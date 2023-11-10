@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cli"
+name = "poetry-cli"
 version = "0.1.0"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
@@ -7,6 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+setuptools = "^68.2.2"
 
 
 [build-system]
