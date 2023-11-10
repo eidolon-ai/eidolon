@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "poetry-sdk"
+name = "sdk"
 version = "0.1.0"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 setuptools = "^68.2.2"
-
+fastapi = "^0.104.1"
 
 [build-system]
 requires = ["poetry-core"]
