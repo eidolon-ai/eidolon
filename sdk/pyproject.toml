@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.11"
 setuptools = "^68.2.2"
 fastapi = "^0.104.1"
+pyyaml = "^6.0.1"
+jsonschema = "^4.19.2"
 
 [build-system]
 requires = ["poetry-core"]
