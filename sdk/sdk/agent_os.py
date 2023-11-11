@@ -34,7 +34,7 @@ class LogicUnit:
 
 class MemoryUnit:
     @staticmethod
-    async def process(prompt, agent: Agent) -> None:
+    async def process(prompt, agent: Agent):  # this probably returns whatever a prompt object is
         pass
 
 
