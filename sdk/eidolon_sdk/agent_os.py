@@ -70,6 +70,20 @@ myDict = {
 }
 
 
+class AgentProcess:
+    def __init__(self, agent_program: AgentProgram):
+        self.agent_program = agent_program
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def restart(self):
+        pass
+
+
 def find_agent(model: AgentProgram) -> Agent:
     # todo, we should probably do some validation here
     return getattr(eidolon_sdk, model.implementation)
@@ -77,6 +91,7 @@ def find_agent(model: AgentProgram) -> Agent:
 
 class AgentOS:
     machine: AgentMachine
+    app: FastAPI
 
     def __init__(self, machine_yaml: str):
         self.machine = AgentMachine.parse(machine_yaml)
@@ -97,3 +112,5 @@ class AgentOS:
                               methods=["POST"])
             for state_name, state in program.states.items():
                 app.add_api_route(f"/{program.name}/{state_name}", create_endpoint(state.input_schema_model, agent.state_mapping[state_name]), methods=["POST"])
+
+        self.app = app
