@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import importlib
 from typing import Generic, TypeVar, List
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ValidationError
 
 from agent import Agent
 
@@ -57,9 +58,19 @@ class AgentCPU(BaseModel):
     def validate_units(cls, value, values, config, field):
         if 'implementation' in value:
             base_class = base_class_dict.get(field.name)
-            implementation_class = globals().get(value['implementation'])
+            implementation_fqn = values.get('implementation')
+            if implementation_fqn:
+                module_name, class_name = implementation_fqn.rsplit(".", 1)
+                try:
+                    module = importlib.import_module(module_name)
+                    implementation_class = getattr(module, class_name)
+                except (ImportError, AttributeError):
+                    raise ValidationError(f"Unable to import {implementation_fqn}")
+            else:
+                raise ValidationError("Implementation not provided.")
+
             if implementation_class and issubclass(implementation_class, base_class):
-                return implementation_class()
+                return implementation_class(**value)
             else:
                 raise ValueError(
                     f"Implementation class '{value['implementation']}' not found or is not a subclass of {field.name}.")
