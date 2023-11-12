@@ -7,7 +7,7 @@ from fastapi import FastAPI, Body
 from pydantic import ValidationError, BaseModel
 
 from agent import Agent
-from eidolon_sdk.agent_program import AgentProgram
+from agent_program import AgentProgram
 
 
 class AgentProcess:

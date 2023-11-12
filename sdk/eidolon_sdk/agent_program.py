@@ -2,8 +2,8 @@ import importlib
 
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
-from eidolon_sdk.agent import CodeAgent
-from eidolon_sdk.agent_cpu import AgentCPU
+from agent import CodeAgent
+from agent_cpu import AgentCPU
 from eidolon_sdk.util.schema_to_model import schema_to_model
 
 

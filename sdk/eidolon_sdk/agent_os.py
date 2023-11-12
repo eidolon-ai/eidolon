@@ -5,10 +5,10 @@ from typing import TypeVar
 from fastapi import FastAPI
 
 import eidolon_sdk
-from eidolon_sdk.agent import Agent
-from eidolon_sdk.agent_process import AgentProcess
-from eidolon_sdk.agent_machine import AgentMachine
-from eidolon_sdk.agent_program import AgentProgram
+from agent import Agent
+from agent_process import AgentProcess
+from agent_machine import AgentMachine
+from agent_program import AgentProgram
 
 T = TypeVar('T')
 V = TypeVar('V')

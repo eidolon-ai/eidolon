@@ -3,9 +3,9 @@ from typing import List
 import yaml
 from pydantic import Field, BaseModel, field_validator
 
-from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.agent_program import AgentProgram
-from eidolon_sdk.agent_io import AgentIO
+from agent_memory import AgentMemory
+from agent_program import AgentProgram
+from agent_io import AgentIO
 
 base_class_dict = {
     "agent_memory": AgentMemory,
