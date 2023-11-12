@@ -31,7 +31,7 @@ class AgentIOState(BaseModel):
         description="The transitions to other states. The key is the name of the state "
                     "to transition to, and the value is the schema of the output.")
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """
         Initializes an `AgentIOState` instance by creating Pydantic models from the provided input schema and
         transitions' output schemas.
@@ -42,7 +42,7 @@ class AgentIOState(BaseModel):
         These models are stored as instance attributes and are used to validate the inputs and outputs during the
         agent's runtime operations.
         """
-        super().__init__()
+        super().__init__(**kwargs)
         self.input_schema_model = schema_to_model(self.input_schema, f'{self.state_name.capitalize()}InputModel')
         self.transitions_to_models = {}
         for key, value in self.transitions_to.items():

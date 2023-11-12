@@ -9,5 +9,6 @@ class Agent:
     starting_state: str
     state_mapping: Dict[str, Callable]
 
+
 class CodeAgent(Agent):
     pass

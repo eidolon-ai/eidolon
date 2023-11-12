@@ -6,7 +6,7 @@ from typing import Type, Callable, Any
 from fastapi import FastAPI, Body
 from pydantic import ValidationError, BaseModel
 
-from eidolon_sdk.agent import Agent
+from agent import Agent
 from eidolon_sdk.agent_program import AgentProgram
 
 
