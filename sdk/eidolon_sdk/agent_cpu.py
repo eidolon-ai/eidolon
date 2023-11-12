@@ -6,7 +6,7 @@ from typing import Generic, TypeVar, List
 
 from pydantic import BaseModel, Field, field_validator, ValidationError
 
-from agent import Agent
+from eidolon_sdk.agent import Agent
 
 T = TypeVar('T')
 V = TypeVar('V')
