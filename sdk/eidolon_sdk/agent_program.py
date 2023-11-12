@@ -1,6 +1,6 @@
 import importlib
 
-from pydantic import BaseModel, Field, validator, ValidationError, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from agent import CodeAgent
 from .agent_cpu import AgentCPU
@@ -23,12 +23,31 @@ class AgentIOState(BaseModel):
 
 
 class AgentProgram(BaseModel):
+    """
+    The `AgentProgram` class represents a program within the agent framework. It serves as a configuration object
+    for setting up the program's properties and linking it to a specific Agent CPU. It defines the program's behavior,
+    states, and the initial state that the program should be in when it starts.
+
+    Attributes:
+        name (str): The name of the program. This is a unique identifier that will also be used as the endpoint name
+                    for the program's interface.
+        agent_cpu (AgentCPU, optional): An instance of `AgentCPU` that this program will use to execute its instructions.
+                                        If not provided, it will default to `None`.
+        implementation (str): The Fully Qualified Name (FQN) of the agent class that implements the program logic.
+        states (dict[str, AgentIOState]): A mapping of state names to their corresponding `AgentIOState` objects,
+                                          defining possible states that the program can be in.
+        initial_state (str): The name of the initial state of the program upon startup.
+
+    The `AgentProgram` class requires that you provide the `name`, `implementation`, and `initial_state` upon creation.
+    The `agent_cpu` and `states` are optional and can be set after initialization.
+    """
     name: str = Field(description="The name of the program. Will be used as the endpoint name.")
     agent_cpu: AgentCPU = Field(default=None, description="The Agent CPU to use.")
     implementation: str = Field(description="The FQN of agent class.")
     states: dict[str, AgentIOState] = Field(description="The states of the program.")
     initial_state: str = Field(description="The initial state of the program.")
 
+    @classmethod
     @field_validator('agent_cpu', mode="before")
     def validate_agent_cpu(cls, v, values):
         # Dynamically import the class from the implementation field
@@ -48,5 +67,7 @@ class AgentProgram(BaseModel):
             # If not a CodeAgent, and agent_cpu is not provided, raise an error
             if not v:
                 raise ValueError('agent_cpu is required for non-CodeAgent implementations')
+        else:
+            raise ValidationError("implementation is required")
 
         return v
