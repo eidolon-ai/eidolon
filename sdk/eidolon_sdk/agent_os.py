@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from typing import TypeVar
+from typing import TypeVar, Type, Callable, Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
+from pydantic import BaseModel
 
 import eidolon_sdk
-from agent_cpu import Agent
+from agent import Agent
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_program import AgentProgram
 
 T = TypeVar('T')
 V = TypeVar('V')
-
 
 myDict = {
     "/route1": {
@@ -84,9 +84,16 @@ class AgentOS:
     def start(self):
         app = FastAPI()
 
+        def create_endpoint(model: Type[BaseModel], fn: Callable[..., Any]):
+            async def endpoint(body: model = Body(...)):
+                return fn(**body.model_dump())
+
+            return endpoint
+
         # Register a POST endpoint for each Pydantic model in the dictionary
         for program in self.machine.agent_programs:
             agent = find_agent(program)
-            app.add_api_route(f"/{program.name}", agent.state_mapping[agent.starting_state], methods=["POST"])
-            for state, function in agent.state_mapping.items():
-                app.add_api_route(f"/{program.name}/{state}", function, methods=["POST"])
+            app.add_api_route(f"/{program.name}", create_endpoint(program.states[program.initial_state].input_schema_model, agent.state_mapping[agent.starting_state]),
+                              methods=["POST"])
+            for state_name, state in program.states.items():
+                app.add_api_route(f"/{program.name}/{state_name}", create_endpoint(state.input_schema_model, agent.state_mapping[state_name]), methods=["POST"])
