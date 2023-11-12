@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, List
 
 from pydantic import BaseModel, Field, field_validator, ValidationError
@@ -11,30 +12,30 @@ T = TypeVar('T')
 V = TypeVar('V')
 
 
-class LogicUnit(BaseModel):
-    @staticmethod
-    async def execute(instruction, framework) -> None:
+class LogicUnit(BaseModel, ABC):
+    @abstractmethod
+    async def execute(self, instruction, framework) -> None:
         # unsure of the object we pass of to manipulate framework.
         pass
 
 
-class MemoryUnit(BaseModel):
-    @staticmethod
-    async def process(prompt, agent):  # this probably returns whatever a prompt object is
+class MemoryUnit(BaseModel, ABC):
+    @abstractmethod
+    async def process(self, prompt, agent):  # this probably returns whatever a prompt object is
         pass
 
 
-class ControlUnit(BaseModel, Generic[T, V]):
-    @staticmethod
-    async def process(request: T, agent: Agent) -> V:
+class ControlUnit(BaseModel, Generic[T, V], ABC):
+    @abstractmethod
+    async def process(self, request: T, agent: Agent) -> V:
         pass
 
 
-class LLMUnit(BaseModel):
+class LLMUnit(BaseModel, ABC):
     model: str = Field(..., description="The name of the language model used by the LLM Unit.")
 
-    @staticmethod
-    async def query(prompt):
+    @abstractmethod
+    async def query(self, prompt):
         pass
 
 
@@ -47,6 +48,21 @@ base_class_dict = {
 
 
 class AgentCPU(BaseModel):
+    """
+    Defines the central processing unit (CPU) of an agent, which is responsible for managing the execution
+    of logic units and interfacing with the memory and control units.
+
+    Attributes:
+        memory_unit (MemoryUnit): An instance of `MemoryUnit` that provides the memory storage capabilities for the CPU.
+        control_unit (ControlUnit): An instance of `ControlUnit` that directs the operation of the CPU by coordinating
+                                    the instruction cycle, including fetching, decoding, and executing instructions.
+        llm_unit (LLMUnit): An instance of `LLMUnit` that facilitates the interaction with a Large Language Model (LLM).
+        logic_units (List[LogicUnit]): A list of `LogicUnit` instances that perform various logical operations as part
+                                       of the CPU's processing tasks.
+
+    The class also includes a class-level validator that ensures the instantiated units are derived from the correct base classes.
+    """
+
     memory_unit: MemoryUnit = Field(description="The Memory Unit to use.")
     control_unit: ControlUnit = Field(description="The Control Unit to use.")
     llm_unit: LLMUnit = Field(description="The LLM Unit to use.")
@@ -56,6 +72,26 @@ class AgentCPU(BaseModel):
     @classmethod
     @field_validator('memory_unit', 'control_unit', 'llm_unit', "logic_units")
     def validate_units(cls, value, values, config, field):
+        """
+        Validates and instantiates units for the AgentCPU based on the provided implementation details.
+
+        This method dynamically imports and instantiates classes for the specified units based on the 'implementation'
+        attribute within the provided value. It supports validating and instantiating single units as well as lists of units.
+
+        Parameters:
+            value: The value containing the implementation details for the unit or list of units.
+            values (dict): A dictionary containing all the fields of the AgentCPU instance.
+            config: The configuration passed to the Pydantic model.
+            field: The model's field that is being validated.
+
+        Raises:
+            ValidationError: If the specified implementation cannot be imported or is not provided.
+            ValueError: If the implementation class is not found or is not a subclass of the expected base class.
+
+        Returns:
+            An instantiated unit object or a list of instantiated unit objects that have been validated.
+        """
+
         if 'implementation' in value:
             base_class = base_class_dict.get(field.name)
             implementation_fqn = values.get('implementation')

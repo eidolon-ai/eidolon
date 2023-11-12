@@ -8,6 +8,23 @@ from .util.schema_to_model import schema_to_model
 
 
 class AgentIOState(BaseModel):
+    """
+    Represents an I/O state within an agent program. Each `AgentIOState` object encapsulates the data schema for inputs
+    to a state and the possible transitions to other states along with the corresponding output schemas.
+
+    Attributes:
+        state_name (str): The unique name identifying this state within the agent program's state machine.
+        input_schema (dict): A dictionary representing the expected schema for inputs when the agent is in this state.
+                             This schema is used to validate incoming data and generate a Pydantic model.
+        transitions_to (dict[str, dict]): A mapping where each key is a state name that can be transitioned to from
+                                          this state and each value is the schema of the output to be produced when
+                                          transitioning to that state. This facilitates validation and model generation
+                                          for outputs.
+
+    The class constructor converts `input_schema` and `transitions_to` schemas into Pydantic models for validation
+    purposes during the runtime.
+    """
+
     state_name: str = Field(description="The name of the state.")
     input_schema: dict = Field(description="The schema of the input.")
     transitions_to: dict[str, dict] = Field(
@@ -15,6 +32,16 @@ class AgentIOState(BaseModel):
                     "to transition to, and the value is the schema of the output.")
 
     def __init__(self):
+        """
+        Initializes an `AgentIOState` instance by creating Pydantic models from the provided input schema and
+        transitions' output schemas.
+
+        The constructor uses the `schema_to_model` function to dynamically create Pydantic models that represent
+        the input schema (`input_schema_model`) and each of the output schemas for transitions (`transitions_to_models`).
+
+        These models are stored as instance attributes and are used to validate the inputs and outputs during the
+        agent's runtime operations.
+        """
         super().__init__()
         self.input_schema_model = schema_to_model(self.input_schema, f'{self.state_name.capitalize()}InputModel')
         self.transitions_to_models = {}
@@ -50,6 +77,32 @@ class AgentProgram(BaseModel):
     @classmethod
     @field_validator('agent_cpu', mode="before")
     def validate_agent_cpu(cls, v, values):
+        """
+        Validates the 'agent_cpu' field of the AgentProgram class. This method ensures that the specified 'agent_cpu'
+        is appropriate for the given 'implementation' of the agent. If the 'implementation' is a subclass of `CodeAgent`,
+        the 'agent_cpu' field is optional. Otherwise, it is required.
+
+        This is a class method decorated with `field_validator` which checks the 'agent_cpu' field before other validations.
+
+        Parameters:
+            v: The value of 'agent_cpu' to be validated.
+            values (dict): A dictionary containing all the fields of the AgentProgram instance.
+
+        Raises:
+            ValidationError: If 'implementation' cannot be imported or is not provided, or if 'agent_cpu' is required
+                             but not provided for non-CodeAgent implementations.
+
+        Returns:
+            The validated 'agent_cpu' if the validation is successful.
+
+        This method uses dynamic importing based on the 'implementation' field to fetch the agent class and then determines
+        the necessity of 'agent_cpu' based on whether the agent class is a subclass of `CodeAgent`.
+
+        Note:
+            This method should be considered as part of the internal API of the AgentProgram class and should not be
+            invoked directly in normal usage.
+        """
+
         # Dynamically import the class from the implementation field
         implementation_fqn = values.get('implementation')
         if implementation_fqn:
