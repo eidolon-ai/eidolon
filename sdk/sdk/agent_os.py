@@ -1,40 +1,97 @@
 from __future__ import annotations
 
-from typing import TypeVar, Generic, Dict
+from typing import TypeVar, Type
 
-from fastapi import Request
-from fastapi.openapi.models import Response
+from fastapi import FastAPI, Body
+from pydantic import BaseModel, Field
 
-from agent_cpu import LogicUnit
+from agent_machine import AgentMachine
+from agent_program import AgentProgram
 
 T = TypeVar('T')
 V = TypeVar('V')
 
 
+myDict = {
+    "/route1": {
+        "input_schema": {
+            "title": "Route1Input",
+            "type": "object",
+            "properties": {
+                "question": {
+                    "title": "Question",
+                    "description": "The question to ask the user.",
+                    "type": "string"
+                }
+            },
+            "required": ["question"]
+        },
+        "output_schema": {
+            "title": "Route1Output",
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "title": "Answer",
+                    "description": "The answer to the question.",
+                    "type": "string"
+                }
+            },
+            "required": ["answer"]
+        }
+    },
+    "/route2": {
+        "input_schema": {
+            "title": "Route1Input",
+            "type": "object",
+            "properties": {
+                "question": {
+                    "title": "Question",
+                    "description": "The question to ask the user.",
+                    "type": "string"
+                }
+            },
+            "required": ["question"]
+        },
+        "output_schema": {
+            "title": "Route1Output",
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "title": "Answer",
+                    "description": "The answer to the question.",
+                    "type": "string"
+                }
+            },
+            "required": ["answer"]
+        }
+    },
+
+}
+
+
 class Agent:
-    """
-    placeholder for the object to manipulate when different logic/control units have access to.
-    """
-    def config(self):
+    pass
+
+
+def create_endpoint(model: Type[AgentProgram]):
+    async def endpoint(body: model = Body(...)):
+        return body
+
+    return endpoint
+
+
+class AgentOS:
+    machine: AgentMachine = None
+
+    def initialize(self, machine_yaml: str):
+        self.machine = AgentMachine.parse(machine_yaml)
+
+    def start(self):
+        app = FastAPI()
+
+        # Register a POST endpoint for each Pydantic model in the dictionary
+        for program in self.machine.agent_programs:
+            endpoint = create_endpoint(program)
+            app.add_api_route(f"/{name}", endpoint, methods=["POST"])
+
         pass
-
-    def agent_memory(self):
-        pass
-
-    def call_llm(self, prompt):
-        pass
-
-    def logic_units(self) -> Dict[str, LogicUnit]:
-        pass
-
-
-class IOUnit(Generic[T, V]):
-    @staticmethod
-    async def read(request: Request) -> T:
-        pass
-
-    @staticmethod
-    async def write(data: V, response: Response) -> None:
-        pass
-
-

@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
 
-class AgentMemory(BaseModel):
+class AgentIO(BaseModel):
     pass
-
