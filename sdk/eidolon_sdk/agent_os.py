@@ -3,10 +3,9 @@ from __future__ import annotations
 from typing import TypeVar, Type
 
 from fastapi import FastAPI, Body
-from pydantic import BaseModel, Field
 
-from agent_machine import AgentMachine
-from agent_program import AgentProgram
+from .agent_machine import AgentMachine
+from .agent_program import AgentProgram
 
 T = TypeVar('T')
 V = TypeVar('V')

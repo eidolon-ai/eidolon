@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Generic
 from pydantic import BaseModel, Field, field_validator
-from agent_os import Agent, T, V
+from .agent_os import Agent, T, V
 
 
 class LogicUnit(BaseModel):

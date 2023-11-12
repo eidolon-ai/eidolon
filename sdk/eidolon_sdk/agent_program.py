@@ -1,13 +1,14 @@
 from pydantic import BaseModel, Field
 
-from agent_cpu import AgentCPU
-from util.schema_to_model import schema_to_model
+from .agent_cpu import AgentCPU
+from .util.schema_to_model import schema_to_model
 
 
 class AgentIOState(BaseModel):
     state_name: str = Field(..., description="The name of the state.")
     input_schema: dict = Field(..., description="The schema of the input.")
-    transitions_to: dict[str, dict] = Field(..., description="The transitions to other states. The key is the name of the state to transition to, and the value is the schema of the output.")
+    transitions_to: dict[str, dict] = Field(..., description="The transitions to other states. The key is the name of the state "
+                                                             "to transition to, and the value is the schema of the output.")
 
     def __init__(self):
         super().__init__()

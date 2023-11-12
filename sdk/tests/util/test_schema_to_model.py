@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel, ValidationError
-from util.schema_to_model import schema_to_model
+from eidolon_sdk.util.schema_to_model import schema_to_model
 
 
 class TestSchemaToModel:
