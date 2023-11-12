@@ -2,9 +2,9 @@ import importlib
 
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
+import util
 from agent import CodeAgent
 from agent_cpu import AgentCPU
-from eidolon_sdk.util.schema_to_model import schema_to_model
 
 
 class AgentIOState(BaseModel):
@@ -43,10 +43,10 @@ class AgentIOState(BaseModel):
         agent's runtime operations.
         """
         super().__init__(**kwargs)
-        self.input_schema_model = schema_to_model(self.input_schema, f'{self.state_name.capitalize()}InputModel')
+        self.input_schema_model = util.schema_to_model.schema_to_model(self.input_schema, f'{self.state_name.capitalize()}InputModel')
         self.transitions_to_models = {}
         for key, value in self.transitions_to.items():
-            self.transitions_to_models[key] = schema_to_model(value, f'{self.state_name.capitalize()}To{key.capitalize()}OutputModel')
+            self.transitions_to_models[key] = util.schema_to_model.schema_to_model(value, f'{self.state_name.capitalize()}To{key.capitalize()}OutputModel')
 
 
 class AgentProgram(BaseModel):
