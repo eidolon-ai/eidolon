@@ -1,9 +1,11 @@
+from typing import List
+
 import yaml
 from pydantic import Field, BaseModel, field_validator
 
-from .agent_memory import AgentMemory
-from .agent_program import AgentProgram
-from .agent_io import AgentIO
+from eidolon_sdk.agent_memory import AgentMemory
+from eidolon_sdk.agent_program import AgentProgram
+from eidolon_sdk.agent_io import AgentIO
 
 base_class_dict = {
     "agent_memory": AgentMemory,
@@ -14,7 +16,7 @@ base_class_dict = {
 class AgentMachine(BaseModel):
     agent_memory: AgentMemory = Field(..., description="The Agent Memory to use.")
     agent_io: AgentIO = Field(..., description="The Agent IO configured on this machine.")
-    agent_programs: list[AgentProgram] = Field(..., description="The list of Agent Programs to run on this machine.")
+    agent_programs: List[AgentProgram] = Field(..., description="The list of Agent Programs to run on this machine.")
 
     @classmethod
     @field_validator('agent_memory', 'agent_io')
