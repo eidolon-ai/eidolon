@@ -96,8 +96,7 @@ class AgentProcess:
             print(state)
             print(body)
             pid = process_id or self.agent_os.startProcess(request.headers.get('callback_url'))
-            # background_tasks.add_task(self.agent.agent_program.handlers[state].fn, self.agent, **body.model_dump())
-            await self.agent.base_handler(state, body)
+            background_tasks.add_task(self.agent.base_handler, state=state, body=body)
             return {"process_id": pid}
 
         return processStateRoute

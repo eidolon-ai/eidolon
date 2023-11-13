@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 from typing import Annotated, Type
 
+import pytest
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
@@ -107,7 +108,9 @@ def test_required_param_missing():
         assert response.status_code == 422
 
 
+@pytest.mark.skip(reason="there is no way to get this error until we hook up gets now that it happens in the background")
 def test_program_error():
     with os_manager(HelloWorld):
-        response = client.post("/helloworld", json=dict(question="hola"))
+        pid = client.post("/helloworld", json=dict(question="hola")).json()['process_id']
+        response = client.get(f"/helloworld/{pid}/idle")
         assert response.status_code == 500
