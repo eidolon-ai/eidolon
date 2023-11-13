@@ -1,8 +1,7 @@
 import importlib
 
-from pydantic import BaseModel, Field, ValidationError, field_validator, Extra
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
-from eidolon_sdk.util.schema_to_model import schema_to_model
 from .agent_cpu import AgentCPU
 
 
@@ -15,10 +14,6 @@ class AgentIOState(BaseModel):
         state_name (str): The unique name identifying this state within the agent program's state machine.
         description (str): The description of the program. This is the description other agents will use to decide to call this agent.
                              This schema is used to validate incoming data and generate a Pydantic model.
-        transitions_to (dict[str, dict]): A mapping where each key is a state name that can be transitioned to from
-                                          this state and each value is the schema of the output to be produced when
-                                          transitioning to that state. This facilitates validation and model generation
-                                          for outputs.
 
     The class constructor converts `input_schema` and `transitions_to` schemas into Pydantic models for validation
     purposes during the runtime.
@@ -26,26 +21,6 @@ class AgentIOState(BaseModel):
 
     state_name: str = Field(description="The name of the state.")
     description: str = Field(description="The description of the program. Will be used by other AgentPrograms that call this agent autonomously to choose which agent to call.")
-    transitions_to: dict[str, dict] = Field(
-        description="The transitions to other states. The key is the name of the state "
-                    "to transition to, and the value is the schema of the output.")
-    model_config = {"extra": "allow"}
-
-    def __init__(self, **kwargs):
-        """
-        Initializes an `AgentIOState` instance by creating Pydantic models from the provided input schema and
-        transitions' output schemas.
-
-        The constructor uses the `schema_to_model` function to dynamically create Pydantic models that represent
-        the input schema (`input_schema_model`) and each of the output schemas for transitions (`transitions_to_models`).
-
-        These models are stored as instance attributes and are used to validate the inputs and outputs during the
-        agent's runtime operations.
-        """
-        super().__init__(**kwargs)
-        self.transitions_to_models = {}
-        for key, value in self.transitions_to.items():
-            self.transitions_to_models[key] = schema_to_model(value, f'{self.state_name.capitalize()}To{key.capitalize()}OutputModel')
 
 
 class AgentProgram(BaseModel):

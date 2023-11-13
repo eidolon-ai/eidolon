@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Annotated
+from typing import Annotated, Dict
 
 import pytest
 from fastapi import FastAPI
@@ -35,8 +35,8 @@ class HelloWorldResponse(BaseModel):
 class TestHelloWorldAgent(CodeAgent):
     counter = 0  # todo, this is a hack to make sure function is called. Should wrap with mock instead
 
-    @register()
-    async def execute(self, question: Annotated[str, Field(description="The question to ask. Can be anything, but it better be hello")]) -> HelloWorldResponse:
+    @register(state="idle", transition_to=['idle', 'terminated'])
+    async def idle(self, question: Annotated[str, Field(description="The question to ask. Can be anything, but it better be hello")]):
         TestHelloWorldAgent.counter += 1
         if question == "hello":
             return HelloWorldResponse(question=question, answer="world")
@@ -54,14 +54,6 @@ def hello_world_machine():
         states={"idle": AgentIOState(
             state_name="idle",
             description="The agent is waiting for a question",
-            input_schema={
-                "type": "object",
-                "properties": {
-                    "question": {
-                        "type": "string"
-                    }
-                }
-            },
             transitions_to={"idle": {
                 "type": "object",
                 "properties": {

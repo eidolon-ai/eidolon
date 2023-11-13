@@ -6,10 +6,3 @@ agent_programs:
       idle:
         state_name: "idle"
         description: "This is the starting state of the agent program."
-        transitions_to:
-          idle:
-            description: "The welcome message is printed."
-            type: "object"
-            properties:
-              welcome_message:
-                type: "string"

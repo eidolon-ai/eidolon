@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import inspect
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, TypeVar, Type, Optional
+
+from pydantic import BaseModel
 
 from .agent_program import AgentProgram
 
@@ -14,7 +16,8 @@ class Agent:
     def __init__(self, agent_program: AgentProgram):
         self.agent_program = agent_program
         self.handlers = {handler.state: handler for handler in (
-            getattr(getattr(self, method_name), 'eidolon_handler') for method_name in dir(self) if hasattr(getattr(self, method_name), 'eidolon_handler')
+            getattr(getattr(self, method_name), 'eidolon_handler') for method_name in dir(self) if
+        hasattr(getattr(self, method_name), 'eidolon_handler')
         )}
 
 
@@ -26,10 +29,11 @@ class CodeAgent(Agent):
 class EidolonHandler:
     state: str
     transition_to: List[str]
+    state_representation: Optional[Type]
     fn: callable
 
 
-def register(state: str = 'idle', transition_to: List[str] = None):
+def register(state: str = 'idle', transition_to: List[str] = None, state_representation: Type = None):
     if state == 'terminated':
         raise ValueError("Cannot register a handler for the terminated state")
 
@@ -39,7 +43,12 @@ def register(state: str = 'idle', transition_to: List[str] = None):
             raise ValueError("Handler must be an async function")
 
         setattr(fn, "eidolon_handler",
-                EidolonHandler(state=state, transition_to=transition_to or ['terminated'], fn=fn))
+                EidolonHandler(state=state, transition_to=transition_to or ['terminated'], fn=fn, state_representation=state_representation))
         return fn
 
     return decorator
+
+
+class StateChangeResponse(BaseModel):
+    new_state: str
+    response: BaseModel
