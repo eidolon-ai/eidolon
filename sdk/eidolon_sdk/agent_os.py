@@ -28,10 +28,13 @@ class AgentOS:
         for process in self.processes:
             process.start(app)
 
+        self.machine.agent_memory.start()
+
     def stop(self):
         for process in self.processes:
             process.stop(self.app)
         self.processes = []
+        self.machine.agent_memory.stop()
 
     def startProcess(self, callback_url: Optional[str]):
         return "123"

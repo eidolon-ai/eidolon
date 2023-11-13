@@ -7,8 +7,8 @@ import pytest
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
-from starlette.requests import Request
 
+from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent import CodeAgent, register, Agent
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
@@ -24,7 +24,11 @@ def os_manager(*agents: Type[Agent]):
         name=agent.__name__.lower(),
         implementation="tests.test_agent_os." + agent.__qualname__
     ) for agent in agents]
-    machine = AgentMachine(agent_memory={}, agent_io={}, agent_programs=programs)
+    machine = AgentMachine(agent_memory=AgentMemory(
+        symbolic_memory=SymbolicMemory(
+            implementation="eidolon_sdk.impl.local_symbolic_memory.LocalSymbolicMemory"
+        )
+    ), agent_io={}, agent_programs=programs)
     os = AgentOS(machine=machine, machine_yaml="")
     os.start(app)
     try:

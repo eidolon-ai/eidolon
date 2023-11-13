@@ -206,11 +206,17 @@ class AgentMemory(BaseModel):
         return implementation_class(**value)
 
     def start(self):
-        self.file_memory.start()
-        self.symbolic_memory.start()
-        self.similarity_memory.start()
+        if self.file_memory:
+            self.file_memory.start()
+        if self.symbolic_memory:
+            self.symbolic_memory.start()
+        if self.similarity_memory:
+            self.similarity_memory.start()
 
     def stop(self):
-        self.file_memory.stop()
-        self.symbolic_memory.stop()
-        self.similarity_memory.stop()
+        if self.file_memory:
+            self.file_memory.stop()
+        if self.symbolic_memory:
+            self.symbolic_memory.stop()
+        if self.similarity_memory:
+            self.similarity_memory.stop()
