@@ -6,7 +6,7 @@ import inspect
 import typing
 from typing import Optional, Annotated
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, BackgroundTasks
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
 
@@ -92,11 +92,12 @@ class AgentProcess:
         self.start(app)
 
     def processRoute(self, state: str):
-        async def processStateRoute(request: Request, body: BaseModel, process_id: typing.Optional[str]):
+        async def processStateRoute(request: Request, body: BaseModel, process_id: typing.Optional[str], background_tasks: BackgroundTasks):
             print(state)
             print(body)
             pid = process_id or self.agent_os.startProcess(request.headers.get('callback_url'))
-            await self.agent.handlers[state].fn(self.agent, **body.model_dump())
+            # background_tasks.add_task(self.agent.agent_program.handlers[state].fn, self.agent, **body.model_dump())
+            await self.agent.base_handler(state, body)
             return {"process_id": pid}
 
         return processStateRoute

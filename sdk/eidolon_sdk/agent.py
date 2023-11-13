@@ -20,6 +20,10 @@ class Agent:
         hasattr(getattr(self, method_name), 'eidolon_handler')
         )}
 
+    async def base_handler(self, state: str, body: BaseModel):
+        handler = self.handlers[state]
+        return await handler.fn(self, **body.model_dump())
+
 
 class CodeAgent(Agent):
     pass
