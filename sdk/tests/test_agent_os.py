@@ -6,6 +6,7 @@ from typing import Annotated, Type
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
+from starlette.requests import Request
 
 from eidolon_sdk.agent import CodeAgent, register, Agent
 from eidolon_sdk.agent_machine import AgentMachine
@@ -70,6 +71,13 @@ def test_empty_start():
 def test_program():
     with os_manager(HelloWorld):
         response = client.post("/helloworld", json=dict(question="hello"))
+        assert response.status_code == 202
+
+
+def test_requests_to_running_process():
+    with os_manager(HelloWorld):
+        pid = client.post("/helloworld", json=dict(question="hello")).json()['process_id']
+        response = client.post(f"/helloworld/{pid}/idle", json=dict(question="hello"))
         assert response.status_code == 202
 
 

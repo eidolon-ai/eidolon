@@ -35,7 +35,7 @@ class AgentOS:
             process.stop(self.app)
         self.processes = []
 
-    def startProcess(self, callback_url: str):
+    def startProcess(self, callback_url: Optional[str]):
         return "123"
 
 from .agent_process import AgentProcess

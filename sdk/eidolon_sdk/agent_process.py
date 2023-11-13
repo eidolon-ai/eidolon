@@ -6,7 +6,7 @@ import inspect
 import typing
 from typing import Annotated
 
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Request
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
 
@@ -17,7 +17,7 @@ from .agent_program import AgentProgram
 
 
 class ProcessResponse(BaseModel):
-    conversation_id: str = Field(..., description="The ID of the conversation.")
+    process_id: str = Field(..., description="The ID of the conversation.")
 
 
 class AgentProcess:
@@ -50,7 +50,7 @@ class AgentProcess:
             # the endpoint to hit to process/continue the current state
             add_dynamic_route(
                 app=app,
-                path=f"/{self.agent_program.name}/{{conversation_id}}/{state_name}",
+                path=f"/{self.agent_program.name}/{{process_id}}/{state_name}",
                 input_model=self.create_input_model(state_name),
                 response_model=ProcessResponse,
                 fn=self.processRoute(state_name),
@@ -60,7 +60,7 @@ class AgentProcess:
             # the endpoint to hit to retrieve the results after transitioning to the next state
             if handler.state_representation:
                 app.add_api_route(
-                    f"/{self.agent_program.name}/{{conversation_id}}/{state_name}",
+                    f"/{self.agent_program.name}/{{process_id}}/{state_name}",
                     endpoint=lambda *args, **kwargs: (asyncio.sleep(0)),
                     # todo, hook up state retrieval once memory is implemented
                     methods=["GET"],
@@ -92,15 +92,15 @@ class AgentProcess:
         self.start(app)
 
     def processRoute(self, state: str):
-        async def processStateRoute(body: BaseModel, callback_url: Annotated[str | None, Header()] = None):
+        async def processStateRoute(request: Request, body: BaseModel, process_id: typing.Optional[str]):
             print(state)
             print(body)
+            pid = process_id or self.agent_os.startProcess(request.headers.get('callback_url'))
             await self.agent.handlers[state].fn(self.agent, **body.model_dump())
-            conversation_id = self.agent_os.startProcess(callback_url)
-            return {"conversation_id": conversation_id}
+            return {"process_id": pid}
 
         return processStateRoute
 
 
 class ConversationResponse(BaseModel):
-    conversation_id: str = Field(..., description="The ID of the conversation.")
+    process_id: str = Field(..., description="The ID of the conversation.")

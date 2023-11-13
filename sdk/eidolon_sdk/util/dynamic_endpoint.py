@@ -1,13 +1,13 @@
 from typing import Type, Callable
 
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, Request
 from pydantic import BaseModel
 
 
 def create_endpoint(model: Type[BaseModel], fn: Callable):
-    async def dynamic_endpoint(item: model = Body(...)):
+    async def dynamic_endpoint(request: Request, item: model = Body(...), process_id: str = None):
         # Process the input item
-        return await fn(item)
+        return await fn(request=request, body=item, process_id=process_id)
     return dynamic_endpoint
 
 
