@@ -25,11 +25,11 @@ class CodeAgent(Agent):
 @dataclass
 class EidolonHandler:
     state: str
-    potential_states: List[str]
+    transition_to: List[str]
     fn: callable
 
 
-def register(state: str = 'idle', potential_states: List[str] = None):
+def register(state: str = 'idle', transition_to: List[str] = None):
     if state == 'terminated':
         raise ValueError("Cannot register a handler for the terminated state")
 
@@ -39,7 +39,7 @@ def register(state: str = 'idle', potential_states: List[str] = None):
             raise ValueError("Handler must be an async function")
 
         setattr(fn, "eidolon_handler",
-                EidolonHandler(state=state, potential_states=potential_states or ['terminated'], fn=fn))
+                EidolonHandler(state=state, transition_to=transition_to or ['terminated'], fn=fn))
         return fn
 
     return decorator

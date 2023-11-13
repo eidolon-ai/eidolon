@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import contextlib
-import itertools
-from unittest.mock import patch
 
 import pytest
 from fastapi import FastAPI

@@ -1,10 +1,9 @@
-from typing import Dict, Any
-
-from eidolon_sdk.agent import CodeAgent
+from eidolon_sdk.agent import CodeAgent, register
 
 
 class HelloWorld(CodeAgent):
-    async def execute(self, state_name: str, input: Dict[str, Any]):
+    @register(transition_to=['idle'])
+    async def execute(self, name: str):
         return {
-            "welcome_message": f'Hello, World {input["name"]}!'
+            "welcome_message": f'Hello, World {name}!'
         }
