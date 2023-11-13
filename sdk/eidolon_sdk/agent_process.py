@@ -3,13 +3,13 @@ from __future__ import annotations
 import asyncio
 import importlib
 import typing
-from typing import Type, Optional, Annotated
+from typing import Annotated
 
 from fastapi import FastAPI, Header
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
 
-from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route, create_endpoint
+from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route
 from .agent import Agent
 from .agent_os import AgentOS
 from .agent_program import AgentProgram
@@ -21,6 +21,8 @@ class ProcessResponse(BaseModel):
 
 class AgentProcess:
     agent: Agent
+    agent_program: AgentProgram
+    agent_os: AgentOS
 
     def __init__(self, agent_program: AgentProgram, agent_os: AgentOS):
         self.agent_program = agent_program
@@ -34,28 +36,35 @@ class AgentProcess:
 
         self.agent = impl_class(self)
 
-        program = self.agent_program
-        # Register a POST endpoint for each Pydantic model in the dictionary
-        for state_name, state in program.states.items():
-            path = f"/{program.name}/{{conversation_id}}/{state_name}"
-            if state_name == program.initial_state:
-                path = f"/{program.name}"
+        add_dynamic_route(
+            app=app,
+            path=f"/{self.agent_program.name}",
+            input_model=self.create_input_model(self.agent_program.initial_state),
+            response_model=ProcessResponse,
+            fn=self.processRoute(self.agent_program.initial_state),
+            status_code=202,
+        )
 
+        for state_name, handler in self.agent.handlers.items():
+            # the endpoint to hit to process/continue the current state
             add_dynamic_route(
                 app=app,
-                path=path,
+                path=f"/{self.agent_program.name}/{{conversation_id}}/{state_name}",
                 input_model=self.create_input_model(state_name),
                 response_model=ProcessResponse,
                 fn=self.processRoute(state_name),
                 status_code=202,
             )
-        for state_name, handler in ((k, v) for k, v in self.agent.handlers.items() if v.state_representation):
-            app.add_api_route(
-                f"/{program.name}/{{conversation_id}}/{state_name}",
-                endpoint=lambda *args, **kwargs: (asyncio.sleep(0)),  # todo, hook up state retrieval once memory is implemented
-                methods=["GET"],
-                response_model=handler.state_representation
-            )
+
+            # the endpoint to hit to retrieve the results after transitioning to the next state
+            if handler.state_representation:
+                app.add_api_route(
+                    f"/{self.agent_program.name}/{{conversation_id}}/{state_name}",
+                    endpoint=lambda *args, **kwargs: (asyncio.sleep(0)),
+                    # todo, hook up state retrieval once memory is implemented
+                    methods=["GET"],
+                    response_model=handler.state_representation
+                )
 
     def create_input_model(self, state_name):
         hints = typing.get_type_hints(self.agent.handlers[state_name].fn, include_extras=True)

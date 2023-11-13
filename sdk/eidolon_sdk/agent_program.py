@@ -5,24 +5,6 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 from .agent_cpu import AgentCPU
 
 
-class AgentIOState(BaseModel):
-    """
-    Represents an I/O state within an agent program. Each `AgentIOState` object encapsulates the data schema for inputs
-    to a state and the possible transitions to other states along with the corresponding output schemas.
-
-    Attributes:
-        state_name (str): The unique name identifying this state within the agent program's state machine.
-        description (str): The description of the program. This is the description other agents will use to decide to call this agent.
-                             This schema is used to validate incoming data and generate a Pydantic model.
-
-    The class constructor converts `input_schema` and `transitions_to` schemas into Pydantic models for validation
-    purposes during the runtime.
-    """
-
-    state_name: str = Field(description="The name of the state.")
-    description: str = Field(description="The description of the program. Will be used by other AgentPrograms that call this agent autonomously to choose which agent to call.")
-
-
 class AgentProgram(BaseModel):
     """
     The `AgentProgram` class represents a program within the agent framework. It serves as a configuration object
@@ -35,8 +17,6 @@ class AgentProgram(BaseModel):
         agent_cpu (AgentCPU, optional): An instance of `AgentCPU` that this program will use to execute its instructions.
                                         If not provided, it will default to `None`.
         implementation (str): The Fully Qualified Name (FQN) of the agent class that implements the program logic.
-        states (dict[str, AgentIOState]): A mapping of state names to their corresponding `AgentIOState` objects,
-                                          defining possible states that the program can be in.
         initial_state (str): The name of the initial state of the program upon startup.
 
     The `AgentProgram` class requires that you provide the `name`, `implementation`, and `initial_state` upon creation.
@@ -45,7 +25,6 @@ class AgentProgram(BaseModel):
     name: str = Field(description="The name of the program. Will be used as the endpoint name.")
     agent_cpu: AgentCPU = Field(default=None, description="The Agent CPU to use.")
     implementation: str = Field(description="The FQN of agent class.")
-    states: dict[str, AgentIOState] = Field(description="The states of the program.")
     initial_state: str = Field(description="The initial state of the program.", default='idle')
 
     @classmethod

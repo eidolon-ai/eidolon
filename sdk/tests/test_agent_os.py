@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from eidolon_sdk.agent import CodeAgent, register
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
-from eidolon_sdk.agent_program import AgentProgram, AgentIOState
+from eidolon_sdk.agent_program import AgentProgram
 
 app = FastAPI()
 client = TestClient(app)
@@ -50,19 +50,6 @@ def hello_world_machine():
     return AgentMachine(agent_memory={}, agent_io={}, agent_programs=[AgentProgram(
         name="hello_world",
         implementation="tests.test_agent_os." + TestHelloWorldAgent.__qualname__,
-        # todo, state transitions should be defined on agent, and constructed on machine automatically
-        states={"idle": AgentIOState(
-            state_name="idle",
-            description="The agent is waiting for a question",
-            transitions_to={"idle": {
-                "type": "object",
-                "properties": {
-                    "answer": {
-                        "type": "string"
-                    }
-                }
-            }},
-        )},
     )])
 
 
