@@ -11,6 +11,5 @@ def create_endpoint(model: Type[BaseModel], fn: Callable):
     return dynamic_endpoint
 
 
-def add_dynamic_route(app: FastAPI, path: str, input_model: Type[BaseModel], response_model: Type[BaseModel], fn: Callable):
-    endpoint = create_endpoint(input_model, fn)
-    app.add_api_route(path, endpoint, methods=["POST"], response_model=response_model)
+def add_dynamic_route(app: FastAPI, path: str, input_model: Type[BaseModel], response_model: Type[BaseModel], fn: Callable, **kwargs):
+    app.add_api_route(path, endpoint=create_endpoint(input_model, fn), methods=["POST"], response_model=response_model, **kwargs)

@@ -33,8 +33,14 @@ class AgentProcess:
             path = f"/{program.name}/{{conversation_id}}/{state_name}"
             if state_name == program.initial_state:
                 path = f"/{program.name}"
-            add_dynamic_route(app, path, self.create_request_model(state_name, state_name != program.initial_state, state.input_schema_model),
-                              self.create_response_model(state_name), self.processRoute(state_name))
+            add_dynamic_route(
+                app=app,
+                path=path,
+                input_model=self.create_request_model(state_name, state_name != program.initial_state, state.input_schema_model),
+                response_model=self.create_response_model(state_name),
+                fn=self.processRoute(state_name),
+                status_code=202,
+            )
 
     def stop(self, app: FastAPI):
         pass
@@ -54,7 +60,7 @@ class AgentProcess:
 
     def create_request_model(self, name: str, include_conversation_id: bool, input_model: Type[BaseModel]):
         fields = {
-            "callback_url": (str, Field(..., description="The URL to call when the agent is done.")),
+            "callback_url": (Optional[str], Field(default=None, description="The URL to call when the agent is done.")),
             "args": (input_model, Field(..., description="The arguments for the agent call.")),
         }
         if include_conversation_id:

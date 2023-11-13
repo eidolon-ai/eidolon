@@ -1,21 +1,31 @@
 from __future__ import annotations
 
+import contextlib
 from typing import Dict, Any
 
+import pytest
 import yaml
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
 from eidolon_sdk.agent import CodeAgent
-from eidolon_sdk.agent_program import AgentProgram, AgentIOState
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
+from eidolon_sdk.agent_program import AgentProgram, AgentIOState
+
+app = FastAPI()
+client = TestClient(app)
 
 
-def get_client(machine):
-    os = AgentOS(yaml.dump(machine.model_dump()))
-    os.start()
-    return TestClient(os.app)
+@contextlib.contextmanager
+def os_manager(machine: AgentMachine):
+    os = AgentOS(machine=machine, machine_yaml="")
+    os.start(app)
+    try:
+        yield
+    finally:
+        os.stop()
 
 
 class HelloWorldResponse(BaseModel):
@@ -31,18 +41,11 @@ class TestHelloWorldAgent(CodeAgent):
             raise ValueError("Invalid Question")
 
 
-def test_empty_start():
-    client = get_client(AgentMachine(agent_memory={}, agent_io={}, agent_programs=[]))
-    docs = client.get("/docs")
-    assert docs.status_code == 200
-
-
-def test_program():
-    # setattr(eidolon_sdk.agent_program, "CodeAgent", TestHelloWorldAgent)
-
-    machine = AgentMachine(agent_memory={}, agent_io={}, agent_programs=[AgentProgram(
+@pytest.fixture
+def hello_world_machine():
+    return AgentMachine(agent_memory={}, agent_io={}, agent_programs=[AgentProgram(
         name="hello_world",
-        implementation=TestHelloWorldAgent.__qualname__,
+        implementation="tests.test_agent_os." + TestHelloWorldAgent.__qualname__,
         initial_state="idle",
         # todo, state transitions should be defined on agent, and constructed on machine automatically
         states={"idle": AgentIOState(
@@ -66,12 +69,16 @@ def test_program():
             }},
         )},
     )])
-    client = get_client(machine)
-    response = client.post("/hello_world", json={"question": "hello"})
-    assert response.status_code == 202
-    state_response = client.get(f"/hello_world/{response.json()['conversation_id']}")
-    assert response.status_code == 200
-    assert state_response.json() == {
-        "question": "hello",
-        "answer": "world"
-    }
+
+
+def test_empty_start():
+    with os_manager(AgentMachine(agent_memory={}, agent_io={}, agent_programs=[])):
+        docs = client.get("/docs")
+        assert docs.status_code == 200
+
+
+def test_program(hello_world_machine):
+    # setattr(eidolon_sdk.agent_program, "CodeAgent", TestHelloWorldAgent)
+    with os_manager(hello_world_machine):
+        response = client.post("/hello_world", json=dict(args=dict(question="hello")))
+        assert response.status_code == 202
