@@ -67,7 +67,7 @@ class AgentProcess:
             "conversation_id": (str, Field(..., description="The ID of the conversation.")),
         }
         for t_name, t_model in self.agent_program.states[state].transitions_to_models.items():
-            fields[t_name] = (Optional[t_model], Field(..., description="The answer for {t_name} transition state."))
+            fields[t_name] = (Optional[t_model], Field(default=None, description="The answer for {t_name} transition state."))
 
         return create_model(f'{state.capitalize()}ResponseModel', **fields)
 
