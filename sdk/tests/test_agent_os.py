@@ -80,5 +80,5 @@ def test_empty_start():
 def test_program(hello_world_machine):
     # setattr(eidolon_sdk.agent_program, "CodeAgent", TestHelloWorldAgent)
     with os_manager(hello_world_machine):
-        response = client.post("/hello_world", json=dict(args=dict(question="hello")))
+        response = client.post("/hello_world", json=dict(question="hello"))
         assert response.status_code == 202

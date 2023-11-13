@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import importlib
-from typing import Type, Optional
+from typing import Type, Optional, Annotated
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from pydantic import BaseModel, Field, create_model
 
 from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route
@@ -36,7 +36,7 @@ class AgentProcess:
             add_dynamic_route(
                 app=app,
                 path=path,
-                input_model=self.create_request_model(state_name, state_name != program.initial_state, state.input_schema_model),
+                input_model=state.input_schema_model,
                 response_model=self.create_response_model(state_name),
                 fn=self.processRoute(state_name),
                 status_code=202,
@@ -50,23 +50,13 @@ class AgentProcess:
         self.start(app)
 
     def processRoute(self, state: str):
-        def processStateRoute(body: dict):
+        def processStateRoute(body: dict, callback_url: Annotated[str | None, Header()] = None):
             print(state)
             print(body)
-            conversation_id = self.agent_os.startProcess(body.callback_url)
+            conversation_id = self.agent_os.startProcess(callback_url)
             return {"conversation_id": conversation_id}
 
         return processStateRoute
-
-    def create_request_model(self, name: str, include_conversation_id: bool, input_model: Type[BaseModel]):
-        fields = {
-            "callback_url": (Optional[str], Field(default=None, description="The URL to call when the agent is done.")),
-            "args": (input_model, Field(..., description="The arguments for the agent call.")),
-        }
-        if include_conversation_id:
-            fields['conversation_id'] = (str, Field(..., description="The ID of the conversation."))
-
-        return create_model(f'{name.capitalize()}RequestModel', **fields)
 
     def create_response_model(self, state: str):
         fields = {
