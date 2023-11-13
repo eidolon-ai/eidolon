@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Annotated, Dict, Type
+from typing import Annotated, Type
 
-import pytest
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
 
@@ -50,7 +49,7 @@ class HelloWorld(CodeAgent):
         if question == "hello":
             return HelloWorldResponse(question=question, answer="world")
         else:
-            raise Exception("Invalid Question")
+            raise HTTPException(status_code=500, detail="huge system error handling unprecedented edge case")
 
 
 class ParamTester(CodeAgent):
@@ -100,13 +99,6 @@ def test_required_param_missing():
         assert response.status_code == 422
 
 
-@pytest.mark.skip(
-    reason="todo, we should not need to anotate args on registered methods. It should hook up with no description")
-def test_non_annotated_args_on_registered_method():
-    ...
-
-
-@pytest.mark.skip(reason="this doesn't work yet, we need an error handler")
 def test_program_error():
     with os_manager(HelloWorld):
         response = client.post("/helloworld", json=dict(question="hola"))
