@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import importlib
+import typing
 from typing import Type, Optional, Annotated
 
 from fastapi import FastAPI, Header
 from pydantic import BaseModel, Field, create_model
+from pydantic.fields import FieldInfo
 
 from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route
 from .agent import Agent
@@ -33,14 +35,25 @@ class AgentProcess:
             path = f"/{program.name}/{{conversation_id}}/{state_name}"
             if state_name == program.initial_state:
                 path = f"/{program.name}"
+
             add_dynamic_route(
                 app=app,
                 path=path,
-                input_model=state.input_schema_model,
+                input_model=self.create_input_model(state_name),
                 response_model=self.create_response_model(state_name),
                 fn=self.processRoute(state_name),
                 status_code=202,
             )
+
+    def create_input_model(self, state_name):
+        hints = typing.get_type_hints(self.agent.handlers[state_name].fn, include_extras=True)
+        fields = {
+            k: (v.__origin__, meta_record)
+            for k, v in hints.items() if k != 'return'
+            for meta_record in v.__metadata__ if isinstance(meta_record, FieldInfo)
+        }
+        input_model = create_model(f'{state_name.capitalize()}InputModel', **fields)
+        return input_model
 
     def stop(self, app: FastAPI):
         pass

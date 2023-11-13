@@ -14,7 +14,6 @@ class AgentIOState(BaseModel):
     Attributes:
         state_name (str): The unique name identifying this state within the agent program's state machine.
         description (str): The description of the program. This is the description other agents will use to decide to call this agent.
-        input_schema (dict): A dictionary representing the expected schema for inputs when the agent is in this state.
                              This schema is used to validate incoming data and generate a Pydantic model.
         transitions_to (dict[str, dict]): A mapping where each key is a state name that can be transitioned to from
                                           this state and each value is the schema of the output to be produced when
@@ -27,7 +26,6 @@ class AgentIOState(BaseModel):
 
     state_name: str = Field(description="The name of the state.")
     description: str = Field(description="The description of the program. Will be used by other AgentPrograms that call this agent autonomously to choose which agent to call.")
-    input_schema: dict = Field(description="The schema of the input.")
     transitions_to: dict[str, dict] = Field(
         description="The transitions to other states. The key is the name of the state "
                     "to transition to, and the value is the schema of the output.")
@@ -45,8 +43,6 @@ class AgentIOState(BaseModel):
         agent's runtime operations.
         """
         super().__init__(**kwargs)
-        self.input_schema_model = schema_to_model(self.input_schema, f'{self.state_name.capitalize()}InputModel')
-        print(self.input_schema_model.__annotations__)
         self.transitions_to_models = {}
         for key, value in self.transitions_to.items():
             self.transitions_to_models[key] = schema_to_model(value, f'{self.state_name.capitalize()}To{key.capitalize()}OutputModel')

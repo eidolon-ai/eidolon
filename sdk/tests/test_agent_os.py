@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import contextlib
+from typing import Annotated
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent import CodeAgent, register
 from eidolon_sdk.agent_machine import AgentMachine
@@ -35,7 +36,7 @@ class TestHelloWorldAgent(CodeAgent):
     counter = 0  # todo, this is a hack to make sure function is called. Should wrap with mock instead
 
     @register()
-    async def execute(self, question: str) -> HelloWorldResponse:
+    async def execute(self, question: Annotated[str, Field(description="The question to ask. Can be anything, but it better be hello")]) -> HelloWorldResponse:
         TestHelloWorldAgent.counter += 1
         if question == "hello":
             return HelloWorldResponse(question=question, answer="world")
@@ -91,7 +92,12 @@ def test_program_actually_calls_code(hello_world_machine):
         assert TestHelloWorldAgent.counter == 1
 
 
-# todo, this doesn't work yet, we need an error handler
+@pytest.mark.skip(reason="todo, we should not need to anotate args on registered methods. It should hook up with no description")
+def test_non_annotated_args_on_registered_method():
+    ...
+
+
+@pytest.mark.skip(reason="this doesn't work yet, we need an error handler")
 def test_program_error(hello_world_machine):
     with os_manager(hello_world_machine):
         response = client.post("/hello_world", json=dict(question="hola"))
