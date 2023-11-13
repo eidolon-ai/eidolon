@@ -29,12 +29,12 @@ class AgentProcess:
 
         program = self.agent_program
         # Register a POST endpoint for each Pydantic model in the dictionary
-        initial_state_ = program.states[program.initial_state]
-        add_dynamic_route(app, f"/{program.name}", self.create_request_model(self.agent_program.name, False, initial_state_.input_schema_model),
-                          self.create_response_model(program.initial_state), self.processRoute(program.initial_state))
-        # for state_name, state in program.states.items():
-        #     add_dynamic_route(app, f"/{program.name}/{{conversation_id}}/{state_name}", self.create_request_model(state_name, True, state.input_schema_model),
-        #                       self.create_response_model(state_name), self.processRoute(state_name))
+        for state_name, state in program.states.items():
+            path = f"/{program.name}/{{conversation_id}}/{state_name}"
+            if state_name == program.initial_state:
+                path = f"/{program.name}"
+            add_dynamic_route(app, path, self.create_request_model(state_name, state_name != program.initial_state, state.input_schema_model),
+                              self.create_response_model(state_name), self.processRoute(state_name))
 
     def stop(self):
         pass
