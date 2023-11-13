@@ -16,6 +16,7 @@ uvicorn = "^0.24.0.post1"
 numpy = "^1.26.2"
 motor = "^3.3.1"
 python-dotenv = "^1.0.0"
+pytest-asyncio = "^0.21.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.3"

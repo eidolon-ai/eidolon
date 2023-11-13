@@ -10,6 +10,7 @@ from eidolon_sdk.agent_memory import SymbolicMemory
 class MongoSymbolicMemory(SymbolicMemory):
     mongo_connection_string: str = Field(default=None, description="The connection string to the MongoDB instance.")
     mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
+    implementation: str = "eidolon_sdk.impl.mongo_symbolic_memory.MongoSymbolicMemory"
 
     class Config:
         arbitrary_types_allowed = True
@@ -42,7 +43,7 @@ class MongoSymbolicMemory(SymbolicMemory):
                 self.mongo_database_name = os.getenv('MONGO_DATABASE_NAME')
 
             client = AsyncIOMotorClient(self.mongo_connection_string)
-            self.database = client.get_database()
+            self.database = client.get_database(self.mongo_database_name)
 
     def stop(self):
         """

@@ -4,8 +4,8 @@ from typing import Any, Optional
 import numpy as np
 from pydantic import BaseModel, Field, field_validator
 
-from util.class_utils import for_name
-from util.str_utils import replace_env_var_in_string
+from eidolon_sdk.util.class_utils import for_name
+from eidolon_sdk.util.str_utils import replace_env_var_in_string
 
 
 class FileMemory(BaseModel, ABC):

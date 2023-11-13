@@ -3,6 +3,13 @@ import pytest
 from eidolon_sdk.agent_machine import AgentMachine
 
 hello_world = """
+agent_memory:
+  file_memory:
+    implementation: "eidolon_sdk.impl.noop_memory.NoopFileMemory"
+  symbolic_memory:
+    implementation: "eidolon_sdk.impl.noop_memory.NoopSymbolicMemory"
+  similarity_memory:
+    implementation: "eidolon_sdk.impl.noop_memory.NoopSimilarityMemory"
 agent_programs:
   - name: "ExampleAgentProgram"
     implementation: "examples.hello_world.HelloWorld.HelloWorld"
