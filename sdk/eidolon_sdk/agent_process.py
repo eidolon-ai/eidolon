@@ -36,12 +36,12 @@ class AgentProcess:
             add_dynamic_route(app, path, self.create_request_model(state_name, state_name != program.initial_state, state.input_schema_model),
                               self.create_response_model(state_name), self.processRoute(state_name))
 
-    def stop(self):
+    def stop(self, app: FastAPI):
         pass
 
-    def restart(self):
-        self.stop()
-        self.start()
+    def restart(self, app: FastAPI):
+        self.stop(app)
+        self.start(app)
 
     def processRoute(self, state: str):
         def processStateRoute(body: dict):
