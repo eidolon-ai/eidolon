@@ -7,7 +7,7 @@ from pydantic import BaseModel
 def create_endpoint(model: Type[BaseModel], fn: Callable):
     async def dynamic_endpoint(item: model = Body(...)):
         # Process the input item
-        return fn(item)
+        return await fn(item)
     return dynamic_endpoint
 
 

@@ -75,7 +75,7 @@ class AgentProgram(BaseModel):
     agent_cpu: AgentCPU = Field(default=None, description="The Agent CPU to use.")
     implementation: str = Field(description="The FQN of agent class.")
     states: dict[str, AgentIOState] = Field(description="The states of the program.")
-    initial_state: str = Field(description="The initial state of the program.")
+    initial_state: str = Field(description="The initial state of the program.", default='idle')
 
     @classmethod
     @field_validator('implementation', mode="before")

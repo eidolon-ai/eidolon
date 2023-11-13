@@ -4,12 +4,11 @@ import contextlib
 from typing import Dict, Any
 
 import pytest
-import yaml
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
-from eidolon_sdk.agent import CodeAgent
+from eidolon_sdk.agent import CodeAgent, register
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram, AgentIOState
@@ -34,9 +33,10 @@ class HelloWorldResponse(BaseModel):
 
 
 class TestHelloWorldAgent(CodeAgent):
-    async def execute(self, state_name: str, input: Dict[str, Any]):
-        if input["question"] == "hello":
-            return HelloWorldResponse(question=input["question"], answer="world")
+    @register()
+    async def execute(self, question: str) -> HelloWorldResponse:
+        if question == "hello":
+            return HelloWorldResponse(question=question, answer="world")
         else:
             raise ValueError("Invalid Question")
 
@@ -46,7 +46,6 @@ def hello_world_machine():
     return AgentMachine(agent_memory={}, agent_io={}, agent_programs=[AgentProgram(
         name="hello_world",
         implementation="tests.test_agent_os." + TestHelloWorldAgent.__qualname__,
-        initial_state="idle",
         # todo, state transitions should be defined on agent, and constructed on machine automatically
         states={"idle": AgentIOState(
             state_name="idle",

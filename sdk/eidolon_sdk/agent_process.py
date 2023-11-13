@@ -50,9 +50,10 @@ class AgentProcess:
         self.start(app)
 
     def processRoute(self, state: str):
-        def processStateRoute(body: dict, callback_url: Annotated[str | None, Header()] = None):
+        async def processStateRoute(body: BaseModel, callback_url: Annotated[str | None, Header()] = None):
             print(state)
             print(body)
+            await self.agent.handlers[state].fn(self.agent, **body.model_dump())
             conversation_id = self.agent_os.startProcess(callback_url)
             return {"conversation_id": conversation_id}
 
