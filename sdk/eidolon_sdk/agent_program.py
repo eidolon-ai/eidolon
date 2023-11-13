@@ -1,10 +1,9 @@
 import importlib
 
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator, Extra
 
-import util
-from agent import CodeAgent
-from agent_cpu import AgentCPU
+from eidolon_sdk.util.schema_to_model import schema_to_model
+from .agent_cpu import AgentCPU
 
 
 class AgentIOState(BaseModel):
@@ -14,6 +13,7 @@ class AgentIOState(BaseModel):
 
     Attributes:
         state_name (str): The unique name identifying this state within the agent program's state machine.
+        description (str): The description of the program. This is the description other agents will use to decide to call this agent.
         input_schema (dict): A dictionary representing the expected schema for inputs when the agent is in this state.
                              This schema is used to validate incoming data and generate a Pydantic model.
         transitions_to (dict[str, dict]): A mapping where each key is a state name that can be transitioned to from
@@ -26,10 +26,12 @@ class AgentIOState(BaseModel):
     """
 
     state_name: str = Field(description="The name of the state.")
+    description: str = Field(description="The description of the program. Will be used by other AgentPrograms that call this agent autonomously to choose which agent to call.")
     input_schema: dict = Field(description="The schema of the input.")
     transitions_to: dict[str, dict] = Field(
         description="The transitions to other states. The key is the name of the state "
                     "to transition to, and the value is the schema of the output.")
+    model_config = {"extra": "allow"}
 
     def __init__(self, **kwargs):
         """
@@ -43,10 +45,11 @@ class AgentIOState(BaseModel):
         agent's runtime operations.
         """
         super().__init__(**kwargs)
-        self.input_schema_model = util.schema_to_model.schema_to_model(self.input_schema, f'{self.state_name.capitalize()}InputModel')
+        self.input_schema_model = schema_to_model(self.input_schema, f'{self.state_name.capitalize()}InputModel')
+        print(self.input_schema_model.__annotations__)
         self.transitions_to_models = {}
         for key, value in self.transitions_to.items():
-            self.transitions_to_models[key] = util.schema_to_model.schema_to_model(value, f'{self.state_name.capitalize()}To{key.capitalize()}OutputModel')
+            self.transitions_to_models[key] = schema_to_model(value, f'{self.state_name.capitalize()}To{key.capitalize()}OutputModel')
 
 
 class AgentProgram(BaseModel):
@@ -75,7 +78,7 @@ class AgentProgram(BaseModel):
     initial_state: str = Field(description="The initial state of the program.")
 
     @classmethod
-    @field_validator('agent_cpu', mode="before")
+    @field_validator('implementation', mode="before")
     def validate_agent_cpu(cls, v, values):
         """
         Validates the 'agent_cpu' field of the AgentProgram class. This method ensures that the specified 'agent_cpu'
@@ -104,7 +107,7 @@ class AgentProgram(BaseModel):
         """
 
         # Dynamically import the class from the implementation field
-        implementation_fqn = values.get('implementation')
+        implementation_fqn = v.get('implementation')
         if implementation_fqn:
             module_name, class_name = implementation_fqn.rsplit(".", 1)
             try:
@@ -113,6 +116,7 @@ class AgentProgram(BaseModel):
             except (ImportError, AttributeError):
                 raise ValidationError(f"Unable to import {implementation_fqn}")
 
+            from .agent import CodeAgent
             # Check if the class is a subclass of CodeAgent
             if issubclass(impl_class, CodeAgent):
                 return v  # agent_cpu is optional for CodeAgent

@@ -1,0 +1,21 @@
+agent_programs:
+  - name: "ExampleAgentProgram"
+    implementation: "examples.hello_world.HelloWorld.HelloWorld"
+    initial_state: "Idle"
+    states:
+      Idle:
+        state_name: "Idle"
+        description: "This is the starting state of the agent program."
+        input_schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+              description: "Your name"
+        transitions_to:
+          Idle:
+            description: "The welcome message is printed."
+            type: "object"
+            properties:
+              welcome_message:
+                type: "string"

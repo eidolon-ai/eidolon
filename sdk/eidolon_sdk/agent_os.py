@@ -5,10 +5,9 @@ from typing import TypeVar
 from fastapi import FastAPI
 
 import eidolon_sdk
-from agent import Agent
-from agent_process import AgentProcess
-from agent_machine import AgentMachine
-from agent_program import AgentProgram
+from .agent import Agent
+from .agent_machine import AgentMachine
+from .agent_program import AgentProgram
 
 T = TypeVar('T')
 V = TypeVar('V')
@@ -78,14 +77,21 @@ def find_agent(model: AgentProgram) -> Agent:
 class AgentOS:
     machine: AgentMachine
     app: FastAPI
-    processes: list[AgentProcess]
 
     def __init__(self, machine_yaml: str):
         self.machine = AgentMachine.parse(machine_yaml)
 
-    def start(self):
-        self.app = FastAPI()
-        self.processes = [AgentProcess(program) for program in self.machine.agent_programs]
+    def start(self, app: FastAPI):
+        self.processes = [AgentProcess(program, self) for program in self.machine.agent_programs]
         for process in self.processes:
-            process.start(self.app)
+            process.start(app)
 
+
+    def stop(self):
+        for process in self.processes:
+            process.stop()
+
+    def startProcess(self, callback_url: str):
+        return "123"
+
+from .agent_process import AgentProcess

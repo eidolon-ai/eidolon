@@ -2,14 +2,11 @@ from __future__ import annotations
 
 import importlib
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, List
+from typing import List
 
 from pydantic import BaseModel, Field, field_validator, ValidationError
 
-from agent import Agent
-
-T = TypeVar('T')
-V = TypeVar('V')
+from .control_unit import ControlUnit
 
 
 class LogicUnit(BaseModel, ABC):
@@ -22,12 +19,6 @@ class LogicUnit(BaseModel, ABC):
 class MemoryUnit(BaseModel, ABC):
     @abstractmethod
     async def process(self, prompt, agent):  # this probably returns whatever a prompt object is
-        pass
-
-
-class ControlUnit(BaseModel, Generic[T, V], ABC):
-    @abstractmethod
-    async def process(self, request: T, agent: Agent) -> V:
         pass
 
 
@@ -94,7 +85,7 @@ class AgentCPU(BaseModel):
 
         if 'implementation' in value:
             base_class = base_class_dict.get(field.name)
-            implementation_fqn = values.get('implementation')
+            implementation_fqn = value.get('implementation')
             if implementation_fqn:
                 module_name, class_name = implementation_fqn.rsplit(".", 1)
                 try:

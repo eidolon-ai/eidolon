@@ -3,7 +3,7 @@ from typing import Dict, Any, Type
 from typing import List
 from uuid import UUID
 
-from pydantic import BaseModel, HttpUrl, EmailStr
+from pydantic import BaseModel, HttpUrl, EmailStr, Field
 from pydantic import create_model, ValidationError
 
 type_mapping = {
@@ -80,31 +80,37 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
         raise ValueError("Schema must be an object with properties.")
 
     for property_name, property_schema in schema.get('properties', {}).items():
-        is_required = property_name in required_fields
-        default_value = ... if is_required else None
+        def makeFieldOrDefaultValue():
+            description = property_schema.get('description')
+            default = ... if property_name in required_fields else None
+            if description is None:
+                return default
+            else:
+                return Field(default=default, description=description)
+
         try:
             field_type = property_schema.get('type')
             if field_type == 'object':
                 # Recursive call for nested object
                 nested_model = schema_to_model(property_schema, f'{model_name}_{property_name.capitalize()}Model')
-                fields[property_name] = (nested_model, default_value)
+                fields[property_name] = (nested_model, makeFieldOrDefaultValue())
             elif field_type == 'array':
                 # Recursive call for arrays of objects
                 items_schema = property_schema.get('items', {})
                 if isinstance(items_schema, dict) and items_schema.get('type') == 'object':
                     nested_item_model = schema_to_model(items_schema, f'{model_name}_{property_name.capitalize()}ItemModel')
-                    fields[property_name] = (List[nested_item_model], default_value)
+                    fields[property_name] = (List[nested_item_model], makeFieldOrDefaultValue())
                 else:
                     item_type = items_schema.get('type', 'string')  # Default to string type
-                    fields[property_name] = (List[item_type], default_value)
+                    fields[property_name] = (List[item_type], makeFieldOrDefaultValue())
             else:
                 # Simple field
                 python_type = type_mapping.get(field_type, str)
-                fields[property_name] = (python_type, default_value)
+                fields[property_name] = (python_type, makeFieldOrDefaultValue())
         except Exception as e:
             raise ValueError(f"Error creating field '{property_name}': {e}")
 
     try:
-        return create_model(model_name, **fields)
+        return create_model(model_name, **fields, __base__=BaseModel)
     except ValidationError as e:
         raise ValueError(f"Error creating model '{model_name}': {e}")

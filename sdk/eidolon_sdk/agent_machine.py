@@ -3,9 +3,9 @@ from typing import List
 import yaml
 from pydantic import Field, BaseModel, field_validator
 
-from agent_memory import AgentMemory
-from agent_program import AgentProgram
-from agent_io import AgentIO
+from .agent_memory import AgentMemory
+from .agent_program import AgentProgram
+from .agent_io import AgentIO
 
 base_class_dict = {
     "agent_memory": AgentMemory,
@@ -45,8 +45,8 @@ class AgentMachine(BaseModel):
             if it is not a subclass of the expected base class, a ValueError is raised.
     """
 
-    agent_memory: AgentMemory = Field(..., description="The Agent Memory to use.")
-    agent_io: AgentIO = Field(..., description="The Agent IO configured on this machine.")
+    agent_memory: AgentMemory = Field(default=None, description="The Agent Memory to use.")
+    agent_io: AgentIO = Field(default=None, description="The Agent IO configured on this machine.")
     agent_programs: List[AgentProgram] = Field(..., description="The list of Agent Programs to run on this machine.")
 
     @classmethod
@@ -72,12 +72,12 @@ class AgentMachine(BaseModel):
         """
 
         if 'implementation' in value:
-            base_class = base_class_dict.get(field.name)
+            base_class = base_class_dict.get(field)
             implementation_class = globals().get(value['implementation'])
             if implementation_class and issubclass(implementation_class, base_class):
                 return implementation_class()
             else:
-                raise ValueError(f"Implementation class '{value['implementation']}' not found or is not a subclass of {field.name}.")
+                raise ValueError(f"Implementation class '{value['implementation']}' not found or is not a subclass of {field}.")
         raise ValueError("Implementation not provided.")
 
     @staticmethod

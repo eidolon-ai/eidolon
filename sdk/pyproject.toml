@@ -11,6 +11,8 @@ setuptools = "^68.2.2"
 fastapi = "^0.104.1"
 pyyaml = "^6.0.1"
 jsonschema = "^4.19.2"
+httpx = "^0.25.1"
+uvicorn = "^0.24.0.post1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.3"

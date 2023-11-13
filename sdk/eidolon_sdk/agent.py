@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from typing import Dict, Callable
+from typing import Dict, Any
+
+from .agent_program import AgentProgram
 
 
 class Agent:
-    # todo, we can grab state mappings and default state nicely using annotations
-    # todo, we need a constructor here which gives users access to system interfaces off of this object
-    starting_state: str
-    state_mapping: Dict[str, Callable]
+    def __init__(self, agent_program: AgentProgram):
+        self.agent_program = agent_program
+
+    async def execute(self, state_name: str, input: Dict[str, Any]):
+        pass
 
 
 class CodeAgent(Agent):

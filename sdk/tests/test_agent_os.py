@@ -1,13 +1,15 @@
 from __future__ import annotations
+
+from typing import Dict, Any
+
 import yaml
+from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
-import eidolon_sdk.agent_program
-from agent import Agent
-from agent_program import AgentProgram, AgentIOState
+from eidolon_sdk.agent import CodeAgent
+from eidolon_sdk.agent_program import AgentProgram, AgentIOState
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
-from fastapi.testclient import TestClient
 
 
 def get_client(machine):
@@ -21,17 +23,10 @@ class HelloWorldResponse(BaseModel):
     answer: str
 
 
-class TestHelloWorldAgent(Agent):
-    # todo, mapping and state should be handled via annotations
-    def __init__(self):
-        super().__init__()
-        self.state_mapping = {"idle": self.idle}
-        self.starting_state = "idle"
-
-    @staticmethod
-    async def idle(question) -> HelloWorldResponse:
-        if question == "hello":
-            return HelloWorldResponse(question=question, answer="world")
+class TestHelloWorldAgent(CodeAgent):
+    async def execute(self, state_name: str, input: Dict[str, Any]):
+        if input["question"] == "hello":
+            return HelloWorldResponse(question=input["question"], answer="world")
         else:
             raise ValueError("Invalid Question")
 
@@ -43,17 +38,32 @@ def test_empty_start():
 
 
 def test_program():
-    setattr(eidolon_sdk.agent_program, "CodeAgent", TestHelloWorldAgent)
+    # setattr(eidolon_sdk.agent_program, "CodeAgent", TestHelloWorldAgent)
 
     machine = AgentMachine(agent_memory={}, agent_io={}, agent_programs=[AgentProgram(
         name="hello_world",
-        implementation="eidolon_sdk.agent_program.CodeAgent",
-        agent_cpu=None,
+        implementation=TestHelloWorldAgent.__qualname__,
+        initial_state="idle",
         # todo, state transitions should be defined on agent, and constructed on machine automatically
         states={"idle": AgentIOState(
             state_name="idle",
-            input_schema={"question": "str"},
-            transitions_to={"idle": {"answer": "str"}},
+            description="The agent is waiting for a question",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string"
+                    }
+                }
+            },
+            transitions_to={"idle": {
+                "type": "object",
+                "properties": {
+                    "answer": {
+                        "type": "string"
+                    }
+                }
+            }},
         )},
     )])
     client = get_client(machine)

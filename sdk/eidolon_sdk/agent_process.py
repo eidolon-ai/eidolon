@@ -1,49 +1,76 @@
 from __future__ import annotations
 
 import importlib
-from typing import Type, Callable, Any
+from typing import Type, Optional
 
-from fastapi import FastAPI, Body
-from pydantic import ValidationError, BaseModel
+from fastapi import FastAPI
+from pydantic import BaseModel, Field, create_model
 
-from agent import Agent
-from agent_program import AgentProgram
+from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route
+from .agent import Agent
+from .agent_os import AgentOS
+from .agent_program import AgentProgram
 
 
 class AgentProcess:
     agent: Agent
 
-    def __init__(self, agent_program: AgentProgram):
+    def __init__(self, agent_program: AgentProgram, agent_os: AgentOS):
         self.agent_program = agent_program
+        self.agent_os = agent_os
 
     def start(self, app: FastAPI):
         # First create the Agent implementation
         module_name, class_name = self.agent_program.implementation.rsplit(".", 1)
-        try:
-            module = importlib.import_module(module_name)
-            impl_class = getattr(module, class_name)
-        except (ImportError, AttributeError):
-            raise ValidationError(f"Unable to import {self.agent_program.implementation}")
+        module = importlib.import_module(module_name)
+        impl_class = getattr(module, class_name)
 
-        self.agent = impl_class()
-
-        # Then create the endpoints
-        def create_endpoint(model: Type[BaseModel], fn: Callable[..., Any]):
-            async def endpoint(body: model = Body(...)):
-                return fn(**body.model_dump())
-
-            return endpoint
+        self.agent = impl_class(self)
 
         program = self.agent_program
         # Register a POST endpoint for each Pydantic model in the dictionary
-        app.add_api_route(f"/{program.name}", create_endpoint(program.states[program.initial_state].input_schema_model, self.agent.state_mapping[self.agent.starting_state]),
-                          methods=["POST"])
-        for state_name, state in program.states.items():
-            app.add_api_route(f"/{program.name}/{state_name}", create_endpoint(state.input_schema_model, self.agent.state_mapping[state_name]), methods=["POST"])
+        initial_state_ = program.states[program.initial_state]
+        add_dynamic_route(app, f"/{program.name}", self.create_request_model(self.agent_program.name, False, initial_state_.input_schema_model),
+                          self.create_response_model(program.initial_state), self.processRoute(program.initial_state))
+        # for state_name, state in program.states.items():
+        #     add_dynamic_route(app, f"/{program.name}/{{conversation_id}}/{state_name}", self.create_request_model(state_name, True, state.input_schema_model),
+        #                       self.create_response_model(state_name), self.processRoute(state_name))
 
-    def stop(self, app: FastAPI):
+    def stop(self):
         pass
 
-    def restart(self, app: FastAPI):
-        self.stop(app)
-        self.start(app)
+    def restart(self):
+        self.stop()
+        self.start()
+
+    def processRoute(self, state: str):
+        def processStateRoute(body: dict):
+            print(state)
+            print(body)
+            conversation_id = self.agent_os.startProcess(body.callback_url)
+            return {"conversation_id": conversation_id}
+
+        return processStateRoute
+
+    def create_request_model(self, name: str, include_conversation_id: bool, input_model: Type[BaseModel]):
+        fields = {
+            "callback_url": (str, Field(..., description="The URL to call when the agent is done.")),
+            "args": (input_model, Field(..., description="The arguments for the agent call.")),
+        }
+        if include_conversation_id:
+            fields['conversation_id'] = (str, Field(..., description="The ID of the conversation."))
+
+        return create_model(f'{name.capitalize()}RequestModel', **fields)
+
+    def create_response_model(self, state: str):
+        fields = {
+            "conversation_id": (str, Field(..., description="The ID of the conversation.")),
+        }
+        for t_name, t_model in self.agent_program.states[state].transitions_to_models.items():
+            fields[t_name] = (Optional[t_model], Field(..., description="The answer for {t_name} transition state."))
+
+        return create_model(f'{state.capitalize()}ResponseModel', **fields)
+
+
+class ConversationResponse(BaseModel):
+    conversation_id: str = Field(..., description="The ID of the conversation.")
