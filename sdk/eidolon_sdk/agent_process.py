@@ -77,7 +77,9 @@ class AgentProcess:
                 field.default = sig[param].default
                 fields[param] = (hint.__origin__, field)
             else:
-                fields[param] = (hint, sig[param].default)
+                # _empty default isn't being handled by create_model properly (still optional when it should be required)
+                default = ... if getattr(sig[param].default, "__name__", None) == '_empty' else sig[param].default
+                fields[param] = (hint, default)
 
         input_model = create_model(f'{state_name.capitalize()}InputModel', **fields)
         return input_model

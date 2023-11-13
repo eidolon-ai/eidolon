@@ -94,6 +94,12 @@ def test_defaults():
         assert ParamTester.last_call == (1, 5, 10)
 
 
+def test_required_param_missing():
+    with os_manager(ParamTester):
+        response = client.post("/paramtester", json=dict())
+        assert response.status_code == 422
+
+
 @pytest.mark.skip(
     reason="todo, we should not need to anotate args on registered methods. It should hook up with no description")
 def test_non_annotated_args_on_registered_method():
