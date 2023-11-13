@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Dict, Any
+import itertools
+from unittest.mock import patch
 
 import pytest
 from fastapi import FastAPI
@@ -33,16 +34,20 @@ class HelloWorldResponse(BaseModel):
 
 
 class TestHelloWorldAgent(CodeAgent):
+    counter = 0  # todo, this is a hack to make sure function is called. Should wrap with mock instead
+
     @register()
     async def execute(self, question: str) -> HelloWorldResponse:
+        TestHelloWorldAgent.counter += 1
         if question == "hello":
             return HelloWorldResponse(question=question, answer="world")
         else:
-            raise ValueError("Invalid Question")
+            raise Exception("Invalid Question")
 
 
 @pytest.fixture
 def hello_world_machine():
+    TestHelloWorldAgent.counter = 0
     return AgentMachine(agent_memory={}, agent_io={}, agent_programs=[AgentProgram(
         name="hello_world",
         implementation="tests.test_agent_os." + TestHelloWorldAgent.__qualname__,
@@ -77,7 +82,19 @@ def test_empty_start():
 
 
 def test_program(hello_world_machine):
-    # setattr(eidolon_sdk.agent_program, "CodeAgent", TestHelloWorldAgent)
     with os_manager(hello_world_machine):
         response = client.post("/hello_world", json=dict(question="hello"))
         assert response.status_code == 202
+
+
+def test_program_actually_calls_code(hello_world_machine):
+    with os_manager(hello_world_machine):
+        client.post("/hello_world", json=dict(question="hello"))
+        assert TestHelloWorldAgent.counter == 1
+
+
+# todo, this doesn't work yet, we need an error handler
+def test_program_error(hello_world_machine):
+    with os_manager(hello_world_machine):
+        response = client.post("/hello_world", json=dict(question="hola"))
+        assert response.status_code == 500

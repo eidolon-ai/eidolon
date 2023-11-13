@@ -4,8 +4,6 @@ import inspect
 from dataclasses import dataclass
 from typing import Dict, List
 
-from pydantic import BaseModel
-
 from .agent_program import AgentProgram
 
 
