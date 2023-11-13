@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import importlib
+import inspect
 import typing
 from typing import Annotated
 
@@ -67,12 +68,17 @@ class AgentProcess:
                 )
 
     def create_input_model(self, state_name):
+        sig = inspect.signature(self.agent.handlers[state_name].fn).parameters
         hints = typing.get_type_hints(self.agent.handlers[state_name].fn, include_extras=True)
-        fields = {
-            k: (v.__origin__, meta_record)
-            for k, v in hints.items() if k != 'return'
-            for meta_record in v.__metadata__ if isinstance(meta_record, FieldInfo)
-        }
+        fields = {}
+        for param, hint in filter(lambda tu: tu[0] != 'return', hints.items()):
+            if hasattr(hint, '__metadata__') and isinstance(hint.__metadata__[0], FieldInfo):
+                field: FieldInfo = hint.__metadata__[0]
+                field.default = sig[param].default
+                fields[param] = (hint.__origin__, field)
+            else:
+                fields[param] = (hint, sig[param].default)
+
         input_model = create_model(f'{state_name.capitalize()}InputModel', **fields)
         return input_model
 

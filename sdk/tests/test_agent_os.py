@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Annotated, Dict
+from typing import Annotated, Dict, Type
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
 
-from eidolon_sdk.agent import CodeAgent, register
+from eidolon_sdk.agent import CodeAgent, register, Agent
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
@@ -18,7 +18,12 @@ client = TestClient(app)
 
 
 @contextlib.contextmanager
-def os_manager(machine: AgentMachine):
+def os_manager(*agents: Type[Agent]):
+    programs = [AgentProgram(
+        name=agent.__name__.lower(),
+        implementation="tests.test_agent_os." + agent.__qualname__
+    ) for agent in agents]
+    machine = AgentMachine(agent_memory={}, agent_io={}, agent_programs=programs)
     os = AgentOS(machine=machine, machine_yaml="")
     os.start(app)
     try:
@@ -32,52 +37,71 @@ class HelloWorldResponse(BaseModel):
     answer: str
 
 
-class TestHelloWorldAgent(CodeAgent):
+class HelloWorld(CodeAgent):
     counter = 0  # todo, this is a hack to make sure function is called. Should wrap with mock instead
+
+    def __init__(self, agent_program: AgentProgram):
+        super().__init__(agent_program)
+        HelloWorld.counter = 0
 
     @register(state="idle", transition_to=['idle', 'terminated'])
     async def idle(self, question: Annotated[str, Field(description="The question to ask. Can be anything, but it better be hello")]):
-        TestHelloWorldAgent.counter += 1
+        HelloWorld.counter += 1
         if question == "hello":
             return HelloWorldResponse(question=question, answer="world")
         else:
             raise Exception("Invalid Question")
 
 
-@pytest.fixture
-def hello_world_machine():
-    TestHelloWorldAgent.counter = 0
-    return AgentMachine(agent_memory={}, agent_io={}, agent_programs=[AgentProgram(
-        name="hello_world",
-        implementation="tests.test_agent_os." + TestHelloWorldAgent.__qualname__,
-    )])
+class ParamTester(CodeAgent):
+    last_call = None
+
+    @register(state="idle")
+    async def foo(self, x: int, y: int = 5, z: Annotated[int, Field(description="z is a param")] = 10):
+        ParamTester.last_call = (x, y, z)
+        return dict(x=x, y=y, z=z)
 
 
 def test_empty_start():
-    with os_manager(AgentMachine(agent_memory={}, agent_io={}, agent_programs=[])):
+    with os_manager():
         docs = client.get("/docs")
         assert docs.status_code == 200
 
 
-def test_program(hello_world_machine):
-    with os_manager(hello_world_machine):
-        response = client.post("/hello_world", json=dict(question="hello"))
+def test_program():
+    with os_manager(HelloWorld):
+        response = client.post("/helloworld", json=dict(question="hello"))
         assert response.status_code == 202
 
 
-def test_program_actually_calls_code(hello_world_machine):
-    with os_manager(hello_world_machine):
-        client.post("/hello_world", json=dict(question="hello"))
-        assert TestHelloWorldAgent.counter == 1
+def test_program_actually_calls_code():
+    with os_manager(HelloWorld):
+        client.post("/helloworld", json=dict(question="hello"))
+        assert HelloWorld.counter == 1
 
 
-@pytest.mark.skip(reason="todo, we should not need to anotate args on registered methods. It should hook up with no description")
+def test_non_annotated_params():
+    with os_manager(ParamTester):
+        response = client.post("/paramtester", json=dict(x=1, y=2, z=3))
+        assert response.status_code == 202
+        assert ParamTester.last_call == (1, 2, 3)
+
+
+def test_defaults():
+    with os_manager(ParamTester):
+        response = client.post("/paramtester", json=dict(x=1))
+        assert response.status_code == 202
+        assert ParamTester.last_call == (1, 5, 10)
+
+
+@pytest.mark.skip(
+    reason="todo, we should not need to anotate args on registered methods. It should hook up with no description")
 def test_non_annotated_args_on_registered_method():
     ...
 
 
 @pytest.mark.skip(reason="this doesn't work yet, we need an error handler")
-def test_program_error(hello_world_machine):
-    with os_manager(hello_world_machine):
-        response = client.post("/hello_world", json=dict(question="hola"))
+def test_program_error():
+    with os_manager(HelloWorld):
+        response = client.post("/helloworld", json=dict(question="hola"))
         assert response.status_code == 500
