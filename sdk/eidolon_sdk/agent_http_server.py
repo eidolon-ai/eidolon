@@ -1,10 +1,13 @@
 import argparse
 from contextlib import asynccontextmanager
 
+import dotenv
 import uvicorn
 from fastapi import FastAPI
 
 from eidolon_sdk.agent_os import AgentOS
+
+dotenv.load_dotenv()
 
 # Set up the argument parser
 parser = argparse.ArgumentParser(description="Start a FastAPI server.")
@@ -15,12 +18,12 @@ parser.add_argument("yaml_path", type=str, help="Path to a YAML file describing 
 # Parse command line arguments
 args = parser.parse_args()
 
+
 @asynccontextmanager
 async def start_os(app: FastAPI):
     with open(args.yaml_path, 'r') as file:
         file_contents = file.read()
 
-    print(file_contents)
     os = AgentOS(file_contents)
     os.start(app)
     yield

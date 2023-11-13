@@ -4,15 +4,13 @@ from typing import List, Optional
 
 from fastapi import FastAPI
 
-import eidolon_sdk
-from .agent import Agent
 from .agent_machine import AgentMachine
-from .agent_program import AgentProgram
 
 
-def find_agent(model: AgentProgram) -> Agent:
-    # todo, we should probably do some validation here
-    return getattr(eidolon_sdk, model.implementation)
+class AgentCallContext:
+    conversation_id: str
+    agent_name: str
+    state_name: str
 
 
 class AgentOS:

@@ -82,7 +82,7 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
     for property_name, property_schema in schema.get('properties', {}).items():
         def makeFieldOrDefaultValue():
             description = property_schema.get('description')
-            default = ... if property_name in required_fields else None
+            default = property_schema.get('default') or (... if property_name in required_fields else None)
             if description is None:
                 return default
             else:
@@ -102,10 +102,13 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
                     fields[property_name] = (List[nested_item_model], makeFieldOrDefaultValue())
                 else:
                     item_type = items_schema.get('type', 'string')  # Default to string type
-                    fields[property_name] = (List[item_type], makeFieldOrDefaultValue())
+                    python_type = type_mapping.get(item_type, str)
+                    fields[property_name] = (List[python_type], makeFieldOrDefaultValue())
             else:
                 # Simple field
-                python_type = type_mapping.get(field_type, str)
+                python_type = type_mapping.get(field_type, None)
+                if python_type is None:
+                    raise ValueError(f"Unsupported type '{field_type}' for field '{property_name}'.")
                 fields[property_name] = (python_type, makeFieldOrDefaultValue())
         except Exception as e:
             raise ValueError(f"Error creating field '{property_name}': {e}")

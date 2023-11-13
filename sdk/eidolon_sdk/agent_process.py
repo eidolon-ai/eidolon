@@ -4,7 +4,7 @@ import asyncio
 import importlib
 import inspect
 import typing
-from typing import Annotated
+from typing import Optional, Annotated
 
 from fastapi import FastAPI, Request
 from pydantic import BaseModel, Field, create_model
@@ -100,6 +100,15 @@ class AgentProcess:
             return {"process_id": pid}
 
         return processStateRoute
+
+    def create_response_model(self, state: str):
+        fields = {
+            "conversation_id": (str, Field(..., description="The ID of the conversation.")),
+        }
+        for t_name, t_model in self.agent_program.states[state].transitions_to_models.items():
+            fields[t_name] = (Optional[t_model], Field(default=None, description="The answer for {t_name} transition state."))
+
+        return create_model(f'{state.capitalize()}ResponseModel', **fields)
 
 
 class ConversationResponse(BaseModel):

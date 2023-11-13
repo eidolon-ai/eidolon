@@ -45,12 +45,12 @@ class AgentMachine(BaseModel):
             if it is not a subclass of the expected base class, a ValueError is raised.
     """
 
-    agent_memory: AgentMemory = Field(default=None, description="The Agent Memory to use.")
+    agent_memory: AgentMemory = Field(default=..., description="The Agent Memory to use.")
     agent_io: AgentIO = Field(default=None, description="The Agent IO configured on this machine.")
     agent_programs: List[AgentProgram] = Field(..., description="The list of Agent Programs to run on this machine.")
 
     @classmethod
-    @field_validator('agent_memory', 'agent_io')
+    @field_validator('agent_io')
     def validate_units(cls, value, field):
         """
         Validates that the memory and I/O units provided have implementations that

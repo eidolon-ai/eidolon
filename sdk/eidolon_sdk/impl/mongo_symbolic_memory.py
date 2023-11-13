@@ -1,0 +1,53 @@
+import os
+from typing import Any, Optional
+
+from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
+from pydantic import Field
+
+from eidolon_sdk.agent_memory import SymbolicMemory
+
+
+class MongoSymbolicMemory(SymbolicMemory):
+    mongo_connection_string: str = Field(default=None, description="The connection string to the MongoDB instance.")
+    mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    database: AsyncIOMotorDatabase = None
+
+    def find(self, symbol_collection: str, query: dict[str, Any]) -> list[dict[str, Any]]:
+        return self.database[symbol_collection].find(query)
+
+    def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
+        return self.database[symbol_collection].find_one(query)
+
+    def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
+        return self.database[symbol_collection].insert_many(documents)
+
+    def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
+        return self.database[symbol_collection].insert_one(document)
+
+    def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
+        return self.database[symbol_collection].update_one(query, document, upsert=True)
+
+    def start(self):
+        """
+        Starts the memory implementation. Noop for this implementation.
+        """
+        if self.database is None:
+            if self.mongo_connection_string is None:
+                self.mongo_connection_string = os.getenv('MONGO_CONNECTION_STRING')
+            if self.mongo_database_name is None:
+                self.mongo_database_name = os.getenv('MONGO_DATABASE_NAME')
+
+            client = AsyncIOMotorClient(self.mongo_connection_string)
+            self.database = client.get_database()
+
+    def stop(self):
+        """
+        Stops the memory implementation. Noop for this implementation.
+        """
+        if self.database is not None:
+            self.database.client.close()
+            self.database = None

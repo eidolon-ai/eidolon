@@ -1,11 +1,15 @@
 import pytest
 from pydantic import BaseModel, ValidationError
+
 from eidolon_sdk.util.schema_to_model import schema_to_model
 
 
+# Define a pytest class for grouping the tests
 class TestSchemaToModel:
-    def test_simple_schema(self):
-        simple_schema = {
+
+    def test_simple_model_creation(self):
+        """Test creation of a simple model with primitive types."""
+        json_schema = {
             "type": "object",
             "properties": {
                 "name": {"type": "string"},
@@ -13,21 +17,18 @@ class TestSchemaToModel:
             },
             "required": ["name"]
         }
-        SimpleModel = schema_to_model(simple_schema, 'SimpleModel')
+        SimpleModel = schema_to_model(json_schema, 'SimpleModel')
         assert issubclass(SimpleModel, BaseModel)
+        model = SimpleModel(name='John Doe', age=30)
+        assert model.name == 'John Doe'
+        assert model.age == 30
 
-        instance = SimpleModel(name='John')
-        assert hasattr(instance, 'name')
-        assert hasattr(instance, 'age')
-        assert instance.name == 'John'
-        with pytest.raises(ValidationError):
-            SimpleModel()
-
-    def test_nested_schema(self):
-        nested_schema = {
+    def test_nested_model_creation(self):
+        """Test creation of a model with nested objects."""
+        json_schema = {
             "type": "object",
             "properties": {
-                "person": {
+                "user": {
                     "type": "object",
                     "properties": {
                         "name": {"type": "string"},
@@ -37,31 +38,78 @@ class TestSchemaToModel:
                 }
             }
         }
-        NestedModel = schema_to_model(nested_schema, 'NestedModel')
+        NestedModel = schema_to_model(json_schema, 'NestedModel')
         assert issubclass(NestedModel, BaseModel)
+        nested_model = NestedModel(user={'name': 'Jane Doe', 'age': 25})
+        assert nested_model.user.name == 'Jane Doe'
+        assert nested_model.user.age == 25
 
-        instance = NestedModel(person={'name': 'John'})
-        assert hasattr(instance, 'person')
-        assert instance.person.name == 'John'
-
-    def test_optional_fields(self):
-        optional_field_schema = {
+    def test_array_model_creation(self):
+        """Test creation of a model with array properties."""
+        json_schema = {
             "type": "object",
+            "properties": {
+                "tags": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            }
+        }
+        ArrayModel = schema_to_model(json_schema, 'ArrayModel')
+        assert issubclass(ArrayModel, BaseModel)
+        array_model = ArrayModel(tags=['tag1', 'tag2'])
+        assert array_model.tags == ['tag1', 'tag2']
+
+    def test_required_fields(self):
+        """Test that required fields are correctly identified and enforced."""
+        json_schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"}
+            },
+            "required": ["name"]
+        }
+        RequiredFieldModel = schema_to_model(json_schema, 'RequiredFieldModel')
+        with pytest.raises(ValidationError):
+            RequiredFieldModel(age=30)  # 'name' is required
+
+    def test_default_values(self):
+        """Test that default values are correctly assigned."""
+        json_schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "default": "Anonymous"},
+                "age": {"type": "integer"}
+            }
+        }
+        DefaultModel = schema_to_model(json_schema, 'DefaultModel')
+        model = DefaultModel(age=30)
+        assert model.name == 'Anonymous'
+
+    def test_invalid_schema(self):
+        """Test that an invalid schema raises the appropriate error."""
+        json_schema = {
             "properties": {
                 "name": {"type": "string"},
                 "age": {"type": "integer"}
             }
         }
-        OptionalFieldModel = schema_to_model(optional_field_schema, 'OptionalFieldModel')
-        assert issubclass(OptionalFieldModel, BaseModel)
+        with pytest.raises(ValueError) as exc_info:
+            schema_to_model(json_schema, 'InvalidModel')
+        assert "Schema must be an object with properties." in str(exc_info.value)
 
-        instance = OptionalFieldModel(name='John')
-        assert hasattr(instance, 'name')
-        assert hasattr(instance, 'age')
-        assert instance.name == 'John'
-        assert instance.age is None
+    def test_unsupported_type(self):
+        """Test that an unsupported type raises the appropriate error."""
+        json_schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "unsupported"}
+            }
+        }
+        with pytest.raises(ValueError) as exc_info:
+            schema_to_model(json_schema, 'UnsupportedModel')
+        assert "Error creating field 'name'" in str(exc_info.value)
 
-    def test_incorrect_schema(self):
-        incorrect_schema = {"foo": "not a valid schema"}
-        with pytest.raises(ValueError):
-            schema_to_model(incorrect_schema, 'IncorrectModel')
+# Run the tests with pytest from the command line
+# pytest test_schema_to_model.py

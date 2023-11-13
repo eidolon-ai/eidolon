@@ -92,9 +92,9 @@ class AgentCPU(BaseModel):
                     module = importlib.import_module(module_name)
                     implementation_class = getattr(module, class_name)
                 except (ImportError, AttributeError):
-                    raise ValidationError(f"Unable to import {implementation_fqn}")
+                    raise ValueError(f"Unable to import {implementation_fqn}")
             else:
-                raise ValidationError("Implementation not provided.")
+                raise ValueError("Implementation not provided.")
 
             if implementation_class and issubclass(implementation_class, base_class):
                 return implementation_class(**value)
