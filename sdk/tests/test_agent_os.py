@@ -80,15 +80,6 @@ class HelloWorld(CodeAgent):
             raise HTTPException(status_code=501, detail="huge system error handling unprecedented edge case")
 
 
-class ParamTester(CodeAgent):
-    last_call = None
-
-    @initializer
-    async def foo(self, x: int, y: int = 5, z: Annotated[int, Field(description="z is a param")] = 10):
-        ParamTester.last_call = (x, y, z)
-        return dict(x=x, y=y, z=z)
-
-
 @pytest.fixture(autouse=True)
 def memory():
     return LocalSymbolicMemory(implementation=LocalSymbolicMemory.__module__ + "." + LocalSymbolicMemory.__qualname__)
@@ -120,6 +111,15 @@ def test_program_automatically_terminates_if_no_new_state_provided(client, os_ma
         assert response.json()['state'] == 'terminated'
 
 
+class ParamTester(CodeAgent):
+    last_call = None
+
+    @initializer
+    async def foo(self, x: int, y: int = 5, z: Annotated[int, Field(description="z is a param")] = 10):
+        ParamTester.last_call = (x, y, z)
+        return dict(x=x, y=y, z=z)
+
+
 def test_non_annotated_params(client, os_manager):
     with os_manager(ParamTester):
         response = client.post("/programs/paramtester", json=dict(x=1, y=2, z=3))
@@ -137,6 +137,12 @@ def test_defaults(client, os_manager):
 def test_required_param_missing(client, os_manager):
     with os_manager(ParamTester):
         response = client.post("/programs/paramtester", json=dict())
+        assert response.status_code == 422
+
+
+def test_required_param_missing_with_no_body(client, os_manager):
+    with os_manager(ParamTester):
+        response = client.post("/programs/paramtester")
         assert response.status_code == 422
 
 

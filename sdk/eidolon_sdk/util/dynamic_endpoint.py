@@ -4,12 +4,8 @@ from fastapi import Body, FastAPI, Request, BackgroundTasks
 from pydantic import BaseModel
 
 
-class EmptyModel(BaseModel):
-    pass
-
-
 def create_endpoint(model: Type[BaseModel], fn: Callable):
-    async def dynamic_endpoint(background_tasks: BackgroundTasks, request: Request, item: model = Body(EmptyModel()), process_id: str = None):
+    async def dynamic_endpoint(background_tasks: BackgroundTasks, request: Request, item: model = Body(...), process_id: str = None):
         # Process the input item
         return await fn(request=request, body=item, process_id=process_id, background_tasks=background_tasks)
     return dynamic_endpoint

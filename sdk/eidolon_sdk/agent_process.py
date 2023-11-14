@@ -45,7 +45,7 @@ class AgentProcess:
             path=f"/programs/{self.agent_program.name}",
             input_model=self.create_input_model('INIT'),
             response_model=ProcessResponse,
-            fn=self.processRoute('INIT'),
+            fn=self.processAction('INIT'),
             status_code=202,
         )
 
@@ -56,7 +56,7 @@ class AgentProcess:
                 path=f"/programs/{self.agent_program.name}/processes/{{process_id}}/actions/{action}",
                 input_model=self.create_input_model(action),
                 response_model=ProcessResponse,
-                fn=self.processRoute(action),
+                fn=self.processAction(action),
                 status_code=202,
             )
 
@@ -91,7 +91,7 @@ class AgentProcess:
         self.stop(app)
         self.start(app)
 
-    def processRoute(self, action: str):
+    def processAction(self, action: str):
         async def processStateRoute(request: Request, body: BaseModel, process_id: typing.Optional[str], background_tasks: BackgroundTasks):
             print(action)
             print(body)
