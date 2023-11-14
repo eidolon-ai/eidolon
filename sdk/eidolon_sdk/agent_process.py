@@ -14,7 +14,7 @@ from starlette.responses import JSONResponse
 
 from agent_memory import SymbolicMemory
 from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route
-from .agent import Agent
+from .agent import Agent, AgentState
 from .agent_os import AgentOS
 from .agent_program import AgentProgram
 
@@ -91,9 +91,9 @@ class AgentProcess:
         self.stop(app)
         self.start(app)
 
-    def processRoute(self, state: str):
+    def processRoute(self, action: str):
         async def processStateRoute(request: Request, body: BaseModel, process_id: typing.Optional[str], background_tasks: BackgroundTasks):
-            print(state)
+            print(action)
             print(body)
             memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
             process_id = process_id or str(ObjectId())
@@ -104,20 +104,24 @@ class AgentProcess:
                 dict(
                     process_id=process_id,
                     state="processing",
-                    data=dict(desired_state=state, body=body.model_dump()),
+                    data=dict(action=action, body=body.model_dump()),
                     date=str(datetime.now().isoformat()))
             )
             async def run_and_store_response():
                 try:
-                    response = await self.agent.base_handler(state=state, body=body)
-                    if isinstance(response, BaseModel):
-                        response = response.model_dump()
+                    response = await self.agent.base_handler(action=action, body=body)
+                    if isinstance(response, AgentState):
+                        state = response.name
+                        data = response.data.model_dump()
+                    else:
+                        state = 'terminated'
+                        data = response.model_dump() if isinstance(response, BaseModel) else response
                     await memory.insert_one(
                         'processes',
                         dict(
                             process_id=process_id,
                             state=state,
-                            data=response,
+                            data=data,
                             date=str(datetime.now().isoformat()))
                     )
                 except HTTPException as e:
@@ -180,7 +184,3 @@ class AgentProcess:
             fields[t_name] = (Optional[t_model], Field(default=None, description="The answer for {t_name} transition state."))
 
         return create_model(f'{state.capitalize()}ResponseModel', **fields)
-
-
-class ConversationResponse(BaseModel):
-    process_id: str = Field(..., description="The ID of the conversation.")

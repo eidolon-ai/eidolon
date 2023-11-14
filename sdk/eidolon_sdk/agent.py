@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from dataclasses import dataclass
-from typing import Dict, List, TypeVar, Generic
+from typing import Dict, List, TypeVar, Generic, Any
 
 from pydantic import BaseModel
 
@@ -24,8 +24,8 @@ class Agent:
         }
         self.agent_program = agent_program
 
-    async def base_handler(self, state: str, body: BaseModel):
-        handler = self.action_handlers[state]
+    async def base_handler(self, action: str, body: BaseModel):
+        handler = self.action_handlers[action]
         return await handler.fn(self, **body.model_dump())
 
 
@@ -65,7 +65,7 @@ def _add_handler(fn, handler):
     return fn
 
 
-T = TypeVar('T', bound=BaseModel)
+T = TypeVar('T')
 
 
 class AgentState(BaseModel, Generic[T]):
