@@ -14,7 +14,10 @@ class LocalSymbolicMemory(SymbolicMemory):
         _DB.clear()
 
     def _matches_query(self, document, query):
-        return all(document.get(k) == v for k, v in query.items())
+        if isinstance(query, dict):
+            return all(self._matches_query(document.get(k), v) for k, v in query.items())
+        else:
+            return document == query
 
     def find(self, symbol_collection: str, query: dict[str, Any]) -> List[dict[str, Any]]:
         return [doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)]
