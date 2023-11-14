@@ -25,7 +25,6 @@ class AgentProgram(BaseModel):
     name: str = Field(description="The name of the program. Will be used as the endpoint name.")
     agent_cpu: AgentCPU = Field(default=None, description="The Agent CPU to use.")
     implementation: str = Field(description="The FQN of agent class.")
-    initial_state: str = Field(description="The initial state of the program.", default='idle')
 
     @classmethod
     @field_validator('implementation', mode="before")

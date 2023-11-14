@@ -42,34 +42,34 @@ class AgentProcess:
 
         add_dynamic_route(
             app=app,
-            path=f"/{self.agent_program.name}",
-            input_model=self.create_input_model(self.agent_program.initial_state),
+            path=f"/programs/{self.agent_program.name}",
+            input_model=self.create_input_model('INIT'),
             response_model=ProcessResponse,
-            fn=self.processRoute(self.agent_program.initial_state),
+            fn=self.processRoute('INIT'),
             status_code=202,
         )
 
-        for state_name, handler in self.agent.handlers.items():
+        for action, handler in self.agent.action_handlers.items():
             # the endpoint to hit to process/continue the current state
             add_dynamic_route(
                 app=app,
-                path=f"/{self.agent_program.name}/{{process_id}}/{state_name}",
-                input_model=self.create_input_model(state_name),
+                path=f"/programs/{self.agent_program.name}/processes/{{process_id}}/{action}",
+                input_model=self.create_input_model(action),
                 response_model=ProcessResponse,
-                fn=self.processRoute(state_name),
+                fn=self.processRoute(action),
                 status_code=202,
             )
 
         app.add_api_route(
-            f"/{self.agent_program.name}/{{process_id}}",
+            f"/programs/{self.agent_program.name}/processes/{{process_id}}/status",
             endpoint=self.getProcessInfo,
             methods=["GET"],
             # response_model=dict,
         )
 
-    def create_input_model(self, state_name):
-        sig = inspect.signature(self.agent.handlers[state_name].fn).parameters
-        hints = typing.get_type_hints(self.agent.handlers[state_name].fn, include_extras=True)
+    def create_input_model(self, action):
+        sig = inspect.signature(self.agent.action_handlers[action].fn).parameters
+        hints = typing.get_type_hints(self.agent.action_handlers[action].fn, include_extras=True)
         fields = {}
         for param, hint in filter(lambda tu: tu[0] != 'return', hints.items()):
             if hasattr(hint, '__metadata__') and isinstance(hint.__metadata__[0], FieldInfo):
@@ -81,7 +81,7 @@ class AgentProcess:
                 default = ... if getattr(sig[param].default, "__name__", None) == '_empty' else sig[param].default
                 fields[param] = (hint, default)
 
-        input_model = create_model(f'{state_name.capitalize()}InputModel', **fields)
+        input_model = create_model(f'{action.capitalize()}InputModel', **fields)
         return input_model
 
     def stop(self, app: FastAPI):
