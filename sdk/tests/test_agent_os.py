@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Annotated, Type
+from typing import Annotated, Type, List
 
 import pytest
 from fastapi import FastAPI, HTTPException
@@ -202,7 +202,8 @@ def test_can_transition_state(client, os_manager):
         post = client.post("/programs/statetester", json={})
         pid = post.json()['process_id']
         assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "a"
-        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar", json=dict(next_state="b")).status_code == 202
+        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar",
+                           json=dict(next_state="b")).status_code == 202
         assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "b"
 
 
@@ -211,6 +212,79 @@ def test_enforced_state_limits(client, os_manager):
         post = client.post("/programs/statetester", json={})
         pid = post.json()['process_id']
         assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "a"
-        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar", json=dict(next_state="c")).status_code == 202
+        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar",
+                           json=dict(next_state="c")).status_code == 202
         assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "c"
-        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar", json=dict(next_state="c")).status_code == 409
+        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar",
+                           json=dict(next_state="c")).status_code == 409
+
+
+def test_empty_body_functions_if_no_args_required(client, os_manager):
+    with os_manager(StateTester):
+        assert client.post("/programs/statetester").status_code == 202
+
+
+class DocumentedBase(BaseModel):
+    some_int: int
+
+
+class Documented(CodeAgent):
+    @initializer
+    async def init(self, x: int) -> dict[str, int]:
+        pass
+
+    @register_action("a")
+    async def no_types(self):
+        pass
+
+    @register_action("a")
+    async def dict_response(self) -> dict:
+        pass
+
+    @register_action("a")
+    async def base_model_response(self) -> DocumentedBase:
+        pass
+
+    @register_action("a")
+    async def param_keys(self, x: str, y: List[int], z: DocumentedBase):
+        pass
+
+
+class TestOpenApiDocs:
+    @pytest.fixture()
+    def openapi_schema(self, client, os_manager):
+        with os_manager(Documented):
+            # Get the OpenAPI schema
+            yield client.get("/openapi.json").json()
+
+    def test_registers_expected_paths(self, openapi_schema):
+        assert '/programs/documented' in openapi_schema['paths']
+        assert '/programs/documented/processes/{process_id}/status' in openapi_schema['paths']
+        assert '/programs/documented/processes/{process_id}/actions/no_types' in openapi_schema['paths']
+
+    def test_init_is_not_registered(self, openapi_schema):
+        assert '/programs/documented/processes/{process_id}/actions/init' not in openapi_schema['paths']
+        assert '/programs/documented/processes/{process_id}/actions/INIT' not in openapi_schema['paths']
+
+    def test_params_are_well_handled(self, openapi_schema):
+        assert action_request_schema(openapi_schema, 'param_keys') == {
+            'properties': {'x': {'type': 'string', 'title': 'X'},
+                           'y': {'items': {'type': 'integer'}, 'type': 'array', 'title': 'Y'},
+                           'z': {'$ref': '#/components/schemas/DocumentedBase'}}, 'type': 'object',
+            'required': ['x', 'y', 'z'], 'title': 'Param_keysInputModel'}
+
+    # todo, lets hook up the no callback headers and then check/impl this since it will change
+    # def test_response_types(self, openapi_schema):
+    #     pass
+
+
+def action_request_schema(openapi_schema, action):
+    body_ref = openapi_schema['paths'][('/programs/documented/processes/{process_id}/actions/%s' % action)]['post'][
+        'requestBody']['content']['application/json']['schema']['allOf'][0]['$ref']
+    return openapi_schema['components']['schemas'][body_ref.split("/")[-1]]
+
+
+def action_response_schema(openapi_schema, action):
+    body_ref = openapi_schema['paths'][('/programs/documented/processes/{process_id}/actions/%s' % action)]['post'][
+        'responses']['202']['content']['application/json']['schema']['$ref']
+    return openapi_schema['components']['schemas'][body_ref.split("/")[-1]]

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import Field, BaseModel
 
-from eidolon_sdk.agent import CodeAgent, register
+from eidolon_sdk.agent import CodeAgent, initializer
 
 
 class IdleStateRepresentation(BaseModel):
@@ -10,8 +10,6 @@ class IdleStateRepresentation(BaseModel):
 
 
 class HelloWorld(CodeAgent):
-    @register(state='idle', transition_to=['idle'], state_representation=IdleStateRepresentation)
-    async def execute(self, name: Annotated[str, Field(description="Your name")]) -> dict:
-        return {
-            "welcome_message": f'Hello, World {name}!'
-        }
+    @initializer
+    async def execute(self, name: Annotated[str, Field(description="Your name")]) -> IdleStateRepresentation:
+        return IdleStateRepresentation(welcome_message=f'Hello, World {name}!')

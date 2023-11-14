@@ -49,7 +49,7 @@ class AgentProcess:
             status_code=202,
         )
 
-        for action, handler in self.agent.action_handlers.items():
+        for action, handler in filter(lambda tu: tu[0] != "INIT", self.agent.action_handlers.items()):
             # the endpoint to hit to process/continue the current state
             add_dynamic_route(
                 app=app,
