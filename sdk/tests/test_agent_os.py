@@ -53,8 +53,10 @@ class HelloWorld(CodeAgent):
         HelloWorld.counter += 1
         if question == "hello":
             return HelloWorldResponse(question=question, answer="world")
+        elif question == "exception":
+            raise Exception("some unexpected error")
         else:
-            raise HTTPException(status_code=500, detail="huge system error handling unprecedented edge case")
+            raise HTTPException(status_code=501, detail="huge system error handling unprecedented edge case")
 
 
 class ParamTester(CodeAgent):
@@ -124,12 +126,19 @@ def test_retrieve_result():
         assert response.json()['data'] == dict(question="hello", answer="world")
 
 
-@pytest.mark.skip(reason="there is no way to get this error until we hook up gets now that it happens in the background")
-def test_program_error():
+def test_program_http_error():
     with os_manager(HelloWorld):
         pid = client.post("/helloworld", json=dict(question="hola")).json()['process_id']
-        response = client.get(f"/helloworld/{pid}/idle")
-        assert response.status_code == 500
+        response = client.get(f"/helloworld/{pid}")
+        assert response.status_code == 501
+        assert response.json()['detail'] == "huge system error handling unprecedented edge case"
+
+
+def test_program_error():
+    pid = client.post("/helloworld", json=dict(question="exception")).json()['process_id']
+    response = client.get(f"/helloworld/{pid}")
+    assert response.status_code == 500
+    assert response.json()['error'] == "some unexpected error"
 
 
 class MemTester(CodeAgent):

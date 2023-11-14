@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-import asyncio
 import importlib
 import inspect
 import typing
 from datetime import datetime
-from typing import Optional, Annotated
+from typing import Optional
 
 from bson import ObjectId
-from fastapi import FastAPI, Request, BackgroundTasks
-from fastapi.openapi.models import Response
+from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
 from starlette.responses import JSONResponse
@@ -110,17 +108,38 @@ class AgentProcess:
                     date=str(datetime.now().isoformat()))
             )
             async def run_and_store_response():
-                response = await self.agent.base_handler(state=state, body=body)
-                if isinstance(response, BaseModel):
-                    response = response.model_dump()
-                memory.insert_one(
-                    'processes',
-                    dict(
-                        process_id=process_id,
-                        state=state,
-                        data=response,
-                        date=str(datetime.now().isoformat()))
-                )
+                try:
+                    response = await self.agent.base_handler(state=state, body=body)
+                    if isinstance(response, BaseModel):
+                        response = response.model_dump()
+                    memory.insert_one(
+                        'processes',
+                        dict(
+                            process_id=process_id,
+                            state=state,
+                            data=response,
+                            date=str(datetime.now().isoformat()))
+                    )
+                except HTTPException as e:
+                    memory.insert_one(
+                        'processes',
+                        dict(
+                            process_id=process_id,
+                            state="http_error",
+                            data=dict(detail=e.detail, status_code=e.status_code),
+                            date=str(datetime.now().isoformat()))
+                    )
+                    print(e)  # todo, log this
+                except Exception as e:
+                    memory.insert_one(
+                        'processes',
+                        dict(
+                            process_id=process_id,
+                            state="unhandled_error",
+                            data=dict(error=str(e)),
+                            date=str(datetime.now().isoformat()))
+                    )
+                    print(e)  # todo, log this
 
             pid = process_id or self.agent_os.startProcess(request.headers.get('callback_url'))
             background_tasks.add_task(run_and_store_response)
@@ -132,7 +151,13 @@ class AgentProcess:
         memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
         records = memory.find('processes', dict(process_id=process_id))
         # todo, memory needs to include sorting
-        return JSONResponse(sorted(records, key=lambda r: r['date']).pop())
+        last = sorted(records, key=lambda r: r['date']).pop()
+        if last['state'] == 'unhandled_error':
+            return JSONResponse(last['data'], 500)
+        elif last['state'] == 'http_error':
+            return JSONResponse(dict(detail=last['data']['detail']), last['data']['status_code'])
+        else:
+            return JSONResponse(last, 200)
 
     def create_response_model(self, state: str):
         fields = {
