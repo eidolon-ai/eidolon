@@ -8,6 +8,7 @@ from typing import Optional
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
+from fastapi.logger import logger
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
 from starlette.responses import JSONResponse
@@ -92,10 +93,18 @@ class AgentProcess:
         self.start(app)
 
     def processAction(self, action: str):
-        async def processStateRoute(request: Request, body: BaseModel, process_id: typing.Optional[str], background_tasks: BackgroundTasks):
+        async def processStateRoute(
+                request: Request,
+                body: BaseModel,
+                process_id: typing.Optional[str],
+                background_tasks: BackgroundTasks,
+        ):
             print(action)
             print(body)
             memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
+            callback = request.headers.get('callback-url')
+            execution_mode = request.headers.get('execution-mode', 'async' if callback else 'sync').lower()
+
             if not process_id:
                 process_id = str(ObjectId())
                 state = 'UNINITIALIZED'
@@ -109,7 +118,8 @@ class AgentProcess:
             if state not in handler.allowed_states:
                 raise HTTPException(status_code=409, detail=f"Action \"{action}\" cannot process state \"{state}\"")
 
-            state = dict(process_id=process_id, state="processing", data=dict(action=action, body=body.model_dump()), date=str(datetime.now().isoformat()))
+            state = dict(process_id=process_id, state="processing", data=dict(action=action, body=body.model_dump()),
+                         date=str(datetime.now().isoformat()))
             await memory.insert_one('processes', state)
 
             async def run_and_store_response():
@@ -121,45 +131,45 @@ class AgentProcess:
                     else:
                         state = 'terminated'
                         data = response.model_dump() if isinstance(response, BaseModel) else response
-                    await memory.insert_one(
-                        'processes',
-                        dict(
-                            process_id=process_id,
-                            state=state,
-                            data=data,
-                            date=str(datetime.now().isoformat()))
-                    )
+                    doc = dict(process_id=process_id, state=state, data=data, date=str(datetime.now().isoformat()))
                 except HTTPException as e:
-                    await memory.insert_one(
-                        'processes',
-                        dict(
-                            process_id=process_id,
-                            state="http_error",
-                            data=dict(detail=e.detail, status_code=e.status_code),
-                            date=str(datetime.now().isoformat()))
+                    doc = dict(
+                        process_id=process_id,
+                        state="http_error",
+                        data=dict(detail=e.detail, status_code=e.status_code),
+                        date=str(datetime.now().isoformat())
                     )
-                    print(e)  # todo, log this
+                    print(e)
                 except Exception as e:
-                    await memory.insert_one(
-                        'processes',
-                        dict(
-                            process_id=process_id,
-                            state="unhandled_error",
-                            data=dict(error=str(e)),
-                            date=str(datetime.now().isoformat()))
+                    doc = dict(
+                        process_id=process_id,
+                        state="unhandled_error",
+                        data=dict(error=str(e)),
+                        date=str(datetime.now().isoformat())
                     )
-                    print(e)  # todo, log this
+                    print(e)
+                await memory.insert_one('processes', doc)
+                if callback:
+                    raise Exception("Not implemented")
+                return doc
 
-            pid = process_id or self.agent_os.startProcess(request.headers.get('callback_url'))
-            background_tasks.add_task(run_and_store_response)
-            return {"process_id": pid}
+            if execution_mode == 'sync':
+                state = await run_and_store_response()
+                return self.doc_to_response(state, success_status_code=200)
+            else:
+                background_tasks.add_task(run_and_store_response)
+                return self.doc_to_response(state, success_status_code=202)
 
         return processStateRoute
 
     async def getProcessInfo(self, process_id: str):
         latest_record = await self.get_latest_process_event(process_id)
+        return self.doc_to_response(latest_record)
+
+    @staticmethod
+    def doc_to_response(latest_record: dict, success_status_code=200):
         if not latest_record:
-            raise HTTPException(status_code=404, detail="Process not found")
+            return JSONResponse(dict(detail="Process not found"), 404)
         elif latest_record['state'] == 'unhandled_error':
             return JSONResponse(latest_record['data'], 500)
         elif latest_record['state'] == 'http_error':
@@ -173,7 +183,7 @@ class AgentProcess:
                 process_id=latest_record['process_id'],
                 state=latest_record['state'],
                 data=latest_record['data'],
-            ), 200)
+            ), success_status_code)
 
     async def get_latest_process_event(self, process_id):
         # todo, memory needs to include sorting
@@ -190,6 +200,7 @@ class AgentProcess:
             "conversation_id": (str, Field(..., description="The ID of the conversation.")),
         }
         for t_name, t_model in self.agent_program.states[state].transitions_to_models.items():
-            fields[t_name] = (Optional[t_model], Field(default=None, description="The answer for {t_name} transition state."))
+            fields[t_name] = (
+            Optional[t_model], Field(default=None, description="The answer for {t_name} transition state."))
 
         return create_model(f'{state.capitalize()}ResponseModel', **fields)
