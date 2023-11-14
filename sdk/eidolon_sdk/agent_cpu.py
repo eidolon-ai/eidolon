@@ -4,7 +4,7 @@ import importlib
 from abc import ABC, abstractmethod
 from typing import List
 
-from pydantic import BaseModel, Field, field_validator, ValidationError
+from pydantic import BaseModel, Field, field_validator
 
 from .control_unit import ControlUnit
 
