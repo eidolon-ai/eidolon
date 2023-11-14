@@ -8,6 +8,7 @@ from eidolon_sdk.util.class_utils import for_name
 from eidolon_sdk.util.str_utils import replace_env_var_in_string
 
 
+# todo, memory contracts all need to be async
 class FileMemory(BaseModel, ABC):
     implementation: str
 
@@ -182,6 +183,7 @@ class SimilarityMemory(BaseModel, ABC):
         pass
 
 
+# todo, we need base models for memory to represent configuration, not implementation as well.
 class AgentMemory(BaseModel):
     file_memory: FileMemory = Field(default=None, description="The File Memory implementation.")
     symbolic_memory: SymbolicMemory = Field(default=None, description="The Symbolic Memory implementation.")
@@ -189,21 +191,30 @@ class AgentMemory(BaseModel):
 
     @field_validator('file_memory', mode='before')
     def validate_file_memory(cls, value):
-        implementation_name = replace_env_var_in_string(value.get('implementation'))
+        implementation_name = replace_env_var_in_string(value.get('implementation') if isinstance(value, dict) else value.implementation)
         implementation_class = for_name(implementation_name, FileMemory)
-        return implementation_class(**value)
+        if isinstance(value, dict):
+            return implementation_class(**value)
+        else:
+            return implementation_class(**value.model_dump())
 
     @field_validator('symbolic_memory', mode='before')
     def validate_symbolic_memory(cls, value):
-        implementation_name = replace_env_var_in_string(value.get('implementation'))
+        implementation_name = replace_env_var_in_string(value.get('implementation') if isinstance(value, dict) else value.implementation)
         implementation_class = for_name(implementation_name, SymbolicMemory)
-        return implementation_class(**value)
+        if isinstance(value, dict):
+            return implementation_class(**value)
+        else:
+            return implementation_class(**value.model_dump())
 
     @field_validator('similarity_memory', mode='before')
     def validate_similarity_memory(cls, value):
-        implementation_name = replace_env_var_in_string(value.get('implementation'))
+        implementation_name = replace_env_var_in_string(value.get('implementation') if isinstance(value, dict) else value.implementation)
         implementation_class = for_name(implementation_name, SimilarityMemory)
-        return implementation_class(**value)
+        if isinstance(value, dict):
+            return implementation_class(**value)
+        else:
+            return implementation_class(**value.model_dump())
 
     def start(self):
         if self.file_memory:

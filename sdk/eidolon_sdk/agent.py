@@ -6,14 +6,17 @@ from typing import Dict, List, TypeVar, Type, Optional
 
 from pydantic import BaseModel
 
+from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
 
 
 class Agent:
     agent_program: AgentProgram
     handlers: Dict[str, EidolonHandler]
+    agent_memory: AgentMemory
 
-    def __init__(self, agent_program: AgentProgram):
+    def __init__(self, agent_program: AgentProgram, agent_memory: AgentMemory):
+        self.agent_memory = agent_memory
         self.agent_program = agent_program
         self.handlers = {handler.state: handler for handler in (
             getattr(getattr(self, method_name), 'eidolon_handler') for method_name in dir(self) if

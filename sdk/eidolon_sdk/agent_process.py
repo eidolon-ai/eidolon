@@ -35,7 +35,7 @@ class AgentProcess:
         module = importlib.import_module(module_name)
         impl_class = getattr(module, class_name)
 
-        self.agent = impl_class(self)
+        self.agent = impl_class(self, agent_memory=self.agent_os.machine.agent_memory)
 
         add_dynamic_route(
             app=app,

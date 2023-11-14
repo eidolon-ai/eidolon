@@ -13,6 +13,7 @@ from eidolon_sdk.agent import CodeAgent, register, Agent
 from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
+from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 
 app = FastAPI()
 client = TestClient(app)
@@ -25,9 +26,7 @@ def os_manager(*agents: Type[Agent]):
         implementation="tests.test_agent_os." + agent.__qualname__
     ) for agent in agents]
     machine = AgentMachine(agent_memory=AgentMemory(
-        symbolic_memory=SymbolicMemory(
-            implementation="eidolon_sdk.impl.local_symbolic_memory.LocalSymbolicMemory"
-        )
+        symbolic_memory=LocalSymbolicMemory(implementation=LocalSymbolicMemory.__module__ + "." + LocalSymbolicMemory.__qualname__)
     ), agent_io={}, agent_programs=programs)
     os = AgentOS(machine=machine, machine_yaml="")
     os.start(app)
@@ -45,8 +44,8 @@ class HelloWorldResponse(BaseModel):
 class HelloWorld(CodeAgent):
     counter = 0  # todo, this is a hack to make sure function is called. Should wrap with mock instead
 
-    def __init__(self, agent_program: AgentProgram):
-        super().__init__(agent_program)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         HelloWorld.counter = 0
 
     @register(state="idle", transition_to=['idle', 'terminated'])
@@ -65,6 +64,11 @@ class ParamTester(CodeAgent):
     async def foo(self, x: int, y: int = 5, z: Annotated[int, Field(description="z is a param")] = 10):
         ParamTester.last_call = (x, y, z)
         return dict(x=x, y=y, z=z)
+
+
+@pytest.fixture(autouse=True)
+def memory():
+    return LocalSymbolicMemory(implementation=LocalSymbolicMemory.__module__ + "." + LocalSymbolicMemory.__qualname__)
 
 
 def test_empty_start():
@@ -118,3 +122,15 @@ def test_program_error():
         pid = client.post("/helloworld", json=dict(question="hola")).json()['process_id']
         response = client.get(f"/helloworld/{pid}/idle")
         assert response.status_code == 500
+
+
+class MemTester(CodeAgent):
+    @register(state="idle")
+    async def add(self, x: int):
+        self.agent_memory.symbolic_memory.insert_one("test", dict(x=x))
+
+
+def test_programs_can_call_memory(memory):
+    with os_manager(MemTester):
+        client.post("/memtester", json=dict(x=1))
+        assert memory.find_one("test", dict(x=1)) == dict(x=1)
