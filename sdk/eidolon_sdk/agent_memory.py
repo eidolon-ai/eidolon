@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Optional, Iterable, AsyncIterable
 
 import numpy as np
 from pydantic import BaseModel, Field, field_validator
@@ -91,7 +91,7 @@ class SymbolicMemory(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def find(self, symbol_collection: str, query: dict[str, Any]) -> list[dict[str, Any]]:
+    def find(self, symbol_collection: str, query: dict[str, Any]) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
 
@@ -100,12 +100,12 @@ class SymbolicMemory(BaseModel, ABC):
             query (dict[str, Any]): The search criteria used to filter symbols.
 
         Returns:
-            list[dict[str, Any]]: A list of symbols that match the query, each represented as a dictionary.
+            Iterable[dict[str, Any]]: A list of symbols that match the query, each represented as a dictionary.
         """
         pass
 
     @abstractmethod
-    def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
+    async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
         """
         Searches for a single symbol within a specified collection that matches the given query.
 
@@ -120,7 +120,7 @@ class SymbolicMemory(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
+    async def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
         """
         Inserts multiple symbols into the specified collection.
 
@@ -134,7 +134,7 @@ class SymbolicMemory(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
+    async def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
         """
         Inserts a single symbol into the specified collection.
 
@@ -148,7 +148,7 @@ class SymbolicMemory(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
+    async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
         """
         Updates a single symbol in the specified collection based on the query, or inserts it if it does not exist.
 
@@ -175,11 +175,11 @@ class SimilarityMemory(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def query(self, query: np.array) -> list[dict[str, Any]]:
+    async def query(self, query: np.array) -> list[dict[str, Any]]:
         pass
 
     @abstractmethod
-    def insert(self, embedding: np.array) -> None:
+    async def insert(self, embedding: np.array) -> None:
         pass
 
 

@@ -99,12 +99,12 @@ class AgentProcess:
             process_id = process_id or str(ObjectId())
             if not process_id:
                 process_id = ObjectId()
-            memory.insert_one(
+            await memory.insert_one(
                 'processes',
                 dict(
                     process_id=process_id,
                     state="processing",
-                    data=dict(desired_state=state, body=body),
+                    data=dict(desired_state=state, body=body.model_dump()),
                     date=str(datetime.now().isoformat()))
             )
             async def run_and_store_response():
@@ -112,7 +112,7 @@ class AgentProcess:
                     response = await self.agent.base_handler(state=state, body=body)
                     if isinstance(response, BaseModel):
                         response = response.model_dump()
-                    memory.insert_one(
+                    await memory.insert_one(
                         'processes',
                         dict(
                             process_id=process_id,
@@ -121,7 +121,7 @@ class AgentProcess:
                             date=str(datetime.now().isoformat()))
                     )
                 except HTTPException as e:
-                    memory.insert_one(
+                    await memory.insert_one(
                         'processes',
                         dict(
                             process_id=process_id,
@@ -131,7 +131,7 @@ class AgentProcess:
                     )
                     print(e)  # todo, log this
                 except Exception as e:
-                    memory.insert_one(
+                    await memory.insert_one(
                         'processes',
                         dict(
                             process_id=process_id,
@@ -149,15 +149,28 @@ class AgentProcess:
 
     async def getProcessInfo(self, process_id: str):
         memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
-        records = memory.find('processes', dict(process_id=process_id))
         # todo, memory needs to include sorting
-        last = sorted(records, key=lambda r: r['date']).pop()
-        if last['state'] == 'unhandled_error':
-            return JSONResponse(last['data'], 500)
-        elif last['state'] == 'http_error':
-            return JSONResponse(dict(detail=last['data']['detail']), last['data']['status_code'])
+        latest_record = None
+        records = memory.find('processes', dict(process_id=process_id))
+        async for record in records:
+            if not latest_record or record['date'] > latest_record['date']:
+                latest_record = record
+        if not latest_record:
+            raise HTTPException(status_code=404, detail="Process not found")
+        elif latest_record['state'] == 'unhandled_error':
+            return JSONResponse(latest_record['data'], 500)
+        elif latest_record['state'] == 'http_error':
+            return JSONResponse(dict(detail=latest_record['data']['detail']), latest_record['data']['status_code'])
         else:
-            return JSONResponse(last, 200)
+            try:
+                del latest_record['_id']
+            except KeyError:
+                pass
+            return JSONResponse(dict(
+                process_id=latest_record['process_id'],
+                state=latest_record['state'],
+                data=latest_record['data'],
+            ), 200)
 
     def create_response_model(self, state: str):
         fields = {

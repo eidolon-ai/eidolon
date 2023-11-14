@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Iterable, AsyncIterable
 
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field
@@ -8,7 +8,7 @@ from eidolon_sdk.agent_memory import SymbolicMemory
 
 
 class MongoSymbolicMemory(SymbolicMemory):
-    mongo_connection_string: str = Field(default=None, description="The connection string to the MongoDB instance.")
+    mongo_connection_string: Optional[str] = Field(default=None, description="The connection string to the MongoDB instance.")
     mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
     implementation: str = "eidolon_sdk.impl.mongo_symbolic_memory.MongoSymbolicMemory"
 
@@ -17,20 +17,20 @@ class MongoSymbolicMemory(SymbolicMemory):
 
     database: AsyncIOMotorDatabase = None
 
-    def find(self, symbol_collection: str, query: dict[str, Any]) -> list[dict[str, Any]]:
+    def find(self, symbol_collection: str, query: dict[str, Any]) -> AsyncIterable[dict[str, Any]]:
         return self.database[symbol_collection].find(query)
 
-    def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
-        return self.database[symbol_collection].find_one(query)
+    async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
+        return await self.database[symbol_collection].find_one(query)
 
-    def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
-        return self.database[symbol_collection].insert_many(documents)
+    async def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
+        return await self.database[symbol_collection].insert_many(documents)
 
-    def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
-        return self.database[symbol_collection].insert_one(document)
+    async def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
+        return await self.database[symbol_collection].insert_one(document)
 
-    def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
-        return self.database[symbol_collection].update_one(query, document, upsert=True)
+    async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
+        return await self.database[symbol_collection].update_one(query, document, upsert=True)
 
     def start(self):
         """

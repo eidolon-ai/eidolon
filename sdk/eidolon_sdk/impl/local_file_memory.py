@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import Field, field_validator
 
 from eidolon_sdk.agent_memory import FileMemory
-from util.str_utils import replace_env_var_in_string
+from eidolon_sdk.util.str_utils import replace_env_var_in_string
 
 
 class LocalFileMemory(FileMemory):
@@ -33,6 +33,9 @@ class LocalFileMemory(FileMemory):
         # Check if the path is absolute
         if not path.is_absolute():
             raise ValueError(f"The root_dir must be an absolute path. Received: {inValue}->{value}")
+
+        if not path.exists():
+            path.mkdir(parents=True)
 
         # You could also check if path exists and is a directory if necessary
         if not path.exists() or not path.is_dir():

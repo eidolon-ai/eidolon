@@ -19,27 +19,28 @@ class LocalSymbolicMemory(SymbolicMemory):
         else:
             return document == query
 
-    def find(self, symbol_collection: str, query: dict[str, Any]) -> List[dict[str, Any]]:
-        return [doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)]
+    async def find(self, symbol_collection: str, query: dict[str, Any]):
+        for doc in [doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)]:
+            yield doc
 
-    def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
+    async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
         for doc in _DB.get(symbol_collection, []):
             if self._matches_query(doc, query):
                 return doc
         return None
 
-    def insert(self, symbol_collection: str, documents: List[dict[str, Any]]) -> None:
+    async def insert(self, symbol_collection: str, documents: List[dict[str, Any]]) -> None:
         if symbol_collection not in _DB:
             _DB[symbol_collection] = []
         _DB[symbol_collection].extend(documents)
 
-    def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
+    async def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
         if symbol_collection not in _DB:
             _DB[symbol_collection] = []
         _DB[symbol_collection].append(document)
 
-    def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
+    async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
         existing_document = self.find_one(symbol_collection, query)
         if existing_document is not None:
             _DB[symbol_collection].remove(existing_document)
-        self.insert_one(symbol_collection, document)
+        await self.insert_one(symbol_collection, document)
