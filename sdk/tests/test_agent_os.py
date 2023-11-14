@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import asyncio
 import contextlib
-from asyncio import get_event_loop
 from typing import Annotated, Type
 
 import pytest
@@ -11,9 +9,9 @@ from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from pydantic import BaseModel, Field
 
-from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
-from eidolon_sdk.agent import CodeAgent, Agent, initializer, register_action
+from eidolon_sdk.agent import CodeAgent, Agent, initializer, register_action, AgentState
 from eidolon_sdk.agent_machine import AgentMachine
+from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
@@ -71,7 +69,6 @@ class HelloWorld(CodeAgent):
         HelloWorld.counter = 0
 
     @initializer
-    @register_action("idle")
     async def idle(self, question: Annotated[
         str, Field(description="The question to ask. Can be anything, but it better be hello")]):
         HelloWorld.counter += 1
@@ -109,17 +106,18 @@ def test_program(client, os_manager):
         assert response.status_code == 202
 
 
-def test_requests_to_running_process(client, os_manager):
-    with os_manager(HelloWorld):
-        pid = client.post("/programs/helloworld", json=dict(question="hello")).json()['process_id']
-        response = client.post(f"/programs/helloworld/processes/{pid}/idle", json=dict(question="hello"))
-        assert response.status_code == 202
-
-
 def test_program_actually_calls_code(client, os_manager):
     with os_manager(HelloWorld):
         client.post("/programs/helloworld", json=dict(question="hello"))
         assert HelloWorld.counter == 1
+
+
+def test_program_automatically_terminates_if_no_new_state_provided(client, os_manager):
+    with os_manager(HelloWorld):
+        pid = client.post("/programs/helloworld", json=dict(question="hello")).json()['process_id']
+        response = client.get(f"/programs/helloworld/processes/{pid}/status")
+        assert response.status_code == 200
+        assert response.json()['state'] == 'terminated'
 
 
 def test_non_annotated_params(client, os_manager):
@@ -142,20 +140,20 @@ def test_required_param_missing(client, os_manager):
         assert response.status_code == 422
 
 
-@pytest.mark.parametrize("use_mongo", [False, True])
+@pytest.mark.parametrize("db", ["mongo", "local"])
 @pytest.mark.asyncio
-async def test_retrieve_result(async_client, os_manager, symbolic_memory, use_mongo):
-    with os_manager(HelloWorld, memory_override=symbolic_memory if use_mongo else None):
+async def test_retrieve_result(async_client, os_manager, symbolic_memory, db):
+    with os_manager(HelloWorld, memory_override=symbolic_memory if db == "mongo" else None):
         post = await async_client.post("/programs/helloworld", json=dict(question="hello"))
         response = await async_client.get(f"/programs/helloworld/processes/{post.json()['process_id']}/status")
         assert response.status_code == 200
         assert response.json()['data'] == dict(question="hello", answer="world")
 
 
-@pytest.mark.parametrize("use_mongo", [False, True])
+@pytest.mark.parametrize("db", ["mongo", "local"])
 @pytest.mark.asyncio
-async def test_program_http_error(async_client, os_manager, symbolic_memory, use_mongo):
-    with os_manager(HelloWorld, memory_override=symbolic_memory if use_mongo else None):
+async def test_program_http_error(async_client, os_manager, symbolic_memory, db):
+    with os_manager(HelloWorld, memory_override=symbolic_memory if db == "mongo" else None):
         post = await async_client.post("/programs/helloworld", json=dict(question="hola"))
         response = await async_client.get(f"/programs/helloworld/processes/{post.json()['process_id']}/status")
         assert response.status_code == 501
@@ -177,13 +175,42 @@ class MemTester(CodeAgent):
 
 
 # todo, lets parameterize this one with mongo as well
-@pytest.mark.parametrize("use_mongo", [False, True])
+@pytest.mark.parametrize("db", ["mongo", "local"])
 @pytest.mark.asyncio
-async def test_programs_can_call_memory(async_client, os_manager, memory, symbolic_memory, use_mongo):
-    if use_mongo:
+async def test_programs_can_call_memory(async_client, os_manager, memory, symbolic_memory, db):
+    if db == "mongo":
         memory = symbolic_memory
     with os_manager(MemTester, memory_override=memory):
         await async_client.post("/programs/memtester", json=dict(x=1))
         found = await memory.find_one("test", dict(x=1))
         assert found
         assert found['x'] == 1
+
+
+class StateTester(CodeAgent):
+    @initializer
+    async def foo(self):
+        return AgentState(name="a", data=dict())
+
+    @register_action("a", "b")
+    async def bar(self, next_state: str):
+        return AgentState(name=next_state, data=dict())
+
+
+def test_can_transition_state(client, os_manager):
+    with os_manager(StateTester):
+        post = client.post("/programs/statetester", json={})
+        pid = post.json()['process_id']
+        assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "a"
+        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar", json=dict(next_state="b")).status_code == 202
+        assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "b"
+
+
+def test_enforced_state_limits(client, os_manager):
+    with os_manager(StateTester):
+        post = client.post("/programs/statetester", json={})
+        pid = post.json()['process_id']
+        assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "a"
+        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar", json=dict(next_state="c")).status_code == 202
+        assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "c"
+        assert client.post(f"/programs/statetester/processes/{pid}/actions/bar", json=dict(next_state="c")).status_code == 409

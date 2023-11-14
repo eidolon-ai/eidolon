@@ -53,7 +53,7 @@ class AgentProcess:
             # the endpoint to hit to process/continue the current state
             add_dynamic_route(
                 app=app,
-                path=f"/programs/{self.agent_program.name}/processes/{{process_id}}/{action}",
+                path=f"/programs/{self.agent_program.name}/processes/{{process_id}}/actions/{action}",
                 input_model=self.create_input_model(action),
                 response_model=ProcessResponse,
                 fn=self.processRoute(action),
@@ -96,23 +96,28 @@ class AgentProcess:
             print(action)
             print(body)
             memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
-            process_id = process_id or str(ObjectId())
             if not process_id:
-                process_id = ObjectId()
-            await memory.insert_one(
-                'processes',
-                dict(
-                    process_id=process_id,
-                    state="processing",
-                    data=dict(action=action, body=body.model_dump()),
-                    date=str(datetime.now().isoformat()))
-            )
+                process_id = str(ObjectId())
+                state = 'UNINITIALIZED'
+            else:
+                found = await self.get_latest_process_event(process_id)
+                if not found:
+                    raise HTTPException(status_code=404, detail="Process not found")
+                state = found['state']
+
+            handler = self.agent.action_handlers[action]
+            if state not in handler.allowed_states:
+                raise HTTPException(status_code=409, detail=f"Action \"{action}\" cannot process state \"{state}\"")
+
+            state = dict(process_id=process_id, state="processing", data=dict(action=action, body=body.model_dump()), date=str(datetime.now().isoformat()))
+            await memory.insert_one('processes', state)
+
             async def run_and_store_response():
                 try:
-                    response = await self.agent.base_handler(action=action, body=body)
+                    response = await handler.fn(self.agent, **body.model_dump())
                     if isinstance(response, AgentState):
                         state = response.name
-                        data = response.data.model_dump()
+                        data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data
                     else:
                         state = 'terminated'
                         data = response.model_dump() if isinstance(response, BaseModel) else response
@@ -152,13 +157,7 @@ class AgentProcess:
         return processStateRoute
 
     async def getProcessInfo(self, process_id: str):
-        memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
-        # todo, memory needs to include sorting
-        latest_record = None
-        records = memory.find('processes', dict(process_id=process_id))
-        async for record in records:
-            if not latest_record or record['date'] > latest_record['date']:
-                latest_record = record
+        latest_record = await self.get_latest_process_event(process_id)
         if not latest_record:
             raise HTTPException(status_code=404, detail="Process not found")
         elif latest_record['state'] == 'unhandled_error':
@@ -175,6 +174,16 @@ class AgentProcess:
                 state=latest_record['state'],
                 data=latest_record['data'],
             ), 200)
+
+    async def get_latest_process_event(self, process_id):
+        # todo, memory needs to include sorting
+        latest_record = None
+        memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
+        records = memory.find('processes', dict(process_id=process_id))
+        async for record in records:
+            if not latest_record or record['date'] > latest_record['date']:
+                latest_record = record
+        return latest_record
 
     def create_response_model(self, state: str):
         fields = {

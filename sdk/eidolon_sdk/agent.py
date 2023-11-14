@@ -16,17 +16,13 @@ class Agent:
     agent_memory: AgentMemory
 
     def __init__(self, agent_program: AgentProgram, agent_memory: AgentMemory):
+        self.agent_program = agent_program
         self.agent_memory = agent_memory
         self.action_handlers = {
             handler.name: handler
             for method_name in dir(self) if hasattr(getattr(self, method_name), 'eidolon_handlers')
             for handler in getattr(getattr(self, method_name), 'eidolon_handlers')
         }
-        self.agent_program = agent_program
-
-    async def base_handler(self, action: str, body: BaseModel):
-        handler = self.action_handlers[action]
-        return await handler.fn(self, **body.model_dump())
 
 
 class CodeAgent(Agent):
@@ -41,16 +37,16 @@ class EidolonHandler:
 
 
 def initializer(fn):
-    return _add_handler(fn, EidolonHandler(name='INIT', allowed_states=[], fn=fn))
+    return _add_handler(fn, EidolonHandler(name='INIT', allowed_states=['UNINITIALIZED'], fn=fn))
 
 
-def register_action(*valid_states: str, name: str = None):
-    if not valid_states:
+def register_action(*allowed_states: str, name: str = None):
+    if not allowed_states:
         raise ValueError("Must specify at least one valid state")
-    if 'terminated' in valid_states:
+    if 'terminated' in allowed_states:
         raise ValueError("Action cannot transform terminated state")
 
-    return lambda fn: _add_handler(fn, EidolonHandler(name=name or fn.__name__, allowed_states=[], fn=fn))
+    return lambda fn: _add_handler(fn, EidolonHandler(name=name or fn.__name__, allowed_states=list(allowed_states), fn=fn))
 
 
 def _add_handler(fn, handler):
