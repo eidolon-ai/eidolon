@@ -4,12 +4,17 @@ import asyncio
 import importlib
 import inspect
 import typing
+from datetime import datetime
 from typing import Optional, Annotated
 
+from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks
+from fastapi.openapi.models import Response
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
+from starlette.responses import JSONResponse
 
+from agent_memory import SymbolicMemory
 from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route
 from .agent import Agent
 from .agent_os import AgentOS
@@ -57,15 +62,12 @@ class AgentProcess:
                 status_code=202,
             )
 
-            # the endpoint to hit to retrieve the results after transitioning to the next state
-            if handler.state_representation:
-                app.add_api_route(
-                    f"/{self.agent_program.name}/{{process_id}}/{state_name}",
-                    endpoint=lambda *args, **kwargs: (asyncio.sleep(0)),
-                    # todo, hook up state retrieval once memory is implemented
-                    methods=["GET"],
-                    response_model=handler.state_representation
-                )
+        app.add_api_route(
+            f"/{self.agent_program.name}/{{process_id}}",
+            endpoint=self.getProcessInfo,
+            methods=["GET"],
+            # response_model=dict,
+        )
 
     def create_input_model(self, state_name):
         sig = inspect.signature(self.agent.handlers[state_name].fn).parameters
@@ -95,11 +97,42 @@ class AgentProcess:
         async def processStateRoute(request: Request, body: BaseModel, process_id: typing.Optional[str], background_tasks: BackgroundTasks):
             print(state)
             print(body)
+            memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
+            process_id = process_id or str(ObjectId())
+            if not process_id:
+                process_id = ObjectId()
+            memory.insert_one(
+                'processes',
+                dict(
+                    process_id=process_id,
+                    state="processing",
+                    data=dict(desired_state=state, body=body),
+                    date=str(datetime.now().isoformat()))
+            )
+            async def run_and_store_response():
+                response = await self.agent.base_handler(state=state, body=body)
+                if isinstance(response, BaseModel):
+                    response = response.model_dump()
+                memory.insert_one(
+                    'processes',
+                    dict(
+                        process_id=process_id,
+                        state=state,
+                        data=response,
+                        date=str(datetime.now().isoformat()))
+                )
+
             pid = process_id or self.agent_os.startProcess(request.headers.get('callback_url'))
-            background_tasks.add_task(self.agent.base_handler, state=state, body=body)
+            background_tasks.add_task(run_and_store_response)
             return {"process_id": pid}
 
         return processStateRoute
+
+    async def getProcessInfo(self, process_id: str):
+        memory: SymbolicMemory = self.agent_os.machine.agent_memory.symbolic_memory
+        records = memory.find('processes', dict(process_id=process_id))
+        # todo, memory needs to include sorting
+        return JSONResponse(sorted(records, key=lambda r: r['date']).pop())
 
     def create_response_model(self, state: str):
         fields = {

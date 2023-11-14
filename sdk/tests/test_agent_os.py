@@ -116,6 +116,14 @@ def test_required_param_missing():
         assert response.status_code == 422
 
 
+def test_retrieve_result():
+    with os_manager(HelloWorld):
+        pid = client.post("/helloworld", json=dict(question="hello")).json()['process_id']
+        response = client.get(f"/helloworld/{pid}")
+        assert response.status_code == 200
+        assert response.json()['data'] == dict(question="hello", answer="world")
+
+
 @pytest.mark.skip(reason="there is no way to get this error until we hook up gets now that it happens in the background")
 def test_program_error():
     with os_manager(HelloWorld):
