@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 import importlib
-import inspect
 import typing
 from datetime import datetime
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field, create_model
-from pydantic.fields import FieldInfo
-from pydantic_core.core_schema import model_schema, JsonSchema
 from starlette.responses import JSONResponse
 
 from .agent import Agent, AgentState
@@ -49,10 +46,10 @@ class AgentProcess:
         for action, handler in self.agent.action_handlers.items():
             path = f"/programs/{self.agent_program.name}"
             if action == 'INIT':
-                endpoint = create_endpoint_without_process_id(self.create_input_model(action), self.processAction(action))
+                endpoint = create_endpoint_without_process_id(self.agent.get_input_model(action), self.process_action(action))
             else:
                 path += f"/processes/{{process_id}}/actions/{action}"
-                endpoint = create_endpoint_with_process_id(self.create_input_model(action), self.processAction(action))
+                endpoint = create_endpoint_with_process_id(self.agent.get_input_model(action), self.process_action(action))
             app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.agent_program.name], responses={
                 202: {"model": AsyncStateResponse},
                 200: {'model': self.create_response_model(action)},
@@ -66,23 +63,6 @@ class AgentProcess:
             tags=[self.agent_program.name],
         )
 
-    def create_input_model(self, action):
-        sig = inspect.signature(self.agent.action_handlers[action].fn).parameters
-        hints = typing.get_type_hints(self.agent.action_handlers[action].fn, include_extras=True)
-        fields = {}
-        for param, hint in filter(lambda tu: tu[0] != 'return', hints.items()):
-            if hasattr(hint, '__metadata__') and isinstance(hint.__metadata__[0], FieldInfo):
-                field: FieldInfo = hint.__metadata__[0]
-                field.default = sig[param].default
-                fields[param] = (hint.__origin__, field)
-            else:
-                # _empty default isn't being handled by create_model properly (still optional when it should be required)
-                default = ... if getattr(sig[param].default, "__name__", None) == '_empty' else sig[param].default
-                fields[param] = (hint, default)
-
-        input_model = create_model(f'{action.capitalize()}InputModel', **fields)
-        return input_model
-
     def stop(self, app: FastAPI):
         pass
 
@@ -90,7 +70,8 @@ class AgentProcess:
         self.stop(app)
         self.start(app)
 
-    def processAction(self, action: str):
+    # todo, defining this on agents and then handling the dynamic function call will give flexibility to define request body
+    def process_action(self, action: str):
         async def processStateRoute(
                 request: Request,
                 body: BaseModel,
@@ -197,10 +178,8 @@ class AgentProcess:
 
     def create_response_model(self, action: str):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
-
         fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
-
-        return_type = typing.get_type_hints(self.agent.action_handlers[action].fn, include_extras=True).get('return', typing.Any)
+        return_type = self.agent.get_response_model(action)
         if getattr(return_type, '__origin__', None) is AgentState:
             return_type, = typing.get_args(return_type)
         fields['data'] = (return_type, Field(..., description=fields['data'][1].description))
