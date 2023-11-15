@@ -16,8 +16,7 @@ from .agent import Agent, AgentState
 from .agent_memory import SymbolicMemory
 from .agent_os import AgentOS
 from .agent_program import AgentProgram
-from .util.dynamic_endpoint import add_dynamic_route, create_endpoint_with_process_id, \
-    create_endpoint_without_process_id
+from .util.dynamic_endpoint import create_endpoint_with_process_id, create_endpoint_without_process_id
 
 
 class AsyncStateResponse(BaseModel):
@@ -54,16 +53,17 @@ class AgentProcess:
             else:
                 path += f"/processes/{{process_id}}/actions/{action}"
                 endpoint = create_endpoint_with_process_id(self.create_input_model(action), self.processAction(action))
-            app.add_api_route(path, endpoint=endpoint, methods=["POST"], responses={
+            app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.agent_program.name], responses={
                 202: {"model": AsyncStateResponse},
                 200: {'model': self.create_response_model(action)},
             })
 
         app.add_api_route(
             f"/programs/{self.agent_program.name}/processes/{{process_id}}/status",
-            endpoint=self.getProcessInfo,
+            endpoint=self.get_process_info,
             methods=["GET"],
             response_model=SyncStateResponse,
+            tags=[self.agent_program.name],
         )
 
     def create_input_model(self, action):
@@ -160,7 +160,7 @@ class AgentProcess:
 
         return processStateRoute
 
-    async def getProcessInfo(self, process_id: str):
+    async def get_process_info(self, process_id: str):
         latest_record = await self.get_latest_process_event(process_id)
         return self.doc_to_response(latest_record)
 
