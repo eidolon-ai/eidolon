@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Annotated, Type, List
+from typing import Annotated, Type, List, Literal
 
 import pytest
 from fastapi import FastAPI, HTTPException
@@ -233,6 +233,10 @@ class DocumentedBase(BaseModel):
     some_int: int
 
 
+class ExtendedStateChange(AgentState[DocumentedBase]):
+    name: Literal['scoped_name']
+
+
 class Documented(CodeAgent):
     @initializer
     async def init(self, x: int) -> dict[str, int]:
@@ -252,6 +256,14 @@ class Documented(CodeAgent):
 
     @register_action("a")
     async def param_keys(self, x: str, y: List[int], z: DocumentedBase):
+        pass
+
+    @register_action("a")
+    async def state_response(self) -> AgentState[DocumentedBase]:
+        pass
+
+    @register_action("a")
+    async def inherited_state_response(self) -> AgentState[DocumentedBase]:
         pass
 
 
@@ -281,9 +293,18 @@ class TestOpenApiDocs:
     def test_no_params(self, openapi_schema):
         assert action_request_schema(openapi_schema, 'no_types') == {'type': 'object', 'title': 'No_typesInputModel', 'properties': {}}
 
-    # todo, lets hook up the no callback headers and then check/impl this since it will change
-    # def test_response_types(self, openapi_schema):
-    #     pass
+    def test_response_types(self, openapi_schema):
+        assert action_response_schema(openapi_schema, 'no_types') == {}
+        assert action_response_schema(openapi_schema, 'dict_response') == {'type': 'object'}
+
+    def test_model_response(self, openapi_schema):
+        assert action_response_referenced_schema(openapi_schema, 'base_model_response')['required'] == ['some_int']
+
+    def test_model_with_state_change(self, openapi_schema):
+        assert action_response_referenced_schema(openapi_schema, 'state_response')['required'] == ['some_int']
+
+    def test_model_with_inherited_state_change(self, openapi_schema):
+        assert action_response_referenced_schema(openapi_schema, 'inherited_state_response')['required'] == ['some_int']
 
 
 def action_request_schema(openapi_schema, action):
@@ -295,4 +316,16 @@ def action_request_schema(openapi_schema, action):
 def action_response_schema(openapi_schema, action):
     body_ref = openapi_schema['paths'][('/programs/documented/processes/{process_id}/actions/%s' % action)]['post'][
         'responses']['200']['content']['application/json']['schema']['$ref']
-    return openapi_schema['components']['schemas'][body_ref.split("/")[-1]]
+    data_ = openapi_schema['components']['schemas'][body_ref.split("/")[-1]]['properties']['data']
+
+    # these two fields should be present, but we don't care what their value is since it is likely to change with time
+    del data_['title']
+    del data_['description']
+    return data_
+
+
+def action_response_referenced_schema(openapi_schema, action):
+    body_ref = openapi_schema['paths'][('/programs/documented/processes/{process_id}/actions/%s' % action)]['post'][
+        'responses']['200']['content']['application/json']['schema']['$ref']
+    sub_ref = openapi_schema['components']['schemas'][body_ref.split("/")[-1]]['properties']['data']['allOf'][0]['$ref']
+    return openapi_schema['components']['schemas'][sub_ref.split("/")[-1]]

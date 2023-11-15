@@ -4,24 +4,29 @@ import importlib
 import inspect
 import typing
 from datetime import datetime
-from typing import Optional
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
-from fastapi.logger import logger
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
+from pydantic_core.core_schema import model_schema, JsonSchema
 from starlette.responses import JSONResponse
 
-from agent_memory import SymbolicMemory
-from eidolon_sdk.util.dynamic_endpoint import add_dynamic_route
 from .agent import Agent, AgentState
+from .agent_memory import SymbolicMemory
 from .agent_os import AgentOS
 from .agent_program import AgentProgram
+from .util.dynamic_endpoint import add_dynamic_route
 
 
-class ProcessResponse(BaseModel):
+class AsyncStateResponse(BaseModel):
     process_id: str = Field(..., description="The ID of the conversation.")
+
+
+class SyncStateResponse(AsyncStateResponse):
+    state: str = Field(..., description="The state of the conversation.")
+    data: typing.Any = Field(..., description="The data returned by the last state change.")
+    available_actions: typing.List[str] = Field(..., description="The actions available from the current state.")
 
 
 class AgentProcess:
@@ -41,31 +46,27 @@ class AgentProcess:
 
         self.agent = impl_class(self, agent_memory=self.agent_os.machine.agent_memory)
 
-        add_dynamic_route(
-            app=app,
-            path=f"/programs/{self.agent_program.name}",
-            input_model=self.create_input_model('INIT'),
-            response_model=ProcessResponse,
-            fn=self.processAction('INIT'),
-            status_code=202,
-        )
-
-        for action, handler in filter(lambda tu: tu[0] != "INIT", self.agent.action_handlers.items()):
+        for action, handler in self.agent.action_handlers.items():
+            path = f"/programs/{self.agent_program.name}"
+            if action != 'INIT':
+                path += f"/processes/{{process_id}}/actions/{action}"
             # the endpoint to hit to process/continue the current state
             add_dynamic_route(
                 app=app,
-                path=f"/programs/{self.agent_program.name}/processes/{{process_id}}/actions/{action}",
+                path=path,
                 input_model=self.create_input_model(action),
-                response_model=ProcessResponse,
                 fn=self.processAction(action),
-                status_code=202,
+                responses={
+                    202: {"model": AsyncStateResponse},
+                    200: {'model': self.create_response_model(action)},
+                }
             )
 
         app.add_api_route(
             f"/programs/{self.agent_program.name}/processes/{{process_id}}/status",
             endpoint=self.getProcessInfo,
             methods=["GET"],
-            # response_model=dict,
+            response_model=SyncStateResponse,
         )
 
     def create_input_model(self, action):
@@ -155,10 +156,10 @@ class AgentProcess:
 
             if execution_mode == 'sync':
                 state = await run_and_store_response()
-                return self.doc_to_response(state, success_status_code=200)
+                return self.doc_to_response(state)
             else:
                 background_tasks.add_task(run_and_store_response)
-                return self.doc_to_response(state, success_status_code=202)
+                return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
 
         return processStateRoute
 
@@ -166,8 +167,7 @@ class AgentProcess:
         latest_record = await self.get_latest_process_event(process_id)
         return self.doc_to_response(latest_record)
 
-    @staticmethod
-    def doc_to_response(latest_record: dict, success_status_code=200):
+    def doc_to_response(self, latest_record: dict):
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
         elif latest_record['state'] == 'unhandled_error':
@@ -179,11 +179,14 @@ class AgentProcess:
                 del latest_record['_id']
             except KeyError:
                 pass
-            return JSONResponse(dict(
+            return JSONResponse(SyncStateResponse(
                 process_id=latest_record['process_id'],
                 state=latest_record['state'],
                 data=latest_record['data'],
-            ), success_status_code)
+                available_actions=[
+                    action for action, handler in self.agent.action_handlers.items() if latest_record['state'] in handler.allowed_states
+                ],
+            ).model_dump(), 200)
 
     async def get_latest_process_event(self, process_id):
         # todo, memory needs to include sorting
@@ -195,12 +198,14 @@ class AgentProcess:
                 latest_record = record
         return latest_record
 
-    def create_response_model(self, state: str):
-        fields = {
-            "conversation_id": (str, Field(..., description="The ID of the conversation.")),
-        }
-        for t_name, t_model in self.agent_program.states[state].transitions_to_models.items():
-            fields[t_name] = (
-            Optional[t_model], Field(default=None, description="The answer for {t_name} transition state."))
+    def create_response_model(self, action: str):
+        # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
 
-        return create_model(f'{state.capitalize()}ResponseModel', **fields)
+        fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
+
+        return_type = typing.get_type_hints(self.agent.action_handlers[action].fn, include_extras=True).get('return', typing.Any)
+        if getattr(return_type, '__origin__', None) is AgentState:
+            return_type, = typing.get_args(return_type)
+        fields['data'] = (return_type, Field(..., description=fields['data'][1].description))
+
+        return create_model(f'{action.capitalize()}ResponseModel', **fields)

@@ -64,6 +64,6 @@ def _add_handler(fn, handler):
 T = TypeVar('T')
 
 
-class AgentState(BaseModel, Generic[T]):
+class AgentState(Generic[T], BaseModel):
     name: str
     data: T
