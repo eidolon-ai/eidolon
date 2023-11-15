@@ -7,6 +7,8 @@ _DB = {}
 
 
 class LocalSymbolicMemory(SymbolicMemory):
+    implementation: str = "local_symbolic_memory"
+
     def start(self):
         _DB = {}
 

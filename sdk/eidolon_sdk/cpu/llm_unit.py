@@ -69,11 +69,12 @@ class OpenAIGPT(LLMUnit):
                 )
 
                 bus_event = BusEvent(
+                    bus.current_event.process_id,
                     bus.current_event.thread_id,
                     "llm_response", {
-                    "usage": CompletionUsage.model_validate(response.usage),
-                    "message": AssistantMessage.model_validate(response.choices[0].message)
-                })
+                        "usage": CompletionUsage.model_validate(response.usage),
+                        "message": AssistantMessage.model_validate(response.choices[0].message)
+                    })
                 self.request_write(bus_event)
             except APIConnectionError as e:
                 print("The server could not be reached")

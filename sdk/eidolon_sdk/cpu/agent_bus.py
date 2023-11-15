@@ -1,17 +1,19 @@
 import asyncio
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any, List
 
 
+@dataclass
 class BusEvent:
-    def __init__(self, thread_id: int, event_type: str, event_data: dict[str, Any]):
-        self.thread_id = thread_id
-        self.event_type = event_type
-        self.event_data = event_data
+    process_id: str
+    thread_id: int
+    event_type: str
+    event_data: dict[str, Any]
 
 
 class Bus:
-    current_event: BusEvent
+    current_event: BusEvent = None
 
 
 class BusParticipant(ABC):
@@ -27,18 +29,22 @@ class BusParticipant(ABC):
 
 class BusController:
     def __init__(self):
-        self.stop = False
+        self.in_event_loop = False
+        self.is_stopped = True
         self.bus = Bus()
         self.participants = []
         self.access_queue: List[(BusParticipant, BusEvent)] = []
         self.lock = asyncio.Event()
 
     async def start(self):
-        asyncio.create_task(self.event_loop())
+        if self.is_stopped:
+            self.is_stopped = False
+            asyncio.create_task(self.event_loop())
 
     def stop(self):
-        self.stop = True
-        self.lock.set()
+        if not self.is_stopped:
+            self.is_stopped = True
+            self.lock.set()
 
     def add_participant(self, participant: BusParticipant):
         self.participants.append(participant)
@@ -52,14 +58,22 @@ class BusController:
         self.access_queue.append((participant, event))
         self.lock.set()
 
-    async def event_loop(self):
-        while not self.stop:
-            self.lock.clear()
-            while len(self.access_queue) > 0:
-                _, event = self.access_queue.pop(0)
-                self.bus.current_event = event
-                # then we allow all participants to read from the bus. This will allow any participant to read from the bus and execute their logic
-                for participant in self.participants:
+    async def _process_one_event(self, should_run_async: bool = True):
+        while not self.is_stopped and len(self.access_queue) > 0:
+            _, event = self.access_queue.pop(0)
+            self.bus.current_event = event
+            # then we allow all participants to read from the bus. This will allow any participant to read from the bus and execute their logic
+            for participant in self.participants:
+                if should_run_async:
                     asyncio.create_task(participant.bus_read(self.bus))
-            self.bus.current_event = None
+                else:
+                    await participant.bus_read(self.bus)
+        self.bus.current_event = None
+
+    async def event_loop(self):
+        self.in_event_loop = True
+        while not self.is_stopped:
+            self.lock.clear()
+            await self._process_one_event()
             await self.lock.wait()
+        self.in_event_loop = True

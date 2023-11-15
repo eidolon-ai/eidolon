@@ -3,8 +3,10 @@ from typing import Any, Union, List
 from jinja2 import Environment
 from pydantic import BaseModel
 
+from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.cpu.agent_bus import BusController, BusEvent, BusParticipant, Bus
 from eidolon_sdk.cpu.llm_message import UserMessage, SystemMessage, UserMessageText, UserMessageImageURL
+from eidolon_sdk.cpu.memory_unit import MemoryUnit, ConversationalMemoryUnit
 
 
 class CPUMessage(BaseModel):
@@ -27,11 +29,14 @@ class ImageURLCPUMessage(CPUMessage):
 class IOUnit(BusParticipant):
     env = Environment()
 
+    def __init__(self, agent_machine: AgentMachine):
+        self.agent_machine = agent_machine
+
     async def bus_read(self, bus: Bus):
         # todo: process response
         pass
 
-    def process_request(self, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: dict[str, Any]):
+    def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: dict[str, Any]):
         # convert the prompts to a list of strings
         event_prompts = []
         user_message_parts = []
@@ -49,12 +54,18 @@ class IOUnit(BusParticipant):
         if len(user_message_parts) > 0:
             event_prompts.append(UserMessage(content=user_message_parts))
 
-        self.request_write(BusEvent(0, "input_request", {"messages": event_prompts}))
+        self.request_write(BusEvent(process_id, 0, "input_request", {"messages": event_prompts}))
 
 
 class AgentCPU:
     bus_controller: BusController = BusController()
-    io_unit: IOUnit = IOUnit()
+    io_unit: IOUnit
+    memory_unit: MemoryUnit
 
-    def schedule_request(self, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: dict[str, Any]):
-        self.io_unit.process_request(prompts, input_data)
+    def __init__(self, agent_machine: AgentMachine):
+        self.agent_machine = agent_machine
+        self.io_unit = IOUnit(agent_machine)
+        self.memory_unit = ConversationalMemoryUnit(agent_machine)
+
+    def schedule_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: dict[str, Any]):
+        self.io_unit.process_request(process_id, prompts, input_data)

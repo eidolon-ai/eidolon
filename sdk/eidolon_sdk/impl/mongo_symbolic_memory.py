@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional, Iterable, AsyncIterable
+from typing import Any, Optional, AsyncIterable
 
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field
