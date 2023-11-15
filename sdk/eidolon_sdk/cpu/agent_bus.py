@@ -1,6 +1,6 @@
 import asyncio
 from abc import ABC, abstractmethod
-from typing import Any, Callable, List
+from typing import Any, List
 
 
 class BusEvent:
@@ -56,9 +56,8 @@ class BusController:
         while not self.stop:
             self.lock.clear()
             while len(self.access_queue) > 0:
-                # first thing we do is allow the first participant in the queue to write to the bus
-                self.access_queue[0].write_fn(self.bus)
-                self.access_queue.pop(0)
+                _, event = self.access_queue.pop(0)
+                self.bus.current_event = event
                 # then we allow all participants to read from the bus. This will allow any participant to read from the bus and execute their logic
                 for participant in self.participants:
                     asyncio.create_task(participant.bus_read(self.bus))
