@@ -1,7 +1,16 @@
 from typing import Type, Callable
 
-from fastapi import Body, FastAPI, Request, BackgroundTasks
+from fastapi import Body, Request, BackgroundTasks
 from pydantic import BaseModel
+
+"""
+This file exists to create dynamic endpoints for the FastAPI server. We need this to properly hook up the body / 
+parameter descriptions. The two methods correspond to the initialization and action endpoints since init does not take
+a process id, but actions do. If we can do this explicitly without wrappers, that would be ideal since we will need to 
+hand this off to the agent definers to support anything other than JSON bodies. 
+"""
+
+# todo, look into forge library to solve this problem: https://stackoverflow.com/questions/1409295/set-function-signature-in-python/50533832#50533832
 
 
 def create_endpoint_with_process_id(model: Type[BaseModel], fn: Callable):
@@ -35,8 +44,3 @@ def create_endpoint_without_process_id(model: Type[BaseModel], fn: Callable):
             background_tasks=background_tasks,
         )
     return dynamic_endpoint
-
-
-def add_dynamic_route(add_proccess_param, app: FastAPI, path: str, input_model: Type[BaseModel], fn: Callable, **kwargs):
-    endpoint = create_endpoint_with_process_id(input_model, fn)
-    app.add_api_route(path, endpoint=endpoint, methods=["POST"], **kwargs)
