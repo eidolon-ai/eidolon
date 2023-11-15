@@ -30,17 +30,18 @@ class ConversationalMemoryUnit(MemoryUnit):
                 "thread_id": bus.current_event.thread_id
             }):
                 existingMessages.append(message["message"])
-            newMessage = ConversationMemoryItem(process_id=bus.current_event.process_id, thread_id=bus.current_event.thread_id,
-                                                message=bus.current_event.event_data["message"])
-            print(bus.current_event.event_data["message"])
-            print(newMessage.model_dump())
-            await self.agent_machine.agent_memory.insert_one("conversation_memory", newMessage.model_dump())
-            existingMessages.append(newMessage.message)
+
+            for message in bus.current_event.event_data["messages"]:
+                newMessage = ConversationMemoryItem(process_id=bus.current_event.process_id, thread_id=bus.current_event.thread_id, message=message)
+                await self.agent_machine.agent_memory.insert_one("conversation_memory", newMessage.model_dump())
+                existingMessages.append(newMessage.message)
+
             self.request_write(BusEvent(
                 bus.current_event.process_id,
                 bus.current_event.thread_id,
                 "llm_event", {
-                    "messages": existingMessages
+                    "messages": existingMessages,
+                    "output_format": bus.current_event.event_data["output_format"]
                 }
             ))
         elif bus.current_event.event_type == "llm_response":

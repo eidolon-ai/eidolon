@@ -11,7 +11,7 @@ class LLMMessage(BaseModel):
 # Derived SystemMessage class
 class SystemMessage(LLMMessage):
     content: str
-    role: str = "system"
+    type: str = "system"
 
 
 # Base class for message content parts
@@ -33,7 +33,7 @@ class UserMessageImageURL(UserMessageContentPart):
 # Derived UserMessage class
 class UserMessage(LLMMessage):
     content: List[UserMessageContentPart]
-    role: str = "user"
+    type: str = "user"
 
 
 # ToolCall class
@@ -45,11 +45,11 @@ class ToolCall(BaseModel):
 # Derived AssistantMessage class
 class AssistantMessage(LLMMessage):
     content: str
-    role: str = "assistant"
+    type: str = "assistant"
     tool_calls: List[ToolCall]
 
 
 # Derived ToolCallMessage class
 class ToolCallMessage(LLMMessage):
     tool_calls: List[ToolCall]
-    role: str = "tool"
+    type: str = "tool"

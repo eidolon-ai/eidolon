@@ -1,6 +1,7 @@
 from abc import ABC
 
 from openai import AsyncOpenAI, RateLimitError, APIStatusError, APIConnectionError
+from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import BaseModel
 
 from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent
@@ -60,12 +61,19 @@ class OpenAIGPT(LLMUnit):
     async def bus_read(self, bus):
         if bus.current_event.event_type == "llm_event":
             messages = [convert_to_openai(message) for message in bus.current_event.event_data["messages"]]
+            output_format = bus.current_event.event_data["output_format"]
+            # add a message to the LLM for the output format which is already in json schema format
+            messages.append({
+                "role": "user",
+                "content": f"The output MUST be valid json and the schema for the response message is {output_format}"
+            })
             # This event is a request to query the LLM
             try:
                 response = await self.llm.chat.completions.create(
                     messages=messages,
                     model=self.model,
-                    temperature=self.temperature
+                    temperature=self.temperature,
+                    response_format=ResponseFormat(type="json_object")
                 )
 
                 bus_event = BusEvent(
