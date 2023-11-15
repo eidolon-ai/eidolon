@@ -306,6 +306,19 @@ class TestOpenApiDocs:
     def test_model_with_inherited_state_change(self, openapi_schema):
         assert action_response_referenced_schema(openapi_schema, 'inherited_state_response')['required'] == ['some_int']
 
+    def test_root_does_not_have_process_id_param_arg(self, openapi_schema):
+        assert 'parameters' not in openapi_schema['paths']['/programs/documented']['post']
+
+    def test_actions_do_have_process_id_param_arg(self, openapi_schema):
+        assert openapi_schema['paths']['/programs/documented/processes/{process_id}/actions/no_types']['post']['parameters'] == [
+            {'name': 'process_id', 'in': 'path', 'required': True, 'schema': {'type': 'string', 'title': 'Process Id'}}
+        ]
+
+    def test_get_status_endpoint_does_have_process_id_param_arg(self, openapi_schema):
+        assert openapi_schema['paths']['/programs/documented/processes/{process_id}/status']['get']['parameters'] == [
+            {'name': 'process_id', 'in': 'path', 'required': True, 'schema': {'type': 'string', 'title': 'Process Id'}}
+        ]
+
 
 def action_request_schema(openapi_schema, action):
     body_ref = openapi_schema['paths'][('/programs/documented/processes/{process_id}/actions/%s' % action)]['post'][
