@@ -11,4 +11,5 @@ agent_memory:
 agent_programs:
   - name: "ExampleAgentProgram"
     implementation: "examples.hello_world.HelloWorld.HelloWorld"
-    initial_state: "idle"
+  - name: "StateMachine"
+    implementation: "examples.hello_world.StateMachine.StateMachine"
