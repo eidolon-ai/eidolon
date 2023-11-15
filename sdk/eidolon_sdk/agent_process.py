@@ -16,7 +16,8 @@ from .agent import Agent, AgentState
 from .agent_memory import SymbolicMemory
 from .agent_os import AgentOS
 from .agent_program import AgentProgram
-from .util.dynamic_endpoint import add_dynamic_route
+from .util.dynamic_endpoint import add_dynamic_route, create_endpoint_with_process_id, \
+    create_endpoint_without_process_id
 
 
 class AsyncStateResponse(BaseModel):
@@ -48,19 +49,15 @@ class AgentProcess:
 
         for action, handler in self.agent.action_handlers.items():
             path = f"/programs/{self.agent_program.name}"
-            if action != 'INIT':
+            if action == 'INIT':
+                endpoint = create_endpoint_without_process_id(self.create_input_model(action), self.processAction(action))
+            else:
                 path += f"/processes/{{process_id}}/actions/{action}"
-            # the endpoint to hit to process/continue the current state
-            add_dynamic_route(
-                app=app,
-                path=path,
-                input_model=self.create_input_model(action),
-                fn=self.processAction(action),
-                responses={
-                    202: {"model": AsyncStateResponse},
-                    200: {'model': self.create_response_model(action)},
-                }
-            )
+                endpoint = create_endpoint_with_process_id(self.create_input_model(action), self.processAction(action))
+            app.add_api_route(path, endpoint=endpoint, methods=["POST"], responses={
+                202: {"model": AsyncStateResponse},
+                200: {'model': self.create_response_model(action)},
+            })
 
         app.add_api_route(
             f"/programs/{self.agent_program.name}/processes/{{process_id}}/status",
