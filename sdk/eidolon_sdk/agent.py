@@ -20,13 +20,11 @@ class ProcessContext(BaseModel):
 
 
 class Agent:
-    agent_program: AgentProgram
     action_handlers: Dict[str, EidolonHandler]
     agent_memory: AgentMemory
     process_context: contextvars.ContextVar
 
-    def __init__(self, agent_program: AgentProgram, agent_machine: AgentMachine):
-        self.agent_program = agent_program
+    def __init__(self, agent_machine: AgentMachine):
         self.agent_memory = agent_machine.agent_memory
         self.agent_machine = agent_machine
         self.action_handlers = {
@@ -61,10 +59,6 @@ class Agent:
 
 
 class CodeAgent(Agent):
-    pass
-
-
-class CPUAgent(Agent):
     pass
 
 

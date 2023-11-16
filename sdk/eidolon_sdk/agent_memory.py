@@ -9,9 +9,7 @@ from eidolon_sdk.util.str_utils import replace_env_var_in_string
 
 
 # todo, memory contracts all need to be async
-class FileMemory(BaseModel, ABC):
-    implementation: str
-
+class FileMemory(ABC):
     """
     Abstract base class representing the file memory interface for an agent.
 
@@ -62,9 +60,7 @@ class FileMemory(BaseModel, ABC):
         pass
 
 
-class SymbolicMemory(BaseModel, ABC):
-    implementation: str
-
+class SymbolicMemory(ABC):
     """
     Abstract base class for a symbolic memory component within an agent.
 
@@ -163,9 +159,7 @@ class SymbolicMemory(BaseModel, ABC):
         pass
 
 
-class SimilarityMemory(BaseModel, ABC):
-    implementation: str
-
+class SimilarityMemory(ABC):
     @abstractmethod
     def start(self):
         pass

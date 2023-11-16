@@ -1,10 +1,12 @@
 agent_memory:
   file_memory:
     implementation: "eidolon_sdk.impl.local_file_memory.LocalFileMemory"
-    root_dir: "/tmp/hello_world"
+    spec:
+      root_dir: "/tmp/hello_world"
   symbolic_memory:
     implementation: "eidolon_sdk.impl.mongo_symbolic_memory.MongoSymbolicMemory"
-    mongo_database_name: "eidolon"
+    spec:
+      mongo_database_name: "eidolon"
   similarity_memory:
     implementation: "eidolon_sdk.impl.noop_memory.NoopSimilarityMemory"
 

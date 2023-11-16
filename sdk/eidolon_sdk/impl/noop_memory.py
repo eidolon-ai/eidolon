@@ -20,7 +20,6 @@ class NoopFileMemory(FileMemory):
 
 
 class NoopSymbolicMemory(SymbolicMemory):
-
     def start(self):
         pass
 

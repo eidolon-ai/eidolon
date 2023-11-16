@@ -19,7 +19,7 @@ class ReferenceMeta(type):
         class GenericReference(BaseModel):
             _sub_class: typing.Type = key
             implementation: str
-            spec: dict = {}
+            spec: dict = None
 
             @model_validator(mode='after')
             def _validate(self):
@@ -28,13 +28,18 @@ class ReferenceMeta(type):
 
             def build_reference_spec(self):
                 if issubclass(self._sub_class, Specable):
-                    bases = getattr(for_name(self.implementation, self._sub_class), '__orig_bases__', None)
+                    reference_class = self.get_reference_class()
+                    bases = getattr(reference_class, '__orig_bases__', None)
                     if not bases:
-                        raise ValueError(f"Unable to find config object")
+                        raise ValueError(f"Unable to find {reference_class} config object")
+                    # todo, add the right check here. Should grab the base which is a Specable, and then get the type
                     spec_type, = bases[0].__args__
                     return spec_type.model_validate(self.spec)
                 else:
                     return self.spec
+
+            def get_reference_class(self):
+                return for_name(self.implementation, self._sub_class)
 
         return GenericReference
 
@@ -43,4 +48,7 @@ class Reference(metaclass=ReferenceMeta):
     pass
 
     def build_reference_spec(self):
+        pass
+
+    def get_reference_class(self) -> typing.Type:
         pass

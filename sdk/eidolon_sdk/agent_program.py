@@ -1,79 +1,177 @@
-import importlib
+from __future__ import annotations
 
-from pydantic import BaseModel, Field, ValidationError, field_validator
+import inspect
+import typing
+from datetime import datetime
 
-from .agent_cpu import AgentCPU
+from bson import ObjectId
+from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
+from pydantic import BaseModel, Field, create_model
+from starlette.responses import JSONResponse
+
+from .agent import Agent, AgentState, ProcessContext
+from .agent_memory import SymbolicMemory
+from .cpu.agent_cpu import AgentCPU
+from .util.dynamic_endpoint import create_endpoint_with_process_id, create_endpoint_without_process_id
+
+
+class AsyncStateResponse(BaseModel):
+    process_id: str = Field(..., description="The ID of the conversation.")
+
+
+class SyncStateResponse(AsyncStateResponse):
+    state: str = Field(..., description="The state of the conversation.")
+    data: typing.Any = Field(..., description="The data returned by the last state change.")
+    available_actions: typing.List[str] = Field(..., description="The actions available from the current state.")
 
 
 class AgentProgram(BaseModel):
-    """
-    The `AgentProgram` class represents a program within the agent framework. It serves as a configuration object
-    for setting up the program's properties and linking it to a specific Agent CPU. It defines the program's behavior,
-    states, and the initial state that the program should be in when it starts.
-
-    Attributes:
-        name (str): The name of the program. This is a unique identifier that will also be used as the endpoint name
-                    for the program's interface.
-        agent_cpu (AgentCPU, optional): An instance of `AgentCPU` that this program will use to execute its instructions.
-                                        If not provided, it will default to `None`.
-        implementation (str): The Fully Qualified Name (FQN) of the agent class that implements the program logic.
-        initial_state (str): The name of the initial state of the program upon startup.
-
-    The `AgentProgram` class requires that you provide the `name`, `implementation`, and `initial_state` upon creation.
-    The `agent_cpu` and `states` are optional and can be set after initialization.
-    """
     name: str = Field(description="The name of the program. Will be used as the endpoint name.")
     agent_cpu: AgentCPU = Field(default=None, description="The Agent CPU to use.")
-    implementation: str = Field(description="The FQN of agent class.")
+    agent: Agent = Field(description="The FQN of agent class.")
 
-    @classmethod
-    @field_validator('implementation', mode="before")
-    def validate_agent_cpu(cls, v, values):
-        """
-        Validates the 'agent_cpu' field of the AgentProgram class. This method ensures that the specified 'agent_cpu'
-        is appropriate for the given 'implementation' of the agent. If the 'implementation' is a subclass of `CodeAgent`,
-        the 'agent_cpu' field is optional. Otherwise, it is required.
+    def start(self, app: FastAPI):
+        # First create the Agent implementation
+        for action, handler in self.agent.action_handlers.items():
+            path = f"/programs/{self.name}"
+            if action == 'INIT':
+                endpoint = create_endpoint_without_process_id(self.agent.get_input_model(action), self.process_action(action))
+            else:
+                path += f"/processes/{{process_id}}/actions/{action}"
+                endpoint = create_endpoint_with_process_id(self.agent.get_input_model(action), self.process_action(action))
+            app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
+                202: {"model": AsyncStateResponse},
+                200: {'model': self.create_response_model(action)},
+            })
 
-        This is a class method decorated with `field_validator` which checks the 'agent_cpu' field before other validations.
+        app.add_api_route(
+            f"/programs/{self.name}/processes/{{process_id}}/status",
+            endpoint=self.get_process_info,
+            methods=["GET"],
+            response_model=SyncStateResponse,
+            tags=[self.name],
+        )
 
-        Parameters:
-            v: The value of 'agent_cpu' to be validated.
-            values (dict): A dictionary containing all the fields of the AgentProgram instance.
+    def stop(self, app: FastAPI):
+        pass
 
-        Raises:
-            ValidationError: If 'implementation' cannot be imported or is not provided, or if 'agent_cpu' is required
-                             but not provided for non-CodeAgent implementations.
+    def restart(self, app: FastAPI):
+        self.stop(app)
+        self.start(app)
 
-        Returns:
-            The validated 'agent_cpu' if the validation is successful.
+    # todo, defining this on agents and then handling the dynamic function call will give flexibility to define request body
+    def process_action(self, action: str):
+        async def processStateRoute(
+                request: Request,
+                body: BaseModel,
+                process_id: typing.Optional[str],
+                background_tasks: BackgroundTasks,
+        ):
+            print(action)
+            print(body)
+            memory: SymbolicMemory = self.agent.agent_memory.symbolic_memory
+            callback = request.headers.get('callback-url')
+            execution_mode = request.headers.get('execution-mode', 'async' if callback else 'sync').lower()
 
-        This method uses dynamic importing based on the 'implementation' field to fetch the agent class and then determines
-        the necessity of 'agent_cpu' based on whether the agent class is a subclass of `CodeAgent`.
+            if not process_id:
+                process_id = str(ObjectId())
+                state = 'UNINITIALIZED'
+            else:
+                found = await self.get_latest_process_event(process_id)
+                if not found:
+                    raise HTTPException(status_code=404, detail="Process not found")
+                state = found['state']
 
-        Note:
-            This method should be considered as part of the internal API of the AgentProgram class and should not be
-            invoked directly in normal usage.
-        """
+            handler = self.agent.action_handlers[action]
+            if state not in handler.allowed_states:
+                raise HTTPException(status_code=409, detail=f"Action \"{action}\" cannot process state \"{state}\"")
 
-        # Dynamically import the class from the implementation field
-        implementation_fqn = v.get('implementation')
-        if implementation_fqn:
-            module_name, class_name = implementation_fqn.rsplit(".", 1)
-            try:
-                module = importlib.import_module(module_name)
-                impl_class = getattr(module, class_name)
-            except (ImportError, AttributeError):
-                raise ValidationError(f"Unable to import {implementation_fqn}")
+            state = dict(process_id=process_id, state="processing", data=dict(action=action, body=body.model_dump()),
+                         date=str(datetime.now().isoformat()))
+            await memory.insert_one('processes', state)
 
-            from .agent import CodeAgent
-            # Check if the class is a subclass of CodeAgent
-            if issubclass(impl_class, CodeAgent):
-                return v  # agent_cpu is optional for CodeAgent
+            async def run_and_store_response():
+                try:
+                    response = await handler.fn(self.agent, **body.model_dump())
+                    if isinstance(response, AgentState):
+                        state = response.name
+                        data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data
+                    else:
+                        state = 'terminated'
+                        data = response.model_dump() if isinstance(response, BaseModel) else response
+                    doc = dict(process_id=process_id, state=state, data=data, date=str(datetime.now().isoformat()))
+                except HTTPException as e:
+                    doc = dict(
+                        process_id=process_id,
+                        state="http_error",
+                        data=dict(detail=e.detail, status_code=e.status_code),
+                        date=str(datetime.now().isoformat())
+                    )
+                    print(e)
+                except Exception as e:
+                    doc = dict(
+                        process_id=process_id,
+                        state="unhandled_error",
+                        data=dict(error=str(e)),
+                        date=str(datetime.now().isoformat())
+                    )
+                    print(e)
+                await memory.insert_one('processes', doc)
+                if callback:
+                    raise Exception("Not implemented")
+                return doc
 
-            # If not a CodeAgent, and agent_cpu is not provided, raise an error
-            if not v:
-                raise ValueError('agent_cpu is required for non-CodeAgent implementations')
+            self.agent.process_context.set(ProcessContext(process_id=process_id, callback_url=callback))
+            if execution_mode == 'sync':
+                state = await run_and_store_response()
+                return self.doc_to_response(state)
+            else:
+                background_tasks.add_task(run_and_store_response)
+                return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
+
+        return processStateRoute
+
+    async def get_process_info(self, process_id: str):
+        latest_record = await self.get_latest_process_event(process_id)
+        return self.doc_to_response(latest_record)
+
+    def doc_to_response(self, latest_record: dict):
+        if not latest_record:
+            return JSONResponse(dict(detail="Process not found"), 404)
+        elif latest_record['state'] == 'unhandled_error':
+            return JSONResponse(latest_record['data'], 500)
+        elif latest_record['state'] == 'http_error':
+            return JSONResponse(dict(detail=latest_record['data']['detail']), latest_record['data']['status_code'])
         else:
-            raise ValidationError("implementation is required")
+            try:
+                del latest_record['_id']
+            except KeyError:
+                pass
+            return JSONResponse(SyncStateResponse(
+                process_id=latest_record['process_id'],
+                state=latest_record['state'],
+                data=latest_record['data'],
+                available_actions=[
+                    action for action, handler in self.agent.action_handlers.items() if latest_record['state'] in handler.allowed_states
+                ],
+            ).model_dump(), 200)
 
-        return v
+    async def get_latest_process_event(self, process_id):
+        # todo, memory needs to include sorting
+        latest_record = None
+        memory: SymbolicMemory = self.agent.agent_memory.symbolic_memory
+        records = memory.find('processes', dict(process_id=process_id))
+        async for record in records:
+            if not latest_record or record['date'] > latest_record['date']:
+                latest_record = record
+        return latest_record
+
+    def create_response_model(self, action: str):
+        # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
+        fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
+        return_type = self.agent.get_response_model(action)
+        if inspect.isclass(return_type) and issubclass(return_type, AgentState):
+            return_type = return_type.model_fields['data'].annotation
+        fields['data'] = (return_type, Field(..., description=fields['data'][1].description))
+
+        return create_model(f'{action.capitalize()}ResponseModel', **fields)

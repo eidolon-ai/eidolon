@@ -4,7 +4,7 @@ from typing import List
 
 from pydantic import Field, BaseModel
 
-from .agent import CPUAgent
+from .agent import Agent
 from .agent_memory import FileMemory, SymbolicMemory, SimilarityMemory
 from .cpu_model import CpuModel
 from .reference_model import Reference
@@ -17,7 +17,7 @@ class MachineModel(BaseModel):
 
 class Program(BaseModel):
     name: str = Field(description="The name of the program.")
-    agent: Reference[CPUAgent] = Field(description="The Agent implementation to use.")
+    agent: Reference[Agent] = Field(description="The Agent implementation to use.")
     cpu: CpuModel = CpuModel()
 
 

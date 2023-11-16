@@ -1,30 +1,19 @@
 from pathlib import Path
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, BaseModel
 
 from eidolon_sdk.agent_memory import FileMemory
+from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.util.str_utils import replace_env_var_in_string
 
 
-class LocalFileMemory(FileMemory):
-    """
-    A FileMemory implementation that stores files on the local filesystem.
-    """
-    root_dir: Path = Field(..., description="The root directory to store files in.")
+class LocalFileMemoryConfig(BaseModel):
+    root_dir: str = Field(..., description="The root directory to store files in.")
 
     @field_validator('root_dir', mode='before')
     def validate_root_dir(cls, inValue: str):
         """
         Validates that the provided root directory is an absolute path and exists.
-
-        Args:
-            inValue (str): The root directory path to validate.
-
-        Returns:
-            Path: The validated root directory as a Path object.
-
-        Raises:
-            ValueError: If the root directory is not an absolute path or does not exist.
         """
         value = replace_env_var_in_string(inValue)
         # Convert the string to a Path object
@@ -34,14 +23,22 @@ class LocalFileMemory(FileMemory):
         if not path.is_absolute():
             raise ValueError(f"The root_dir must be an absolute path. Received: {inValue}->{value}")
 
-        if not path.exists():
-            path.mkdir(parents=True)
-
         # You could also check if path exists and is a directory if necessary
-        if not path.exists() or not path.is_dir():
-            raise ValueError(f"The root_dir must exist and be a directory. Received: {inValue}->{value}")
+        if not path.is_dir():
+            raise ValueError(f"The root_dir be a directory. Received: {inValue}->{value}")
 
-        return path
+        return inValue
+
+
+class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
+    def __init__(self, spec: LocalFileMemoryConfig):
+        super().__init__()
+        self.root_dir = Path(spec.root_dir).resolve()
+
+    """
+    A FileMemory implementation that stores files on the local filesystem.
+    """
+    root_dir: Path = Field(..., description="The root directory to store files in.")
 
     def resolve(self, *paths):
         """
@@ -104,7 +101,8 @@ class LocalFileMemory(FileMemory):
         """
         Starts the memory implementation. Noop for this implementation.
         """
-        pass
+        if not self.path.exists():
+            self.path.mkdir(parents=True)
 
     def stop(self):
         """

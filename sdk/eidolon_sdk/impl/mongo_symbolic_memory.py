@@ -5,17 +5,22 @@ from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field
 
 from eidolon_sdk.agent_memory import SymbolicMemory
+from eidolon_sdk.reference_model import Specable
 
 
-class MongoSymbolicMemory(SymbolicMemory):
+class MongoSymbolicMemoryConfig:
     mongo_connection_string: Optional[str] = Field(default=None, description="The connection string to the MongoDB instance.")
     mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
-    implementation: str = "eidolon_sdk.impl.mongo_symbolic_memory.MongoSymbolicMemory"
 
-    class Config:
-        arbitrary_types_allowed = True
 
+class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
+    mongo_connection_string: Optional[str] = Field(default=None, description="The connection string to the MongoDB instance.")
+    mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
     database: AsyncIOMotorDatabase = None
+
+    def __init__(self, spec: MongoSymbolicMemoryConfig):
+        self.mongo_connection_string = spec.mongo_connection_string
+        self.mongo_database_name = spec.mongo_database_name
 
     def find(self, symbol_collection: str, query: dict[str, Any]) -> AsyncIterable[dict[str, Any]]:
         return self.database[symbol_collection].find(query)
