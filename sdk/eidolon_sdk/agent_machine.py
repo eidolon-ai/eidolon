@@ -1,17 +1,9 @@
 from typing import List
 
 import yaml
-from pydantic import Field, BaseModel
-
-from .agent_io import AgentIO
 from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
 from .machine_model import MachineModel
-
-base_class_dict = {
-    "agent_memory": AgentMemory,
-    "agent_io": AgentIO,
-}
 
 
 class AgentMachine:
