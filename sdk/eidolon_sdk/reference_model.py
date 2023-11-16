@@ -69,7 +69,12 @@ class Reference(metaclass=ReferenceMeta):
     Can be use in conjunction with Specable to validate the spec provided to the reference.
 
     References are expected to accept a spec kwarg in __init__
+
+    Note:   This class and the implementation below are just syntactic sugar.
+            See GenericReference in the metaclass for the actual implementation.
     """
+    implementation: str
+    spec: dict = None
 
     def build_reference_spec(self):
         pass
