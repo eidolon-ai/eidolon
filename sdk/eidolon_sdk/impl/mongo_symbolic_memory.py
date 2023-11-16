@@ -2,13 +2,13 @@ import os
 from typing import Any, Optional, AsyncIterable
 
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
-from pydantic import Field
+from pydantic import Field, BaseModel
 
 from eidolon_sdk.agent_memory import SymbolicMemory
 from eidolon_sdk.reference_model import Specable
 
 
-class MongoSymbolicMemoryConfig:
+class MongoSymbolicMemoryConfig(BaseModel):
     mongo_connection_string: Optional[str] = Field(default=None, description="The connection string to the MongoDB instance.")
     mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
 

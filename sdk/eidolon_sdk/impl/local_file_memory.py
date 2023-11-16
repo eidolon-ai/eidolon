@@ -101,8 +101,8 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         """
         Starts the memory implementation. Noop for this implementation.
         """
-        if not self.path.exists():
-            self.path.mkdir(parents=True)
+        if not self.root_dir.exists():
+            self.root_dir.mkdir(parents=True)
 
     def stop(self):
         """

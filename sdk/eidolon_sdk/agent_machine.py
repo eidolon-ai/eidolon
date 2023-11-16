@@ -37,13 +37,12 @@ class YamlAgentMachine(AgentMachine):
                 description.
         """
 
-        machine_descriptor = yaml.safe_load(machine_description)
-        model = MachineModel(**machine_descriptor)
+        model = MachineModel(**(yaml.safe_load(machine_description)))
         super().__init__(
             agent_memory=AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()}),
             agent_programs=[AgentProgram(
                 name=program.name,
-                agent=program.agent.instantiate(machine=self)
+                agent=program.agent.instantiate(agent_machine=self)
                 # todo add cpu
             ) for program in model.agent_programs]
         )

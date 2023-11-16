@@ -27,7 +27,6 @@ class ReferenceMeta(type):
                 self.build_reference_spec()
                 return self
 
-            # todo, fix bug here where checking wrong class. is subclass should be on reference_class
             def build_reference_spec(self):
                 reference_class = self._get_reference_class()
                 if issubclass(reference_class, Specable):

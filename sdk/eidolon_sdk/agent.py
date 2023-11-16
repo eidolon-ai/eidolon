@@ -19,18 +19,20 @@ class ProcessContext(BaseModel):
 
 class Agent:
     action_handlers: Dict[str, EidolonHandler]
-    agent_memory: AgentMemory
     process_context: contextvars.ContextVar
 
     def __init__(self, agent_machine: 'AgentMachine'):
-        self.agent_memory = agent_machine.agent_memory
         self.agent_machine = agent_machine
         self.action_handlers = {
             handler.name: handler
-            for method_name in dir(self) if hasattr(getattr(self, method_name), 'eidolon_handlers')
+            for method_name in dir(self) if method_name != 'agent_memory' and hasattr(getattr(self, method_name), 'eidolon_handlers')
             for handler in getattr(getattr(self, method_name), 'eidolon_handlers')
         }
         self.process_context = contextvars.ContextVar('process_state', default=None)
+
+    @property
+    def agent_memory(self) -> AgentMemory:
+        return self.agent_machine.agent_memory
 
     def get_context(self) -> ProcessContext:
         return self.process_context.get()
