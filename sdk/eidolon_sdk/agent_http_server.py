@@ -24,7 +24,7 @@ async def start_os(app: FastAPI):
     with open(args.yaml_path, 'r') as file:
         file_contents = file.read()
 
-    os = AgentOS(file_contents)
+    os = AgentOS.from_yaml(file_contents)
     os.start(app)
     yield
     os.stop()

@@ -37,16 +37,12 @@ async def async_client(app):
 def os_manager(app):
     @contextlib.contextmanager
     def fn(*agents: Type[Agent], memory_override: SymbolicMemory = None):
+        machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
         programs = [AgentProgram(
             name=agent.__name__.lower(),
-            implementation="tests.test_agent_os." + agent.__qualname__
+            agent=agent(agent_machine=machine),
         ) for agent in agents]
-        mem = memory_override or LocalSymbolicMemory(
-            implementation=LocalSymbolicMemory.__module__ + "." + LocalSymbolicMemory.__qualname__)
-        machine = AgentMachine(agent_memory=AgentMemory(
-            symbolic_memory=mem
-        ), agent_io={}, agent_programs=programs)
-        os = AgentOS(machine=machine, machine_yaml="")
+        os = AgentOS(machine=machine)
         os.start(app)
         try:
             yield
@@ -82,7 +78,7 @@ class HelloWorld(CodeAgent):
 
 @pytest.fixture(autouse=True)
 def memory():
-    return LocalSymbolicMemory(implementation=LocalSymbolicMemory.__module__ + "." + LocalSymbolicMemory.__qualname__)
+    return LocalSymbolicMemory()
 
 
 def test_empty_start(client, os_manager):
