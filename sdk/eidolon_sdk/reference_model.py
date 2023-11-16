@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import typing
 
 from pydantic import BaseModel, model_validator
@@ -26,15 +27,18 @@ class ReferenceMeta(type):
                 self.build_reference_spec()
                 return self
 
+            # todo, fix bug here where checking wrong class. is subclass should be on reference_class
             def build_reference_spec(self):
-                if issubclass(self._sub_class, Specable):
-                    reference_class = self._get_reference_class()
-                    bases = getattr(reference_class, '__orig_bases__', None)
-                    if not bases:
-                        raise ValueError(f"Unable to find {reference_class} config object")
-                    # todo, add the right check here. Should grab the base which is a Specable, and then get the type
-                    spec_type, = bases[0].__args__
-                    return spec_type.model_validate(self.spec)
+                reference_class = self._get_reference_class()
+                if issubclass(reference_class, Specable):
+                    bases = getattr(reference_class, '__orig_bases__', [])
+                    specable = next((base for base in bases if getattr(base, '__origin__', None) is Specable), None)
+                    if specable:
+                        spec_type, = specable.__args__
+                        return spec_type.model_validate(self.spec)
+                    else:
+                        logging.warning(f'Unable to find Specable definition on "{reference_class}", skipping validation')
+                        return self.spec
                 else:
                     return self.spec
 

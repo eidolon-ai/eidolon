@@ -12,8 +12,11 @@ agent_memory:
 
 agent_programs:
   - name: "ExampleAuto"
-    implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
+    agent:
+      implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
   - name: "ExampleAgentProgram"
-    implementation: "examples.hello_world.HelloWorld.HelloWorld"
+    agent:
+      implementation: "examples.hello_world.HelloWorld.HelloWorld"
   - name: "StateMachine"
-    implementation: "examples.hello_world.StateMachine.StateMachine"
+    agent:
+      implementation: "examples.hello_world.StateMachine.StateMachine"
