@@ -2,8 +2,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from eidolon_sdk.cpu.agent_bus import BusEvent, Bus
-from eidolon_sdk.cpu.llm_message import LLMMessage
+from eidolon_sdk.cpu.agent_bus import BusEvent
+from eidolon_sdk.cpu.bus_messages import AddConversationHistory, LLMResponse, LLMEvent, InputRequest
+from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage, AssistantMessage
 # Assuming the classes are in a module named 'my_module', which needs to be imported here.
 from eidolon_sdk.cpu.memory_unit import ConversationalMemoryUnit
 
@@ -28,10 +29,7 @@ def agent_machine():
 
 @pytest.fixture
 def bus_event():
-    return BusEvent(process_id="process1", thread_id=1, event_type="add_conversation_history", event_data={
-        "messages": [{"text": "Hi there!", "type": "mock"}],
-        "output_format": {}
-    })
+    return BusEvent(process_id="process1", thread_id=1, message=AddConversationHistory(messages=[SystemMessage(content="hi there")], output_format={}))
 
 
 @pytest.fixture
@@ -62,40 +60,32 @@ class TestConversationalMemoryUnit:
             "message": MockLLMMessage(text="Message 2").model_dump()
         }]
 
-        agent_machine.agent_memory.find = await make_async_find_generator(existing_messages)
+        agent_machine.agent_memory.symbolic_memory.find = await make_async_find_generator(existing_messages)
         memory_unit.request_write = MagicMock()
 
-        bus = Bus()
-        # Simulate the bus event
-        bus.current_event = bus_event
-
         # Perform the bus read
-        await memory_unit.bus_read(bus)
+        await memory_unit.bus_read(bus_event)
 
         # Check if insert_one was called with correct arguments
-        for message in bus_event.event_data["messages"]:
-            agent_machine.agent_memory.insert_one.assert_awaited_once_with("conversation_memory", {
+        for message in bus_event.message.messages:
+            agent_machine.agent_memory.symbolic_memory.insert_one.assert_awaited_once_with("conversation_memory", {
                 "process_id": bus_event.process_id,
                 "thread_id": bus_event.thread_id,
-                "message": message
+                "message": message.model_dump()
             })
 
     async def test_bus_read_llm_response(self, memory_unit, agent_machine):
         # Create an event for llm_response
-        llm_response_event = BusEvent(process_id="process1", thread_id=1, event_type="llm_response", event_data={"message": MockLLMMessage(text="Response message").model_dump()})
-
-        bus = Bus()
-        # Simulate the bus event
-        bus.current_event = llm_response_event
+        llm_response_event = BusEvent(process_id="process1", thread_id=1, message=LLMResponse(message=AssistantMessage(content={"hello": "there"}, tool_calls=None)))
 
         # Perform the bus read
-        await memory_unit.bus_read(bus)
+        await memory_unit.bus_read(llm_response_event)
 
         # Check if insert_one was called with the correct arguments
-        agent_machine.agent_memory.insert_one.assert_awaited_once_with("conversation_memory", {
+        agent_machine.agent_memory.symbolic_memory.insert_one.assert_awaited_once_with("conversation_memory", {
             "process_id": llm_response_event.process_id,
             "thread_id": llm_response_event.thread_id,
-            "message": llm_response_event.event_data["message"]
+            "message": llm_response_event.message.message.model_dump()
         })
 
     async def test_bus_read_with_existing_messages(self, memory_unit, bus_event, agent_machine):
@@ -109,33 +99,24 @@ class TestConversationalMemoryUnit:
                 "thread_id": 1,
                 "message": MockLLMMessage(text="Message 2").model_dump()}]
 
-        agent_machine.agent_memory.find = await make_async_find_generator(existing_messages)
+        agent_machine.agent_memory.symbolic_memory.find = await make_async_find_generator(existing_messages)
         memory_unit.request_write = MagicMock()
 
-        bus = Bus()
-        # Simulate the bus event
-        bus.current_event = bus_event
-
         # Perform the bus read
-        await memory_unit.bus_read(bus)
+        await memory_unit.bus_read(bus_event)
 
         # Check if request_write was called with the correct BusEvent
-        expected_messages = [message["message"] for message in existing_messages] + bus_event.event_data["messages"]
-        expected_event_data = {"messages": expected_messages, "output_format": {}}
-        expected_bus_event = BusEvent(bus_event.process_id, bus_event.thread_id, "llm_event", expected_event_data)
+        expected_messages = [message["message"] for message in existing_messages] + bus_event.message.messages
+        expected_bus_event = BusEvent(bus_event.process_id, bus_event.thread_id, LLMEvent(messages = expected_messages, output_format = {}))
         memory_unit.request_write.assert_called_once_with(expected_bus_event)
 
     async def test_event_type_not_handled(self, memory_unit, agent_machine):
         # Create an event with an unhandled event type
-        unhandled_event = BusEvent(process_id="process1", thread_id=1, event_type="unhandled_event", event_data={})
-
-        bus = Bus()
-        # Simulate the bus event
-        bus.current_event = unhandled_event
+        unhandled_event = BusEvent(process_id="process1", thread_id=1, message=InputRequest(messages=[SystemMessage(content="hello")], output_format={}))
 
         # Perform the bus read and verify that no interactions with the agent memory occur
-        await memory_unit.bus_read(bus)
-        agent_machine.agent_memory.find.assert_not_called()
-        agent_machine.agent_memory.insert_one.assert_not_called()
+        await memory_unit.bus_read(unhandled_event)
+        agent_machine.agent_memory.symbolic_memory.find.assert_not_called()
+        agent_machine.agent_memory.symbolic_memory.insert_one.assert_not_called()
 
 # It's assumed that the Bus and BusEvent classes are already defined elsewhere.

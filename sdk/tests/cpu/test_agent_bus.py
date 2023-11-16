@@ -1,25 +1,32 @@
+from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
 
 from eidolon_sdk.cpu.agent_bus import BusParticipant, Bus, BusEvent, BusController
+from eidolon_sdk.cpu.bus_messages import BusMessage
 
+
+class TestEvent(BusMessage):
+    event_type: str = "test_event"
+    event_data: Dict[str, str]
 
 # Assuming the provided classes are in a module named 'bus_system', which needs to be imported here.
 # from bus_system import BusEvent, Bus, BusParticipant, BusController
+
 
 # Mocking the abstract BusParticipant for testing purposes
 class MockBusParticipant(BusParticipant):
     def __init__(self):
         self.read_events = []
 
-    async def bus_read(self, bus: Bus):
-        self.read_events.append(bus.current_event)
+    async def bus_read(self, event: BusEvent):
+        self.read_events.append(event)
 
 
 @pytest.fixture
 def bus_event():
-    return BusEvent(process_id="process1", thread_id=1, event_type="test_event", event_data={"key": "value"})
+    return BusEvent(process_id="process1", thread_id=1, message=TestEvent(event_data={"key": "value"}))
 
 
 @pytest.fixture
@@ -90,11 +97,11 @@ class TestBusSystem:
         await bus_controller.start()
 
         # First write
-        first_event = BusEvent("process1", 1, "test_event1", {"key": "value1"})
+        first_event = BusEvent("process1", 1, TestEvent(event_data={"key": "value1"}))
         participants[0].request_write(first_event)
 
         # Second write
-        second_event = BusEvent("process2", 2, "test_event2", {"key": "value2"})
+        second_event = BusEvent("process2", 2, TestEvent(event_data={"key": "value2"}))
         participants[1].request_write(second_event)
 
         # Process the events

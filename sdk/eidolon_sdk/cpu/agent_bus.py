@@ -1,15 +1,16 @@
 import asyncio
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, List
+from typing import List
+
+from eidolon_sdk.cpu.bus_messages import BusMessage
 
 
 @dataclass
 class BusEvent:
     process_id: str
     thread_id: int
-    event_type: str
-    event_data: dict[str, Any]
+    message: BusMessage
 
 
 class Bus:
@@ -23,7 +24,7 @@ class BusParticipant(ABC):
         self.controller.request_write_access(self, event)
 
     @abstractmethod
-    async def bus_read(self, bus: Bus):
+    async def bus_read(self, event: BusEvent):
         pass
 
 
@@ -65,9 +66,9 @@ class BusController:
             # then we allow all participants to read from the bus. This will allow any participant to read from the bus and execute their logic
             for participant in self.participants:
                 if should_run_async:
-                    asyncio.create_task(participant.bus_read(self.bus))
+                    asyncio.create_task(participant.bus_read(event))
                 else:
-                    await participant.bus_read(self.bus)
+                    await participant.bus_read(event)
         self.bus.current_event = None
 
     async def event_loop(self):

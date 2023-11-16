@@ -1,9 +1,10 @@
-from typing import List, Union, Any
+from typing import List, Union, Any, Dict
 
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, validate_call
 
-from eidolon_sdk.cpu.agent_bus import BusParticipant, Bus, BusEvent
+from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent
+from eidolon_sdk.cpu.bus_messages import InputRequest
 from eidolon_sdk.cpu.llm_message import UserMessageText, SystemMessage, UserMessageImageURL, UserMessage
 
 
@@ -30,12 +31,14 @@ class IOUnit(BusParticipant):
     def __init__(self, agent_cpu: "AgentCPU"):
         self.agent_cpu = agent_cpu
 
-    async def bus_read(self, bus: Bus):
-        if bus.current_event.event_type == "output_response":
-            await self.agent_cpu.respond(bus.current_event.process_id, bus.current_event.event_data["response"])
+    async def bus_read(self, event: BusEvent):
+        if event.message.event_type == "output_response":
+            print("output_response" + str(event.message.response))
+            await self.agent_cpu.respond(event.process_id, event.message.response)
 
     @validate_call
-    def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: dict[str, Any]):
+    def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: dict[str, Any],
+                        output_format: Dict[str, Any]):
         # convert the prompts to a list of strings
         event_prompts = []
         user_message_parts = []
@@ -53,4 +56,5 @@ class IOUnit(BusParticipant):
         if len(user_message_parts) > 0:
             event_prompts.append(UserMessage(content=user_message_parts))
 
-        self.request_write(BusEvent(process_id, 0, "input_request", {"messages": event_prompts}))
+        print("event_prompts" + str(event_prompts))
+        self.request_write(BusEvent(process_id, 0, InputRequest(messages=event_prompts, output_format=output_format)))

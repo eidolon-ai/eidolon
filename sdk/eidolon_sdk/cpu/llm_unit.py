@@ -1,3 +1,4 @@
+import json
 from abc import ABC
 
 from openai import AsyncOpenAI, RateLimitError, APIStatusError, APIConnectionError
@@ -5,7 +6,8 @@ from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import BaseModel
 
 from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent
-from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
+from eidolon_sdk.cpu.bus_messages import LLMResponse
+from eidolon_sdk.cpu.llm_message import AssistantMessage, LLMMessage
 
 
 class CompletionUsage(BaseModel):
@@ -19,7 +21,7 @@ class CompletionUsage(BaseModel):
     """Total number of tokens used in the request (prompt + completion)."""
 
 
-class LLMUnit(ABC, BusParticipant):
+class LLMUnit(BusParticipant, ABC):
     pass
 
 
@@ -30,9 +32,12 @@ def convert_to_openai(message: LLMMessage):
             "content": message.content
         }
     elif message.type == "user":
+        content = message.content
+        if not isinstance(content, str):
+            content = [part.model_dump() for part in content]
         return {
             "role": "user",
-            "content": message.content
+            "content": content
         }
     elif message.type == "assistant":
         return {
@@ -58,10 +63,10 @@ class OpenAIGPT(LLMUnit):
         self.temperature = temperature
         self.llm = AsyncOpenAI()
 
-    async def bus_read(self, bus):
-        if bus.current_event.event_type == "llm_event":
-            messages = [convert_to_openai(message) for message in bus.current_event.event_data["messages"]]
-            output_format = bus.current_event.event_data["output_format"]
+    async def bus_read(self, event: BusEvent):
+        if event.message.event_type == "llm_event":
+            messages = [convert_to_openai(message) for message in event.message.messages]
+            output_format = event.message.output_format
             # add a message to the LLM for the output format which is already in json schema format
             messages.append({
                 "role": "user",
@@ -69,6 +74,7 @@ class OpenAIGPT(LLMUnit):
             })
             # This event is a request to query the LLM
             try:
+                print("messages = " + str(messages))
                 response = await self.llm.chat.completions.create(
                     messages=messages,
                     model=self.model,
@@ -76,13 +82,12 @@ class OpenAIGPT(LLMUnit):
                     response_format=ResponseFormat(type="json_object")
                 )
 
+                response = response.choices[0].message.model_dump()
+                response["content"] = json.loads(response["content"])
                 bus_event = BusEvent(
-                    bus.current_event.process_id,
-                    bus.current_event.thread_id,
-                    "llm_response", {
-                        "usage": CompletionUsage.model_validate(response.usage),
-                        "message": AssistantMessage.model_validate(response.choices[0].message)
-                    })
+                    event.process_id,
+                    event.thread_id,
+                    LLMResponse(message=AssistantMessage.model_validate(response)))
                 self.request_write(bus_event)
             except APIConnectionError as e:
                 print("The server could not be reached")

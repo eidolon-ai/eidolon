@@ -41,7 +41,7 @@ class AgentProcess:
         module = importlib.import_module(module_name)
         impl_class = getattr(module, class_name)
 
-        self.agent = impl_class(self, agent_memory=self.agent_os.machine.agent_memory)
+        self.agent = impl_class(self, agent_machine=self.agent_os.machine)
 
         for action, handler in self.agent.action_handlers.items():
             path = f"/programs/{self.agent_program.name}"
@@ -103,7 +103,10 @@ class AgentProcess:
 
             async def run_and_store_response():
                 try:
-                    response = await handler.fn(self.agent, **body.model_dump())
+                    bodyDict = body.model_dump()
+                    # todo -- hack to get process_id into function call
+                    bodyDict['process_id'] = process_id
+                    response = await handler.fn(self.agent, **bodyDict)
                     if isinstance(response, AgentState):
                         state = response.name
                         data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data

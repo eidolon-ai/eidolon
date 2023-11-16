@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -44,9 +44,9 @@ class ToolCall(BaseModel):
 
 # Derived AssistantMessage class
 class AssistantMessage(LLMMessage):
-    content: str
+    content: Dict[str, Any]
     type: str = "assistant"
-    tool_calls: List[ToolCall]
+    tool_calls: Optional[List[ToolCall]]
 
 
 # Derived ToolCallMessage class

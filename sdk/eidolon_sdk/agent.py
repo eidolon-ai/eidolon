@@ -8,6 +8,7 @@ from typing import Dict, List, TypeVar, Generic
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
+from .agent_machine import AgentMachine
 from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
 
@@ -17,9 +18,10 @@ class Agent:
     action_handlers: Dict[str, EidolonHandler]
     agent_memory: AgentMemory
 
-    def __init__(self, agent_program: AgentProgram, agent_memory: AgentMemory):
+    def __init__(self, agent_program: AgentProgram, agent_machine: AgentMachine):
         self.agent_program = agent_program
-        self.agent_memory = agent_memory
+        self.agent_memory = agent_machine.agent_memory
+        self.agent_machine = agent_machine
         self.action_handlers = {
             handler.name: handler
             for method_name in dir(self) if hasattr(getattr(self, method_name), 'eidolon_handlers')
@@ -86,6 +88,6 @@ def _add_handler(fn, handler):
 T = TypeVar('T')
 
 
-class AgentState(Generic[T], BaseModel):
+class AgentState(BaseModel, Generic[T]):
     name: str
     data: T

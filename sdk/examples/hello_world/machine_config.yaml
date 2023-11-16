@@ -9,6 +9,8 @@ agent_memory:
     implementation: "eidolon_sdk.impl.noop_memory.NoopSimilarityMemory"
 
 agent_programs:
+  - name: "ExampleAuto"
+    implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
   - name: "ExampleAgentProgram"
     implementation: "examples.hello_world.HelloWorld.HelloWorld"
   - name: "StateMachine"
