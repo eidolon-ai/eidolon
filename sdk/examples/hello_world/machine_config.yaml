@@ -11,12 +11,12 @@ agent_memory:
     implementation: "eidolon_sdk.impl.noop_memory.NoopSimilarityMemory"
 
 agent_programs:
-  - name: "ExampleAuto"
+  ExampleAuto:
     agent:
       implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
-  - name: "ExampleAgentProgram"
+  ExampleAgentProgram:
     agent:
       implementation: "examples.hello_world.HelloWorld.HelloWorld"
-  - name: "StateMachine"
+  StateMachine:
     agent:
       implementation: "examples.hello_world.StateMachine.StateMachine"

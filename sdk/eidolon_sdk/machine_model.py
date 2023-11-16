@@ -1,28 +1,32 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, Dict
 
 from pydantic import Field, BaseModel
 
 from .agent import Agent
 from .agent_memory import FileMemory, SymbolicMemory, SimilarityMemory
 from .cpu.agent_io import IOUnit
-from .cpu.memory_unit import MemoryUnit
+from .cpu.control_unit import ControlUnit, ConversationalControlUnit
+from .cpu.logic_unit import LogicUnit
+from .cpu.memory_unit import MemoryUnit, ConversationalMemoryUnit
 from .reference_model import Reference
+from .util.class_utils import fqn
 
 
 class MachineModel(BaseModel):
     agent_memory: MemoryModel = Field(description="The Agent Memory to use.")
-    agent_programs: List[ProgramModel] = Field(description="The list of Agent Programs to run on this machine.")
+    agent_programs: Dict[str, ProgramModel] = Field(description="The list of Agent Programs to run on this machine.")
 
 
 class CpuModel(BaseModel):
-    memory_unit: Reference[MemoryUnit] = Reference(implementation='eidolon_sdk.cpu.memory_unit.MemoryUnit')
-    io_unit: Reference[IOUnit] = Reference(implementation='eidolon_sdk.cpu.agent_io.IOUnit')
+    io_unit: Reference[IOUnit] = Reference(implementation=fqn(IOUnit))
+    control_unit: Reference[ControlUnit] = Reference(implementation=fqn(ConversationalControlUnit))
+    memory_unit: Reference[MemoryUnit] = Reference(implementation=fqn(ConversationalMemoryUnit))
+    logic_units: Dict[str, Reference[LogicUnit]] = Field(default={})
 
 
 class ProgramModel(BaseModel):
-    name: str = Field(description="The name of the program.")
     agent: Reference[Agent] = Field(description="The Agent implementation to use.")
     cpu: CpuModel = Field(CpuModel(), description="The CPU implementation to use.")
 

@@ -22,8 +22,8 @@ class AgentMachine:
             agent_programs=[]
         )
         machine.agent_programs = [AgentProgram(
-            name=program.name,
+            name=name,
             agent=program.agent.instantiate(agent_machine=machine)
             # todo add cpu
-        ) for program in model.agent_programs]
+        ) for name, program in model.agent_programs.items()]
         return machine

@@ -39,5 +39,10 @@ def for_name(implementation_fqn: str, sub_class: Type) -> Type:
             print(implementation_class)
             print(sub_class)
             print(issubclass(implementation_class, sub_class))
-            raise ValueError(f"Implementation class '{implementation_fqn}' not found or is not a subclass of '{sub_class}'.")
+            raise ValueError(
+                f"Implementation class '{implementation_fqn}' not found or is not a subclass of '{sub_class}'.")
     raise ValueError("Implementation not provided.")
+
+
+def fqn(clazz=Type):
+    return clazz.__module__ + '.' + clazz.__name__
