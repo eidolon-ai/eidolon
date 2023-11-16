@@ -38,7 +38,7 @@ def os_manager(app):
     @contextlib.contextmanager
     def fn(*agents: Type[Agent], memory_override: SymbolicMemory = None):
         machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
-        programs = [AgentProgram(
+        machine.agent_programs = [AgentProgram(
             name=agent.__name__.lower(),
             agent=agent(agent_machine=machine),
         ) for agent in agents]
