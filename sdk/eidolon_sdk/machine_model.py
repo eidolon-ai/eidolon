@@ -12,10 +12,10 @@ from .reference_model import Reference
 
 class MachineModel(BaseModel):
     agent_memory: MemoryModel = Field(description="The Agent Memory to use.")
-    agent_programs: List[Program] = Field(description="The list of Agent Programs to run on this machine.")
+    agent_programs: List[ProgramModel] = Field(description="The list of Agent Programs to run on this machine.")
 
 
-class Program(BaseModel):
+class ProgramModel(BaseModel):
     name: str = Field(description="The name of the program.")
     agent: Reference[Agent] = Field(description="The Agent implementation to use.")
     cpu: CpuModel = CpuModel()

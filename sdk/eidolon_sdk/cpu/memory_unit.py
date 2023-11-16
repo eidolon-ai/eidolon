@@ -2,7 +2,6 @@ from abc import ABC
 
 from pydantic import BaseModel, SerializeAsAny
 
-from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent
 from eidolon_sdk.cpu.bus_messages import LLMEvent
 from eidolon_sdk.cpu.llm_message import LLMMessage
@@ -10,7 +9,7 @@ from eidolon_sdk.cpu.llm_message import LLMMessage
 
 class MemoryUnit(BusParticipant, ABC):
 
-    def __init__(self, agent_machine: AgentMachine):
+    def __init__(self, agent_machine: 'AgentMachine'):
         self.agent_machine = agent_machine
 
 

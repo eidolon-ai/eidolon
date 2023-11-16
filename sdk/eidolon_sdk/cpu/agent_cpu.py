@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, Union, List, Dict, Callable, Awaitable
 
-from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.cpu.agent_bus import BusController
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, IOUnit
 from eidolon_sdk.cpu.control_unit import ConversationalControlUnit
@@ -20,7 +19,7 @@ class AgentCPU:
     io_unit: IOUnit
     memory_unit: MemoryUnit
 
-    def __init__(self, agent_machine: AgentMachine, response_handler: Callable[[str, Dict[str, Any]], Awaitable[None]]):
+    def __init__(self, agent_machine: 'AgentMachine', response_handler: Callable[[str, Dict[str, Any]], Awaitable[None]]):
         self.bus_controller = BusController()
 
         self.agent_machine = agent_machine

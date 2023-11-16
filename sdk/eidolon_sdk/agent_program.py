@@ -25,10 +25,15 @@ class SyncStateResponse(AsyncStateResponse):
     available_actions: typing.List[str] = Field(..., description="The actions available from the current state.")
 
 
-class AgentProgram(BaseModel):
-    name: str = Field(description="The name of the program. Will be used as the endpoint name.")
-    agent_cpu: AgentCPU = Field(default=None, description="The Agent CPU to use.")
-    agent: Agent = Field(description="The FQN of agent class.")
+class AgentProgram:
+    name: str
+    agent_cpu: AgentCPU
+    agent: Agent
+
+    def __init__(self, name: str, agent: Agent, agent_cpu: AgentCPU = None):
+        self.name = name
+        self.agent_cpu = agent_cpu
+        self.agent = agent
 
     def start(self, app: FastAPI):
         # First create the Agent implementation

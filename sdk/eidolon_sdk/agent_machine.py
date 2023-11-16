@@ -14,9 +14,13 @@ base_class_dict = {
 }
 
 
-class AgentMachine(BaseModel):
-    agent_memory: AgentMemory = Field(default=..., description="The Agent Memory to use.")
-    agent_programs: List[AgentProgram] = Field(..., description="The list of Agent Programs to run on this machine.")
+class AgentMachine:
+    agent_memory: AgentMemory
+    agent_programs: List[AgentProgram]
+
+    def __init__(self, agent_memory: AgentMemory, agent_programs: List[AgentProgram]):
+        self.agent_memory = agent_memory
+        self.agent_programs = agent_programs
 
 
 class YamlAgentMachine(AgentMachine):
@@ -36,14 +40,10 @@ class YamlAgentMachine(AgentMachine):
         machine_descriptor = yaml.safe_load(machine_description)
         model = MachineModel(**machine_descriptor)
         super().__init__(
-            agent_memory={k: v.get_reference_class(
-                **({'spec': v.build_reference_spec()} if v.build_reference_spec() is None else {})
-            ) for k, v in model.agent_memory.__dict__.items()},
+            agent_memory=AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()}),
             agent_programs=[AgentProgram(
                 name=program.name,
-                agent_cpu=program.cpu,
-                agent={k: v.get_reference_class(
-                    **({'machine': self, 'spec': v.build_reference_spec()} if v.build_reference_spec() is None else {'machine': self})
-                ) for k, v in program.agent.__dict__.items()}
+                agent=program.agent.instantiate(machine=self)
+                # todo add cpu
             ) for program in model.agent_programs]
         )

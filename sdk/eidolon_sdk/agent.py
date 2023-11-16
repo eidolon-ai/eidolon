@@ -9,9 +9,7 @@ from typing import Dict, List, TypeVar, Generic
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
-from .agent_machine import AgentMachine
 from .agent_memory import AgentMemory
-from .agent_program import AgentProgram
 
 
 class ProcessContext(BaseModel):
@@ -24,7 +22,7 @@ class Agent:
     agent_memory: AgentMemory
     process_context: contextvars.ContextVar
 
-    def __init__(self, agent_machine: AgentMachine):
+    def __init__(self, agent_machine: 'AgentMachine'):
         self.agent_memory = agent_machine.agent_memory
         self.agent_machine = agent_machine
         self.action_handlers = {

@@ -28,7 +28,7 @@ class ReferenceMeta(type):
 
             def build_reference_spec(self):
                 if issubclass(self._sub_class, Specable):
-                    reference_class = self.get_reference_class()
+                    reference_class = self._get_reference_class()
                     bases = getattr(reference_class, '__orig_bases__', None)
                     if not bases:
                         raise ValueError(f"Unable to find {reference_class} config object")
@@ -38,7 +38,13 @@ class ReferenceMeta(type):
                 else:
                     return self.spec
 
-            def get_reference_class(self):
+            def instantiate(self, *args, **kwargs):
+                spec = self.build_reference_spec()
+                if spec is not None:
+                    kwargs['spec'] = spec
+                return self._get_reference_class()(*args, **kwargs)
+
+            def _get_reference_class(self):
                 return for_name(self.implementation, self._sub_class)
 
         return GenericReference
@@ -50,5 +56,5 @@ class Reference(metaclass=ReferenceMeta):
     def build_reference_spec(self):
         pass
 
-    def get_reference_class(self) -> typing.Type:
+    def instantiate(self, *args, **kwargs):
         pass

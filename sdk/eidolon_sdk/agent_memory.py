@@ -2,10 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional, Iterable, AsyncIterable
 
 import numpy as np
-from pydantic import BaseModel, Field, field_validator
-
-from eidolon_sdk.util.class_utils import for_name
-from eidolon_sdk.util.str_utils import replace_env_var_in_string
 
 
 # todo, memory contracts all need to be async
@@ -177,38 +173,15 @@ class SimilarityMemory(ABC):
         pass
 
 
-# todo, we need base models for memory to represent configuration, not implementation as well.
-class AgentMemory(BaseModel):
-    file_memory: FileMemory = Field(default=None, description="The File Memory implementation.")
-    symbolic_memory: SymbolicMemory = Field(default=None, description="The Symbolic Memory implementation.")
-    similarity_memory: SimilarityMemory = Field(default=None, description="The Similarity Memory implementation.")
+class AgentMemory:
+    file_memory: FileMemory
+    symbolic_memory: SymbolicMemory
+    similarity_memory: SimilarityMemory
 
-    @field_validator('file_memory', mode='before')
-    def validate_file_memory(cls, value):
-        implementation_name = replace_env_var_in_string(value.get('implementation') if isinstance(value, dict) else value.implementation)
-        implementation_class = for_name(implementation_name, FileMemory)
-        if isinstance(value, dict):
-            return implementation_class(**value)
-        else:
-            return implementation_class(**value.model_dump())
-
-    @field_validator('symbolic_memory', mode='before')
-    def validate_symbolic_memory(cls, value):
-        implementation_name = replace_env_var_in_string(value.get('implementation') if isinstance(value, dict) else value.implementation)
-        implementation_class = for_name(implementation_name, SymbolicMemory)
-        if isinstance(value, dict):
-            return implementation_class(**value)
-        else:
-            return implementation_class(**value.model_dump())
-
-    @field_validator('similarity_memory', mode='before')
-    def validate_similarity_memory(cls, value):
-        implementation_name = replace_env_var_in_string(value.get('implementation') if isinstance(value, dict) else value.implementation)
-        implementation_class = for_name(implementation_name, SimilarityMemory)
-        if isinstance(value, dict):
-            return implementation_class(**value)
-        else:
-            return implementation_class(**value.model_dump())
+    def __init__(self, file_memory: FileMemory = None, symbolic_memory: SymbolicMemory = None, similarity_memory: SimilarityMemory = None):
+        self.file_memory = file_memory
+        self.symbolic_memory = symbolic_memory
+        self.similarity_memory = similarity_memory
 
     def start(self):
         if self.file_memory:
