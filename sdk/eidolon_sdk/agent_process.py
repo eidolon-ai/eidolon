@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import inspect
 import typing
 from datetime import datetime
 
@@ -181,8 +182,8 @@ class AgentProcess:
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
         fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
         return_type = self.agent.get_response_model(action)
-        if getattr(return_type, '__origin__', None) is AgentState:
-            return_type, = typing.get_args(return_type)
+        if inspect.isclass(return_type) and issubclass(return_type, AgentState):
+            return_type = return_type.model_fields['data'].annotation
         fields['data'] = (return_type, Field(..., description=fields['data'][1].description))
 
         return create_model(f'{action.capitalize()}ResponseModel', **fields)
