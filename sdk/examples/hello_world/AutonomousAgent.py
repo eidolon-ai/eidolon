@@ -15,7 +15,9 @@ class IdleStateRepresentation(BaseModel):
 class AutonomousAgent(CodeAgent):
 
     @initializer
-    async def execute(self, question: Annotated[str, Field(description="A question")], process_id: str) -> IdleStateRepresentation:
+    async def execute(self, question: Annotated[str, Field(description="A question")]) -> IdleStateRepresentation:
+        process_id = self.get_context().process_id
+
         retValue = []
         lock = asyncio.Event()
         async def response_handler(ret_p_id: str, response: dict[str, Any]):

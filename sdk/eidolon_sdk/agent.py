@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextvars
 import inspect
 import typing
 from dataclasses import dataclass
@@ -13,10 +14,16 @@ from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
 
 
+class ProcessContext(BaseModel):
+    process_id: str
+    callback_url: typing.Optional[str]
+
+
 class Agent:
     agent_program: AgentProgram
     action_handlers: Dict[str, EidolonHandler]
     agent_memory: AgentMemory
+    process_context: contextvars.ContextVar
 
     def __init__(self, agent_program: AgentProgram, agent_machine: AgentMachine):
         self.agent_program = agent_program
@@ -27,6 +34,10 @@ class Agent:
             for method_name in dir(self) if hasattr(getattr(self, method_name), 'eidolon_handlers')
             for handler in getattr(getattr(self, method_name), 'eidolon_handlers')
         }
+        self.process_context = contextvars.ContextVar('process_state', default=None)
+
+    def get_context(self) -> ProcessContext:
+        return self.process_context.get()
 
     def get_input_model(self, action):
         sig = inspect.signature(self.action_handlers[action].fn).parameters
@@ -70,7 +81,8 @@ def register_action(*allowed_states: str, name: str = None):
     if 'terminated' in allowed_states:
         raise ValueError("Action cannot transform terminated state")
 
-    return lambda fn: _add_handler(fn, EidolonHandler(name=name or fn.__name__, allowed_states=list(allowed_states), fn=fn))
+    return lambda fn: _add_handler(fn,
+                                   EidolonHandler(name=name or fn.__name__, allowed_states=list(allowed_states), fn=fn))
 
 
 def _add_handler(fn, handler):

@@ -150,7 +150,8 @@ def test_required_param_missing_with_no_body(client, os_manager):
 @pytest.mark.asyncio
 async def test_async_retrieve_result(async_client, os_manager, symbolic_memory, db):
     with os_manager(HelloWorld, memory_override=symbolic_memory if db == "mongo" else None):
-        post = await async_client.post("/programs/helloworld", json=dict(question="hello"), headers={'execution-mode': 'async'})
+        post = await async_client.post("/programs/helloworld", json=dict(question="hello"),
+                                       headers={'execution-mode': 'async'})
         assert post.status_code == 202
         response = await async_client.get(f"/programs/helloworld/processes/{post.json()['process_id']}/status")
         assert response.status_code == 200
@@ -229,6 +230,18 @@ def test_empty_body_functions_if_no_args_required(client, os_manager):
         assert client.post("/programs/statetester").status_code == 200
 
 
+class PidTester(CodeAgent):
+    @initializer
+    async def foo(self):
+        return dict(agent_found_pid=self.get_context().process_id)
+
+
+def test_agents_can_read_process_id(client, os_manager):
+    with os_manager(PidTester):
+        post = client.post("/programs/pidtester", json={})
+        assert post.json()['process_id'] == post.json()['data']['agent_found_pid']
+
+
 class DocumentedBase(BaseModel):
     some_int: int
 
@@ -291,7 +304,8 @@ class TestOpenApiDocs:
             'required': ['x', 'y', 'z'], 'title': 'Param_keysInputModel'}
 
     def test_no_params(self, openapi_schema):
-        assert action_request_schema(openapi_schema, 'no_types') == {'type': 'object', 'title': 'No_typesInputModel', 'properties': {}}
+        assert action_request_schema(openapi_schema, 'no_types') == {'type': 'object', 'title': 'No_typesInputModel',
+                                                                     'properties': {}}
 
     def test_response_types(self, openapi_schema):
         assert action_response_schema(openapi_schema, 'no_types') == {}
@@ -310,9 +324,11 @@ class TestOpenApiDocs:
         assert 'parameters' not in openapi_schema['paths']['/programs/documented']['post']
 
     def test_actions_do_have_process_id_param_arg(self, openapi_schema):
-        assert openapi_schema['paths']['/programs/documented/processes/{process_id}/actions/no_types']['post']['parameters'] == [
-            {'name': 'process_id', 'in': 'path', 'required': True, 'schema': {'type': 'string', 'title': 'Process Id'}}
-        ]
+        assert openapi_schema['paths']['/programs/documented/processes/{process_id}/actions/no_types']['post'][
+                   'parameters'] == [
+                   {'name': 'process_id', 'in': 'path', 'required': True,
+                    'schema': {'type': 'string', 'title': 'Process Id'}}
+               ]
 
     def test_get_status_endpoint_does_have_process_id_param_arg(self, openapi_schema):
         assert openapi_schema['paths']['/programs/documented/processes/{process_id}/status']['get']['parameters'] == [

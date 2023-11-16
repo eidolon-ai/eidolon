@@ -9,7 +9,7 @@ from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field, create_model
 from starlette.responses import JSONResponse
 
-from .agent import Agent, AgentState
+from .agent import Agent, AgentState, ProcessContext
 from .agent_memory import SymbolicMemory
 from .agent_os import AgentOS
 from .agent_program import AgentProgram
@@ -103,10 +103,7 @@ class AgentProcess:
 
             async def run_and_store_response():
                 try:
-                    bodyDict = body.model_dump()
-                    # todo -- hack to get process_id into function call
-                    bodyDict['process_id'] = process_id
-                    response = await handler.fn(self.agent, **bodyDict)
+                    response = await handler.fn(self.agent, **body.model_dump())
                     if isinstance(response, AgentState):
                         state = response.name
                         data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data
@@ -135,6 +132,7 @@ class AgentProcess:
                     raise Exception("Not implemented")
                 return doc
 
+            self.agent.process_context.set(ProcessContext(process_id=process_id, callback_url=callback))
             if execution_mode == 'sync':
                 state = await run_and_store_response()
                 return self.doc_to_response(state)
