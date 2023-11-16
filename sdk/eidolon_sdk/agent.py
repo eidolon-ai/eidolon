@@ -22,7 +22,8 @@ class Agent:
     agent_machine: AgentMemory
     process_context: contextvars.ContextVar
 
-    def __init__(self, agent_machine: 'AgentMachine'):
+    def __init__(self, agent_machine: 'AgentMachine', spec=None):
+        self.spec = spec
         self.agent_memory = agent_machine.agent_memory
         self.agent_machine = agent_machine
         self.action_handlers = {

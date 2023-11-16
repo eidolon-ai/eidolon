@@ -3,6 +3,8 @@ from __future__ import annotations
 import inspect
 import typing
 from datetime import datetime
+from inspect import Parameter
+from typing import Any
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
@@ -12,7 +14,6 @@ from starlette.responses import JSONResponse
 from .agent import Agent, AgentState, ProcessContext
 from .agent_memory import SymbolicMemory
 from .cpu.agent_cpu import AgentCPU
-from .util.dynamic_endpoint import create_endpoint_with_process_id, create_endpoint_without_process_id
 
 
 class AsyncStateResponse(BaseModel):
@@ -39,11 +40,9 @@ class AgentProgram:
         # First create the Agent implementation
         for action, handler in self.agent.action_handlers.items():
             path = f"/programs/{self.name}"
-            if action == 'INIT':
-                endpoint = create_endpoint_without_process_id(self.agent.get_input_model(action), self.process_action(action))
-            else:
+            if action != 'INIT':
                 path += f"/processes/{{process_id}}/actions/{action}"
-                endpoint = create_endpoint_with_process_id(self.agent.get_input_model(action), self.process_action(action))
+            endpoint = self.process_action(action)
             app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
                 202: {"model": AsyncStateResponse},
                 200: {'model': self.create_response_model(action)},
@@ -66,14 +65,12 @@ class AgentProgram:
 
     # todo, defining this on agents and then handling the dynamic function call will give flexibility to define request body
     def process_action(self, action: str):
-        async def processStateRoute(
+        async def run_program(
                 request: Request,
                 body: BaseModel,
-                process_id: typing.Optional[str],
                 background_tasks: BackgroundTasks,
+                process_id: typing.Optional[str] = None,
         ):
-            print(action)
-            print(body)
             memory: SymbolicMemory = self.agent.agent_memory.symbolic_memory
             callback = request.headers.get('callback-url')
             execution_mode = request.headers.get('execution-mode', 'async' if callback else 'sync').lower()
@@ -134,7 +131,16 @@ class AgentProgram:
                 background_tasks.add_task(run_and_store_response)
                 return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
 
-        return processStateRoute
+        sig = inspect.signature(run_program)
+        params = dict(sig.parameters)
+        params['body'] = params['body'].replace(annotation=(self.agent.get_input_model(action)))
+        if action == 'INIT':
+            del params['process_id']
+        else:
+            replace: Parameter = params['process_id'].replace(annotation=str)
+            params['process_id'] = replace
+        run_program.__signature__ = sig.replace(parameters=params.values())
+        return run_program
 
     async def get_process_info(self, process_id: str):
         latest_record = await self.get_latest_process_event(process_id)
