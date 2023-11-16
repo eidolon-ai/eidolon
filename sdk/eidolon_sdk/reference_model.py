@@ -10,12 +10,18 @@ from eidolon_sdk.util.class_utils import for_name
 T = typing.TypeVar('T', bound=BaseModel)
 
 
-# Type wrapper to describe the config type which is expected. If not specable, spec is passed in un-validated
 class Specable(typing.Generic[T]):
-    spec: T
+    """
+    A generic type which can be used to describe a specable type. Specable types are expected to accept "spec" in kwarg.
+    If Specable is not used, There will be no spec validation and the spec will be passed through as-is.
+    """
+    pass
 
 
 class ReferenceMeta(type):
+    def __call__(cls, **kwargs):
+        return cls[object](**kwargs)
+
     def __getitem__(cls, key):
         class GenericReference(BaseModel):
             _sub_class: typing.Type = key
@@ -54,7 +60,16 @@ class ReferenceMeta(type):
 
 
 class Reference(metaclass=ReferenceMeta):
-    pass
+    """
+    A wrapper to provide a generic reference to a class. Can be used like a Generic type to validate sub-class constraints
+
+    Reference[Foo](implementation="module.CLASS") will validate that the implementation is a subclass of Foo.
+    Reference(implementation="module.CLASS") is equivalent to Reference[object](implementation="module.CLASS").
+
+    Can be use in conjunction with Specable to validate the spec provided to the reference.
+
+    References are expected to accept a spec kwarg in __init__
+    """
 
     def build_reference_spec(self):
         pass

@@ -1,5 +1,3 @@
-from typing import TypeVar, Generic
-
 import pytest
 from pydantic import BaseModel, ValidationError
 
@@ -32,6 +30,11 @@ def test_plugable_instantiation():
     assert ref.instantiate(baz="BAZ").kwargs == dict(baz='BAZ', spec={'foo': 'bar'})
 
 
+def test_no_spec_provided():
+    ref = Reference[Base](implementation=Base.ref)
+    assert ref.instantiate().kwargs == dict()
+
+
 def test_specable_reference():
     ref = Reference[Base](implementation=Extension.ref, spec={'foo': 'bar'})
     assert ref.build_reference_spec() == TestSchema(foo='bar')
@@ -48,3 +51,8 @@ def test_enforces_sub_class():
     with pytest.raises(ValidationError) as e:
         Reference[Extension](implementation=ReversedExtension.ref, spec={'foo': 'bar'})
     assert e.value.errors()
+
+
+def test_unenforced_reference():
+    ref = Reference(implementation=Base.ref)
+    assert ref.instantiate().kwargs == dict()

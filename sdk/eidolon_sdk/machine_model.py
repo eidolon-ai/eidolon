@@ -17,8 +17,8 @@ class MachineModel(BaseModel):
 
 
 class CpuModel(BaseModel):
-    memory_unit: Reference[MemoryUnit] = Reference[MemoryUnit](implementation='eidolon_sdk.cpu.memory_unit.MemoryUnit')
-    io_unit: Reference[IOUnit] = Reference[IOUnit](implementation='eidolon_sdk.cpu.agent_io.IOUnit')
+    memory_unit: Reference[MemoryUnit] = Reference(implementation='eidolon_sdk.cpu.memory_unit.MemoryUnit')
+    io_unit: Reference[IOUnit] = Reference(implementation='eidolon_sdk.cpu.agent_io.IOUnit')
 
 
 class ProgramModel(BaseModel):
