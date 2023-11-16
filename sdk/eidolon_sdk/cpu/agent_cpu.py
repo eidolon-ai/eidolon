@@ -16,11 +16,13 @@ class ResponseHandler(ABC):
 
 
 class AgentCPU:
-    bus_controller: BusController = BusController()
+    bus_controller: BusController
     io_unit: IOUnit
     memory_unit: MemoryUnit
 
     def __init__(self, agent_machine: AgentMachine, response_handler: Callable[[str, Dict[str, Any]], Awaitable[None]]):
+        self.bus_controller = BusController()
+
         self.agent_machine = agent_machine
         self.io_unit = IOUnit(self)
         self.io_unit.controller = self.bus_controller

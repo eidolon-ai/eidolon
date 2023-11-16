@@ -64,6 +64,10 @@ class CodeAgent(Agent):
     pass
 
 
+class CPUAgent(Agent):
+    pass
+
+
 @dataclass
 class EidolonHandler:
     name: str
