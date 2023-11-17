@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from eidolon_sdk.cpu.agent_bus import BusEvent
+from eidolon_sdk.cpu.agent_bus import BusEvent, BusController
 from eidolon_sdk.cpu.bus_messages import AddConversationHistory, LLMResponse, LLMEvent, InputRequest
 from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage, AssistantMessage
 # Assuming the classes are in a module named 'my_module', which needs to be imported here.
@@ -33,8 +33,13 @@ def bus_event():
 
 
 @pytest.fixture
-def memory_unit(agent_machine):
-    memory_unit = ConversationalMemoryUnit(agent_machine)
+def bus_controller():
+    return BusController()
+
+
+@pytest.fixture
+def memory_unit(agent_machine, bus_controller):
+    memory_unit = ConversationalMemoryUnit(agent_machine, bus_controller)
     memory_unit.request_write = AsyncMock()
     return memory_unit
 

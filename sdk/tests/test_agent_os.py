@@ -13,13 +13,12 @@ from eidolon_sdk.agent_machine import AgentMachine, _make_cpu
 from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
-from eidolon_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_sdk.machine_model import CpuModel
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def app_builder(os_builder):
     def get_app(*agents: Type[Agent], memory_override: SymbolicMemory = None):
         @contextlib.asynccontextmanager

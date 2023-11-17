@@ -4,9 +4,10 @@ import pytest
 from jinja2 import UndefinedError
 from pydantic import ValidationError
 
-from eidolon_sdk.cpu.agent_bus import BusEvent, Bus
+from eidolon_sdk.cpu.agent_bus import BusEvent, Bus, BusController
 from eidolon_sdk.cpu.agent_cpu import AgentCPU
-from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, CPUMessage, SystemCPUMessage, ImageURLCPUMessage, IOUnit
+from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, CPUMessage, SystemCPUMessage, ImageURLCPUMessage, IOUnit, \
+    ResponseHandler
 from eidolon_sdk.cpu.bus_messages import OutputResponse, InputRequest
 from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, UserMessageImageURL, SystemMessage
 
@@ -15,15 +16,22 @@ from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, UserMessag
 # from io_unit_module import IOUnit, UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage, Bus, AgentCPU, BusEvent
 
 @pytest.fixture
-def agent_cpu():
-    cpu = MagicMock(spec=AgentCPU)
-    cpu.respond = AsyncMock()
-    return cpu
+def response_handler():
+    rh = MagicMock(spec=ResponseHandler)
+    rh.handle = AsyncMock()
+    return rh
 
 
 @pytest.fixture
-def io_unit(agent_cpu):
-    return IOUnit(agent_cpu=agent_cpu)
+def bus_controller():
+    return BusController()
+
+
+@pytest.fixture
+def io_unit(bus_controller, response_handler):
+    io_unit = IOUnit(bus_controller)
+    io_unit.start(response_handler)
+    return io_unit
 
 
 @pytest.fixture
@@ -38,10 +46,10 @@ def bus_event():
 
 @pytest.mark.asyncio
 class TestIOUnit:
-    async def test_bus_read_output_response(self, io_unit, bus, bus_event, agent_cpu):
+    async def test_bus_read_output_response(self, io_unit, bus, bus_event, response_handler):
         bus.current_event = bus_event
         await io_unit.bus_read(bus_event)
-        agent_cpu.respond.assert_awaited_once_with(bus_event.process_id, bus_event.message.response)
+        response_handler.handle.assert_awaited_once_with(bus_event.process_id, bus_event.message.response)
 
     def test_process_request_with_user_prompt(self, io_unit):
         prompts = [UserTextCPUMessage(type="user", prompt="Hello, {{ name }}")]

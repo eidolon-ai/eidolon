@@ -44,6 +44,7 @@ class Agent:
     cpu: AgentCPU
 
     def __init__(self, agent_machine: 'AgentMachine', cpu: AgentCPU, spec=None):
+        self.cpu = cpu
         self.spec = spec
         self.agent_memory = agent_machine.agent_memory
         self.agent_machine = agent_machine
@@ -54,7 +55,6 @@ class Agent:
         }
         self.process_context = contextvars.ContextVar('process_state', default=None)
         self.cpu_response_handler = AgentResponseHandler()
-        self.cpu = cpu
 
     def get_context(self) -> ProcessContext:
         return self.process_context.get()

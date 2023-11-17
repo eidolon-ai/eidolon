@@ -18,12 +18,12 @@ class AgentCPU:
 
     def __init__(
             self,
+            bus_controller: BusController,
             io_unit: IOUnit,
             memory_unit: MemoryUnit,
             llm_unit: OpenAIGPT,
             control_unit: ConversationalControlUnit,
             logic_units: Dict[str, LogicUnit] = None,
-            bus_controller: BusController = BusController(),
     ):
         self.bus_controller = bus_controller
 

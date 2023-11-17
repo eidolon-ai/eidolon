@@ -34,6 +34,7 @@ class AgentMachine:
 def _make_cpu(cpu_model, machine):
     bus_controller = BusController()
     cpu = AgentCPU(
+        bus_controller=bus_controller,
         io_unit=cpu_model.io_unit.instantiate(controller=bus_controller),
         memory_unit=cpu_model.memory_unit.instantiate(agent_machine=machine, controller=bus_controller),
         llm_unit=cpu_model.llm_unit.instantiate(controller=bus_controller),
