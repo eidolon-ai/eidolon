@@ -5,9 +5,10 @@ from openai import AsyncOpenAI, RateLimitError, APIStatusError, APIConnectionErr
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import BaseModel
 
-from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent
+from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent, BusController
 from eidolon_sdk.cpu.bus_messages import LLMResponse
 from eidolon_sdk.cpu.llm_message import AssistantMessage, LLMMessage
+from eidolon_sdk.reference_model import Specable
 
 
 class CompletionUsage(BaseModel):
@@ -54,13 +55,19 @@ def convert_to_openai(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-class OpenAIGPT(LLMUnit):
+class OpenAiGPTSpec(BaseModel):
+    model: str = "gpt-4-1106-preview"
+    temperature: float = 0.3
+
+
+class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
     model: str
     temperature: float
 
-    def __init__(self, model: str, temperature: float):
-        self.model = model
-        self.temperature = temperature
+    def __init__(self, controller: BusController, spec: OpenAiGPTSpec):
+        super().__init__(controller)
+        self.model = spec.model
+        self.temperature = spec.temperature
         self.llm = AsyncOpenAI()
 
     async def bus_read(self, event: BusEvent):

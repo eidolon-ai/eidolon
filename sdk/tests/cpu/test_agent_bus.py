@@ -17,7 +17,8 @@ class TestEvent(BusMessage):
 
 # Mocking the abstract BusParticipant for testing purposes
 class MockBusParticipant(BusParticipant):
-    def __init__(self):
+    def __init__(self, controller: BusController):
+        super().__init__(controller)
         self.read_events = []
 
     async def bus_read(self, event: BusEvent):
@@ -35,9 +36,7 @@ def bus_controller():
 
 
 def make_bus_participant(bus_controller):
-    participant = MockBusParticipant()
-    participant.controller = bus_controller
-    return participant
+    return MockBusParticipant(bus_controller)
 
 
 @pytest.mark.asyncio

@@ -22,5 +22,5 @@ class ConversationalControlUnit(ControlUnit):
             self.request_write(BusEvent(
                 event.process_id,
                 event.thread_id,
-                OutputResponse(response = event.message.message.content)
+                OutputResponse(response=event.message.message.content)
             ))

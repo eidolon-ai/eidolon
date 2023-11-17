@@ -20,6 +20,9 @@ class Bus:
 class BusParticipant(ABC):
     controller: 'BusController' = None
 
+    def __init__(self, controller: 'BusController'):
+        self.controller = controller
+
     def request_write(self, event: BusEvent):
         self.controller.request_write_access(self, event)
 

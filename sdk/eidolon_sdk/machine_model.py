@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Dict
+from typing import Dict
 
 from pydantic import Field, BaseModel
 
@@ -8,6 +8,7 @@ from .agent import Agent
 from .agent_memory import FileMemory, SymbolicMemory, SimilarityMemory
 from .cpu.agent_io import IOUnit
 from .cpu.control_unit import ControlUnit, ConversationalControlUnit
+from .cpu.llm_unit import LLMUnit, OpenAIGPT
 from .cpu.logic_unit import LogicUnit
 from .cpu.memory_unit import MemoryUnit, ConversationalMemoryUnit
 from .reference_model import Reference
@@ -23,6 +24,7 @@ class CpuModel(BaseModel):
     io_unit: Reference[IOUnit] = Reference(implementation=fqn(IOUnit))
     control_unit: Reference[ControlUnit] = Reference(implementation=fqn(ConversationalControlUnit))
     memory_unit: Reference[MemoryUnit] = Reference(implementation=fqn(ConversationalMemoryUnit))
+    llm_unit: Reference[LLMUnit] = Reference(implementation=fqn(OpenAIGPT))
     logic_units: Dict[str, Reference[LogicUnit]] = Field(default={})
 
 

@@ -2,7 +2,7 @@ from abc import ABC
 
 from pydantic import BaseModel, SerializeAsAny
 
-from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent
+from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent, BusController
 from eidolon_sdk.cpu.bus_messages import LLMEvent
 from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.reference_model import Specable
@@ -14,7 +14,8 @@ class MemoryUnitConfig(BaseModel):
 
 
 class MemoryUnit(BusParticipant, Specable[MemoryUnitConfig], ABC):
-    def __init__(self, agent_machine: 'AgentMachine', spec: MemoryUnitConfig = None):
+    def __init__(self, agent_machine: 'AgentMachine', controller: BusController, spec: MemoryUnitConfig = None):
+        super().__init__(controller)
         self.agent_machine = agent_machine
 
 

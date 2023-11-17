@@ -9,13 +9,14 @@ from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent import CodeAgent, Agent, initializer, register_action, AgentState
-from eidolon_sdk.agent_machine import AgentMachine
+from eidolon_sdk.agent_machine import AgentMachine, _make_cpu
 from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
 from eidolon_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
+from eidolon_sdk.machine_model import CpuModel
 
 
 @pytest.fixture
@@ -45,7 +46,7 @@ def os_builder():
         machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
         machine.agent_programs = [AgentProgram(
             name=agent.__name__.lower(),
-            agent=agent(machine, AgentCPU(machine))
+            agent=agent(machine, cpu=_make_cpu(CpuModel(), machine))
         ) for agent in agents]
         return AgentOS(machine=machine)
 
