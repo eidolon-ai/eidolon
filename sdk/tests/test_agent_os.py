@@ -6,7 +6,6 @@ from typing import Annotated, Type, List, Literal
 import pytest
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
-from httpx import AsyncClient
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent import CodeAgent, Agent, initializer, register_action, AgentState
@@ -20,36 +19,35 @@ from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 
 
 @pytest.fixture
-def app():
-    return FastAPI()
+def app_builder(os_builder):
+    def get_app(*agents: Type[Agent], memory_override: SymbolicMemory = None):
+        @contextlib.asynccontextmanager
+        async def manage_lifecycle(app: FastAPI):
+            os = os_builder(*agents, memory_override=memory_override)
+            await os.start(app)
+            yield
+            os.stop()
+
+        return FastAPI(lifespan=manage_lifecycle)
+    return get_app
 
 
 @pytest.fixture
-def client(app):
-    return TestClient(app)
+def client_builder(app_builder):
+    def fn(*args, **kwargs):
+        return TestClient(app_builder(*args, **kwargs))
+    return fn
 
 
 @pytest.fixture
-async def async_client(app):
-    async with AsyncClient(app=app, base_url="http://test") as client:
-        yield client
-
-
-@pytest.fixture
-def os_manager(app):
-    @contextlib.contextmanager
+def os_builder():
     def fn(*agents: Type[Agent], memory_override: SymbolicMemory = None):
         machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
         machine.agent_programs = [AgentProgram(
             name=agent.__name__.lower(),
             agent=agent(machine, AgentCPU(machine))
         ) for agent in agents]
-        os = AgentOS(machine=machine)
-        os.start(app)
-        try:
-            yield
-        finally:
-            os.stop()
+        return AgentOS(machine=machine)
 
     return fn
 
@@ -83,26 +81,25 @@ def memory():
     return LocalSymbolicMemory()
 
 
-def test_empty_start(client, os_manager):
-    with os_manager():
-        docs = client.get("/docs")
-        assert docs.status_code == 200
+def test_empty_start(client_builder):
+    docs = client_builder().get("/docs")
+    assert docs.status_code == 200
 
 
-def test_program(client, os_manager):
-    with os_manager(HelloWorld):
+def test_program(client_builder):
+    with client_builder(HelloWorld) as client:
         response = client.post("/programs/helloworld", json=dict(question="hello"))
         assert response.status_code == 200
 
 
-def test_program_actually_calls_code(client, os_manager):
-    with os_manager(HelloWorld):
+def test_program_actually_calls_code(client_builder):
+    with client_builder(HelloWorld) as client:
         client.post("/programs/helloworld", json=dict(question="hello"))
         assert HelloWorld.counter == 1
 
 
-def test_program_automatically_terminates_if_no_new_state_provided(client, os_manager):
-    with os_manager(HelloWorld):
+def test_program_automatically_terminates_if_no_new_state_provided(client_builder):
+    with client_builder(HelloWorld) as client:
         pid = client.post("/programs/helloworld", json=dict(question="hello")).json()['process_id']
         response = client.get(f"/programs/helloworld/processes/{pid}/status")
         assert response.status_code == 200
@@ -118,54 +115,54 @@ class ParamTester(CodeAgent):
         return dict(x=x, y=y, z=z)
 
 
-def test_non_annotated_params(client, os_manager):
-    with os_manager(ParamTester):
+def test_non_annotated_params(client_builder):
+    with client_builder(ParamTester) as client:
         response = client.post("/programs/paramtester", json=dict(x=1, y=2, z=3))
         assert response.status_code == 200
         assert ParamTester.last_call == (1, 2, 3)
 
 
-def test_defaults(client, os_manager):
-    with os_manager(ParamTester):
+def test_defaults(client_builder):
+    with client_builder(ParamTester) as client:
         response = client.post("/programs/paramtester", json=dict(x=1))
         assert response.status_code == 200
         assert ParamTester.last_call == (1, 5, 10)
 
 
-def test_required_param_missing(client, os_manager):
-    with os_manager(ParamTester):
+def test_required_param_missing(client_builder):
+    with client_builder(ParamTester) as client:
         response = client.post("/programs/paramtester", json=dict())
         assert response.status_code == 422
 
 
-def test_required_param_missing_with_no_body(client, os_manager):
-    with os_manager(ParamTester):
+def test_required_param_missing_with_no_body(client_builder):
+    with client_builder(ParamTester) as client:
         response = client.post("/programs/paramtester")
         assert response.status_code == 422
 
 
 @pytest.mark.parametrize("db", ["mongo", "local"])
 @pytest.mark.asyncio
-async def test_async_retrieve_result(async_client, os_manager, symbolic_memory, db):
-    with os_manager(HelloWorld, memory_override=symbolic_memory if db == "mongo" else None):
-        post = await async_client.post("/programs/helloworld", json=dict(question="hello"),
+def test_async_retrieve_result(client_builder, symbolic_memory, db):
+    with client_builder(HelloWorld, memory_override=symbolic_memory if db == "mongo" else None) as client:
+        post = client.post("/programs/helloworld", json=dict(question="hello"),
                                        headers={'execution-mode': 'async'})
         assert post.status_code == 202
-        response = await async_client.get(f"/programs/helloworld/processes/{post.json()['process_id']}/status")
+        response = client.get(f"/programs/helloworld/processes/{post.json()['process_id']}/status")
         assert response.status_code == 200
         assert response.json()['data'] == dict(question="hello", answer="world")
 
 
 @pytest.mark.parametrize("db", ["mongo", "local"])
 @pytest.mark.asyncio
-async def test_program_http_error(async_client, os_manager, symbolic_memory, db):
-    with os_manager(HelloWorld, memory_override=symbolic_memory if db == "mongo" else None):
-        response = await async_client.post("/programs/helloworld", json=dict(question="hola"))
+async def test_program_http_error(client_builder, symbolic_memory, db):
+    with client_builder(HelloWorld, memory_override=symbolic_memory if db == "mongo" else None) as client:
+        response = client.post("/programs/helloworld", json=dict(question="hola"))
         assert response.json()['detail'] == "huge system error handling unprecedented edge case"
 
 
-def test_program_error(client, os_manager):
-    with os_manager(HelloWorld):
+def test_program_error(client_builder):
+    with client_builder(HelloWorld) as client:
         response = client.post("/programs/helloworld", json=dict(question="exception"))
         assert response.status_code == 500
         assert response.json()['error'] == "some unexpected error"
@@ -175,19 +172,17 @@ class MemTester(CodeAgent):
     @initializer
     async def add(self, x: int):
         await self.agent_memory.symbolic_memory.insert_one("test", dict(x=x))
+        found = await self.agent_memory.symbolic_memory.find_one("test", dict(x=x))
+        return found['x']
 
 
-# todo, lets parameterize this one with mongo as well
 @pytest.mark.parametrize("db", ["mongo", "local"])
-@pytest.mark.asyncio
-async def test_programs_can_call_memory(async_client, os_manager, memory, symbolic_memory, db):
+def test_programs_can_call_memory(client_builder, memory, symbolic_memory, db):
     if db == "mongo":
         memory = symbolic_memory
-    with os_manager(MemTester, memory_override=memory):
-        await async_client.post("/programs/memtester", json=dict(x=1))
-        found = await memory.find_one("test", dict(x=1))
-        assert found
-        assert found['x'] == 1
+    with client_builder(MemTester, memory_override=memory) as client:
+        post = client.post("/programs/memtester", json=dict(x=1))
+        assert post.json()['data'] == 1
 
 
 class StateTester(CodeAgent):
@@ -200,8 +195,8 @@ class StateTester(CodeAgent):
         return AgentState(name=next_state, data=dict())
 
 
-def test_can_transition_state(client, os_manager):
-    with os_manager(StateTester):
+def test_can_transition_state(client_builder):
+    with client_builder(StateTester) as client:
         post = client.post("/programs/statetester", json={})
         pid = post.json()['process_id']
         assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "a"
@@ -210,8 +205,8 @@ def test_can_transition_state(client, os_manager):
         assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "b"
 
 
-def test_enforced_state_limits(client, os_manager):
-    with os_manager(StateTester):
+def test_enforced_state_limits(client_builder):
+    with client_builder(StateTester) as client:
         post = client.post("/programs/statetester", json={})
         pid = post.json()['process_id']
         assert client.get(f"/programs/statetester/processes/{pid}/status").json()['state'] == "a"
@@ -223,8 +218,8 @@ def test_enforced_state_limits(client, os_manager):
 
 
 @pytest.mark.skip("todo, this needs some special handling")
-def test_empty_body_functions_if_no_args_required(client, os_manager):
-    with os_manager(StateTester):
+def test_empty_body_functions_if_no_args_required(client_builder):
+    with client_builder(StateTester) as client:
         assert client.post("/programs/statetester").status_code == 200
 
 
@@ -234,8 +229,8 @@ class PidTester(CodeAgent):
         return dict(agent_found_pid=self.get_context().process_id)
 
 
-def test_agents_can_read_process_id(client, os_manager):
-    with os_manager(PidTester):
+def test_agents_can_read_process_id(client_builder):
+    with client_builder(PidTester) as client:
         post = client.post("/programs/pidtester", json={})
         assert post.json()['process_id'] == post.json()['data']['agent_found_pid']
 
@@ -250,12 +245,11 @@ class CpuTester(Agent):
         return await self.cpu_request([UserTextCPUMessage(prompt="foo")], {}, CpuResponse.model_json_schema())
 
 
-@pytest.mark.skip("this is not working yet. Not sure where bug is.")
-def test_agent_can_use_cpu(client, os_manager):
-    with os_manager(CpuTester):
+def test_agent_can_use_cpu(client_builder):
+    with client_builder(CpuTester) as client:
         post = client.post("/programs/cputester", json={})
         assert post.status_code == 200
-        assert post.json()['data'] == dict(foo="bar")
+        assert post.json()['data'] == {'response': 'foo'}
 
 
 class DocumentedBase(BaseModel):
@@ -298,8 +292,8 @@ class Documented(CodeAgent):
 
 class TestOpenApiDocs:
     @pytest.fixture()
-    def openapi_schema(self, client, os_manager):
-        with os_manager(Documented):
+    def openapi_schema(self, client_builder):
+        with client_builder(Documented) as client:
             # Get the OpenAPI schema
             yield client.get("/openapi.json").json()
 

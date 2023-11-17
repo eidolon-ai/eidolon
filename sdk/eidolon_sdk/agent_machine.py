@@ -22,6 +22,8 @@ class AgentMachine:
         model = MachineModel(**(yaml.safe_load(machine_yaml)))
         memory = AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()})
         machine = AgentMachine(agent_memory=memory, agent_programs=[])
+
+        # todo, agent cpu needs to be driven from model, but it is currently hard coded
         machine.agent_programs = [
             AgentProgram(name=name, agent=(program.agent.instantiate(agent_machine=machine, cpu=AgentCPU(agent_machine=machine))))
             for name, program in model.agent_programs.items()

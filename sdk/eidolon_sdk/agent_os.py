@@ -18,10 +18,10 @@ class AgentOS:
     def __init__(self, machine: AgentMachine):
         self.machine = machine
 
-    def start(self, app: FastAPI):
+    async def start(self, app: FastAPI):
         self.app = app
         for program in self.machine.agent_programs:
-            program.start(app)
+            await program.start(app)
 
         self.machine.agent_memory.start()
 

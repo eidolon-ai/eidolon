@@ -77,4 +77,4 @@ class BusController:
             self.lock.clear()
             await self._process_one_event()
             await self.lock.wait()
-        self.in_event_loop = True
+        self.in_event_loop = False

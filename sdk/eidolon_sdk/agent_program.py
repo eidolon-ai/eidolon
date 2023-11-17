@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import inspect
 import typing
 from datetime import datetime
@@ -34,8 +35,8 @@ class AgentProgram:
         self.name = name
         self.agent = agent
 
-    def start(self, app: FastAPI):
-        self.agent.cpu.start(self.agent.cpu_response_handler)
+    async def start(self, app: FastAPI):
+        await self.agent.cpu.start(self.agent.cpu_response_handler)
         for action, handler in self.agent.action_handlers.items():
             path = f"/programs/{self.name}"
             if action != 'INIT':
@@ -57,9 +58,9 @@ class AgentProgram:
     def stop(self, app: FastAPI):
         pass
 
-    def restart(self, app: FastAPI):
+    async def restart(self, app: FastAPI):
         self.stop(app)
-        self.start(app)
+        await self.start(app)
 
     # todo, defining this on agents and then handling the dynamic function call will give flexibility to define request body
     def process_action(self, action: str):

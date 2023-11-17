@@ -7,7 +7,6 @@ from asyncio import Future
 from dataclasses import dataclass
 from typing import Dict, List, TypeVar, Generic
 
-from bson import ObjectId
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
