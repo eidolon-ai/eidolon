@@ -9,11 +9,11 @@ from eidolon_sdk.reference_model import Specable
 
 
 class MemoryUnitConfig(BaseModel):
-    ms: str
-    msf: str
+    ms: str = 'llm.le'
+    # msf: str  # input port doesn't need to define mapping
 
 
-class MemoryUnit(BusParticipant, ABC, Specable[MemoryUnitConfig]):
+class MemoryUnit(BusParticipant, Specable[MemoryUnitConfig], ABC):
     def __init__(self, agent_machine: 'AgentMachine', spec: MemoryUnitConfig = None):
         self.agent_machine = agent_machine
 

@@ -40,7 +40,7 @@ class ReferenceMeta(type):
                     specable = next((base for base in bases if getattr(base, '__origin__', None) is Specable), None)
                     if specable:
                         spec_type, = specable.__args__
-                        return spec_type.model_validate(self.spec)
+                        return spec_type.model_validate(self.spec or {})
                     else:
                         logging.warning(f'Unable to find Specable definition on "{reference_class}", skipping validation')
                         return self.spec
