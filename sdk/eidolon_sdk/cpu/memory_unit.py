@@ -5,11 +5,16 @@ from pydantic import BaseModel, SerializeAsAny
 from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent
 from eidolon_sdk.cpu.bus_messages import LLMEvent
 from eidolon_sdk.cpu.llm_message import LLMMessage
+from eidolon_sdk.reference_model import Specable
 
 
-class MemoryUnit(BusParticipant, ABC):
+class MemoryUnitConfig(BaseModel):
+    ms: str
+    msf: str
 
-    def __init__(self, agent_machine: 'AgentMachine'):
+
+class MemoryUnit(BusParticipant, ABC, Specable[MemoryUnitConfig]):
+    def __init__(self, agent_machine: 'AgentMachine', spec: MemoryUnitConfig = None):
         self.agent_machine = agent_machine
 
 
