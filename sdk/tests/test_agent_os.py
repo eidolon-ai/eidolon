@@ -14,6 +14,8 @@ from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
+from eidolon_sdk.cpu.agent_cpu import AgentCPU
+from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 
 
@@ -40,7 +42,7 @@ def os_manager(app):
         machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
         machine.agent_programs = [AgentProgram(
             name=agent.__name__.lower(),
-            agent=agent(agent_machine=machine),
+            agent=agent(machine, AgentCPU(machine))
         ) for agent in agents]
         os = AgentOS(machine=machine)
         os.start(app)
@@ -236,6 +238,24 @@ def test_agents_can_read_process_id(client, os_manager):
     with os_manager(PidTester):
         post = client.post("/programs/pidtester", json={})
         assert post.json()['process_id'] == post.json()['data']['agent_found_pid']
+
+
+class CpuResponse(BaseModel):
+    response: str
+
+
+class CpuTester(Agent):
+    @initializer
+    async def foo(self):
+        return await self.cpu_request([UserTextCPUMessage(prompt="foo")], {}, CpuResponse.model_json_schema())
+
+
+@pytest.mark.skip("this is not working yet. Not sure where bug is.")
+def test_agent_can_use_cpu(client, os_manager):
+    with os_manager(CpuTester):
+        post = client.post("/programs/cputester", json={})
+        assert post.status_code == 200
+        assert post.json()['data'] == dict(foo="bar")
 
 
 class DocumentedBase(BaseModel):

@@ -3,13 +3,17 @@ from __future__ import annotations
 import contextvars
 import inspect
 import typing
+from asyncio import Future
 from dataclasses import dataclass
 from typing import Dict, List, TypeVar, Generic
 
+from bson import ObjectId
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
 from .agent_memory import AgentMemory
+from .cpu.agent_cpu import AgentCPU, ResponseHandler
+from .cpu.agent_io import UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage
 
 
 class ProcessContext(BaseModel):
@@ -17,12 +21,30 @@ class ProcessContext(BaseModel):
     callback_url: typing.Optional[str]
 
 
+class AgentResponseHandler(ResponseHandler):
+    def __init__(self):
+        self.listeners = {}
+
+    async def handle(self, ret_p_id: str, response: Dict[str, typing.Any]):
+        try:
+            self.listeners[ret_p_id].set_result(response)
+        except KeyError:
+            pass
+
+    def add_listener(self, ret_p_id: str) -> Future:
+        future = Future()
+        self.listeners[ret_p_id] = future
+        return future
+
+
 class Agent:
+    cpu_response_handler: AgentResponseHandler
     action_handlers: Dict[str, EidolonHandler]
     agent_machine: AgentMemory
     process_context: contextvars.ContextVar
+    cpu: AgentCPU
 
-    def __init__(self, agent_machine: 'AgentMachine', spec=None):
+    def __init__(self, agent_machine: 'AgentMachine', cpu: AgentCPU, spec=None):
         self.spec = spec
         self.agent_memory = agent_machine.agent_memory
         self.agent_machine = agent_machine
@@ -32,6 +54,8 @@ class Agent:
             for handler in getattr(getattr(self, method_name), 'eidolon_handlers')
         }
         self.process_context = contextvars.ContextVar('process_state', default=None)
+        self.cpu_response_handler = AgentResponseHandler()
+        self.cpu = cpu
 
     def get_context(self) -> ProcessContext:
         return self.process_context.get()
@@ -55,6 +79,15 @@ class Agent:
 
     def get_response_model(self, action: str):
         return typing.get_type_hints(self.action_handlers[action].fn, include_extras=True).get('return', typing.Any)
+
+    async def cpu_request(self,
+                          prompts: List[typing.Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]],
+                          input_data: Dict[str, typing.Any],
+                          output_format: Dict[str, typing.Any]):
+        process_id = self.get_context().process_id
+        future = self.cpu_response_handler.add_listener(process_id)
+        self.cpu.schedule_request(process_id, prompts, input_data, output_format)
+        return await future
 
 
 class CodeAgent(Agent):

@@ -37,7 +37,7 @@ class IOUnit(BusParticipant):
             await self.agent_cpu.respond(event.process_id, event.message.response)
 
     @validate_call
-    def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: dict[str, Any],
+    def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: Dict[str, Any],
                         output_format: Dict[str, Any]):
         # convert the prompts to a list of strings
         event_prompts = []

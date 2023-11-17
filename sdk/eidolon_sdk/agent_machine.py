@@ -1,8 +1,11 @@
 from typing import List
 
 import yaml
+
+from .agent import Agent
 from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
+from .cpu.agent_cpu import AgentCPU
 from .machine_model import MachineModel
 
 
@@ -17,13 +20,10 @@ class AgentMachine:
     @staticmethod
     def from_yaml(machine_yaml):
         model = MachineModel(**(yaml.safe_load(machine_yaml)))
-        machine = AgentMachine(
-            agent_memory=AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()}),
-            agent_programs=[]
-        )
-        machine.agent_programs = [AgentProgram(
-            name=name,
-            agent=program.agent.instantiate(agent_machine=machine)
-            # todo add cpu
-        ) for name, program in model.agent_programs.items()]
+        memory = AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()})
+        machine = AgentMachine(agent_memory=memory, agent_programs=[])
+        machine.agent_programs = [
+            AgentProgram(name=name, agent=(program.agent.instantiate(agent_machine=machine, cpu=AgentCPU(agent_machine=machine))))
+            for name, program in model.agent_programs.items()
+        ]
         return machine

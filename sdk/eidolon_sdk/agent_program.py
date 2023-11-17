@@ -28,16 +28,14 @@ class SyncStateResponse(AsyncStateResponse):
 
 class AgentProgram:
     name: str
-    agent_cpu: AgentCPU
     agent: Agent
 
-    def __init__(self, name: str, agent: Agent, agent_cpu: AgentCPU = None):
+    def __init__(self, name: str, agent: Agent):
         self.name = name
-        self.agent_cpu = agent_cpu
         self.agent = agent
 
     def start(self, app: FastAPI):
-        # First create the Agent implementation
+        self.agent.cpu.start(self.agent.cpu_response_handler)
         for action, handler in self.agent.action_handlers.items():
             path = f"/programs/{self.name}"
             if action != 'INIT':
