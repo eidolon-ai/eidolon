@@ -66,7 +66,7 @@ class Reference(metaclass=ReferenceMeta):
     Reference[Foo](implementation="module.CLASS") will validate that the implementation is a subclass of Foo.
     Reference(implementation="module.CLASS") is equivalent to Reference[object](implementation="module.CLASS").
 
-    Can be use in conjunction with Specable to validate the spec provided to the reference.
+    Can be used in conjunction with Specable to validate the spec provided to the reference.
 
     References are expected to accept a spec kwarg in __init__
 

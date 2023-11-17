@@ -8,7 +8,8 @@ from .agent import Agent
 from .agent_memory import FileMemory, SymbolicMemory, SimilarityMemory
 from .cpu.agent_io import IOUnit
 from .cpu.control_unit import ControlUnit, ConversationalControlUnit
-from .cpu.llm_unit import LLMUnit, OpenAIGPT
+from .cpu.llm_unit import LLMUnit
+from .impl.open_ai_llm_unit import OpenAIGPT
 from .cpu.logic_unit import LogicUnit
 from .cpu.memory_unit import MemoryUnit, ConversationalMemoryUnit
 from .reference_model import Reference
@@ -21,16 +22,16 @@ class MachineModel(BaseModel):
 
 
 class CpuModel(BaseModel):
-    io_unit: Reference[IOUnit] = Reference(implementation=fqn(IOUnit))
-    control_unit: Reference[ControlUnit] = Reference(implementation=fqn(ConversationalControlUnit))
-    memory_unit: Reference[MemoryUnit] = Reference(implementation=fqn(ConversationalMemoryUnit))
-    llm_unit: Reference[LLMUnit] = Reference(implementation=fqn(OpenAIGPT))
+    io_unit: Reference[IOUnit] = Field(default=None)
+    control_unit: Reference[ControlUnit] = Field(default=None)
+    memory_unit: Reference[MemoryUnit] = Field(default=None)
+    llm_unit: Reference[LLMUnit] = Field(default=None)
     logic_units: Dict[str, Reference[LogicUnit]] = Field(default={})
 
 
 class ProgramModel(BaseModel):
     agent: Reference[Agent] = Field(description="The Agent implementation to use.")
-    cpu: CpuModel = Field(CpuModel(), description="The CPU implementation to use.")
+    cpu: CpuModel = Field(default=None, description="The CPU implementation to use.")
 
 
 class MemoryModel(BaseModel):

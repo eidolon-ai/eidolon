@@ -1,13 +1,12 @@
-import json
-from abc import ABC
+from abc import ABC, abstractmethod
+from typing import List
 
-from openai import AsyncOpenAI, RateLimitError, APIStatusError, APIConnectionError
-from openai.types.chat.completion_create_params import ResponseFormat
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent, BusController
-from eidolon_sdk.cpu.bus_messages import LLMResponse
-from eidolon_sdk.cpu.llm_message import AssistantMessage, LLMMessage
+from eidolon_sdk.cpu.agent_bus import BusEvent, CallContext
+from eidolon_sdk.cpu.processing_unit import ProcessingUnit
+from eidolon_sdk.cpu.bus_messages import READ_PORT, WRITE_PORT
+from eidolon_sdk.cpu.llm_message import AssistantMessage, LLMMessage, ToolCallMessage
 from eidolon_sdk.reference_model import Specable
 
 
@@ -22,86 +21,33 @@ class CompletionUsage(BaseModel):
     """Total number of tokens used in the request (prompt + completion)."""
 
 
-class LLMUnit(BusParticipant, ABC):
-    pass
+class LLMUnitConfig(BaseModel):
+    llm_read: READ_PORT = Field(description="A port that, when bound to an event, will read the conversation, or message, from the bus and execute it.")
+    llm_write: WRITE_PORT = Field(description="A port that, when bound to an event, will write the response from the LLM to the bus.")
+    lt_write: WRITE_PORT = Field(default=None, description="A port that, when bound to an event, will write the tool calls from the LLM to the bus.")
 
 
-def convert_to_openai(message: LLMMessage):
-    if message.type == "system":
-        return {
-            "role": "system",
-            "content": message.content
-        }
-    elif message.type == "user":
-        content = message.content
-        if not isinstance(content, str):
-            content = [part.model_dump() for part in content]
-        return {
-            "role": "user",
-            "content": content
-        }
-    elif message.type == "assistant":
-        return {
-            "role": "assistant",
-            "content": message.content,
-            "tool_calls": message.tool_calls
-        }
-    elif message.type == "tool":
-        return {
-            "role": "tool",
-            "tool_calls": message.tool_calls
-        }
-    else:
-        raise ValueError(f"Unknown message type {message.type}")
-
-
-class OpenAiGPTSpec(BaseModel):
-    model: str = "gpt-4-1106-preview"
-    temperature: float = 0.3
-
-
-class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
-    model: str
-    temperature: float
-
-    def __init__(self, controller: BusController, spec: OpenAiGPTSpec):
-        super().__init__(controller)
-        self.model = spec.model
-        self.temperature = spec.temperature
-        self.llm = AsyncOpenAI()
+class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
+    def __init__(self, spec: LLMUnitConfig = None):
+        self.spec = spec
 
     async def bus_read(self, event: BusEvent):
-        if event.message.event_type == "llm_event":
-            messages = [convert_to_openai(message) for message in event.message.messages]
-            output_format = event.message.output_format
-            # add a message to the LLM for the output format which is already in json schema format
-            messages.append({
-                "role": "user",
-                "content": f"The output MUST be valid json and the schema for the response message is {output_format}"
-            })
-            # This event is a request to query the LLM
-            try:
-                print("messages = " + str(messages))
-                response = await self.llm.chat.completions.create(
-                    messages=messages,
-                    model=self.model,
-                    temperature=self.temperature,
-                    response_format=ResponseFormat(type="json_object")
-                )
+        if event.event_type == self.spec.llm_read:
+            await self.process_llm_event(event.call_context, event.messages)
 
-                response = response.choices[0].message.model_dump()
-                response["content"] = json.loads(response["content"])
-                bus_event = BusEvent(
-                    event.process_id,
-                    event.thread_id,
-                    LLMResponse(message=AssistantMessage.model_validate(response)))
-                self.request_write(bus_event)
-            except APIConnectionError as e:
-                print("The server could not be reached")
-                print(e.__cause__)  # an underlying Exception, likely raised within httpx.
-            except RateLimitError as e:
-                print("A 429 status code was received; we should back off a bit.")
-            except APIStatusError as e:
-                print("Another non-200-range status code was received")
-                print(e.status_code)
-                print(e.response)
+    @abstractmethod
+    async def process_llm_event(self, call_context: CallContext, messages: List[LLMMessage]):
+        pass
+
+    def write_llm_response(self, call_context: CallContext, message: AssistantMessage):
+        self.request_write(BusEvent(
+            call_context,
+            self.spec.llm_write,
+            [message]
+        ))
+
+    def write_llm_tool_calls(self, call_context: CallContext, tool_calls: List[ToolCallMessage]):
+        self.request_write(BusEvent(
+            call_context,
+            self.spec.lt_write,
+            tool_calls))

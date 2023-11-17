@@ -1,16 +1,24 @@
 import asyncio
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict, Any
 
-from eidolon_sdk.cpu.bus_messages import BusMessage
+from eidolon_sdk.cpu.llm_message import LLMMessage
+
+
+@dataclass
+class CallContext:
+    def __init__(self, process_id: str, thread_id: int, output_format: Dict[str, Any]):
+        self.process_id = process_id
+        self.thread_id = thread_id
+        self.output_format = output_format
 
 
 @dataclass
 class BusEvent:
-    process_id: str
-    thread_id: int
-    message: BusMessage
+    call_context: CallContext
+    event_type: str
+    messages: List[LLMMessage]
 
 
 class Bus:
@@ -20,7 +28,7 @@ class Bus:
 class BusParticipant(ABC):
     controller: 'BusController' = None
 
-    def __init__(self, controller: 'BusController'):
+    def initialize(self, controller: 'BusController'):
         self.controller = controller
 
     def request_write(self, event: BusEvent):
@@ -59,6 +67,7 @@ class BusController:
         participant.controller = None
 
     def request_write_access(self, participant: BusParticipant, event: BusEvent):
+        print("writing event " + str(event))
         self.access_queue.append((participant, event))
         self.lock.set()
 

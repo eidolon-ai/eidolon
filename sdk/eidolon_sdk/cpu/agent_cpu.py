@@ -1,29 +1,27 @@
-from typing import Any, Union, List, Dict
+from typing import Any, Union, List, Dict, Optional
 
 from eidolon_sdk.cpu.agent_bus import BusController, BusParticipant
-from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, IOUnit, ResponseHandler
-from eidolon_sdk.cpu.control_unit import ConversationalControlUnit, ControlUnit
-from eidolon_sdk.cpu.llm_unit import OpenAIGPT, LLMUnit
+from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler, IOUnit
 from eidolon_sdk.cpu.logic_unit import LogicUnit
-from eidolon_sdk.cpu.memory_unit import MemoryUnit
+from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 
 
 class AgentCPU:
     bus_controller: BusController
     io_unit: IOUnit
-    memory_unit: MemoryUnit
-    llm_unit: LLMUnit
-    control_unit: ControlUnit
+    memory_unit: ProcessingUnit
+    llm_unit: ProcessingUnit
+    control_unit: ProcessingUnit
     logic_units: Dict[str, LogicUnit]
 
     def __init__(
             self,
             bus_controller: BusController,
             io_unit: IOUnit,
-            memory_unit: MemoryUnit,
-            llm_unit: OpenAIGPT,
-            control_unit: ConversationalControlUnit,
-            logic_units: Dict[str, LogicUnit] = None,
+            memory_unit: Optional[ProcessingUnit],
+            llm_unit: Optional[ProcessingUnit],
+            control_unit: Optional[ProcessingUnit],
+            logic_units: Dict[str, ProcessingUnit] = None,
     ):
         self.bus_controller = bus_controller
 
@@ -35,7 +33,14 @@ class AgentCPU:
 
     async def start(self, response_handler: ResponseHandler):
         self.io_unit.start(response_handler)
-        participants: List[BusParticipant] = [self.memory_unit, self.llm_unit, self.control_unit, self.io_unit]
+        participants: List[BusParticipant] = [self.io_unit]
+        if self.memory_unit:
+            participants.append(self.memory_unit)
+        if self.llm_unit:
+            participants.append(self.llm_unit)
+        if self.control_unit:
+            participants.append(self.control_unit)
+
         participants.extend(self.logic_units.values())
         for participant in participants:
             self.bus_controller.add_participant(participant)

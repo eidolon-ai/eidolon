@@ -35,3 +35,10 @@ class LLMResponse(BusMessage):
 class OutputResponse(BusMessage):
     event_type: str = "output_response"
     response: Dict[str, Any]
+
+
+# A new type that is used to bind a read port to an event
+READ_PORT = str
+
+# A new type that is used to bind a write port to an event
+WRITE_PORT = str

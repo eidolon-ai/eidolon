@@ -6,7 +6,7 @@ from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
 from .cpu.agent_bus import BusController
 from .cpu.agent_cpu import AgentCPU
-from .machine_model import MachineModel, ProgramModel
+from .machine_model import MachineModel
 
 
 class AgentMachine:
@@ -32,17 +32,43 @@ class AgentMachine:
 
 
 def _make_cpu(cpu_model, machine):
+    if not cpu_model:
+        return None
+
     bus_controller = BusController()
+    memory_unit = None
+    llm_unit = None
+    control_unit = None
+    if cpu_model.memory_unit:
+        memory_unit = cpu_model.memory_unit.instantiate()
+    if cpu_model.llm_unit:
+        llm_unit = cpu_model.llm_unit.instantiate()
+    if cpu_model.control_unit:
+        control_unit = cpu_model.control_unit.instantiate()
+
     cpu = AgentCPU(
         bus_controller=bus_controller,
-        io_unit=cpu_model.io_unit.instantiate(controller=bus_controller),
-        memory_unit=cpu_model.memory_unit.instantiate(agent_machine=machine, controller=bus_controller),
-        llm_unit=cpu_model.llm_unit.instantiate(controller=bus_controller),
-        control_unit=cpu_model.control_unit.instantiate(controller=bus_controller),
+        io_unit=cpu_model.io_unit.instantiate(),
+        memory_unit=memory_unit,
+        llm_unit=llm_unit,
+        control_unit=control_unit,
         logic_units={
             name: logic_unit.instantiate(agent_machine=machine, controller=bus_controller)
             for name, logic_unit in cpu_model.logic_units.items()
         },
     )
-    return cpu
 
+    cpu.io_unit.initialize(bus_controller, cpu, machine.agent_memory)
+    if cpu.memory_unit:
+        cpu.memory_unit.initialize(bus_controller, cpu, machine.agent_memory)
+
+    if cpu.llm_unit:
+        cpu.llm_unit.initialize(bus_controller, cpu, machine.agent_memory)
+
+    if cpu.control_unit:
+        cpu.control_unit.initialize(bus_controller, cpu, machine.agent_memory)
+
+    for logic_unit in cpu.logic_units.values():
+        logic_unit.initialize(bus_controller, cpu, machine.agent_memory)
+
+    return cpu

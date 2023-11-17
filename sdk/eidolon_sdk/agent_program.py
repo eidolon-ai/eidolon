@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import asyncio
 import inspect
 import typing
 from datetime import datetime
 from inspect import Parameter
-from typing import Any
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
@@ -14,7 +12,6 @@ from starlette.responses import JSONResponse
 
 from .agent import Agent, AgentState, ProcessContext
 from .agent_memory import SymbolicMemory
-from .cpu.agent_cpu import AgentCPU
 
 
 class AsyncStateResponse(BaseModel):
@@ -36,7 +33,8 @@ class AgentProgram:
         self.agent = agent
 
     async def start(self, app: FastAPI):
-        await self.agent.cpu.start(self.agent.cpu_response_handler)
+        if self.agent.cpu:
+            await self.agent.cpu.start(self.agent.cpu_response_handler)
         for action, handler in self.agent.action_handlers.items():
             path = f"/programs/{self.name}"
             if action != 'INIT':
