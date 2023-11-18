@@ -36,9 +36,8 @@ class ImageURLCPUMessage(CPUMessage):
 
 
 class IOUnitConfig(BaseModel):
-    io_write: WRITE_PORT = Field(description="A port that, when bound to an event, will write the input request to the event bus.")
-    io_read: WRITE_PORT = Field(description="A port that, when bound to an event, will read the output response from the event bus.")
-    pass
+    io_write: WRITE_PORT = Field("Request", description="A port that, when bound to an event, will write the input request to the event bus.")
+    io_read: WRITE_PORT = Field("Response", description="A port that, when bound to an event, will read the output response from the event bus.")
 
 
 class IOUnit(ProcessingUnit, Specable[IOUnitConfig]):

@@ -24,8 +24,8 @@ class LocalFileMemoryConfig(BaseModel):
             raise ValueError(f"The root_dir must be an absolute path. Received: {inValue}->{value}")
 
         # You could also check if path exists and is a directory if necessary
-        if not path.is_dir():
-            raise ValueError(f"The root_dir be a directory. Received: {inValue}->{value}")
+        if path.is_file():
+            raise ValueError(f"The root_dir must be a directory. Received: {inValue}->{value}")
 
         return inValue
 

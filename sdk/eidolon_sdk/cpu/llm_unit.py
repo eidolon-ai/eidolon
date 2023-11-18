@@ -22,8 +22,8 @@ class CompletionUsage(BaseModel):
 
 
 class LLMUnitConfig(BaseModel):
-    llm_read: READ_PORT = Field(description="A port that, when bound to an event, will read the conversation, or message, from the bus and execute it.")
-    llm_write: WRITE_PORT = Field(description="A port that, when bound to an event, will write the response from the LLM to the bus.")
+    llm_read: READ_PORT = Field("Conversation", description="A port that, when bound to an event, will read the conversation, or message, from the bus and execute it.")
+    llm_write: WRITE_PORT = Field("Response", description="A port that, when bound to an event, will write the response from the LLM to the bus.")
     lt_write: WRITE_PORT = Field(default=None, description="A port that, when bound to an event, will write the tool calls from the LLM to the bus.")
 
 

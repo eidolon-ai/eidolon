@@ -2,17 +2,18 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from eidolon_sdk.cpu.agent_bus import BusEvent, BusController
+from eidolon_sdk.agent_machine import AgentMachine
+from eidolon_sdk.cpu.agent_bus import BusEvent, BusController, CallContext
 from eidolon_sdk.cpu.bus_messages import AddConversationHistory, LLMResponse, LLMEvent, InputRequest
 from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage, AssistantMessage
 # Assuming the classes are in a module named 'my_module', which needs to be imported here.
-from eidolon_sdk.cpu.memory_unit import ConversationalMemoryUnit
+from eidolon_sdk.cpu.memory_unit import ConversationalMemoryUnit, MemoryUnitConfig
 
 
 # Mocking the LLMMessage for testing purposes
 class MockLLMMessage(LLMMessage):
-    text: str
-    type: str = "mock"
+    content: str
+    type: str = "system"
 
 
 @pytest.fixture
@@ -28,8 +29,12 @@ def agent_machine():
 
 
 @pytest.fixture
-def bus_event():
-    return BusEvent(process_id="process1", thread_id=1, message=AddConversationHistory(messages=[SystemMessage(content="hi there")], output_format={}))
+def bus_event(memory_unit):
+    return BusEvent(
+        call_context=CallContext(process_id="process1", thread_id=1, output_format={}),
+        event_type=memory_unit.spec.msf_read,
+        messages=[LLMMessage(type='system', data=AddConversationHistory(messages=[SystemMessage(content="hi there")], output_format={}))]
+    )
 
 
 @pytest.fixture
@@ -38,8 +43,9 @@ def bus_controller():
 
 
 @pytest.fixture
-def memory_unit(agent_machine, bus_controller):
-    memory_unit = ConversationalMemoryUnit(agent_machine, bus_controller)
+def memory_unit(agent_machine: AgentMachine, bus_controller):
+    memory_unit = ConversationalMemoryUnit(MemoryUnitConfig(ms_read="ms_read", msf_read="msf_read"))
+    memory_unit.initialize(bus_controller, cpu=None, memory=agent_machine.agent_memory)
     memory_unit.request_write = AsyncMock()
     return memory_unit
 
@@ -58,11 +64,11 @@ class TestConversationalMemoryUnit:
         existing_messages = [{
             "process_id": "process1",
             "thread_id": 1,
-            "message": MockLLMMessage(text="Message 1").model_dump()
+            "message": MockLLMMessage(content="Message 1").model_dump()
         }, {
             "process_id": "process1",
             "thread_id": 1,
-            "message": MockLLMMessage(text="Message 2").model_dump()
+            "message": MockLLMMessage(content="Message 2").model_dump()
         }]
 
         agent_machine.agent_memory.symbolic_memory.find = await make_async_find_generator(existing_messages)
@@ -72,37 +78,42 @@ class TestConversationalMemoryUnit:
         await memory_unit.bus_read(bus_event)
 
         # Check if insert_one was called with correct arguments
-        for message in bus_event.message.messages:
-            agent_machine.agent_memory.symbolic_memory.insert_one.assert_awaited_once_with("conversation_memory", {
-                "process_id": bus_event.process_id,
-                "thread_id": bus_event.thread_id,
+        for message in bus_event.messages:
+            agent_machine.agent_memory.symbolic_memory.insert.assert_awaited_once_with("conversation_memory", [{
+                "process_id": bus_event.call_context.process_id,
+                "thread_id": bus_event.call_context.thread_id,
                 "message": message.model_dump()
-            })
+            }])
 
     async def test_bus_read_llm_response(self, memory_unit, agent_machine):
         # Create an event for llm_response
-        llm_response_event = BusEvent(process_id="process1", thread_id=1, message=LLMResponse(message=AssistantMessage(content={"hello": "there"}, tool_calls=None)))
+        llm_response_event = BusEvent(
+            CallContext(process_id="process1", thread_id=1, output_format={}),
+            event_type="ms_read",
+            messages=[AssistantMessage(content={"hello": "there"}, tool_calls=None)]
+        )
 
         # Perform the bus read
         await memory_unit.bus_read(llm_response_event)
 
         # Check if insert_one was called with the correct arguments
-        agent_machine.agent_memory.symbolic_memory.insert_one.assert_awaited_once_with("conversation_memory", {
-            "process_id": llm_response_event.process_id,
-            "thread_id": llm_response_event.thread_id,
-            "message": llm_response_event.message.message.model_dump()
-        })
+        agent_machine.agent_memory.symbolic_memory.insert.assert_awaited_once_with("conversation_memory", [{
+            "process_id": llm_response_event.call_context.process_id,
+            "thread_id": llm_response_event.call_context.thread_id,
+            "message": llm_response_event.messages[0].model_dump()
+        }])
 
     async def test_bus_read_with_existing_messages(self, memory_unit, bus_event, agent_machine):
         # Set up existing messages
         existing_messages = [{
             "process_id": "process1",
             "thread_id": 1,
-            "message": MockLLMMessage(text="Message 1").model_dump()},
-            {
-                "process_id": "process1",
-                "thread_id": 1,
-                "message": MockLLMMessage(text="Message 2").model_dump()}]
+            "message": MockLLMMessage(content="Message 1").model_dump()
+        }, {
+            "process_id": "process1",
+            "thread_id": 1,
+            "message": MockLLMMessage(content="Message 2").model_dump()
+        }]
 
         agent_machine.agent_memory.symbolic_memory.find = await make_async_find_generator(existing_messages)
         memory_unit.request_write = MagicMock()
@@ -111,8 +122,8 @@ class TestConversationalMemoryUnit:
         await memory_unit.bus_read(bus_event)
 
         # Check if request_write was called with the correct BusEvent
-        expected_messages = [message["message"] for message in existing_messages] + bus_event.message.messages
-        expected_bus_event = BusEvent(bus_event.process_id, bus_event.thread_id, LLMEvent(messages = expected_messages, output_format = {}))
+        expected_messages = [SystemMessage(**message["message"]) for message in existing_messages] + bus_event.messages
+        expected_bus_event = BusEvent(bus_event.call_context, memory_unit.spec.msf_write, expected_messages)
         memory_unit.request_write.assert_called_once_with(expected_bus_event)
 
     async def test_event_type_not_handled(self, memory_unit, agent_machine):

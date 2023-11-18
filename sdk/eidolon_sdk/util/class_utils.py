@@ -44,5 +44,5 @@ def for_name(implementation_fqn: str, sub_class: Type) -> Type:
     raise ValueError("Implementation not provided.")
 
 
-def fqn(clazz=Type):
+def fqn(clazz=Type) -> str:
     return clazz.__module__ + '.' + clazz.__name__

@@ -3,8 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from eidolon_sdk.cpu.agent_bus import BusParticipant, Bus, BusEvent, BusController
+from eidolon_sdk.cpu.agent_bus import BusParticipant, BusEvent, BusController, CallContext
 from eidolon_sdk.cpu.bus_messages import BusMessage
+from eidolon_sdk.cpu.llm_message import SystemMessage
 
 
 class TestEvent(BusMessage):
@@ -26,8 +27,12 @@ class MockBusParticipant(BusParticipant):
 
 
 @pytest.fixture
-def bus_event():
-    return BusEvent(process_id="process1", thread_id=1, message=TestEvent(event_data={"key": "value"}))
+def bus_event(memory_unit):
+    return BusEvent(
+        call_context=CallContext("process1", thread_id=1, output_format={}),
+        event_type=memory_unit.spec.msf_read,
+        messages=[SystemMessage(event_data={"key": "value"})]
+    )
 
 
 @pytest.fixture

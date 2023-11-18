@@ -13,13 +13,13 @@ from eidolon_sdk.reference_model import Specable
 class MemoryUnitConfig(BaseModel):
     ms_read: READ_PORT = Field(default=None, description="A port that, when bound to an event, will read a new conversation message in the event and store it at the end "
                                                          "of the current conversation.")
-    msf_read: READ_PORT = Field(default=None, description="A port that, when bound to an event, will read a new conversation message in the event and store it at the end "
+    msf_read: READ_PORT = Field(default="Request", description="A port that, when bound to an event, will read a new conversation message in the event and store it at the end "
                                                           "of the current conversation. This will produce a write on the the MSF write port.")
-    msf_write: WRITE_PORT = Field(default=None, description="A port that, when bound to an event, will write the complete conversation history to the event bus.")
+    msf_write: WRITE_PORT = Field(default="Conversation", description="A port that, when bound to an event, will write the complete conversation history to the event bus.")
 
 
 class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
-    def __init__(self, spec: MemoryUnitConfig = None):
+    def __init__(self, spec: MemoryUnitConfig = MemoryUnitConfig()):
         self.spec = spec
 
     async def bus_read(self, event: BusEvent):
@@ -27,8 +27,6 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
             await self.processStoreEvent(event.call_context, event.messages)
         elif event.event_type == self.spec.msf_read:
             await self.processStoreAndFetchEvent(event.call_context, event.messages)
-
-        pass
 
     async def processStoreEvent(self, call_context: CallContext, messages: List[LLMMessage]):
         await self.writeMessages(call_context, messages)

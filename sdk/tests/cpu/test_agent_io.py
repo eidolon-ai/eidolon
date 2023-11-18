@@ -4,7 +4,7 @@ import pytest
 from jinja2 import UndefinedError
 from pydantic import ValidationError
 
-from eidolon_sdk.cpu.agent_bus import BusEvent, Bus, BusController
+from eidolon_sdk.cpu.agent_bus import BusEvent, Bus, BusController, CallContext
 from eidolon_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, CPUMessage, SystemCPUMessage, ImageURLCPUMessage, IOUnit, \
     ResponseHandler
@@ -41,7 +41,7 @@ def bus():
 
 @pytest.fixture
 def bus_event():
-    return BusEvent(process_id="process1", thread_id=0, message=OutputResponse(response={"response": "Test Response"}))
+    return BusEvent(CallContext(process_id="process1", thread_id=0, output_format={}), "TestEvent", messages=[OutputResponse(response={"response": "Test Response"})])
 
 
 @pytest.mark.asyncio

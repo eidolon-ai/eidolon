@@ -110,8 +110,7 @@ def register_action(*allowed_states: str, name: str = None):
     if 'terminated' in allowed_states:
         raise ValueError("Action cannot transform terminated state")
 
-    return lambda fn: _add_handler(fn,
-                                   EidolonHandler(name=name or fn.__name__, allowed_states=list(allowed_states), fn=fn))
+    return lambda fn: _add_handler(fn, EidolonHandler(name=name or fn.__name__, allowed_states=list(allowed_states), fn=fn))
 
 
 def _add_handler(fn, handler):

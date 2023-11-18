@@ -23,8 +23,8 @@ class LLMMessage(BaseModel):
 
 # Derived SystemMessage class
 class SystemMessage(LLMMessage):
-    content: str
     type: str = "system"
+    content: str
 
 
 # Base class for message content parts
@@ -54,8 +54,8 @@ class UserMessageImageURL(UserMessageContentPart):
 
 # Derived UserMessage class
 class UserMessage(LLMMessage):
-    content: List[SerializeAsAny[UserMessageContentPart]]
     type: str = "user"
+    content: List[SerializeAsAny[UserMessageContentPart]]
 
     @field_validator('content', mode="before")
     def validate_content(cls, value):
@@ -78,12 +78,12 @@ class ToolCall(BaseModel):
 
 # Derived AssistantMessage class
 class AssistantMessage(LLMMessage):
-    content: Dict[str, Any]
     type: str = "assistant"
+    content: Dict[str, Any]
     tool_calls: Optional[List[ToolCall]]
 
 
 # Derived ToolCallMessage class
 class ToolCallMessage(LLMMessage):
-    tool_calls: List[ToolCall]
     type: str = "tool"
+    tool_calls: List[ToolCall]
