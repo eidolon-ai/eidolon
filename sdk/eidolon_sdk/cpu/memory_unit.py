@@ -13,13 +13,13 @@ from eidolon_sdk.reference_model import Specable
 class MemoryUnitConfig(BaseModel):
     ms_read: READ_PORT = Field(default=None, description="A port that, when bound to an event, will read a new conversation message in the event and store it at the end "
                                                          "of the current conversation.")
-    msf_read: READ_PORT = Field(default="Request", description="A port that, when bound to an event, will read a new conversation message in the event and store it at the end "
-                                                          "of the current conversation. This will produce a write on the the MSF write port.")
-    msf_write: WRITE_PORT = Field(default="Conversation", description="A port that, when bound to an event, will write the complete conversation history to the event bus.")
+    msf_read: READ_PORT = Field(description="A port that, when bound to an event, will read a new conversation message in the event and store it at the end "
+                                            "of the current conversation. This will produce a write on the the MSF write port.")
+    msf_write: WRITE_PORT = Field(description="A port that, when bound to an event, will write the complete conversation history to the event bus.")
 
 
 class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
-    def __init__(self, spec: MemoryUnitConfig = MemoryUnitConfig()):
+    def __init__(self, spec: MemoryUnitConfig = None):
         self.spec = spec
 
     async def bus_read(self, event: BusEvent):
@@ -47,27 +47,3 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
     @abstractmethod
     async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
         pass
-
-
-class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
-    async def writeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
-        conversationItems = [{
-            "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id,
-            "message": message.model_dump()} for message in messages]
-
-        print(str(messages))
-        print(conversationItems)
-
-        await self.agent_memory.symbolic_memory.insert("conversation_memory", conversationItems)
-
-    async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
-        existingMessages = []
-        async for message in self.agent_memory.symbolic_memory.find("conversation_memory", {
-            "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id
-        }):
-            existingMessages.append(LLMMessage.from_dict(message["message"]))
-
-        print("existingMessages = " + str(existingMessages))
-        return existingMessages

@@ -3,10 +3,9 @@ from typing import List
 
 from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
 from openai.types.chat.completion_create_params import ResponseFormat
-from pydantic import BaseModel
 
 from eidolon_sdk.cpu.agent_bus import CallContext
-from eidolon_sdk.cpu.llm_message import LLMMessage, ToolCall, ToolCallMessage, AssistantMessage
+from eidolon_sdk.cpu.llm_message import LLMMessage, ToolCall, AssistantMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
 from eidolon_sdk.reference_model import Specable
 
@@ -34,7 +33,7 @@ def convert_to_openai(message: LLMMessage):
     elif message.type == "tool":
         return {
             "role": "tool",
-            "tool_calls": message.tool_calls
+            "tool_calls": [ToolCall(name=message.tool_name, arguments=message.tool_arguments)]
         }
     else:
         raise ValueError(f"Unknown message type {message.type}")
@@ -55,8 +54,8 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.temperature = spec.temperature
         self.llm = AsyncOpenAI()
 
-    async def process_llm_event(self, call_context: CallContext, messages: List[LLMMessage]):
-        messages = [convert_to_openai(message) for message in messages]
+    async def process_llm_event(self, call_context: CallContext, inMessages: List[LLMMessage]):
+        messages = [convert_to_openai(message) for message in inMessages]
         # add a message to the LLM for the output format which is already in json schema format
         messages.append({
             "role": "user",
@@ -73,13 +72,10 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             )
 
             message = llm_response.choices[0].message
-            if message.tool_calls:
-                tool_calls = []
+            if message.tool_calls and len(message.tool_calls) > 0:
                 for tool_call in message.tool_calls:
                     arguments = json.dumps(tool_call.function.arguments)
-                    tool_calls.append(ToolCall(name=tool_call.function.name, arguments=arguments))
-
-                self.write_llm_tool_calls(call_context, [ToolCallMessage(tool_calls=tool_calls)])
+                    self.write_llm_tool_conversations(call_context, inMessages, ToolCall(name=tool_call.function.name, arguments=arguments))
 
             response = message.model_dump()
             response["content"] = json.loads(response["content"])

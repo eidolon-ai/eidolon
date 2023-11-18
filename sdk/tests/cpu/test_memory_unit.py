@@ -7,7 +7,8 @@ from eidolon_sdk.cpu.agent_bus import BusEvent, BusController, CallContext
 from eidolon_sdk.cpu.bus_messages import AddConversationHistory, LLMResponse, LLMEvent, InputRequest
 from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage, AssistantMessage
 # Assuming the classes are in a module named 'my_module', which needs to be imported here.
-from eidolon_sdk.cpu.memory_unit import ConversationalMemoryUnit, MemoryUnitConfig
+from eidolon_sdk.cpu.memory_unit import MemoryUnitConfig
+from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
 
 
 # Mocking the LLMMessage for testing purposes

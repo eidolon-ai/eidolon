@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from eidolon_sdk.cpu.agent_bus import BusEvent, CallContext
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_sdk.cpu.bus_messages import READ_PORT, WRITE_PORT
-from eidolon_sdk.cpu.llm_message import AssistantMessage, LLMMessage, ToolCallMessage
+from eidolon_sdk.cpu.llm_message import AssistantMessage, LLMMessage, ToolCallMessage, ToolCall
 from eidolon_sdk.reference_model import Specable
 
 
@@ -22,9 +22,10 @@ class CompletionUsage(BaseModel):
 
 
 class LLMUnitConfig(BaseModel):
-    llm_read: READ_PORT = Field("Conversation", description="A port that, when bound to an event, will read the conversation, or message, from the bus and execute it.")
-    llm_write: WRITE_PORT = Field("Response", description="A port that, when bound to an event, will write the response from the LLM to the bus.")
+    llm_read: READ_PORT = Field(description="A port that, when bound to an event, will read the conversation, or message, from the bus and execute it.")
+    llm_write: WRITE_PORT = Field(description="A port that, when bound to an event, will write the response from the LLM to the bus.")
     lt_write: WRITE_PORT = Field(default=None, description="A port that, when bound to an event, will write the tool calls from the LLM to the bus.")
+    ltc_write: WRITE_PORT = Field(default=None, description="A port that, when bound to an event, will write the tool calls with the full conversation from the LLM to the bus.")
 
 
 class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
@@ -46,8 +47,10 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
             [message]
         ))
 
-    def write_llm_tool_calls(self, call_context: CallContext, tool_calls: List[ToolCallMessage]):
+    def write_llm_tool_conversations(self, call_context: CallContext, existing_conversation: List[LLMMessage],
+                                     tool_call: ToolCall):
         self.request_write(BusEvent(
             call_context,
             self.spec.lt_write,
-            tool_calls))
+            [ToolCallMessage(conversation=existing_conversation, tool_call=tool_call)]
+        ))

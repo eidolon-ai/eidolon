@@ -83,7 +83,14 @@ class AssistantMessage(LLMMessage):
     tool_calls: Optional[List[ToolCall]]
 
 
-# Derived ToolCallMessage class
-class ToolCallMessage(LLMMessage):
+class ToolResponseMessage(LLMMessage):
     type: str = "tool"
-    tool_calls: List[ToolCall]
+    tool_name: str
+    response: Dict[str, Any]
+
+
+# Synthetic message for tool calls
+class ToolCallMessage(LLMMessage):
+    type: str = "tool_call"
+    conversation: List[LLMMessage]
+    tool_call: ToolCall

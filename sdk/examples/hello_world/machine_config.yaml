@@ -21,7 +21,7 @@ agent_programs:
           io_write: "Request"
           io_read: "Response"
       memory_unit:
-        implementation: "eidolon_sdk.cpu.memory_unit.ConversationalMemoryUnit"
+        implementation: "eidolon_sdk.impl.conversation_memory_unit.ConversationalMemoryUnit"
         spec:
           msf_read: "Request"
           msf_write: "Conversation"
