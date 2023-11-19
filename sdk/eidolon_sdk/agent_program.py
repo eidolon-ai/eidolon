@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 import typing
 from datetime import datetime
+from functools import cmp_to_key
 from inspect import Parameter
 
 from bson import ObjectId
@@ -35,7 +36,7 @@ class AgentProgram:
     async def start(self, app: FastAPI):
         if self.agent.cpu:
             await self.agent.cpu.start(self.agent.cpu_response_handler)
-        for action, handler in self.agent.action_handlers.items():
+        for action, handler in sorted(self.agent.action_handlers.items().__reversed__(), key=cmp_to_key(lambda x, y: -1 if x[0] == 'INIT' else 1 if y[0] == 'INIT' else 0)):
             path = f"/programs/{self.name}"
             if action != 'INIT':
                 path += f"/processes/{{process_id}}/actions/{action}"
