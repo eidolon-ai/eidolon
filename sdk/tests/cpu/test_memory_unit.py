@@ -45,7 +45,7 @@ def bus_controller():
 
 @pytest.fixture
 def memory_unit(agent_machine: AgentMachine, bus_controller):
-    memory_unit = ConversationalMemoryUnit(MemoryUnitConfig(ms_read="ms_read", msf_read="msf_read"))
+    memory_unit = ConversationalMemoryUnit(MemoryUnitConfig(ms_read="ms_read", msf_read="msf_read", msf_write="msf_write"))
     memory_unit.initialize(bus_controller, cpu=None, memory=agent_machine.agent_memory)
     memory_unit.request_write = AsyncMock()
     return memory_unit
@@ -129,7 +129,11 @@ class TestConversationalMemoryUnit:
 
     async def test_event_type_not_handled(self, memory_unit, agent_machine):
         # Create an event with an unhandled event type
-        unhandled_event = BusEvent(process_id="process1", thread_id=1, message=InputRequest(messages=[SystemMessage(content="hello")], output_format={}))
+        unhandled_event = BusEvent(
+            CallContext(process_id="process1", thread_id=1, output_format={}),
+            event_type="unhandled_event",
+            messages=[SystemMessage(content="hello")]
+        )
 
         # Perform the bus read and verify that no interactions with the agent memory occur
         await memory_unit.bus_read(unhandled_event)
