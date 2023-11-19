@@ -36,39 +36,17 @@ def _make_cpu(cpu_model, machine):
         return None
 
     bus_controller = BusController()
-    memory_unit = None
-    llm_unit = None
-    control_unit = None
-    if cpu_model.memory_unit:
-        memory_unit = cpu_model.memory_unit.instantiate()
-    if cpu_model.llm_unit:
-        llm_unit = cpu_model.llm_unit.instantiate()
-    if cpu_model.control_unit:
-        control_unit = cpu_model.control_unit.instantiate()
-
     cpu = AgentCPU(
+        agent_memory=machine.agent_memory,
         bus_controller=bus_controller,
         io_unit=cpu_model.io_unit.instantiate(),
-        memory_unit=memory_unit,
-        llm_unit=llm_unit,
-        control_unit=control_unit,
+        memory_unit=cpu_model.memory_unit.instantiate() if cpu_model.memory_unit else None,
+        llm_unit=cpu_model.llm_unit.instantiate() if cpu_model.llm_unit else None,
+        control_unit=cpu_model.control_unit.instantiate() if cpu_model.control_unit else None,
         logic_units={
             name: logic_unit.instantiate(agent_machine=machine, controller=bus_controller)
             for name, logic_unit in cpu_model.logic_units.items()
         },
     )
-
-    cpu.io_unit.initialize(bus_controller, cpu, machine.agent_memory)
-    if cpu.memory_unit:
-        cpu.memory_unit.initialize(bus_controller, cpu, machine.agent_memory)
-
-    if cpu.llm_unit:
-        cpu.llm_unit.initialize(bus_controller, cpu, machine.agent_memory)
-
-    if cpu.control_unit:
-        cpu.control_unit.initialize(bus_controller, cpu, machine.agent_memory)
-
-    for logic_unit in cpu.logic_units.values():
-        logic_unit.initialize(bus_controller, cpu, machine.agent_memory)
 
     return cpu

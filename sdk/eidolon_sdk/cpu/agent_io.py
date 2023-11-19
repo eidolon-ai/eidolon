@@ -47,8 +47,9 @@ class IOUnit(ProcessingUnit, Specable[IOUnitConfig]):
     def __init__(self, spec: MemoryUnitConfig = None):
         self.spec = spec
 
-    def start(self, response_handler: ResponseHandler):
+    def initialize(self, response_handler: ResponseHandler, **kwargs):
         self.response_handler = response_handler
+        super().initialize(**kwargs)
 
     async def bus_read(self, event: BusEvent):
         if event.event_type == self.spec.io_read:

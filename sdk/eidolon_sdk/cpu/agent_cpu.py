@@ -1,5 +1,6 @@
 from typing import Any, Union, List, Dict, Optional
 
+from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.agent_bus import BusController, BusParticipant
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler, IOUnit
 from eidolon_sdk.cpu.logic_unit import LogicUnit
@@ -16,6 +17,7 @@ class AgentCPU:
 
     def __init__(
             self,
+            agent_memory: AgentMemory,
             bus_controller: BusController,
             io_unit: IOUnit,
             memory_unit: Optional[ProcessingUnit],
@@ -23,6 +25,7 @@ class AgentCPU:
             control_unit: Optional[ProcessingUnit],
             logic_units: Dict[str, ProcessingUnit] = None,
     ):
+        self.agent_memory = agent_memory
         self.bus_controller = bus_controller
 
         self.io_unit = io_unit
@@ -31,19 +34,22 @@ class AgentCPU:
         self.control_unit = control_unit
         self.logic_units = logic_units or {}
 
-    async def start(self, response_handler: ResponseHandler):
-        self.io_unit.start(response_handler)
-        participants: List[BusParticipant] = [self.io_unit]
+        self.processing_units: List[ProcessingUnit] = [self.io_unit, *self.logic_units.values()]
         if self.memory_unit:
-            participants.append(self.memory_unit)
+            self.processing_units.append(self.memory_unit)
         if self.llm_unit:
-            participants.append(self.llm_unit)
+            self.processing_units.append(self.llm_unit)
         if self.control_unit:
-            participants.append(self.control_unit)
+            self.processing_units.append(self.control_unit)
 
-        participants.extend(self.logic_units.values())
-        for participant in participants:
-            self.bus_controller.add_participant(participant)
+    async def start(self, response_handler: ResponseHandler):
+        for pu in self.processing_units:
+            kwargs = dict(bus_controller=self.bus_controller, cpu=self, memory=self.agent_memory)
+            if pu == self.io_unit:
+                kwargs['response_handler'] = response_handler
+            pu.initialize(**kwargs)
+            self.bus_controller.add_participant(pu)
+
         await self.bus_controller.start()
 
     async def stop(self):

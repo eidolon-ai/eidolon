@@ -39,14 +39,18 @@ def client_builder(app_builder):
     return fn
 
 
+def _make_program(agent, machine):
+    AgentProgram(
+        name=agent.__name__.lower(),
+        agent=agent(machine, cpu=_make_cpu(CpuModel(), machine))
+    )
+
+
 @pytest.fixture
 def os_builder():
     def fn(*agents: Type[Agent], memory_override: SymbolicMemory = None):
         machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
-        machine.agent_programs = [AgentProgram(
-            name=agent.__name__.lower(),
-            agent=agent(machine, cpu=_make_cpu(CpuModel(), machine))
-        ) for agent in agents]
+        machine.agent_programs = [_make_program(agent, machine) for agent in agents]
         return AgentOS(machine=machine)
 
     return fn
