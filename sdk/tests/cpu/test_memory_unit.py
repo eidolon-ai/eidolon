@@ -9,6 +9,7 @@ from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage, AssistantMess
 # Assuming the classes are in a module named 'my_module', which needs to be imported here.
 from eidolon_sdk.cpu.memory_unit import MemoryUnitConfig
 from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
+from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 
 
 # Mocking the LLMMessage for testing purposes
@@ -34,7 +35,7 @@ def bus_event(memory_unit):
     return BusEvent(
         call_context=CallContext(process_id="process1", thread_id=1, output_format={}),
         event_type=memory_unit.spec.msf_read,
-        messages=[LLMMessage(type='system', data=AddConversationHistory(messages=[SystemMessage(content="hi there")], output_format={}))]
+        messages=[SystemMessage(content="hi there")]
     )
 
 
@@ -47,7 +48,7 @@ def bus_controller():
 def memory_unit(agent_machine: AgentMachine, bus_controller):
     memory_unit = ConversationalMemoryUnit(MemoryUnitConfig(ms_read="ms_read", msf_read="msf_read", msf_write="msf_write"))
     memory_unit.initialize(bus_controller, cpu=None, memory=agent_machine.agent_memory)
-    memory_unit.request_write = AsyncMock()
+    memory_unit.request_write = LocalSymbolicMemory()
     return memory_unit
 
 
@@ -105,6 +106,9 @@ class TestConversationalMemoryUnit:
         }])
 
     async def test_bus_read_with_existing_messages(self, memory_unit, bus_event, agent_machine):
+        agent_machine.agent_memory.symbolic_memory = LocalSymbolicMemory()
+        agent_machine.agent_memory.symbolic_memory.start()
+
         # Set up existing messages
         existing_messages = [{
             "process_id": "process1",
@@ -116,7 +120,9 @@ class TestConversationalMemoryUnit:
             "message": MockLLMMessage(content="Message 2").model_dump()
         }]
 
-        agent_machine.agent_memory.symbolic_memory.find = await make_async_find_generator(existing_messages)
+        # Insert existing messages into LocalSymbolicMemory
+        await agent_machine.agent_memory.symbolic_memory.insert('conversation_memory', existing_messages)
+
         memory_unit.request_write = MagicMock()
 
         # Perform the bus read
