@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -7,9 +8,10 @@ from pydantic import ValidationError
 from eidolon_sdk.cpu.agent_bus import BusEvent, Bus, BusController, CallContext
 from eidolon_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, CPUMessage, SystemCPUMessage, ImageURLCPUMessage, IOUnit, \
-    ResponseHandler
+    ResponseHandler, IOUnitConfig
 from eidolon_sdk.cpu.bus_messages import OutputResponse, InputRequest
 from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, UserMessageImageURL, SystemMessage
+from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 
 
 # Assuming the IOUnit and other related classes are in a module named 'io_unit_module', which needs to be imported here.
@@ -28,9 +30,20 @@ def bus_controller():
 
 
 @pytest.fixture
-def io_unit(bus_controller, response_handler):
-    io_unit = IOUnit(bus_controller)
-    io_unit.start(response_handler)
+def memory_unit():
+    return LocalSymbolicMemory()
+
+
+@pytest.fixture
+def io_config():
+    return IOUnitConfig(io_read='mock_io_read', io_write='mock_io_write')
+
+
+@pytest.fixture
+def io_unit(bus_controller, response_handler, memory_unit, io_config):
+    io_unit = IOUnit(io_config)
+    io_unit.initialize(response_handler, bus_controller=bus_controller, cpu=None, memory=memory_unit)
+    bus_controller.add_participant(io_unit)
     return io_unit
 
 
@@ -40,8 +53,11 @@ def bus():
 
 
 @pytest.fixture
-def bus_event():
-    return BusEvent(CallContext(process_id="process1", thread_id=0, output_format={}), "TestEvent", messages=[OutputResponse(response={"response": "Test Response"})])
+def bus_event(io_config):
+    return BusEvent(
+        CallContext(process_id="process1", thread_id=0, output_format={}),
+        io_config.io_read, messages=[SystemMessage(content="Test Response")]
+    )
 
 
 @pytest.mark.asyncio
@@ -49,7 +65,7 @@ class TestIOUnit:
     async def test_bus_read_output_response(self, io_unit, bus, bus_event, response_handler):
         bus.current_event = bus_event
         await io_unit.bus_read(bus_event)
-        response_handler.handle.assert_awaited_once_with(bus_event.process_id, bus_event.message.response)
+        response_handler.handle.assert_awaited_once_with(bus_event.call_context.process_id, bus_event.messages[0].content)
 
     def test_process_request_with_user_prompt(self, io_unit):
         prompts = [UserTextCPUMessage(type="user", prompt="Hello, {{ name }}")]

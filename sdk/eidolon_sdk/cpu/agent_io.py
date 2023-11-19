@@ -5,10 +5,9 @@ from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, validate_call, Field
 
 from eidolon_sdk.cpu.agent_bus import BusEvent, CallContext
-from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_sdk.cpu.bus_messages import WRITE_PORT
 from eidolon_sdk.cpu.llm_message import UserMessageText, SystemMessage, UserMessageImageURL, UserMessage
-from eidolon_sdk.cpu.memory_unit import MemoryUnitConfig
+from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_sdk.reference_model import Specable
 
 
@@ -43,8 +42,9 @@ class IOUnitConfig(BaseModel):
 class IOUnit(ProcessingUnit, Specable[IOUnitConfig]):
     env = Environment(undefined=StrictUndefined)
     response_handler: ResponseHandler = None
+    spec: IOUnitConfig
 
-    def __init__(self, spec: MemoryUnitConfig = None):
+    def __init__(self, spec: IOUnitConfig):
         self.spec = spec
 
     def initialize(self, response_handler: ResponseHandler, **kwargs):
