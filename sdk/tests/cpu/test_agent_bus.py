@@ -18,8 +18,7 @@ class TestEvent(BusMessage):
 
 # Mocking the abstract BusParticipant for testing purposes
 class MockBusParticipant(BusParticipant):
-    def __init__(self, controller: BusController):
-        super().__init__(controller)
+    def __init__(self):
         self.read_events = []
 
     async def bus_read(self, event: BusEvent):
@@ -27,11 +26,11 @@ class MockBusParticipant(BusParticipant):
 
 
 @pytest.fixture
-def bus_event(memory_unit):
+def bus_event():
     return BusEvent(
         call_context=CallContext("process1", thread_id=1, output_format={}),
-        event_type=memory_unit.spec.msf_read,
-        messages=[SystemMessage(event_data={"key": "value"})]
+        event_type='mock_event_type',
+        messages=[SystemMessage(content="mock_content", event_data={"key": "value"})]
     )
 
 
@@ -41,7 +40,9 @@ def bus_controller():
 
 
 def make_bus_participant(bus_controller):
-    return MockBusParticipant(bus_controller)
+    participant = MockBusParticipant()
+    participant.initialize(bus_controller)
+    return participant
 
 
 @pytest.mark.asyncio
