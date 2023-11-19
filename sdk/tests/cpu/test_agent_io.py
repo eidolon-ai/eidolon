@@ -1,4 +1,3 @@
-from unittest.mock import patch
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -6,10 +5,9 @@ from jinja2 import UndefinedError
 from pydantic import ValidationError
 
 from eidolon_sdk.cpu.agent_bus import BusEvent, Bus, BusController, CallContext
-from eidolon_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, CPUMessage, SystemCPUMessage, ImageURLCPUMessage, IOUnit, \
     ResponseHandler, IOUnitConfig
-from eidolon_sdk.cpu.bus_messages import OutputResponse, InputRequest
+from eidolon_sdk.cpu.bus_messages import InputRequest
 from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, UserMessageImageURL, SystemMessage
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 
@@ -72,22 +70,22 @@ class TestIOUnit:
         input_data = {"name": "World"}
         io_unit.request_write = MagicMock()
         io_unit.process_request("process1", prompts, input_data, {})
-        expected_message = UserMessage(content=[UserMessageText(text="Hello, World")])
-        io_unit.request_write.assert_called_once_with(BusEvent("process1", 0, message=InputRequest(messages=[expected_message], output_format={})))
+        expected_message = UserMessage(type='user', content=[UserMessageText(type='text', text='Hello, World')])
+        io_unit.request_write.assert_called_once_with(BusEvent(CallContext("process1", 0, {}), event_type="mock_io_write", messages=[expected_message]))
 
     def test_process_request_with_system_prompt(self, io_unit):
         prompts = [SystemCPUMessage(type="system", prompt="System update complete.")]
         io_unit.request_write = MagicMock()
         io_unit.process_request("process2", prompts, {}, {})
         expected_message = SystemMessage(content="System update complete.")
-        io_unit.request_write.assert_called_once_with(BusEvent("process2", 0, message=InputRequest(messages=[expected_message], output_format={})))
+        io_unit.request_write.assert_called_once_with(BusEvent(CallContext("process2", 0, {}), event_type="mock_io_write", messages=[expected_message]))
 
     def test_process_request_with_image_url_prompt(self, io_unit):
         prompts = [ImageURLCPUMessage(type="image_url", prompt="https://example.com/image.jpg")]
         io_unit.request_write = MagicMock()
         io_unit.process_request("process3", prompts, {}, {})
         expected_message = UserMessage(content=[UserMessageImageURL(image_url="https://example.com/image.jpg")])
-        io_unit.request_write.assert_called_once_with(BusEvent("process3", 0, message=InputRequest(messages=[expected_message], output_format={})))
+        io_unit.request_write.assert_called_once_with(BusEvent(CallContext("process3", 0, {}), event_type="mock_io_write", messages=[expected_message]))
 
     def test_process_request_with_mixed_prompts(self, io_unit):
         prompts = [
@@ -105,7 +103,8 @@ class TestIOUnit:
                 UserMessageImageURL(image_url="https://example.com/image.jpg")
             ])
         ]
-        io_unit.request_write.assert_called_once_with(BusEvent("process4", 0, message=InputRequest(messages=expected_messages, output_format={})))
+
+        io_unit.request_write.assert_called_once_with(BusEvent(CallContext("process4", 0, {}), event_type="mock_io_write", messages=expected_messages))
 
     def test_process_request_with_invalid_prompt_type(self, io_unit):
         prompts = [CPUMessage(type="invalid_type", prompt="This should fail.")]
@@ -119,7 +118,7 @@ class TestIOUnit:
         io_unit.request_write = MagicMock()
         io_unit.process_request("process6", prompts, input_data, {})
         expected_message = UserMessage(content=[UserMessageText(text="Hello, World")])
-        io_unit.request_write.assert_called_once_with(BusEvent("process6", 0, message=InputRequest(messages=[expected_message], output_format={})))
+        io_unit.request_write.assert_called_once_with(BusEvent(CallContext("process6", 0, {}), event_type="mock_io_write", messages=[expected_message]))
 
     def test_process_request_with_missing_template_data(self, io_unit):
         prompts = [UserTextCPUMessage(type="user", prompt="Hello, {{ name }}")]
