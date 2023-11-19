@@ -13,9 +13,13 @@ from eidolon_sdk.agent_machine import AgentMachine, _make_cpu
 from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
-from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
+from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, IOUnit
+from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
+from eidolon_sdk.impl.open_ai_llm_unit import OpenAIGPT
 from eidolon_sdk.machine_model import CpuModel
+from eidolon_sdk.reference_model import Reference
+from eidolon_sdk.util.class_utils import fqn
 
 
 @pytest.fixture(scope="function")
@@ -40,9 +44,14 @@ def client_builder(app_builder):
 
 
 def _make_program(agent, machine):
-    AgentProgram(
+    cpu = _make_cpu(CpuModel(
+        io_unit=Reference(implementation=fqn(IOUnit), spec=dict(io_write="Request", io_read="Response")).dict(),
+        memory_unit=Reference(implementation=fqn(ConversationalMemoryUnit), spec=dict(msf_read="Request", msf_write="Conversation")).dict(),
+        llm_unit=Reference(implementation=fqn(OpenAIGPT), spec=dict(llm_read="Conversation", llm_write="Response")).dict(),
+    ), machine)
+    return AgentProgram(
         name=agent.__name__.lower(),
-        agent=agent(machine, cpu=_make_cpu(CpuModel(), machine))
+        agent=agent(machine, cpu=cpu)
     )
 
 
