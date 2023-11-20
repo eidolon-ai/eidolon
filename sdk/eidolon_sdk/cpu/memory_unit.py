@@ -43,21 +43,8 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
 
     @abstractmethod
     async def writeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
-        conversationItems = [{
-            "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id,
-            "message": message.model_dump()} for message in messages]
+        raise NotImplementedError("getConversationHistory not implemented")
 
-        print("writeMessages: " + str(messages))
-        await self.agent_memory.symbolic_memory.insert("conversation_memory", conversationItems)
-
+    @abstractmethod
     async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
-        existingMessages = []
-        async for message in self.agent_memory.symbolic_memory.find("conversation_memory", {
-            "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id
-        }):
-            existingMessages.append(LLMMessage.from_dict(message["message"]))
-
-        print("existingMessages = " + str(existingMessages))
-        return existingMessages
+        raise NotImplementedError("getConversationHistory not implemented")
