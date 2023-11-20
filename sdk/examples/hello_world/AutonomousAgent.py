@@ -9,8 +9,7 @@ from eidolon_sdk.cpu.agent_cpu import AgentCPU, ResponseHandler
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 
 
-class IdleStateRepresentation(AgentState):
-    name: str = "idle"
+class IdleStateRepresentation(BaseModel):
     response: str
 
 
@@ -18,6 +17,7 @@ class AutonomousAgent(CodeAgent):
 
     @initializer
     @register_action('idle')
-    async def converse(self, question: Annotated[str, Field(description="A question")]) -> IdleStateRepresentation:
+    async def converse(self, question: Annotated[str, Field(description="A question")]) -> AgentState[IdleStateRepresentation]:
         response = await self.cpu_request([UserTextCPUMessage(prompt=question)], {}, IdleStateRepresentation.model_json_schema())
-        return IdleStateRepresentation(**response)
+        print("response: ", response)
+        return AgentState(name="idle", data=IdleStateRepresentation(**response))

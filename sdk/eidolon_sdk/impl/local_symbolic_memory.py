@@ -21,6 +21,9 @@ class LocalSymbolicMemory(SymbolicMemory):
         else:
             return document == query
 
+    async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
+        return len([doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)])
+
     async def find(self, symbol_collection: str, query: dict[str, Any]):
         for doc in [doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)]:
             yield doc
@@ -46,3 +49,8 @@ class LocalSymbolicMemory(SymbolicMemory):
         if existing_document is not None:
             _DB[symbol_collection].remove(existing_document)
         await self.insert_one(symbol_collection, document)
+
+    async def delete(self, symbol_collection, query):
+        for doc in _DB.get(symbol_collection, []):
+            if self._matches_query(doc, query):
+                _DB[symbol_collection].remove(doc)

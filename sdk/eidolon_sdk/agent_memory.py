@@ -83,6 +83,20 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
+    async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
+        """
+        Searches for symbols within a specified collection that match the given query and returns the number matching.
+
+        Args:
+            symbol_collection (str): The name of the collection to search within.
+            query (dict[str, Any]): The search criteria used to filter symbols.
+
+        Returns:
+            int: The number of symbols that match the query.
+        """
+        pass
+
+    @abstractmethod
     def find(self, symbol_collection: str, query: dict[str, Any]) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
@@ -152,6 +166,10 @@ class SymbolicMemory(ABC):
         Returns:
             None
         """
+        pass
+
+    @abstractmethod
+    async def delete(self, symbol_collection, query):
         pass
 
 

@@ -26,6 +26,9 @@ class NoopSymbolicMemory(SymbolicMemory):
     def stop(self):
         pass
 
+    async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
+        return 0
+
     def find(self, symbol_collection: str, query: dict[str, Any]):
         pass
 
@@ -39,6 +42,9 @@ class NoopSymbolicMemory(SymbolicMemory):
         pass
 
     async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
+        pass
+
+    async def delete(self, symbol_collection, query):
         pass
 
 

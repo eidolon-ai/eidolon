@@ -25,11 +25,20 @@ def convert_to_openai(message: LLMMessage):
             "content": content
         }
     elif message.type == "assistant":
-        return {
+        ret = {
             "role": "assistant",
-            "content": message.content,
-            "tool_calls": message.tool_calls
+            "content": str(message.content)
         }
+        if message.tool_calls and len(message.tool_calls) > 0:
+            ret["tool_calls"] = [{
+                "id": tool_call.name,
+                "type": "function",
+                "function": {
+                    "name": tool_call.name,
+                    "arguments": str(tool_call.arguments)
+                }
+            } for tool_call in message.tool_calls]
+        return ret
     elif message.type == "tool":
         return {
             "role": "tool",

@@ -57,6 +57,7 @@ agent_programs:
       memory_unit:
         implementation: "eidolon_sdk.impl.conversation_memory_unit.ConversationalMemoryUnit"
         spec:
+          ms_read: "Response"
           msf_read: "Request"
           msf_write: "Conversation"
       llm_unit:

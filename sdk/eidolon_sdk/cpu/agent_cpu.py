@@ -63,3 +63,7 @@ class AgentCPU:
             output_format: Dict[str, Any]
     ):
         self.io_unit.process_request(process_id, prompts, input_data, output_format)
+
+    def register_logic_unit(self, logic_unit: LogicUnit):
+        self.logic_units[logic_unit.spec.name] = logic_unit
+        self.bus_controller.add_participant(logic_unit)

@@ -22,6 +22,9 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
         self.mongo_connection_string = spec.mongo_connection_string
         self.mongo_database_name = spec.mongo_database_name
 
+    async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
+        return await self.database[symbol_collection].count_documents(query)
+
     def find(self, symbol_collection: str, query: dict[str, Any]) -> AsyncIterable[dict[str, Any]]:
         return self.database[symbol_collection].find(query)
 
@@ -36,6 +39,9 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
 
     async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
         return await self.database[symbol_collection].update_one(query, document, upsert=True)
+
+    async def delete(self, symbol_collection, query):
+        return await self.database[symbol_collection].delete(query)
 
     def start(self):
         """
