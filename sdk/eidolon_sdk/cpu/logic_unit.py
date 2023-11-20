@@ -2,7 +2,7 @@ import inspect
 import typing
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Dict, Any, Callable
+from typing import List, Dict, Any, Callable, Generic, TypeVar
 
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
@@ -52,8 +52,11 @@ class LogicUnitConfig(BaseModel):
     lu_write: READ_PORT = Field(default=None, description="A port that, when bound to an event, will write the tool call response to the bus.")
 
 
-class LogicUnit(ProcessingUnit, Specable[LogicUnitConfig], ABC):
-    def __init__(self, spec: LogicUnitConfig = None):
+T = TypeVar('T', bound=LogicUnitConfig)
+
+
+class LogicUnit(ProcessingUnit, Generic[T], Specable[T], ABC):
+    def __init__(self, spec: T = None):
         self.spec = spec
         self._tool_functions = self.discover()
 

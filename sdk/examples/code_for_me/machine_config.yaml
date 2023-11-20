@@ -1,0 +1,57 @@
+agent_memory:
+  file_memory:
+    implementation: "eidolon_sdk.impl.local_file_memory.LocalFileMemory"
+    spec:
+      root_dir: "/tmp/code_for_me"
+  symbolic_memory:
+    implementation: "eidolon_sdk.impl.mongo_symbolic_memory.MongoSymbolicMemory"
+    spec:
+      mongo_database_name: "eidolon"
+  similarity_memory:
+    implementation: "eidolon_sdk.impl.noop_memory.NoopSimilarityMemory"
+
+agent_programs:
+  ExampleGeneric:
+    agent:
+      implementation: "eidolon_sdk.impl.generic_agent.GenericAgent"
+      spec:
+        root_dir: "/Users/lukelalor/projects/code_for_me_playground"
+        system_prompt:
+          You are a software developer responsible for maintaining a project and trying to prove yourself. You 
+          are tasked with implementing features or fixing bugs. You ask for clarification when instructions are unclear, 
+          but you try to work when possible. You write clean, easy to understand code, add new test cases when writing 
+          code and always fix tests you break. Your contributions are greatly appreciated.
+        
+          Before you start coding, you need to understand the project and problem you are trying to solve. Then make a 
+          plan to implement the changes. Finally, you need to write the code and test it. You may need to repeat these
+          steps multiple times until you have satisfied the user requirements.
+        question_prompt: "{{request}}"
+        question_json_schema:
+          type: object
+          properties:
+              request:
+                type: string
+    cpu:
+      io_unit:
+        implementation: "eidolon_sdk.cpu.agent_io.IOUnit"
+        spec:
+          io_write: "Request"
+          io_read: "Response"
+      memory_unit:
+        implementation: "eidolon_sdk.impl.conversation_memory_unit.ConversationalMemoryUnit"
+        spec:
+          msf_read: "Request"
+          msf_write: "Conversation"
+      llm_unit:
+        implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
+        spec:
+          model: "gpt-4-1106-preview"
+          temperature: 0.3
+          llm_read: "Conversation"
+          llm_write: "Tools"
+      logic_units:
+        - implementation: "examples.code_with_me.file_manager.FileManager"
+          spec:
+            root_dir: "/Users/lukelalor/projects/code_for_me_playground"
+            file_read: "Tools"
+            file_write: "Request"
