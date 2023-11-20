@@ -33,7 +33,7 @@ def agent_machine():
 @pytest.fixture
 def bus_event(memory_unit):
     return BusEvent(
-        call_context=CallContext(process_id="process1", thread_id=1, output_format={}),
+        call_context=CallContext(process_id="process1", thread_id="1", output_format={}),
         event_type=memory_unit.spec.msf_read,
         messages=[SystemMessage(content="hi there")]
     )
@@ -90,7 +90,7 @@ class TestConversationalMemoryUnit:
     async def test_bus_read_llm_response(self, memory_unit, agent_machine):
         # Create an event for llm_response
         llm_response_event = BusEvent(
-            CallContext(process_id="process1", thread_id=1, output_format={}),
+            CallContext(process_id="process1", thread_id="1", output_format={}),
             event_type="ms_read",
             messages=[AssistantMessage(content={"hello": "there"}, tool_calls=None)]
         )
@@ -136,7 +136,7 @@ class TestConversationalMemoryUnit:
     async def test_event_type_not_handled(self, memory_unit, agent_machine):
         # Create an event with an unhandled event type
         unhandled_event = BusEvent(
-            CallContext(process_id="process1", thread_id=1, output_format={}),
+            CallContext(process_id="process1", thread_id="1", output_format={}),
             event_type="unhandled_event",
             messages=[SystemMessage(content="hello")]
         )

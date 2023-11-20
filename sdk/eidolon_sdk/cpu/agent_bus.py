@@ -8,7 +8,7 @@ from eidolon_sdk.cpu.llm_message import LLMMessage
 
 @dataclass
 class CallContext:
-    def __init__(self, process_id: str, thread_id: int, output_format: Dict[str, Any]):
+    def __init__(self, process_id: str, thread_id: str, output_format: Dict[str, Any]):
         self.process_id = process_id
         self.thread_id = thread_id
         self.output_format = output_format

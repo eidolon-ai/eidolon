@@ -53,7 +53,7 @@ def bus():
 @pytest.fixture
 def bus_event(io_config):
     return BusEvent(
-        CallContext(process_id="process1", thread_id=0, output_format={}),
+        CallContext(process_id="process1", thread_id="0", output_format={}),
         io_config.io_read, messages=[SystemMessage(content="Test Response")]
     )
 

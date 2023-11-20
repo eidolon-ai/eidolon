@@ -1,11 +1,12 @@
 from typing import List, Dict, Any, Optional
 
-from pydantic import BaseModel, Field, SerializeAsAny, field_validator
+from pydantic import BaseModel, SerializeAsAny, field_validator
 
 
 # Base LLMMessage class
 class LLMMessage(BaseModel):
     type: str
+    is_boot_message: bool = False
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
@@ -25,6 +26,7 @@ class LLMMessage(BaseModel):
 class SystemMessage(LLMMessage):
     type: str = "system"
     content: str
+    is_boot_message = True
 
 
 # Base class for message content parts

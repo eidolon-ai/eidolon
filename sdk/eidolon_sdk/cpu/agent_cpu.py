@@ -3,7 +3,7 @@ from typing import Any, Union, List, Dict, Optional
 from bson import ObjectId
 
 from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.cpu.agent_bus import BusController
+from eidolon_sdk.cpu.agent_bus import BusController, CallContext
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler, IOUnit
 from eidolon_sdk.cpu.logic_unit import LogicUnit, MethodInfo
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
@@ -93,3 +93,17 @@ class AgentCPU:
     def register_logic_unit(self, logic_unit: LogicUnit):
         self.processing_units.append(logic_unit)
         self.logic_units.append(logic_unit)
+
+    def new_call_context(self, existing_context: CallContext) -> CallContext:
+        return CallContext(
+            process_id=existing_context.process_id,
+            thread_id=str(ObjectId()),
+            output_format=existing_context.output_format
+        )
+
+    # returns the processing unit matching the class passed in
+    def get_processing_unit(self, processing_unit_class: type[ProcessingUnit]) -> Optional[ProcessingUnit]:
+        for pu in self.processing_units:
+            if isinstance(pu, processing_unit_class):
+                return pu
+        return None

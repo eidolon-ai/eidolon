@@ -37,6 +37,9 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
     async def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
         return await self.database[symbol_collection].insert_one(document)
 
+    async def update_many(self, symbol_collection: str, query: dict[str, Any], document: dict[str, Any]) -> None:
+        return await self.database[symbol_collection].update_many(query, document)
+
     async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
         return await self.database[symbol_collection].update_one(query, document, upsert=True)
 

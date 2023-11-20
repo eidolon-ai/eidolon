@@ -169,6 +169,10 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
+    async def update_many(self, symbol_collection: str, query: dict[str, Any], document: dict[str, Any]) -> None:
+        pass
+
+    @abstractmethod
     async def delete(self, symbol_collection, query):
         pass
 

@@ -28,7 +28,7 @@ class MockBusParticipant(BusParticipant):
 @pytest.fixture
 def bus_event():
     return BusEvent(
-        call_context=CallContext("process1", thread_id=1, output_format={}),
+        call_context=CallContext("process1", thread_id="1", output_format={}),
         event_type='mock_event_type',
         messages=[SystemMessage(content="mock_content", event_data={"key": "value"})]
     )

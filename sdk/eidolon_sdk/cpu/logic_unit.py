@@ -51,6 +51,9 @@ class MethodInfo(BaseModel):
     fn: Callable
 
 
+DO_NOT_WRITE_RESPONSE = "___DO_NOT_WRITE___"
+
+
 class LogicUnitConfig(BaseModel):
     lu_read: READ_PORT = Field(default=None, description="A port that, when bound to an event, will read the LLM tool call from the bus.")
     lu_write: READ_PORT = Field(default=None, description="A port that, when bound to an event, will write the tool call response to the bus.")
@@ -96,14 +99,15 @@ class LogicUnit(ProcessingUnit, Specable[T], ABC):
         # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
         if self.is_sync():
             result = await fn(**args)
-            # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
-            if isinstance(result, BaseModel):
-                result = result.model_dump()
-            elif isinstance(result, str):
-                result = {"text": result}
-            elif result is None:
-                result = {}
-            self.write_response(call_context, fn_name, result)
+            if result is not DO_NOT_WRITE_RESPONSE:
+                # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
+                if isinstance(result, BaseModel):
+                    result = result.model_dump()
+                elif isinstance(result, str):
+                    result = {"text": result}
+                elif result is None:
+                    result = {}
+                self.write_response(call_context, fn_name, result)
         else:
             # todo -- store the conversation and args in memory
             raise NotImplementedError("Async tools are not yet supported.")

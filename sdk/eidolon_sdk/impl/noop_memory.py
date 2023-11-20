@@ -44,6 +44,9 @@ class NoopSymbolicMemory(SymbolicMemory):
     async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
         pass
 
+    async def update_many(self, symbol_collection: str, query: dict[str, Any], document: dict[str, Any]) -> None:
+        pass
+
     async def delete(self, symbol_collection, query):
         pass
 
