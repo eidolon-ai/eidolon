@@ -8,8 +8,7 @@ from openai.types.chat.completion_create_params import ResponseFormat
 
 from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolCall, AssistantMessage
-from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
-from eidolon_sdk.cpu.logic_unit import MethodInfo
+from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, AddsMessages
 from eidolon_sdk.reference_model import Specable
 
 
@@ -68,11 +67,6 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
     async def process_llm_event(self, call_context: CallContext, inMessages: List[LLMMessage]):
         messages = [convert_to_openai(message) for message in inMessages]
-        # add a message to the LLM for the output format which is already in json schema format
-        messages.append({
-            "role": "user",
-            "content": f"The output MUST be valid json and the schema for the response message is {call_context.output_format}"
-        })
         tools = NOT_GIVEN
         if self.cpu.logic_units:
             tools = []
@@ -81,11 +75,20 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                     tools.append(ChatCompletionToolParam(**{
                         "type": "function",
                         "function": {
-                            "name": logic_unit.__class__.__name__ + "." + fn_name,
+                            "name": logic_unit.__class__.__name__ + "_" + fn_name,
                             "description": t.description,
                             "parameters": t.input_model.model_json_schema()
                         }
                     }))
+                if isinstance(logic_unit, AddsMessages):
+                    messages = messages + [convert_to_openai(message) for message in logic_unit.get_messages()]
+
+        # add a message to the LLM for the output format which is already in json schema format
+        messages.append({
+            "role": "user",
+            "content": f"The output MUST be valid json and the schema for the response message is {call_context.output_format}"
+        })
+
         # This event is a request to query the LLM
         try:
             print("messages = " + str(messages))

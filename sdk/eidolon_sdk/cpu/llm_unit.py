@@ -28,6 +28,12 @@ class LLMUnitConfig(BaseModel):
     ltc_write: WRITE_PORT = Field(default=None, description="A port that, when bound to an event, will write the tool calls with the full conversation from the LLM to the bus.")
 
 
+class AddsMessages(ABC):
+    @abstractmethod
+    def get_messages(self) -> List[LLMMessage]:
+        pass
+
+
 class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
     def __init__(self, spec: LLMUnitConfig = None):
         self.spec = spec

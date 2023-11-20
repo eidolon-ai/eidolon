@@ -6,7 +6,8 @@ from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.agent_bus import CallContext, BusController, BusEvent
-from eidolon_sdk.cpu.llm_message import LLMMessage
+from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage
+from eidolon_sdk.cpu.llm_unit import AddsMessages
 from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig, llm_function
 from eidolon_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
 from eidolon_sdk.reference_model import Specable, Reference
@@ -20,11 +21,17 @@ class CoreMemoryConfig(LogicUnitConfig):
     memory_collection: str = Field(default="core_memory")
 
 
-class CoreMemory(LogicUnit, Specable[CoreMemoryConfig]):
+class CoreMemory(LogicUnit, AddsMessages, Specable[CoreMemoryConfig]):
 
     def __init__(self, spec: CoreMemoryConfig = None):
         super().__init__(spec)
         self.spec = spec
+
+    def get_messages(self) -> List[LLMMessage]:
+        return [SystemMessage(content='''I can use this space in my core memory to keep track of my current tasks and goals.
+
+The answer to the human's question will usually be located somewhere in your archival memory, so keep paging through results until you find enough information to construct an answer.
+Do not respond to the human until you have arrived at an answer.''')]
 
     @llm_function
     async def append_core_memory(self, content: Annotated[str, Field(description="Content to write to the memory. All unicode (including emojis) are supported.")]) -> None:

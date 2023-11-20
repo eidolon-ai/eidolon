@@ -7,7 +7,6 @@ from eidolon_sdk.cpu.agent_bus import BusController
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler, IOUnit
 from eidolon_sdk.cpu.logic_unit import LogicUnit, MethodInfo
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_sdk.util.class_utils import fqn
 
 
 class AgentCPU:
