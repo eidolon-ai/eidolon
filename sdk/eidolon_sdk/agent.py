@@ -84,9 +84,8 @@ class Agent:
             prompts: List[typing.Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]],
             input_data: Dict[str, typing.Any],
             output_format: Dict[str, typing.Any],
-            process_id: str = None,
     ):
-        process_id = process_id or self.get_context().process_id
+        process_id = self.get_context().process_id
         future = self.cpu_response_handler.add_listener(process_id)
         self.cpu.schedule_request(process_id, prompts, input_data, output_format)
         return await future
