@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -55,6 +56,7 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
 
     def write_llm_tool_conversations(self, call_context: CallContext, existing_conversation: List[LLMMessage],
                                      tool_call: ToolCall):
+        logging.info(f"calling tool {tool_call.name}")
         self.request_write(BusEvent(
             call_context,
             self.spec.lt_write,

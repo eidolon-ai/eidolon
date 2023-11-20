@@ -12,11 +12,6 @@ from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig, llm_function
 from eidolon_sdk.reference_model import Specable
 
 
-class TestOutput(BaseModel):
-    success: bool
-    stdout: str
-
-
 class FileUpdate(BaseModel):
     file_path: Annotated[str, Field(description="The path to the file to be updated")]
     content: Annotated[str, Field(description="The new content of the file")]
@@ -35,6 +30,9 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
 
     @llm_function
     async def list_files(self) -> List[str]:
+        """
+        List all files in the project
+        """
         all_files = []
         for root, dirs, files in os.walk(self.spec.root_dir):
             for file in files:
@@ -45,8 +43,12 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
     async def update_files(
             self,
             update_summary: Annotated[str, Field(description="A summary of the changes. Will be included in commit message")],
-            updates: List[FileUpdate]
-    ):
+            updates: Annotated[List[FileUpdate], Field(description="A list of update instructions")],
+    ) -> dict:
+        """
+        Update the contents of one or more files in the project and commit the changes.
+        """
+        # todo, limit to files in project
         for update in updates:
             file_path = os.path.join(self.spec.root_dir, update.file_path)
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -57,12 +59,19 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         return dict(revision=self.repo.head.commit.hexsha)
 
     @llm_function
-    async def revert(self, revision):
+    async def revert(self, revision) -> dict:
+        """
+        Revert the project to a previous revision.
+        """
         self.repo.git.reset('--hard', revision)
         return dict(revision=self.repo.head.commit.hexsha)
 
     @llm_function
     async def run_pytest_async(self) -> dict:
+        """
+        Run pytest in the project directory and return the results.
+        :return:
+        """
         with tempfile.NamedTemporaryFile(suffix='.json', mode='w+', delete=True) as tmpfile:
             cmd = ["pytest", self.spec.root_dir, "--json-report", "--json-report-file=" + tmpfile.name]
 

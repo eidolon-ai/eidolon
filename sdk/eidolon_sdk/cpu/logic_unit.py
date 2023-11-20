@@ -16,7 +16,6 @@ from eidolon_sdk.util.class_utils import get_function_details, fqn
 
 
 def llm_function(fn):
-    setattr(fn, 'llm_function', True)
     sig = inspect.signature(fn).parameters
     hints = typing.get_type_hints(fn, include_extras=True)
     fields = {}
@@ -33,17 +32,22 @@ def llm_function(fn):
     function_name, clazz = get_function_details(fn)
     input_model = create_model(f'{clazz}_{function_name}InputModel', **fields)
     output_model = typing.get_type_hints(fn, include_extras=True).get('return', typing.Any)
-    setattr(fn, 'input_model', input_model)
-    setattr(fn, 'output_model', output_model)
+
+    setattr(fn, 'llm_function', MethodInfo(
+        name=function_name,
+        description=fn.__doc__,
+        input_model=input_model,
+        output_model=output_model,
+        fn=fn
+    ))
     return fn
 
 
-@dataclass
-class MethodInfo:
+class MethodInfo(BaseModel):
     name: str
     description: str
-    input_model: BaseModel
-    output_model: BaseModel
+    input_model: typing.Type[BaseModel]
+    output_model: Any
     fn: Callable
 
 
@@ -62,13 +66,7 @@ class LogicUnit(ProcessingUnit, Specable[T], ABC):
 
     def discover(self):
         return {
-            method_name: MethodInfo(
-                name=method_name,
-                description=method.__doc__,
-                input_model=method.input_model,
-                output_model=method.output_model,
-                fn=method
-            )
+            method_name: getattr(method, 'llm_function')
             for method_name in dir(self)
             for method in [getattr(self, method_name)]
             if hasattr(method, 'llm_function')

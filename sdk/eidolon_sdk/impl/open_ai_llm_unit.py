@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import List
 
 from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
@@ -104,12 +105,13 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             message = llm_response.choices[0].message
             if message.tool_calls and len(message.tool_calls) > 0:
                 for tool_call in message.tool_calls:
-                    arguments = json.dumps(tool_call.function.arguments)
-                    self.write_llm_tool_conversations(call_context, inMessages, ToolCall(name=tool_call.function.name, arguments=arguments))
+                    arguments = json.loads(tool_call.function.arguments)
+                    tool_call = ToolCall(name=tool_call.function.name, arguments=arguments)
+                    self.write_llm_tool_conversations(call_context, inMessages, tool_call)
 
             response = message.model_dump()
-            response["content"] = json.loads(response["content"])
-            self.write_llm_response(call_context, AssistantMessage.model_validate(response))
+            if response["content"]:
+                self.write_llm_response(call_context, AssistantMessage.model_validate(json.loads(response["content"])))
         except APIConnectionError as e:
             print("The server could not be reached")
             print(e.__cause__)  # an underlying Exception, likely raised within httpx.
@@ -119,3 +121,5 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             print("Another non-200-range status code was received")
             print(e.status_code)
             print(e.response)
+        except Exception as e:
+            logging.exception("An unknown error occurred")
