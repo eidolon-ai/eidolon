@@ -4,19 +4,20 @@ from typing import List, Annotated, Optional
 
 from pydantic import BaseModel, Field
 
-from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.agent_memory import AgentMemory
+from eidolon_sdk.cpu.agent_bus import CallContext, BusController, BusEvent
 from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig, llm_function
-from eidolon_sdk.cpu.memory_unit import MemoryUnit
+from eidolon_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
 
 
+RETRIEVAL_QUERY_DEFAULT_PAGE_SIZE = 10
+
+
 class CoreMemoryConfig(LogicUnitConfig):
     memory_collection: str = Field(default="core_memory")
-
-
-RETRIEVAL_QUERY_DEFAULT_PAGE_SIZE = 10
 
 
 class CoreMemory(LogicUnit, Specable[CoreMemoryConfig]):
@@ -86,7 +87,7 @@ class CoreMemory(LogicUnit, Specable[CoreMemoryConfig]):
         return results_str
 
 
-class ArchiveMemoryConfig(BaseModel):
+class ArchiveMemoryConfig(LogicUnitConfig):
     memory_collection: str = Field(default="archive_memory")
 
 
@@ -132,19 +133,27 @@ class ArchiveMemory(LogicUnit, Specable[ArchiveMemoryConfig]):
         return results_str
 
 
-class MemGPTMemoryUnitConfig(BaseModel):
+class MemGPTMemoryUnitConfig(MemoryUnitConfig):
     core_memory: Reference[CoreMemory] = Reference(implementation=fqn(CoreMemory))
     archive_memory: Reference[ArchiveMemory] = Reference(implementation=fqn(ArchiveMemory))
-    conversation_memory_collection: str = Field(default="mem_gpt_conversation_memory")
-    archive_memory_collection: str = Field("mem_gpt_archive_memory")
 
 
 class MemGPTMemoryUnit(MemoryUnit, Specable[MemGPTMemoryUnitConfig]):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._memgpt = None
-        self.cpu.register_logic_unit(CoreMemory)
-        self.cpu.register_logic_unit(ArchiveMemory)
+    def __init__(self, spec: MemGPTMemoryUnitConfig = None):
+        super().__init__(spec)
+        self.spec = spec
+
+    def initialize(self, **kwargs):
+        super().initialize(**kwargs)
+        self.cpu.register_logic_unit(self.spec.core_memory.instantiate())
+        self.cpu.register_logic_unit(self.spec.archive_memory.instantiate())
+
+    async def processStoreAndFetchEvent(self, call_context: CallContext, messages: List[LLMMessage]):
+        self.request_write(BusEvent(
+            call_context,
+            self.spec.msf_write,
+            messages
+        ))
 
     async def writeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
         pass

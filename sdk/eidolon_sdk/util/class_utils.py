@@ -31,7 +31,8 @@ def for_name(implementation_fqn: str, sub_class: Type) -> Type:
         try:
             module = importlib.import_module(module_name)
             implementation_class = getattr(module, class_name)
-        except (ImportError, AttributeError):
+        except (ImportError, AttributeError) as e:
+            print(e)
             raise ValueError(f"Unable to import {implementation_fqn}")
         if implementation_class and issubclass(implementation_class, sub_class):
             return implementation_class
@@ -46,3 +47,19 @@ def for_name(implementation_fqn: str, sub_class: Type) -> Type:
 
 def fqn(clazz=Type) -> str:
     return clazz.__module__ + '.' + clazz.__name__
+
+
+def get_function_details(func):
+    function_name = func.__name__
+    owning_class = None
+
+    if hasattr(func, '__self__'):
+        # This is a bound method; it will have a '__self__' attribute.
+        owning_class = func.__self__.__class__.__name__
+    elif hasattr(func, '__qualname__'):
+        # This is an unbound method or a function; try to parse the class name out of the __qualname__
+        qualname_parts = func.__qualname__.split('.')
+        if len(qualname_parts) > 1:
+            owning_class = qualname_parts[-2]
+
+    return function_name, owning_class

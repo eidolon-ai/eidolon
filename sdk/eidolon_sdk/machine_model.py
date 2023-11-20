@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, List
 
 from pydantic import Field, BaseModel
 
@@ -24,7 +24,7 @@ class CpuModel(BaseModel):
     control_unit: Reference[ControlUnit] = Field(default=None)
     memory_unit: Reference[MemoryUnit] = Field(default=None)
     llm_unit: Reference[LLMUnit] = Field(default=None)
-    logic_units: Dict[str, Reference[LogicUnit]] = {}
+    logic_units: List[Reference[LogicUnit]] = {}
 
 
 class ProgramModel(BaseModel):

@@ -20,6 +20,7 @@ class MemoryUnitConfig(BaseModel):
 
 class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
     def __init__(self, spec: MemoryUnitConfig = None):
+        super().__init__()
         self.spec = spec
 
     async def bus_read(self, event: BusEvent):
@@ -42,8 +43,21 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
 
     @abstractmethod
     async def writeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
-        pass
+        conversationItems = [{
+            "process_id": call_context.process_id,
+            "thread_id": call_context.thread_id,
+            "message": message.model_dump()} for message in messages]
 
-    @abstractmethod
+        print("writeMessages: " + str(messages))
+        await self.agent_memory.symbolic_memory.insert("conversation_memory", conversationItems)
+
     async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
-        pass
+        existingMessages = []
+        async for message in self.agent_memory.symbolic_memory.find("conversation_memory", {
+            "process_id": call_context.process_id,
+            "thread_id": call_context.thread_id
+        }):
+            existingMessages.append(LLMMessage.from_dict(message["message"]))
+
+        print("existingMessages = " + str(existingMessages))
+        return existingMessages

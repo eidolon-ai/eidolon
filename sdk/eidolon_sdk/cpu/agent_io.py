@@ -67,7 +67,7 @@ class IOUnit(ProcessingUnit, Specable[IOUnitConfig]):
             if prompt.type == "user":
                 user_message_parts.append(UserMessageText(text=converted_prompt))
             elif prompt.type == "system":
-                event_prompts.append(SystemMessage(content=prompt.prompt))
+                event_prompts.append(SystemMessage(content=converted_prompt))
             elif prompt.type == "image_url":
                 user_message_parts.append(UserMessageImageURL(image_url=converted_prompt))
             else:

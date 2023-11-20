@@ -2,11 +2,14 @@ import json
 from typing import List
 
 from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
+from openai._types import NOT_GIVEN
+from openai.types.chat import ChatCompletionToolParam
 from openai.types.chat.completion_create_params import ResponseFormat
 
 from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolCall, AssistantMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
+from eidolon_sdk.cpu.logic_unit import MethodInfo
 from eidolon_sdk.reference_model import Specable
 
 
@@ -70,12 +73,27 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             "role": "user",
             "content": f"The output MUST be valid json and the schema for the response message is {call_context.output_format}"
         })
+        tools = NOT_GIVEN
+        if self.cpu.tools and len(self.cpu.tools) > 0:
+            tools = []
+            for tool_name, tool in self.cpu.tools.items():
+                t: MethodInfo = tool
+                tools.append(ChatCompletionToolParam(**{
+                    "type": "function",
+                    "function": {
+                        "name": tool_name,
+                        "description": t.description,
+                        "parameters": t.input_model.model_json_schema()
+                    }
+                }))
         # This event is a request to query the LLM
         try:
             print("messages = " + str(messages))
+            print("tools = " + str(tools))
             llm_response = await self.llm.chat.completions.create(
                 messages=messages,
                 model=self.model,
+                tools=tools,
                 temperature=self.temperature,
                 response_format=ResponseFormat(type="json_object")
             )

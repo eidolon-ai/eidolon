@@ -1,6 +1,7 @@
 from typing import List
 
 import yaml
+from pydantic import ValidationError
 
 from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
@@ -19,16 +20,20 @@ class AgentMachine:
 
     @staticmethod
     def from_yaml(machine_yaml):
-        model = MachineModel(**(yaml.safe_load(machine_yaml)))
-        memory = AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()})
-        machine = AgentMachine(agent_memory=memory, agent_programs=[])
+        try:
+            model = MachineModel(**(yaml.safe_load(machine_yaml)))
+            memory = AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()})
+            machine = AgentMachine(agent_memory=memory, agent_programs=[])
 
-        machine.agent_programs = [
-            AgentProgram(name=name, agent=program.agent.instantiate(
-                agent_machine=machine, cpu=(_make_cpu(program.cpu, machine))
-            )) for name, program in model.agent_programs.items()
-        ]
-        return machine
+            machine.agent_programs = [
+                AgentProgram(name=name, agent=program.agent.instantiate(
+                    agent_machine=machine, cpu=(_make_cpu(program.cpu, machine))
+                )) for name, program in model.agent_programs.items()
+            ]
+            return machine
+        except ValidationError as e:
+            print(e.errors())
+            raise Exception(f"Invalid machine model: {e}")
 
 
 def _make_cpu(cpu_model, machine):
@@ -43,10 +48,7 @@ def _make_cpu(cpu_model, machine):
         memory_unit=cpu_model.memory_unit.instantiate() if cpu_model.memory_unit else None,
         llm_unit=cpu_model.llm_unit.instantiate() if cpu_model.llm_unit else None,
         control_unit=cpu_model.control_unit.instantiate() if cpu_model.control_unit else None,
-        logic_units={
-            name: logic_unit.instantiate(agent_machine=machine, controller=bus_controller)
-            for name, logic_unit in cpu_model.logic_units.items()
-        },
+        logic_units=[logic_unit for logic_unit in cpu_model.logic_units.items()],
     )
 
     return cpu
