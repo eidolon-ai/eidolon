@@ -74,18 +74,18 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             "content": f"The output MUST be valid json and the schema for the response message is {call_context.output_format}"
         })
         tools = NOT_GIVEN
-        if self.cpu.tools and len(self.cpu.tools) > 0:
+        if self.cpu.logic_units:
             tools = []
-            for tool_name, tool in self.cpu.tools.items():
-                t: MethodInfo = tool
-                tools.append(ChatCompletionToolParam(**{
-                    "type": "function",
-                    "function": {
-                        "name": tool_name,
-                        "description": t.description,
-                        "parameters": t.input_model.model_json_schema()
-                    }
-                }))
+            for logic_unit in self.cpu.logic_units:
+                for fn_name, t in logic_unit._tool_functions.items():
+                    tools.append(ChatCompletionToolParam(**{
+                        "type": "function",
+                        "function": {
+                            "name": logic_unit.__class__.__name__ + "." + fn_name,
+                            "description": t.description,
+                            "parameters": t.input_model.model_json_schema()
+                        }
+                    }))
         # This event is a request to query the LLM
         try:
             print("messages = " + str(messages))

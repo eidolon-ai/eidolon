@@ -8,7 +8,7 @@ from typing import List, Annotated
 from git import Repo
 from pydantic import BaseModel, Field
 
-from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig
+from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig, llm_function
 from eidolon_sdk.reference_model import Specable
 
 
@@ -33,6 +33,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         super().__init__(**kwargs)
         self.repo = Repo.init(self.spec.root_dir)
 
+    @llm_function
     async def list_files(self) -> List[str]:
         all_files = []
         for root, dirs, files in os.walk(self.spec.root_dir):
@@ -40,6 +41,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
                 all_files.append(os.path.relpath(os.path.join(root, file), self.spec.root_dir))
         return all_files
 
+    @llm_function
     async def update_files(
             self,
             update_summary: Annotated[str, Field(description="A summary of the changes. Will be included in commit message")],
@@ -54,10 +56,12 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         self.repo.index.commit(update_summary)
         return dict(revision=self.repo.head.commit.hexsha)
 
+    @llm_function
     async def revert(self, revision):
         self.repo.git.reset('--hard', revision)
         return dict(revision=self.repo.head.commit.hexsha)
 
+    @llm_function
     async def run_pytest_async(self) -> dict:
         with tempfile.NamedTemporaryFile(suffix='.json', mode='w+', delete=True) as tmpfile:
             cmd = ["pytest", self.spec.root_dir, "--json-report", "--json-report-file=" + tmpfile.name]
