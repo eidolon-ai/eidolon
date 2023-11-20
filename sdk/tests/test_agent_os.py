@@ -15,6 +15,7 @@ from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, IOUnit
 from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
+from eidolon_sdk.impl.generic_agent import GenericAgent, GenericAgentSpec
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_sdk.impl.open_ai_llm_unit import OpenAIGPT
 from eidolon_sdk.machine_model import CpuModel
@@ -24,10 +25,10 @@ from eidolon_sdk.util.class_utils import fqn
 
 @pytest.fixture(scope="function")
 def app_builder(os_builder):
-    def get_app(*agents: Type[Agent], memory_override: SymbolicMemory = None):
+    def get_app(*agents: Type[Agent], memory_override: SymbolicMemory = None, **kwargs):
         @contextlib.asynccontextmanager
         async def manage_lifecycle(app: FastAPI):
-            os = os_builder(*agents, memory_override=memory_override)
+            os = os_builder(*agents, memory_override=memory_override, **kwargs)
             await os.start(app)
             yield
             os.stop()
@@ -43,7 +44,7 @@ def client_builder(app_builder):
     return fn
 
 
-def _make_program(agent, machine):
+def _make_program(agent, machine, spec=None, **kwargs):
     cpu = _make_cpu(CpuModel(
         io_unit=Reference(implementation=fqn(IOUnit), spec=dict(io_write="Request", io_read="Response")).dict(),
         memory_unit=Reference(implementation=fqn(ConversationalMemoryUnit), spec=dict(msf_read="Request", msf_write="Conversation")).dict(),
@@ -51,15 +52,15 @@ def _make_program(agent, machine):
     ), machine)
     return AgentProgram(
         name=agent.__name__.lower(),
-        agent=agent(machine, cpu=cpu)
+        agent=agent(machine, cpu=cpu, spec=spec)
     )
 
 
 @pytest.fixture
 def os_builder():
-    def fn(*agents: Type[Agent], memory_override: SymbolicMemory = None):
+    def fn(*agents: Type[Agent], memory_override: SymbolicMemory = None, **kwargs):
         machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
-        machine.agent_programs = [_make_program(agent, machine) for agent in agents]
+        machine.agent_programs = [_make_program(agent, machine, **kwargs) for agent in agents]
         return AgentOS(machine=machine)
 
     return fn
@@ -263,6 +264,20 @@ def test_agent_can_use_cpu(client_builder):
         post = client.post("/programs/cputester", json={})
         assert post.status_code == 200
         assert post.json()['data'] == {'response': 'foo'}
+
+
+# todo, break this into a separate test file
+def test_generic_agent(client_builder):
+    with client_builder(GenericAgent, spec=GenericAgentSpec(
+        system_prompt="You are a helpful agent that answers questions.",
+        question_prompt="{{question}}",
+        question_json_schema=dict(type="object", properties=dict(question=dict(type="string"))),
+    )) as client:
+        post = client.post("/programs/genericagent", json=dict(question="what is the capital of Germany?"))
+        assert post.status_code == 200
+        assert post.json()['data']['response'] == 'Berlin'
+        response = client.post(f"/programs/genericagent/processes/{post.json()['process_id']}/actions/respond", json=dict(statement="What is it's country code?"))
+        assert response.status_code == 200
 
 
 class DocumentedBase(BaseModel):
