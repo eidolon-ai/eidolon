@@ -48,7 +48,7 @@ def _make_cpu(cpu_model, machine):
         memory_unit=cpu_model.memory_unit.instantiate() if cpu_model.memory_unit else None,
         llm_unit=cpu_model.llm_unit.instantiate() if cpu_model.llm_unit else None,
         control_unit=cpu_model.control_unit.instantiate() if cpu_model.control_unit else None,
-        logic_units=[logic_unit for logic_unit in cpu_model.logic_units.items()],
+        logic_units=[logic_unit.instantiate() for logic_unit in cpu_model.logic_units],
     )
 
     return cpu

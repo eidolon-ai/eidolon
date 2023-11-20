@@ -55,7 +55,7 @@ class LogicUnitConfig(BaseModel):
 T = TypeVar('T', bound=LogicUnitConfig)
 
 
-class LogicUnit(ProcessingUnit, Generic[T], Specable[T], ABC):
+class LogicUnit(ProcessingUnit, Specable[T], ABC):
     def __init__(self, spec: T = None):
         self.spec = spec
         self._tool_functions = self.discover()

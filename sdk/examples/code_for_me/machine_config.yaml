@@ -50,7 +50,7 @@ agent_programs:
           llm_read: "Conversation"
           llm_write: "Tools"
       logic_units:
-        - implementation: "examples.code_with_me.file_manager.FileManager"
+        - implementation: "examples.code_for_me.file_manager.FileManager"
           spec:
             root_dir: "/Users/lukelalor/projects/code_for_me_playground"
             file_read: "Tools"

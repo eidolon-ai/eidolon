@@ -9,6 +9,7 @@ from git import Repo
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig
+from eidolon_sdk.reference_model import Specable
 
 
 class TestOutput(BaseModel):
@@ -25,11 +26,11 @@ class FileManagerConfig(LogicUnitConfig):
     root_dir: str
 
 
-class FileManager(LogicUnit[FileManagerConfig]):
+class FileManager(LogicUnit, Specable[FileManagerConfig]):
     repo: Repo
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.repo = Repo.init(self.spec.root_dir)
 
     async def list_files(self) -> List[str]:
