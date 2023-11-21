@@ -1,12 +1,14 @@
-from typing import Annotated, List, Dict
+from typing import List, Dict
 
 from bson import ObjectId
 from pydantic import Field, BaseModel
 
+from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
-from eidolon_sdk.cpu.logic_unit import LogicUnit, llm_function, LogicUnitConfig
+from eidolon_sdk.cpu.logic_unit import llm_function
+from eidolon_sdk.reference_model import Specable
 
 PROMPT = f"""
 Your job is to summarize a history of previous messages in a conversation between an AI persona and a human.
@@ -27,22 +29,27 @@ class MessageSummary(BaseModel):
     summary: str = Field(description="The summary of the messages")
 
 
-class MessageSummarizerConfig(LogicUnitConfig):
+class MessageSummarizerConfig(BaseModel):
     summary_word_limit: int = Field(default=100, description="The word limit for the summary")
 
 
-class MessageSummarizer(LogicUnit):
+class MessageSummarizer(Specable[MessageSummarizerConfig]):
     llm_config: LLMUnitConfig = None
     outstanding_calls: Dict[str, (CallContext, List[str])] = {}
 
+    def __init__(self, agent_memory: AgentMemory, spec: MessageSummarizerConfig = None, **kwargs):
+        super().__init__(**kwargs)
+        self.spec = spec
+        self.agent_memory = agent_memory
+
     @llm_function
-    async def summarize_messages(self, call_context: Annotated[CallContext, Field(description="The current call context")]) \
-            -> Annotated[LLMMessage, Field(description="The summary of the messages")]:
+    async def summarize_messages(self, call_context: CallContext, llm_unit: LLMUnit) -> LLMMessage:
         """
         Summarizes a list of messages into a single message using a new thread from the cpu.
 
         Args:
             call_context (CallContext): The current call context
+            llm_unit (LLMUnit): The llm unit to use to execute the llm
 
         Returns:
             LLMMessage: The summary of the messages
@@ -54,14 +61,8 @@ class MessageSummarizer(LogicUnit):
         }):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 
-        # todo -- handle messages that are > the max call context
-        new_context = self.derive_call_context(call_context)
-        # store the new context as the key to an object as a local object, so we can retrieve it later in bus_read to make sure the LLM event is for us
-        self.outstanding_calls[new_context.thread_id] = (call_context, [message._id for message in existingMessages])
-
         summarizer_message = SystemMessage(content=PROMPT)
-        llm_unit: LLMUnit = self._getOrFetchLLMUnit()
-        assistant_message = llm_unit.execute_llm(new_context, [summarizer_message], [], MessageSummary.model_json_schema())
+        assistant_message = llm_unit.execute_llm(call_context, [summarizer_message], [], MessageSummary.model_json_schema())
 
         # create a new object id for the summary message
         summary_id = str(ObjectId())

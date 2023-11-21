@@ -4,9 +4,10 @@ from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler
 from eidolon_sdk.cpu.control_unit import ControlUnit
 from eidolon_sdk.cpu.logic_unit import MethodInfo
+from eidolon_sdk.cpu.processing_unit_locator import ProcessingUnitLocator
 
 
-class AgentCPU:
+class AgentCPU(ProcessingUnitLocator):
     control_unit: ControlUnit
 
     tools: Dict[str, MethodInfo]
@@ -33,3 +34,6 @@ class AgentCPU:
             output_format: Dict[str, Any]
     ):
         return await self.control_unit.process_request(process_id, prompts, input_data, output_format)
+
+    def locate_unit(self, unit_type):
+        return self.control_unit.locate_unit(unit_type)

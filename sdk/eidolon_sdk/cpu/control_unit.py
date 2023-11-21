@@ -1,8 +1,7 @@
-import asyncio
 import json
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict, Any, Type
 
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -13,7 +12,7 @@ from eidolon_sdk.cpu.llm_message import ToolResponseMessage, LLMMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidolon_sdk.cpu.logic_unit import LogicUnit, MethodInfo
 from eidolon_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_sdk.cpu.processing_unit import ProcessingUnit
+from eidolon_sdk.cpu.processing_unit import ProcessingUnit, T
 from eidolon_sdk.reference_model import Specable
 
 
@@ -47,6 +46,21 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
         self.memory_unit = memory_unit
         self.llm_unit = llm_unit
         self.logic_units = logic_units or []
+
+    def locate_unit(self, unit_type: Type[T]) -> T:
+        for unit in self.logic_units:
+            if isinstance(unit, unit_type):
+                return unit
+        if isinstance(self.io_unit, unit_type):
+            return self.io_unit
+
+        if isinstance(self.memory_unit, unit_type):
+            return self.memory_unit
+
+        if isinstance(self.llm_unit, unit_type):
+            return self.llm_unit
+
+        raise ValueError(f"Could not locate {unit_type}")
 
     def get_or_create_tools(self) -> Dict[str, ToolDefType]:
         if self.tool_defs is None:
