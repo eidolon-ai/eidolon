@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
-from .cpu.agent_bus import BusController
 from .cpu.agent_cpu import AgentCPU
 from .machine_model import MachineModel
 
@@ -40,15 +39,15 @@ def _make_cpu(cpu_model, machine):
     if not cpu_model:
         return None
 
-    bus_controller = BusController()
+    io_unit = cpu_model.io_unit.instantiate(memory=machine.agent_memory)
+    memory_unit = cpu_model.memory_unit.instantiate(memory=machine.agent_memory)
+    llm_unit = cpu_model.llm_unit.instantiate(memory=machine.agent_memory)
+    logic_units = [logic_unit.instantiate(memory=machine.agent_memory) for logic_unit in cpu_model.logic_units]
+    control_unit = cpu_model.control_unit.instantiate(memory=machine.agent_memory, io_unit=io_unit, memory_unit=memory_unit, llm_unit=llm_unit, logic_units=logic_units)
+
     cpu = AgentCPU(
         agent_memory=machine.agent_memory,
-        bus_controller=bus_controller,
-        io_unit=cpu_model.io_unit.instantiate(),
-        memory_unit=cpu_model.memory_unit.instantiate() if cpu_model.memory_unit else None,
-        llm_unit=cpu_model.llm_unit.instantiate() if cpu_model.llm_unit else None,
-        control_unit=cpu_model.control_unit.instantiate() if cpu_model.control_unit else None,
-        logic_units=[logic_unit.instantiate() for logic_unit in cpu_model.logic_units],
+        control_unit=control_unit
     )
 
     return cpu

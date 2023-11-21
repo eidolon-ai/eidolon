@@ -3,13 +3,12 @@ import logging
 from typing import List
 
 from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
-from openai._types import NOT_GIVEN
 from openai.types.chat import ChatCompletionToolParam
 from openai.types.chat.completion_create_params import ResponseFormat
 
 from eidolon_sdk.cpu.agent_bus import CallContext
-from eidolon_sdk.cpu.llm_message import LLMMessage, ToolCall, AssistantMessage
-from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, AddsMessages
+from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolCall
+from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
 from eidolon_sdk.reference_model import Specable
 
 
@@ -43,9 +42,11 @@ def convert_to_openai(message: LLMMessage):
             } for tool_call in message.tool_calls]
         return ret
     elif message.type == "tool":
+        # tool_call_id, content
         return {
             "role": "tool",
-            "tool_calls": [ToolCall(name=message.tool_name, arguments=message.tool_arguments)]
+            "tool_call_id": message.name,
+            "content": message.result
         }
     else:
         raise ValueError(f"Unknown message type {message.type}")
@@ -60,58 +61,57 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
     model: str
     temperature: float
 
-    def __init__(self, spec: OpenAiGPTSpec):
-        super().__init__(spec)
+    def __init__(self, spec: OpenAiGPTSpec, **kwargs):
+        super().__init__(spec, **kwargs)
         self.model = spec.model
         self.temperature = spec.temperature
         self.llm = AsyncOpenAI()
 
-    async def process_llm_event(self, call_context: CallContext, inMessages: List[LLMMessage]):
+    async def process_llm_event(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: str) -> AssistantMessage:
         messages = [convert_to_openai(message) for message in inMessages]
-        tools = NOT_GIVEN
-        if self.cpu.logic_units:
-            tools = []
-            for logic_unit in self.cpu.logic_units:
-                for fn_name, t in logic_unit._tool_functions.items():
-                    tools.append(ChatCompletionToolParam(**{
-                        "type": "function",
-                        "function": {
-                            "name": logic_unit.__class__.__name__ + "_" + fn_name,
-                            "description": t.description,
-                            "parameters": t.input_model.model_json_schema()
-                        }
-                    }))
-                if isinstance(logic_unit, AddsMessages):
-                    messages = messages + [convert_to_openai(message) for message in logic_unit.get_messages()]
 
         # add a message to the LLM for the output format which is already in json schema format
         messages.append({
             "role": "user",
-            "content": f"The output MUST be valid json and the schema for the response message is {call_context.output_format}"
+            "content": f"The output MUST be valid json and the schema for the response message is {output_format}"
         })
 
+        tools = []
+        for tool in inTools:
+            tools.append(ChatCompletionToolParam(**{
+                "type": "function",
+                "function": {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "parameters": tool.parameters
+                }
+            }))
         # This event is a request to query the LLM
         try:
             print("messages = " + str(messages))
-            print("tools = " + str(tools))
-            llm_response = await self.llm.chat.completions.create(
-                messages=messages,
-                model=self.model,
-                tools=tools,
-                temperature=self.temperature,
-                response_format=ResponseFormat(type="json_object")
-            )
+            # print("tools = " + str(tools))
+            request = {
+                "messages": messages,
+                "model": self.model,
+                "temperature": self.temperature,
+                "response_format": ResponseFormat(type="json_object")
+            }
+            if len(tools) > 0:
+                request["tools"] = tools
 
+            llm_response = await self.llm.chat.completions.create(**request)
             message = llm_response.choices[0].message
-            if message.tool_calls and len(message.tool_calls) > 0:
-                for tool_call in message.tool_calls:
-                    arguments = json.loads(tool_call.function.arguments)
-                    tool_call = ToolCall(name=tool_call.function.name, arguments=arguments)
-                    self.write_llm_tool_conversations(call_context, inMessages, tool_call)
+            tool_response = None
+            if message.tool_calls:
+                tool_response = []
+                for tool in message.tool_calls:
+                    tool_response.append(ToolCall(name=tool.function.name, arguments=json.loads(tool.function.arguments)))
 
-            response = message.model_dump()
-            if response["content"]:
-                self.write_llm_response(call_context, AssistantMessage.model_validate(json.loads(response["content"])))
+            if message.content:
+                response = json.loads(message.content)
+            else:
+                response = {}
+            return AssistantMessage(content=response, tool_calls=tool_response)
         except APIConnectionError as e:
             print("The server could not be reached")
             print(e.__cause__)  # an underlying Exception, likely raised within httpx.

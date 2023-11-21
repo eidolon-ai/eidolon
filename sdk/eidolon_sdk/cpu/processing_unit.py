@@ -1,15 +1,16 @@
 from abc import ABC
 
+from bson import ObjectId
+
 from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.cpu.agent_bus import BusParticipant, BusController
+from eidolon_sdk.cpu.agent_bus import CallContext
 
 
-class ProcessingUnit(BusParticipant, ABC):
-    cpu: 'AgentCPU'
+class ProcessingUnit(ABC):
     agent_memory: AgentMemory
 
-    # noinspection PyMethodOverriding
-    def initialize(self, bus_controller: BusController, cpu: 'AgentCPU', memory: AgentMemory):
-        super().initialize(bus_controller)
-        self.cpu = cpu
+    def __init__(self, memory: AgentMemory, **kwargs):
         self.agent_memory = memory
+
+    def derive_call_context(self, existing_call_context):
+        return CallContext(process_id=existing_call_context.process_id, thread_id=str(ObjectId()))

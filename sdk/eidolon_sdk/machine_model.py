@@ -11,7 +11,10 @@ from .cpu.control_unit import ControlUnit
 from .cpu.llm_unit import LLMUnit
 from .cpu.logic_unit import LogicUnit
 from .cpu.memory_unit import MemoryUnit
+from .impl.conversation_memory_unit import ConversationalMemoryUnit
+from .impl.open_ai_llm_unit import OpenAIGPT
 from .reference_model import Reference
+from .util.class_utils import fqn
 
 
 class MachineModel(BaseModel):
@@ -20,10 +23,10 @@ class MachineModel(BaseModel):
 
 
 class CpuModel(BaseModel):
-    io_unit: Reference[IOUnit] = Field(default=None)
-    control_unit: Reference[ControlUnit] = Field(default=None)
-    memory_unit: Reference[MemoryUnit] = Field(default=None)
-    llm_unit: Reference[LLMUnit] = Field(default=None)
+    io_unit: Reference[IOUnit] = Reference(implementation=fqn(IOUnit))
+    control_unit: Reference[ControlUnit] = Reference(implementation=fqn(ControlUnit))
+    memory_unit: Reference[MemoryUnit] = Reference(implementation=fqn(ConversationalMemoryUnit))
+    llm_unit: Reference[LLMUnit] = Reference(implementation=fqn(OpenAIGPT))
     logic_units: List[Reference[LogicUnit]] = {}
 
 

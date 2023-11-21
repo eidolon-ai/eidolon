@@ -2,10 +2,9 @@ from abc import abstractmethod, ABC
 from typing import List, Union, Any, Dict
 
 from jinja2 import Environment, StrictUndefined
-from pydantic import BaseModel, validate_call, Field
+from pydantic import BaseModel, validate_call
 
-from eidolon_sdk.cpu.agent_bus import BusEvent, CallContext
-from eidolon_sdk.cpu.bus_messages import WRITE_PORT
+from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.llm_message import UserMessageText, SystemMessage, UserMessageImageURL, UserMessage
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_sdk.reference_model import Specable
@@ -35,30 +34,14 @@ class ImageURLCPUMessage(CPUMessage):
 
 
 class IOUnitConfig(BaseModel):
-    io_write: WRITE_PORT = Field(description="A port that, when bound to an event, will write the input request to the event bus.")
-    io_read: WRITE_PORT = Field(description="A port that, when bound to an event, will read the output response from the event bus.")
+    pass
 
 
 class IOUnit(ProcessingUnit, Specable[IOUnitConfig]):
     env = Environment(undefined=StrictUndefined)
-    response_handler: ResponseHandler = None
-    spec: IOUnitConfig
-
-    def __init__(self, spec: IOUnitConfig):
-        self.spec = spec
-
-    def initialize(self, response_handler: ResponseHandler, **kwargs):
-        self.response_handler = response_handler
-        super().initialize(**kwargs)
-
-    async def bus_read(self, event: BusEvent):
-        if event.event_type == self.spec.io_read:
-            # todo -- should we assert this? We are assuming this is an AssistantMessage
-            await self.process_response(event.call_context.process_id, event.messages[0].content)
 
     @validate_call
-    def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: Dict[str, Any],
-                        output_format: Dict[str, Any]):
+    async def process_request(self, call_context: CallContext, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: Dict[str, Any]):
         # convert the prompts to a list of strings
         event_prompts = []
         user_message_parts = []
@@ -76,8 +59,8 @@ class IOUnit(ProcessingUnit, Specable[IOUnitConfig]):
         if len(user_message_parts) > 0:
             event_prompts.append(UserMessage(content=user_message_parts))
 
-        print("event_prompts" + str(event_prompts))
-        self.request_write(BusEvent(CallContext(process_id, 0, output_format), self.spec.io_write, event_prompts))
+        return event_prompts
 
-    async def process_response(self, process_id: str, response: Dict[str, Any]):
-        await self.response_handler.handle(process_id, response)
+    @validate_call
+    async def process_response(self, call_context: CallContext, response: Dict[str, Any]):
+        return response

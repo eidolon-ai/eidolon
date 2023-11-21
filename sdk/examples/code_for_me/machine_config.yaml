@@ -15,7 +15,7 @@ agent_programs:
     agent:
       implementation: "eidolon_sdk.impl.generic_agent.GenericAgent"
       spec:
-        root_dir: "/Users/lukelalor/projects/code_for_me_playground"
+        root_dir: "/Users/davebrewster/projects/code_for_me_playground"
         system_prompt:
           You are a software developer responsible for maintaining a project and trying to prove yourself. You 
           are tasked with implementing features or fixing bugs. You ask for clarification when instructions are unclear, 
@@ -32,28 +32,12 @@ agent_programs:
               request:
                 type: string
     cpu:
-      io_unit:
-        implementation: "eidolon_sdk.cpu.agent_io.IOUnit"
-        spec:
-          io_write: "Request"
-          io_read: "Response"
-      memory_unit:
-        implementation: "eidolon_sdk.impl.conversation_memory_unit.ConversationalMemoryUnit"
-        spec:
-          msf_read: "Request"
-          msf_write: "Conversation"
       llm_unit:
         implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
         spec:
           model: "gpt-4-1106-preview"
           temperature: 0.3
-          llm_read: "Conversation"
-          llm_write: "Response"
-          lt_write: "ToolWrite"
-          ltc_write: "ToolRead"
       logic_units:
         - implementation: "examples.code_for_me.file_manager.FileManager"
           spec:
-            root_dir: "/Users/lukelalor/projects/code_for_me_playground/eidolon/sdk"
-            file_read: "ToolRead"
-            file_write: "ToolWrite"
+            root_dir: "/Users/davebrewster/projects/code_for_me_playground"

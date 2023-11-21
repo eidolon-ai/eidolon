@@ -27,46 +27,21 @@ agent_programs:
               statement:
                 type: string
     cpu:
-      io_unit:
-        implementation: "eidolon_sdk.cpu.agent_io.IOUnit"
-        spec:
-          io_write: "Request"
-          io_read: "Response"
-      memory_unit:
-        implementation: "eidolon_sdk.impl.memgpt_memory_unit.MemGPTMemoryUnit"
-        spec:
-          msf_read: "Request"
-          msf_write: "Conversation"
       llm_unit:
         implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
         spec:
           model: "gpt-4-1106-preview"
           temperature: 0.3
-          llm_read: "Conversation"
-          llm_write: "Response"
 
   ExampleAuto:
     agent:
       implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
     cpu:
-      io_unit:
-        implementation: "eidolon_sdk.cpu.agent_io.IOUnit"
-        spec:
-          io_write: "Request"
-          io_read: "Response"
-      memory_unit:
-        implementation: "eidolon_sdk.impl.conversation_memory_unit.ConversationalMemoryUnit"
-        spec:
-          ms_read: "Response"
-          msf_read: "Request"
-          msf_write: "Conversation"
       llm_unit:
         implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
         spec:
           model: "gpt-4-1106-preview"
           temperature: 0.3
-          llm_read: "Conversation"
-          llm_write: "Response"
 
   ExampleAgentProgram:
     agent:

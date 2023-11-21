@@ -86,9 +86,7 @@ class Agent:
             output_format: Dict[str, typing.Any],
     ):
         process_id = self.get_context().process_id
-        future = self.cpu_response_handler.add_listener(process_id)
-        self.cpu.schedule_request(process_id, prompts, input_data, output_format)
-        return await future
+        return await self.cpu.schedule_request(process_id, prompts, input_data, output_format)
 
 
 class CodeAgent(Agent):

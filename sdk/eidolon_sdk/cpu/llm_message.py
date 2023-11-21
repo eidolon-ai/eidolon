@@ -17,7 +17,7 @@ class LLMMessage(BaseModel):
         elif data.get("type") == "assistant":
             return AssistantMessage.model_validate(data)
         elif data.get("type") == "tool":
-            return ToolCallMessage.model_validate(data)
+            return ToolResponseMessage.model_validate(data)
         else:
             raise ValueError(f"Unknown message type {data.get('type')}")
 
@@ -26,7 +26,7 @@ class LLMMessage(BaseModel):
 class SystemMessage(LLMMessage):
     type: str = "system"
     content: str
-    is_boot_message = True
+    is_boot_message: bool = True
 
 
 # Base class for message content parts
@@ -87,12 +87,5 @@ class AssistantMessage(LLMMessage):
 
 class ToolResponseMessage(LLMMessage):
     type: str = "tool"
-    tool_name: str
-    response: Dict[str, Any]
-
-
-# Synthetic message for tool calls
-class ToolCallMessage(LLMMessage):
-    type: str = "tool_call"
-    conversation: List[LLMMessage]
-    tool_call: ToolCall
+    name: str
+    result: str

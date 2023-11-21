@@ -1,4 +1,3 @@
-import jinja2
 from pydantic import BaseModel
 
 from eidolon_sdk.agent import Agent, initializer, register_action, AgentState

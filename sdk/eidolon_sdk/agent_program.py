@@ -92,6 +92,7 @@ class AgentProgram:
 
             async def run_and_store_response():
                 try:
+                    # todo -- probably should be **dict(body) per https://docs.pydantic.dev/latest/concepts/serialization/
                     response = await handler.fn(self.agent, **body.model_dump())
                     if isinstance(response, AgentState):
                         state = response.name
