@@ -43,4 +43,4 @@ agent_programs:
       logic_units:
         - implementation: "examples.code_for_me.file_manager.FileManager"
           spec:
-            root_dir: "$HOME/projects/code_for_me_playground"
+            root_dir: "$HOME/projects/code_for_me_playground/eidolon"

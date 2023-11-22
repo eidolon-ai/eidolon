@@ -6,7 +6,7 @@ from asyncio import subprocess
 from typing import List, Annotated
 
 from git import Repo
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig, llm_function
 from eidolon_sdk.reference_model import Specable
@@ -58,6 +58,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         """
         # todo, limit to files in project
         file_path = os.path.join(self.spec.root_dir, file_path)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, 'w') as f:
             f.write(content)
         self.repo.git.add(file_path)
@@ -73,7 +74,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         return dict(revision=self.repo.head.commit.hexsha)
 
     @llm_function
-    async def run_pytest_async(self) -> dict:
+    async def run_pytest(self) -> dict:
         """
         Run pytest in the project directory and return the results.
         :return:
