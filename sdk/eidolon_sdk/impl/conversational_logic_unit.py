@@ -25,11 +25,11 @@ class ConversationalSpec(BaseModel):
 
 
 class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
+    _openapi_json: Optional[dict] = None
+
     def __init__(self, spec: ConversationalSpec, **kwargs):
         super().__init__(**kwargs)
         self.spec = spec
-
-    _openapi_json: Optional[dict] = None
 
     def set_openapi_json(self, openapi_json):
         self._openapi_json = jsonref.replace_refs(openapi_json)
@@ -44,7 +44,8 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
         for agent in self.spec.agents:
             path = f'/programs/{agent}'
-            tools[path] = await self._build_tool_def(path, agent)
+            name = self._name(path) + "_start"
+            tools[name] = await self._build_tool_def(name, path, agent)
 
         # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
         allowed_agent_prefix = tuple(self.spec.tool_prefix + "_programs_" + agent for agent in self.spec.agents)
@@ -57,31 +58,32 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         # newer process state should override older process state if there are multiple calls
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
             path = f'/programs/{response.program}/processes/{{process_id}}/actions/{action}'
-            tools[path] = await self._build_tool_def(path, response.program)
+            name = self._name(path, response.process_id)
+            tools[name] = await self._build_tool_def(name, path, response.program)
 
-        return {self._name(k): v for k, v in tools.items()}
+        return tools
 
-    async def _build_tool_def(self, path, agent_program):
+    async def _build_tool_def(self, name, path, agent_program):
         json_schema = self._openapi_json['paths'][path]['post']['requestBody']['content']['application/json']['schema']
         description = "Create a conversation with the given agent"  # todo, derive this from openapi
         tool_def_type = ToolDefType(
             self,
             MethodInfo(
-                name=self._name(path),
+                name=name,
                 description=description,
-                input_model=schema_to_model(json_schema, self._name(path) + "_input_model"),
+                input_model=schema_to_model(json_schema, name + "_input_model"),
                 fn=_build_fn(path, agent_program)
             ),
             LLMCallFunction(
-                name=self._name(path),
+                name=name,
                 description=description,
                 parameters=json_schema
             )
         )
         return tool_def_type
 
-    def _name(self, path):
-        return self.spec.tool_prefix + path.replace("/", "_")
+    def _name(self, path, process_id=""):
+        return self.spec.tool_prefix + path.replace("/", "_").replace("{process_id}", process_id)
 
 
 def _build_fn(path, agent_program):
