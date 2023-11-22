@@ -51,7 +51,8 @@ class MessageSummarizer(Specable[MessageSummarizerConfig]):
         existingMessages = []
         async for message in self.agent_memory.symbolic_memory.find("conversation_memory", {
             "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id
+            "thread_id": call_context.thread_id,
+            "archive": None
         }):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 
