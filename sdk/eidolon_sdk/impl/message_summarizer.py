@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from jinja2 import Environment, StrictUndefined
 from pydantic import Field, BaseModel
@@ -33,6 +33,9 @@ class MessageSummary(BaseModel):
 
 class MessageSummarizerConfig(BaseModel):
     summary_word_limit: int = Field(default=100, description="The word limit for the summary")
+    prompt: Optional[str] = Field(default=None, description="A jinja2 template for the prompt to use during the summarization phase. "
+                                                            "The summary_word_limit variable is exposed as {{summary_word_limit}} variable "
+                                                            "and the messages are exposed as the {{messages}} variable")
 
 
 class MessageSummarizer(Specable[MessageSummarizerConfig]):
@@ -43,7 +46,7 @@ class MessageSummarizer(Specable[MessageSummarizerConfig]):
         self.agent_memory = agent_memory
         # create the jinja 2 environment with PROMPT as the template
         self.env = Environment(undefined=StrictUndefined)
-        self.template = self.env.from_string(PROMPT)
+        self.template = self.env.from_string(spec.prompt or PROMPT)
 
     async def summarize_messages(self, call_context: CallContext, existing_messages: List[LLMMessage], llm_unit: LLMUnit) -> LLMMessage:
         """
@@ -59,7 +62,7 @@ class MessageSummarizer(Specable[MessageSummarizerConfig]):
         """
 
         # format prompt with word limit and existing_messages using jinja2
-        message = self.template.render(WORD_LIMIT=self.spec.summary_word_limit, messages=existing_messages)
+        message = self.template.render(summary_word_limit=self.spec.summary_word_limit, messages=existing_messages)
         summarizer_message = SystemMessage(content=message)
 
         assistant_message = await llm_unit.execute_llm(call_context, [summarizer_message], [], MessageSummary.model_json_schema())
