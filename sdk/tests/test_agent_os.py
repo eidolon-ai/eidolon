@@ -13,7 +13,7 @@ from eidolon_sdk.agent_machine import AgentMachine, _make_cpu
 from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
-from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, IOUnit
+from eidolon_sdk.cpu.agent_io import IOUnit
 from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
 from eidolon_sdk.impl.generic_agent import GenericAgent, GenericAgentSpec
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory

@@ -1,16 +1,29 @@
+from __future__ import annotations
+
 import inspect
 import logging
 import typing
 from abc import ABC
+from dataclasses import dataclass
 from typing import Dict, Any, Callable, TypeVar
 
+from bson import ObjectId
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
 from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.llm_unit import LLMCallFunction
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.util.class_utils import get_function_details
+
+
+# todo, this can be collapsed with MethodInfo, but surgery for now
+@dataclass
+class ToolDefType:
+    logic_unit: LogicUnit
+    method_info: MethodInfo
+    llm_call_function: LLMCallFunction
 
 
 # todo, llm function should require annotations and error if they are not present
@@ -63,15 +76,26 @@ class LogicUnit(ProcessingUnit, Specable[T], ABC):
     def __init__(self, spec: T = None, **kwargs):
         super().__init__(**kwargs)
         self.spec = spec
-        self._tool_functions = self.discover()
+        self._tool_functions = self._find_base_tools()
 
-    def discover(self):
+    def _find_base_tools(self):
         return {
             method_name: getattr(method, 'llm_function')
             for method_name in dir(self)
             for method in [getattr(self, method_name)]
             if hasattr(method, 'llm_function')
         }
+
+    def build_tools(self, conversation):
+        tools = {}
+        for fn_name, t in self._tool_functions.items():
+            unique_method_name = fn_name + "_" + str(ObjectId())
+            tools[unique_method_name] = ToolDefType(self, t, LLMCallFunction(
+                name=unique_method_name,
+                description=t.description,
+                parameters=t.input_model.model_json_schema()
+            ))
+        return tools
 
     def is_sync(self):
         return True

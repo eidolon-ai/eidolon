@@ -10,7 +10,7 @@ from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage, IOUnit
 from eidolon_sdk.cpu.llm_message import ToolResponseMessage, LLMMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidolon_sdk.cpu.logic_unit import LogicUnit, MethodInfo
+from eidolon_sdk.cpu.logic_unit import LogicUnit, MethodInfo, ToolDefType
 from eidolon_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit, T
 from eidolon_sdk.reference_model import Specable
@@ -19,12 +19,6 @@ from eidolon_sdk.reference_model import Specable
 class ControlUnitConfig(BaseModel):
     max_num_function_calls: int = Field(10, description="The maximum number of function calls to make in a single request.")
 
-
-@dataclass
-class ToolDefType:
-    logic_unit: LogicUnit
-    method_info: MethodInfo
-    llm_call_function: LLMCallFunction
 
 
 class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
@@ -62,21 +56,11 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
 
         raise ValueError(f"Could not locate {unit_type}")
 
-    def get_or_create_tools(self) -> Dict[str, ToolDefType]:
-        if self.tool_defs is None:
-            self.tool_defs = {}
-            for logic_unit in self.logic_units:
-                # noinspection PyProtectedMember
-                for fn_name, t in logic_unit._tool_functions.items():
-                    unique_method_name = fn_name + "_" + str(ObjectId())
-                    self.tool_defs[unique_method_name] = ToolDefType(logic_unit, t, LLMCallFunction(name=unique_method_name,
-                                                                                                    description=t.description,
-                                                                                                    parameters=t.input_model.model_json_schema()
-                                                                                                    ))
+    def get_tools(self, conversation) -> Dict[str, ToolDefType]:
+        self.tool_defs = {}
+        for logic_unit in self.logic_units:
+            self.tool_defs.update(logic_unit.build_tools(conversation))
         return self.tool_defs
-
-    def get_tool_defs(self) -> List[LLMCallFunction]:
-        return [tool_def.llm_call_function for tool_def in self.get_or_create_tools().values()]
 
     async def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: Dict[str, Any],
                               output_format: Dict[str, Any]):
@@ -90,10 +74,11 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
     async def process_llm_requests(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Dict[str, Any]):
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            assistant_message = await self.llm_unit.execute_llm(call_context, conversation, self.get_tool_defs(), output_format)
+            tool_defs = self.get_tools(conversation)
+            tool_list = [d.llm_call_function for d in tool_defs.values()]
+            assistant_message = await self.llm_unit.execute_llm(call_context, conversation, tool_list, output_format)
             await self.memory_unit.processStoreEvent(call_context, [assistant_message])
             if assistant_message.tool_calls:
-                tool_defs = self.get_or_create_tools()
                 results = []
                 for tool_call in assistant_message.tool_calls:
                     tool_def = tool_defs[tool_call.name]
