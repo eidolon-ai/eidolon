@@ -15,16 +15,12 @@ agent_programs:
     agent:
       implementation: "eidolon_sdk.impl.generic_agent.GenericAgent"
       spec:
-        system_prompt: "You are an angry sailor. You are in a bar. You are looking for a fight. A user walks in and orders a {{drink_order}}."
-        question_prompt: "How do you do? My name is {{name}}. {{statement}}"
+        system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
+        question_prompt: "{{instruction}}"
         question_json_schema:
           type: object
           properties:
-              name:
-                type: string
-              drink_order:
-                type: string
-              statement:
+              instruction:
                 type: string
     cpu:
       llm_unit:
@@ -32,6 +28,10 @@ agent_programs:
         spec:
           model: "gpt-4-1106-preview"
           temperature: 0.3
+      logic_units:
+        - implementation: "eidolon_sdk.impl.conversational_logic_unit.ConversationalLogicUnit"
+          spec:
+            agents: ["StateMachine", "ExampleAgentProgram"]
 
   ExampleAuto:
     agent:

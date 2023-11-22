@@ -404,12 +404,12 @@ class TestConversationalLogicUnit:
     async def test_get_methods(self, conversational_logic_unit: ConversationalLogicUnit):
         tools_ = await conversational_logic_unit.build_tools([])
         assert len(tools_) == 1
-        assert 'eidolon_conversation_programs_statetester_start' in tools_
+        assert 'convo_statetester_INIT' in tools_
 
     @pytest.mark.asyncio
     async def test_gets_methods_for_existing_conversations(self, conversational_logic_unit: ConversationalLogicUnit):
         tools_ = await conversational_logic_unit.build_tools([ToolResponseMessage(
-            name='eidolon_conversation_programs_statetester',
+            name='convo_statetester_INIT',
             tool_call_id='abc',
             result=ConversationalResponse(
                 program='statetester',
@@ -420,5 +420,5 @@ class TestConversationalLogicUnit:
             ).model_dump_json()
         )])
         assert len(tools_) == 2
-        assert 'eidolon_conversation_programs_statetester_start' in tools_
-        assert 'eidolon_conversation_programs_statetester_processes_1234_actions_bar' in tools_
+        assert 'convo_statetester_INIT' in tools_
+        assert 'convo_statetester_1234_bar' in tools_

@@ -20,7 +20,7 @@ class ConversationalResponse(SyncStateResponse):
 
 class ConversationalSpec(BaseModel):
     location: str = 'http://localhost:8080'
-    tool_prefix: str = "eidolon_conversation"
+    tool_prefix: str = "convo"
     agents: List[str]
 
 
@@ -44,11 +44,11 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
         for agent in self.spec.agents:
             path = f'/programs/{agent}'
-            name = self._name(path) + "_start"
+            name = self._name(agent, action="INIT")
             tools[name] = await self._build_tool_def(name, path, agent)
 
         # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
-        allowed_agent_prefix = tuple(self.spec.tool_prefix + "_programs_" + agent for agent in self.spec.agents)
+        allowed_agent_prefix = tuple(self._name(agent) for agent in self.spec.agents)
         processes = {}
         for message in conversation:
             if isinstance(message, ToolResponseMessage) and message.name.startswith(allowed_agent_prefix):
@@ -58,7 +58,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         # newer process state should override older process state if there are multiple calls
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
             path = f'/programs/{response.program}/processes/{{process_id}}/actions/{action}'
-            name = self._name(path, response.process_id)
+            name = self._name(response.program, action, response.process_id)
             tools[name] = await self._build_tool_def(name, path, response.program)
 
         return tools
@@ -82,8 +82,14 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         )
         return tool_def_type
 
-    def _name(self, path, process_id=""):
-        return self.spec.tool_prefix + path.replace("/", "_").replace("{process_id}", process_id)
+    # needs to be under 64 characters
+    def _name(self, agent_program, action="", process_id=""):
+        agent_program = agent_program[:15]
+        process_id = process_id[:25]
+        process_id = "_" + process_id if process_id else ""
+        action = action[:15]
+        action = "_" + action if action else ""
+        return self.spec.tool_prefix + "_" + agent_program + process_id + action
 
 
 def _build_fn(path, agent_program):
