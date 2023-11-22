@@ -72,8 +72,7 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             tool_defs = await self.get_tools(conversation)
-            tool_list = [d.llm_call_function for d in tool_defs.values()]
-            assistant_message = await self.llm_unit.execute_llm(call_context, conversation, tool_list, output_format)
+            assistant_message = await self.llm_unit.execute_llm(call_context, conversation, list(tool_defs.values()), output_format)
             await self.memory_unit.processStoreEvent(call_context, [assistant_message])
             if assistant_message.tool_calls:
                 results = []

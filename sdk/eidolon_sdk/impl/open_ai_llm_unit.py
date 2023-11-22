@@ -75,7 +75,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
         # add response rules to original system message for this call only
         if messages[0]['role'] == 'system':
-            messages[0]['content'] += f"\n\n Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
+            messages[0]['content'] += f"\n\nYour response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
         else:
             messages.insert(0, {
                 "role": "system",

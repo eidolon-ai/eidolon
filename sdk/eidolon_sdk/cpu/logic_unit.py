@@ -22,6 +22,10 @@ class ToolDefType(LLMCallFunction):
     fn: Callable
     _logic_unit: LogicUnit
 
+    def __init__(self, _logic_unit: LogicUnit, **data):
+        super().__init__(**data)
+        self._logic_unit = _logic_unit
+
     async def execute(self, call_context: CallContext, args: Dict[str, Any]) -> Dict[str, Any]:
         return await self._logic_unit.execute(call_context, self.name, self.parameters, self.fn, args)
 
@@ -84,19 +88,23 @@ class LogicUnit(ProcessingUnit, ABC):
         return True
 
     async def execute(self, call_context: CallContext, name, parameter_schema, fn, args: Dict[str, Any]) -> Dict[str, Any]:
-        # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
-        if self.is_sync():
-            converted_input = schema_to_model(parameter_schema, name + "_input").model_validate(args)
-            logging.info("calling tool " + name + " with args " + str(converted_input))
-            result = await fn(**dict(converted_input))
-            # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
-            if isinstance(result, BaseModel):
-                result = result.model_dump()
-            elif isinstance(result, str):
-                result = {"text": result}
-            elif result is None:
-                result = {}
-            return result
-        else:
-            # todo -- store the conversation and args in memory
-            raise NotImplementedError("Async tools are not yet supported.")
+        try:
+            # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
+            if self.is_sync():
+                converted_input = schema_to_model(parameter_schema, name + "_input").model_validate(args)
+                logging.info("calling tool " + name + " with args " + str(converted_input))
+                result = await fn(**dict(converted_input))
+                # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
+                if isinstance(result, BaseModel):
+                    result = result.model_dump()
+                elif isinstance(result, str):
+                    result = {"text": result}
+                elif result is None:
+                    result = {}
+                return result
+            else:
+                # todo -- store the conversation and args in memory
+                raise NotImplementedError("Async tools are not yet supported.")
+        except Exception as e:
+            logging.exception("error calling tool " + name)
+            return dict(error=str(e))

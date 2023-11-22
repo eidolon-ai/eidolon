@@ -57,18 +57,19 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
             path = f'/programs/{response.program}/processes/{{process_id}}/actions/{action}'
             name = self._name(response.program, action, response.process_id)
-            tools[name] = await self._build_tool_def(name, path, response.program)
+            tools[name] = await self._build_tool_def(name, path, response.program, process_id=response.process_id)
 
         return tools
 
-    async def _build_tool_def(self, name, path, agent_program):
+    async def _build_tool_def(self, name, path, agent_program, process_id=""):
+        path = path.format(process_id="{process_id}")
         json_schema = self._openapi_json['paths'][path]['post']['requestBody']['content']['application/json']['schema']
         description = "Create a conversation with the given agent"  # todo, derive this from openapi
         return ToolDefType(
             name=name,
             description=description,
             parameters=json_schema,
-            fn=_build_fn(path, agent_program),
+            fn=lambda **kwargs: self._make_agent_request(path.replace("{process_id}", process_id), agent_program, **kwargs),
             _logic_unit=self
         )
 
@@ -81,12 +82,9 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent_program + process_id + action
 
-
-def _build_fn(path, agent_program):
-    async def fn(self: ConversationalLogicUnit, **kwargs) -> dict:
+    async def _make_agent_request(self, path, agent_program, **kwargs) -> dict:
         async with aiohttp.ClientSession() as session:
             async with session.post(urljoin(self.spec.location, path), json=kwargs) as resp:
                 json_ = await resp.json()
                 json_['program'] = agent_program
                 return ConversationalResponse.model_validate(json_).model_dump()
-    return fn
