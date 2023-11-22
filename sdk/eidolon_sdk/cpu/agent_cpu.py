@@ -3,13 +3,11 @@ from typing import Any, Union, List, Dict
 from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler
 from eidolon_sdk.cpu.control_unit import ControlUnit
-from eidolon_sdk.cpu.logic_unit import MethodInfo
 from eidolon_sdk.cpu.processing_unit import ProcessingUnitLocator
 
 
 class AgentCPU(ProcessingUnitLocator):
     control_unit: ControlUnit
-    tools: Dict[str, MethodInfo]
 
     def __init__(
             self,

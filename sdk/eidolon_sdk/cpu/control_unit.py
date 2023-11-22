@@ -18,7 +18,6 @@ class ControlUnitConfig(BaseModel):
     max_num_function_calls: int = Field(10, description="The maximum number of function calls to make in a single request.")
 
 
-
 class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
     io_unit: IOUnit
     memory_unit: MemoryUnit
@@ -80,7 +79,7 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
                 results = []
                 for tool_call in assistant_message.tool_calls:
                     tool_def = tool_defs[tool_call.name]
-                    tool_result = await tool_def.logic_unit._execute(call_context=call_context, method_info=tool_def.method_info, args=tool_call.arguments)
+                    tool_result = await tool_def.execute(call_context, tool_call.arguments)
                     message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=json.dumps(tool_result), name=tool_call.name)
                     await self.memory_unit.processStoreEvent(call_context, [message])
                     results.append(message)

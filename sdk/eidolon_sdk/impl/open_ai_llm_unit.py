@@ -2,7 +2,7 @@ import json
 import logging
 from typing import List
 
-from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
+from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
 from openai.types.chat.completion_create_params import ResponseFormat
 
@@ -82,7 +82,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 "content": f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
             })
 
-        print(messages)
+        logging.info(messages)
         tools = []
         for tool in inTools:
             tools.append(ChatCompletionToolParam(**{

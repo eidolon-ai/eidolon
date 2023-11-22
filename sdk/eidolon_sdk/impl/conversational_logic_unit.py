@@ -8,10 +8,8 @@ from pydantic import BaseModel
 
 from eidolon_sdk.agent_program import SyncStateResponse
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
-from eidolon_sdk.cpu.llm_unit import LLMCallFunction
-from eidolon_sdk.cpu.logic_unit import LogicUnit, ToolDefType, MethodInfo
+from eidolon_sdk.cpu.logic_unit import LogicUnit, ToolDefType
 from eidolon_sdk.reference_model import Specable
-from eidolon_sdk.util.schema_to_model import schema_to_model
 
 
 class ConversationalResponse(SyncStateResponse):
@@ -66,21 +64,13 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
     async def _build_tool_def(self, name, path, agent_program):
         json_schema = self._openapi_json['paths'][path]['post']['requestBody']['content']['application/json']['schema']
         description = "Create a conversation with the given agent"  # todo, derive this from openapi
-        tool_def_type = ToolDefType(
-            self,
-            MethodInfo(
-                name=name,
-                description=description,
-                input_model=schema_to_model(json_schema, name + "_input_model"),
-                fn=_build_fn(path, agent_program)
-            ),
-            LLMCallFunction(
-                name=name,
-                description=description,
-                parameters=json_schema
-            )
+        return ToolDefType(
+            name=name,
+            description=description,
+            parameters=json_schema,
+            fn=_build_fn(path, agent_program),
+            _logic_unit=self
         )
-        return tool_def_type
 
     # needs to be under 64 characters
     def _name(self, agent_program, action="", process_id=""):
@@ -93,11 +83,10 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
 
 def _build_fn(path, agent_program):
-    async def fn(self: ConversationalLogicUnit, **kwargs):
+    async def fn(self: ConversationalLogicUnit, **kwargs) -> dict:
         async with aiohttp.ClientSession() as session:
             async with session.post(urljoin(self.spec.location, path), json=kwargs) as resp:
                 json_ = await resp.json()
                 json_['program'] = agent_program
-                ConversationalResponse.model_validate(json_)
-                return json_
+                return ConversationalResponse.model_validate(json_).model_dump()
     return fn
