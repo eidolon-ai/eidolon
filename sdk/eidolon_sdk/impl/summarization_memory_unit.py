@@ -1,3 +1,4 @@
+import logging
 from typing import List, Annotated
 
 import tiktoken
@@ -27,8 +28,8 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
             "thread_id": call_context.thread_id,
             "message": message.model_dump()} for message in messages]
 
-        print(str(messages))
-        print(conversationItems)
+        logging.debug(str(messages))
+        logging.debug(conversationItems)
 
         await self.agent_memory.symbolic_memory.insert("conversation_memory", conversationItems)
 
@@ -41,7 +42,7 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
         }):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 
-        print("existingMessages = " + str(existingMessages))
+        logging.debug("existingMessages = " + str(existingMessages))
         return existingMessages
 
     async def processStoreAndFetchEvent(self, call_context: CallContext, messages: List[LLMMessage]):

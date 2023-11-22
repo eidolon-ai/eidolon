@@ -74,6 +74,7 @@ class UserMessage(LLMMessage):
 
 # ToolCall class
 class ToolCall(BaseModel):
+    tool_call_id: str
     name: str
     arguments: Dict[str, Any]
 
@@ -82,10 +83,10 @@ class ToolCall(BaseModel):
 class AssistantMessage(LLMMessage):
     type: str = "assistant"
     content: Dict[str, Any]
-    tool_calls: Optional[List[ToolCall]]
+    tool_calls: List[ToolCall]
 
 
 class ToolResponseMessage(LLMMessage):
     type: str = "tool"
-    name: str
+    tool_call_id: str
     result: str

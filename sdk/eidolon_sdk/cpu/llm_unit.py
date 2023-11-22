@@ -57,15 +57,6 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
         super().__init__(**kwargs)
         self.spec = spec
 
-    async def execute_llm(self, call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction], output_format: Dict[str, Any]) -> (AssistantMessage, List[ToolCall]):
-        message = await self.process_llm_event(call_context, messages, tools, json.dumps(output_format))
-
-        tools = []
-        if message.tool_calls and len(message.tool_calls) > 0:
-            tools = [ToolCall(name=tool_call.name, arguments=tool_call.arguments) for tool_call in message.tool_calls]
-
-        return message, tools
-
     @abstractmethod
-    async def process_llm_event(self, call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction], output_format: str) -> AssistantMessage:
+    async def execute_llm(self, call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction], output_format: Dict[str, Any]) -> AssistantMessage:
         pass

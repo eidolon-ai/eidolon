@@ -12,11 +12,6 @@ from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig, llm_function
 from eidolon_sdk.reference_model import Specable
 
 
-class FileUpdate(BaseModel):
-    file_path: Annotated[str, Field(description="The path to the file to be updated")]
-    content: Annotated[str, Field(description="The new content of the file")]
-
-
 class FileManagerConfig(LogicUnitConfig):
     root_dir: str
 
@@ -26,6 +21,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.spec.root_dir = os.path.expandvars(self.spec.root_dir)
         self.repo = Repo.init(self.spec.root_dir)
 
     @llm_function
@@ -40,26 +36,37 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         return all_files
 
     @llm_function
-    async def update_files(
+    async def get_file(self, file_path: str) -> dict:
+        """
+        Get the contents of a file in the project
+        """
+        try:
+            with open(os.path.join(self.spec.root_dir, file_path), 'r') as f:
+                return dict(exists=True, content=f.read())
+        except FileNotFoundError:
+            return dict(exists=False)
+
+    @llm_function
+    async def upsert_file(
             self,
             update_summary: Annotated[str, Field(description="A summary of the changes. Will be included in commit message")],
-            updates: Annotated[List[FileUpdate], Field(description="A list of update instructions")],
+            file_path: Annotated[str, Field(description="The path to the file to be updated")],
+            content: Annotated[str, Field(description="The new content of the file")],
     ) -> dict:
         """
-        Update the contents of one or more files in the project and commit the changes.
+        replace the contents a file or create it if it doesn't exist and commit the changes.
         """
         # todo, limit to files in project
-        for update in updates:
-            file_path = os.path.join(self.spec.root_dir, update.file_path)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, 'w') as f:
-                f.write(update.content)
-        self.repo.index.add([u.file_path for u in updates])
+        file_path = os.path.join(self.spec.root_dir, file_path)
+        with open(file_path, 'w') as f:
+            f.write(content)
+        self.repo.index.add([file_path])
         self.repo.index.commit(update_summary)
         return dict(revision=self.repo.head.commit.hexsha)
 
-    @llm_function
-    async def revert(self, revision) -> dict:
+    # todo, commit is not working, so leave this out until it is fixed
+    # @llm_function
+    async def revert(self, revision: Annotated[str, Field(description="The commit hexsha to revert to")]) -> dict:
         """
         Revert the project to a previous revision.
         """

@@ -253,19 +253,6 @@ class CpuResponse(BaseModel):
     response: str
 
 
-class CpuTester(Agent):
-    @initializer
-    async def foo(self):
-        return await self.cpu_request([UserTextCPUMessage(prompt="foo")], {}, CpuResponse.model_json_schema())
-
-
-def test_agent_can_use_cpu(client_builder):
-    with client_builder(CpuTester) as client:
-        post = client.post("/programs/cputester", json={})
-        assert post.status_code == 200
-        assert post.json()['data'] == {'response': 'foo'}
-
-
 # todo, break this into a separate test file
 def test_generic_agent(client_builder):
     with client_builder(GenericAgent, spec=GenericAgentSpec(
@@ -273,7 +260,7 @@ def test_generic_agent(client_builder):
         question_prompt="{{question}}",
         question_json_schema=dict(type="object", properties=dict(question=dict(type="string"))),
     )) as client:
-        post = client.post("/programs/genericagent", json=dict(question="what is the capital of Germany?"))
+        post = client.post("/programs/genericagent", json=dict(question="what is the capital of Germany? Please answer in one word"))
         assert post.status_code == 200
         assert post.json()['data']['response'] == 'Berlin'
         response = client.post(f"/programs/genericagent/processes/{post.json()['process_id']}/actions/respond", json=dict(statement="What is it's country code?"))

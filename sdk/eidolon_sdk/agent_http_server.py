@@ -1,4 +1,5 @@
 import argparse
+import logging
 from contextlib import asynccontextmanager
 
 import dotenv
@@ -32,6 +33,7 @@ async def start_os(app: FastAPI):
 app = FastAPI(lifespan=start_os)
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
 
     # Run the server
     uvicorn.run("eidolon_sdk.agent_http_server:app", host="0.0.0.0", port=args.port, log_level="info", reload=args.reload)

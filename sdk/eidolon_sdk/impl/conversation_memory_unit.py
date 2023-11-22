@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from eidolon_sdk.cpu.agent_bus import CallContext
@@ -13,8 +14,8 @@ class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
             "thread_id": call_context.thread_id,
             "message": message.model_dump()} for message in messages]
 
-        print(str(messages))
-        print(conversationItems)
+        logging.debug(str(messages))
+        logging.debug(conversationItems)
 
         await self.agent_memory.symbolic_memory.insert("conversation_memory", conversationItems)
 
@@ -26,5 +27,5 @@ class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
         }):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 
-        print("existingMessages = " + str(existingMessages))
+        logging.debug("existingMessages = " + str(existingMessages))
         return existingMessages

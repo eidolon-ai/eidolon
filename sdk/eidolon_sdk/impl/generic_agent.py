@@ -26,10 +26,12 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
 
     @initializer
     async def question(self, **kwargs) -> AgentState[LlmResponse]:
+        schema = LlmResponse.model_json_schema()
+        schema['type'] = 'object'
         response = await self.cpu_request(
             [SystemCPUMessage(prompt=self.spec.system_prompt), UserTextCPUMessage(prompt=self.spec.question_prompt)],
             kwargs,
-            LlmResponse.model_json_schema()
+            schema
         )
         response = LlmResponse(**response)
         return AgentState(name='idle', data=response)

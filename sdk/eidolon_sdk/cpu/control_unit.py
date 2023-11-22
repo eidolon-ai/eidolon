@@ -68,7 +68,7 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
             for logic_unit in self.logic_units:
                 # noinspection PyProtectedMember
                 for fn_name, t in logic_unit._tool_functions.items():
-                    unique_method_name = str(ObjectId()) + "_" + fn_name
+                    unique_method_name = fn_name + "_" + str(ObjectId())
                     self.tool_defs[unique_method_name] = ToolDefType(logic_unit, t, LLMCallFunction(name=unique_method_name,
                                                                                                     description=t.description,
                                                                                                     parameters=t.input_model.model_json_schema()
@@ -90,15 +90,15 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
     async def process_llm_requests(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Dict[str, Any]):
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            assistant_message, tool_calls = await self.llm_unit.execute_llm(call_context, conversation, self.get_tool_defs(), output_format)
+            assistant_message = await self.llm_unit.execute_llm(call_context, conversation, self.get_tool_defs(), output_format)
             await self.memory_unit.processStoreEvent(call_context, [assistant_message])
-            if tool_calls and len(tool_calls) > 0:
+            if assistant_message.tool_calls:
                 tool_defs = self.get_or_create_tools()
                 results = []
-                for tool_call in tool_calls:
+                for tool_call in assistant_message.tool_calls:
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.logic_unit._execute(call_context=call_context, method_info=tool_def.method_info, args=tool_call.arguments)
-                    message = ToolResponseMessage(name=tool_def.llm_call_function.name, result=json.dumps(tool_result))
+                    message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=json.dumps(tool_result))
                     await self.memory_unit.processStoreEvent(call_context, [message])
                     results.append(message)
 

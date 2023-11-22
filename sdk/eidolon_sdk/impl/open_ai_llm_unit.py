@@ -3,22 +3,23 @@ import logging
 from typing import List
 
 from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
-from openai.types.chat import ChatCompletionToolParam
+from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
 from openai.types.chat.completion_create_params import ResponseFormat
 
 from eidolon_sdk.cpu.agent_bus import CallContext
-from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolCall
+from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolCall, ToolResponseMessage, UserMessage, \
+    SystemMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
 from eidolon_sdk.reference_model import Specable
 
 
 def convert_to_openai(message: LLMMessage):
-    if message.type == "system":
+    if isinstance(message, SystemMessage):
         return {
             "role": "system",
             "content": message.content
         }
-    elif message.type == "user":
+    elif isinstance(message, UserMessage):
         content = message.content
         if not isinstance(content, str):
             content = [part.model_dump() for part in content]
@@ -26,14 +27,14 @@ def convert_to_openai(message: LLMMessage):
             "role": "user",
             "content": content
         }
-    elif message.type == "assistant":
+    elif isinstance(message, AssistantMessage):
         ret = {
             "role": "assistant",
             "content": str(message.content)
         }
         if message.tool_calls and len(message.tool_calls) > 0:
             ret["tool_calls"] = [{
-                "id": tool_call.name,
+                "id": tool_call.tool_call_id,
                 "type": "function",
                 "function": {
                     "name": tool_call.name,
@@ -41,11 +42,11 @@ def convert_to_openai(message: LLMMessage):
                 }
             } for tool_call in message.tool_calls]
         return ret
-    elif message.type == "tool":
+    elif isinstance(message, ToolResponseMessage):
         # tool_call_id, content
         return {
             "role": "tool",
-            "tool_call_id": message.name,
+            "tool_call_id": message.tool_call_id,
             "content": message.result
         }
     else:
@@ -67,14 +68,11 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.temperature = spec.temperature
         self.llm = AsyncOpenAI()
 
-    async def process_llm_event(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: str) -> AssistantMessage:
+    async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: dict) -> AssistantMessage:
         messages = [convert_to_openai(message) for message in inMessages]
 
-        # add a message to the LLM for the output format which is already in json schema format
-        messages.append({
-            "role": "user",
-            "content": f"The output MUST be valid json and the schema for the response message is {output_format}"
-        })
+        # add response rules to original system message for this call only
+        messages[0]['content'] += f"\n\n Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
 
         tools = []
         for tool in inTools:
@@ -87,39 +85,36 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 }
             }))
         # This event is a request to query the LLM
+        request = {
+            "messages": messages,
+            "model": self.model,
+            "temperature": self.temperature,
+            "response_format": ResponseFormat(type="json_object")
+        }
+        if len(tools) > 0:
+            request["tools"] = tools
+
+        logging.info("executing open ai llm request", extra=request)
         try:
-            print("messages = " + str(messages))
-            # print("tools = " + str(tools))
-            request = {
-                "messages": messages,
-                "model": self.model,
-                "temperature": self.temperature,
-                "response_format": ResponseFormat(type="json_object")
-            }
-            if len(tools) > 0:
-                request["tools"] = tools
-
             llm_response = await self.llm.chat.completions.create(**request)
-            message = llm_response.choices[0].message
-            tool_response = None
-            if message.tool_calls:
-                tool_response = []
-                for tool in message.tool_calls:
-                    tool_response.append(ToolCall(name=tool.function.name, arguments=json.loads(tool.function.arguments)))
+        except Exception:
+            logging.exception("error calling open ai llm")
+            raise
+        message = llm_response.choices[0].message
 
-            if message.content:
-                response = json.loads(message.content)
-            else:
-                response = {}
-            return AssistantMessage(content=response, tool_calls=tool_response)
-        except APIConnectionError as e:
-            print("The server could not be reached")
-            print(e.__cause__)  # an underlying Exception, likely raised within httpx.
-        except RateLimitError as e:
-            print("A 429 status code was received; we should back off a bit.")
-        except APIStatusError as e:
-            print("Another non-200-range status code was received")
-            print(e.status_code)
-            print(e.response)
-        except Exception as e:
-            logging.exception("An unknown error occurred")
+        logging.info(f"open ai llm response", extra=dict(content=message.content, tool_calls=message.tool_calls))
+
+        tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
+        try:
+            content = json.loads(message.content) if message.content else {}
+        except json.JSONDecodeError as e:
+            raise RuntimeError("Error decoding response content") from e
+        return AssistantMessage(content=content, tool_calls=tool_response)
+
+
+def _convert_tool_call(tool: ChatCompletionMessageToolCall) -> ToolCall:
+    try:
+        loads = json.loads(tool.function.arguments)
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"Error decoding response function arguments for tool {tool.function.name}") from e
+    return ToolCall(tool_call_id=tool.id, name=tool.function.name, arguments=loads)

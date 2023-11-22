@@ -33,7 +33,10 @@ class AgentCPU(ProcessingUnitLocator):
             input_data: Dict[str, Any],
             output_format: Dict[str, Any]
     ):
-        return await self.control_unit.process_request(process_id, prompts, input_data, output_format)
+        try:
+            return await self.control_unit.process_request(process_id, prompts, input_data, output_format)
+        except Exception as e:
+            raise RuntimeError("Error in control unit while processing request") from e
 
     def locate_unit(self, unit_type):
         return self.control_unit.locate_unit(unit_type)

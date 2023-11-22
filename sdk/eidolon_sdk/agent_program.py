@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import logging
 import typing
 from datetime import datetime
 from functools import cmp_to_key
@@ -108,7 +109,10 @@ class AgentProgram:
                         data=dict(detail=e.detail, status_code=e.status_code),
                         date=str(datetime.now().isoformat())
                     )
-                    print(e)
+                    if e.status_code >= 500:
+                        logging.exception(f"Unhandled error raised by handler")
+                    else:
+                        logging.warning(f"Handler {handler.name} raised a http error", exc_info=True)
                 except Exception as e:
                     doc = dict(
                         process_id=process_id,
@@ -116,7 +120,7 @@ class AgentProgram:
                         data=dict(error=str(e)),
                         date=str(datetime.now().isoformat())
                     )
-                    print(e)
+                    logging.exception(f"Unhandled error raised by handler")
                 await memory.insert_one('processes', doc)
                 if callback:
                     raise Exception("Not implemented")

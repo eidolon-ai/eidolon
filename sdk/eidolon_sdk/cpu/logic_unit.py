@@ -1,4 +1,5 @@
 import inspect
+import logging
 import typing
 from abc import ABC
 from typing import Dict, Any, Callable, TypeVar
@@ -12,6 +13,7 @@ from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.util.class_utils import get_function_details
 
 
+# todo, llm function should require annotations and error if they are not present
 def llm_function(fn):
     sig = inspect.signature(fn).parameters
     hints = typing.get_type_hints(fn, include_extras=True)
@@ -78,7 +80,7 @@ class LogicUnit(ProcessingUnit, Specable[T], ABC):
         # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
         if self.is_sync():
             converted_input = method_info.input_model.model_validate(args)
-            print("executing tool " + method_info.name + " with args " + str(args) + " converted to " + str(converted_input))
+            logging.info("calling tool " + method_info.name + " with args " + str(converted_input))
             result = await method_info.fn(self, **dict(converted_input))
             # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
             if isinstance(result, BaseModel):
