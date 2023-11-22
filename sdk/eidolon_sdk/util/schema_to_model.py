@@ -76,7 +76,7 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
     required_fields = set(schema.get('required', []))
     fields = {}
 
-    if (not schema.get('type') == 'object') or (not schema.get('properties')):
+    if (not schema.get('type') == 'object') or 'properties' not in schema:
         raise ValueError("Schema must be an object with properties.")
 
     for property_name, property_schema in schema.get('properties', {}).items():

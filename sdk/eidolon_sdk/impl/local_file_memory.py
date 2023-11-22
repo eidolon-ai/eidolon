@@ -32,7 +32,6 @@ class LocalFileMemoryConfig(BaseModel):
 
 class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
     def __init__(self, spec: LocalFileMemoryConfig):
-        super().__init__()
         self.root_dir = Path(spec.root_dir).resolve()
 
     """

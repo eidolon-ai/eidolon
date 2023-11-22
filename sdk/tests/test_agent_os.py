@@ -14,7 +14,10 @@ from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
 from eidolon_sdk.cpu.agent_io import IOUnit
+from eidolon_sdk.cpu.llm_message import ToolResponseMessage
 from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
+from eidolon_sdk.impl.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec, \
+    ConversationalResponse
 from eidolon_sdk.impl.generic_agent import GenericAgent, GenericAgentSpec
 from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_sdk.impl.open_ai_llm_unit import OpenAIGPT
@@ -304,7 +307,6 @@ class Documented(CodeAgent):
     async def inherited_state_response(self) -> AgentState[DocumentedBase]:
         pass
 
-
 class TestOpenApiDocs:
     @pytest.fixture()
     def openapi_schema(self, client_builder):
@@ -383,3 +385,40 @@ def action_response_referenced_schema(openapi_schema, action):
         'responses']['200']['content']['application/json']['schema']['$ref']
     sub_ref = openapi_schema['components']['schemas'][body_ref.split("/")[-1]]['properties']['data']['allOf'][0]['$ref']
     return openapi_schema['components']['schemas'][sub_ref.split("/")[-1]]
+
+
+class TestConversationalLogicUnit:
+    @pytest.fixture()
+    def openapi_schema(self, client_builder):
+        with client_builder(StateTester) as client:
+            # Get the OpenAPI schema
+            yield client.get("/openapi.json").json()
+
+    @pytest.fixture()
+    def conversational_logic_unit(self, openapi_schema):
+        clu = ConversationalLogicUnit(spec=ConversationalSpec(agents=['statetester']), memory=None)
+        clu.set_openapi_json(openapi_schema)
+        return clu
+
+    @pytest.mark.asyncio
+    async def test_get_methods(self, conversational_logic_unit: ConversationalLogicUnit):
+        tools_ = await conversational_logic_unit.build_tools([])
+        assert len(tools_) == 1
+        assert 'eidolon_conversation_programs_statetester' in tools_
+
+    @pytest.mark.asyncio
+    async def test_gets_methods_for_existing_conversations(self, conversational_logic_unit: ConversationalLogicUnit):
+        tools_ = await conversational_logic_unit.build_tools([ToolResponseMessage(
+            name='eidolon_conversation_programs_statetester',
+            tool_call_id='abc',
+            result=ConversationalResponse(
+                program='statetester',
+                process_id='1234',
+                available_actions=['bar'],
+                state="somestate",
+                data=dict()
+            ).model_dump_json()
+        )])
+        assert len(tools_) == 2
+        assert 'eidolon_conversation_programs_statetester' in tools_
+        assert 'eidolon_conversation_programs_statetester_processes_{process_id}_actions_bar' in tools_

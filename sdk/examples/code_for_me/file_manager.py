@@ -6,21 +6,22 @@ from asyncio import subprocess
 from typing import List, Annotated
 
 from git import Repo
-from pydantic import Field
+from pydantic import Field, BaseModel
 
-from eidolon_sdk.cpu.logic_unit import LogicUnit, LogicUnitConfig, llm_function
+from eidolon_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidolon_sdk.reference_model import Specable
 
 
-class FileManagerConfig(LogicUnitConfig):
+class FileManagerConfig(BaseModel):
     root_dir: str
 
 
 class FileManager(LogicUnit, Specable[FileManagerConfig]):
     repo: Repo
 
-    def __init__(self, **kwargs):
+    def __init__(self, spec: FileManagerConfig, **kwargs):
         super().__init__(**kwargs)
+        self.spec = spec
         self.spec.root_dir = os.path.expandvars(self.spec.root_dir)
         self.repo = Repo(self.spec.root_dir)
 

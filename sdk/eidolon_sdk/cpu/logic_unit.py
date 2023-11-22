@@ -5,16 +5,16 @@ import logging
 import typing
 from abc import ABC
 from dataclasses import dataclass
-from typing import Dict, Any, Callable, TypeVar
+from typing import Dict, Any, Callable, List
 
 from bson import ObjectId
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
 from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.cpu.llm_unit import LLMCallFunction
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.util.class_utils import get_function_details
 
 
@@ -43,13 +43,11 @@ def llm_function(fn):
 
     function_name, clazz = get_function_details(fn)
     input_model = create_model(f'{clazz}_{function_name}InputModel', **fields)
-    output_model = typing.get_type_hints(fn, include_extras=True).get('return', typing.Any)
 
     setattr(fn, 'llm_function', MethodInfo(
         name=function_name,
         description=fn.__doc__,
         input_model=input_model,
-        output_model=output_model,
         fn=fn
     ))
     return fn
@@ -59,23 +57,14 @@ class MethodInfo(BaseModel):
     name: str
     description: str
     input_model: typing.Type[BaseModel]
-    output_model: Any
     fn: Callable
 
 
-class LogicUnitConfig(BaseModel):
-    pass
-
-
-T = TypeVar('T', bound=LogicUnitConfig)
-
-
-class LogicUnit(ProcessingUnit, Specable[T], ABC):
+class LogicUnit(ProcessingUnit, ABC):
     _tool_functions: Dict[str, MethodInfo]
 
-    def __init__(self, spec: T = None, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.spec = spec
         self._tool_functions = self._find_base_tools()
 
     def _find_base_tools(self):
@@ -86,7 +75,7 @@ class LogicUnit(ProcessingUnit, Specable[T], ABC):
             if hasattr(method, 'llm_function')
         }
 
-    def build_tools(self, conversation):
+    async def build_tools(self, conversation: List[LLMMessage]) -> Dict[str, ToolDefType]:
         tools = {}
         for fn_name, t in self._tool_functions.items():
             unique_method_name = fn_name + "_" + str(ObjectId())

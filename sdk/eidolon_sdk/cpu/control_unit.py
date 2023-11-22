@@ -1,16 +1,14 @@
 import json
 from abc import ABC
-from dataclasses import dataclass
 from typing import List, Union, Dict, Any, Type
 
-from bson import ObjectId
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage, IOUnit
 from eidolon_sdk.cpu.llm_message import ToolResponseMessage, LLMMessage
-from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidolon_sdk.cpu.logic_unit import LogicUnit, MethodInfo, ToolDefType
+from eidolon_sdk.cpu.llm_unit import LLMUnit
+from eidolon_sdk.cpu.logic_unit import LogicUnit, ToolDefType
 from eidolon_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit, T
 from eidolon_sdk.reference_model import Specable
@@ -56,10 +54,10 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
 
         raise ValueError(f"Could not locate {unit_type}")
 
-    def get_tools(self, conversation) -> Dict[str, ToolDefType]:
+    async def get_tools(self, conversation) -> Dict[str, ToolDefType]:
         self.tool_defs = {}
         for logic_unit in self.logic_units:
-            self.tool_defs.update(logic_unit.build_tools(conversation))
+            self.tool_defs.update(await logic_unit.build_tools(conversation))
         return self.tool_defs
 
     async def process_request(self, process_id: str, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: Dict[str, Any],
@@ -74,7 +72,7 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
     async def process_llm_requests(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Dict[str, Any]):
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            tool_defs = self.get_tools(conversation)
+            tool_defs = await self.get_tools(conversation)
             tool_list = [d.llm_call_function for d in tool_defs.values()]
             assistant_message = await self.llm_unit.execute_llm(call_context, conversation, tool_list, output_format)
             await self.memory_unit.processStoreEvent(call_context, [assistant_message])
@@ -83,7 +81,7 @@ class ControlUnit(ProcessingUnit, Specable[ControlUnitConfig], ABC):
                 for tool_call in assistant_message.tool_calls:
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.logic_unit._execute(call_context=call_context, method_info=tool_def.method_info, args=tool_call.arguments)
-                    message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=json.dumps(tool_result))
+                    message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=json.dumps(tool_result), name=tool_call.name)
                     await self.memory_unit.processStoreEvent(call_context, [message])
                     results.append(message)
 

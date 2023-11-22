@@ -88,5 +88,6 @@ class AssistantMessage(LLMMessage):
 
 class ToolResponseMessage(LLMMessage):
     type: str = "tool"
+    name: str
     tool_call_id: str
     result: str
