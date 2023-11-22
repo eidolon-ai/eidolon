@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging.config
+
 from fastapi import FastAPI
 
 from .agent_machine import AgentMachine
@@ -19,6 +21,8 @@ class AgentOS:
         self.machine = machine
 
     async def start(self, app: FastAPI):
+        logger = logging.getLogger("eidolon")
+        logger.info("Starting AgentOS")
         self.app = app
         for program in self.machine.agent_programs:
             await program.start(app)

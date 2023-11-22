@@ -37,6 +37,10 @@ agent_programs:
     agent:
       implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
     cpu:
+      memory_unit:
+        implementation: "eidolon_sdk.impl.summarization_memory_unit.SummarizationMemoryUnit"
+        spec:
+          max_token_fraction: 0.005
       llm_unit:
         implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
         spec:

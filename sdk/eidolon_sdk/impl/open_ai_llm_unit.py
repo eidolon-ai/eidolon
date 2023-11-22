@@ -74,8 +74,15 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         messages = [convert_to_openai(message) for message in inMessages]
 
         # add response rules to original system message for this call only
-        messages[0]['content'] += f"\n\n Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
+        if messages[0]['role'] == 'system':
+            messages[0]['content'] += f"\n\n Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
+        else:
+            messages.insert(0, {
+                "role": "system",
+                "content": f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
+            })
 
+        print(messages)
         tools = []
         for tool in inTools:
             tools.append(ChatCompletionToolParam(**{
