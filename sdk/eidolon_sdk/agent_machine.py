@@ -53,6 +53,12 @@ def _make_cpu(cpu_model, machine):
         agent_memory=machine.agent_memory,
         control_unit=control_unit
     )
+    io_unit.processing_unit_locator = cpu
+    memory_unit.processing_unit_locator = cpu
+    llm_unit.processing_unit_locator = cpu
+    control_unit.processing_unit_locator = cpu
+    for logic_unit in logic_units:
+        logic_unit.processing_unit_locator = cpu
 
     return cpu
 

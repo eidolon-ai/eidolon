@@ -1,5 +1,3 @@
-from typing import List, Dict
-
 from bson import ObjectId
 from pydantic import Field, BaseModel
 
@@ -7,7 +5,6 @@ from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
-from eidolon_sdk.cpu.logic_unit import llm_function
 from eidolon_sdk.reference_model import Specable
 
 PROMPT = f"""
@@ -35,14 +32,11 @@ class MessageSummarizerConfig(BaseModel):
 
 class MessageSummarizer(Specable[MessageSummarizerConfig]):
     llm_config: LLMUnitConfig = None
-    outstanding_calls: Dict[str, (CallContext, List[str])] = {}
 
-    def __init__(self, agent_memory: AgentMemory, spec: MessageSummarizerConfig = None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, agent_memory: AgentMemory, spec: MessageSummarizerConfig = None):
         self.spec = spec
         self.agent_memory = agent_memory
 
-    @llm_function
     async def summarize_messages(self, call_context: CallContext, llm_unit: LLMUnit) -> LLMMessage:
         """
         Summarizes a list of messages into a single message using a new thread from the cpu.
@@ -62,7 +56,7 @@ class MessageSummarizer(Specable[MessageSummarizerConfig]):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 
         summarizer_message = SystemMessage(content=PROMPT)
-        assistant_message = llm_unit.execute_llm(call_context, [summarizer_message], [], MessageSummary.model_json_schema())
+        assistant_message = await llm_unit.execute_llm(call_context, [summarizer_message], [], MessageSummary.model_json_schema())
 
         # create a new object id for the summary message
         summary_id = str(ObjectId())

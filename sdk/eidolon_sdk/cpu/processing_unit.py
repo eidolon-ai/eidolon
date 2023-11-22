@@ -14,10 +14,10 @@ class ProcessingUnitLocator:
 
 class ProcessingUnit(ABC):
     agent_memory: AgentMemory
+    processing_unit_locator: ProcessingUnitLocator
 
-    def __init__(self, memory: AgentMemory, processing_unit_locator: ProcessingUnitLocator, **kwargs):
+    def __init__(self, memory: AgentMemory, **kwargs):
         self.agent_memory = memory
-        self.processing_unit_locator = processing_unit_locator
 
     def locate_unit(self, unit_type: Type[T]) -> T:
         return self.processing_unit_locator.locate_unit(unit_type)

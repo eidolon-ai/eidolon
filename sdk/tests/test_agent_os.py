@@ -46,9 +46,9 @@ def client_builder(app_builder):
 
 def _make_program(agent, machine, spec=None, **kwargs):
     cpu = _make_cpu(CpuModel(
-        io_unit=Reference(implementation=fqn(IOUnit), spec=dict(io_write="Request", io_read="Response")).dict(),
-        memory_unit=Reference(implementation=fqn(ConversationalMemoryUnit), spec=dict(msf_read="Request", msf_write="Conversation")).dict(),
-        llm_unit=Reference(implementation=fqn(OpenAIGPT), spec=dict(llm_read="Conversation", llm_write="Response")).dict(),
+        io_unit=Reference(implementation=fqn(IOUnit), spec=dict()).dict(),
+        memory_unit=Reference(implementation=fqn(ConversationalMemoryUnit), spec=dict()).dict(),
+        llm_unit=Reference(implementation=fqn(OpenAIGPT), spec=dict()).dict(),
     ), machine)
     return AgentProgram(
         name=agent.__name__.lower(),

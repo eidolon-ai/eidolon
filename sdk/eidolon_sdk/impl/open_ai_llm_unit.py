@@ -61,14 +61,16 @@ class OpenAiGPTSpec(LLMUnitConfig):
 class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
     model: str
     temperature: float
+    llm: AsyncOpenAI = None
 
     def __init__(self, spec: OpenAiGPTSpec, **kwargs):
         super().__init__(spec, **kwargs)
         self.model = spec.model
         self.temperature = spec.temperature
-        self.llm = AsyncOpenAI()
 
     async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: dict) -> AssistantMessage:
+        if not self.llm:
+            self.llm = AsyncOpenAI()
         messages = [convert_to_openai(message) for message in inMessages]
 
         # add response rules to original system message for this call only
