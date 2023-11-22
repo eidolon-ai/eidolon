@@ -9,7 +9,6 @@ from eidolon_sdk.cpu.processing_unit import ProcessingUnitLocator
 
 class AgentCPU(ProcessingUnitLocator):
     control_unit: ControlUnit
-
     tools: Dict[str, MethodInfo]
 
     def __init__(

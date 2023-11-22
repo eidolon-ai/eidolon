@@ -1,4 +1,5 @@
-from typing import List
+from collections import deque
+from typing import List, Type, Optional
 
 import yaml
 from pydantic import ValidationError
@@ -6,6 +7,7 @@ from pydantic import ValidationError
 from .agent_memory import AgentMemory
 from .agent_program import AgentProgram
 from .cpu.agent_cpu import AgentCPU
+from .cpu.processing_unit import ProcessingUnitLocator, T, ProcessingUnit
 from .machine_model import MachineModel
 
 
@@ -39,11 +41,13 @@ def _make_cpu(cpu_model, machine):
     if not cpu_model:
         return None
 
-    io_unit = cpu_model.io_unit.instantiate(memory=machine.agent_memory)
-    memory_unit = cpu_model.memory_unit.instantiate(memory=machine.agent_memory)
-    llm_unit = cpu_model.llm_unit.instantiate(memory=machine.agent_memory)
-    logic_units = [logic_unit.instantiate(memory=machine.agent_memory) for logic_unit in cpu_model.logic_units]
-    control_unit = cpu_model.control_unit.instantiate(memory=machine.agent_memory, io_unit=io_unit, memory_unit=memory_unit, llm_unit=llm_unit, logic_units=logic_units)
+    loader = LateLoader()
+    kwargs = dict(memory=machine.agent_memory, processing_unit_locator=loader)
+    io_unit = loader.add_locator(cpu_model.io_unit.instantiate(**kwargs))
+    memory_unit = loader.add_locator(cpu_model.memory_unit.instantiate(**kwargs))
+    llm_unit = loader.add_locator(cpu_model.llm_unit.instantiate(**kwargs))
+    logic_units = [loader.add_locator(logic_unit.instantiate(**kwargs)) for logic_unit in cpu_model.logic_units]
+    control_unit = loader.add_locator(cpu_model.control_unit.instantiate(io_unit=io_unit, memory_unit=memory_unit, llm_unit=llm_unit, logic_units=logic_units, **kwargs))
 
     cpu = AgentCPU(
         agent_memory=machine.agent_memory,
@@ -51,3 +55,17 @@ def _make_cpu(cpu_model, machine):
     )
 
     return cpu
+
+
+class LateLoader(ProcessingUnitLocator):
+    locators: deque[ProcessingUnit]
+
+    def __init__(self):
+        self.locators = deque()
+
+    def add_locator(self, locator: T) -> T:
+        self.locators.appendleft(locator)
+        return locator
+
+    def locate_unit(self, unit_type: Type[T]) -> Optional[T]:
+        return next((locator for locator in self.locators if isinstance(locator, unit_type)), None)

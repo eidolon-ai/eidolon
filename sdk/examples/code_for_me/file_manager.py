@@ -22,7 +22,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.spec.root_dir = os.path.expandvars(self.spec.root_dir)
-        self.repo = Repo.init(self.spec.root_dir)
+        self.repo = Repo(self.spec.root_dir)
 
     @llm_function
     async def list_files(self) -> List[str]:
@@ -60,12 +60,11 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         file_path = os.path.join(self.spec.root_dir, file_path)
         with open(file_path, 'w') as f:
             f.write(content)
-        self.repo.index.add([file_path])
+        self.repo.git.add(file_path)
         self.repo.index.commit(update_summary)
         return dict(revision=self.repo.head.commit.hexsha)
 
-    # todo, commit is not working, so leave this out until it is fixed
-    # @llm_function
+    @llm_function
     async def revert(self, revision: Annotated[str, Field(description="The commit hexsha to revert to")]) -> dict:
         """
         Revert the project to a previous revision.

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Type
+from typing import TypeVar, Type, Optional
 
 from eidolon_sdk.agent_memory import AgentMemory
 
@@ -7,9 +7,8 @@ T = TypeVar('T', bound='ProcessingUnit')
 
 
 class ProcessingUnitLocator:
-
     @abstractmethod
-    def locate_unit(self, unit_type: Type[T]) -> T:
+    def locate_unit(self, unit_type: Type[T]) -> Optional[T]:
         pass
 
 
