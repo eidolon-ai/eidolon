@@ -1,7 +1,7 @@
 import logging
 from typing import List
 
-from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
 from eidolon_sdk.reference_model import Specable

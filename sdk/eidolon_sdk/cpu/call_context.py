@@ -10,6 +10,5 @@ class CallContext:
         self.process_id = process_id
         self.thread_id = thread_id
     
-    @classmethod
-    def derive_call_context(self, existing_call_context):
-        return CallContext(process_id=existing_call_context.process_id, thread_id=str(ObjectId()))
+    def derive_call_context(self):
+        return CallContext(process_id=self.process_id, thread_id=str(ObjectId()))

@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict
 
 from pydantic import Field, BaseModel
 
 from .agent import Agent
 from .agent_memory import FileMemory, SymbolicMemory, SimilarityMemory
-from .cpu.agent_io import IOUnit
-from .cpu.control_unit import ControlUnit
-from .cpu.llm_unit import LLMUnit
-from .cpu.logic_unit import LogicUnit
-from .cpu.memory_unit import MemoryUnit
-from .impl.conversation_memory_unit import ConversationalMemoryUnit
-from .impl.open_ai_llm_unit import OpenAIGPT
+from .cpu.agent_cpu import AgentCPU
 from .reference_model import Reference
 from .util.class_utils import fqn
 
@@ -22,17 +16,9 @@ class MachineModel(BaseModel):
     agent_programs: Dict[str, ProgramModel] = Field(description="The list of Agent Programs to run on this machine.")
 
 
-class CpuModel(BaseModel):
-    io_unit: Reference[IOUnit] = Reference(implementation=fqn(IOUnit))
-    control_unit: Reference[ControlUnit] = Reference(implementation=fqn(ControlUnit))
-    memory_unit: Reference[MemoryUnit] = Reference(implementation=fqn(ConversationalMemoryUnit))
-    llm_unit: Reference[LLMUnit] = Reference(implementation=fqn(OpenAIGPT))
-    logic_units: List[Reference[LogicUnit]] = {}
-
-
 class ProgramModel(BaseModel):
     agent: Reference[Agent] = Field(description="The Agent implementation to use.")
-    cpu: CpuModel = Field(default=None, description="The CPU implementation to use.")
+    cpu: Reference[AgentCPU] = Reference(implementation=fqn(AgentCPU))
 
 
 class MemoryModel(BaseModel):

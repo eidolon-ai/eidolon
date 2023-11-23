@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 import typing
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, Field
 
-from eidolon_sdk.util.class_utils import for_name
+from eidolon_sdk.util.class_utils import for_name, fqn
 
 T = typing.TypeVar('T', bound=BaseModel)
 
@@ -25,11 +25,13 @@ class ReferenceMeta(type):
     def __getitem__(cls, key):
         class GenericReference(BaseModel):
             _sub_class: typing.Type = key
-            implementation: str
+            implementation: str = Field(default=None, description="The implementation of the reference")
             spec: dict = None
 
             @model_validator(mode='after')
             def _validate(self):
+                if self.implementation is None:
+                    self.implementation = fqn(self._sub_class)
                 self.build_reference_spec()
                 return self
 

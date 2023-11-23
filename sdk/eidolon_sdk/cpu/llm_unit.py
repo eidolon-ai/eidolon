@@ -4,7 +4,7 @@ from typing import List, Any, Dict
 
 from pydantic import BaseModel, Field
 
-from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import AssistantMessage, LLMMessage, ToolCall
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_sdk.reference_model import Specable

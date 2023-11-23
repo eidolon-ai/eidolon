@@ -10,7 +10,7 @@ from bson import ObjectId
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
-from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.cpu.llm_unit import LLMCallFunction
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit

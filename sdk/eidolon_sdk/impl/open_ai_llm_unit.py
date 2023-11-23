@@ -6,7 +6,7 @@ from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
 from openai.types.chat.completion_create_params import ResponseFormat
 
-from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolCall, ToolResponseMessage, UserMessage, \
     SystemMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction

@@ -4,7 +4,7 @@ from jinja2 import Environment, StrictUndefined
 from pydantic import Field, BaseModel
 
 from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
 from eidolon_sdk.reference_model import Specable

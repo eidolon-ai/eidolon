@@ -5,7 +5,7 @@ import tiktoken
 from bson import ObjectId
 from pydantic import Field
 
-from eidolon_sdk.cpu.agent_bus import CallContext
+from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.cpu.llm_unit import LLM_MAX_TOKENS, LLMUnit
 from eidolon_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
@@ -47,8 +47,8 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig
         logging.debug("existingMessages = " + str(existingMessages))
         return existingMessages
 
-    async def processStoreAndFetchEvent(self, call_context: CallContext, messages: List[LLMMessage]):
-        conversation = await super().processStoreAndFetchEvent(call_context, messages)
+    async def storeAndFetch(self, call_context: CallContext, messages: List[LLMMessage]):
+        conversation = await super().storeAndFetch(call_context, messages)
         llm_unit = self.locate_unit(LLMUnit)
 
         num_tokens = sum([len(tiktoken.get_encoding('cl100k_base').encode(message.model_dump_json())) for message in conversation])
