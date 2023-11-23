@@ -4,11 +4,11 @@ from typing import Any, Union, List, Dict, Type
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler, IOUnit
+from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit
-from eidolon_sdk.cpu.logic_unit import MethodInfo, ToolDefType, LogicUnit
+from eidolon_sdk.cpu.logic_unit import ToolDefType, LogicUnit
 from eidolon_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
@@ -30,7 +30,6 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
     io_unit: IOUnit
     memory_unit: MemoryUnit
     logic_units: List[LogicUnit] = None,
-    tools: Dict[str, MethodInfo]
 
     def __init__(
             self,
@@ -98,8 +97,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             tool_defs = await self.get_tools(full_conversation)
-            tool_list = [d.llm_call_function for d in tool_defs.values()]
-            assistant_message = await self.llm_unit.execute_llm(call_context, full_conversation, tool_list, output_format)
+            assistant_message = await self.llm_unit.execute_llm(call_context, full_conversation, list(tool_defs.values()), output_format)
             if should_store_tool_calls:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             if assistant_message.tool_calls:
