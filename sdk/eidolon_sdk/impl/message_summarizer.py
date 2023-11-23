@@ -62,7 +62,7 @@ class MessageSummarizer(Specable[MessageSummarizerConfig]):
         """
 
         # format prompt with word limit and existing_messages using jinja2
-        message = self.template.render(summary_word_limit=self.spec.summary_word_limit, messages=existing_messages)
+        message = self.template.render(WORD_LIMIT=self.spec.summary_word_limit, messages=existing_messages)
         summarizer_message = SystemMessage(content=message)
 
         assistant_message = await llm_unit.execute_llm(call_context, [summarizer_message], [], MessageSummary.model_json_schema())

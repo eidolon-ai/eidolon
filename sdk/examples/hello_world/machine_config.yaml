@@ -47,6 +47,22 @@ agent_programs:
           model: "gpt-4-1106-preview"
           temperature: 0.3
 
+#  ExampleCustomSummarizer:
+#    agent:
+#      implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
+#    cpu:
+#      memory_unit:
+#        implementation: "eidolon_sdk.impl.summarization_memory_unit.SummarizationMemoryUnit"
+#        spec:
+#          max_token_fraction: 0.005
+#          summarizer:
+#              implementation: "examples.hello_world.CustomSummary.CustomSummarizer"
+#      llm_unit:
+#        implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
+#        spec:
+#          model: "gpt-4-1106-preview"
+#          temperature: 0.3
+
   ExampleAgentProgram:
     agent:
       implementation: "examples.hello_world.HelloWorld.HelloWorld"
