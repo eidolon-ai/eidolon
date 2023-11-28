@@ -19,9 +19,21 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
         self.spec = spec
 
     async def storeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
+        """
+        Store the messages for the given call context
+        :param call_context: The call context for the current conversation
+        :param messages: The messages to store
+        :return: None
+        """
         await self.writeMessages(call_context, messages)
 
     async def storeAndFetch(self, call_context: CallContext, messages: List[LLMMessage]) -> List[LLMMessage]:
+        """
+        Store the messages and returns the full conversation history for the given call context (including the messages just stored)
+        :param call_context: The call context for the current conversation
+        :param messages: The messages to store
+        :return: The full conversation history for the given call context (including the messages just stored)
+        """
         if messages and len(messages) > 0:
             await self.writeMessages(call_context, messages)
         conversation = await self.getConversationHistory(call_context)
@@ -29,8 +41,19 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
 
     @abstractmethod
     async def writeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
+        """
+        Store the messages for the given call context
+        :param call_context: The call context for the current conversation
+        :param messages: The messages to store
+        :return: None
+        """
         raise NotImplementedError("getConversationHistory not implemented")
 
     @abstractmethod
     async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
+        """
+        Get the full conversation history for the given call context
+        :param call_context: The call context for the current conversation
+        :return: The full conversation history for the given call context
+        """
         raise NotImplementedError("getConversationHistory not implemented")

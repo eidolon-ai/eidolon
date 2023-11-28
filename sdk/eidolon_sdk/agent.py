@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextvars
 import inspect
+import logging
 import typing
 from asyncio import Future
 from dataclasses import dataclass
@@ -55,6 +56,7 @@ class Agent:
         }
         self.process_context = contextvars.ContextVar('process_state', default=None)
         self.cpu_response_handler = AgentResponseHandler()
+        self.logger = logging.getLogger("eidolon_sdk")
 
     def get_context(self) -> ProcessContext:
         return self.process_context.get()
