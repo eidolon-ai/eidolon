@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 
 class ThoughtValidity(BaseModel):
-    validity: Literal["VALID_INTERMEDIATE", "VALID_FINAL", "INVALID"]
+    validity: Literal["INTERMEDIATE", "FINAL", "INVALID"]
 
 
 class Thought(ThoughtValidity):

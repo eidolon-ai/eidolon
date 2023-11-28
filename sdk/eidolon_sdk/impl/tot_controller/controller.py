@@ -27,14 +27,14 @@ class ToTController:
         next_thought = memory.top()
         parent_thought = memory.top_parent()
         validity = (
-            ThoughtValidity.VALID_INTERMEDIATE
+            "INTERMEDIATE"
             if next_thought is None
             else next_thought.validity
         )
 
         # 1 if the current partial solution is invalid, backtrack to the parent
         # thought.
-        if validity == ThoughtValidity.INVALID:
+        if validity == "INVALID":
             memory.pop()
             next_thought = memory.top()
             if next_thought and len(next_thought.children) >= self.c:
@@ -44,7 +44,7 @@ class ToTController:
         # explored and yet failed to find a final solution, backtrack to the
         # parent thought.
         elif (
-            validity == ThoughtValidity.VALID_INTERMEDIATE
+            validity == "INTERMEDIATE"
             and parent_thought
             and len(parent_thought.children) >= self.c
         ):

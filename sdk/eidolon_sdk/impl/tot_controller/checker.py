@@ -44,7 +44,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
         """
 
         checker_prompt = Environment(undefined=StrictUndefined).from_string(self.spec.prompt).render(
-            problem=problem_description, thoughts=tuple(*thoughts)
+            problem=problem_description, thoughts=thoughts
         )
 
         resp = await self.cpu.process_llm_requests(

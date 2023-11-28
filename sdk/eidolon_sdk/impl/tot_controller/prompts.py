@@ -27,18 +27,18 @@ CHECKER_PROMPT = dedent(
     """
     You are an intelligent agent, validating thoughts of another intelligent agent.
 
-    Evaluate the thoughts and problem and respond with one word.
+    Evaluate the thoughts and question and respond with one word.
 
-    - Respond VALID if the last thought is a valid final solution to the
-    problem.
+    - Respond VALID if the last thought is a valid final solution to the question.
     - Respond INVALID if the last thought is invalid.
-    - Respond INTERMEDIATE if the last thought is valid but not the final
-    solution to the problem.
+    - Respond INTERMEDIATE if the last thought is valid but not the final solution to the question.
     
-    <PROBLEM>
-    {{problem}}
-    </PROBLEM>
-
+    {% if problem %}
+    <QUESTION>
+    {{ problem }}
+    </QUESTION>
+    {% endif %}
+    
     {% if thoughts %}
     <THOUGHTS>
     {% for thought in thoughts %}
@@ -47,4 +47,4 @@ CHECKER_PROMPT = dedent(
     </THOUGHTS>
     {% endif %}
     """
-).strip(),
+).strip()

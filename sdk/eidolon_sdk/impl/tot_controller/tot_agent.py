@@ -49,11 +49,6 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
         thought: Thought,
         level: int,
     ) -> None:
-        colors = {
-            ThoughtValidity.VALID_FINAL: "green",
-            ThoughtValidity.VALID_INTERMEDIATE: "yellow",
-            ThoughtValidity.INVALID: "red",
-        }
         text = indent(f"Thought: {thought.text}\n", prefix="    " * level)
         self.logger.info(text)
 
@@ -82,7 +77,7 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
                 thoughts=thoughts_path + [thought_text]
             )
             thought = Thought(text=thought_text, validity=thought_validity.validity)
-            if thought.validity == ThoughtValidity.VALID_FINAL:
+            if thought.validity == "FINAL":
                 self.log_thought(thought, level)
                 # go back to llm now with the tree of thoughts and the requested output format
                 return await self.cpu.process_llm_requests(
@@ -99,7 +94,10 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
         if self.spec.fallback == "ERROR":
-            raise HTTPException(status_code=400, detail="Could not find a valid thought.")
+            raise HTTPException(status_code=400, detail=dict(
+                error=f"Could not find a valid thought within {self.spec.num_iterations} iterations.",
+                thoughts=thoughts_path,
+            ))
         elif self.spec.fallback == "LLM":
             return await self.cpu.process_llm_requests(call_context, [], messages, False, output_format)
         else:

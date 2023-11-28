@@ -35,7 +35,7 @@ class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
         self.spec = spec
 
     def build_prompt(self, user_message, thoughts_path: List[str]):
-        thoughts_tuple = tuple(*thoughts_path)
+        thoughts_tuple = tuple(thoughts_path)
         preamble_txt = self.env.from_string(self.spec.preamble).render(thoughts=thoughts_tuple, n=self.spec.c)
         thoughts_txt = self.env.from_string(self.spec.thoughts).render(thoughts=thoughts_tuple, n=self.spec.c)
         post_amble_txt = self.env.from_string(self.spec.post_amble).render(thoughts=thoughts_tuple, n=self.spec.c)
@@ -111,7 +111,7 @@ class ProposePromptStrategy(BaseThoughtGenerationStrategy, Specable[ProposePromp
         llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[AssistantMessage]],
         thoughts_path: List[str] = Field(default_factory=list)
     ) -> str:
-        thoughts_tuple = tuple(*thoughts_path)
+        thoughts_tuple = tuple(thoughts_path)
         if thoughts_tuple not in self.tot_memory or not self.tot_memory[thoughts_tuple]:
             messages = self.build_prompt(user_message, thoughts_path)
             next_thought_msg = await llm_call(messages, ProposeOutputFormat.model_json_schema())
