@@ -49,10 +49,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
 
         resp = await self.cpu.process_llm_requests(
             context,
-            prior_messages,
-            [UserMessage(
-                content=[UserMessageText(text=checker_prompt)]
-            )],
+            prior_messages + [UserMessage(content=[UserMessageText(text=checker_prompt)])],
             False,
             ThoughtValidity.model_json_schema()
         )

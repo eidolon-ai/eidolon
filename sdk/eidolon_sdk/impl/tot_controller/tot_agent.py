@@ -5,6 +5,7 @@ from typing import List, Dict, Any, Literal
 from fastapi import HTTPException
 from pydantic import Field, BaseModel
 
+from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, UserMessage, UserMessageText, LLMMessageTypes
 from eidolon_sdk.cpu.llm_unit import LLMCallFunction
@@ -66,7 +67,8 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
             user_message_text = user_message.content[-1].text
 
         async def exec_request(_messages: List[LLMMessage], _output_format: Dict[str, Any]) -> AssistantMessage:
-            return await self.cpu.process_llm_requests(new_context, prior_messages, _messages, False, _output_format)
+            # todo, this should perhaps use schedule request interface
+            return await self.cpu.process_llm_requests(new_context, prior_messages + _messages, False, _output_format)
 
         for _ in range(self.spec.num_iterations):
             thought_text = await self.thought_generator.next_thought(user_message, exec_request, thoughts_path)
@@ -82,7 +84,6 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
                 # go back to llm now with the tree of thoughts and the requested output format
                 return await self.cpu.process_llm_requests(
                     call_context,
-                    boot_conversation=[],
                     conversation=messages + [UserMessage(
                         content=[UserMessageText(text="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text])))]
                     )],
@@ -99,7 +100,7 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
                 thoughts=thoughts_path,
             ))
         elif self.spec.fallback == "LLM":
-            return await self.cpu.process_llm_requests(call_context, [], messages, False, output_format)
+            return await self.cpu.process_llm_requests(call_context, messages, False, output_format)
         else:
             raise ValueError(f"Unknown fallback type: {self.spec.fallback}")
 

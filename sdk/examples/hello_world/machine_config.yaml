@@ -28,29 +28,19 @@ agent_programs:
               instruction:
                 type: string
     cpu:
-      llm_unit:
-        implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
-        spec:
-          model: "gpt-4-1106-preview"
-          temperature: 0.3
-      logic_units:
-        - implementation: "eidolon_sdk.impl.conversational_logic_unit.ConversationalLogicUnit"
+      spec:
+        llm_unit:
+          implementation: "eidolon_sdk.impl.agent_llm_unit.AgentLLMUnit"
           spec:
-            agents: ["StateMachine", "ExampleAgentProgram"]
+            agent: TreeOfThoughts
+        logic_units:
+          - implementation: "eidolon_sdk.impl.conversational_logic_unit.ConversationalLogicUnit"
+            spec:
+              agents: ["StateMachine", "ExampleAgentProgram"]
 
   ExampleAuto:
     agent:
       implementation: "examples.hello_world.AutonomousAgent.AutonomousAgent"
-    cpu:
-      memory_unit:
-        implementation: "eidolon_sdk.impl.summarization_memory_unit.SummarizationMemoryUnit"
-        spec:
-          max_token_fraction: 0.005
-      llm_unit:
-        implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
-        spec:
-          model: "gpt-4-1106-preview"
-          temperature: 0.3
 
 #  ExampleCustomSummarizer:
 #    agent:

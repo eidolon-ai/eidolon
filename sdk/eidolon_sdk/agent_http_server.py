@@ -5,6 +5,8 @@ from contextlib import asynccontextmanager
 import dotenv
 import uvicorn
 from fastapi import FastAPI
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 
 from eidolon_sdk.agent_os import AgentOS
 
@@ -23,7 +25,6 @@ args = parser.parse_args()
 
 @asynccontextmanager
 async def start_os(app: FastAPI):
-    logging.basicConfig(level=logging.INFO)
     logging.config.fileConfig("logging.conf")
     logger = logging.getLogger("eidolon")
     logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
@@ -39,7 +40,19 @@ async def start_os(app: FastAPI):
     yield
     os.stop()
 
+
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        logger = logging.getLogger("eidolon")
+        logger.info(f"Request: {request.method} {request.url}")
+        response = await call_next(request)
+        logger.info(f"Response: {response.status_code}")
+        return response
+
+
 app = FastAPI(lifespan=start_os)
+app.add_middleware(LoggingMiddleware)
+
 
 if __name__ == "__main__":
     log_level_str = "debug" if args.debug else "info"

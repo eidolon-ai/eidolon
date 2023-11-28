@@ -1,6 +1,7 @@
 import json
 from typing import Any, Union, List, Dict, Type
 
+from fastapi import HTTPException
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent_memory import AgentMemory
@@ -77,11 +78,13 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
             call_context = CallContext(process_id=process_id, thread_id=None)
             boot_messages, conversation_message = await self.io_unit.process_request(call_context, prompts, input_data)
             # todo -- change to store in agent memory directly or pass in every time...
-            boot_conversation = await self.memory_unit.storeAndFetch(call_context, [conversation_message])
+            if boot_messages:
+                await self.memory_unit.storeMessages(call_context, boot_messages)
             conversation = await self.memory_unit.storeAndFetch(call_context, [conversation_message])
-            assistant_message = await self.process_llm_requests(call_context, boot_conversation, conversation, True, output_format)
-            response = await self.io_unit.process_response(call_context, assistant_message.content)
-            return response
+            assistant_message = await self.process_llm_requests(call_context, conversation, True, output_format)
+            return await self.io_unit.process_response(call_context, assistant_message.content)
+        except HTTPException:
+            raise
         except Exception as e:
             raise RuntimeError("Error in control unit while processing request") from e
 
@@ -91,13 +94,12 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
             self.tool_defs.update(await logic_unit.build_tools(conversation))
         return self.tool_defs
 
-    async def process_llm_requests(self, call_context: CallContext, boot_conversation: List[LLMMessage], conversation: List[LLMMessage],
+    async def process_llm_requests(self, call_context: CallContext, conversation: List[LLMMessage],
                                    should_store_tool_calls: bool, output_format: Dict[str, Any]) -> AssistantMessage:
-        full_conversation = boot_conversation + conversation
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            tool_defs = await self.get_tools(full_conversation)
-            assistant_message = await self.llm_unit.execute_llm(call_context, full_conversation, list(tool_defs.values()), output_format)
+            tool_defs = await self.get_tools(conversation)
+            assistant_message = await self.llm_unit.execute_llm(call_context, conversation, list(tool_defs.values()), output_format)
             if should_store_tool_calls:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             if assistant_message.tool_calls:
@@ -111,7 +113,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
                         await self.memory_unit.storeMessages(call_context, [message])
                     results.append(message)
 
-                full_conversation = full_conversation + [assistant_message] + results
+                conversation = conversation + [assistant_message] + results
                 num_iterations += 1
             else:
                 return assistant_message
