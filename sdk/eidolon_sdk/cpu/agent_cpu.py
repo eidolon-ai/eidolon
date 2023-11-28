@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler, IOUnit
 from eidolon_sdk.cpu.call_context import CallContext
-from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
+from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage, AssistantMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit
 from eidolon_sdk.cpu.logic_unit import ToolDefType, LogicUnit
 from eidolon_sdk.cpu.memory_unit import MemoryUnit
@@ -92,7 +92,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
         return self.tool_defs
 
     async def process_llm_requests(self, call_context: CallContext, boot_conversation: List[LLMMessage], conversation: List[LLMMessage],
-                                   should_store_tool_calls: bool, output_format: Dict[str, Any]):
+                                   should_store_tool_calls: bool, output_format: Dict[str, Any]) -> AssistantMessage:
         full_conversation = boot_conversation + conversation
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:

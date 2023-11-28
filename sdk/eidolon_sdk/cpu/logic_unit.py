@@ -92,7 +92,7 @@ class LogicUnit(ProcessingUnit, ABC):
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
             if self.is_sync():
                 converted_input = schema_to_model(parameter_schema, name + "_input").model_validate(args)
-                logging.info("calling tool " + name + " with args " + str(converted_input))
+                logging.getLogger("eidolon").info("calling tool " + name + " with args " + str(converted_input))
                 result = await fn(**dict(converted_input))
                 # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
                 if isinstance(result, BaseModel):

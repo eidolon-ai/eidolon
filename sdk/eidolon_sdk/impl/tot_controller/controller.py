@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 
 from eidolon_sdk.impl.tot_controller.memory import ToTDFSMemory
 from eidolon_sdk.impl.tot_controller.thought import ThoughtValidity
@@ -8,8 +8,7 @@ class ToTController:
     """
     Tree of Thought (ToT) controller.
 
-    This is a version of a ToT controller, dubbed in the paper as a "Simple
-    Controller".
+    This is a version of a ToT controller, dubbed in the paper as a "Simple Controller".
 
     It has one parameter `c` which is the number of children to explore for each
     thought.
@@ -24,7 +23,7 @@ class ToTController:
         """
         self.c = c
 
-    def __call__(self, memory: ToTDFSMemory) -> Tuple[str, ...]:
+    def thoughts(self, memory: ToTDFSMemory) -> List[str]:
         next_thought = memory.top()
         parent_thought = memory.top_parent()
         validity = (
@@ -51,4 +50,4 @@ class ToTController:
         ):
             memory.pop(2)
 
-        return tuple(thought.text for thought in memory.current_path())
+        return [t.text for t in memory.current_path()]

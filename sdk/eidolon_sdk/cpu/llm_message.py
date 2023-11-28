@@ -1,9 +1,10 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union, Literal
 
 from pydantic import BaseModel, SerializeAsAny, field_validator
 
 
 # Base LLMMessage class
+# todo, replace LLMMessage with LLMMessageTypes
 class LLMMessage(BaseModel):
     type: str
     is_boot_message: bool = False
@@ -29,47 +30,21 @@ class SystemMessage(LLMMessage):
     is_boot_message: bool = True
 
 
-# Base class for message content parts
-class UserMessageContentPart(BaseModel):
-    type: str
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]):
-        if data.get("type") == "text":
-            return UserMessageText.model_validate(data)
-        elif data.get("type") == "image_url":
-            return UserMessageImageURL.model_validate(data)
-        else:
-            raise ValueError(f"Unknown message content part type {data.get('type')}")
-
-
 # Derived classes for different types of message content parts
-class UserMessageText(UserMessageContentPart):
+class UserMessageText(BaseModel):
     text: str
-    type: str = "text"
+    type: Literal["text"] = "text"
 
 
-class UserMessageImageURL(UserMessageContentPart):
+class UserMessageImageURL(BaseModel):
     image_url: str
-    type: str = "image_url"
+    type: Literal["image_url"] = "image_url"
 
 
 # Derived UserMessage class
 class UserMessage(LLMMessage):
     type: str = "user"
-    content: List[SerializeAsAny[UserMessageContentPart]]
-
-    @field_validator('content', mode="before")
-    def validate_content(cls, value):
-        if not isinstance(value, list):
-            raise ValueError("content must be a list")
-        ret_list = []
-        for part in value:
-            if isinstance(part, UserMessageContentPart):
-                ret_list.append(part)
-            elif isinstance(part, dict):
-                ret_list.append(UserMessageContentPart.from_dict(part))
-        return ret_list
+    content: List[UserMessageText | UserMessageImageURL]
 
 
 # ToolCall class
@@ -91,3 +66,6 @@ class ToolResponseMessage(LLMMessage):
     name: str
     tool_call_id: str
     result: str
+
+
+LLMMessageTypes = SystemMessage | UserMessage | AssistantMessage | ToolResponseMessage

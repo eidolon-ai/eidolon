@@ -52,6 +52,7 @@ class LLMUnitConfig(BaseModel):
     pass
 
 
+# todo, llm unit config probably doesn't belong at this level
 class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
     def __init__(self, spec: LLMUnitConfig = None, **kwargs):
         super().__init__(**kwargs)

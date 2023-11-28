@@ -23,15 +23,19 @@ args = parser.parse_args()
 
 @asynccontextmanager
 async def start_os(app: FastAPI):
+    logging.basicConfig(level=logging.INFO)
     logging.config.fileConfig("logging.conf")
     logger = logging.getLogger("eidolon")
     logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
+    try:
+        with open(args.yaml_path, 'r') as file:
+            file_contents = file.read()
 
-    with open(args.yaml_path, 'r') as file:
-        file_contents = file.read()
-
-    os = AgentOS.from_yaml(file_contents)
-    await os.start(app)
+        os = AgentOS.from_yaml(file_contents)
+        await os.start(app)
+    except Exception as e:
+        logger.exception("Failed to start AgentOS")
+        raise e
     yield
     os.stop()
 

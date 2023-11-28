@@ -82,7 +82,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 "content": f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
             })
 
-        logging.info(messages)
+        logging.getLogger("eidolon").info(messages)
         tools = []
         for tool in inTools:
             tools.append(ChatCompletionToolParam(**{
@@ -103,7 +103,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         if len(tools) > 0:
             request["tools"] = tools
 
-        logging.info("executing open ai llm request", extra=request)
+        logging.getLogger("eidolon").info("executing open ai llm request", extra=request)
         try:
             llm_response = await self.llm.chat.completions.create(**request)
         except Exception:
@@ -111,7 +111,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             raise
         message = llm_response.choices[0].message
 
-        logging.info(f"open ai llm response", extra=dict(content=message.content, tool_calls=message.tool_calls))
+        logging.getLogger("eidolon").info(f"open ai llm response", extra=dict(content=message.content, tool_calls=message.tool_calls))
 
         tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
         try:

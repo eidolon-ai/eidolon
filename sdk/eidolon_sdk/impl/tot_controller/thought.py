@@ -1,20 +1,17 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Set
+from typing import Set, Literal
 
 from pydantic import BaseModel, Field
 
 
-class ThoughtValidity(Enum):
-    VALID_INTERMEDIATE = 0
-    VALID_FINAL = 1
-    INVALID = 2
+class ThoughtValidity(BaseModel):
+    validity: Literal["VALID_INTERMEDIATE", "VALID_FINAL", "INVALID"]
 
 
-class Thought(BaseModel):
+class Thought(ThoughtValidity):
     text: str
-    validity: ThoughtValidity
     children: Set[Thought] = Field(default_factory=set)
 
     def __hash__(self) -> int:

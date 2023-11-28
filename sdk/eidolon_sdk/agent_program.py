@@ -94,7 +94,7 @@ class AgentProgram:
             async def run_and_store_response():
                 try:
                     # todo -- probably should be **dict(body) per https://docs.pydantic.dev/latest/concepts/serialization/
-                    response = await handler.fn(self.agent, **body.model_dump())
+                    response = await handler.fn(self.agent, **body.__dict__)
                     if isinstance(response, AgentState):
                         state = response.name
                         data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data
@@ -134,6 +134,7 @@ class AgentProgram:
                 background_tasks.add_task(run_and_store_response)
                 return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
 
+        logging.getLogger("eidolon").info(f"Registering action {action} for program {self.name}")
         sig = inspect.signature(run_program)
         params = dict(sig.parameters)
         params['body'] = params['body'].replace(annotation=(self.agent.get_input_model(action)))

@@ -11,6 +11,11 @@ agent_memory:
     implementation: "eidolon_sdk.impl.noop_memory.NoopSimilarityMemory"
 
 agent_programs:
+  TreeOfThoughts:
+    agent:
+      implementation: "eidolon_sdk.impl.tot_controller.tot_agent.TreeOfThoughtsAgent"
+
+#  todo, back generic agent cpu by tree of thoughts
   ExampleGeneric:
     agent:
       implementation: "eidolon_sdk.impl.generic_agent.GenericAgent"

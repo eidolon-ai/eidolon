@@ -44,11 +44,3 @@ def _make_cpu(cpu_model, machine):
         logger = logging.getLogger("eidolon")
         logger.exception(f"Failed to make cpu {cpu_model}")
         raise e
-    # if not cpu_model:
-    #     return None
-    #
-    # kwargs = dict(memory=machine.agent_memory)
-    # print(f"Making cpu: {cpu_model}")
-    # cpu = cpu_model.instantiate(agent_memory=machine.agent_memory, **kwargs)
-    #
-    # return cpu
