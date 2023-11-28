@@ -82,11 +82,14 @@ class Agent:
     async def cpu_request(
             self,
             prompts: List[typing.Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]],
-            input_data: Dict[str, typing.Any],
-            output_format: Dict[str, typing.Any],
+            input_data: Dict[str, typing.Any] = None,
+            output_format: Dict[str, typing.Any] = None,
     ):
-        process_id = self.get_context().process_id
-        return await self.cpu.schedule_request(process_id, prompts, input_data, output_format)
+        return await self.cpu.schedule_request(
+            self.get_context().process_id, prompts,
+            input_data or {},
+            output_format or dict(type="str")
+        )
 
 
 class CodeAgent(Agent):

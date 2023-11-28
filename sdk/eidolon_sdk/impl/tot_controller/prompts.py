@@ -29,8 +29,8 @@ CHECKER_PROMPT = dedent(
 
     Evaluate the thoughts and question and respond with one word.
 
-    - Respond VALID if the last thought is a valid final solution to the question.
-    - Respond INVALID if the last thought is invalid.
+    - Respond VALID if the thoughts contain the information needed so answer the question
+    - Respond INVALID if the last thought is invalid or does not make progress from previous thoughts.
     - Respond INTERMEDIATE if the last thought is valid but not the final solution to the question.
     
     {% if problem %}
@@ -40,11 +40,11 @@ CHECKER_PROMPT = dedent(
     {% endif %}
     
     {% if thoughts %}
-    <THOUGHTS>
     {% for thought in thoughts %}
+    <THOUGHT>
     {{ thought }}
+    </THOUGHT>
     {% endfor %}
-    </THOUGHTS>
     {% endif %}
     """
 ).strip()

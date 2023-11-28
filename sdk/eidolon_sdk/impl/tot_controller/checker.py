@@ -35,7 +35,6 @@ class ToTChecker(Specable[TotCheckerConfig]):
     async def evaluate(
         self,
         context: CallContext,
-        prior_messages: List[LLMMessage],
         problem_description: str,
         thoughts: List[str] = Field(default_factory=list),
     ) -> ThoughtValidity:

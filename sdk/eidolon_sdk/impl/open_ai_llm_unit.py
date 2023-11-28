@@ -82,7 +82,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 "content": f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
             })
 
-        logging.getLogger("eidolon").info(messages)
+        logging.getLogger("eidolon").debug(messages)
         tools = []
         for tool in inTools:
             tools.append(ChatCompletionToolParam(**{

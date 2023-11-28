@@ -5,15 +5,13 @@ from typing import List, Dict, Any, Literal
 from fastapi import HTTPException
 from pydantic import Field, BaseModel
 
+from eidolon_sdk.agent import initializer, Agent
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
-from eidolon_sdk.cpu.call_context import CallContext
-from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, UserMessage, UserMessageText, LLMMessageTypes
-from eidolon_sdk.cpu.llm_unit import LLMCallFunction
-from eidolon_sdk.impl.agent_llm_unit import LLMAgent
+from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
 from eidolon_sdk.impl.tot_controller.checker import ToTChecker
 from eidolon_sdk.impl.tot_controller.controller import ToTController
 from eidolon_sdk.impl.tot_controller.memory import ToTDFSMemory
-from eidolon_sdk.impl.tot_controller.thought import Thought, ThoughtValidity
+from eidolon_sdk.impl.tot_controller.thought import Thought
 from eidolon_sdk.impl.tot_controller.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
@@ -30,7 +28,12 @@ class ToTAgentConfig(BaseModel):
     fallback: Literal["ERROR", "LLM"] = "ERROR"
 
 
-class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
+class TotResponse(BaseModel):
+    answer: str
+    thoughts: List[str]
+
+
+class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
     logger = logging.getLogger("eidolon")
     thought_generator: BaseThoughtGenerationStrategy
     tot_memory: ToTDFSMemory
@@ -53,45 +56,35 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
         text = indent(f"Thought: {thought.text}\n", prefix="    " * level)
         self.logger.info(text)
 
-    async def execute_llm(self, call_context: CallContext, messages: List[LLMMessageTypes], tools: List[LLMCallFunction], output_format: Dict[str, Any]) -> AssistantMessage:
+    @initializer
+    async def execute_llm(self, question: str, output_format: Dict[str, Any] = None) -> TotResponse:
         # override to run the tree of thoughts algorithm in a separate thread
-        new_context = call_context.derive_call_context()
-        user_message = messages[-1]
-        prior_messages = messages[:-1]
+        context = self.get_context()
+        new_context = context.call_context.derive_call_context()
         thoughts_path: List[str] = []
         level = 0
 
-        if not isinstance(user_message, UserMessage) or not isinstance(user_message.content[-1], UserMessageText):
-            raise HTTPException(status_code=400, detail="The last message in the list of messages must be a user message with text content")
-        else:
-            user_message_text = user_message.content[-1].text
-
         async def exec_request(_messages: List[LLMMessage], _output_format: Dict[str, Any]) -> AssistantMessage:
             # todo, this should perhaps use schedule request interface
-            return await self.cpu.process_llm_requests(new_context, prior_messages + _messages, False, _output_format)
+            return await self.cpu.process_llm_requests(new_context, _messages, False, _output_format)
 
-        for _ in range(self.spec.num_iterations):
-            thought_text = await self.thought_generator.next_thought(user_message, exec_request, thoughts_path)
+        for i in range(self.spec.num_iterations):
+            thought_text = await self.thought_generator.next_thought(question, exec_request, thoughts_path)
             thought_validity = await self.checker.evaluate(
                 context=new_context,
-                prior_messages=prior_messages,
-                problem_description=user_message_text,
+                problem_description=question,
                 thoughts=thoughts_path + [thought_text]
             )
             thought = Thought(text=thought_text, validity=thought_validity.validity)
-            if thought.validity == "FINAL":
-                self.log_thought(thought, level)
-                # go back to llm now with the tree of thoughts and the requested output format
-                return await self.cpu.process_llm_requests(
-                    call_context,
-                    conversation=messages + [UserMessage(
-                        content=[UserMessageText(text="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text])))]
-                    )],
-                    should_store_tool_calls=False,
-                    output_format=output_format,
-                )
             self.tot_memory.store(thought)
             self.log_thought(thought, level)
+            if thought.validity == "FINAL" or (i == self.spec.num_iterations - 1 and self.spec.fallback == "LLM"):
+                if thought.validity != "FINAL":
+                    self.logger.warning(f"Problem not solved after after {self.spec.num_iterations} iterations, but falling back to LLM anyway.")
+                # go back to llm now with the tree of thoughts and the requested output format
+                conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path)))]
+                resp = await self.cpu_request(conversation, output_format)
+                return TotResponse(answer=resp.content, thoughts=thoughts_path)
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
         if self.spec.fallback == "ERROR":
@@ -99,8 +92,5 @@ class TreeOfThoughtsAgent(LLMAgent, Specable[ToTAgentConfig]):
                 error=f"Could not find a valid thought within {self.spec.num_iterations} iterations.",
                 thoughts=thoughts_path,
             ))
-        elif self.spec.fallback == "LLM":
-            return await self.cpu.process_llm_requests(call_context, messages, False, output_format)
         else:
             raise ValueError(f"Unknown fallback type: {self.spec.fallback}")
-

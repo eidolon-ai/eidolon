@@ -41,7 +41,7 @@ class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
         post_amble_txt = self.env.from_string(self.spec.post_amble).render(thoughts=thoughts_tuple, n=self.spec.c)
         return [
             UserMessage(content=[UserMessageText(text=preamble_txt)]),
-            user_message,
+            UserMessage(content=[UserMessageText(text=user_message)]),
             UserMessage(content=[UserMessageText(text=thoughts_txt)]),
             UserMessage(content=[UserMessageText(text=post_amble_txt)])
         ]
@@ -49,7 +49,7 @@ class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
     @abstractmethod
     async def next_thought(
         self,
-        user_message: UserMessage,
+        user_message: str,
         llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[str]],
         thoughts_path: List[str] = Field(default_factory=list),
     ) -> str:

@@ -14,6 +14,8 @@ agent_programs:
   TreeOfThoughts:
     agent:
       implementation: "eidolon_sdk.impl.tot_controller.tot_agent.TreeOfThoughtsAgent"
+      spec:
+        fallback: LLM
 
 #  todo, back generic agent cpu by tree of thoughts
   ExampleGeneric:
@@ -36,7 +38,7 @@ agent_programs:
         logic_units:
           - implementation: "eidolon_sdk.impl.conversational_logic_unit.ConversationalLogicUnit"
             spec:
-              agents: ["StateMachine", "ExampleAgentProgram"]
+              agents: ["StateMachine", "ExampleAgentProgram", "TreeOfThoughts"]
 
   ExampleAuto:
     agent:
