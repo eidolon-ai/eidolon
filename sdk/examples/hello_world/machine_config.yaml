@@ -31,10 +31,6 @@ agent_programs:
                 type: string
     cpu:
       spec:
-        llm_unit:
-          implementation: "eidolon_sdk.impl.agent_llm_unit.AgentLLMUnit"
-          spec:
-            agent: TreeOfThoughts
         logic_units:
           - implementation: "eidolon_sdk.impl.conversational_logic_unit.ConversationalLogicUnit"
             spec:
