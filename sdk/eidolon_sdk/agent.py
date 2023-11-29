@@ -101,21 +101,22 @@ class CodeAgent(Agent):
 @dataclass
 class EidolonHandler:
     name: str
+    description: str
     allowed_states: List[str]
     fn: callable
 
 
-def initializer(fn):
-    return _add_handler(fn, EidolonHandler(name='INIT', allowed_states=['UNINITIALIZED'], fn=fn))
+def initializer(fn, description: str = None):
+    return _add_handler(fn, EidolonHandler(name='INIT', description=description or fn.__doc__, allowed_states=['UNINITIALIZED'], fn=fn))
 
 
-def register_action(*allowed_states: str, name: str = None):
+def register_action(*allowed_states: str, name: str = None, description: str = None):
     if not allowed_states:
         raise ValueError("Must specify at least one valid state")
     if 'terminated' in allowed_states:
         raise ValueError("Action cannot transform terminated state")
 
-    return lambda fn: _add_handler(fn, EidolonHandler(name=name or fn.__name__, allowed_states=list(allowed_states), fn=fn))
+    return lambda fn: _add_handler(fn, EidolonHandler(name=name or fn.__name__, description=description or fn.__doc__, allowed_states=list(allowed_states), fn=fn))
 
 
 def _add_handler(fn, handler):

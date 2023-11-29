@@ -45,7 +45,7 @@ class AgentProgram:
             app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
                 202: {"model": AsyncStateResponse},
                 200: {'model': self.create_response_model(action)},
-            })
+            }, description=handler.description)
 
         app.add_api_route(
             f"/programs/{self.name}/processes/{{process_id}}/status",

@@ -58,6 +58,13 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
 
     @initializer
     async def execute_llm(self, question: str, output_format: Dict[str, Any] = None) -> TotResponse:
+        """
+        Answers a question using the tree of thoughts algorithm. This is computationally expensive, but will provide
+        better results than standard llm calls for some problems. Specializes in questions which need to make initial
+        assumptions which may not be accurate. The tree of thoughts algorithm will explore many possible assumptions
+        and solutions and trim branches when they are found to be invalid.
+        """
+
         # override to run the tree of thoughts algorithm in a separate thread
         context = self.get_context()
         new_context = context.call_context.derive_call_context()
