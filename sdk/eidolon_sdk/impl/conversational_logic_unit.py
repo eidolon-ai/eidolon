@@ -22,7 +22,7 @@ class ConversationalSpec(BaseModel):
     agents: List[str]
 
 
-class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
+class   ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
     _openapi_json: Optional[dict] = None
 
     def __init__(self, spec: ConversationalSpec, **kwargs):
@@ -64,7 +64,9 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
     async def _build_tool_def(self, name, path, agent_program, process_id=""):
         path = path.format(process_id="{process_id}")
         json_schema = self._openapi_json['paths'][path]['post']['requestBody']['content']['application/json']['schema']
-        description = "Create a conversation with the given agent"  # todo, derive this from openapi
+        description = self._openapi_json['paths'][path]['post'].get('description', '')
+        if not description:
+            self.logger.warning(f"Agent action at {path} does not have a description. LLM may not use it properly")
         return ToolDefType(
             name=name,
             description=description,

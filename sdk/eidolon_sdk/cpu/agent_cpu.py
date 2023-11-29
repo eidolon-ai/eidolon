@@ -106,8 +106,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
                 results = []
                 for tool_call in assistant_message.tool_calls:
                     tool_def = tool_defs[tool_call.name]
-                    # noinspection PyProtectedMember
-                    tool_result = await tool_def.logic_unit._execute(call_context=call_context, method_info=tool_def.method_info, args=tool_call.arguments)
+                    tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
                     message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=json.dumps(tool_result), name=tool_call.name)
                     if should_store_tool_calls:
                         await self.memory_unit.storeMessages(call_context, [message])
