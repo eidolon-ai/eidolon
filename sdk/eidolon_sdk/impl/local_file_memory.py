@@ -96,6 +96,39 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         with open(safe_file_path, 'wb') as file:
             file.write(file_contents)
 
+    def mkdir(self, directory: str, exist_ok: bool = False):
+        """
+        Creates a directory at the specified path relative to the root directory.
+
+        Args:
+            directory (str): The path to the directory to be created, relative to the root directory.
+            exist_ok (bool): If True, do not raise an exception if the directory already exists.
+
+        Returns:
+            None
+        """
+        # Resolve the safe path
+        safe_directory = self.resolve(directory)
+
+        # Create the directory
+        safe_directory.mkdir(parents=True, exist_ok=exist_ok)
+
+    def exists(self, file_name: str):
+        """
+        Checks if a file exists at the specified path relative to the root directory.
+
+        Args:
+            file_name (str): The path to the file to check, relative to the root directory.
+
+        Returns:
+            bool: True if the file exists, False otherwise.
+        """
+        # Resolve the safe path
+        safe_file_path = self.resolve(file_name)
+
+        # Check if the file exists
+        return safe_file_path.exists()
+
     def start(self):
         """
         Starts the memory implementation. Noop for this implementation.

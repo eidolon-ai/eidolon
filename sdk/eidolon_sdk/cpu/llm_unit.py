@@ -48,7 +48,6 @@ class LLMCallFunction(BaseModel):
 
 
 class LLMUnitConfig(BaseModel):
-    model: str = Field(description="The model to use for the LLM.")
     pass
 
 

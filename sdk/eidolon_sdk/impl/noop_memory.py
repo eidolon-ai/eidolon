@@ -18,6 +18,12 @@ class NoopFileMemory(FileMemory):
     async def write_file(self, file_path: str, file_contents: bytes) -> None:
         pass
 
+    def mkdir(self, directory: str, exist_ok: bool = False):
+        pass
+
+    def exists(self, file_name: str):
+        pass
+
 
 class NoopSymbolicMemory(SymbolicMemory):
     def start(self):

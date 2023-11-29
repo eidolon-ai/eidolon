@@ -5,6 +5,7 @@ from typing import List
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
 from openai.types.chat.completion_create_params import ResponseFormat
+from pydantic import Field
 
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolCall, ToolResponseMessage, UserMessage, \
@@ -54,7 +55,7 @@ def convert_to_openai(message: LLMMessage):
 
 
 class OpenAiGPTSpec(LLMUnitConfig):
-    model: str = "gpt-4-1106-preview"
+    model: str = Field(default="gpt-4-1106-preview", description="The model to use for the LLM.")
     temperature: float = 0.3
 
 

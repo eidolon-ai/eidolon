@@ -55,6 +55,14 @@ class FileMemory(ABC):
         """
         pass
 
+    @abstractmethod
+    def mkdir(self, directory: str, exist_ok: bool = False):
+        pass
+
+    @abstractmethod
+    def exists(self, file_name: str):
+        pass
+
 
 class SymbolicMemory(ABC):
     """
