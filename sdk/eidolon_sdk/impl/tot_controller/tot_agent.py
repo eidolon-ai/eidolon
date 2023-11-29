@@ -1,6 +1,6 @@
 import logging
 from textwrap import indent
-from typing import List, Dict, Any, Literal
+from typing import List, Dict, Any, Literal, Optional
 
 from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
@@ -32,6 +32,7 @@ class ToTAgentConfig(BaseModel):
     checker: Reference[ToTChecker] = Field(default=Reference(implementation=fqn(ToTChecker)), description="The checker to use.")
     fallback: Literal["ERROR", "LLM"] = "ERROR"
     output_format: Dict[str, Any] = Field(default=None, description="The requested output format of the INIT endpoint.")
+    init_description: Optional[str] = Field(default=None, description="Overrides the description of the INIT endpoint.")
 
 
 class TotResponse(BaseModel):
@@ -54,6 +55,8 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         self.checker = spec.checker.instantiate(cpu=self.cpu)
         self.tot_memory = ToTDFSMemory()
         self.tot_controller = ToTController()
+        if self.spec.init_description:
+            self.action_handlers["INIT"].description = self.spec.init_description
 
     def log_thought(
         self,
