@@ -24,7 +24,7 @@ class ToTAgentConfig(BaseModel):
     num_iterations: int = Field(10, description="The maximum number of iterations to run the tree of thoughts algorithm.")
     num_children: int = Field(10, description="The maximum number of children to generate for each node in the tree of thoughts algorithm.")
     question_prompt: str = Field(description="The prompt to use when asking the user for a question.")
-    question_json_schema: Dict[str, Any] = Field(description="The json schema for the question input model."),
+    question_json_schema: Dict[str, Any] = Field(description="The json schema for the question input model.")
     thought_generator: Reference[BaseThoughtGenerationStrategy] = Field(
         default=Reference(implementation=fqn(ProposePromptStrategy)),
         description="The thought generator to use."
