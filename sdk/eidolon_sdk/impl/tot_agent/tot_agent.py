@@ -10,11 +10,11 @@ from eidolon_sdk.agent import initializer, Agent
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
-from eidolon_sdk.impl.tot_controller.checker import ToTChecker
-from eidolon_sdk.impl.tot_controller.controller import ToTController
-from eidolon_sdk.impl.tot_controller.memory import ToTDFSMemory
-from eidolon_sdk.impl.tot_controller.thought import Thought
-from eidolon_sdk.impl.tot_controller.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
+from eidolon_sdk.impl.tot_agent.checker import ToTChecker
+from eidolon_sdk.impl.tot_agent.controller import ToTController
+from eidolon_sdk.impl.tot_agent.memory import ToTDFSMemory
+from eidolon_sdk.impl.tot_agent.thought import Thought
+from eidolon_sdk.impl.tot_agent.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
 from eidolon_sdk.util.schema_to_model import schema_to_model

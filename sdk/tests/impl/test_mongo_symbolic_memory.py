@@ -3,7 +3,7 @@ import asyncio
 import pytest
 from bson import ObjectId
 
-from eidolon_sdk.impl.mongo_symbolic_memory import MongoSymbolicMemory
+from eidolon_sdk.impl.memory.mongo_symbolic_memory import MongoSymbolicMemory
 
 
 @pytest.fixture(scope='class')

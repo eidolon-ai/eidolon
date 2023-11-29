@@ -12,8 +12,8 @@ from eidolon_sdk.cpu.llm_unit import LLMUnit
 from eidolon_sdk.cpu.logic_unit import ToolDefType, LogicUnit
 from eidolon_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
-from eidolon_sdk.impl.llm.open_ai_llm_unit import OpenAIGPT
+from eidolon_sdk.impl.cpu.conversation_memory_unit import ConversationalMemoryUnit
+from eidolon_sdk.impl.cpu.llm import OpenAIGPT
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
 

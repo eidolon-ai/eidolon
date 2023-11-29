@@ -6,8 +6,8 @@ from pydantic import Field, BaseModel
 from eidolon_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import UserMessage, UserMessageText
-from eidolon_sdk.impl.tot_controller.prompts import CHECKER_PROMPT
-from eidolon_sdk.impl.tot_controller.thought import ThoughtValidity
+from eidolon_sdk.impl.tot_agent.prompts import CHECKER_PROMPT
+from eidolon_sdk.impl.tot_agent.thought import ThoughtValidity
 from eidolon_sdk.reference_model import Specable
 
 

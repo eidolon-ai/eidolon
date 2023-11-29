@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from eidolon_sdk.impl.tot_controller.thought import Thought
+from eidolon_sdk.impl.tot_agent.thought import Thought
 
 
 class ToTDFSMemory:

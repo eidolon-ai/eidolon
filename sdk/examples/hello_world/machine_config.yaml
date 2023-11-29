@@ -13,7 +13,7 @@ agent_memory:
 agent_programs:
   TreeOfThoughts:
     agent:
-      implementation: "eidolon_sdk.impl.tot_controller.tot_agent.TreeOfThoughtsAgent"
+      implementation: "eidolon_sdk.impl.tot_agent.tot_agent.TreeOfThoughtsAgent"
       spec:
         fallback: LLM
 

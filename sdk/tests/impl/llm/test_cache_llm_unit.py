@@ -8,8 +8,8 @@ import pytest
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import AssistantMessage, SystemMessage
 from eidolon_sdk.cpu.llm_unit import LLMCallFunction
-from eidolon_sdk.impl.in_memory_file_memory import InMemoryFileMemory, InMemoryFileMemoryConfig
-from eidolon_sdk.impl.llm.cache_llm_unit import CacheLLMSpec, CacheLLM
+from eidolon_sdk.impl.memory.in_memory_file_memory import InMemoryFileMemory, InMemoryFileMemoryConfig
+from eidolon_sdk.impl.cpu.llm import CacheLLMSpec, CacheLLM
 
 
 # Assuming 'your_llm_reference' and 'your_module' are placeholders for actual implementations

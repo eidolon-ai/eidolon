@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelWithLMHead
 from eidolon_sdk.cpu.agent_bus import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit
-from eidolon_sdk.impl.message_summarizer import MessageSummarizer
+from eidolon_sdk.impl.cpu.message_summarizer import MessageSummarizer
 
 
 class CustomSummarizer(MessageSummarizer):

@@ -1,7 +1,7 @@
 from typing import Tuple, List
 
-from eidolon_sdk.impl.tot_controller.memory import ToTDFSMemory
-from eidolon_sdk.impl.tot_controller.thought import ThoughtValidity
+from eidolon_sdk.impl.tot_agent.memory import ToTDFSMemory
+from eidolon_sdk.impl.tot_agent.thought import ThoughtValidity
 
 
 class ToTController:

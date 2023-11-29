@@ -15,12 +15,12 @@ from eidolon_sdk.agent_os import AgentOS
 from eidolon_sdk.agent_program import AgentProgram
 from eidolon_sdk.cpu.agent_io import IOUnit
 from eidolon_sdk.cpu.llm_message import ToolResponseMessage
-from eidolon_sdk.impl.conversation_memory_unit import ConversationalMemoryUnit
-from eidolon_sdk.impl.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec, \
+from eidolon_sdk.impl.cpu.conversation_memory_unit import ConversationalMemoryUnit
+from eidolon_sdk.impl.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec, \
     ConversationalResponse
 from eidolon_sdk.impl.generic_agent import GenericAgent, GenericAgentSpec
-from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
-from eidolon_sdk.impl.llm.open_ai_llm_unit import OpenAIGPT
+from eidolon_sdk.impl.memory.local_symbolic_memory import LocalSymbolicMemory
+from eidolon_sdk.impl.cpu.llm import OpenAIGPT
 from eidolon_sdk.machine_model import CpuModel
 from eidolon_sdk.reference_model import Reference
 from eidolon_sdk.util.class_utils import fqn

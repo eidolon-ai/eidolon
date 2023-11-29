@@ -7,8 +7,8 @@ from eidolon_sdk.agent_memory import AgentMemory
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
-from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory
-from eidolon_sdk.impl.message_summarizer import MessageSummarizer, MessageSummarizerConfig
+from eidolon_sdk.impl.memory.local_symbolic_memory import LocalSymbolicMemory
+from eidolon_sdk.impl.cpu.message_summarizer import MessageSummarizer, MessageSummarizerConfig
 
 
 # Assuming the necessary imports and the LocalSymbolicMemory class are already defined

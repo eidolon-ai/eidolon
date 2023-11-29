@@ -13,7 +13,7 @@ from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
 from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, LLMMessage, AssistantMessage, SystemMessage
-from eidolon_sdk.impl.tot_controller.prompts import POST_AMBLE, THOUGHTS, PREAMBLE, POST_AMBLE_MULTI
+from eidolon_sdk.impl.tot_agent.prompts import POST_AMBLE, THOUGHTS, PREAMBLE, POST_AMBLE_MULTI
 from eidolon_sdk.reference_model import Specable
 
 

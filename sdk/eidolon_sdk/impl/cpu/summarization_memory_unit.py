@@ -9,7 +9,7 @@ from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.cpu.llm_unit import LLM_MAX_TOKENS, LLMUnit
 from eidolon_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
-from eidolon_sdk.impl.message_summarizer import MessageSummarizer
+from eidolon_sdk.impl.cpu.message_summarizer import MessageSummarizer
 from eidolon_sdk.reference_model import Specable, Reference
 
 

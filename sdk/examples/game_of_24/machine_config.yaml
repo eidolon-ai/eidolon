@@ -41,7 +41,7 @@ agent_programs:
       - ToT
   ToT:
     agent:
-      implementation: "eidolon_sdk.impl.tot_controller.tot_agent.TreeOfThoughtsAgent"
+      implementation: "eidolon_sdk.impl.tot_agent.tot_agent.TreeOfThoughtsAgent"
       spec:
         num_iterations: 10
         num_children: 3

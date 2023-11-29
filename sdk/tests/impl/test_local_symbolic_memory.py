@@ -1,6 +1,6 @@
 import pytest
 
-from eidolon_sdk.impl.local_symbolic_memory import LocalSymbolicMemory, _DB
+from eidolon_sdk.impl.memory.local_symbolic_memory import LocalSymbolicMemory, _DB
 
 
 @pytest.fixture

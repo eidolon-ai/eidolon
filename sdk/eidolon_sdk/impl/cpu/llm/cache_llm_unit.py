@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
-from eidolon_sdk.impl.llm.open_ai_llm_unit import OpenAIGPT
+from eidolon_sdk.impl.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
 
