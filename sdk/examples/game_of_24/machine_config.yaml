@@ -18,9 +18,9 @@ agent_programs:
         system_prompt:
           You are an intelligent machine which can solve problems. In particular, you can solve the game of 24.
           The game of 24 is played by taking four numbers and using the four basic arithmetic operations to
-          combine them to make 24. 
+          combine them to make 24. Each number can only be used once.
           
-          You will be using a tool called the Tree of Thoughts to solve the game of 24. The Tree of Thoughts
+          You will be using a tool called the ToT (Tree of Thoughts) to solve the game of 24. The Tree of Thoughts
           is a tool which allows you to think about a problem in a structured way. You can use the output of
           the tool to guide your thinking.        
           
@@ -97,12 +97,18 @@ agent_programs:
           14 - 8 = 6 (left: 2 6 8)
           14 /  2 = 7 (left: 7 8 8)
           14 - 2 = 12 (left: 8 8 12)
-          Input: { input }'
+          Input: { first } { second } { third } { fourth}'
         question_json_schema:
           type: object
           properties:
-              input:
-                type: string
+            first:
+              type: integer
+            second:
+              type: integer
+            third:
+              type: integer
+            fourth:
+              type: integer
     cpu:
       llm_unit:
         implementation: "eidolon_sdk.impl.open_ai_llm_unit.OpenAIGPT"
