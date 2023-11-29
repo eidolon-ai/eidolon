@@ -47,46 +47,63 @@ agent_programs:
         num_children: 3
         checker:
           spec:
-            prompt:
-              Evaluate if given numbers can reach 24
+            examples: |-
               10 14
               10 + 14 = 24
               VALID
+              
+              
               11 12
               11 + 12 = 23
               12 - 11 = 1
               11 * 12 = 132
               11 / 12 = 0.91
               INVALID
+              
+              
               4 4 10
               4 + 4 + 10 = 8 + 10 = 18
               4 * 10 - 4 = 40 - 4 = 36
               (10 - 4) * 4 = 6 * 4 = 24
               VALID
+              
+              
               4 9 11
               9 + 11 + 4 = 20 + 4 = 24
               VALID
+              
+              
               5 7 8
               5 + 7 + 8 = 12 + 8 = 20
               (8 - 5) * 7 = 3 * 7 = 21
               I cannot obtain 24 now, but numbers are within a reasonable range
               INTERMEDIATE
+              
+              
               5 6 6
               5 + 6 + 6 = 17
               (6 - 5) * 6 = 1 * 6 = 6
               I cannot obtain 24 now, but numbers are within a reasonable range
               INTERMEDIATE
+              
+              
               10 10 11
               10 + 10 + 11 = 31
               (11 - 10) * 10 = 10
-              10 10 10 are all too big
-              INVALID
+              I am unsure if I can obtain 24
+              INTERMEDIATE
+              
+              
               1 3 3
               1 * 3 * 3 = 9
               (1 + 3) * 3 = 12
               1 3 3 are all too small
               INVALID
-        question_prompt: '
+        question_prompt: |-
+          Evaluate if the given numbers can reach 24 using standard math operations. You may only use each number once,
+          you must use all numbers, and you may use basic math operations (+, -, *, /). Think step by step.
+          
+          <Examples>
           Input: 2 8 8 14
           Possible next steps:
           2 + 8 = 10 (left: 8 10 14)
@@ -97,7 +114,17 @@ agent_programs:
           14 - 8 = 6 (left: 2 6 8)
           14 /  2 = 7 (left: 7 8 8)
           14 - 2 = 12 (left: 8 8 12)
-          Input: { first } { second } { third } { fourth}'
+          
+          
+          Input: 9 28 1 14
+          Possible next steps:
+          9 + 28 = 37 (left: 37 1 14)
+          9 * 14 = 128 (left: 128 28 1)
+          28 - 14 = 14 (left: 9 14 1)
+          </Examples>
+          
+          
+          Input: {{ first }} {{ second }} {{ third }} {{ fourth }}
         question_json_schema:
           type: object
           properties:

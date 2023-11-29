@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Callable, Awaitable
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, LLMMessage, AssistantMessage
+from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, LLMMessage, AssistantMessage, SystemMessage
 from eidolon_sdk.impl.tot_controller.prompts import POST_AMBLE, THOUGHTS, PREAMBLE, POST_AMBLE_MULTI
 from eidolon_sdk.reference_model import Specable
 
@@ -40,7 +40,7 @@ class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
         thoughts_txt = self.env.from_string(self.spec.thoughts).render(thoughts=thoughts_tuple, n=self.spec.c)
         post_amble_txt = self.env.from_string(self.spec.post_amble).render(thoughts=thoughts_tuple, n=self.spec.c)
         return [
-            UserMessage(content=[UserMessageText(text=preamble_txt)]),
+            SystemMessage(content=preamble_txt),
             UserMessage(content=[UserMessageText(text=user_message)]),
             UserMessage(content=[UserMessageText(text=thoughts_txt)]),
             UserMessage(content=[UserMessageText(text=post_amble_txt)])
