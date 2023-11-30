@@ -112,7 +112,7 @@ class AgentProgram:
                     if e.status_code >= 500:
                         logging.exception(f"Unhandled error raised by handler")
                     else:
-                        logging.warning(f"Handler {handler.name} raised a http error", exc_info=True)
+                        logging.debug(f"Handler {handler.name} raised a http error", exc_info=True)
                 except Exception as e:
                     doc = dict(
                         process_id=process_id,

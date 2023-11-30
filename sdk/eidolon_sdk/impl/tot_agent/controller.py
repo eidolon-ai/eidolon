@@ -1,7 +1,8 @@
+import copy
 from typing import Tuple, List
 
 from eidolon_sdk.impl.tot_agent.memory import ToTDFSMemory
-from eidolon_sdk.impl.tot_agent.thought import ThoughtValidity
+from eidolon_sdk.impl.tot_agent.thought import ThoughtValidity, Thought
 
 
 class ToTController:
@@ -51,3 +52,28 @@ class ToTController:
             memory.pop(2)
 
         return [t.text for t in memory.current_path()]
+
+    def exploration_synopsis(self, memory: ToTDFSMemory) -> dict:
+        """
+        Return the remaining intermediate paths in the ToT and the number of unexplored branches per thought.
+
+        An intermediate path is remaining if it has not yet been explored to the
+        maximum depth and has INTERMEDIATE validity.
+        """
+        def recurse(path: List[Thought]) -> dict:
+            rtn = {}
+            unexplored_branch_count = self.c - len(path)
+            if unexplored_branch_count > 0:
+                rtn['UNEXPLORED_BRANCHES'] = unexplored_branch_count
+            for child in path:
+                if child.validity != "INVALID":
+                    recursed_child = recurse(child.children)
+                    if recursed_child:
+                        rtn[child.text] = recursed_child
+            return rtn
+
+        if not memory.stack:
+            return {}
+        else:
+            return {memory.stack[0].text: recurse(memory.stack[0].children)}
+

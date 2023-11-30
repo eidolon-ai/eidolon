@@ -1,7 +1,7 @@
 import copy
 import logging
 from textwrap import indent
-from typing import List, Dict, Any, Literal, Optional
+from typing import List, Dict, Any, Literal, Optional, Iterable
 
 from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
@@ -115,28 +115,15 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
                     # todo, we should give all remaining valid thoughts in this scenario rather than just the current path
                     self.logger.warning(f"Problem not solved after after {self.spec.num_iterations} iterations, but falling back to LLM anyway.")
                 # go back to llm now with the tree of thoughts and the requested output format
-                conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path)))]
+                conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text])))]
                 resp = await self.cpu_request(conversation, self.spec.output_format)
                 return TotResponse(answer=resp, thoughts=thoughts_path)
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
         if self.spec.fallback == "ERROR":
-            def remove_invalid(t: Thought) -> bool:
-                if t.validity == "INVALID":
-                    return True
-                children_to_remove = {c for c in t.children if remove_invalid(c)}
-                t.children = [c for c in t.children if c not in children_to_remove]
-                return children_to_remove and not t.children
-
-            def clean_dump(t: Thought) -> Dict[str, Any]:
-                resp = dict(text=t.text)
-                if t.children:
-                    resp['children'] = [clean_dump(c) for c in t.children]
-                return resp
-
             raise HTTPException(status_code=400, detail=dict(
                 error=f"Could not find a valid thought within {self.spec.num_iterations} iterations.",
-                remaining_thoughts=[clean_dump(t) for t in copy.deepcopy(self.tot_memory.stack) if not remove_invalid(t)],
+                remaining_thoughts=self.tot_controller.exploration_synopsis(self.tot_memory)
             ))
         else:
             raise ValueError(f"Unknown fallback type: {self.spec.fallback}")

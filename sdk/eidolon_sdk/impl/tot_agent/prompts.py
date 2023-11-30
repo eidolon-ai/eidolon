@@ -16,9 +16,9 @@ POST_AMBLE = "Let's think step by step."
 POST_AMBLE_MULTI = dedent(
     """
     {% if thoughts %}
-    Possible next {{ n }} valid thoughts based on the last valid thought:
+    Please generate {{ n }} valid thoughts based on the last valid thought
     {% else %}
-    Possible next {{ n }} valid thoughts based on the question:
+    Please generate {{ n }} valid thoughts based on the question
     {%- endif -%}
     """
 ).strip()
