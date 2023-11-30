@@ -34,7 +34,7 @@ class ToTDFSMemory:
     def store(self, node: Thought) -> None:
         """Add a node on the top of the stack."""
         if len(self.stack) > 0:
-            self.stack[-1].children.add(node)
+            self.stack[-1].children.append(node)
         self.stack.append(node)
 
     @property

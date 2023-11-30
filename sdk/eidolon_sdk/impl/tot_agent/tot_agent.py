@@ -1,3 +1,4 @@
+import copy
 import logging
 from textwrap import indent
 from typing import List, Dict, Any, Literal, Optional
@@ -13,7 +14,7 @@ from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
 from eidolon_sdk.impl.tot_agent.checker import ToTChecker
 from eidolon_sdk.impl.tot_agent.controller import ToTController
 from eidolon_sdk.impl.tot_agent.memory import ToTDFSMemory
-from eidolon_sdk.impl.tot_agent.thought import Thought
+from eidolon_sdk.impl.tot_agent.thought import Thought, ThoughtValidity
 from eidolon_sdk.impl.tot_agent.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
@@ -22,7 +23,6 @@ from eidolon_sdk.util.schema_to_model import schema_to_model
 
 class ToTAgentConfig(BaseModel):
     num_iterations: int = Field(10, description="The maximum number of iterations to run the tree of thoughts algorithm.")
-    num_children: int = Field(10, description="The maximum number of children to generate for each node in the tree of thoughts algorithm.")
     question_prompt: str = Field(description="The prompt to use when asking the user for a question.")
     question_json_schema: Dict[str, Any] = Field(description="The json schema for the question input model.")
     thought_generator: Reference[BaseThoughtGenerationStrategy] = Field(
@@ -63,7 +63,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         thought: Thought,
         level: int,
     ) -> None:
-        text = indent(f"Thought: {thought.text}\n", prefix="    " * level)
+        text = indent(f"Thought ({thought.validity}): {thought.text}", prefix="    " * level)
         self.logger.info(text)
 
     def get_input_model(self, action: str):
@@ -110,8 +110,9 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             thought = Thought(text=thought_text, validity=thought_validity.validity)
             self.tot_memory.store(thought)
             self.log_thought(thought, level)
-            if thought.validity == "FINAL" or (i == self.spec.num_iterations - 1 and self.spec.fallback == "LLM"):
-                if thought.validity != "FINAL":
+            if thought.validity == "VALID" or (i == self.spec.num_iterations - 1 and self.spec.fallback == "LLM"):
+                if thought.validity != "VALID":
+                    # todo, we should give all remaining valid thoughts in this scenario rather than just the current path
                     self.logger.warning(f"Problem not solved after after {self.spec.num_iterations} iterations, but falling back to LLM anyway.")
                 # go back to llm now with the tree of thoughts and the requested output format
                 conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path)))]
@@ -120,9 +121,22 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
         if self.spec.fallback == "ERROR":
+            def remove_invalid(t: Thought) -> bool:
+                if t.validity == "INVALID":
+                    return True
+                children_to_remove = {c for c in t.children if remove_invalid(c)}
+                t.children = [c for c in t.children if c not in children_to_remove]
+                return children_to_remove and not t.children
+
+            def clean_dump(t: Thought) -> Dict[str, Any]:
+                resp = dict(text=t.text)
+                if t.children:
+                    resp['children'] = [clean_dump(c) for c in t.children]
+                return resp
+
             raise HTTPException(status_code=400, detail=dict(
                 error=f"Could not find a valid thought within {self.spec.num_iterations} iterations.",
-                thoughts=thoughts_path,
+                remaining_thoughts=[clean_dump(t) for t in copy.deepcopy(self.tot_memory.stack) if not remove_invalid(t)],
             ))
         else:
             raise ValueError(f"Unknown fallback type: {self.spec.fallback}")

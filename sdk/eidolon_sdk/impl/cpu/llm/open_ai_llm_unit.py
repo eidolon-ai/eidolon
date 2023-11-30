@@ -13,6 +13,8 @@ from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolCall, 
 from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
 from eidolon_sdk.reference_model import Specable
 
+logger = logging.getLogger("eidolon")
+
 
 def convert_to_openai(message: LLMMessage):
     if isinstance(message, SystemMessage):
@@ -83,7 +85,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 "content": f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
             })
 
-        logging.getLogger("eidolon").debug(messages)
+        logger.debug(messages)
         tools = []
         for tool in inTools:
             tools.append(ChatCompletionToolParam(**{
@@ -104,15 +106,15 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         if len(tools) > 0:
             request["tools"] = tools
 
-        logging.getLogger("eidolon").info("executing open ai llm request", extra=request)
+        logger.info("executing open ai llm request", extra=request)
         try:
             llm_response = await self.llm.chat.completions.create(**request)
         except Exception:
-            logging.exception("error calling open ai llm")
+            logger.exception("error calling open ai llm")
             raise
         message = llm_response.choices[0].message
 
-        logging.getLogger("eidolon").info(f"open ai llm response", extra=dict(content=message.content, tool_calls=message.tool_calls))
+        logger.info(f"open ai llm response", extra=dict(content=message.content, tool_calls=message.tool_calls))
 
         tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
         try:

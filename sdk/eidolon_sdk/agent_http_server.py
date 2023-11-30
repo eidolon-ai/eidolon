@@ -45,7 +45,11 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         logger = logging.getLogger("eidolon")
         logger.info(f"Request: {request.method} {request.url}")
-        response = await call_next(request)
+        try:
+            response = await call_next(request)
+        except Exception as e:
+            logger.exception("Unhandled exception")
+            raise e
         logger.info(f"Response: {response.status_code}")
         return response
 

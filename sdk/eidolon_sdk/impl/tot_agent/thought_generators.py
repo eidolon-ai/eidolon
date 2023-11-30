@@ -21,7 +21,7 @@ class TGSConfig(BaseModel):
     preamble: str = PREAMBLE
     thoughts: str = THOUGHTS
     post_amble: str = POST_AMBLE
-    c: int = Field(3, description="The number of thoughts to generate.")
+    num_children: int = Field(3, description="The number of thoughts to generate.")
 
 
 class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
@@ -36,9 +36,9 @@ class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
 
     def build_prompt(self, user_message, thoughts_path: List[str]):
         thoughts_tuple = tuple(thoughts_path)
-        preamble_txt = self.env.from_string(self.spec.preamble).render(thoughts=thoughts_tuple, n=self.spec.c)
-        thoughts_txt = self.env.from_string(self.spec.thoughts).render(thoughts=thoughts_tuple, n=self.spec.c)
-        post_amble_txt = self.env.from_string(self.spec.post_amble).render(thoughts=thoughts_tuple, n=self.spec.c)
+        preamble_txt = self.env.from_string(self.spec.preamble).render(thoughts=thoughts_tuple, n=self.spec.num_children)
+        thoughts_txt = self.env.from_string(self.spec.thoughts).render(thoughts=thoughts_tuple, n=self.spec.num_children)
+        post_amble_txt = self.env.from_string(self.spec.post_amble).render(thoughts=thoughts_tuple, n=self.spec.num_children)
         return [
             SystemMessage(content=preamble_txt),
             UserMessage(content=[UserMessageText(text=user_message)]),

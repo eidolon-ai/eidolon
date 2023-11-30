@@ -56,7 +56,7 @@ class Agent:
         }
         self.process_context = contextvars.ContextVar('process_state', default=None)
         self.cpu_response_handler = AgentResponseHandler()
-        self.logger = logging.getLogger("eidolon_sdk")
+        self.logger = logging.getLogger("eidolon")
 
     def get_context(self) -> ProcessContext:
         return self.process_context.get()
