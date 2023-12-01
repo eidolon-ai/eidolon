@@ -1,11 +1,14 @@
+from __future__ import annotations
+
+import contextvars
 import json
-from typing import Any, Union, List, Dict, Type
+from typing import Any, List, Dict, Type
 
 from fastapi import HTTPException
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, ResponseHandler, IOUnit
+from eidolon_sdk.cpu.agent_io import ResponseHandler, IOUnit, CPUMessageTypes
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage, AssistantMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit
@@ -13,7 +16,7 @@ from eidolon_sdk.cpu.logic_unit import ToolDefType, LogicUnit
 from eidolon_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_sdk.impl.cpu.conversation_memory_unit import ConversationalMemoryUnit
-from eidolon_sdk.impl.cpu.llm import OpenAIGPT
+from eidolon_sdk.impl.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
 
@@ -31,6 +34,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
     io_unit: IOUnit
     memory_unit: MemoryUnit
     logic_units: List[LogicUnit] = None,
+    process_id: contextvars.ContextVar
 
     def __init__(
             self,
@@ -45,6 +49,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
         self.memory_unit = spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = spec.llm_unit.instantiate(**kwargs)
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in spec.logic_units]
+        self.process_id = contextvars.ContextVar('process_id', default=None)
 
     async def start(self, response_handler: ResponseHandler):
         pass
@@ -69,19 +74,18 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
 
     async def schedule_request(
             self,
-            process_id: str,
-            prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]],
-            input_data: Dict[str, Any],
-            output_format: Dict[str, Any]
+            call_context: CallContext,
+            prompts: List[CPUMessageTypes],
+            output_format: Dict[str, Any] = None,
     ):
+        output_format = output_format or dict(type="str")
         try:
-            call_context = CallContext(process_id=process_id, thread_id=None)
-            boot_messages, conversation_message = await self.io_unit.process_request(call_context, prompts, input_data)
+            boot_messages, conversation_message = await self.io_unit.process_request(call_context, prompts)
             # todo -- change to store in agent memory directly or pass in every time...
             if boot_messages:
                 await self.memory_unit.storeMessages(call_context, boot_messages)
             conversation = await self.memory_unit.storeAndFetch(call_context, [conversation_message])
-            assistant_message = await self.process_llm_requests(call_context, conversation, True, output_format)
+            assistant_message = await self._llm_execution_cycle(call_context, conversation, output_format)
             return await self.io_unit.process_response(call_context, assistant_message.content)
         except HTTPException:
             raise
@@ -94,22 +98,19 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
             self.tool_defs.update(await logic_unit.build_tools(conversation))
         return self.tool_defs
 
-    async def process_llm_requests(self, call_context: CallContext, conversation: List[LLMMessage],
-                                   should_store_tool_calls: bool, output_format: Dict[str, Any]) -> AssistantMessage:
+    async def _llm_execution_cycle(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Dict[str, Any]) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             tool_defs = await self.get_tools(conversation)
             assistant_message = await self.llm_unit.execute_llm(call_context, conversation, list(tool_defs.values()), output_format)
-            if should_store_tool_calls:
-                await self.memory_unit.storeMessages(call_context, [assistant_message])
+            await self.memory_unit.storeMessages(call_context, [assistant_message])
             if assistant_message.tool_calls:
                 results = []
                 for tool_call in assistant_message.tool_calls:
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
                     message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=json.dumps(tool_result), name=tool_call.name)
-                    if should_store_tool_calls:
-                        await self.memory_unit.storeMessages(call_context, [message])
+                    await self.memory_unit.storeMessages(call_context, [message])
                     results.append(message)
 
                 conversation = conversation + [assistant_message] + results
@@ -118,3 +119,31 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
                 return assistant_message
 
         raise ValueError(f"Exceeded maximum number of function calls {self.spec.max_num_function_calls}")
+
+    @property
+    def main_thread(self) -> Thread:
+        return Thread(CallContext(process_id=self.process_id.get()), self)
+
+    @property
+    def new_thread(self) -> Thread:
+        return Thread(CallContext(process_id=self.process_id.get()).derive_call_context(), self)
+
+
+class Thread:
+    _call_context: CallContext
+    _cpu: AgentCPU
+
+    def __init__(self, call_context: CallContext, cpu: AgentCPU):
+        self._call_context = call_context
+        self._cpu = cpu
+
+    async def schedule_request(self, *args, **kwargs):
+        return await self._cpu.schedule_request(self._call_context, *args, **kwargs)
+
+    async def clone(self) -> Thread:
+        new_context = self._call_context.derive_call_context()
+        messages = await self._cpu.memory_unit.getConversationHistory(self._call_context)
+        for m in messages:
+            m['thread_id'] = new_context.thread_id
+        await self._cpu.memory_unit.storeMessages(new_context, messages)
+        return Thread(call_context=new_context, cpu=self._cpu)

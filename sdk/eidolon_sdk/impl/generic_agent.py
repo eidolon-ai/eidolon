@@ -1,3 +1,4 @@
+from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
 
 from eidolon_sdk.agent import Agent, initializer, register_action, AgentState
@@ -28,15 +29,16 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
     async def question(self, **kwargs) -> AgentState[LlmResponse]:
         schema = LlmResponse.model_json_schema()
         schema['type'] = 'object'
-        response = await self.cpu_request(
-            [SystemCPUMessage(prompt=self.spec.system_prompt), UserTextCPUMessage(prompt=self.spec.question_prompt)],
-            kwargs,
-            schema
-        )
+
+        env = Environment(undefined=StrictUndefined)
+        response = await self.cpu_request([
+            SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**kwargs))),
+            UserTextCPUMessage(prompt=(env.from_string(self.spec.question_prompt).render(**kwargs)))
+        ], schema)
         response = LlmResponse(**response)
         return AgentState(name='idle', data=response)
 
     @register_action('idle')
     async def respond(self, statement: str) -> AgentState[LlmResponse]:
-        response = await self.cpu_request([UserTextCPUMessage(prompt=statement)], {}, LlmResponse.model_json_schema())
+        response = await self.cpu_request([UserTextCPUMessage(prompt=statement)], LlmResponse.model_json_schema())
         return AgentState(name='idle', data=response)

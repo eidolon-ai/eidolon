@@ -1,7 +1,6 @@
-import copy
 import logging
 from textwrap import indent
-from typing import List, Dict, Any, Literal, Optional, Iterable
+from typing import List, Dict, Any, Literal, Optional
 
 from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
@@ -14,7 +13,7 @@ from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
 from eidolon_sdk.impl.tot_agent.checker import ToTChecker
 from eidolon_sdk.impl.tot_agent.controller import ToTController
 from eidolon_sdk.impl.tot_agent.memory import ToTDFSMemory
-from eidolon_sdk.impl.tot_agent.thought import Thought, ThoughtValidity
+from eidolon_sdk.impl.tot_agent.thought import Thought
 from eidolon_sdk.impl.tot_agent.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_sdk.reference_model import Specable, Reference
 from eidolon_sdk.util.class_utils import fqn
@@ -97,33 +96,35 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         question = Environment(undefined=StrictUndefined).from_string(self.spec.question_prompt).render(**kwargs)
 
         async def exec_request(_messages: List[LLMMessage], _output_format: Dict[str, Any]) -> AssistantMessage:
-            # todo, this should perhaps use schedule request interface
-            return await self.cpu.process_llm_requests(new_context, _messages, False, _output_format)
+            return await self.cpu.new_thread.schedule_request(_messages, _output_format)
 
         for i in range(self.spec.num_iterations):
             thought_text = await self.thought_generator.next_thought(question, exec_request, thoughts_path)
             thought_validity = await self.checker.evaluate(
-                context=new_context,
                 problem_description=question,
                 thoughts=thoughts_path + [thought_text]
             )
             thought = Thought(text=thought_text, validity=thought_validity.validity)
             self.tot_memory.store(thought)
             self.log_thought(thought, level)
-            if thought.validity == "VALID" or (i == self.spec.num_iterations - 1 and self.spec.fallback == "LLM"):
-                if thought.validity != "VALID":
-                    # todo, we should give all remaining valid thoughts in this scenario rather than just the current path
-                    self.logger.warning(f"Problem not solved after after {self.spec.num_iterations} iterations, but falling back to LLM anyway.")
+            if thought.validity == "VALID":
                 # go back to llm now with the tree of thoughts and the requested output format
                 conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text])))]
                 resp = await self.cpu_request(conversation, self.spec.output_format)
                 return TotResponse(answer=resp, thoughts=thoughts_path)
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
+        synopsis = self.tot_controller.exploration_synopsis(self.tot_memory)
         if self.spec.fallback == "ERROR":
             raise HTTPException(status_code=400, detail=dict(
                 error=f"Could not find a valid thought within {self.spec.num_iterations} iterations.",
-                remaining_thoughts=self.tot_controller.exploration_synopsis(self.tot_memory)
+                remaining_thoughts=synopsis
             ))
+        elif self.spec.fallback == "LLM":
+            conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(
+                prompt="You have had some helpful thoughts on the question. Please use them to provide an answer\n\n" + str(synopsis)
+            )]
+            resp = await self.cpu_request(conversation, self.spec.output_format)
+            return TotResponse(answer=resp, thoughts=thoughts_path)
         else:
             raise ValueError(f"Unknown fallback type: {self.spec.fallback}")

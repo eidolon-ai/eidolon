@@ -12,8 +12,8 @@ from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
 from .agent_memory import AgentMemory
-from .cpu.agent_cpu import AgentCPU, ResponseHandler
-from .cpu.agent_io import UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage
+from .cpu.agent_cpu import AgentCPU, ResponseHandler, Thread
+from .cpu.call_context import CallContext
 
 
 class ProcessContext(BaseModel):
@@ -81,17 +81,8 @@ class Agent:
     def get_response_model(self, action: str):
         return typing.get_type_hints(self.action_handlers[action].fn, include_extras=True).get('return', typing.Any)
 
-    async def cpu_request(
-            self,
-            prompts: List[typing.Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]],
-            input_data: Dict[str, typing.Any] = None,
-            output_format: Dict[str, typing.Any] = None,
-    ):
-        return await self.cpu.schedule_request(
-            self.get_context().process_id, prompts,
-            input_data or {},
-            output_format or dict(type="str")
-        )
+    async def cpu_request(self, *args, **kwargs):
+        return await self.cpu.main_thread.schedule_request(*args, **kwargs)
 
 
 class CodeAgent(Agent):

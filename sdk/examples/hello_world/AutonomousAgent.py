@@ -18,6 +18,5 @@ class AutonomousAgent(CodeAgent):
     @initializer
     @register_action('idle')
     async def converse(self, question: Annotated[str, Field(description="A question")]) -> AgentState[IdleStateRepresentation]:
-        response = await self.cpu_request([UserTextCPUMessage(prompt=question)], {}, IdleStateRepresentation.model_json_schema())
-        print("response: ", response)
+        response = await self.cpu_request([UserTextCPUMessage(prompt=question)], IdleStateRepresentation.model_json_schema())
         return AgentState(name="idle", data=IdleStateRepresentation(**response))

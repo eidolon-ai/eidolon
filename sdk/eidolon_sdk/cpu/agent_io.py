@@ -1,13 +1,13 @@
-from abc import abstractmethod, ABC
-from typing import List, Union, Any, Dict
+from __future__ import annotations
 
-from jinja2 import Environment, StrictUndefined
+from abc import abstractmethod, ABC
+from typing import List, Any, Dict, Literal
+
 from pydantic import BaseModel, validate_call
 
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import UserMessageText, SystemMessage, UserMessageImageURL, UserMessage
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_sdk.reference_model import Specable
 
 
 class ResponseHandler(ABC):
@@ -23,45 +23,41 @@ class CPUMessage(BaseModel):
 
 
 class UserTextCPUMessage(CPUMessage):
-    type: str = "user"
+    type: Literal['user'] = "user"
 
 
 class SystemCPUMessage(CPUMessage):
-    type: str = "system"
+    type: Literal['system'] = "system"
     is_boot_prompt: str = True
 
 
 class ImageURLCPUMessage(CPUMessage):
-    type: str = "image_url"
+    type: Literal['image_url'] = "image_url"
 
 
-class IOUnitConfig(BaseModel):
-    pass
+CPUMessageTypes = UserTextCPUMessage | SystemCPUMessage | ImageURLCPUMessage
 
 
-class IOUnit(ProcessingUnit, Specable[IOUnitConfig]):
-    env = Environment(undefined=StrictUndefined)
-
+class IOUnit(ProcessingUnit):
     @validate_call
-    async def process_request(self, call_context: CallContext, prompts: List[Union[UserTextCPUMessage, ImageURLCPUMessage, SystemCPUMessage]], input_data: Dict[str, Any]):
+    async def process_request(self, prompts: List[CPUMessageTypes]):
         # convert the prompts to a list of strings
         boot_event_prompts = []
         boot_user_message_parts = []
         conv_user_message_parts = []
         for prompt in prompts:
-            converted_prompt = self.env.from_string(prompt.prompt).render(**input_data)
             if prompt.type == "user":
                 if prompt.is_boot_prompt:
-                    boot_user_message_parts.append(UserMessageText(text=converted_prompt))
+                    boot_user_message_parts.append(UserMessageText(text=prompt))
                 else:
-                    conv_user_message_parts.append(UserMessageText(text=converted_prompt))
+                    conv_user_message_parts.append(UserMessageText(text=prompt))
             elif prompt.type == "system":
-                boot_event_prompts.append(SystemMessage(content=converted_prompt))
+                boot_event_prompts.append(SystemMessage(content=prompt))
             elif prompt.type == "image_url":
                 if prompt.is_boot_prompt:
-                    boot_user_message_parts.append(UserMessageImageURL(image_url=converted_prompt))
+                    boot_user_message_parts.append(UserMessageImageURL(image_url=prompt))
                 else:
-                    conv_user_message_parts.append(UserMessageImageURL(image_url=converted_prompt))
+                    conv_user_message_parts.append(UserMessageImageURL(image_url=prompt))
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
 

@@ -127,6 +127,7 @@ class AgentProgram:
                 return doc
 
             self.agent.process_context.set(ProcessContext(process_id=process_id, callback_url=callback))
+            self.agent.cpu.process_id.set(process_id)
             if execution_mode == 'sync':
                 state = await run_and_store_response()
                 return self.doc_to_response(state)

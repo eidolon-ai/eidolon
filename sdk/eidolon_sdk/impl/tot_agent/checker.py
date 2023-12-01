@@ -34,7 +34,6 @@ class ToTChecker(Specable[TotCheckerConfig]):
 
     async def evaluate(
         self,
-        context: CallContext,
         problem_description: str,
         thoughts: List[str] = Field(default_factory=list),
     ) -> ThoughtValidity:
@@ -46,10 +45,8 @@ class ToTChecker(Specable[TotCheckerConfig]):
             problem=problem_description, thoughts=thoughts, examples=self.spec.examples
         )
 
-        resp = await self.cpu.process_llm_requests(
-            context,
+        resp = await self.cpu.new_thread.schedule_request(
             [UserMessage(content=[UserMessageText(text=checker_prompt)])],
-            False,
             ThoughtValidity.model_json_schema()
         )
 
