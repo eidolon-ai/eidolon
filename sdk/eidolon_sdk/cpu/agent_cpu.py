@@ -77,10 +77,10 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
             call_context: CallContext,
             prompts: List[CPUMessageTypes],
             output_format: Dict[str, Any] = None,
-    ):
+    ) -> Dict[str, Any]:
         output_format = output_format or dict(type="str")
         try:
-            boot_messages, conversation_message = await self.io_unit.process_request(call_context, prompts)
+            boot_messages, conversation_message = await self.io_unit.process_request(prompts)
             # todo -- change to store in agent memory directly or pass in every time...
             if boot_messages:
                 await self.memory_unit.storeMessages(call_context, boot_messages)
@@ -137,8 +137,8 @@ class Thread:
         self._call_context = call_context
         self._cpu = cpu
 
-    async def schedule_request(self, *args, **kwargs):
-        return await self._cpu.schedule_request(self._call_context, *args, **kwargs)
+    async def schedule_request(self, prompts: List[CPUMessageTypes], output_format: Dict[str, Any] = None) -> Dict[str, Any]:
+        return await self._cpu.schedule_request(self._call_context, prompts, output_format)
 
     async def clone(self) -> Thread:
         new_context = self._call_context.derive_call_context()

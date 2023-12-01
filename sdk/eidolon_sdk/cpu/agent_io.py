@@ -48,16 +48,16 @@ class IOUnit(ProcessingUnit):
         for prompt in prompts:
             if prompt.type == "user":
                 if prompt.is_boot_prompt:
-                    boot_user_message_parts.append(UserMessageText(text=prompt))
+                    boot_user_message_parts.append(UserMessageText(text=prompt.prompt))
                 else:
-                    conv_user_message_parts.append(UserMessageText(text=prompt))
+                    conv_user_message_parts.append(UserMessageText(text=prompt.prompt))
             elif prompt.type == "system":
-                boot_event_prompts.append(SystemMessage(content=prompt))
+                boot_event_prompts.append(SystemMessage(content=prompt.prompt))
             elif prompt.type == "image_url":
                 if prompt.is_boot_prompt:
-                    boot_user_message_parts.append(UserMessageImageURL(image_url=prompt))
+                    boot_user_message_parts.append(UserMessageImageURL(image_url=prompt.prompt))
                 else:
-                    conv_user_message_parts.append(UserMessageImageURL(image_url=prompt))
+                    conv_user_message_parts.append(UserMessageImageURL(image_url=prompt.prompt))
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
 

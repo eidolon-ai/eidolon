@@ -13,6 +13,7 @@ from pydantic.fields import FieldInfo
 
 from .agent_memory import AgentMemory
 from .cpu.agent_cpu import AgentCPU, ResponseHandler, Thread
+from .cpu.agent_io import CPUMessageTypes
 from .cpu.call_context import CallContext
 
 
@@ -81,8 +82,8 @@ class Agent:
     def get_response_model(self, action: str):
         return typing.get_type_hints(self.action_handlers[action].fn, include_extras=True).get('return', typing.Any)
 
-    async def cpu_request(self, *args, **kwargs):
-        return await self.cpu.main_thread.schedule_request(*args, **kwargs)
+    async def cpu_request(self, prompts: List[CPUMessageTypes], output_format: Dict[str, typing.Any] = None) -> Dict[str, typing.Any]:
+        return await self.cpu.main_thread.schedule_request(prompts, output_format)
 
 
 class CodeAgent(Agent):

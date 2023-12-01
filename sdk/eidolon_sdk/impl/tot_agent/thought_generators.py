@@ -12,7 +12,8 @@ from typing import Any, Dict, List, Callable, Awaitable
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, LLMMessage, AssistantMessage, SystemMessage
+from eidolon_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage, CPUMessageTypes
+from eidolon_sdk.cpu.llm_message import UserMessageText, UserMessage, LLMMessage, AssistantMessage
 from eidolon_sdk.impl.tot_agent.prompts import POST_AMBLE, THOUGHTS, PREAMBLE, POST_AMBLE_MULTI
 from eidolon_sdk.reference_model import Specable
 
@@ -34,23 +35,23 @@ class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
     def __init__(self, spec):
         self.spec = spec
 
-    def build_prompt(self, user_message, thoughts_path: List[str]):
+    def build_prompt(self, user_message, thoughts_path: List[str]) -> List[CPUMessageTypes]:
         thoughts_tuple = tuple(thoughts_path)
         preamble_txt = self.env.from_string(self.spec.preamble).render(thoughts=thoughts_tuple, n=self.spec.num_children)
         thoughts_txt = self.env.from_string(self.spec.thoughts).render(thoughts=thoughts_tuple, n=self.spec.num_children)
         post_amble_txt = self.env.from_string(self.spec.post_amble).render(thoughts=thoughts_tuple, n=self.spec.num_children)
         return [
-            SystemMessage(content=preamble_txt),
-            UserMessage(content=[UserMessageText(text=user_message)]),
-            UserMessage(content=[UserMessageText(text=thoughts_txt)]),
-            UserMessage(content=[UserMessageText(text=post_amble_txt)])
+            SystemCPUMessage(prompt=preamble_txt),
+            UserTextCPUMessage(prompt=user_message),
+            UserTextCPUMessage(prompt=thoughts_txt),
+            UserTextCPUMessage(prompt=post_amble_txt)
         ]
 
     @abstractmethod
     async def next_thought(
         self,
         user_message: str,
-        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[str]],
+        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
         thoughts_path: List[str] = Field(default_factory=list),
     ) -> str:
         """
@@ -75,12 +76,12 @@ class SampleCoTStrategy(BaseThoughtGenerationStrategy):
     async def next_thought(
         self,
         user_message: UserMessage,
-        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[AssistantMessage]],
+        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
         thoughts_path: List[str] = Field(default_factory=list),
     ) -> str:
         messages = self.build_prompt(user_message, thoughts_path)
         next_thought = await llm_call(messages, SampleCoTStrategyOutput.model_json_schema())
-        return next_thought.content["thought"]
+        return next_thought["thought"]
 
 
 class ProposeOutputFormat(BaseModel):
@@ -108,12 +109,12 @@ class ProposePromptStrategy(BaseThoughtGenerationStrategy, Specable[ProposePromp
     async def next_thought(
         self,
         user_message: UserMessage,
-        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[AssistantMessage]],
+        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
         thoughts_path: List[str] = Field(default_factory=list)
     ) -> str:
         thoughts_tuple = tuple(thoughts_path)
         if thoughts_tuple not in self.tot_memory or not self.tot_memory[thoughts_tuple]:
             messages = self.build_prompt(user_message, thoughts_path)
             next_thought_msg = await llm_call(messages, ProposeOutputFormat.model_json_schema())
-            self.tot_memory[thoughts_tuple] = next_thought_msg.content["thoughts"]
+            self.tot_memory[thoughts_tuple] = next_thought_msg["thoughts"]
         return self.tot_memory[thoughts_tuple].pop()

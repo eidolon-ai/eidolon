@@ -22,7 +22,7 @@ class ConversationalSpec(BaseModel):
     agents: List[str]
 
 
-class   ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
+class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
     _openapi_json: Optional[dict] = None
 
     def __init__(self, spec: ConversationalSpec, **kwargs):

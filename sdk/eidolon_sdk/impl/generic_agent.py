@@ -31,10 +31,13 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         schema['type'] = 'object'
 
         env = Environment(undefined=StrictUndefined)
-        response = await self.cpu_request([
-            SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**kwargs))),
-            UserTextCPUMessage(prompt=(env.from_string(self.spec.question_prompt).render(**kwargs)))
-        ], schema)
+        response = await self.cpu_request(
+            prompts=[
+                SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**kwargs))),
+                UserTextCPUMessage(prompt=(env.from_string(self.spec.question_prompt).render(**kwargs))),
+            ],
+            output_format=schema
+        )
         response = LlmResponse(**response)
         return AgentState(name='idle', data=response)
 
