@@ -16,6 +16,12 @@ agent_programs:
       implementation: "eidolon_sdk.impl.tot_agent.tot_agent.TreeOfThoughtsAgent"
       spec:
         fallback: LLM
+        question_prompt: "{{question}}"
+        question_json_schema:
+          type: object
+          properties:
+            question:
+              type: string
 
 #  todo, back generic agent cpu by tree of thoughts
   ExampleGeneric:
