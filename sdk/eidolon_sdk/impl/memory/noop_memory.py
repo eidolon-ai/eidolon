@@ -1,8 +1,8 @@
-from typing import Any, Optional
+from typing import Any, Optional, List, Dict
 
-import numpy as np
-
-from eidolon_sdk.agent_memory import FileMemory, SimilarityMemory, SymbolicMemory
+from eidolon_sdk.agent_memory import FileMemory, SymbolicMemory
+from eidolon_sdk.vector_store.document import EmbeddedDocument
+from eidolon_sdk.vector_store.vector_store import VectorStore, QueryItem
 
 
 class NoopFileMemory(FileMemory):
@@ -16,6 +16,9 @@ class NoopFileMemory(FileMemory):
         pass
 
     async def write_file(self, file_path: str, file_contents: bytes) -> None:
+        pass
+
+    def delete_file(self, file_path: str) -> None:
         pass
 
     def mkdir(self, directory: str, exist_ok: bool = False):
@@ -57,15 +60,18 @@ class NoopSymbolicMemory(SymbolicMemory):
         pass
 
 
-class NoopSimilarityMemory(SimilarityMemory):
+class NoopVectorStore(VectorStore):
     def start(self):
         pass
 
     def stop(self):
         pass
 
-    async def query(self, query: np.array) -> list[dict[str, Any]]:
+    async def add(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
         pass
 
-    async def insert(self,  embedding: np.array) -> None:
+    async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
+        pass
+
+    async def query(self, collection: str, query: List[float], num_results: int, metadata_where: Dict[str, str]) -> List[QueryItem]:
         pass

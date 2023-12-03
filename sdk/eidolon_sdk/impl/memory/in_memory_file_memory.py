@@ -76,6 +76,14 @@ class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
         # Write the contents to the file
         self.files[safe_file_path] = file_contents
 
+    def delete_file(self, file_path: str) -> None:
+
+        # Resolve the safe path
+        safe_file_path = self.resolve(file_path)
+
+        # Delete the file
+        del self.files[safe_file_path]
+
     def mkdir(self, directory: str, exist_ok: bool = False):
         safe_file_path = self.resolve(directory)
         self.files[safe_file_path] = {}

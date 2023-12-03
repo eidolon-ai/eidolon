@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterable, AsyncIterable
+from typing import Any, Optional, Iterable, AsyncIterable, List, Dict
 
-import numpy as np
+from pydantic import BaseModel, Field
+
+from eidolon_sdk.reference_model import Specable, Reference
+from eidolon_sdk.vector_store.document import Document
+from eidolon_sdk.vector_store.embeddings import Embedding
+from eidolon_sdk.vector_store.vector_store import VectorStore
 
 
 # todo, memory contracts all need to be async
@@ -52,6 +57,17 @@ class FileMemory(ABC):
 
         :param file_path: The path to the file where the contents should be written.
         :param file_contents: The contents to write to the file.
+        """
+        pass
+
+    @abstractmethod
+    def delete_file(self, file_path: str) -> None:
+        """
+            Deletes the file specified by `file_path` within the context of an agent call.
+            This method ensures that the file is deleted in the appropriate location and
+            manner as dictated by the call context.
+
+        :param file_path: The path to the file to be deleted.
         """
         pass
 
@@ -185,30 +201,58 @@ class SymbolicMemory(ABC):
         pass
 
 
-class SimilarityMemory(ABC):
-    @abstractmethod
-    def start(self):
-        pass
+class VectorMemorySpec(BaseModel):
+    root_document_directory: str = Field(default="/vector_memory", description="The root directory where the vector memory will store documents.")
+    vector_store: Reference[VectorStore] = Field(description="The vector store to use for storing and querying documents.")
 
-    @abstractmethod
+
+class VectorMemory(Specable[VectorMemorySpec]):
+    def __init__(self, agent_memory: "AgentMemory", spec: VectorMemorySpec):
+        self.spec = spec
+        self.file_memory = agent_memory.file_memory
+        self.vector_store = spec.vector_store.instantiate()
+
+    def start(self):
+        self.file_memory.mkdir(self.spec.root_document_directory, exist_ok=True)
+
     def stop(self):
         pass
 
-    @abstractmethod
-    async def query(self, query: np.array) -> list[dict[str, Any]]:
-        pass
+    async def add(self, collection: str, docs: List[Document], embedder: Embedding):
+        self.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
+        embeddedDocs = embedder.embed(docs)
+        self.vector_store.add(collection, embeddedDocs)
+        for doc in docs:
+            self.file_memory.write_file(self.spec.root_document_directory + "/" + collection + "/" + doc.id, doc.page_content.encode())
 
     @abstractmethod
-    async def insert(self, embedding: np.array) -> None:
-        pass
+    async def delete(self,
+                     collection: str,
+                     doc_ids: List[str], **delete_kwargs: Any):
+        self.vector_store.delete(collection, doc_ids)
+        for doc_id in doc_ids:
+            self.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
+
+    @abstractmethod
+    async def query(self,
+                    collection: str,
+                    query: List[float],
+                    num_results: int,
+                    metadata_where: Dict[str, str]) -> List[Document]:
+        results = self.vector_store.query(collection, query, num_results, metadata_where)
+        returnDocuments = []
+        for result in results:
+            returnDocuments.append(Document(id=result.id, page_content=self.file_memory.read_file(self.spec.root_document_directory + "/" +
+                                                                                                  collection + "/" + result.id).decode()))
+        return returnDocuments
 
 
 class AgentMemory:
     file_memory: FileMemory
     symbolic_memory: SymbolicMemory
-    similarity_memory: SimilarityMemory
+    similarity_memory: VectorMemory
 
-    def __init__(self, file_memory: FileMemory = None, symbolic_memory: SymbolicMemory = None, similarity_memory: SimilarityMemory = None):
+    def __init__(self, file_memory: FileMemory = None, symbolic_memory: SymbolicMemory = None, similarity_memory: VectorMemory = None):
         self.file_memory = file_memory
         self.symbolic_memory = symbolic_memory
         self.similarity_memory = similarity_memory

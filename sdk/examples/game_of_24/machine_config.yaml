@@ -8,7 +8,9 @@ agent_memory:
     spec:
       mongo_database_name: "eidolon"
   similarity_memory:
-    implementation: "eidolon_sdk.impl.memory.noop_memory.NoopSimilarityMemory"
+    spec:
+      vector_store:
+        implementation: "eidolon_sdk.impl.memory.noop_memory.NoopVectorStore"
 
 agent_programs:
   GO24:

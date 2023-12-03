@@ -96,6 +96,13 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         with open(safe_file_path, 'wb') as file:
             file.write(file_contents)
 
+    def delete_file(self, file_path: str) -> None:
+        # Resolve the safe path
+        safe_file_path = self.resolve(file_path)
+
+        # Delete the file
+        safe_file_path.unlink()
+
     def mkdir(self, directory: str, exist_ok: bool = False):
         """
         Creates a directory at the specified path relative to the root directory.
