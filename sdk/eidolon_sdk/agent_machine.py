@@ -22,7 +22,10 @@ class AgentMachine:
     def from_yaml(machine_yaml):
         try:
             model = MachineModel(**(yaml.safe_load(machine_yaml)))
-            memory = AgentMemory(**{k: v.instantiate() for k, v in model.agent_memory.__dict__.items()})
+            file_memory = model.agent_memory.file_memory.instantiate()
+            symbolic_memory = model.agent_memory.symbolic_memory.instantiate()
+            vector_memory = model.agent_memory.similarity_memory.instantiate(file_memory)
+            memory = AgentMemory(file_memory=file_memory, symbolic_memory=symbolic_memory, similarity_memory=vector_memory)
             machine = AgentMachine(agent_memory=memory, agent_programs=[])
 
             machine.agent_programs = [

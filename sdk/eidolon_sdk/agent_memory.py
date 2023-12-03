@@ -202,14 +202,14 @@ class SymbolicMemory(ABC):
 
 
 class VectorMemorySpec(BaseModel):
-    root_document_directory: str = Field(default="/vector_memory", description="The root directory where the vector memory will store documents.")
-    vector_store: Reference[VectorStore] = Field(description="The vector store to use for storing and querying documents.")
+    root_document_directory: str = Field(default="vector_memory", description="The root directory where the vector memory will store documents.")
+    vector_store: Reference[VectorStore] = Reference(implementation="eidolon_sdk.impl.memory.noop_memory.NoopVectorStore", description="The vector store to use for storing and querying documents.")
 
 
 class VectorMemory(Specable[VectorMemorySpec]):
-    def __init__(self, agent_memory: "AgentMemory", spec: VectorMemorySpec):
+    def __init__(self, file_memory: FileMemory, spec: VectorMemorySpec):
         self.spec = spec
-        self.file_memory = agent_memory.file_memory
+        self.file_memory = file_memory
         self.vector_store = spec.vector_store.instantiate()
 
     def start(self):
