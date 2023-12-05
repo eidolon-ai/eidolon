@@ -6,7 +6,7 @@ import yaml
 
 from .agent_controller import AgentController
 from .agent_memory import AgentMemory
-from .resourece_models import AgentResource, MachineResource
+from .resource_models import MachineResource, resources
 from .util.logger import logger
 
 
@@ -41,22 +41,26 @@ class AgentMachine:
         programs = {}
         for file in os.listdir(read_dir):
             file_loc = os.path.join(read_dir, file)
-            with open(file_loc) as stream:
-                resource_yaml = yaml.safe_load(stream)
+            with open(file_loc) as resource_yaml:
+                resource_object = yaml.safe_load(resource_yaml)
+                kind = resource_object.get('kind')
+                resource_model = resources.get(kind)
+                if not resource_model:
+                    raise ValueError(f'Unsupported kind "{kind}" not in resource list {resources.keys()}')
                 try:
-                    if resource_yaml.get('type') == 'eidolon/machine':
-                        machine = MachineResource.model_validate(resource_yaml)
+                    resource = resource_model.model_validate(resource_object)
+                    if isinstance(resource, MachineResource):
+                        machine = resource
                     else:
-                        program = AgentResource.model_validate(resource_yaml)
-                        if program.metadata.name in programs:
-                            logger.warning(f"Overwriting existing program {program.metadata.name}")
-                        programs[program.metadata.name] = program
+                        if resource.metadata.name in programs:
+                            logger.warning(f"Overwriting existing program {resource.metadata.name}")
+                        programs[resource.metadata.name] = resource
                 except Exception as e:
                     raise ValueError(f"Error parsing {file_loc}") from e
 
         if not machine:
             raise FileNotFoundError(f"Could not find Machine Resource in {read_dir}")
-        memory = machine.spec.to_agent_memory()
+        memory = machine.spec.get_agent_memory()
         return AgentMachine(
             agent_memory=memory,
             agent_programs=[AgentController(p.metadata.name, p.instantiate(memory=memory)) for p in programs.values()]

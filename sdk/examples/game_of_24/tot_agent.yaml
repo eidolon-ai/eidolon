@@ -1,9 +1,9 @@
-type: eidolon/agent
+apiVersion: eidolon/v1
+kind: TreeOfThoughtsAgent
 
 metadata:
   name: TOT
 
-implementation: "eidolon_sdk.impl.tot_agent.tot_agent.TreeOfThoughtsAgent"
 spec:
   cpu:
     llm_unit:

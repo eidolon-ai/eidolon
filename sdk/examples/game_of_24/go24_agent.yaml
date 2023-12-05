@@ -1,11 +1,10 @@
-type: "eidolon/agent"
-
+apiVersion: eidolon/v1
+kind: GenericAgent
 metadata:
   name: GO24
 
-implementation: "eidolon_sdk.impl.generic_agent.GenericAgent"  # make reference mapping based on type: eidolon/generic_agent
 spec:
-  resources: ['ToT']  # todo agent_refs
+  agent_refs: ['ToT']
   system_prompt:
     You are an intelligent machine which can solve problems. In particular, you can solve the game of 24.
     The game of 24 is played by taking four numbers and using the four basic arithmetic operations to

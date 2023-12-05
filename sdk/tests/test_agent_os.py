@@ -21,7 +21,7 @@ from eidolon_sdk.impl.cpu.conversational_logic_unit import ConversationalLogicUn
 from eidolon_sdk.impl.generic_agent import GenericAgent, GenericAgentSpec
 from eidolon_sdk.impl.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_sdk.impl.cpu.llm import OpenAIGPT
-from eidolon_sdk.resourece_models import CpuModel
+from eidolon_sdk.resource_models import CpuModel
 from eidolon_sdk.reference_model import Reference
 from eidolon_sdk.util.class_utils import fqn
 

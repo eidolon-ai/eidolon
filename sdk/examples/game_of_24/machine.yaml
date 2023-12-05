@@ -1,4 +1,5 @@
-type: eidolon/machine
+apiVersion: eidolon/v1
+kind: Machine
 spec:
   file_memory:
     implementation: "eidolon_sdk.impl.memory.local_file_memory.LocalFileMemory"

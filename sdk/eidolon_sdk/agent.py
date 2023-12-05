@@ -25,7 +25,7 @@ class ProcessContext(BaseModel):
 
 class AgentSpec(BaseModel):
     cpu: Reference[AgentCPU] = Reference(implementation=fqn(AgentCPU))
-    resources: List[str] = []
+    agent_refs: List[str] = []
 
 
 class Agent(Specable[AgentSpec]):
@@ -38,11 +38,11 @@ class Agent(Specable[AgentSpec]):
         super().__init__(spec)
         self.agent_memory = memory
         self.cpu = self.spec.cpu.instantiate(agent_memory=self.agent_memory)
-        if self.spec.resources:
+        if self.spec.agent_refs:
             self.cpu.logic_units.append(ConversationalLogicUnit(
                 agent_memory=memory,
                 processing_unit_locator=self,
-                spec=ConversationalSpec(agents=self.spec.resources)
+                spec=ConversationalSpec(agents=self.spec.agent_refs)
             ))
 
         self.action_handlers = {
