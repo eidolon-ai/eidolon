@@ -1,0 +1,14 @@
+apiVersion: eidolon/v1
+kind: TreeOfThoughtsAgent
+
+metadata:
+  name: TreeOfThoughts
+
+spec:
+  fallback: LLM
+  question_prompt: "{{question}}"
+  question_json_schema:
+    type: object
+    properties:
+      question:
+        type: string

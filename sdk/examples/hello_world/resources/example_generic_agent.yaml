@@ -1,9 +1,11 @@
-type: eidolon/agent
+apiVersion: eidolon/v1
+kind: GenericAgent
+
 metadata:
   name: ExampleGeneric
-implementation: eidolon_sdk.impl.generic_agent.GenericAgent
-contacts: ["StateMachine", "ExampleAgentProgram", "TreeOfThoughts"]
+
 spec:
+  ref_agents: ["StateMachine", "HelloWorld", "TreeOfThoughts"]
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
   question_prompt: "{{instruction}}"
   question_json_schema:

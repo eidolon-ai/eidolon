@@ -2,7 +2,7 @@ import logging
 import os
 from contextlib import contextmanager
 from itertools import groupby
-from typing import List, Dict, Type
+from typing import List, Dict
 
 import yaml
 

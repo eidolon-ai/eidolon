@@ -1,0 +1,6 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: HelloWorld
+
+implementation: "examples.hello_world.HelloWorld.HelloWorld"

@@ -1,0 +1,6 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: StateMachine
+
+implementation: "examples.hello_world.StateMachine.StateMachine"
