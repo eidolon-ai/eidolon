@@ -58,7 +58,7 @@ class AgentMachine:
         cpus = {
             r.metadata.name: _error_wrapped_fn(r, source_map, lambda: r.promote(CPUResource))
             for r in grouped_resources.pop(CPUResource.kind_literal())
-        }
+        } if CPUResource.kind_literal() in grouped_resources else {}
 
         agents = {}
         for kind, agent in ((k, a) for k, xs in grouped_resources.items() for a in xs):

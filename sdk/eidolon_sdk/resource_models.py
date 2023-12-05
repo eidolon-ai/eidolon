@@ -26,6 +26,7 @@ class Resource(BaseModel, extra=Extra.allow):
     apiVersion: Literal["eidolon/v1"]
     kind: str
     metadata: Metadata = Metadata(name='DEFAULT')
+    spec: dict = {}
 
     @classmethod
     def kind_literal(cls) -> Optional[str]:
