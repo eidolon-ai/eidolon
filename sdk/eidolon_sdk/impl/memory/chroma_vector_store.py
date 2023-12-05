@@ -7,6 +7,7 @@ from chromadb import Include, QueryResult
 from chromadb.api.models.Collection import Collection
 from pydantic import BaseModel, Field, field_validator
 
+from eidolon_sdk.vector_store.document import EmbeddedDocument
 from eidolon_sdk.vector_store.vector_store import QueryItem, VectorStore
 from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.util.str_utils import replace_env_var_in_string
@@ -37,7 +38,7 @@ class ChromaVectorStoreConfig(BaseModel):
             if not path.is_absolute():
                 raise ValueError(f"The root_dir must be an absolute path. Received: {path}->{value}")
 
-            return
+            return f"file://{path.absolute()}"
         if not (url.startswith("http://") or url.startswith("https://")):
             raise ValueError("url must start with file://, http://, or https://")
 
@@ -72,18 +73,18 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
         pass
 
     def _get_collection(self, name: str) -> Collection:
-        if not self.client.heartbeat():
+        if not self.client:
             self.connect()
 
         return self.client.get_or_create_collection(name=name)
 
     async def add(self, collection: str,
-                  docs: List[(str, List[float], dict)],
+                  docs: List[EmbeddedDocument],
                   **add_kwargs: Any):
         collection = self._get_collection(name=collection)
-        doc_ids = [doc_id for doc_id, _, _ in docs]
-        embeddings = [embedding for _, embedding, _ in docs]
-        metadata = [md for _, _, md in docs]
+        doc_ids = [doc.id for doc in docs]
+        embeddings = [doc.embedding for doc in docs]
+        metadata = [doc.metadata for doc in docs]
         collection.upsert(embeddings=embeddings, ids=doc_ids, metadatas=metadata, **add_kwargs)
 
     async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):

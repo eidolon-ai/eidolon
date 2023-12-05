@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import logging
 from abc import ABC, abstractmethod
 from typing import Any, Sequence, List, Callable, Optional, Iterable
 from uuid import uuid4
@@ -10,7 +11,8 @@ from pydantic_core.core_schema import ValidationInfo
 
 from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.vector_store.document import Document
-from eidolon_sdk.vector_store.text_splitters import logger
+
+logger = logging.getLogger("eidolon")
 
 
 class BaseDocumentTransformer(ABC):

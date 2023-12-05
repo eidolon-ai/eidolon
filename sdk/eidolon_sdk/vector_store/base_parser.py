@@ -1,8 +1,9 @@
 import contextlib
 import logging
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from io import BufferedReader, BytesIO, IOBase
-from typing import Union, Optional, Iterable, Generator
+from typing import Union, Optional, Generator, Sequence
 
 from pydantic import BaseModel
 
@@ -10,7 +11,8 @@ from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.vector_store.document import Document
 
 
-class DataBlob(BaseModel):
+@dataclass
+class DataBlob:
     data: Union[bytes, IOBase, str, None]
     mimetype: Optional[str] = None
     encoding: str = "utf-8"
@@ -173,5 +175,5 @@ class BaseParser(ABC, Specable[BaseParserSpec]):
         self.logger = logging.getLogger("eidolon")
 
     @abstractmethod
-    def parse(self, blob: DataBlob) -> Iterable[Document]:
+    def parse(self, blob: DataBlob) -> Sequence[Document]:
         pass

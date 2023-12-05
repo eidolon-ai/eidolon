@@ -1,11 +1,11 @@
-from typing import Iterable
+from typing import Sequence
 
 from eidolon_sdk.vector_store.base_parser import BaseParser, DataBlob
 from eidolon_sdk.vector_store.document import Document
 
 
 class MsWordParser(BaseParser):
-    def parse(self, blob: DataBlob) -> Iterable[Document]:
+    def parse(self, blob: DataBlob) -> Sequence[Document]:
         try:
             from unstructured.partition.doc import partition_doc
             from unstructured.partition.docx import partition_docx

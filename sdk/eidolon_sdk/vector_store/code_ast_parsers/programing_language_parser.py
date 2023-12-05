@@ -1,4 +1,4 @@
-from typing import Dict, Any, Iterable, Literal
+from typing import Dict, Any, Literal, Sequence
 
 from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.vector_store.base_parser import BaseParser, DataBlob, BaseParserSpec
@@ -33,7 +33,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
         self.language = spec.language
         self.parser_threshold = spec.parser_threshold
 
-    def parse(self, blob: DataBlob) -> Iterable[Document]:
+    def parse(self, blob: DataBlob) -> Sequence[Document]:
         code = blob.as_string()
 
         language = self.language or (
@@ -46,7 +46,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "source": blob.source,
+                    "file_path": blob.path,
                 },
             )
             return
@@ -55,7 +55,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "source": blob.source,
+                    "file_path": blob.path,
                     "language": language,
                 },
             )
@@ -66,7 +66,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "source": blob.source,
+                    "file_path": blob.path,
                 },
             )
             return
@@ -75,7 +75,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=functions_classes,
                 metadata={
-                    "source": blob.source,
+                    "file_path": blob.path,
                     "content_type": "functions_classes",
                     "language": language,
                 },
@@ -83,7 +83,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
         yield Document(
             page_content=generator.simplify_code(),
             metadata={
-                "source": blob.source,
+                "file_path": blob.path,
                 "content_type": "simplified_code",
                 "language": language,
             },

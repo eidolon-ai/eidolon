@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterable, AsyncIterable, List, Dict
+from typing import Any, Optional, Iterable, AsyncIterable, List, Dict, Sequence
 
 from pydantic import BaseModel, Field
 
@@ -203,7 +203,8 @@ class SymbolicMemory(ABC):
 
 class VectorMemorySpec(BaseModel):
     root_document_directory: str = Field(default="vector_memory", description="The root directory where the vector memory will store documents.")
-    vector_store: Reference[VectorStore] = Reference(implementation="eidolon_sdk.impl.memory.noop_memory.NoopVectorStore", description="The vector store to use for storing and querying documents.")
+    vector_store: Reference[VectorStore] = Reference(implementation="eidolon_sdk.impl.memory.noop_memory.NoopVectorStore",
+                                                     description="The vector store to use for storing and querying documents.")
 
 
 class VectorMemory(Specable[VectorMemorySpec]):
@@ -218,10 +219,13 @@ class VectorMemory(Specable[VectorMemorySpec]):
     def stop(self):
         pass
 
-    async def add(self, collection: str, docs: List[Document], embedder: Embedding):
+    async def add(self, collection: str, docs: Sequence[Document], embedder: Embedding):
         self.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
-        embeddedDocs = embedder.embed(docs)
-        self.vector_store.add(collection, embeddedDocs)
+        # Asynchronously collect embedded documents
+        embeddedDocs = []
+        async for embeddedDoc in embedder.embed(docs):
+            embeddedDocs.append(embeddedDoc)
+        await self.vector_store.add(collection, embeddedDocs)
         for doc in docs:
             self.file_memory.write_file(self.spec.root_document_directory + "/" + collection + "/" + doc.id, doc.page_content.encode())
 
@@ -229,21 +233,25 @@ class VectorMemory(Specable[VectorMemorySpec]):
     async def delete(self,
                      collection: str,
                      doc_ids: List[str], **delete_kwargs: Any):
-        self.vector_store.delete(collection, doc_ids)
+        await self.vector_store.delete(collection, doc_ids)
         for doc_id in doc_ids:
             self.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
 
     @abstractmethod
     async def query(self,
                     collection: str,
-                    query: List[float],
+                    embedder: Embedding,
+                    query: str,
                     num_results: int,
                     metadata_where: Dict[str, str]) -> List[Document]:
-        results = self.vector_store.query(collection, query, num_results, metadata_where)
+        text = await embedder.embed_text(query)
+        results = await self.vector_store.query(collection, text, num_results, metadata_where)
         returnDocuments = []
         for result in results:
-            returnDocuments.append(Document(id=result.id, page_content=self.file_memory.read_file(self.spec.root_document_directory + "/" +
-                                                                                                  collection + "/" + result.id).decode()))
+            returnDocuments.append(Document(
+                id=result.id,
+                metadata=result.metadata,
+                page_content=self.file_memory.read_file(self.spec.root_document_directory + "/" + collection + "/" + result.id).decode()))
         return returnDocuments
 
 

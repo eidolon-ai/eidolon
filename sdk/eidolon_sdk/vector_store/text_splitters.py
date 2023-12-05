@@ -458,8 +458,8 @@ def split_text_on_tokens(*, text: str, tokenizer: Tokenizer) -> List[str]:
 class TokenTextSplitterSpec(TextSplitterSpec):
     encoding_name: str = Field(default="gpt2", description="Encoding name")
     model_name: Optional[str] = Field(default=None, description="Model name")
-    allowed_special: Union[Literal["all"], AbstractSet[str]] = Field(default=set(), description="Allowed special tokens")
-    disallowed_special: Union[Literal["all"], Collection[str]] = Field(default="all", description="Disallowed special tokens")
+    allowed_special: Union[Literal["all"], List[str]] = Field(default=set(), description="Allowed special tokens")
+    disallowed_special: Union[Literal["all"], List[str]] = Field(default="all", description="Disallowed special tokens")
 
 
 class TokenTextSplitter(TextSplitter, Specable[TokenTextSplitterSpec]):

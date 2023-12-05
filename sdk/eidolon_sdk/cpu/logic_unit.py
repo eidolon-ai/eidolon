@@ -27,6 +27,7 @@ class ToolDefType(LLMCallFunction):
         self._logic_unit = _logic_unit
 
     async def execute(self, call_context: CallContext, args: Dict[str, Any]) -> Dict[str, Any]:
+        print("executing tool " + self.name + " with args " + str(args))
         return await self._logic_unit.execute(call_context, self.name, self.parameters, self.fn, args)
 
 
@@ -72,17 +73,21 @@ class LogicUnit(ProcessingUnit, ABC):
                 if hasattr(method, 'llm_function')
         ):
             unique_name = name + "_" + str(ObjectId())
+            fn = llm_function_['fn']
+            print("registering tool " + unique_name + " with fn " + str(fn))
             schema = llm_function_['input_model'].model_json_schema()
+            description_ = llm_function_['description']
             self._base_tools[unique_name] = ToolDefType(
                 name=unique_name,
-                description=llm_function_['description'],
+                description=description_,
                 parameters=schema,
-                fn=lambda **kwargs: llm_function_['fn'](self, **kwargs),
+                fn=lambda **kwargs: fn(self, **kwargs),
                 _logic_unit=self
             )
 
     async def build_tools(self, conversation: List[LLMMessage]) -> Dict[str, ToolDefType]:
-        return {k: v.model_copy(deep=True) for k, v in self._base_tools.items()}
+        return self._base_tools
+        # return {k: v.model_copy(deep=True) for k, v in self._base_tools.items()}
 
     def is_sync(self):
         return True

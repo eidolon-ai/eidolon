@@ -32,7 +32,7 @@ class LocalFileMemoryConfig(BaseModel):
 
 class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
     def __init__(self, spec: LocalFileMemoryConfig):
-        self.root_dir = Path(spec.root_dir).resolve()
+        self.root_dir = Path(replace_env_var_in_string(spec.root_dir)).resolve()
 
     """
     A FileMemory implementation that stores files on the local filesystem.

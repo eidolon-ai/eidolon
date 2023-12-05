@@ -41,7 +41,8 @@ class AgentResponseHandler(ResponseHandler):
 class Agent:
     cpu_response_handler: AgentResponseHandler
     action_handlers: Dict[str, EidolonHandler]
-    agent_machine: AgentMemory
+    agent_machine: 'AgentMachine'
+    agent_memory: AgentMemory
     process_context: contextvars.ContextVar
     cpu: AgentCPU
 

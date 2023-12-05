@@ -44,7 +44,7 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
         return await self.database[symbol_collection].update_one(query, document, upsert=True)
 
     async def delete(self, symbol_collection, query):
-        return await self.database[symbol_collection].delete(query)
+        return await self.database[symbol_collection].delete_many(query)
 
     def start(self):
         """

@@ -98,6 +98,16 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
             self.tool_defs.update(await logic_unit.build_tools(conversation))
         return self.tool_defs
 
+    def _to_json(self, obj):
+        if obj is None:
+            return ""
+        elif isinstance(obj, BaseModel):
+            return obj.model_dump_json()
+        elif isinstance(obj, list):
+            return "[" + (",".join([self._to_json(o) for o in obj])) + "]"
+        else:
+            return json.dumps(obj)
+
     async def _llm_execution_cycle(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Dict[str, Any]) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
@@ -107,9 +117,10 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
             if assistant_message.tool_calls:
                 results = []
                 for tool_call in assistant_message.tool_calls:
+                    print("executing tool " + tool_call.name + " with args " + str(tool_call.arguments))
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
-                    message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=json.dumps(tool_result), name=tool_call.name)
+                    message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=self._to_json(tool_result), name=tool_call.name)
                     await self.memory_unit.storeMessages(call_context, [message])
                     results.append(message)
 

@@ -1,0 +1,44 @@
+agent_memory:
+  file_memory:
+    implementation: "eidolon_sdk.impl.memory.local_file_memory.LocalFileMemory"
+    spec:
+      root_dir: "file://${EIDOLON_DATA_DIR}/code_search/file_memory"
+  symbolic_memory:
+    implementation: "eidolon_sdk.impl.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    spec:
+      mongo_database_name: "eidolon"
+  similarity_memory:
+    spec:
+      vector_store:
+        implementation: "eidolon_sdk.impl.memory.chroma_vector_store.ChromaVectorStore"
+        spec:
+          url: "file://${EIDOLON_DATA_DIR}/code_search"
+
+agent_programs:
+  Searcher:
+    agent:
+      implementation: "eidolon_sdk.impl.generic_agent.GenericAgent"
+      spec:
+        system_prompt:
+          You are a software developer responsible for maintaining a project and trying to prove yourself. You ask for 
+          clarification when instructions are unclear, but you prefer to work when possible. You use tools to read
+          files and allow you to search through code. 
+          
+          Think carefully about how you want to solve the problem. Then make a plan to implement the changes.
+        question_prompt: "{{request}}"
+        question_json_schema:
+          type: object
+          properties:
+              request:
+                type: string
+    cpu:
+      spec:
+        llm_unit:
+          implementation: "eidolon_sdk.impl.cpu.llm.open_ai_llm_unit.OpenAIGPT"
+          spec:
+            model: "gpt-4-1106-preview"
+            temperature: 0.3
+        logic_units:
+          - implementation: "examples.code_search.code_search.CodeSearch"
+            spec:
+              root_dir: "$HOME//Development/augustdata/eidolon/sdk"
