@@ -27,7 +27,7 @@ class ToolDefType(LLMCallFunction):
         self._logic_unit = _logic_unit
 
     async def execute(self, call_context: CallContext, args: Dict[str, Any]) -> Dict[str, Any]:
-        print("executing tool " + self.name + " with args " + str(args))
+        print("executing tool " + self.name + " with args " + str(args) + " and fn " + str(self.fn))
         return await self._logic_unit.execute(call_context, self.name, self.parameters, self.fn, args)
 
 
@@ -39,7 +39,10 @@ def llm_function(fn):
     for param, hint in filter(lambda tu: tu[0] != 'return', hints.items()):
         if hasattr(hint, '__metadata__') and isinstance(hint.__metadata__[0], FieldInfo):
             field: FieldInfo = hint.__metadata__[0]
-            field.default = sig[param].default
+            if sig[param].default is not inspect.Parameter.empty:
+                field.default = sig[param].default
+            else:
+                field.default = None
             fields[param] = (hint.__origin__, field)
         else:
             # _empty default isn't being handled by create_model properly (still optional when it should be required)
@@ -47,6 +50,7 @@ def llm_function(fn):
             fields[param] = (hint, default)
 
     function_name, clazz = get_function_details(fn)
+    print("creating model " + f'{clazz}_{function_name}InputModel' + " with fields " + str(fields))
     input_model = create_model(f'{clazz}_{function_name}InputModel', **fields)
 
     setattr(fn, 'llm_function', dict(
@@ -81,7 +85,7 @@ class LogicUnit(ProcessingUnit, ABC):
                 name=unique_name,
                 description=description_,
                 parameters=schema,
-                fn=lambda **kwargs: fn(self, **kwargs),
+                fn=fn,
                 _logic_unit=self
             )
 
@@ -92,13 +96,13 @@ class LogicUnit(ProcessingUnit, ABC):
     def is_sync(self):
         return True
 
-    async def execute(self, call_context: CallContext, name, parameter_schema, fn, args: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, call_context: CallContext, name, parameter_schema, fn: Callable, args: Dict[str, Any]) -> Dict[str, Any]:
         try:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
             if self.is_sync():
                 converted_input = schema_to_model(parameter_schema, name + "_input").model_validate(args)
                 logging.getLogger("eidolon").info("calling tool " + name + " with args " + str(converted_input))
-                result = await fn(**dict(converted_input))
+                result = await fn(self, **dict(converted_input))
                 # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
                 if isinstance(result, BaseModel):
                     result = result.model_dump()

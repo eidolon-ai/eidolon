@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Annotated
 
 from pydantic import Field, BaseModel
 
@@ -44,7 +44,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
     def __init__(self, spec: CodeSearchConfig, **kwargs):
         super().__init__(**kwargs)
         self.spec = spec
-        self.root_dir = os.path.expandvars(self.spec.root_dir)
+        self.root_dir = os.path.abspath(os.path.expandvars(self.spec.root_dir))
         self.embedder = OpenAIEmbedding(OpenAIEmbeddingSpec())
 
     async def _init(self):
@@ -64,7 +64,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
 
         for root, dirs, files in os.walk(self.root_dir):
             if '__init__.py' in files:
-                package_name = str(Path(self.root_dir).relative_to(root))
+                package_name = str(Path(root).relative_to(self.root_dir))
                 package_files = [f for f in files if f.endswith('.py')]
                 package_directories[root] = CodePackage(
                     package_directory=package_name,
@@ -72,46 +72,46 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
                 )
 
         return list(package_directories.values())
-    #
-    # @llm_function
-    # async def get_code(
-    #         self,
-    #         file_name: Annotated[str, Field(description="The name of the file to get code from")]
-    # ) -> SourceCode:
-    #     """
-    #     Get the source code for a given file
-    #     :return: The source code for the file
-    #     """
-    #     await self._init()
-    #     # first expand the file name wrt the root dir
-    #     file_name = os.path.expandvars(file_name)
-    #     # now process relative paths for file name wrt the root dir
-    #     file_name = os.path.relpath(file_name, self.root_dir)
-    #     # now convert to absolute path
-    #     file_name = os.path.abspath(file_name)
-    #
-    #     # now check that the file is in the root dir
-    #     if not file_name.startswith(self.root_dir):
-    #         raise ValueError(f"File {file_name} is not in root dir {self.root_dir}")
-    #
-    #     with open(os.path.join(self.root_dir, file_name), 'r') as f:
-    #         return SourceCode(
-    #             file_name=file_name,
-    #             source_code=f.read(),
-    #         )
-    #
-    # @llm_function
-    # async def search_code(
-    #         self,
-    #         query: Annotated[str, Field(description="The query to search for. The query will be embedded and searched using a vector store")]
-    # ) -> List[SearchResult]:
-    #     """
-    #     Search for code that matches the query
-    #     :return: The code snippets that match the query
-    #     """
-    #     await self._init()
-    #     results = await self.agent_memory.similarity_memory.query("code_sync", self.embedder, query, 10, {})
-    #     return [SearchResult(
-    #         file_name=result.metadata["file_path"],
-    #         source_code_snippet=result.page_content,
-    #     ) for result in results]
+
+    @llm_function
+    async def get_code(
+            self,
+            file_name: Annotated[str, Field(description="The name of the file to get code from")]
+    ) -> SourceCode:
+        """
+        Get the source code for a given file
+        :return: The source code for the file
+        """
+        await self._init()
+        # first expand the file name wrt the root dir
+        file_name = os.path.expandvars(file_name)
+        # now process relative paths for file name wrt the root dir
+        file_name = os.path.relpath(file_name, self.root_dir)
+        # now convert to absolute path
+        file_name = os.path.abspath(file_name)
+
+        # now check that the file is in the root dir
+        if not file_name.startswith(self.root_dir):
+            raise ValueError(f"File {file_name} is not in root dir {self.root_dir}")
+
+        with open(os.path.join(self.root_dir, file_name), 'r') as f:
+            return SourceCode(
+                file_name=file_name,
+                source_code=f.read(),
+            )
+
+    @llm_function
+    async def search_code(
+            self,
+            query: Annotated[str, Field(description="The query to search for. The query will be embedded and searched using a vector store")]
+    ) -> List[SearchResult]:
+        """
+        Search for code that matches the query
+        :return: The code snippets that match the query
+        """
+        await self._init()
+        results = await self.agent_memory.similarity_memory.query("code_sync", self.embedder, query, 10, {})
+        return [SearchResult(
+            file_name=result.metadata["file_path"],
+            source_code_snippet=result.page_content,
+        ) for result in results]

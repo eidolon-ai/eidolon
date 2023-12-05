@@ -2,7 +2,7 @@ agent_memory:
   file_memory:
     implementation: "eidolon_sdk.impl.memory.local_file_memory.LocalFileMemory"
     spec:
-      root_dir: "file://${EIDOLON_DATA_DIR}/code_search/file_memory"
+      root_dir: "${EIDOLON_DATA_DIR}/code_search/file_memory"
   symbolic_memory:
     implementation: "eidolon_sdk.impl.memory.mongo_symbolic_memory.MongoSymbolicMemory"
     spec:
