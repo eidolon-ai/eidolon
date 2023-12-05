@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import List, Literal, Type, Dict, Optional
+from typing import List, Literal, Type, Dict, Optional, TypeVar
 
-from pydantic import Field, BaseModel, field_validator
+from pydantic import Field, BaseModel, field_validator, Extra
 
 from .agent import Agent
 from .agent_memory import FileMemory, SymbolicMemory, VectorMemory, AgentMemory
+from .cpu.agent_cpu import AgentCPUConfig, AgentCPU
 from .impl.generic_agent import GenericAgent
 from .impl.tot_agent.tot_agent import TreeOfThoughtsAgent
 from .reference_model import Reference
@@ -18,30 +19,40 @@ class Metadata(BaseModel):
     labels: List[str] = []
 
 
-class Resource(BaseModel):
+T = TypeVar("T", bound=Type[BaseModel])
+
+
+class Resource(BaseModel, extra=Extra.allow):
     apiVersion: Literal["eidolon/v1"]
     kind: str
-    metadata: Metadata
+    metadata: Metadata = Metadata(name='DEFAULT')
 
     @classmethod
     def kind_literal(cls) -> Optional[str]:
         return getattr(cls.model_fields['kind'].annotation, "__args__", [None])[0]
 
+    def promote(self, clazz: T) -> T:
+        return clazz.model_validate(self.model_dump())
+
 
 class MachineResource(Resource):
     kind: Literal['Machine']
-    metadata: Metadata = Metadata(name='DEFAULT')
     spec: MachineSpec
+
+
+class CPUResource(Resource, Reference[AgentCPU]):
+    kind: Literal['CPU']
+    implementation: str = fqn(AgentCPU)
 
 
 class AgentResource(Resource, Reference[Agent]):
     kind: Literal['Agent']
 
 
-def _build_resource(clazz: Type):
+def _build_resource(clazz: Type) -> Type[Resource]:
     class CustomResource(Resource, Reference[clazz]):
-        implementation: str = fqn(clazz)
         kind: str
+        implementation: str = fqn(clazz)
 
         @field_validator('kind')
         def _is_class_name(cls, v):
@@ -56,8 +67,7 @@ def _build_resource(clazz: Type):
     return CustomResource
 
 
-resources: Dict[str, Resource] = {r.kind_literal(): r for r in [
-    MachineResource,
+agent_resources: Dict[str, Type[Resource]] = {r.kind_literal(): r for r in [
     AgentResource,
     _build_resource(GenericAgent),
     _build_resource(TreeOfThoughtsAgent),

@@ -5,11 +5,6 @@ metadata:
   name: TOT
 
 spec:
-  cpu:
-    llm_unit:
-        model: "gpt-4-1106-preview"
-        temperature: 0.3
-
   num_iterations: 10
   checker:
     spec:

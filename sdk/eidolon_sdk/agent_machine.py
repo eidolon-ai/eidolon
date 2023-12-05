@@ -1,12 +1,13 @@
 import logging
 import os
-from typing import List
+from itertools import groupby
+from typing import List, Dict
 
 import yaml
 
 from .agent_controller import AgentController
 from .agent_memory import AgentMemory
-from .resource_models import MachineResource, resources
+from .resource_models import MachineResource, agent_resources, Resource, CPUResource
 from .util.logger import logger
 
 
@@ -37,31 +38,35 @@ class AgentMachine:
 
     @staticmethod
     def from_dir(read_dir: str):
-        machine = None
-        programs = {}
+        resources = []
         for file in os.listdir(read_dir):
             file_loc = os.path.join(read_dir, file)
             with open(file_loc) as resource_yaml:
                 resource_object = yaml.safe_load(resource_yaml)
-                kind = resource_object.get('kind')
-                resource_model = resources.get(kind)
-                if not resource_model:
-                    raise ValueError(f'Unsupported kind "{kind}" not in resource list {resources.keys()}')
-                try:
-                    resource = resource_model.model_validate(resource_object)
-                    if isinstance(resource, MachineResource):
-                        machine = resource
-                    else:
-                        if resource.metadata.name in programs:
-                            logger.warning(f"Overwriting existing program {resource.metadata.name}")
-                        programs[resource.metadata.name] = resource
-                except Exception as e:
-                    raise ValueError(f"Error parsing {file_loc}") from e
+                resources.append(Resource.model_validate(resource_object))
 
-        if not machine:
+        grouped_resources: Dict[str, List[Resource]] = {k: list(xs) for k, xs in groupby(resources, lambda r: r.kind)}
+        if not MachineResource.kind_literal() in grouped_resources:
             raise FileNotFoundError(f"Could not find Machine Resource in {read_dir}")
+        machine = [machine.promote(MachineResource) for machine in grouped_resources.pop(MachineResource.kind_literal())].pop()
+        cpus = {cpu.metadata.name: cpu.promote(CPUResource) for cpu in grouped_resources.pop(CPUResource.kind_literal())}
+        agents = {}
+        for kind, agent in ((k, a) for k, xs in grouped_resources.items() for a in xs):
+            resource_model = agent_resources.get(kind)
+            if not resource_model:
+                raise ValueError(f'Unsupported kind "{kind}"')
+            cpu = agent.spec.get('cpu', None)
+            if not cpu and 'DEFAULT' in cpus:
+                agent.spec['cpu'] = cpus['DEFAULT'].spec
+            elif isinstance(cpu, str):
+                if cpu not in cpus:
+                    raise ValueError(f'Undefined cpu "{agent.spec.cpu}"')
+                agent.spec['cpu'] = cpus[cpu].spec
+            if agent.metadata.name in agents:
+                logger.warning(f"Overwriting existing agent {agent.metadata.name}")
+            agents[agent.metadata.name] = agent.promote(resource_model)
         memory = machine.spec.get_agent_memory()
         return AgentMachine(
             agent_memory=memory,
-            agent_programs=[AgentController(p.metadata.name, p.instantiate(memory=memory)) for p in programs.values()]
+            agent_programs=[AgentController(p.metadata.name, p.instantiate(memory=memory)) for p in agents.values()]
         )

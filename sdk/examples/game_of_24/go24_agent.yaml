@@ -5,6 +5,8 @@ metadata:
 
 spec:
   agent_refs: ['ToT']
+  #  can reference named cpus within spec or implement them locally, default used if none is provided. If no default reverts to system default
+  cpu: custom
   system_prompt:
     You are an intelligent machine which can solve problems. In particular, you can solve the game of 24.
     The game of 24 is played by taking four numbers and using the four basic arithmetic operations to

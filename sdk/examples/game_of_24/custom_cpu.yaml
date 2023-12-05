@@ -1,0 +1,9 @@
+apiVersion: eidolon/v1
+kind: CPU
+metadata:
+  name: custom
+spec:
+  cpu:
+    llm_unit:
+      model: "gpt-4-1106-preview"
+      temperature: 0.4
