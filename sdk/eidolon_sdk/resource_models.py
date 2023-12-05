@@ -19,7 +19,7 @@ class Metadata(BaseModel):
     labels: List[str] = []
 
 
-T = TypeVar("T", bound=Type[BaseModel])
+T = TypeVar("T", bound=BaseModel)
 
 
 class Resource(BaseModel, extra=Extra.allow):
@@ -31,7 +31,7 @@ class Resource(BaseModel, extra=Extra.allow):
     def kind_literal(cls) -> Optional[str]:
         return getattr(cls.model_fields['kind'].annotation, "__args__", [None])[0]
 
-    def promote(self, clazz: T) -> T:
+    def promote(self, clazz: Type[T]) -> T:
         return clazz.model_validate(self.model_dump())
 
 
