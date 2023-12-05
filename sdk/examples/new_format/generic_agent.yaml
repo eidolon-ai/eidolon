@@ -1,0 +1,13 @@
+type: eidolon/agent
+metadata:
+  name: ExampleGeneric
+implementation: eidolon_sdk.impl.generic_agent.GenericAgent
+contacts: ["StateMachine", "ExampleAgentProgram", "TreeOfThoughts"]
+spec:
+  system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
+  question_prompt: "{{instruction}}"
+  question_json_schema:
+    type: object
+    properties:
+      instruction:
+        type: string

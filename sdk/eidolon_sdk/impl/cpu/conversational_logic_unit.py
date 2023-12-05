@@ -6,7 +6,7 @@ import aiohttp
 import jsonref as jsonref
 from pydantic import BaseModel
 
-from eidolon_sdk.agent_program import SyncStateResponse
+from eidolon_sdk.agent_contract import SyncStateResponse
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
 from eidolon_sdk.cpu.logic_unit import LogicUnit, ToolDefType
 from eidolon_sdk.reference_model import Specable
@@ -41,7 +41,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         tools = {}
 
         for agent in self.spec.agents:
-            path = f'/programs/{agent}'
+            path = f'/agents/{agent}'
             name = self._name(agent, action="INIT")
             tools[name] = await self._build_tool_def(name, path, agent)
 
@@ -55,7 +55,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
         # newer process state should override older process state if there are multiple calls
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
-            path = f'/programs/{response.program}/processes/{{process_id}}/actions/{action}'
+            path = f'/agents/{response.program}/processes/{{process_id}}/actions/{action}'
             name = self._name(response.program, action, response.process_id)
             tools[name] = await self._build_tool_def(name, path, response.program, process_id=response.process_id)
 

@@ -1,14 +1,14 @@
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
 
-from eidolon_sdk.agent import Agent, initializer, register_action, AgentState
+from eidolon_sdk.agent import Agent, initializer, register_action, AgentState, AgentSpec
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
 from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.util.schema_to_model import schema_to_model
 
 
 # todo, this probably defines states and output schema, but leaving that out for now
-class GenericAgentSpec(BaseModel):
+class GenericAgentSpec(AgentSpec):
     system_prompt: str
     question_prompt: str
     question_json_schema: dict

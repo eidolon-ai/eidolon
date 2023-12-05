@@ -13,20 +13,11 @@ from pydantic import BaseModel, Field, create_model
 from starlette.responses import JSONResponse
 
 from .agent import Agent, AgentState, ProcessContext
+from .agent_contract import SyncStateResponse, AsyncStateResponse
 from .agent_memory import SymbolicMemory
 
 
-class AsyncStateResponse(BaseModel):
-    process_id: str = Field(..., description="The ID of the conversation.")
-
-
-class SyncStateResponse(AsyncStateResponse):
-    state: str = Field(..., description="The state of the conversation.")
-    data: typing.Any = Field(..., description="The data returned by the last state change.")
-    available_actions: typing.List[str] = Field(..., description="The actions available from the current state.")
-
-
-class AgentProgram:
+class AgentController:
     name: str
     agent: Agent
 
@@ -35,10 +26,8 @@ class AgentProgram:
         self.agent = agent
 
     async def start(self, app: FastAPI):
-        if self.agent.cpu:
-            await self.agent.cpu.start(self.agent.cpu_response_handler)
         for action, handler in sorted(self.agent.action_handlers.items().__reversed__(), key=cmp_to_key(lambda x, y: -1 if x[0] == 'INIT' else 1 if y[0] == 'INIT' else 0)):
-            path = f"/programs/{self.name}"
+            path = f"/agents/{self.name}"
             if action != 'INIT':
                 path += f"/processes/{{process_id}}/actions/{action}"
             endpoint = self.process_action(action)
@@ -48,7 +37,7 @@ class AgentProgram:
             }, description=handler.description)
 
         app.add_api_route(
-            f"/programs/{self.name}/processes/{{process_id}}/status",
+            f"/agents/{self.name}/processes/{{process_id}}/status",
             endpoint=self.get_process_info,
             methods=["GET"],
             response_model=SyncStateResponse,

@@ -6,10 +6,10 @@ from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_sdk.agent import initializer, Agent
+from eidolon_sdk.agent import initializer, Agent, AgentSpec
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_sdk.cpu.call_context import CallContext
-from eidolon_sdk.cpu.llm_message import LLMMessage, AssistantMessage
+from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.impl.tot_agent.checker import ToTChecker
 from eidolon_sdk.impl.tot_agent.controller import ToTController
 from eidolon_sdk.impl.tot_agent.memory import ToTDFSMemory
@@ -20,7 +20,7 @@ from eidolon_sdk.util.class_utils import fqn
 from eidolon_sdk.util.schema_to_model import schema_to_model
 
 
-class ToTAgentConfig(BaseModel):
+class ToTAgentConfig(AgentSpec):
     num_iterations: int = Field(10, description="The maximum number of iterations to run the tree of thoughts algorithm.")
     question_prompt: str = Field(description="The prompt to use when asking the user for a question.")
     question_json_schema: Dict[str, Any] = Field(description="The json schema for the question input model.")
@@ -40,18 +40,16 @@ class TotResponse(BaseModel):
 
 
 class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
-    spec: ToTAgentConfig
     logger = logging.getLogger("eidolon")
     thought_generator: BaseThoughtGenerationStrategy
     tot_memory: ToTDFSMemory
     tot_controller: ToTController
     checker: ToTChecker
 
-    def __init__(self, spec: ToTAgentConfig, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.spec = spec
-        self.thought_generator = spec.thought_generator.instantiate()
-        self.checker = spec.checker.instantiate(cpu=self.cpu)
+        self.thought_generator = self.spec.thought_generator.instantiate()
+        self.checker = self.spec.checker.instantiate(cpu=self.cpu)
         self.tot_memory = ToTDFSMemory()
         self.tot_controller = ToTController()
         if self.spec.init_description:

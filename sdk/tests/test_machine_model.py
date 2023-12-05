@@ -1,6 +1,6 @@
 import yaml
 
-from eidolon_sdk.machine_model import MachineModel
+from eidolon_sdk.resourece_models import MachineModel
 
 
 def test_can_parse_hello_world():

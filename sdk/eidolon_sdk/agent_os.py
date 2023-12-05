@@ -24,16 +24,7 @@ class AgentOS:
         logger = logging.getLogger("eidolon")
         logger.info("Starting AgentOS")
         self.app = app
-        for program in self.machine.agent_programs:
-            await program.start(app)
+        await self.machine.start(app)
 
-        self.machine.agent_memory.start()
-
-    def stop(self):
-        for program in self.machine.agent_programs:
-            program.stop(self.app)
-        self.machine.agent_memory.stop()
-
-    @staticmethod
-    def from_yaml(machine_yaml):
-        return AgentOS(AgentMachine.from_yaml(machine_yaml))
+    async def stop(self):
+        await self.machine.stop()

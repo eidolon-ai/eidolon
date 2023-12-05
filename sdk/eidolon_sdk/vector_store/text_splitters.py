@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import pathlib
 import re
 from dataclasses import dataclass
@@ -28,8 +27,6 @@ from pydantic import Field
 from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.vector_store.document import Document
 from eidolon_sdk.vector_store.document_transformer import TextSplitter, TextSplitterSpec
-
-logger = logging.getLogger("eidolon")
 
 TS = TypeVar("TS", bound="TextSplitter")
 

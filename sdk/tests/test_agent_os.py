@@ -12,7 +12,7 @@ from eidolon_sdk.agent import CodeAgent, Agent, initializer, register_action, Ag
 from eidolon_sdk.agent_machine import AgentMachine, _make_cpu
 from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
-from eidolon_sdk.agent_program import AgentProgram
+from eidolon_sdk.agent_controller import AgentController
 from eidolon_sdk.cpu.agent_io import IOUnit
 from eidolon_sdk.cpu.llm_message import ToolResponseMessage
 from eidolon_sdk.impl.cpu.conversation_memory_unit import ConversationalMemoryUnit
@@ -21,7 +21,7 @@ from eidolon_sdk.impl.cpu.conversational_logic_unit import ConversationalLogicUn
 from eidolon_sdk.impl.generic_agent import GenericAgent, GenericAgentSpec
 from eidolon_sdk.impl.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_sdk.impl.cpu.llm import OpenAIGPT
-from eidolon_sdk.machine_model import CpuModel
+from eidolon_sdk.resourece_models import CpuModel
 from eidolon_sdk.reference_model import Reference
 from eidolon_sdk.util.class_utils import fqn
 
@@ -53,7 +53,7 @@ def _make_program(agent, machine, spec=None, **kwargs):
         memory_unit=Reference(implementation=fqn(ConversationalMemoryUnit), spec=dict()).dict(),
         llm_unit=Reference(implementation=fqn(OpenAIGPT), spec=dict()).dict(),
     ), machine)
-    return AgentProgram(
+    return AgentController(
         name=agent.__name__.lower(),
         agent=agent(machine, cpu=cpu, spec=spec)
     )
@@ -63,7 +63,7 @@ def _make_program(agent, machine, spec=None, **kwargs):
 def os_builder():
     def fn(*agents: Type[Agent], memory_override: SymbolicMemory = None, **kwargs):
         machine = AgentMachine(AgentMemory(symbolic_memory=memory_override or LocalSymbolicMemory()), [])
-        machine.agent_programs = [_make_program(agent, machine, **kwargs) for agent in agents]
+        machine.agent_controllers = [_make_program(agent, machine, **kwargs) for agent in agents]
         return AgentOS(machine=machine)
 
     return fn

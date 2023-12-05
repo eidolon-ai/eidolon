@@ -47,7 +47,7 @@ class TestCacheLLM:
     @pytest.mark.asyncio
     async def test_cache_creation(self, cache_llm_unit):
         # Test if the cache directory is created
-        assert cache_llm_unit.agent_memory.file_memory.exists(cache_llm_unit.dir)
+        assert cache_llm_unit.memory.file_memory.exists(cache_llm_unit.dir)
 
     @pytest.mark.asyncio
     async def test_valid_llm_call_and_caching(self, cache_llm_unit, call_context):
@@ -65,7 +65,7 @@ class TestCacheLLM:
         hash_object.update(combined_str.encode())
         hash_hex = hash_object.hexdigest()
         file_name = f"{cache_llm_unit.dir}/{hash_hex}.json"
-        assert cache_llm_unit.agent_memory.file_memory.exists(file_name)
+        assert cache_llm_unit.memory.file_memory.exists(file_name)
 
     @pytest.mark.asyncio
     async def test_cache_retrieval(self, cache_llm_unit, call_context):
@@ -99,5 +99,5 @@ class TestCacheLLM:
         hash_hex = hash_object.hexdigest()
         file_name = f"{cache_llm_unit.dir}/{hash_hex}.json"
 
-        cached_response = json.loads(cache_llm_unit.agent_memory.file_memory.read_file(file_name).decode())
+        cached_response = json.loads(cache_llm_unit.memory.file_memory.read_file(file_name).decode())
         assert cached_response == expected_response.model_dump()

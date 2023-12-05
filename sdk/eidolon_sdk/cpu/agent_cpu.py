@@ -36,26 +36,16 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
     logic_units: List[LogicUnit] = None,
     process_id: contextvars.ContextVar
 
-    def __init__(
-            self,
-            agent_memory: AgentMemory,
-            spec: AgentCPUConfig = None
-    ):
+    def __init__(self, agent_memory: AgentMemory, spec: AgentCPUConfig = None):
+        super().__init__(spec)
         self.tool_defs = None
         self.agent_memory = agent_memory
-        self.spec = spec
         kwargs = dict(agent_memory=agent_memory, processing_unit_locator=self)
-        self.io_unit = spec.io_unit.instantiate(**kwargs)
-        self.memory_unit = spec.memory_unit.instantiate(**kwargs)
-        self.llm_unit = spec.llm_unit.instantiate(**kwargs)
-        self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in spec.logic_units]
+        self.io_unit = self.spec.io_unit.instantiate(**kwargs)
+        self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
+        self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
+        self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.process_id = contextvars.ContextVar('process_id', default=None)
-
-    async def start(self, response_handler: ResponseHandler):
-        pass
-
-    async def stop(self):
-        pass
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
         for unit in self.logic_units:

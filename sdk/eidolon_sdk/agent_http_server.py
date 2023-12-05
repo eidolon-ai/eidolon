@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
+from eidolon_sdk.agent_machine import AgentMachine
 from eidolon_sdk.agent_os import AgentOS
 
 dotenv.load_dotenv()
@@ -17,7 +18,7 @@ parser = argparse.ArgumentParser(description="Start a FastAPI server.")
 parser.add_argument("-p", "--port", type=int, default=8080, help="Port to run the FastAPI server on. Defaults to 8080.")
 parser.add_argument("-r", "--reload", help="Reload the server when the code changes. Defaults to False.", action="store_true")
 parser.add_argument('--debug', action='store_true', help='Turn on debug logging')
-parser.add_argument("yaml_path", type=str, help="Path to a YAML file describing the agent machine to start.")
+parser.add_argument("yaml_path", type=str, help="Path to a directory containing YAML files describing the agent machine to start.")
 
 # Parse command line arguments
 args = parser.parse_args()
@@ -29,16 +30,14 @@ async def start_os(app: FastAPI):
     logger = logging.getLogger("eidolon")
     logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
     try:
-        with open(args.yaml_path, 'r') as file:
-            file_contents = file.read()
-
-        os = AgentOS.from_yaml(file_contents)
+        machine = AgentMachine.from_dir(args.yaml_path)
+        os = AgentOS(machine)
         await os.start(app)
     except Exception as e:
         logger.exception("Failed to start AgentOS")
         raise e
     yield
-    os.stop()
+    await os.stop()
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):

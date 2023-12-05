@@ -15,7 +15,10 @@ class Specable(typing.Generic[T]):
     A generic type which can be used to describe a specable type. Specable types are expected to accept "spec" in kwarg.
     If Specable is not used, There will be no spec validation and the spec will be passed through as-is.
     """
-    pass
+    spec: T
+
+    def __init__(self, spec: T, **kwargs):
+        self.spec = spec
 
 
 class ReferenceMeta(type):

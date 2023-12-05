@@ -4,7 +4,6 @@ import contextvars
 import inspect
 import logging
 import typing
-from asyncio import Future
 from dataclasses import dataclass
 from typing import Dict, List, TypeVar, Generic
 
@@ -12,9 +11,11 @@ from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
 
 from .agent_memory import AgentMemory
-from .cpu.agent_cpu import AgentCPU, ResponseHandler, Thread
+from .cpu.agent_cpu import AgentCPU
 from .cpu.agent_io import CPUMessageTypes
-from .cpu.call_context import CallContext
+from .impl.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec
+from .reference_model import Specable, Reference
+from .util.class_utils import fqn
 
 
 class ProcessContext(BaseModel):
@@ -22,42 +23,34 @@ class ProcessContext(BaseModel):
     callback_url: typing.Optional[str]
 
 
-class AgentResponseHandler(ResponseHandler):
-    def __init__(self):
-        self.listeners = {}
-
-    async def handle(self, ret_p_id: str, response: Dict[str, typing.Any]):
-        try:
-            self.listeners[ret_p_id].set_result(response)
-        except KeyError:
-            pass
-
-    def add_listener(self, ret_p_id: str) -> Future:
-        future = Future()
-        self.listeners[ret_p_id] = future
-        return future
+class AgentSpec(BaseModel):
+    cpu: Reference[AgentCPU] = Reference(implementation=fqn(AgentCPU))
+    resources: List[str] = []
 
 
-class Agent:
-    cpu_response_handler: AgentResponseHandler
+class Agent(Specable[AgentSpec]):
     action_handlers: Dict[str, EidolonHandler]
-    agent_machine: 'AgentMachine'
     agent_memory: AgentMemory
     process_context: contextvars.ContextVar
     cpu: AgentCPU
 
-    def __init__(self, agent_machine: 'AgentMachine', cpu: AgentCPU, spec=None):
-        self.cpu = cpu
-        self.spec = spec
-        self.agent_memory = agent_machine.agent_memory
-        self.agent_machine = agent_machine
+    def __init__(self, memory: AgentMemory, spec):
+        super().__init__(spec)
+        self.agent_memory = memory
+        self.cpu = self.spec.cpu.instantiate(agent_memory=self.agent_memory)
+        if self.spec.resources:
+            self.cpu.logic_units.append(ConversationalLogicUnit(
+                agent_memory=memory,
+                processing_unit_locator=self,
+                spec=ConversationalSpec(agents=self.spec.resources)
+            ))
+
         self.action_handlers = {
             handler.name: handler
             for method_name in dir(self) if hasattr(getattr(self, method_name), 'eidolon_handlers')
             for handler in getattr(getattr(self, method_name), 'eidolon_handlers')
         }
         self.process_context = contextvars.ContextVar('process_state', default=None)
-        self.cpu_response_handler = AgentResponseHandler()
         self.logger = logging.getLogger("eidolon")
 
     def get_context(self) -> ProcessContext:
