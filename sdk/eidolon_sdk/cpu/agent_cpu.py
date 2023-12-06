@@ -110,6 +110,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
                     print("executing tool " + tool_call.name + " with args " + str(tool_call.arguments))
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
+                    # todo, store tool response result as Any (must be json serializable) so that it can be retrieved symmetrically
                     message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=self._to_json(tool_result), name=tool_call.name)
                     await self.memory_unit.storeMessages(call_context, [message])
                     results.append(message)

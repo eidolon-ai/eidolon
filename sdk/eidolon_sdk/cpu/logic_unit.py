@@ -98,6 +98,7 @@ class LogicUnit(ProcessingUnit, ABC):
     def is_sync(self):
         return True
 
+    # todo, response type here should not be limited to dict
     async def execute(self, call_context: CallContext, name, parameter_schema, fn: Callable, args: Dict[str, Any]) -> Dict[str, Any]:
         try:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory

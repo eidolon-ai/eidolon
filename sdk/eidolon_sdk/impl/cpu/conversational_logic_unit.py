@@ -54,7 +54,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         for message in conversation:
             if isinstance(message, ToolResponseMessage) and message.name.startswith(allowed_agent_prefix):
                 try:
-                    last = ConversationalResponse.model_validate(json.loads(message.result))  # todo, perhaps we should be converting these to strings when calling the model rather than saving them this way?
+                    last = ConversationalResponse.model_validate(json.loads(message.result))
                     processes[last.process_id] = last
                 except ValidationError:
                     logger.warning("unable to parse conversation response", exc_info=True)
