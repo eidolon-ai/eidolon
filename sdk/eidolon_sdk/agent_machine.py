@@ -1,5 +1,6 @@
 import logging
 import os
+from collections import defaultdict
 from contextlib import contextmanager
 from itertools import groupby
 from typing import List, Dict
@@ -49,7 +50,9 @@ class AgentMachine:
                 source_map[(resource.kind, resource.metadata.name)] = file_loc
                 resources.append(resource)
 
-        grouped_resources: Dict[str, List[Resource]] = {k: list(xs) for k, xs in groupby(resources, lambda r: r.kind)}
+        grouped_resources = defaultdict(list)
+        for r in resources:
+            grouped_resources[r.kind].append(r)
         if not MachineResource.kind_literal() in grouped_resources:
             raise FileNotFoundError(f"Could not find Machine Resource in {read_dir}")
         resource = grouped_resources.pop(MachineResource.kind_literal()).pop()
