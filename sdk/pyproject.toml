@@ -5,8 +5,8 @@ description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
-[project.scripts]
-eidos-server = "eidos.system.agent_http_server"
+[tool.poetry.scripts]
+eidos-server = "eidos.system.agent_http_server:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
