@@ -1,9 +1,8 @@
-from typing import Annotated, Union
+from typing import Union
 
+from eidos.agent.agent import CodeAgent, register_program, AgentState, register_action
 from fastapi import HTTPException
-from pydantic import Field, BaseModel
-
-from eidos.agent import CodeAgent, register_program, AgentState, register_action
+from pydantic import BaseModel
 
 
 class AState(BaseModel):

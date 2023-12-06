@@ -3,13 +3,13 @@ import logging
 import uuid
 from pathlib import Path
 
-from watchdog.events import FileSystemEvent, FileSystemMovedEvent
-
-from eidos.memory.agent_memory import AgentMemory
+from eidos import agent_os
+from eidos.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
 from eidos.memory.parsers.base_parser import DataBlob
 from eidos.memory.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
-from eidos.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
-from examples.code_search.file_system_watcher import FileSystemWatcher
+from watchdog.events import FileSystemEvent, FileSystemMovedEvent
+
+from code_search.file_system_watcher import FileSystemWatcher
 
 
 def hash_file(file_path, chunk_size=8192):
@@ -30,9 +30,8 @@ def hash_file(file_path, chunk_size=8192):
 
 
 class CodeSync:
-    def __init__(self, root_dir: str, agent_memory: AgentMemory):
+    def __init__(self, root_dir: str):
         self.root_dir = Path(root_dir)
-        self.agent_memory = agent_memory
         self.embedder = OpenAIEmbedding(OpenAIEmbeddingSpec())
         self.file_watcher = FileSystemWatcher(self.root_dir, self.on_file_change)
         self.logger = logging.getLogger("eidolon")
@@ -56,7 +55,7 @@ class CodeSync:
     async def sync_all(self):
         # get all hashes from symbolic memory
         hashes = {}
-        async for file in self.agent_memory.symbolic_memory.find("code_sync", {}):
+        async for file in agent_os.symbolic_memory.find("code_sync", {}):
             hashes[file["file_path"]] = file["file_hash"]
 
         self.logger.info(f"Found {len(hashes)} files in symbolic memory")
@@ -105,8 +104,8 @@ class CodeSync:
         docs = list(language_parser.parse(DataBlob.from_path(path=str(file_path))))
         for doc in docs:
             doc.id = str(uuid.uuid4())
-        await self.agent_memory.similarity_memory.add("code_sync", docs, self.embedder)
-        await self.agent_memory.symbolic_memory.insert("code_sync", [
+        await agent_os.similarity_memory.add("code_sync", docs, self.embedder)
+        await agent_os.symbolic_memory.insert("code_sync", [
             {
                 "file_path": str(file_path.relative_to(self.root_dir)),
                 "file_hash": hash_file(file_path),
@@ -116,9 +115,9 @@ class CodeSync:
     async def removeFile(self, file_path: Path):
         # get the doc ids for the file
         relative_path = str(file_path.relative_to(self.root_dir))
-        doc = await self.agent_memory.symbolic_memory.find_one("code_sync", {"file_path": relative_path})
+        doc = await agent_os.symbolic_memory.find_one("code_sync", {"file_path": relative_path})
         if doc:
             # remove the docs from similarity memory
-            await self.agent_memory.similarity_memory.delete("code_sync", doc["doc_ids"])
+            await agent_os.similarity_memory.delete("code_sync", doc["doc_ids"])
             # remove the file from symbolic memory
-            await self.agent_memory.symbolic_memory.delete("code_sync", {"file_path": relative_path})
+            await agent_os.symbolic_memory.delete("code_sync", {"file_path": relative_path})

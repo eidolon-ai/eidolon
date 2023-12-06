@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+$(poetry env info -p)/bin/python3 eidos.system.agent_http_server $@

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import Field, BaseModel
 
-from eidos.agent import CodeAgent, register_program, AgentState, register_action
+from eidos.agent.agent import CodeAgent, register_program, AgentState, register_action
 from eidos.cpu.agent_io import UserTextCPUMessage
 
 

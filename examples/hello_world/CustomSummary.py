@@ -1,11 +1,10 @@
 from typing import List
 
-from transformers import AutoTokenizer, AutoModelWithLMHead
-
-from eidos.cpu.agent_bus import CallContext
+from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import LLMMessage, AssistantMessage
 from eidos.cpu.llm_unit import LLMUnit
 from eidos.cpu.message_summarizer import MessageSummarizer
+from transformers import AutoTokenizer, AutoModelWithLMHead
 
 
 class CustomSummarizer(MessageSummarizer):
