@@ -60,6 +60,13 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
 
         raise ValueError(f"Could not locate {unit_type}")
 
+    async def set_boot_messages(
+            self,
+            call_context: CallContext,
+            boot_messages: List[CPUMessageTypes]
+    ):
+        await self.memory_unit.storeBootMessages(call_context, boot_messages)
+
     async def schedule_request(
             self,
             call_context: CallContext,
@@ -68,10 +75,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
     ) -> Dict[str, Any]:
         output_format = output_format or dict(type="str")
         try:
-            boot_messages, conversation_message = await self.io_unit.process_request(prompts)
-            # todo -- change to store in agent memory directly or pass in every time...
-            if boot_messages:
-                await self.memory_unit.storeMessages(call_context, boot_messages)
+            conversation_message = await self.io_unit.process_request(prompts)
             conversation = await self.memory_unit.storeAndFetch(call_context, [conversation_message])
             assistant_message = await self._llm_execution_cycle(call_context, conversation, output_format)
             return await self.io_unit.process_response(call_context, assistant_message.content)
@@ -136,6 +140,9 @@ class Thread:
     def __init__(self, call_context: CallContext, cpu: AgentCPU):
         self._call_context = call_context
         self._cpu = cpu
+
+    async def set_boot_messages(self, *prompts: CPUMessageTypes):
+        return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
     async def schedule_request(self, prompts: List[CPUMessageTypes], output_format: Dict[str, Any] = None) -> Dict[str, Any]:
         return await self._cpu.schedule_request(self._call_context, prompts, output_format)

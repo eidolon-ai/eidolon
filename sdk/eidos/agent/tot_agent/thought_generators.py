@@ -36,24 +36,26 @@ class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
         super().__init__(spec)
         self.spec = spec
 
-    def build_prompt(self, user_message, thoughts_path: List[str]) -> List[CPUMessageTypes]:
+    def build_prompt(self, user_message, thoughts_path: List[str]) -> (List[CPUMessageTypes], List[CPUMessageTypes]):
         thoughts_tuple = tuple(thoughts_path)
         preamble_txt = self.env.from_string(self.spec.preamble).render(thoughts=thoughts_tuple, n=self.spec.num_children)
         thoughts_txt = self.env.from_string(self.spec.thoughts).render(thoughts=thoughts_tuple, n=self.spec.num_children)
         post_amble_txt = self.env.from_string(self.spec.post_amble).render(thoughts=thoughts_tuple, n=self.spec.num_children)
-        return [
-            SystemCPUMessage(prompt=preamble_txt),
-            UserTextCPUMessage(prompt=user_message),
-            UserTextCPUMessage(prompt=thoughts_txt),
-            UserTextCPUMessage(prompt=post_amble_txt)
-        ]
+        return ([
+                    SystemCPUMessage(prompt=preamble_txt)
+                ],
+                [
+                    UserTextCPUMessage(prompt=user_message),
+                    UserTextCPUMessage(prompt=thoughts_txt),
+                    UserTextCPUMessage(prompt=post_amble_txt)
+                ])
 
     @abstractmethod
     async def next_thought(
-        self,
-        user_message: str,
-        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
-        thoughts_path: List[str] = Field(default_factory=list),
+            self,
+            user_message: str,
+            llm_call: Callable[[List[LLMMessage], List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
+            thoughts_path: List[str] = Field(default_factory=list),
     ) -> str:
         """
         Generate the next thought given the problem description and the thoughts
@@ -75,13 +77,13 @@ class SampleCoTStrategy(BaseThoughtGenerationStrategy):
     """
 
     async def next_thought(
-        self,
-        user_message: UserMessage,
-        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
-        thoughts_path: List[str] = Field(default_factory=list),
+            self,
+            user_message: UserMessage,
+            llm_call: Callable[[List[LLMMessage], List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
+            thoughts_path: List[str] = Field(default_factory=list),
     ) -> str:
-        messages = self.build_prompt(user_message, thoughts_path)
-        next_thought = await llm_call(messages, SampleCoTStrategyOutput.model_json_schema())
+        system_messages, messages = self.build_prompt(user_message, thoughts_path)
+        next_thought = await llm_call(system_messages, messages, SampleCoTStrategyOutput.model_json_schema())
         return next_thought["thought"]
 
 
@@ -108,14 +110,14 @@ class ProposePromptStrategy(BaseThoughtGenerationStrategy, Specable[ProposePromp
         self.tot_memory = {}
 
     async def next_thought(
-        self,
-        user_message: UserMessage,
-        llm_call: Callable[[List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
-        thoughts_path: List[str] = Field(default_factory=list)
+            self,
+            user_message: UserMessage,
+            llm_call: Callable[[List[LLMMessage], List[LLMMessage], Dict[str, Any]], Awaitable[Dict[str, Any]]],
+            thoughts_path: List[str] = Field(default_factory=list)
     ) -> str:
         thoughts_tuple = tuple(thoughts_path)
         if thoughts_tuple not in self.tot_memory or not self.tot_memory[thoughts_tuple]:
-            messages = self.build_prompt(user_message, thoughts_path)
-            next_thought_msg = await llm_call(messages, ProposeOutputFormat.model_json_schema())
+            system_messages, messages = self.build_prompt(user_message, thoughts_path)
+            next_thought_msg = await llm_call(system_messages, messages, ProposeOutputFormat.model_json_schema())
             self.tot_memory[thoughts_tuple] = next_thought_msg["thoughts"]
         return self.tot_memory[thoughts_tuple].pop()

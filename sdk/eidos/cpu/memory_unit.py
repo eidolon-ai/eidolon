@@ -27,6 +27,15 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
         """
         await self.writeMessages(call_context, messages)
 
+    async def storeBootMessages(self, call_context: CallContext, messages: List[LLMMessage]):
+        """
+        Store the messages for the given call context
+        :param call_context: The call context for the current conversation
+        :param messages: The messages to store
+        :return: None
+        """
+        await self.writeBootMessages(call_context, messages)
+
     async def storeAndFetch(self, call_context: CallContext, messages: List[LLMMessage]) -> List[LLMMessage]:
         """
         Store the messages and returns the full conversation history for the given call context (including the messages just stored)
@@ -40,6 +49,16 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
         return conversation
 
     @abstractmethod
+    async def writeBootMessages(self, call_context: CallContext, messages: List[LLMMessage]):
+        """
+        Store the messages for the given call context
+        :param call_context: The call context for the current conversation
+        :param messages: The messages to store
+        :return: None
+        """
+        raise NotImplementedError("writeBootMessages not implemented")
+
+    @abstractmethod
     async def writeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
         """
         Store the messages for the given call context
@@ -47,7 +66,7 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
         :param messages: The messages to store
         :return: None
         """
-        raise NotImplementedError("getConversationHistory not implemented")
+        raise NotImplementedError("writeMessages not implemented")
 
     @abstractmethod
     async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:

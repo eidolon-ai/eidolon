@@ -42,33 +42,22 @@ class IOUnit(ProcessingUnit):
     @validate_call
     async def process_request(self, prompts: List[CPUMessageTypes]):
         # convert the prompts to a list of strings
-        boot_event_prompts = []
-        boot_user_message_parts = []
-        conv_user_message_parts = []
+        conv_message = []
+        user_message_parts = []
         for prompt in prompts:
             if prompt.type == "user":
-                if prompt.is_boot_prompt:
-                    boot_user_message_parts.append(UserMessageText(text=prompt.prompt))
-                else:
-                    conv_user_message_parts.append(UserMessageText(text=prompt.prompt))
+                user_message_parts.append(UserMessageText(text=prompt.prompt))
             elif prompt.type == "system":
-                boot_event_prompts.append(SystemMessage(content=prompt.prompt))
+                conv_message.append(SystemMessage(content=prompt.prompt))
             elif prompt.type == "image_url":
-                if prompt.is_boot_prompt:
-                    boot_user_message_parts.append(UserMessageImageURL(image_url=prompt.prompt))
-                else:
-                    conv_user_message_parts.append(UserMessageImageURL(image_url=prompt.prompt))
+                user_message_parts.append(UserMessageImageURL(image_url=prompt.prompt))
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
 
-        if len(boot_user_message_parts) > 0:
-            boot_event_prompts.append(UserMessage(content=boot_user_message_parts))
+        if len(user_message_parts) > 0:
+            conv_message = UserMessage(content=user_message_parts)
 
-        conv_message = []
-        if len(conv_user_message_parts) > 0:
-            conv_message = UserMessage(content=conv_user_message_parts)
-
-        return boot_event_prompts, conv_message
+        return conv_message
 
     @validate_call
     async def process_response(self, call_context: CallContext, response: Dict[str, Any]):

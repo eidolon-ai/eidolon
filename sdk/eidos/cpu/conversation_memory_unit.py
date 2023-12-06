@@ -13,7 +13,23 @@ class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
         conversationItems = [{
             "process_id": call_context.process_id,
             "thread_id": call_context.thread_id,
-            "message": message.model_dump()} for message in messages]
+            "message": message.model_dump(),
+            "is_boot_message": False
+        } for message in messages]
+
+        logging.debug(str(messages))
+        logging.debug(conversationItems)
+
+        await agent_os.symbolic_memory.insert("conversation_memory", conversationItems)
+
+    async def writeBootMessages(self, call_context: CallContext, messages: List[LLMMessage]):
+        conversationItems = [{
+            "process_id": call_context.process_id,
+            "thread_id": call_context.thread_id,
+            "message": message.model_dump(),
+            "is_boot_message": True
+        }
+            for message in messages]
 
         logging.debug(str(messages))
         logging.debug(conversationItems)
@@ -24,7 +40,14 @@ class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
         existingMessages = []
         async for message in agent_os.symbolic_memory.find("conversation_memory", {
             "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id
+            "thread_id": call_context.thread_id,
+            "is_boot_message": True
+        }):
+            existingMessages.append(LLMMessage.from_dict(message["message"]))
+        async for message in agent_os.symbolic_memory.find("conversation_memory", {
+            "process_id": call_context.process_id,
+            "thread_id": call_context.thread_id,
+            "is_boot_message": False
         }):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 

@@ -90,7 +90,8 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         level = 0
         question = Environment(undefined=StrictUndefined).from_string(self.spec.question_prompt).render(**kwargs)
 
-        async def exec_request(_messages: List[LLMMessage], _output_format: Dict[str, Any]) -> Dict[str, Any]:
+        async def exec_request(_boot_messages: List[LLMMessage], _messages: List[LLMMessage], _output_format: Dict[str, Any]) -> Dict[str, Any]:
+            await self.cpu.set_boot_messages(*_boot_messages)
             return await self.cpu.new_thread.schedule_request(_messages, _output_format)
 
         for i in range(self.spec.num_iterations):
