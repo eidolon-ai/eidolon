@@ -10,7 +10,7 @@ spec:
         model: "gpt-4-1106-preview"
         temperature: 0.3
     logic_units:
-      - implementation: "examples.code_search.code_search.CodeSearch"
+      - implementation: "eidolon_examples.code_search.code_search.CodeSearch"
         spec:
           root_dir: "$HOME//Development/augustdata/eidolon/sdk"
 

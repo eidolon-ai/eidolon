@@ -19,7 +19,7 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
     database: AsyncIOMotorDatabase = None
 
     def __init__(self, spec: MongoSymbolicMemoryConfig):
-        super().__init__()
+        super().__init__(spec)
         self.mongo_connection_string = spec.mongo_connection_string
         self.mongo_database_name = spec.mongo_database_name
 

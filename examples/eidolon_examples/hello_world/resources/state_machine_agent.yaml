@@ -3,4 +3,4 @@ kind: Agent
 metadata:
   name: StateMachine
 
-implementation: "examples.hello_world.StateMachine.StateMachine"
+implementation: "eidolon_examples.hello_world.StateMachine.StateMachine"

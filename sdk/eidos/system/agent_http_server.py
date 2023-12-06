@@ -1,5 +1,6 @@
 import argparse
 import logging.config
+import pathlib
 from contextlib import asynccontextmanager
 
 import dotenv
@@ -26,7 +27,8 @@ args = parser.parse_args()
 
 @asynccontextmanager
 async def start_os(app: FastAPI):
-    logging.config.fileConfig("logging.conf")
+    conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
+    logging.config.fileConfig(conf_)
     logger = logging.getLogger("eidolon")
     logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
     try:
@@ -61,4 +63,4 @@ if __name__ == "__main__":
     log_level_str = "debug" if args.debug else "info"
 
     # Run the server
-    uvicorn.run("eidos.agent_http_server:app", host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
+    uvicorn.run("eidos.system.agent_http_server:app", host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
