@@ -1,0 +1,17 @@
+apiVersion: eidolon/v1
+kind: Machine
+spec:
+  file_memory:
+    implementation: "eidos.impl.memory.local_file_memory.LocalFileMemory"
+    spec:
+      root_dir: "${EIDOLON_DATA_DIR}/code_search/file_memory"
+  symbolic_memory:
+    implementation: "eidos.impl.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    spec:
+      mongo_database_name: "eidolon"
+  similarity_memory:
+    spec:
+      vector_store:
+        implementation: "eidos.impl.memory.chroma_vector_store.ChromaVectorStore"
+        spec:
+          url: "file://${EIDOLON_DATA_DIR}/code_search"

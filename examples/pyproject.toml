@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "eidolon-examples"
+version = "0.1.0"
+description = ""
+authors = ["Luke Lalor <lukehlalor@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+setuptools = "^68.2.2"
+eidos = {path = "../sdk"}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

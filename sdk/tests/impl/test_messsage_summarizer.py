@@ -3,12 +3,12 @@ from typing import Any
 import pytest
 from bson import ObjectId
 
-from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.cpu.call_context import CallContext
-from eidolon_sdk.cpu.llm_message import LLMMessage, SystemMessage
-from eidolon_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
-from eidolon_sdk.impl.memory.local_symbolic_memory import LocalSymbolicMemory
-from eidolon_sdk.impl.cpu.message_summarizer import MessageSummarizer, MessageSummarizerConfig
+from eidos.memory.agent_memory import AgentMemory
+from eidos.cpu.call_context import CallContext
+from eidos.cpu.llm_message import LLMMessage, SystemMessage
+from eidos.cpu.llm_unit import LLMUnit, LLMUnitConfig
+from eidos.memory.local_symbolic_memory import LocalSymbolicMemory
+from eidos.cpu.message_summarizer import MessageSummarizer, MessageSummarizerConfig
 
 
 # Assuming the necessary imports and the LocalSymbolicMemory class are already defined

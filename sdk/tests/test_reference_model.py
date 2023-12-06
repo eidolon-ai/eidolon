@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from eidolon_sdk.reference_model import Reference, Specable
+from eidos.system.reference_model import Reference, Specable
 
 
 class TestSchema(BaseModel):

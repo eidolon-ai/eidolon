@@ -5,11 +5,11 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from eidolon_sdk.cpu.call_context import CallContext
-from eidolon_sdk.cpu.llm_message import AssistantMessage, SystemMessage
-from eidolon_sdk.cpu.llm_unit import LLMCallFunction
-from eidolon_sdk.impl.memory.in_memory_file_memory import InMemoryFileMemory, InMemoryFileMemoryConfig
-from eidolon_sdk.impl.cpu.llm import CacheLLMSpec, CacheLLM
+from eidos.cpu.call_context import CallContext
+from eidos.cpu.llm_message import AssistantMessage, SystemMessage
+from eidos.cpu.llm_unit import LLMCallFunction
+from eidos.memory.in_memory_file_memory import InMemoryFileMemory, InMemoryFileMemoryConfig
+from eidos.cpu.llm import CacheLLMSpec, CacheLLM
 
 
 # Assuming 'your_llm_reference' and 'your_module' are placeholders for actual implementations

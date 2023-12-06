@@ -8,22 +8,22 @@ from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
 
-from eidolon_sdk.agent import CodeAgent, Agent, register_program, register_action, AgentState
-from eidolon_sdk.agent_machine import AgentMachine, _make_cpu
-from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
-from eidolon_sdk.agent_os import AgentOS
-from eidolon_sdk.agent_controller import AgentController
-from eidolon_sdk.cpu.agent_io import IOUnit
-from eidolon_sdk.cpu.llm_message import ToolResponseMessage
-from eidolon_sdk.impl.cpu.conversation_memory_unit import ConversationalMemoryUnit
-from eidolon_sdk.impl.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec, \
+from eidos.agent import CodeAgent, Agent, register_program, register_action, AgentState
+from eidos.system.agent_machine import AgentMachine, _make_cpu
+from eidos.memory.agent_memory import AgentMemory, SymbolicMemory
+from eidos.agent_os import AgentOS
+from eidos.system.agent_controller import AgentController
+from eidos.cpu.agent_io import IOUnit
+from eidos.cpu.llm_message import ToolResponseMessage
+from eidos.cpu.conversation_memory_unit import ConversationalMemoryUnit
+from eidos.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec, \
     ConversationalResponse
-from eidolon_sdk.impl.generic_agent import GenericAgent, GenericAgentSpec
-from eidolon_sdk.impl.memory.local_symbolic_memory import LocalSymbolicMemory
-from eidolon_sdk.impl.cpu.llm import OpenAIGPT
-from eidolon_sdk.resource_models import CpuModel
-from eidolon_sdk.reference_model import Reference
-from eidolon_sdk.util.class_utils import fqn
+from eidos.agent.generic_agent import GenericAgent, GenericAgentSpec
+from eidos.memory.local_symbolic_memory import LocalSymbolicMemory
+from eidos.cpu.llm import OpenAIGPT
+from eidos.system.resource_models import CpuModel
+from eidos.system.reference_model import Reference
+from eidos.util.class_utils import fqn
 
 
 @pytest.fixture(scope="function")

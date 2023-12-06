@@ -1,0 +1,48 @@
+agent_memory:
+  file_memory:
+    implementation: "eidos.impl.memory.local_file_memory.LocalFileMemory"
+    spec:
+      root_dir: "/tmp/code_for_me"
+  symbolic_memory:
+    implementation: "eidos.impl.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    spec:
+      mongo_database_name: "eidolon"
+  similarity_memory:
+    spec:
+      vector_store:
+        implementation: "eidos.impl.memory.noop_memory.NoopVectorStore"
+
+agent_programs:
+  Coder:
+    agent:
+      implementation: "eidos.impl.generic_agent.GenericAgent"
+      spec:
+        system_prompt:
+          You are a software developer responsible for maintaining a project and trying to prove yourself. You ask for 
+          clarification when instructions are unclear, but you prefer to work when possible. You use tools to read
+          and modify files. You always write easy to understand code and prefer to use libraries when possible. Your 
+          contributions are greatly appreciated.
+          
+          Think carefully about how you want to solve the problem. Then make a 
+          plan to implement the changes. Finally, you need to write the code and test it. You may need to repeat these
+          steps multiple times until you have satisfied the user requirements.
+        question_prompt: "{{request}}"
+        question_json_schema:
+          type: object
+          properties:
+              request:
+                type: string
+    cpu:
+      control_unit:
+        implementation: "eidos.cpu.control_unit.ControlUnit"
+        spec:
+          max_num_function_calls: 20
+      llm_unit:
+        implementation: "eidos.impl.open_ai_llm_unit.OpenAIGPT"
+        spec:
+          model: "gpt-4-1106-preview"
+          temperature: 0.3
+      logic_units:
+        - implementation: "examples.code_for_me.file_manager.FileManager"
+          spec:
+            root_dir: "$HOME/projects/code_for_me_playground/eidolon"

@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from eidolon_sdk.util.schema_to_model import schema_to_model
+from eidos.util.schema_to_model import schema_to_model
 
 
 # Define a pytest class for grouping the tests

@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from eidolon_sdk.util.str_utils import replace_env_var_in_string
+from eidos.util.str_utils import replace_env_var_in_string
 
 
 class TestStrUtils:

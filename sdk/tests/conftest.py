@@ -4,7 +4,7 @@ import pytest
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from eidolon_sdk.impl.memory.mongo_symbolic_memory import MongoSymbolicMemory, MongoSymbolicMemoryConfig
+from eidos.memory.mongo_symbolic_memory import MongoSymbolicMemory, MongoSymbolicMemoryConfig
 
 
 @pytest.fixture()

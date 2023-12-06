@@ -1,0 +1,52 @@
+from typing import List
+
+from jinja2 import StrictUndefined, Environment
+from pydantic import Field, BaseModel
+
+from eidos.cpu.agent_cpu import AgentCPU
+from eidos.cpu.agent_io import UserTextCPUMessage
+from eidos.agent.tot_agent.prompts import CHECKER_PROMPT
+from eidos.agent.tot_agent.thought import ThoughtValidity
+from eidos.system.reference_model import Specable
+
+
+class TotCheckerConfig(BaseModel):
+    prompt: str = CHECKER_PROMPT
+    examples: str = ""
+
+
+class ToTChecker(Specable[TotCheckerConfig]):
+    spec: TotCheckerConfig
+    cpu: AgentCPU
+
+    def __init__(self, cpu, spec):
+        self.cpu = cpu
+        self.spec = spec
+
+    """
+    Tree of Thought (ToT) checker.
+
+    This is an abstract ToT checker that can be implemented by the user. You
+    can implement a simple rule-based checker or a more sophisticated
+    neural network based classifier.
+    """
+
+    async def evaluate(
+        self,
+        problem_description: str,
+        thoughts: List[str] = Field(default_factory=list),
+    ) -> ThoughtValidity:
+        """
+        Evaluate the response to the problem description and return the solution type.
+        """
+
+        checker_prompt = Environment(undefined=StrictUndefined).from_string(self.spec.prompt).render(
+            problem=problem_description, thoughts=thoughts, examples=self.spec.examples
+        )
+
+        resp = await self.cpu.new_thread.schedule_request(
+            prompts=[UserTextCPUMessage(prompt=checker_prompt)],
+            output_format=ThoughtValidity.model_json_schema()
+        )
+
+        return ThoughtValidity.model_validate(resp)
