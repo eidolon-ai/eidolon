@@ -66,7 +66,7 @@ class ReferenceMeta(type):
 
 class Reference(metaclass=ReferenceMeta):
     """
-    A wrapper to provide a generic reference to a class. Can be used like a Generic type to validate sub-class constraints
+    A wrapper to provide a generic reference to a class. Can be used like a Generic type to validate subclass constraints
 
     Reference[Foo](implementation="module.CLASS") will validate that the implementation is a subclass of Foo.
     Reference(implementation="module.CLASS") is equivalent to Reference[object](implementation="module.CLASS").
