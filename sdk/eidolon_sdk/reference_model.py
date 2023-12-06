@@ -29,7 +29,7 @@ class ReferenceMeta(type):
         class GenericReference(BaseModel):
             _sub_class: typing.Type = key
             implementation: str = Field(default=None, description="The implementation of the reference")
-            spec: dict = None
+            spec: dict = {} if issubclass(key, Specable) else None
 
             @model_validator(mode='after')
             def _validate(self):
@@ -85,4 +85,7 @@ class Reference(metaclass=ReferenceMeta):
         pass
 
     def instantiate(self, *args, **kwargs):
+        pass
+
+    def model_dump(self):
         pass

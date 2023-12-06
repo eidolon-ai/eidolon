@@ -12,7 +12,7 @@ from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field, create_model
 from starlette.responses import JSONResponse
 
-from .agent import Agent, AgentState, ProcessContext
+from .agent import Agent, AgentState, ProcessContext, EidolonHandler
 from .agent_contract import SyncStateResponse, AsyncStateResponse
 from .agent_memory import SymbolicMemory
 
@@ -26,14 +26,19 @@ class AgentController:
         self.agent = agent
 
     async def start(self, app: FastAPI):
-        for action, handler in sorted(self.agent.action_handlers.items().__reversed__(), key=cmp_to_key(lambda x, y: -1 if x[0] == 'INIT' else 1 if y[0] == 'INIT' else 0)):
+        for handler in sorted(
+                self.agent.action_handlers.values().__reversed__(),
+                key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0)
+        ):
             path = f"/agents/{self.name}"
-            if action != 'INIT':
-                path += f"/processes/{{process_id}}/actions/{action}"
-            endpoint = self.process_action(action)
+            if handler.is_initializer():
+                path += f"/programs/{handler.name}"
+            else:
+                path += f"/processes/{{process_id}}/actions/{handler.name}"
+            endpoint = self.process_action(handler)
             app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
                 202: {"model": AsyncStateResponse},
-                200: {'model': self.create_response_model(action)},
+                200: {'model': self.create_response_model(handler.name)},
             }, description=handler.description)
 
         app.add_api_route(
@@ -52,7 +57,8 @@ class AgentController:
         await self.start(app)
 
     # todo, defining this on agents and then handling the dynamic function call will give flexibility to define request body
-    def process_action(self, action: str):
+    def process_action(self, handler: EidolonHandler):
+        action = handler.name
         async def run_program(
                 request: Request,
                 body: BaseModel,
@@ -128,7 +134,7 @@ class AgentController:
         sig = inspect.signature(run_program)
         params = dict(sig.parameters)
         params['body'] = params['body'].replace(annotation=(self.agent.get_input_model(action)))
-        if action == 'INIT':
+        if handler.is_initializer():
             del params['process_id']
         else:
             replace: Parameter = params['process_id'].replace(annotation=str)

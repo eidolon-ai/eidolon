@@ -4,12 +4,13 @@ from urllib.parse import urljoin
 
 import aiohttp
 import jsonref as jsonref
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from eidolon_sdk.agent_contract import SyncStateResponse
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
 from eidolon_sdk.cpu.logic_unit import LogicUnit, ToolDefType
 from eidolon_sdk.reference_model import Specable
+from eidolon_sdk.util.logger import logger
 
 
 class ConversationalResponse(SyncStateResponse):
@@ -41,17 +42,22 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         tools = {}
 
         for agent in self.spec.agents:
-            path = f'/agents/{agent}'
-            name = self._name(agent, action="INIT")
-            tools[name] = await self._build_tool_def(name, path, agent)
+            prefix = f'/agents/{agent}/programs/'
+            for path in filter(lambda p: p.startswith(prefix), self._openapi_json['paths'].keys()):
+                action = path.removeprefix(prefix)
+                name = self._name(agent, action=action)
+                tools[name] = await self._build_tool_def(name, path, agent)
 
         # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
         allowed_agent_prefix = tuple(self._name(agent) for agent in self.spec.agents)
         processes = {}
         for message in conversation:
             if isinstance(message, ToolResponseMessage) and message.name.startswith(allowed_agent_prefix):
-                last = ConversationalResponse.model_validate(json.loads(message.result))  # todo, perhaps we should be converting these to strings when calling the model rather than saving them this way?
-                processes[last.process_id] = last
+                try:
+                    last = ConversationalResponse.model_validate(json.loads(message.result))  # todo, perhaps we should be converting these to strings when calling the model rather than saving them this way?
+                    processes[last.process_id] = last
+                except ValidationError:
+                    logger.warning("unable to parse conversation response", exc_info=True)
 
         # newer process state should override older process state if there are multiple calls
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
@@ -71,7 +77,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
             name=name,
             description=description,
             parameters=json_schema,
-            fn=lambda **kwargs: self._make_agent_request(path.replace("{process_id}", process_id), agent_program, **kwargs),
+            fn=self._make_agent_request(path=path.replace("{process_id}", process_id), agent_program=agent_program),
             _logic_unit=self
         )
 
@@ -84,9 +90,12 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent_program + process_id + action
 
-    async def _make_agent_request(self, path, agent_program, **kwargs) -> dict:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(urljoin(self.spec.location, path), json=kwargs) as resp:
-                json_ = await resp.json()
-                json_['program'] = agent_program
-                return ConversationalResponse.model_validate(json_).model_dump()
+    def _make_agent_request(self, path, agent_program):
+        async def fn(_self, **kwargs):
+            async with aiohttp.ClientSession() as session:
+                async with session.post(urljoin(self.spec.location, path), json=kwargs) as resp:
+                    json_ = await resp.json()
+                    json_['program'] = agent_program
+                    return ConversationalResponse.model_validate(json_).model_dump()
+
+        return fn

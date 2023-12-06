@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_sdk.agent import initializer, Agent, AgentSpec
+from eidolon_sdk.agent import register_program, Agent, AgentSpec
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage
@@ -53,7 +53,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         self.tot_memory = ToTDFSMemory()
         self.tot_controller = ToTController()
         if self.spec.init_description:
-            self.action_handlers["INIT"].description = self.spec.init_description
+            self.action_handlers["question"].description = self.spec.init_description
 
     def log_thought(
         self,
@@ -64,21 +64,21 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         self.logger.info(text)
 
     def get_input_model(self, action: str):
-        if action == 'INIT':
+        if action == 'question':
             return schema_to_model(self.spec.question_json_schema, "InitialQuestionInputModel")
         else:
             return super().get_input_model(action)
 
     def get_response_model(self, action: str):
-        if action == 'INIT':
+        if action == 'question':
             schema = TotResponse.model_json_schema()
             schema['properties']['answer'] = self.spec.output_format or dict(type='string')
             return schema_to_model(schema, "InitialQuestionOutputModel")
         else:
             return super().get_response_model(action)
 
-    @initializer
-    async def execute_llm(self, **kwargs) -> TotResponse:
+    @register_program()
+    async def question(self, **kwargs) -> TotResponse:
         """
         Answers a question using the tree of thoughts algorithm. This is computationally expensive, but will provide
         better results than standard llm calls for some problems. Specializes in questions which need to make initial

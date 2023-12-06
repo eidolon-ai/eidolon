@@ -5,7 +5,7 @@ metadata:
   name: ExampleGeneric
 
 spec:
-  ref_agents: ["StateMachine", "HelloWorld", "TreeOfThoughts"]
+  agent_refs: ["StateMachine", "HelloWorld", "TreeOfThoughts"]
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
   question_prompt: "{{instruction}}"
   question_json_schema:

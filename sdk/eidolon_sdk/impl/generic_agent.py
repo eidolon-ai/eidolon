@@ -1,7 +1,7 @@
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
 
-from eidolon_sdk.agent import Agent, initializer, register_action, AgentState, AgentSpec
+from eidolon_sdk.agent import Agent, register_program, register_action, AgentState, AgentSpec
 from eidolon_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
 from eidolon_sdk.reference_model import Specable
 from eidolon_sdk.util.schema_to_model import schema_to_model
@@ -20,12 +20,12 @@ class LlmResponse(BaseModel):
 
 class GenericAgent(Agent, Specable[GenericAgentSpec]):
     def get_input_model(self, action: str):
-        if action == 'INIT':
+        if action == 'question':
             return schema_to_model(self.spec.question_json_schema, "InitialQuestionInputModel")
         else:
             return super().get_input_model(action)
 
-    @initializer
+    @register_program()
     async def question(self, **kwargs) -> AgentState[LlmResponse]:
         schema = LlmResponse.model_json_schema()
         schema['type'] = 'object'

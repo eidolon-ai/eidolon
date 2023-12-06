@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel, Field
 
 from eidolon_sdk.agent_memory import AgentMemory
-from eidolon_sdk.cpu.agent_io import ResponseHandler, IOUnit, CPUMessageTypes
+from eidolon_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_sdk.cpu.call_context import CallContext
 from eidolon_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage, AssistantMessage
 from eidolon_sdk.cpu.llm_unit import LLMUnit
@@ -25,7 +25,7 @@ class AgentCPUConfig(BaseModel):
     io_unit: Reference[IOUnit] = Reference(implementation=fqn(IOUnit))
     memory_unit: Reference[MemoryUnit] = Reference(implementation=fqn(ConversationalMemoryUnit))
     llm_unit: Reference[LLMUnit] = Reference(implementation=fqn(OpenAIGPT))
-    logic_units: List[Reference[LogicUnit]] = {}
+    logic_units: List[Reference[LogicUnit]] = []
 
     max_num_function_calls: int = Field(10, description="The maximum number of function calls to make in a single request.")
 
@@ -80,7 +80,7 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
         except HTTPException:
             raise
         except Exception as e:
-            raise RuntimeError("Error in control unit while processing request") from e
+            raise RuntimeError("Error in cpu while processing request") from e
 
     async def get_tools(self, conversation) -> Dict[str, ToolDefType]:
         self.tool_defs = {}

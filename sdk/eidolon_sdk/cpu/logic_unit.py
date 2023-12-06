@@ -15,6 +15,7 @@ from eidolon_sdk.cpu.llm_message import LLMMessage
 from eidolon_sdk.cpu.llm_unit import LLMCallFunction
 from eidolon_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_sdk.util.class_utils import get_function_details
+from eidolon_sdk.util.logger import logger
 from eidolon_sdk.util.schema_to_model import schema_to_model
 
 
@@ -27,7 +28,8 @@ class ToolDefType(LLMCallFunction):
         self._logic_unit = _logic_unit
 
     async def execute(self, call_context: CallContext, args: Dict[str, Any]) -> Dict[str, Any]:
-        print("executing tool " + self.name + " with args " + str(args) + " and fn " + str(self.fn))
+        logger.info("executing tool " + self.name)
+        logger.debug("args: " + str(args) + " | fn: " + str(self.fn))
         return await self._logic_unit.execute(call_context, self.name, self.parameters, self.fn, args)
 
 
@@ -50,7 +52,7 @@ def llm_function(fn):
             fields[param] = (hint, default)
 
     function_name, clazz = get_function_details(fn)
-    print("creating model " + f'{clazz}_{function_name}InputModel' + " with fields " + str(fields))
+    logger.debug("creating model " + f'{clazz}_{function_name}InputModel' + " with fields " + str(fields))
     input_model = create_model(f'{clazz}_{function_name}InputModel', **fields)
 
     setattr(fn, 'llm_function', dict(
@@ -78,7 +80,7 @@ class LogicUnit(ProcessingUnit, ABC):
         ):
             unique_name = name + "_" + str(ObjectId())
             fn = llm_function_['fn']
-            print("registering tool " + unique_name + " with fn " + str(fn))
+            logger.debug("registering tool " + unique_name + " with fn " + str(fn))
             schema = llm_function_['input_model'].model_json_schema()
             description_ = llm_function_['description']
             self._base_tools[unique_name] = ToolDefType(

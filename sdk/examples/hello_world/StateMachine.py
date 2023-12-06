@@ -3,7 +3,7 @@ from typing import Annotated, Union
 from fastapi import HTTPException
 from pydantic import Field, BaseModel
 
-from eidolon_sdk.agent import CodeAgent, initializer, AgentState, register_action
+from eidolon_sdk.agent import CodeAgent, register_program, AgentState, register_action
 
 
 class AState(BaseModel):
@@ -23,7 +23,7 @@ class StateMachine(CodeAgent):
     Initializes in state a, can transform a or b to any state. Can terminate b or c.
     """
 
-    @initializer
+    @register_program()
     async def execute(self) -> AgentState[str]:
         return AgentState(name="a", data="here is something to transform")
 

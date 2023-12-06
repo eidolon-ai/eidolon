@@ -37,13 +37,14 @@ class Agent(Specable[AgentSpec]):
     def __init__(self, memory: AgentMemory, spec):
         super().__init__(spec)
         self.agent_memory = memory
-        self.cpu = self.spec.cpu.instantiate(agent_memory=self.agent_memory)
         if self.spec.agent_refs:
-            self.cpu.logic_units.append(ConversationalLogicUnit(
-                agent_memory=memory,
-                processing_unit_locator=self,
-                spec=ConversationalSpec(agents=self.spec.agent_refs)
-            ))
+            if 'logic_units' not in self.spec.cpu.spec:
+                self.spec.cpu.spec['logic_units'] = []
+            self.spec.cpu.spec['logic_units'].append(Reference[ConversationalLogicUnit](
+                implementation=fqn(ConversationalLogicUnit),
+                spec=ConversationalSpec(agents=self.spec.agent_refs).model_dump()
+            ).model_dump())
+        self.cpu = self.spec.cpu.instantiate(agent_memory=self.agent_memory)
 
         self.action_handlers = {
             handler.name: handler
@@ -91,9 +92,12 @@ class EidolonHandler:
     allowed_states: List[str]
     fn: callable
 
+    def is_initializer(self):
+        return len(self.allowed_states) == 1 and self.allowed_states[0] == 'UNINITIALIZED'
 
-def initializer(fn, description: str = None):
-    return _add_handler(fn, EidolonHandler(name='INIT', description=description or fn.__doc__, allowed_states=['UNINITIALIZED'], fn=fn))
+
+def register_program(name: str = None, description: str = None):
+    return register_action('UNINITIALIZED', name=name, description=description)
 
 
 def register_action(*allowed_states: str, name: str = None, description: str = None):

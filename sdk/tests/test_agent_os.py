@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from pydantic import BaseModel, Field
 
-from eidolon_sdk.agent import CodeAgent, Agent, initializer, register_action, AgentState
+from eidolon_sdk.agent import CodeAgent, Agent, register_program, register_action, AgentState
 from eidolon_sdk.agent_machine import AgentMachine, _make_cpu
 from eidolon_sdk.agent_memory import AgentMemory, SymbolicMemory
 from eidolon_sdk.agent_os import AgentOS
@@ -81,7 +81,7 @@ class HelloWorld(CodeAgent):
         super().__init__(*args, **kwargs)
         HelloWorld.counter = 0
 
-    @initializer
+    @register_program()
     async def idle(self, question: Annotated[
         str, Field(description="The question to ask. Can be anything, but it better be hello")]):
         HelloWorld.counter += 1
@@ -126,7 +126,7 @@ def test_program_automatically_terminates_if_no_new_state_provided(client_builde
 class ParamTester(CodeAgent):
     last_call = None
 
-    @initializer
+    @register_program()
     async def foo(self, x: int, y: int = 5, z: Annotated[int, Field(description="z is a param")] = 10):
         ParamTester.last_call = (x, y, z)
         return dict(x=x, y=y, z=z)
@@ -186,7 +186,7 @@ def test_program_error(client_builder):
 
 
 class MemTester(CodeAgent):
-    @initializer
+    @register_program()
     async def add(self, x: int):
         await self.agent_memory.symbolic_memory.insert_one("test", dict(x=x))
         found = await self.agent_memory.symbolic_memory.find_one("test", dict(x=x))
@@ -203,7 +203,7 @@ def test_programs_can_call_memory(client_builder, memory, symbolic_memory, db):
 
 
 class StateTester(CodeAgent):
-    @initializer
+    @register_program()
     async def foo(self):
         return AgentState(name="a", data=dict())
 
@@ -241,7 +241,7 @@ def test_empty_body_functions_if_no_args_required(client_builder):
 
 
 class PidTester(CodeAgent):
-    @initializer
+    @register_program()
     async def foo(self):
         return dict(agent_found_pid=self.get_context().process_id)
 
@@ -279,7 +279,7 @@ class ExtendedStateChange(AgentState[DocumentedBase]):
 
 
 class Documented(CodeAgent):
-    @initializer
+    @register_program()
     async def init(self, x: int) -> dict[str, int]:
         pass
 
