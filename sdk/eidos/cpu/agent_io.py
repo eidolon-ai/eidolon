@@ -19,7 +19,7 @@ class ResponseHandler(ABC):
 class CPUMessage(BaseModel):
     type: str
     prompt: str
-    is_boot_prompt: str = False
+    is_boot_prompt: bool = False
 
 
 class UserTextCPUMessage(CPUMessage):
@@ -28,7 +28,7 @@ class UserTextCPUMessage(CPUMessage):
 
 class SystemCPUMessage(CPUMessage):
     type: Literal['system'] = "system"
-    is_boot_prompt: str = True
+    is_boot_prompt: bool = True
 
 
 class ImageURLCPUMessage(CPUMessage):
