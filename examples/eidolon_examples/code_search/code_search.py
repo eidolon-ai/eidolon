@@ -8,7 +8,7 @@ from eidos import agent_os
 from eidos.cpu.logic_unit import LogicUnit, llm_function
 from eidos.memory.embeddings import OpenAIEmbeddingSpec, OpenAIEmbedding
 from eidos.system.reference_model import Specable
-from code_search.code_sync import CodeSync
+from eidolon_examples.code_search.code_sync import CodeSync
 
 
 class CodePackage(BaseModel):

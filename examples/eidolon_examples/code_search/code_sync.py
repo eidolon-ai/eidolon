@@ -9,7 +9,7 @@ from eidos.memory.parsers.base_parser import DataBlob
 from eidos.memory.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
 from watchdog.events import FileSystemEvent, FileSystemMovedEvent
 
-from code_search.file_system_watcher import FileSystemWatcher
+from eidolon_examples.code_search.file_system_watcher import FileSystemWatcher
 
 
 def hash_file(file_path, chunk_size=8192):
