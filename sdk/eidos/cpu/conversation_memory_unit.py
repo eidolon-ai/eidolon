@@ -42,13 +42,13 @@ class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
             "process_id": call_context.process_id,
             "thread_id": call_context.thread_id,
             "is_boot_message": True
-        }):
+        }, {"is_boot_message": 0}):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
         async for message in AgentOS.symbolic_memory.find("conversation_memory", {
             "process_id": call_context.process_id,
             "thread_id": call_context.thread_id,
             "is_boot_message": False
-        }):
+        }, {"is_boot_message": 0}):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 
         logging.debug("existingMessages = " + str(existingMessages))

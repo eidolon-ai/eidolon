@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import uuid
 from abc import abstractmethod, ABC
+from io import IOBase
 from typing import List, Any, Dict, Literal
 
+from fastapi import UploadFile
 from pydantic import BaseModel, validate_call
 
+from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
-from eidos.cpu.llm_message import UserMessageText, SystemMessage, UserMessageImageURL, UserMessage
+from eidos.cpu.llm_message import UserMessageText, SystemMessage, UserMessageImageURL, UserMessage, LLMMessage
 from eidos.cpu.processing_unit import ProcessingUnit
 
 
@@ -31,33 +35,44 @@ class SystemCPUMessage(CPUMessage):
     is_boot_prompt: bool = True
 
 
-class ImageURLCPUMessage(CPUMessage):
-    type: Literal['image_url'] = "image_url"
+class ImageCPUMessage(CPUMessage):
+    type: Literal['image_url'] = "image"
+    image: IOBase
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
-CPUMessageTypes = UserTextCPUMessage | SystemCPUMessage | ImageURLCPUMessage
+CPUMessageTypes = UserTextCPUMessage | SystemCPUMessage | ImageCPUMessage
 
 
 class IOUnit(ProcessingUnit):
-    @validate_call
-    async def process_request(self, prompts: List[CPUMessageTypes]):
+    async def process_request(self, prompts: List[CPUMessageTypes]) -> List[LLMMessage]:
         # convert the prompts to a list of strings
-        conv_message = []
+        conv_messages = []
         user_message_parts = []
         for prompt in prompts:
             if prompt.type == "user":
                 user_message_parts.append(UserMessageText(text=prompt.prompt))
             elif prompt.type == "system":
-                conv_message.append(SystemMessage(content=prompt.prompt))
-            elif prompt.type == "image_url":
-                user_message_parts.append(UserMessageImageURL(image_url=prompt.prompt))
+                conv_messages.append(SystemMessage(content=prompt.prompt))
+            elif prompt.type == "image":
+                # todo -- store image file into agent_os file memory, record the url, and use the URL in the message
+                file_memory = AgentOS.file_memory
+                image_file: IOBase = prompt.image
+                # read the prompt.image file into memory
+                image_data = image_file.read()
+                tmp_path = "uploaded_images/" + str(uuid.uuid4())
+                file_memory.mkdir("uploaded_images", True)
+                file_memory.write_file(tmp_path, image_data)
+                user_message_parts.append(UserMessageImageURL(image_url=tmp_path))
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
 
         if len(user_message_parts) > 0:
-            conv_message = UserMessage(content=user_message_parts)
+            conv_messages.append(UserMessage(content=user_message_parts))
 
-        return conv_message
+        return conv_messages
 
     @validate_call
     async def process_response(self, call_context: CallContext, response: Dict[str, Any]):

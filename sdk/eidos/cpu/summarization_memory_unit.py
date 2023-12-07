@@ -42,8 +42,9 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig
         async for message in AgentOS.symbolic_memory.find("conversation_memory", {
             "process_id": call_context.process_id,
             "thread_id": call_context.thread_id,
-            "archive": None
-        }):
+            "archive": None,
+            "is_boot_message": False
+        }, {"is_boot_message": 0}):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
 
         logging.debug("existingMessages = " + str(existingMessages))
@@ -65,8 +66,9 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig
             async for message in AgentOS.symbolic_memory.find("conversation_memory", {
                 "process_id": call_context.process_id,
                 "thread_id": call_context.thread_id,
-                "archive": None
-            }):
+                "archive": None,
+                "is_boot_message": False
+            }, {"is_boot_message": 0}):
                 existingMessages.append(LLMMessage.from_dict(message["message"]))
 
             # call the summarize_messages function on the MessageSummarizer logic unit

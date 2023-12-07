@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterable, AsyncIterable, List, Dict, Sequence
+from typing import Any, Optional, Iterable, AsyncIterable, List, Dict, Sequence, Union
 
 from pydantic import BaseModel, Field
 
@@ -121,13 +121,16 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
-    def find(self, symbol_collection: str, query: dict[str, Any]) -> AsyncIterable[dict[str, Any]]:
+    def find(self, symbol_collection: str, query: dict[str, Any], projection: Union[List[str], Dict[str, int]] = None) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
 
         Args:
             symbol_collection (str): The name of the collection to search within.
             query (dict[str, Any]): The search criteria used to filter symbols.
+            projection (Union[List[str], Dict[str, int]]): The fields to include or exclude from the results. If a list,
+                the fields will be included. If a dictionary, the fields will be included or excluded based on the
+                value of the dictionary. A value of 1 will include the field, and a value of 0 will exclude it.
 
         Returns:
             Iterable[dict[str, Any]]: A list of symbols that match the query, each represented as a dictionary.

@@ -1,4 +1,4 @@
-from typing import Any, Optional, List, Dict
+from typing import Any, Optional, List, Dict, Union
 
 from eidos.memory.agent_memory import FileMemory, SymbolicMemory
 from eidos.memory.document import EmbeddedDocument
@@ -38,7 +38,7 @@ class NoopSymbolicMemory(SymbolicMemory):
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return 0
 
-    def find(self, symbol_collection: str, query: dict[str, Any]):
+    def find(self, symbol_collection: str, query: dict[str, Any], projection: Union[List[str], Dict[str, int]] = None):
         pass
 
     async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:

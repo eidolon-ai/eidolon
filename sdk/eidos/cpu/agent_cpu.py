@@ -62,7 +62,8 @@ class AgentCPU(Specable[AgentCPUConfig], ProcessingUnitLocator):
             call_context: CallContext,
             boot_messages: List[CPUMessageTypes]
     ):
-        await self.memory_unit.storeBootMessages(call_context, boot_messages)
+        conversation_messages = await self.io_unit.process_request(boot_messages)
+        await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
             self,
@@ -72,8 +73,8 @@ class AgentCPU(Specable[AgentCPUConfig], ProcessingUnitLocator):
     ) -> Dict[str, Any]:
         output_format = output_format or dict(type="str")
         try:
-            conversation_message = await self.io_unit.process_request(prompts)
-            conversation = await self.memory_unit.storeAndFetch(call_context, [conversation_message])
+            conversation_messages = await self.io_unit.process_request(prompts)
+            conversation = await self.memory_unit.storeAndFetch(call_context, conversation_messages)
             assistant_message = await self._llm_execution_cycle(call_context, conversation, output_format)
             return await self.io_unit.process_response(call_context, assistant_message.content)
         except HTTPException:

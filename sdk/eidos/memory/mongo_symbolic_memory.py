@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional, AsyncIterable
+from typing import Any, Optional, AsyncIterable, Union, Dict, List
 
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field, BaseModel
@@ -26,8 +26,8 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return await self.database[symbol_collection].count_documents(query)
 
-    def find(self, symbol_collection: str, query: dict[str, Any]) -> AsyncIterable[dict[str, Any]]:
-        return self.database[symbol_collection].find(query)
+    def find(self, symbol_collection: str, query: dict[str, Any], projection: Union[List[str], Dict[str, int]] = None) -> AsyncIterable[dict[str, Any]]:
+        return self.database[symbol_collection].find(query, projection = projection)
 
     async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
         return await self.database[symbol_collection].find_one(query)

@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, AsyncIterable
 
 from eidos.memory.agent_memory import SymbolicMemory
 
@@ -53,9 +53,19 @@ class LocalSymbolicMemory(SymbolicMemory):
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return len([doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)])
 
-    async def find(self, symbol_collection: str, query: dict[str, Any]):
+    async def find(self, symbol_collection: str, query: dict[str, Any], projection: Optional[List[str]] = None) -> AsyncIterable[dict[str, Any]]:
         for doc in [doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)]:
-            yield doc
+            if projection is not None:
+                # handle projection, both list and dict.
+                if isinstance(projection, list):
+                    yield {k: v for k, v in doc.items() if k in projection}
+                elif isinstance(projection, dict):
+                    # Remember, the dict version is indicating which fields to include, not exclude.
+                    yield {k: v for k, v in doc.items() if k in projection}
+                else:
+                    raise ValueError(f"Invalid projection type {type(projection)}")
+            else:
+                yield doc
 
     async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
         for doc in _DB.get(symbol_collection, []):

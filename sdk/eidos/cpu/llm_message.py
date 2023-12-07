@@ -7,7 +7,6 @@ from pydantic import BaseModel
 # todo, replace LLMMessage with LLMMessageTypes
 class LLMMessage(BaseModel):
     type: str
-    is_boot_message: bool = False
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
@@ -27,7 +26,6 @@ class LLMMessage(BaseModel):
 class SystemMessage(LLMMessage):
     type: str = "system"
     content: str
-    is_boot_message: bool = True
 
 
 # Derived classes for different types of message content parts

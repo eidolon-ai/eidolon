@@ -1,5 +1,5 @@
 import pytest
-from eidos.cpu.agent_io import IOUnit, UserTextCPUMessage, SystemCPUMessage, ImageURLCPUMessage, CPUMessage
+from eidos.cpu.agent_io import IOUnit, UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage, CPUMessage
 from eidos.cpu.call_context import CallContext
 
 
@@ -27,7 +27,7 @@ async def test_process_request_with_system_message(io_unit: IOUnit):
 
 @pytest.mark.asyncio
 async def test_process_request_with_image_url_message(io_unit: IOUnit):
-    prompts = [ImageURLCPUMessage(prompt="http://example.com/image.jpg", is_boot_prompt=True)]
+    prompts = [ImageCPUMessage(prompt="http://example.com/image.jpg", is_boot_prompt=True)]
     boot_event_prompts, conv_message = await io_unit.process_request(prompts)
     assert len(boot_event_prompts) == 1
     assert conv_message == []
@@ -38,7 +38,7 @@ async def test_process_request_with_multiple_messages(io_unit: IOUnit):
     prompts = [
         UserTextCPUMessage(prompt="Hello", is_boot_prompt=True),
         SystemCPUMessage(prompt="System boot", is_boot_prompt=True),
-        ImageURLCPUMessage(prompt="http://example.com/image.jpg", is_boot_prompt=True)
+        ImageCPUMessage(prompt="http://example.com/image.jpg", is_boot_prompt=True)
     ]
     boot_event_prompts, conv_message = await io_unit.process_request(prompts)
     assert len(boot_event_prompts) == 3
