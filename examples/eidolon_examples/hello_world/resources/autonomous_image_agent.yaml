@@ -5,6 +5,17 @@ metadata:
   name: ImageAgent
 
 spec:
+  cpu:
+    spec:
+      llm_unit:
+        #    todo, we should not need to specify implementation here if it matches default
+        implementation: "eidos.cpu.llm.open_ai_llm_unit.OpenAIGPT"
+        spec:
+          model: "gpt-4-vision-preview"
+          temperature: 0.3
+          force_json: false
+          max_tokens: 4096
+
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
   question_prompt: "{{instruction}}"
   question_json_schema:
