@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
-import eidos
+from eidos import agent_os
 from eidos.system.agent_machine import AgentMachine
 
 dotenv.load_dotenv()
@@ -33,8 +33,8 @@ async def start_os(app: FastAPI):
     logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
     try:
         machine = AgentMachine.from_dir(args.yaml_path)
-        await machine.start(app)
         agent_os._machine = machine
+        await machine.start(app)
     except Exception as e:
         logger.exception("Failed to start AgentOS")
         raise e

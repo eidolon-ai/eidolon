@@ -1,25 +1,25 @@
-import logging
 import os
 from collections import defaultdict
 from contextlib import contextmanager
-from typing import List
+from typing import List, Dict
 
 import yaml
 
-from .agent_controller import AgentController
 from eidos.memory.agent_memory import AgentMemory
-from .resource_models import MachineResource, agent_resources, Resource, CPUResource
 from eidos.util.logger import logger
+from .agent_controller import AgentController
+from .resource_models import MachineResource, agent_resources, Resource, CPUResource
 
 
 class AgentMachine:
     memory: AgentMemory
     agent_controllers: List[AgentController]
+    cpus: Dict[str, CPUResource]
 
-    def __init__(self, agent_memory: AgentMemory, agent_programs: List[AgentController] = None):
+    def __init__(self, agent_memory: AgentMemory, agent_programs: List[AgentController] = None, cpus=None):
         self.memory = agent_memory
+        self.cpus = cpus or {}
         self.agent_controllers = agent_programs or []
-        self.logger = logging.getLogger("eidolon")
         self.app = None
 
     async def start(self, app):
@@ -68,19 +68,23 @@ class AgentMachine:
                 resource_model = agent_resources.get(kind)
                 if not resource_model:
                     raise ValueError(f'Unsupported kind "{kind}"')
-                cpu = agent.spec.get('cpu', None)
-                if not cpu and 'DEFAULT' in cpus:
-                    agent.spec['cpu'] = cpus['DEFAULT'].spec
-                elif isinstance(cpu, str):
-                    if cpu not in cpus:
-                        raise ValueError(f'Undefined cpu "{cpu}"')
-                    agent.spec['cpu'] = cpus[cpu].spec
                 if agent.metadata.name in agents:
                     logger.warning(f"Overwriting existing agent {agent.metadata.name}")
                 agents[agent.metadata.name] = agent.promote(resource_model)
+
+        wrapped_agents = []
+        for agent in agents.values():
+            fn_pointer = agent.instantiate
+            def _wrap_agent(*args, **kwargs):
+                with _error_wrapper(agent, source_map):
+                    return fn_pointer(*args, **kwargs)
+
+            agent.instantiate = _wrap_agent
+            wrapped_agents.append(agent)
+
         return AgentMachine(
             agent_memory=(machine.spec.get_agent_memory()),
-            agent_programs=[AgentController(p.metadata.name, p.instantiate()) for p in agents.values()]
+            agent_programs=[AgentController(p) for p in wrapped_agents]
         )
 
 

@@ -5,12 +5,11 @@ from typing import List, Literal, Type, Dict, Optional, TypeVar
 from pydantic import Field, BaseModel, field_validator, Extra
 
 from eidos.agent.generic_agent import GenericAgent
+from eidos.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidos.cpu.agent_cpu import AgentCPU
 from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory, AgentMemory
+from eidos.system.reference_model import Reference
 from eidos.util.class_utils import fqn
-from .reference_model import Reference
-from ..agent.agent import Agent
-from ..agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 
 
 class Metadata(BaseModel):
@@ -26,7 +25,6 @@ class Resource(BaseModel, extra=Extra.allow):
     apiVersion: Literal["eidolon/v1"]
     kind: str
     metadata: Metadata = Metadata(name='DEFAULT')
-    spec: dict = {}
 
     @classmethod
     def kind_literal(cls) -> Optional[str]:
@@ -46,7 +44,7 @@ class CPUResource(Resource, Reference[AgentCPU]):
     implementation: str = fqn(AgentCPU)
 
 
-class AgentResource(Resource, Reference[Agent]):
+class AgentResource(Resource, Reference[object]):
     kind: Literal['Agent']
 
 

@@ -1564,13 +1564,13 @@ text-helpers = ["chardet (>=5.1.0,<6.0.0)"]
 
 [[package]]
 name = "langchain-core"
-version = "0.0.10"
+version = "0.0.11"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = ">=3.8.1,<4.0"
 files = [
-    {file = "langchain_core-0.0.10-py3-none-any.whl", hash = "sha256:a194f6c27b44432901a8c493f0efc4e9cda66e018c227876a563922f451892f6"},
-    {file = "langchain_core-0.0.10.tar.gz", hash = "sha256:d1850245902cc38bf18000acc8c93cf7714452ff9825ac0c7119d5da43f1bb50"},
+    {file = "langchain_core-0.0.11-py3-none-any.whl", hash = "sha256:7208bc195559336fae91dbd3d9b4b78e52d5cbc4166411f24b03845832d4c329"},
+    {file = "langchain_core-0.0.11.tar.gz", hash = "sha256:0c81adee6b3ef00f1677d01c22afb876b011fc6ebca7770cae05647b26e94875"},
 ]
 
 [package.dependencies]

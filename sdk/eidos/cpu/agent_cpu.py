@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextvars
 import json
 from typing import Any, List, Dict, Type
 
@@ -29,11 +28,10 @@ class AgentCPUConfig(BaseModel):
     max_num_function_calls: int = Field(10, description="The maximum number of function calls to make in a single request.")
 
 
-class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
+class AgentCPU(Specable[AgentCPUConfig], ProcessingUnitLocator):
     io_unit: IOUnit
     memory_unit: MemoryUnit
     logic_units: List[LogicUnit] = None,
-    process_id: contextvars.ContextVar
 
     def __init__(self, spec: AgentCPUConfig = None):
         super().__init__(spec)
@@ -43,7 +41,6 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
         self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
-        self.process_id = contextvars.ContextVar('process_id', default=None)
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
         for unit in self.logic_units:
@@ -124,13 +121,11 @@ class AgentCPU(ProcessingUnitLocator, Specable[AgentCPUConfig]):
 
         raise ValueError(f"Exceeded maximum number of function calls {self.spec.max_num_function_calls}")
 
-    @property
-    def main_thread(self) -> Thread:
-        return Thread(CallContext(process_id=self.process_id.get()), self)
+    def main_thread(self, process_id: str) -> Thread:
+        return Thread(CallContext(process_id=process_id), self)
 
-    @property
-    def new_thread(self) -> Thread:
-        return Thread(CallContext(process_id=self.process_id.get()).derive_call_context(), self)
+    def new_thread(self, process_id) -> Thread:
+        return Thread(CallContext(process_id=process_id).derive_call_context(), self)
 
 
 class Thread:

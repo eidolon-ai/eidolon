@@ -1,10 +1,17 @@
 from __future__ import annotations
 
+from typing import Any
+
 from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory
 
-_machine: AgentMachine
+_machine: Any = None
+
 
 class AgentOS:
+    @staticmethod
+    def machine() -> Any:
+        return _machine
+
     @staticmethod
     def file_memory() -> FileMemory:
         return _machine.memory.file_memory

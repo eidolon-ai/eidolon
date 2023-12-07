@@ -12,22 +12,33 @@ from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field, create_model
 from starlette.responses import JSONResponse
 
-from eidos.agent.agent import Agent, AgentState, ProcessContext, EidolonHandler
-from .agent_contract import SyncStateResponse, AsyncStateResponse
+from eidos.agent.agent import Agent, AgentState, EidolonHandler
 from eidos.agent_os import AgentOS
+from .agent_contract import SyncStateResponse, AsyncStateResponse
+from .resource_models import AgentResource
 
 
 class AgentController:
-    name: str
-    agent: Agent
+    name: typing.Optional[str]
+    agent: typing.Optional[object]
+    handlers: typing.Dict[str, EidolonHandler]
 
-    def __init__(self, name: str, agent: Agent):
-        self.name = name
-        self.agent = agent
+    def __init__(self, agent_resource: AgentResource):
+        self.name = None
+        self.agent = None
+        self.handlers = {}
+        self._agent_reference = agent_resource
 
     async def start(self, app: FastAPI):
+        self.agent = self._agent_reference.instantiate()
+        self.name = self._agent_reference.metadata.name
+        self.handlers = {
+            handler.name: handler
+            for method_name in dir(self.agent) if hasattr(getattr(self.agent, method_name), 'eidolon_handlers')
+            for handler in getattr(getattr(self.agent, method_name), 'eidolon_handlers')
+        }
         for handler in sorted(
-                self.agent.action_handlers.values().__reversed__(),
+                self.handlers.values().__reversed__(),
                 key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0)
         ):
             path = f"/agents/{self.name}"
@@ -38,7 +49,7 @@ class AgentController:
             endpoint = self.process_action(handler)
             app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
                 202: {"model": AsyncStateResponse},
-                200: {'model': self.create_response_model(handler.name)},
+                200: {'model': self.create_response_model(handler)},
             }, description=handler.description)
 
         app.add_api_route(
@@ -50,7 +61,9 @@ class AgentController:
         )
 
     def stop(self, app: FastAPI):
-        pass
+        self.name = None
+        self.agent = None
+        self.handlers = {}
 
     async def restart(self, app: FastAPI):
         self.stop(app)
@@ -58,7 +71,6 @@ class AgentController:
 
     # todo, defining this on agents and then handling the dynamic function call will give flexibility to define request body
     def process_action(self, handler: EidolonHandler):
-        action = handler.name
         async def run_program(
                 request: Request,
                 background_tasks: BackgroundTasks,
@@ -77,17 +89,19 @@ class AgentController:
                     raise HTTPException(status_code=404, detail="Process not found")
                 state = found['state']
 
-            handler = self.agent.action_handlers[action]
             if state not in handler.allowed_states:
-                raise HTTPException(status_code=409, detail=f"Action \"{action}\" cannot process state \"{state}\"")
+                raise HTTPException(status_code=409, detail=f"Action \"{handler.name}\" cannot process state \"{state}\"")
 
-            state = dict(process_id=process_id, state="processing", data=dict(action=action),
+            state = dict(process_id=process_id, state="processing", data=dict(action=handler.name),
                          date=str(datetime.now().isoformat()))
             await AgentOS.symbolic_memory().insert_one('processes', state)
 
             async def run_and_store_response():
                 try:
                     # todo -- probably should be **dict(body) per https://docs.pydantic.dev/latest/concepts/serialization/
+                    sig = inspect.signature(handler.fn)
+                    if "process_id" in dict(sig.parameters):
+                        kwargs['process_id'] = process_id
                     response = await handler.fn(self.agent, **kwargs)
                     if isinstance(response, AgentState):
                         state = response.name
@@ -120,8 +134,6 @@ class AgentController:
                     raise Exception("Not implemented")
                 return doc
 
-            self.agent.process_context.set(ProcessContext(process_id=process_id, callback_url=callback))
-            self.agent.cpu.process_id.set(process_id)
             if execution_mode == 'sync':
                 state = await run_and_store_response()
                 return self.doc_to_response(state)
@@ -129,14 +141,12 @@ class AgentController:
                 background_tasks.add_task(run_and_store_response)
                 return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
 
-        logging.getLogger("eidolon").info(f"Registering action {action} for program {self.name}")
+        logging.getLogger("eidolon").info(f"Registering action {handler.name} for program {self.name}")
         sig = inspect.signature(run_program)
-        print(str(sig))
         params = dict(sig.parameters)
-        model = self.agent.get_input_model(action)
+        model = handler.input_model_fn(self.agent, handler)
         for field in model.model_fields:
             params[field] = Parameter(field, Parameter.KEYWORD_ONLY, annotation=model.model_fields[field].annotation)
-        # params['body'] = params['body'].replace(annotation=(model))
         if handler.is_initializer():
             del params['process_id']
         else:
@@ -167,7 +177,7 @@ class AgentController:
                 state=latest_record['state'],
                 data=latest_record['data'],
                 available_actions=[
-                    action for action, handler in self.agent.action_handlers.items() if latest_record['state'] in handler.allowed_states
+                    action for action, handler in self.handlers.items() if latest_record['state'] in handler.allowed_states
                 ],
             ).model_dump(), 200)
 
@@ -180,12 +190,12 @@ class AgentController:
                 latest_record = record
         return latest_record
 
-    def create_response_model(self, action: str):
+    def create_response_model(self, handler: EidolonHandler):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
         fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
-        return_type = self.agent.get_response_model(action)
+        return_type = handler.output_model_fn(self.agent, handler)
         if inspect.isclass(return_type) and issubclass(return_type, AgentState):
             return_type = return_type.model_fields['data'].annotation
         fields['data'] = (return_type, Field(..., description=fields['data'][1].description))
 
-        return create_model(f'{action.capitalize()}ResponseModel', **fields)
+        return create_model(f'{handler.name.capitalize()}ResponseModel', **fields)
