@@ -72,19 +72,10 @@ class AgentMachine:
                     logger.warning(f"Overwriting existing agent {agent.metadata.name}")
                 agents[agent.metadata.name] = agent.promote(resource_model)
 
-        wrapped_agents = []
-        for agent in agents.values():
-            fn_pointer = agent.instantiate
-            def _wrap_agent(*args, **kwargs):
-                with _error_wrapper(agent, source_map):
-                    return fn_pointer(*args, **kwargs)
-
-            agent.instantiate = _wrap_agent
-            wrapped_agents.append(agent)
-
         return AgentMachine(
             agent_memory=(machine.spec.get_agent_memory()),
-            agent_programs=[AgentController(p) for p in wrapped_agents]
+            agent_programs=[AgentController(p) for p in agents.values()],
+            cpus=cpus,
         )
 
 

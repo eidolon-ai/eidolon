@@ -94,7 +94,7 @@ class AgentController:
 
             state = dict(process_id=process_id, state="processing", data=dict(action=handler.name),
                          date=str(datetime.now().isoformat()))
-            await AgentOS.symbolic_memory().insert_one('processes', state)
+            await AgentOS.symbolic_memory.insert_one('processes', state)
 
             async def run_and_store_response():
                 try:
@@ -129,7 +129,7 @@ class AgentController:
                         date=str(datetime.now().isoformat())
                     )
                     logging.exception(f"Unhandled error raised by handler")
-                await AgentOS.symbolic_memory().insert_one('processes', doc)
+                await AgentOS.symbolic_memory.insert_one('processes', doc)
                 if callback:
                     raise Exception("Not implemented")
                 return doc
@@ -184,7 +184,7 @@ class AgentController:
     async def get_latest_process_event(self, process_id):
         # todo, memory needs to include sorting
         latest_record = None
-        records = AgentOS.symbolic_memory().find('processes', dict(process_id=process_id))
+        records = AgentOS.symbolic_memory.find('processes', dict(process_id=process_id))
         async for record in records:
             if not latest_record or record['date'] > latest_record['date']:
                 latest_record = record

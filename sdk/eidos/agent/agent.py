@@ -31,7 +31,7 @@ class Agent(Specable[AgentSpec]):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        cpus: Dict[str, AgentCPU] = AgentOS.machine().cpus if AgentOS.machine() else {}
+        cpus: Dict[str, AgentCPU] = AgentOS.machine.cpus if AgentOS.machine else {}
         if self.spec.cpu is None:
             self.spec.cpu = cpus.get('DEFAULT', Reference[AgentCPU](implementation=fqn(AgentCPU)))
         elif isinstance(self.spec.cpu, str):

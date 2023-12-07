@@ -7,19 +7,21 @@ from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory
 _machine: Any = None
 
 
-class AgentOS:
-    @staticmethod
-    def machine() -> Any:
-        return _machine
+class _AgentOSMeta(type):
+    def __getattr__(self, item):
+        if item in ['file_memory', 'symbolic_memory', 'similarity_memory']:
+            return getattr(_machine.memory, item)
+        elif item == 'machine':
+            return _machine
+        else:
+            raise AttributeError(f"Attribute {item} not found on AgentOS")
 
-    @staticmethod
-    def file_memory() -> FileMemory:
-        return _machine.memory.file_memory
+    def __setattr__(self, key, value):
+        pass
 
-    @staticmethod
-    def symbolic_memory() -> SymbolicMemory:
-        return _machine.memory.symbolic_memory
 
-    @staticmethod
-    def similarity_memory() -> VectorMemory:
-        return _machine.memory.similarity_memory
+class AgentOS(metaclass=_AgentOSMeta):
+    machine: Any
+    file_memory: FileMemory
+    symbolic_memory: SymbolicMemory
+    similarity_memory: VectorMemory
