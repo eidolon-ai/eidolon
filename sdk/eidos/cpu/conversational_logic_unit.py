@@ -69,7 +69,16 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
     async def _build_tool_def(self, name, path, agent_program, process_id=""):
         path = path.format(process_id="{process_id}")
-        json_schema = self._openapi_json['paths'][path]['post']['requestBody']['content']['application/json']['schema']
+        path_post_part = self._openapi_json['paths'][path]['post']
+        if 'properties' not in path_post_part:
+            json_schema = {
+                'type': 'object',
+                'properties': {}
+            }
+        else:
+            json_schema = {}
+            for k, v in path_post_part['properties'].items():
+                json_schema[k] = v['schema']
         description = self._openapi_json['paths'][path]['post'].get('description', '')
         if not description:
             self.logger.warning(f"Agent action at {path} does not have a description. LLM may not use it properly")

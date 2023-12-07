@@ -1,0 +1,17 @@
+apiVersion: eidolon/v1
+kind: GenericAgent
+
+metadata:
+  name: ImageAgent
+
+spec:
+  system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
+  question_prompt: "{{instruction}}"
+  question_json_schema:
+    type: object
+    properties:
+      instruction:
+        type: string
+      image:
+        type: string
+        format: "binary"

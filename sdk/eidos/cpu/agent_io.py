@@ -57,7 +57,6 @@ class IOUnit(ProcessingUnit):
             elif prompt.type == "system":
                 conv_messages.append(SystemMessage(content=prompt.prompt))
             elif prompt.type == "image":
-                # todo -- store image file into agent_os file memory, record the url, and use the URL in the message
                 file_memory = AgentOS.file_memory
                 image_file: IOBase = prompt.image
                 # read the prompt.image file into memory
