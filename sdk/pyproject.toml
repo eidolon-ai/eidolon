@@ -39,6 +39,7 @@ watchdog = "^3.0.0"
 contextvars = "^2.4"
 python-multipart = "^0.0.6"
 pillow = "^10.1.0"
+pydub = "^0.25.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.3"
