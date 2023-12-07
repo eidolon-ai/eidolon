@@ -3,6 +3,7 @@ from typing import Dict, Any, Type
 from typing import List
 from uuid import UUID
 
+from fastapi import UploadFile
 from pydantic import BaseModel, HttpUrl, EmailStr, Field
 from pydantic import create_model, ValidationError
 
@@ -104,6 +105,8 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
                     item_type = items_schema.get('type', 'string')  # Default to string type
                     python_type = type_mapping.get(item_type, str)
                     fields[property_name] = (List[python_type], makeFieldOrDefaultValue())
+            elif field_type == 'string' and 'format' in property_schema and property_schema['format'] == 'binary':
+                fields[property_name] = (UploadFile, makeFieldOrDefaultValue())
             else:
                 # Simple field
                 python_type = type_mapping.get(field_type, None)

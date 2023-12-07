@@ -5,7 +5,7 @@ from typing import List
 from pydantic import Field
 from pydantic import ValidationError
 
-from eidos import agent_os
+from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import LLMMessage, AssistantMessage
 from eidos.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
@@ -27,7 +27,7 @@ class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
     def __init__(self, spec: CacheLLMSpec, **kwargs):
         super().__init__(spec, **kwargs)
         self.dir = spec.dir
-        agent_os.file_memory.mkdir(self.dir, exist_ok=True)
+        AgentOS.file_memory().mkdir(self.dir, exist_ok=True)
         self.llm = spec.llm.instantiate(processing_unit_locator=self.processing_unit_locator)
 
     async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: dict) -> AssistantMessage:
@@ -43,12 +43,12 @@ class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
 
             file_name = f"{self.dir}/{hash_hex}.json"
 
-            if agent_os.file_memory.exists(file_name):
-                contents = agent_os.file_memory.read_file(file_name)
+            if AgentOS.file_memory().exists(file_name):
+                contents = AgentOS.file_memory().read_file(file_name)
                 return LLMMessage.from_dict(json.loads(contents.decode()))
             else:
                 result = await self.llm.execute_llm(call_context, inMessages, inTools, output_format)
-                agent_os.file_memory.write_file(file_name, json.dumps(result.dict()).encode())
+                AgentOS.file_memory().write_file(file_name, json.dumps(result.dict()).encode())
                 return result
         except ValidationError as ve:
             # Handle Pydantic validation errors

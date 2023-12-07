@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from eidos.agent import CodeAgent, Agent, register_program, register_action, AgentState
 from eidos.system.agent_machine import AgentMachine, _make_cpu
 from eidos.memory.agent_memory import AgentMemory, SymbolicMemory
-from eidos.agent_os import AgentOS
+from eidos import AgentOS
 from eidos.system.agent_controller import AgentController
 from eidos.cpu.agent_io import IOUnit
 from eidos.cpu.llm_message import ToolResponseMessage

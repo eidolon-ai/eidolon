@@ -5,7 +5,7 @@ import tiktoken
 from bson import ObjectId
 from pydantic import Field
 
-from eidos import agent_os
+from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import LLMMessage
 from eidos.cpu.llm_unit import LLM_MAX_TOKENS, LLMUnit
@@ -35,11 +35,11 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig
         logging.debug(str(messages))
         logging.debug(conversationItems)
 
-        await agent_os.symbolic_memory.insert("conversation_memory", conversationItems)
+        await AgentOS.symbolic_memory().insert("conversation_memory", conversationItems)
 
     async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
         existingMessages = []
-        async for message in agent_os.symbolic_memory.find("conversation_memory", {
+        async for message in AgentOS.symbolic_memory().find("conversation_memory", {
             "process_id": call_context.process_id,
             "thread_id": call_context.thread_id,
             "archive": None
@@ -62,7 +62,7 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig
         # cl100k_base encodings only work for gpt-3.5-turbo and up models
         if num_tokens >= LLM_MAX_TOKENS.get(llm_unit.spec.model) * self.max_token_frac:
             existingMessages = []
-            async for message in agent_os.symbolic_memory.find("conversation_memory", {
+            async for message in AgentOS.symbolic_memory().find("conversation_memory", {
                 "process_id": call_context.process_id,
                 "thread_id": call_context.thread_id,
                 "archive": None
@@ -75,14 +75,14 @@ class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig
             # create a new object id for the summary message
             summary_id = str(ObjectId())
             # update existing messages and set the archive column to the new object id and insert the new message into the database with the object id all using an upsert in the db
-            await agent_os.symbolic_memory.update_many("conversation_memory", {
+            await AgentOS.symbolic_memory().update_many("conversation_memory", {
                 "process_id": call_context.process_id,
                 "thread_id": call_context.thread_id
             }, {"$set": {
                 "archive": summary_id
             }})
 
-            await agent_os.symbolic_memory.insert_one("conversation_memory", {
+            await AgentOS.symbolic_memory().insert_one("conversation_memory", {
                 "_id": summary_id,
                 "process_id": call_context.process_id,
                 "thread_id": call_context.thread_id,

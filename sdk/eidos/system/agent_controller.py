@@ -14,7 +14,7 @@ from starlette.responses import JSONResponse
 
 from eidos.agent.agent import Agent, AgentState, ProcessContext, EidolonHandler
 from .agent_contract import SyncStateResponse, AsyncStateResponse
-from eidos import agent_os
+from eidos.agent_os import AgentOS
 
 
 class AgentController:
@@ -61,9 +61,9 @@ class AgentController:
         action = handler.name
         async def run_program(
                 request: Request,
-                body: BaseModel,
                 background_tasks: BackgroundTasks,
                 process_id: typing.Optional[str] = None,
+                **kwargs
         ):
             callback = request.headers.get('callback-url')
             execution_mode = request.headers.get('execution-mode', 'async' if callback else 'sync').lower()
@@ -81,14 +81,14 @@ class AgentController:
             if state not in handler.allowed_states:
                 raise HTTPException(status_code=409, detail=f"Action \"{action}\" cannot process state \"{state}\"")
 
-            state = dict(process_id=process_id, state="processing", data=dict(action=action, body=body.model_dump()),
+            state = dict(process_id=process_id, state="processing", data=dict(action=action),
                          date=str(datetime.now().isoformat()))
-            await agent_os.symbolic_memory.insert_one('processes', state)
+            await AgentOS.symbolic_memory().insert_one('processes', state)
 
             async def run_and_store_response():
                 try:
                     # todo -- probably should be **dict(body) per https://docs.pydantic.dev/latest/concepts/serialization/
-                    response = await handler.fn(self.agent, **body.__dict__)
+                    response = await handler.fn(self.agent, **kwargs)
                     if isinstance(response, AgentState):
                         state = response.name
                         data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data
@@ -115,7 +115,7 @@ class AgentController:
                         date=str(datetime.now().isoformat())
                     )
                     logging.exception(f"Unhandled error raised by handler")
-                await agent_os.symbolic_memory.insert_one('processes', doc)
+                await AgentOS.symbolic_memory().insert_one('processes', doc)
                 if callback:
                     raise Exception("Not implemented")
                 return doc
@@ -131,13 +131,18 @@ class AgentController:
 
         logging.getLogger("eidolon").info(f"Registering action {action} for program {self.name}")
         sig = inspect.signature(run_program)
+        print(str(sig))
         params = dict(sig.parameters)
-        params['body'] = params['body'].replace(annotation=(self.agent.get_input_model(action)))
+        model = self.agent.get_input_model(action)
+        for field in model.model_fields:
+            params[field] = Parameter(field, Parameter.KEYWORD_ONLY, annotation=model.model_fields[field].annotation)
+        # params['body'] = params['body'].replace(annotation=(model))
         if handler.is_initializer():
             del params['process_id']
         else:
             replace: Parameter = params['process_id'].replace(annotation=str)
             params['process_id'] = replace
+        del params['kwargs']
         run_program.__signature__ = sig.replace(parameters=params.values())
         return run_program
 
@@ -169,7 +174,7 @@ class AgentController:
     async def get_latest_process_event(self, process_id):
         # todo, memory needs to include sorting
         latest_record = None
-        records = agent_os.symbolic_memory.find('processes', dict(process_id=process_id))
+        records = AgentOS.symbolic_memory().find('processes', dict(process_id=process_id))
         async for record in records:
             if not latest_record or record['date'] > latest_record['date']:
                 latest_record = record

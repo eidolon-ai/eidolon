@@ -13,3 +13,6 @@ spec:
     properties:
       instruction:
         type: string
+      image:
+        type: string
+        format: "binary"

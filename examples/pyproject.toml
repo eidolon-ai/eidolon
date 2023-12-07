@@ -8,8 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
 setuptools = "^69.0.2"
-eidos = {path = "../sdk"}
 transformers = "^4.35.2"
+eidos = {path = "../sdk", develop = true}
 
 [build-system]
 requires = ["poetry-core"]

@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
-from eidos import agent_os
+import eidos
 from eidos.system.agent_machine import AgentMachine
 
 dotenv.load_dotenv()
@@ -59,8 +59,12 @@ app = FastAPI(lifespan=start_os)
 app.add_middleware(LoggingMiddleware)
 
 
-if __name__ == "__main__":
+def main():
     log_level_str = "debug" if args.debug else "info"
 
     # Run the server
     uvicorn.run("eidos.system.agent_http_server:app", host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
+
+
+if __name__ == "__main__":
+    main()

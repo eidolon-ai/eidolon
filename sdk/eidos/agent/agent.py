@@ -54,7 +54,7 @@ class Agent(Specable[AgentSpec]):
     def get_context(self) -> ProcessContext:
         return self.process_context.get()
 
-    def get_input_model(self, action):
+    def get_input_model(self, action) -> typing.Union[BaseModel, dict]:
         sig = inspect.signature(self.action_handlers[action].fn).parameters
         hints = typing.get_type_hints(self.action_handlers[action].fn, include_extras=True)
         fields = {}

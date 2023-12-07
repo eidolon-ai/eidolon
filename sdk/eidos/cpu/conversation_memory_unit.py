@@ -1,7 +1,7 @@
 import logging
 from typing import List
 
-from eidos import agent_os
+from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import LLMMessage
 from eidos.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
@@ -20,7 +20,7 @@ class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
         logging.debug(str(messages))
         logging.debug(conversationItems)
 
-        await agent_os.symbolic_memory.insert("conversation_memory", conversationItems)
+        await AgentOS.symbolic_memory().insert("conversation_memory", conversationItems)
 
     async def writeBootMessages(self, call_context: CallContext, messages: List[LLMMessage]):
         conversationItems = [{
@@ -34,17 +34,17 @@ class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
         logging.debug(str(messages))
         logging.debug(conversationItems)
 
-        await agent_os.symbolic_memory.insert("conversation_memory", conversationItems)
+        await AgentOS.symbolic_memory().insert("conversation_memory", conversationItems)
 
     async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
         existingMessages = []
-        async for message in agent_os.symbolic_memory.find("conversation_memory", {
+        async for message in AgentOS.symbolic_memory().find("conversation_memory", {
             "process_id": call_context.process_id,
             "thread_id": call_context.thread_id,
             "is_boot_message": True
         }):
             existingMessages.append(LLMMessage.from_dict(message["message"]))
-        async for message in agent_os.symbolic_memory.find("conversation_memory", {
+        async for message in AgentOS.symbolic_memory().find("conversation_memory", {
             "process_id": call_context.process_id,
             "thread_id": call_context.thread_id,
             "is_boot_message": False
