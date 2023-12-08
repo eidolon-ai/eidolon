@@ -108,14 +108,12 @@ spec:
     <question>
     Input: {{ first }} {{ second }} {{ third }} {{ fourth }}
     </question>
-  question_json_schema:
-    type: object
-    properties:
-      first:
-        type: integer
-      second:
-        type: integer
-      third:
-        type: integer
-      fourth:
-        type: integer
+  prompt_properties:
+    first:
+      type: integer
+    second:
+      type: integer
+    third:
+      type: integer
+    fourth:
+      type: integer

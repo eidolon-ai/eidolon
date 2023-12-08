@@ -27,11 +27,9 @@ agent_programs:
           plan to implement the changes. Finally, you need to write the code and test it. You may need to repeat these
           steps multiple times until you have satisfied the user requirements.
         question_prompt: "{{request}}"
-        question_json_schema:
-          type: object
-          properties:
-              request:
-                type: string
+        prompt_properties:
+          request:
+            type: string
     cpu:
       control_unit:
         implementation: "eidos.cpu.control_unit.ControlUnit"

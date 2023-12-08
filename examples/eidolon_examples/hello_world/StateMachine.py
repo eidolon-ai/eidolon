@@ -1,4 +1,6 @@
-from typing import Union
+from typing import Union, Annotated
+
+from fastapi.params import Body
 
 from eidos.agent.agent import CodeAgent, register_program, AgentState, register_action
 from fastapi import HTTPException
@@ -27,7 +29,7 @@ class StateMachine(CodeAgent):
         return AgentState(name="a", data="here is something to transform")
 
     @register_action("a", "b")
-    async def transform(self, requested_state: str) -> AgentState[Union[AState, BState, CState]]:
+    async def transform(self, requested_state: Annotated[str, Body(embed=True)]) -> AgentState[Union[AState, BState, CState]]:
         if requested_state == "a":
             return AgentState(name="a", data=AState(foo="here ya foo"))
         elif requested_state == "b":
@@ -38,5 +40,5 @@ class StateMachine(CodeAgent):
             raise HTTPException(status_code=400, detail="Invalid state requested")
 
     @register_action("b", "c")
-    async def terminate(self, requested_state: str):
+    async def terminate(self, requested_state: Annotated[str, Body(embed=True)]):
         return "It was a good run while it lasted. 🤘"

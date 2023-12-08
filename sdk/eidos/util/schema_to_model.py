@@ -1,10 +1,11 @@
+import json
 from datetime import date, datetime, time
 from typing import Dict, Any, Type
 from typing import List
 from uuid import UUID
 
 from fastapi import UploadFile
-from pydantic import BaseModel, HttpUrl, EmailStr, Field
+from pydantic import BaseModel, HttpUrl, EmailStr, Field, model_validator
 from pydantic import create_model, ValidationError
 
 type_mapping = {
@@ -74,7 +75,6 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
         - The function does not handle JSON Schema `$ref` references or other advanced features
           such as `additionalProperties`, `allOf`, `anyOf`, etc.
     """
-    required_fields = set(schema.get('required', []))
     fields = {}
 
     if (not schema.get('type') == 'object') or 'properties' not in schema:
@@ -83,11 +83,12 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
     for property_name, property_schema in schema.get('properties', {}).items():
         def makeFieldOrDefaultValue():
             description = property_schema.get('description')
-            default = property_schema.get('default') or (... if property_name in required_fields else None)
-            if description is None:
-                return default
-            else:
-                return Field(default=default, description=description)
+            kwargs = {}
+            if 'default' in property_schema:
+                kwargs['default'] = property_schema['default']
+            if description:
+                kwargs['description'] = description
+            return Field(**kwargs)
 
         try:
             field_type = property_schema.get('type')
@@ -102,21 +103,34 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
                     nested_item_model = schema_to_model(items_schema, f'{model_name}_{property_name.capitalize()}ItemModel')
                     fields[property_name] = (List[nested_item_model], makeFieldOrDefaultValue())
                 else:
-                    item_type = items_schema.get('type', 'string')  # Default to string type
-                    python_type = type_mapping.get(item_type, str)
+                    python_type = get_python_type(items_schema, str)
                     fields[property_name] = (List[python_type], makeFieldOrDefaultValue())
-            elif field_type == 'string' and 'format' in property_schema and property_schema['format'] == 'binary':
-                fields[property_name] = (UploadFile, makeFieldOrDefaultValue())
             else:
-                # Simple field
-                python_type = type_mapping.get(field_type, None)
-                if python_type is None:
-                    raise ValueError(f"Unsupported type '{field_type}' for field '{property_name}'.")
-                fields[property_name] = (python_type, makeFieldOrDefaultValue())
+                fields[property_name] = (get_python_type(property_schema), makeFieldOrDefaultValue())
         except Exception as e:
             raise ValueError(f"Error creating field '{property_name}': {e}")
 
     try:
-        return create_model(model_name, **fields, __base__=BaseModel)
+        return create_model(model_name, **fields, __base__=JsonProofModel)
     except ValidationError as e:
         raise ValueError(f"Error creating model '{model_name}': {e}")
+
+
+class JsonProofModel(BaseModel):
+    @model_validator(mode='before')
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
+
+
+def get_python_type(property_schema, default=None):
+    field_type = property_schema.get('type')
+    if field_type == 'string' and 'format' in property_schema and property_schema['format'] == 'binary':
+        return UploadFile
+    else:
+        python_type = type_mapping.get(field_type, default)
+        if python_type is None:
+            raise ValueError(f"Unsupported type '{field_type}'")
+        return python_type

@@ -7,7 +7,8 @@ from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidos.agent.agent import register_program, Agent, AgentSpec, SpecRef
+from eidos.agent.agent import register_program, Agent, AgentSpec, spec_input_model, \
+    spec_output_model, nest_with_fn, get_output_model
 from eidos.agent.tot_agent.checker import ToTChecker
 from eidos.agent.tot_agent.controller import ToTController
 from eidos.agent.tot_agent.memory import ToTDFSMemory
@@ -18,32 +19,25 @@ from eidos.cpu.llm_message import LLMMessage
 from eidos.system.reference_model import Specable, Reference
 from eidos.util.class_utils import fqn
 from eidos.util.logger import logger
-from eidos.util.schema_to_model import schema_to_model
 
 
 class ToTAgentConfig(AgentSpec):
     num_iterations: int = Field(10, description="The maximum number of iterations to run the tree of thoughts algorithm.")
     question_prompt: str = Field(description="The prompt to use when asking the user for a question.")
-    question_json_schema: Dict[str, Any] = Field(description="The json schema for the question input model.")
+    prompt_properties: Dict[str, Any] = Field(description="The json schema for the question input model.")
     thought_generator: Reference[BaseThoughtGenerationStrategy] = Field(
         default=Reference(implementation=fqn(ProposePromptStrategy)),
         description="The thought generator to use."
     )
     checker: Reference[ToTChecker] = Field(default=Reference(implementation=fqn(ToTChecker)), description="The checker to use.")
     fallback: Literal["ERROR", "LLM"] = "ERROR"
-    output_format: Dict[str, Any] = Field(default=None, description="The requested output format of the INIT endpoint.")
+    output_format: Dict[str, Any] = Field(default=dict(type='string'), description="The requested output format of the INIT endpoint.")
     init_description: Optional[str] = Field(default=None, description="Overrides the description of the INIT endpoint.")
 
 
 class TotResponse(BaseModel):
     answer: Any
     thoughts: List[str]
-
-
-def get_response_model(self: TreeOfThoughtsAgent, *args, **kwargs):
-    schema = TotResponse.model_json_schema()
-    schema['properties']['answer'] = self.spec.output_format or dict(type='string')
-    return schema_to_model(schema, "InitialQuestionOutputModel")
 
 
 class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
@@ -69,8 +63,14 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         text = indent(f"Thought ({thought.validity}): {thought.text}", prefix="    " * level)
         logger.info(text)
 
-    @register_program(input_model=SpecRef.question_json_schema, output_model=get_response_model)
-    async def question(self, process_id, **kwargs) -> TotResponse:
+    @register_program(
+        input_model=spec_input_model(lambda spec: dict(type="object", properties=spec.prompt_properties)),
+        output_model=spec_output_model(
+            get_schema=lambda spec: spec.output_format,
+            transformer=nest_with_fn("answer", get_output_model)
+        ),
+    )
+    async def question(self, process_id, body) -> TotResponse:
         """
         Answers a question using the tree of thoughts algorithm. This is computationally expensive, but will provide
         better results than standard llm calls for some problems. Specializes in questions which need to make initial
@@ -81,7 +81,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         # override to run the tree of thoughts algorithm in a separate thread
         thoughts_path: List[str] = []
         level = 0
-        question = Environment(undefined=StrictUndefined).from_string(self.spec.question_prompt).render(**kwargs)
+        question = Environment(undefined=StrictUndefined).from_string(self.spec.question_prompt).render(**body.model_dump())
 
         async def exec_request(_boot_messages: List[LLMMessage], _messages: List[LLMMessage], _output_format: Dict[str, Any]) -> Dict[str, Any]:
             thread = self.cpu.new_thread(process_id)

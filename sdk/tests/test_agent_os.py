@@ -261,7 +261,7 @@ def test_generic_agent(client_builder):
     with client_builder(GenericAgent, spec=GenericAgentSpec(
         system_prompt="You are a helpful agent that answers questions.",
         question_prompt="{{question}}",
-        question_json_schema=dict(type="object", properties=dict(question=dict(type="string"))),
+        prompt_properties=dict(type="object", properties=dict(question=dict(type="string"))),
     )) as client:
         post = client.post("/programs/genericagent", json=dict(question="what is the capital of Germany? Please answer in one word"))
         assert post.status_code == 200

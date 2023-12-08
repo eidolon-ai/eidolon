@@ -9,10 +9,12 @@ from inspect import Parameter
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
+from fastapi.params import Body, Param
 from pydantic import BaseModel, Field, create_model
+from pydantic_core import PydanticUndefined
 from starlette.responses import JSONResponse
 
-from eidos.agent.agent import Agent, AgentState, EidolonHandler
+from eidos.agent.agent import AgentState, EidolonHandler
 from eidos.agent_os import AgentOS
 from .agent_contract import SyncStateResponse, AsyncStateResponse
 from .resource_models import AgentResource
@@ -47,6 +49,10 @@ class AgentController:
             else:
                 path += f"/processes/{{process_id}}/actions/{handler.name}"
             endpoint = self.process_action(handler)
+
+            sig = inspect.signature(endpoint)
+            params = dict(sig.parameters)
+
             app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
                 202: {"model": AsyncStateResponse},
                 200: {'model': self.create_response_model(handler)},
@@ -144,9 +150,15 @@ class AgentController:
         logging.getLogger("eidolon").info(f"Registering action {handler.name} for program {self.name}")
         sig = inspect.signature(run_program)
         params = dict(sig.parameters)
-        model = handler.input_model_fn(self.agent, handler)
+        model: typing.Type[BaseModel] = handler.input_model_fn(self.agent, handler)
         for field in model.model_fields:
-            params[field] = Parameter(field, Parameter.KEYWORD_ONLY, annotation=model.model_fields[field].annotation)
+            kwargs = dict(annotation=model.model_fields[field].annotation)
+            if isinstance(model.model_fields[field], Body) or isinstance(model.model_fields[field], Param):
+                kwargs['annotation'] = typing.Annotated[model.model_fields[field].annotation, model.model_fields[field]]
+            if model.model_fields[field].default is not PydanticUndefined:
+                kwargs['default'] = model.model_fields[field].default
+
+            params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
         if handler.is_initializer():
             del params['process_id']
         else:

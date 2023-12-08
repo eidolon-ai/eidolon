@@ -1,8 +1,10 @@
+from typing import List, Annotated
+
+from fastapi import UploadFile, Body
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
-from starlette.datastructures import UploadFile
 
-from eidos.agent.agent import Agent, register_program, register_action, AgentState, AgentSpec, SpecRef
+from eidos.agent.agent import Agent, register_action, AgentState, AgentSpec, register_program, spec_input_model
 from eidos.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage
 from eidos.system.reference_model import Specable
 
@@ -11,7 +13,7 @@ from eidos.system.reference_model import Specable
 class GenericAgentSpec(AgentSpec):
     system_prompt: str
     question_prompt: str
-    question_json_schema: dict
+    prompt_properties: dict = {}
 
 
 class LlmResponse(BaseModel):
@@ -19,32 +21,29 @@ class LlmResponse(BaseModel):
 
 
 class GenericAgent(Agent, Specable[GenericAgentSpec]):
-    @register_program(input_model=SpecRef.question_json_schema)
-    async def question(self, process_id, **kwargs) -> AgentState[LlmResponse]:
+    @register_program(input_model=spec_input_model(lambda spec: dict(type="object", properties=spec.prompt_properties)))
+    async def question(self, process_id, body, images: List[UploadFile] = None) -> AgentState[LlmResponse]:
+        images = images or []
         schema = LlmResponse.model_json_schema()
         schema['type'] = 'object'
 
         env = Environment(undefined=StrictUndefined)
         await self.cpu.main_thread(process_id).set_boot_messages(
-            SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**kwargs)))
+            SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**dict(body))))
         )
         # pull out any kwargs that are UploadFile and put them in a list of UserImageCPUMessage
-        images = []
-        newArgs = {}
-        for k, v in kwargs.items():
-            if isinstance(v, UploadFile):
-                images.append(ImageCPUMessage(image=v.file, prompt=v.filename))
-            else:
-                newArgs[k] = v
+        image_messages = []
+        for image in images:
+            image_messages.append(ImageCPUMessage(image=image.file, prompt=image.filename))
 
         response = await self.cpu.main_thread(process_id).schedule_request(
-            prompts=[UserTextCPUMessage(prompt=(env.from_string(self.spec.question_prompt).render(**newArgs))), *images],
+            prompts=[UserTextCPUMessage(prompt=(env.from_string(self.spec.question_prompt).render(**dict(body)))), *image_messages],
             output_format=schema
         )
         response = LlmResponse(**response)
         return AgentState(name='idle', data=response)
 
     @register_action('idle')
-    async def respond(self, process_id, statement: str) -> AgentState[LlmResponse]:
+    async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[LlmResponse]:
         response = await self.cpu.main_thread(process_id).schedule_request([UserTextCPUMessage(prompt=statement)], LlmResponse.model_json_schema())
         return AgentState(name='idle', data=response)

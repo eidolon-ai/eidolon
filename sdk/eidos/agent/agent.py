@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Dict, List, TypeVar, Generic
 
 from pydantic import BaseModel, create_model
-from pydantic.fields import FieldInfo
+from pydantic.fields import FieldInfo, Field
 
 from eidos.agent_os import AgentOS
 from eidos.cpu.agent_cpu import AgentCPU
@@ -68,7 +68,7 @@ def register_action(*allowed_states: str, name: str = None, description: str = N
         allowed_states=list(allowed_states),
         fn=fn,
         input_model_fn=input_model or get_input_model,
-        output_model_fn=output_model or get_response_model,
+        output_model_fn=output_model or get_output_model,
     ))
 
 
@@ -99,54 +99,46 @@ def get_input_model(_obj, handler: EidolonHandler) -> BaseModel:
     for param, hint in filter(lambda tu: tu[0] != 'return', hints.items()):
         if hasattr(hint, '__metadata__') and isinstance(hint.__metadata__[0], FieldInfo):
             field: FieldInfo = hint.__metadata__[0]
-            field.default = sig[param].default
+            if getattr(sig[param].default, "__name__", None) != '_empty':
+                field.default = sig[param].default
             fields[param] = (hint.__origin__, field)
         else:
             # _empty default isn't being handled by create_model properly (still optional when it should be required)
-            default = ... if getattr(sig[param].default, "__name__", None) == '_empty' else sig[param].default
-            fields[param] = (hint, default)
+            field = Field() if getattr(sig[param].default, "__name__", None) == '_empty' else Field(default=sig[param].default)
+            fields[param] = (hint, field)
 
     input_model = create_model(f'{handler.name.capitalize()}InputModel', **fields)
     return input_model
 
 
-def get_response_model(_obj, handler: EidolonHandler) -> BaseModel:
+def get_output_model(_obj, handler: EidolonHandler) -> BaseModel:
     return typing.get_type_hints(handler.fn, include_extras=True).get('return', typing.Any)
 
 
-class SpecRefMeta(type):
-    def __getitem__(cls, key):
-        return SpecRef()[key]
+def nest_with_fn(arg, get_outer: callable):
+    def _fn(_obj, handler, schema, name):
+        rtn = get_outer(_obj, handler).schema()
+        rtn['properties'][arg] = schema
+        return schema_to_model(rtn, model_name=name)
+    return _fn
 
-    def __getattr__(self, item):
-        return getattr(SpecRef(), item)
+
+def to_model(*args, schema, name):
+    return schema_to_model(schema, model_name=name)
 
 
-class SpecRef(metaclass=SpecRefMeta):
-    def __init__(self):
-        self._path = []
+def spec_input_model(get_schema: callable, name=None, transformer: callable = nest_with_fn("body", get_input_model)):
+    return _spec_model_wrapper(get_schema, name, "InputModel", transformer)
 
-    def __getitem__(self, item):
-        self._path.append(('getitem', item))
-        return self
 
-    def __getattr__(self, item):
-        if item not in {"shape", "__len__", "_path"}:
-            self._path.append(('getattr', item))
-            return self
+def spec_output_model(get_schema: callable, name=None, transformer: callable = to_model):
+    return _spec_model_wrapper(get_schema, name, "OutputModel", transformer)
 
-    def __call__(self, _obj, handler: EidolonHandler):
-        if not _obj.spec:
-            raise ValueError("Spec must be defined")
-        rtn = _obj.spec
-        for instruction, item in self._path:
-            if instruction == 'getitem':
-                rtn = rtn[item]
-            elif instruction == 'getattr':
-                rtn = getattr(rtn, item)
-            else:
-                raise ValueError(f"Unknown instruction {instruction}")
-        return schema_to_model(rtn, f'{handler.name.capitalize()}InputModel')
+
+def _spec_model_wrapper(get_schema: callable, name: str, suffix: str, transformer: callable):
+    def _fn(_obj, handler):
+        return transformer(_obj, handler, schema=get_schema(_obj.spec), name=name or handler.name.capitalize() + suffix)
+    return _fn
 
 
 @dataclass

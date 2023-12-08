@@ -21,8 +21,6 @@ spec:
     
     Think carefully about how you want to solve the problem. Then make a plan to implement the changes.
   question_prompt: "{{request}}"
-  question_json_schema:
-    type: object
-    properties:
-      request:
-        type: string
+  prompt_properties:
+    request:
+      type: string

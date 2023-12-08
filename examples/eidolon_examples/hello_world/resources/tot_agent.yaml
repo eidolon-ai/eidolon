@@ -7,8 +7,6 @@ metadata:
 spec:
   fallback: LLM
   question_prompt: "{{question}}"
-  question_json_schema:
-    type: object
-    properties:
-      question:
-        type: string
+  prompt_properties:
+    question:
+      type: string
