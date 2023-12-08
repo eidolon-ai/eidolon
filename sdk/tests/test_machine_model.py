@@ -1,6 +1,6 @@
 import yaml
 
-from eidos.system.resource_models import MachineModel
+from eidos.system.resources import MachineModel
 
 
 def test_can_parse_hello_world():

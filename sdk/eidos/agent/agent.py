@@ -3,12 +3,11 @@ from __future__ import annotations
 import inspect
 import typing
 from dataclasses import dataclass
-from typing import Dict, List, TypeVar, Generic
+from typing import List, TypeVar, Generic
 
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo, Field
 
-from eidos.agent_os import AgentOS
 from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec
@@ -23,7 +22,7 @@ class ProcessContext(BaseModel):
 
 
 class AgentSpec(BaseModel):
-    cpu: Reference[AgentCPU] | str = None
+    cpu: Reference[AgentCPU] = Reference(implementation=fqn(AgentCPU))
     agent_refs: List[str] = []
 
 
@@ -32,21 +31,9 @@ class Agent(Specable[AgentSpec]):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        cpus: Dict[str, AgentCPU] = AgentOS.machine.cpus if AgentOS.machine else {}
-        if self.spec.cpu is None:
-            self.spec.cpu = cpus.get('DEFAULT', Reference[AgentCPU](implementation=fqn(AgentCPU)))
-        elif isinstance(self.spec.cpu, str):
-            self.spec.cpu = cpus.get(self.spec.cpu)
-            if self.spec.cpu is None:
-                raise ValueError(f"Could not find CPU {self.spec.cpu}")
-        if self.spec.agent_refs:
-            if 'logic_units' not in self.spec.cpu.spec:
-                self.spec.cpu.spec['logic_units'] = []
-            self.spec.cpu.spec['logic_units'].append(Reference[ConversationalLogicUnit](
-                implementation=fqn(ConversationalLogicUnit),
-                spec=ConversationalSpec(agents=self.spec.agent_refs).model_dump()
-            ).model_dump())
         self.cpu = self.spec.cpu.instantiate()
+        if self.spec.agent_refs:
+            self.cpu.logic_units.append(ConversationalLogicUnit(ConversationalSpec(agents=self.spec.agent_refs)))
 
 
 class CodeAgent:

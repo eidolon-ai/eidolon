@@ -1,16 +1,19 @@
 import argparse
 import logging.config
+import os
 import pathlib
 from contextlib import asynccontextmanager
 
 import dotenv
 import uvicorn
+import yaml
 from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
-from eidos import agent_os
-from eidos.system.agent_machine import AgentMachine
+from eidos.agent_os import AgentOS
+from eidos.system.agent_machine import AgentMachine, error_logger
+from eidos.system.resources import Resource
 
 dotenv.load_dotenv()
 
@@ -32,8 +35,13 @@ async def start_os(app: FastAPI):
     logger = logging.getLogger("eidolon")
     logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
     try:
-        machine = AgentMachine.from_dir(args.yaml_path)
-        agent_os._machine = machine
+        for file in os.listdir(args.yaml_path):
+            file_loc = os.path.join(args.yaml_path, file)
+            with error_logger(file_loc), open(file_loc) as resource_yaml:
+                resource_object = yaml.safe_load(resource_yaml)
+                AgentOS.register_resource(resource=Resource.model_validate(resource_object), source=file_loc)
+        machine = AgentMachine.from_os(AgentOS)
+        AgentOS.load_machine(machine)
         await machine.start(app)
     except Exception as e:
         logger.exception("Failed to start AgentOS")

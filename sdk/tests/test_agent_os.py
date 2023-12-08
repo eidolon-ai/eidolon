@@ -21,7 +21,7 @@ from eidos.cpu.conversational_logic_unit import ConversationalLogicUnit, Convers
 from eidos.agent.generic_agent import GenericAgent, GenericAgentSpec
 from eidos.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos.cpu.llm import OpenAIGPT
-from eidos.system.resource_models import CpuModel
+from eidos.system.resources import CpuModel
 from eidos.system.reference_model import Reference
 from eidos.util.class_utils import fqn
 

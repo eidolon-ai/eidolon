@@ -16,29 +16,26 @@ from starlette.responses import JSONResponse
 
 from eidos.agent.agent import AgentState, EidolonHandler
 from eidos.agent_os import AgentOS
-from .agent_contract import SyncStateResponse, AsyncStateResponse
-from .resource_models import AgentResource
+from eidos.system.agent_contract import SyncStateResponse, AsyncStateResponse
+from eidos.util.logger import logger
 
 
 class AgentController:
-    name: typing.Optional[str]
-    agent: typing.Optional[object]
+    name: str
+    agent: object
     handlers: typing.Dict[str, EidolonHandler]
 
-    def __init__(self, agent_resource: AgentResource):
-        self.name = None
-        self.agent = None
-        self.handlers = {}
-        self._agent_reference = agent_resource
-
-    async def start(self, app: FastAPI):
-        self.agent = self._agent_reference.instantiate()
-        self.name = self._agent_reference.metadata.name
+    def __init__(self, name, agent):
+        self.name = name
+        self.agent = agent
         self.handlers = {
             handler.name: handler
             for method_name in dir(self.agent) if hasattr(getattr(self.agent, method_name), 'eidolon_handlers')
             for handler in getattr(getattr(self.agent, method_name), 'eidolon_handlers')
         }
+
+    async def start(self, app: FastAPI):
+        logger.info(f"Starting agent {self.name}")
         for handler in sorted(
                 self.handlers.values().__reversed__(),
                 key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0)
@@ -66,16 +63,14 @@ class AgentController:
             tags=[self.name],
         )
 
+    # todo, unregister routes
     def stop(self, app: FastAPI):
-        self.name = None
-        self.agent = None
-        self.handlers = {}
+        pass
 
     async def restart(self, app: FastAPI):
         self.stop(app)
         await self.start(app)
 
-    # todo, defining this on agents and then handling the dynamic function call will give flexibility to define request body
     def process_action(self, handler: EidolonHandler):
         async def run_program(
                 request: Request,
@@ -104,7 +99,6 @@ class AgentController:
 
             async def run_and_store_response():
                 try:
-                    # todo -- probably should be **dict(body) per https://docs.pydantic.dev/latest/concepts/serialization/
                     sig = inspect.signature(handler.fn)
                     if "process_id" in dict(sig.parameters):
                         kwargs['process_id'] = process_id

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import List, Literal, Type, Dict, Optional, TypeVar
+from typing import Literal, Type, Dict
 
-from pydantic import Field, BaseModel, field_validator, Extra
+from pydantic import Field, BaseModel, field_validator
 
 from eidos.agent.generic_agent import GenericAgent
 from eidos.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
@@ -10,29 +10,8 @@ from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory, AgentMemory
 from eidos.system.reference_model import Reference
+from eidos.system.resources_base import Resource
 from eidos.util.class_utils import fqn
-
-
-class Metadata(BaseModel):
-    name: str
-    annotations: List[str] = []
-    labels: List[str] = []
-
-
-T = TypeVar("T", bound=BaseModel)
-
-
-class Resource(BaseModel, extra=Extra.allow):
-    apiVersion: Literal["eidolon/v1"]
-    kind: str
-    metadata: Metadata = Metadata(name='DEFAULT')
-
-    @classmethod
-    def kind_literal(cls) -> Optional[str]:
-        return getattr(cls.model_fields['kind'].annotation, "__args__", [None])[0]
-
-    def promote(self, clazz: Type[T]) -> T:
-        return clazz.model_validate(self.model_dump())
 
 
 class MachineResource(Resource):
@@ -50,8 +29,7 @@ class AgentResource(Resource, Reference[object]):
 
 
 def _build_resource(clazz: Type) -> Type[Resource]:
-    class CustomResource(Resource, Reference[clazz]):
-        kind: str
+    class AutoAgentResource(AgentResource):
         implementation: str = fqn(clazz)
 
         @field_validator('kind')
@@ -64,7 +42,7 @@ def _build_resource(clazz: Type) -> Type[Resource]:
         def kind_literal(cls) -> str:
             return clazz.__name__
 
-    return CustomResource
+    return AutoAgentResource
 
 
 agent_resources: Dict[str, Type[Resource]] = {r.kind_literal(): r for r in [
