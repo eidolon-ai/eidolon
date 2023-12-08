@@ -141,7 +141,7 @@ class AgentController:
                 background_tasks.add_task(run_and_store_response)
                 return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
 
-        logging.getLogger("eidolon").info(f"Registering action {handler.name} for program {self.name}")
+        logger.debug(f"Registering action {handler.name} for program {self.name}")
         sig = inspect.signature(run_program)
         params = dict(sig.parameters)
         model: typing.Type[BaseModel] = handler.input_model_fn(self.agent, handler)

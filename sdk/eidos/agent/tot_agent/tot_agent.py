@@ -25,11 +25,8 @@ class ToTAgentConfig(AgentSpec):
     num_iterations: int = Field(10, description="The maximum number of iterations to run the tree of thoughts algorithm.")
     question_prompt: str = Field(description="The prompt to use when asking the user for a question.")
     prompt_properties: Dict[str, Any] = Field(description="The json schema for the question input model.")
-    thought_generator: Reference[BaseThoughtGenerationStrategy] = Field(
-        default=Reference(implementation=fqn(ProposePromptStrategy)),
-        description="The thought generator to use."
-    )
-    checker: Reference[ToTChecker] = Field(default=Reference(implementation=fqn(ToTChecker)), description="The checker to use.")
+    thought_generator: Reference(BaseThoughtGenerationStrategy, default=fqn(ProposePromptStrategy))
+    checker: Reference(ToTChecker, default=fqn(ToTChecker))
     fallback: Literal["ERROR", "LLM"] = "ERROR"
     output_format: Dict[str, Any] = Field(default=dict(type='string'), description="The requested output format of the INIT endpoint.")
     init_description: Optional[str] = Field(default=None, description="Overrides the description of the INIT endpoint.")

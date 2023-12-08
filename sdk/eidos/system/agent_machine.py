@@ -3,7 +3,7 @@ from typing import List, Type
 
 from eidos.memory.agent_memory import AgentMemory
 from .agent_controller import AgentController
-from .resources import MachineResource, agent_resources, Resource, AgentResource
+from .resources import MachineResource, agent_resources, Resource
 from ..agent_os import AgentOS
 
 
@@ -36,8 +36,10 @@ class AgentMachine:
         machine = agent_os.get_resource(MachineResource.kind_literal()).promote(MachineResource)
 
         agents = {}
-        for name, r in agent_os.get_resources(AgentResource.kind_literal()).items():
-            agents[name] = r.promote(agent_resources[r.kind]).instantiate()
+        for kind, agent_resource_class in agent_resources.items():
+            for name, r in agent_os.get_resources(kind).items():
+                with _error_wrapper(r):
+                    agents[name] = r.promote(agent_resource_class).instantiate()
 
         return AgentMachine(
             agent_memory=(machine.spec.get_agent_memory()),
@@ -54,7 +56,7 @@ def error_logger(filename: str = None):
 
 
 def _error_wrapper(resource: Resource):
-    return error_logger(AgentOS.get_resource_source(resource.metadata.name))
+    return error_logger(AgentOS.get_resource_source(resource.kind, resource.metadata.name))
 
 
 def _error_wrapped_fn(resource, fn):

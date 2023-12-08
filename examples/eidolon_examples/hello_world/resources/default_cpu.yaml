@@ -3,8 +3,6 @@ kind: CPU
 implementation: "eidos.cpu.conversational_agent_cpu.ConversationalAgentCPU"
 spec:
   llm_unit:
-#    todo, we should not need to specify implementation here if it matches default
-    implementation: "eidos.cpu.llm.open_ai_llm_unit.OpenAIGPT"
     spec:
       model: "gpt-4-1106-preview"
       temperature: 0.4

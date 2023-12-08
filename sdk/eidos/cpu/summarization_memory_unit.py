@@ -17,7 +17,7 @@ from eidos.util.class_utils import fqn
 
 class SummarizationMemoryUnitConfig(MemoryUnitConfig):
     max_token_fraction: Annotated[float, Field(strict=True, gt=0, le=1)] = 0.75
-    summarizer: Reference[MessageSummarizer] = Reference(implementation=fqn(MessageSummarizer))
+    summarizer: Reference(MessageSummarizer, default=MessageSummarizer)
 
 
 class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig]):

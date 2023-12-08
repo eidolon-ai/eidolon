@@ -2,15 +2,12 @@ from __future__ import annotations
 
 from typing import Dict, Tuple
 
-from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory
-from eidos.system.resources_base import Resource
-
 
 class AgentOS:
-    _resources: Dict[str, Dict[str, Tuple[Resource, str]]] = {}
-    file_memory: FileMemory = ...
-    symbolic_memory: SymbolicMemory = ...
-    similarity_memory: VectorMemory = ...
+    _resources: Dict[str, Dict[str, Tuple['Resource', str]]] = {}
+    file_memory: 'FileMemory' = ...
+    symbolic_memory: 'SymbolicMemory' = ...
+    similarity_memory: 'VectorMemory' = ...
 
     @classmethod
     def load_machine(cls, machine):
@@ -19,7 +16,7 @@ class AgentOS:
         cls.similarity_memory = machine.memory.similarity_memory
 
     @classmethod
-    def register_resource(cls, resource: Resource, source=None):
+    def register_resource(cls, resource: 'Resource', source=None):
         if resource.kind not in cls._resources:
             cls._resources[resource.kind] = {}
         bucket = cls._resources[resource.kind]
@@ -28,21 +25,21 @@ class AgentOS:
         bucket[resource.metadata.name] = (resource, source)
 
     @classmethod
-    def get_resources(cls, bucket) -> Dict[str, Resource]:
+    def get_resources(cls, bucket) -> Dict[str, 'Resource']:
         return {k: tu[0].model_copy() for k, tu in cls._resources.get(bucket, {}).items()}
 
     @classmethod
-    def get_resource(cls, bucket: str, name: str = None) -> Resource:
+    def get_resource(cls, bucket: str, name: str = "DEFAULT", default=...) -> 'Resource':
         try:
-            name = name or "DEFAULT"
             return cls._resources[bucket][name][0].model_copy(deep=True)
         except KeyError:
+            if default is not ...:
+                return default
             raise ValueError(f"Resource {name} not found in bucket {bucket}")
 
     @classmethod
-    def get_resource_source(cls, bucket, name: str = None) -> str:
+    def get_resource_source(cls, bucket, name: str = "DEFAULT") -> str:
         try:
-            name = name or "DEFAULT"
             return cls._resources[bucket][name][1]
         except KeyError:
             raise ValueError(f"Resource {name} not found in bucket {bucket}")

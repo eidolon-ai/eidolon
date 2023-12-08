@@ -2,15 +2,14 @@ from fastapi import UploadFile, File
 from fastapi.responses import Response
 from pydub import AudioSegment
 
-from eidos.agent.agent import AgentState, register_program
-from eidos.agent.generic_agent import GenericAgent, LlmResponse, GenericAgentSpec
-from eidos.cpu.llm.open_ai_speech import OpenAiSpeechSpec, OpenAiSpeech
+from eidos.agent.agent import register_program
+from eidos.agent.generic_agent import GenericAgent, GenericAgentSpec
+from eidos.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidos.system.reference_model import Reference, Specable
-from eidos.util.class_utils import fqn
 
 
 class AutonomousSpeechAgentSpec(GenericAgentSpec):
-    speech_llm: Reference[OpenAiSpeech] = Reference(implementation=fqn(OpenAiSpeech))
+    speech_llm: Reference(OpenAiSpeech, default=OpenAiSpeech)
 
 
 class AutonomousSpeechAgent(GenericAgent, Specable[AutonomousSpeechAgentSpec]):

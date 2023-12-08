@@ -12,7 +12,6 @@ from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec
 from eidos.system.reference_model import Specable, Reference
-from eidos.util.class_utils import fqn
 from eidos.util.schema_to_model import schema_to_model
 
 
@@ -22,7 +21,7 @@ class ProcessContext(BaseModel):
 
 
 class AgentSpec(BaseModel):
-    cpu: Reference[AgentCPU] = Reference(implementation=fqn(AgentCPU))
+    cpu: Reference(AgentCPU, default=ConversationalAgentCPU, kind='CPU')
     agent_refs: List[str] = []
 
 
@@ -32,8 +31,11 @@ class Agent(Specable[AgentSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.cpu = self.spec.cpu.instantiate()
-        if self.spec.agent_refs:
-            self.cpu.logic_units.append(ConversationalLogicUnit(ConversationalSpec(agents=self.spec.agent_refs)))
+        if self.spec.agent_refs and hasattr(self.cpu, 'logic_units'):
+            self.cpu.logic_units.append(ConversationalLogicUnit(
+                processing_unit_locator=self.cpu,
+                spec=ConversationalSpec(agents=self.spec.agent_refs))
+            )
 
 
 class CodeAgent:

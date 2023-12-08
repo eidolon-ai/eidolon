@@ -17,9 +17,9 @@ from eidos.util.class_utils import fqn
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
-    io_unit: Reference[IOUnit] = Reference(implementation=fqn(IOUnit))
-    memory_unit: Reference[MemoryUnit] = Reference(implementation=fqn(ConversationalMemoryUnit))
-    llm_unit: Reference[LLMUnit] = Reference(implementation=fqn(OpenAIGPT))
+    io_unit: Reference(IOUnit, default=IOUnit)
+    memory_unit: Reference(MemoryUnit, default=ConversationalMemoryUnit)
+    llm_unit: Reference(LLMUnit, default=OpenAIGPT)
     logic_units: List[Reference[LogicUnit]] = []
 
 

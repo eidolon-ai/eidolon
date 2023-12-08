@@ -1,58 +1,126 @@
-import pytest
-from pydantic import BaseModel, ValidationError
+from contextlib import contextmanager
 
+from pydantic import BaseModel
+
+from eidos.agent_os import AgentOS
 from eidos.system.reference_model import Reference, Specable
+from eidos.system.resources_base import Resource
+from eidos.util.class_utils import fqn
 
 
-class TestSchema(BaseModel):
-    foo: str
+class BaseSpec(BaseModel):
+    foo: str = "simple foo"
 
 
-class Base:
-    kwargs: dict
-    ref = 'tests.test_reference_model.Base'
-
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
+class OSSpec(BaseSpec):
+    foo: str = "os foo"
 
 
-class Extension(Base, Specable[TestSchema]):
-    ref = 'tests.test_reference_model.Extension'
+class SystemSpec(BaseSpec):
+    foo: str = "system foo"
 
 
-class ReversedExtension(Base, Specable[TestSchema]):
-    ref = 'tests.test_reference_model.ReversedExtension'
+class RandomSpec(BaseSpec):
+    foo: str = "random foo"
 
 
-def test_plugable_instantiation():
-    ref = Reference[Base](implementation=Base.ref, spec={'foo': 'bar'})
-    assert ref.build_reference_spec() == {'foo': 'bar'}
-    assert ref.instantiate(baz="BAZ").kwargs == dict(baz='BAZ', spec={'foo': 'bar'})
+class Base(Specable[BaseSpec]):
+    ...
 
 
-def test_no_spec_provided():
-    ref = Reference[Base](implementation=Base.ref)
-    assert ref.instantiate().kwargs == dict()
+class OS(Base, Specable[OSSpec]):
+    ...
 
 
-def test_specable_reference():
-    ref = Reference[Base](implementation=Extension.ref, spec={'foo': 'bar'})
-    assert ref.build_reference_spec() == TestSchema(foo='bar')
-    assert ref.instantiate().kwargs == dict(spec=TestSchema(foo='bar'))
+class System(Base, Specable[SystemSpec]):
+    ...
 
 
-def test_spec_backwards_ref():
-    ref = Reference[Base](implementation=ReversedExtension.ref, spec={'foo': 'bar'})
-    assert ref.build_reference_spec() == TestSchema(foo='bar')
-    assert ref.instantiate().kwargs == dict(spec=TestSchema(foo='bar'))
+class Random(Base, Specable[RandomSpec]):
+    ...
 
 
-def test_enforces_sub_class():
-    with pytest.raises(ValidationError) as e:
-        Reference[Extension](implementation=ReversedExtension.ref, spec={'foo': 'bar'})
-    assert e.value.errors()
+class SimpleModel(BaseModel):
+    simple: Reference(Base, kind='TestResource', default=fqn(System))
 
 
-def test_unenforced_reference():
-    ref = Reference(implementation=Base.ref)
-    assert ref.instantiate().kwargs == dict()
+@contextmanager
+def os_resource(**kwargs):
+    try:
+        AgentOS.register_resource(Resource(
+            apiVersion='eidolon/v1',
+            kind='TestResource',
+            implementation=fqn(OS),
+            **kwargs
+        ))
+        yield
+    finally:
+        AgentOS._resources = {}
+
+
+def test_explicit_reference_default_spec():
+    model = SimpleModel(simple=dict(implementation=fqn(Random)))
+    instantiated = model.simple.instantiate()
+    assert type(instantiated) == Random
+    assert instantiated.spec.foo == 'random foo'
+
+
+def test_explicit_reference_override_spec():
+    model = SimpleModel(simple=dict(implementation=fqn(Random), spec=dict(foo='bar')))
+    instantiated = model.simple.instantiate()
+    assert type(instantiated) == Random
+    assert instantiated.spec.foo == 'bar'
+
+
+def test_explicit_named_reference_default_spec():
+    with os_resource():
+        model = SimpleModel(simple="DEFAULT")
+        instantiated = model.simple.instantiate()
+        assert type(instantiated) == OS
+        assert instantiated.spec.foo == 'os foo'
+
+
+def test_explicit_named_reference_spec_overriden_in_reference():
+    with os_resource(spec=dict(foo='bar')):
+        model = SimpleModel(simple="DEFAULT")
+        instantiated = model.simple.instantiate()
+        assert type(instantiated) == OS
+        assert instantiated.spec.foo == 'bar'
+
+
+def test_default_named_reference_default_spec():
+    with os_resource():
+        model = SimpleModel()
+        instantiated = model.simple.instantiate()
+        assert type(instantiated) == OS
+        assert instantiated.spec.foo == 'os foo'
+
+
+def test_default_named_reference_spec_overriden_in_reference():
+    with os_resource(spec=dict(foo='bar')):
+        model = SimpleModel()
+        instantiated = model.simple.instantiate()
+        assert type(instantiated) == OS
+        assert instantiated.spec.foo == 'bar'
+
+
+def test_default_named_reference_spec_overriden_in_simple_model():
+    with os_resource():
+        model = SimpleModel(simple=dict(spec=dict(foo='baz')))
+        instantiated = model.simple.instantiate()
+        assert type(instantiated) == OS
+        assert instantiated.spec.foo == 'baz'
+
+
+def test_system_fallback_default_spec():
+    model = SimpleModel()
+    instantiated = model.simple.instantiate()
+    assert type(instantiated) == System
+    assert instantiated.spec.foo == 'system foo'
+
+
+def test_system_fallback_default_override_spec():
+    model = SimpleModel(simple=dict(spec=dict(foo='baz')))
+    instantiated = model.simple.instantiate()
+    assert type(instantiated) == System
+    assert instantiated.spec.foo == 'baz'

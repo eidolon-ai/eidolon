@@ -206,8 +206,11 @@ class SymbolicMemory(ABC):
 
 class VectorMemorySpec(BaseModel):
     root_document_directory: str = Field(default="vector_memory", description="The root directory where the vector memory will store documents.")
-    vector_store: Reference[VectorStore] = Reference(implementation="eidos.memory.noop_memory.NoopVectorStore",
-                                                     description="The vector store to use for storing and querying documents.")
+    vector_store: Reference(
+        VectorStore,
+        default="eidos.memory.noop_memory.NoopVectorStore",
+        description="The vector store to use for storing and querying documents."
+    )
 
 
 class VectorMemory(Specable[VectorMemorySpec]):

@@ -18,7 +18,7 @@ from eidos.util.class_utils import fqn
 
 class CacheLLMSpec(LLMUnitConfig):
     dir: str = Field(default="llm_cache", description="The directory to store the cache in.")
-    llm: Reference[LLMUnit] = Reference(implementation=fqn(OpenAIGPT))
+    llm: Reference(LLMUnit, default=OpenAIGPT)
 
 
 class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):

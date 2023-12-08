@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal, Type, Dict
 
-from pydantic import Field, BaseModel, field_validator
+from pydantic import BaseModel, field_validator
 
 from eidos.agent.generic_agent import GenericAgent
 from eidos.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
@@ -19,18 +19,20 @@ class MachineResource(Resource):
     spec: MachineSpec
 
 
-class CPUResource(Resource, Reference[AgentCPU]):
+class CPUResource(Resource, Reference(AgentCPU, ConversationalAgentCPU, kind='CPU')):
     kind: Literal['CPU']
-    implementation: str = fqn(ConversationalAgentCPU)
 
 
-class AgentResource(Resource, Reference[object]):
+class AgentResource(Resource, Reference()):
     kind: Literal['Agent']
 
 
 def _build_resource(clazz: Type) -> Type[Resource]:
-    class AutoAgentResource(AgentResource):
-        implementation: str = fqn(clazz)
+    class AutoAgentResource(Resource, Reference()):
+        def __init__(self, **kwargs):
+            if 'implementation' not in kwargs:
+                kwargs['implementation'] = fqn(clazz)
+            super().__init__(**kwargs)
 
         @field_validator('kind')
         def _is_class_name(cls, v):
@@ -53,9 +55,9 @@ agent_resources: Dict[str, Type[Resource]] = {r.kind_literal(): r for r in [
 
 
 class MachineSpec(BaseModel):
-    symbolic_memory: Reference[SymbolicMemory] = Field(description="The Symbolic Memory implementation.")
-    file_memory: Reference[FileMemory] = Field(default=None, description="The File Memory implementation.")
-    similarity_memory: Reference[VectorMemory] = Reference(implementation=fqn(VectorMemory))
+    symbolic_memory: Reference(SymbolicMemory, description="The Symbolic Memory implementation.")
+    file_memory: Reference(FileMemory, description="The File Memory implementation.")
+    similarity_memory: Reference(VectorMemory, default=fqn(VectorMemory))
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
