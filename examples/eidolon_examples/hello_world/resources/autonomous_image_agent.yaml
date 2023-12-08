@@ -6,6 +6,7 @@ metadata:
 
 spec:
   cpu:
+    implementation: "eidos.cpu.conversational_agent_cpu.ConversationalAgentCPU"
     spec:
       llm_unit:
         #    todo, we should not need to specify implementation here if it matches default

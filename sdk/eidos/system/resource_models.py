@@ -7,6 +7,7 @@ from pydantic import Field, BaseModel, field_validator, Extra
 from eidos.agent.generic_agent import GenericAgent
 from eidos.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidos.cpu.agent_cpu import AgentCPU
+from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory, AgentMemory
 from eidos.system.reference_model import Reference
 from eidos.util.class_utils import fqn
@@ -41,7 +42,7 @@ class MachineResource(Resource):
 
 class CPUResource(Resource, Reference[AgentCPU]):
     kind: Literal['CPU']
-    implementation: str = fqn(AgentCPU)
+    implementation: str = fqn(ConversationalAgentCPU)
 
 
 class AgentResource(Resource, Reference[object]):

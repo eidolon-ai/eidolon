@@ -1,0 +1,20 @@
+apiVersion: eidolon/v1
+kind: GenericAgent
+
+metadata:
+  name: OpenAIAssistants
+
+spec:
+  cpu:
+    implementation: "eidos.cpu.open_ai_assistants_cpu.OpenAIAssistantsCPU"
+
+  system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
+  question_prompt: "{{instruction}}"
+  question_json_schema:
+    type: object
+    properties:
+      instruction:
+        type: string
+      image:
+        type: string
+        format: "binary"

@@ -28,15 +28,18 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         schema['type'] = 'object'
 
         env = Environment(undefined=StrictUndefined)
-        await self.cpu.main_thread(process_id).set_boot_messages(
+        t = await self.cpu.main_thread(process_id)
+        await t.set_boot_messages(
+            schema,
             SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**dict(body))))
         )
+
         # pull out any kwargs that are UploadFile and put them in a list of UserImageCPUMessage
         image_messages = []
         for image in images:
             image_messages.append(ImageCPUMessage(image=image.file, prompt=image.filename))
 
-        response = await self.cpu.main_thread(process_id).schedule_request(
+        response = await t.schedule_request(
             prompts=[UserTextCPUMessage(prompt=(env.from_string(self.spec.question_prompt).render(**dict(body)))), *image_messages],
             output_format=schema
         )
@@ -45,5 +48,6 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
 
     @register_action('idle')
     async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[LlmResponse]:
-        response = await self.cpu.main_thread(process_id).schedule_request([UserTextCPUMessage(prompt=statement)], LlmResponse.model_json_schema())
+        t = await self.cpu.main_thread(process_id)
+        response = await t.schedule_request([UserTextCPUMessage(prompt=statement)], LlmResponse.model_json_schema())
         return AgentState(name='idle', data=response)

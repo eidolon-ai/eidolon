@@ -20,6 +20,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
     cpu: AgentCPU
 
     def __init__(self, cpu, spec):
+        super().__init__(spec)
         self.cpu = cpu
         self.spec = spec
 
@@ -33,6 +34,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
 
     async def evaluate(
         self,
+        process_id: str,
         problem_description: str,
         thoughts: List[str] = Field(default_factory=list),
     ) -> ThoughtValidity:
@@ -44,7 +46,8 @@ class ToTChecker(Specable[TotCheckerConfig]):
             problem=problem_description, thoughts=thoughts, examples=self.spec.examples
         )
 
-        resp = await self.cpu.new_thread.schedule_request(
+        thread = await self.cpu.new_thread(process_id)
+        resp = await thread.schedule_request(
             prompts=[UserTextCPUMessage(prompt=checker_prompt)],
             output_format=ThoughtValidity.model_json_schema()
         )

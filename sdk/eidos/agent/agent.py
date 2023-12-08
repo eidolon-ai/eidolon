@@ -10,6 +10,7 @@ from pydantic.fields import FieldInfo, Field
 
 from eidos.agent_os import AgentOS
 from eidos.cpu.agent_cpu import AgentCPU
+from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec
 from eidos.system.reference_model import Specable, Reference
 from eidos.util.class_utils import fqn

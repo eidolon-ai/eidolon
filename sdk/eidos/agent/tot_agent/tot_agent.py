@@ -84,13 +84,14 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         question = Environment(undefined=StrictUndefined).from_string(self.spec.question_prompt).render(**body.model_dump())
 
         async def exec_request(_boot_messages: List[LLMMessage], _messages: List[LLMMessage], _output_format: Dict[str, Any]) -> Dict[str, Any]:
-            thread = self.cpu.new_thread(process_id)
-            await thread.set_boot_messages(*_boot_messages)
-            return await thread.schedule_request(_messages, _output_format)
+            t2 = await self.cpu.new_thread(process_id)
+            await t2.set_boot_messages(_output_format, *_boot_messages)
+            return await t2.schedule_request(_messages, _output_format)
 
         for i in range(self.spec.num_iterations):
             thought_text = await self.thought_generator.next_thought(question, exec_request, thoughts_path)
             thought_validity = await self.checker.evaluate(
+                process_id,
                 problem_description=question,
                 thoughts=thoughts_path + [thought_text]
             )
@@ -98,9 +99,10 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             self.tot_memory.store(thought)
             self.log_thought(thought, level)
             if thought.validity == "VALID":
+                mainThread = await self.cpu.main_thread(process_id)
                 # go back to llm now with the tree of thoughts and the requested output format
                 conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text])))]
-                resp = await self.cpu.main_thread(process_id).schedule_request(conversation, self.spec.output_format)
+                resp = await mainThread.schedule_request(conversation, self.spec.output_format)
                 return TotResponse(answer=resp, thoughts=thoughts_path)
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
@@ -114,9 +116,8 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(
                 prompt="You have had some helpful thoughts on the question. Please use them to provide an answer\n\n" + str(synopsis)
             )]
-            thread = self.cpu.new_thread(process_id)
+            thread = await self.cpu.new_thread(process_id)
             resp = await thread.schedule_request(conversation, self.spec.output_format)
             return TotResponse(answer=resp, thoughts=thoughts_path)
         else:
             raise ValueError(f"Unknown fallback type: {self.spec.fallback}")
-
