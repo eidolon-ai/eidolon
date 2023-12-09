@@ -22,6 +22,6 @@ spec:
   prompt_properties:
     instruction:
       type: string
-    image:
-      type: string
-      format: "binary"
+  files:
+    allow: true
+    allow_multiple: false

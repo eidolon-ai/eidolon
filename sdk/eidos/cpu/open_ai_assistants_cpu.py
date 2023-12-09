@@ -223,7 +223,6 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                 results = []
 
                 for tool_call in run.required_action.submit_tool_outputs.tool_calls:
-                    print("executing tool " + tool_call.name + " with args " + str(tool_call.arguments))
                     tool_call_id = tool_call.id
                     function_call = tool_call.function
                     arguments = json.loads(function_call.arguments)
@@ -232,7 +231,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                     tool_result = await tool_def.execute(call_context=call_context, args=arguments)
                     result_as_json_str = self._to_json(tool_result)
                     message = ToolOutput(tool_call_id=tool_call_id, output=result_as_json_str)
-                    message_to_store = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=result_as_json_str, name=tool_call.name)
+                    message_to_store = ToolResponseMessage(tool_call_id=tool_call_id, result=result_as_json_str, name=function_call.name)
                     await AgentOS.symbolic_memory.insert_one("open_ai_conversation_data", {
                         "process_id": call_context.process_id,
                         "thread_id": call_context.thread_id,

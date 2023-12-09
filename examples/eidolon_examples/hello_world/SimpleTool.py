@@ -6,7 +6,7 @@ class MathsTool(LogicUnit):
     A simple tool that performs basic math operations.
     """
     @llm_function
-    def add(self, a, b):
+    async def add(self, a: float, b: float) -> float:
         """
         Adds two numbers together.
         :param a: The first number
@@ -16,7 +16,7 @@ class MathsTool(LogicUnit):
         return a + b
 
     @llm_function
-    def subtract(self, a, b):
+    async def subtract(self, a: float, b: float) -> float:
         """
         Subtracts b from a.
         :param a: The first number
@@ -26,7 +26,7 @@ class MathsTool(LogicUnit):
         return a - b
 
     @llm_function
-    def multiply(self, a, b):
+    async def multiply(self, a: float, b: float) -> float:
         """
         Multiplies two numbers together.
         :param a: The first number
@@ -36,7 +36,7 @@ class MathsTool(LogicUnit):
         return a * b
 
     @llm_function
-    def divide(self, a, b):
+    async def divide(self, a: float, b: float) -> float:
         """
         Divides a by b.
         :param a: The first number

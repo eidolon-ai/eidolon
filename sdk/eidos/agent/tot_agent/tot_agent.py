@@ -64,7 +64,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         input_model=spec_input_model(lambda spec: dict(type="object", properties=spec.prompt_properties)),
         output_model=spec_output_model(
             get_schema=lambda spec: spec.output_format,
-            transformer=nest_with_fn("answer", get_output_model)
+            transformer=nest_with_fn(get_output_model, embed="answer")
         ),
     )
     async def question(self, process_id, body) -> TotResponse:

@@ -105,10 +105,13 @@ def get_output_model(_obj, handler: EidolonHandler) -> BaseModel:
     return typing.get_type_hints(handler.fn, include_extras=True).get('return', typing.Any)
 
 
-def nest_with_fn(arg, get_outer: callable):
+def nest_with_fn(get_outer: callable, embed=None):
     def _fn(_obj, handler, schema, name):
         rtn = get_outer(_obj, handler).schema()
-        rtn['properties'][arg] = schema
+        if embed:
+            rtn['properties'][embed] = schema
+        else:
+            rtn['properties'].update(schema)
         return schema_to_model(rtn, model_name=name)
     return _fn
 
@@ -117,7 +120,7 @@ def to_model(*args, schema, name):
     return schema_to_model(schema, model_name=name)
 
 
-def spec_input_model(get_schema: callable, name=None, transformer: callable = nest_with_fn("body", get_input_model)):
+def spec_input_model(get_schema: callable, name=None, transformer: callable = nest_with_fn(get_input_model, 'body')):
     return _spec_model_wrapper(get_schema, name, "InputModel", transformer)
 
 
