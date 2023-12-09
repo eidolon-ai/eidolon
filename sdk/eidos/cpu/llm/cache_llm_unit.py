@@ -7,18 +7,17 @@ from pydantic import ValidationError
 
 from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
+from eidos.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos.cpu.llm_message import LLMMessage, AssistantMessage
 from eidos.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
-from eidos.cpu.llm.open_ai_llm_unit import OpenAIGPT
-from eidos.system.reference_model import Specable, Reference
-from eidos.util.class_utils import fqn
+from eidos.system.reference_model import Specable, AnnotatedReference
 
 
 # Assuming CallContext, LLMMessage, LLMCallFunction, AssistantMessage are defined elsewhere
 
 class CacheLLMSpec(LLMUnitConfig):
     dir: str = Field(default="llm_cache", description="The directory to store the cache in.")
-    llm: Reference(LLMUnit, default=OpenAIGPT)
+    llm: AnnotatedReference[LLMUnit, OpenAIGPT]
 
 
 class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):

@@ -8,12 +8,12 @@ from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.cpu.llm.open_ai_speech import OpenAiSpeech
-from eidos.system.reference_model import Reference, Specable
+from eidos.system.reference_model import Specable, AnnotatedReference
 
 
 class AutonomousSpeechAgentSpec(GenericAgentSpec):
-    speech_llm: Reference(OpenAiSpeech, default=OpenAiSpeech)
-    cpu: Reference(AgentCPU, default=ConversationalAgentCPU, kind='CPU')
+    speech_llm: AnnotatedReference[OpenAiSpeech, OpenAiSpeech]
+    cpu: AnnotatedReference[AgentCPU, ConversationalAgentCPU]
 
 
 class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):

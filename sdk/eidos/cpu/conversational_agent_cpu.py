@@ -12,14 +12,13 @@ from eidos.cpu.llm_unit import LLMUnit
 from eidos.cpu.logic_unit import LogicUnit, ToolDefType
 from eidos.cpu.memory_unit import MemoryUnit
 from eidos.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidos.system.reference_model import Reference, Specable
-from eidos.util.class_utils import fqn
+from eidos.system.reference_model import Reference, Specable, AnnotatedReference
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
-    io_unit: Reference(IOUnit, default=IOUnit)
-    memory_unit: Reference(MemoryUnit, default=ConversationalMemoryUnit)
-    llm_unit: Reference(LLMUnit, default=OpenAIGPT)
+    io_unit: AnnotatedReference[IOUnit]
+    memory_unit: AnnotatedReference[MemoryUnit, ConversationalMemoryUnit]
+    llm_unit: AnnotatedReference[LLMUnit, OpenAIGPT]
     logic_units: List[Reference[LogicUnit]] = []
 
 

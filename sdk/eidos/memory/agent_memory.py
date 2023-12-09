@@ -3,10 +3,10 @@ from typing import Any, Optional, Iterable, AsyncIterable, List, Dict, Sequence,
 
 from pydantic import BaseModel, Field
 
-from eidos.system.reference_model import Specable, Reference
 from eidos.memory.document import Document
 from eidos.memory.embeddings import Embedding
 from eidos.memory.vector_store import VectorStore
+from eidos.system.reference_model import Specable, AnnotatedReference
 
 
 # todo, memory contracts all need to be async
@@ -206,11 +206,7 @@ class SymbolicMemory(ABC):
 
 class VectorMemorySpec(BaseModel):
     root_document_directory: str = Field(default="vector_memory", description="The root directory where the vector memory will store documents.")
-    vector_store: Reference(
-        VectorStore,
-        default="eidos.memory.noop_memory.NoopVectorStore",
-        description="The vector store to use for storing and querying documents."
-    )
+    vector_store: AnnotatedReference[VectorStore] = Field(description="The vector store to use for storing and querying documents.")
 
 
 class VectorMemory(Specable[VectorMemorySpec]):

@@ -42,7 +42,9 @@ async def start_os(app: FastAPI):
                 AgentOS.register_resource(resource=Resource.model_validate(resource_object), source=file_loc)
         machine = AgentMachine.from_os(AgentOS)
         AgentOS.load_machine(machine)
+        logger.info("Starting machine...")
         await machine.start(app)
+        logger.info("Machine started")
     except Exception as e:
         logger.exception("Failed to start AgentOS")
         raise e

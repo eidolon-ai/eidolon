@@ -11,13 +11,12 @@ from eidos.cpu.llm_message import LLMMessage
 from eidos.cpu.llm_unit import LLM_MAX_TOKENS, LLMUnit
 from eidos.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
 from eidos.cpu.message_summarizer import MessageSummarizer
-from eidos.system.reference_model import Specable, Reference
-from eidos.util.class_utils import fqn
+from eidos.system.reference_model import Specable, AnnotatedReference
 
 
 class SummarizationMemoryUnitConfig(MemoryUnitConfig):
     max_token_fraction: Annotated[float, Field(strict=True, gt=0, le=1)] = 0.75
-    summarizer: Reference(MessageSummarizer, default=MessageSummarizer)
+    summarizer: AnnotatedReference[MessageSummarizer]
 
 
 class SummarizationMemoryUnit(MemoryUnit, Specable[SummarizationMemoryUnitConfig]):

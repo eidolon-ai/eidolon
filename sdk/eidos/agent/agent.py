@@ -11,7 +11,7 @@ from pydantic.fields import FieldInfo, Field
 from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec
-from eidos.system.reference_model import Specable, Reference
+from eidos.system.reference_model import Specable, AnnotatedReference
 from eidos.util.schema_to_model import schema_to_model
 
 
@@ -21,7 +21,7 @@ class ProcessContext(BaseModel):
 
 
 class AgentSpec(BaseModel):
-    cpu: Reference(AgentCPU, default=ConversationalAgentCPU, kind='CPU')
+    cpu: AnnotatedReference[AgentCPU, ConversationalAgentCPU]
     agent_refs: List[str] = []
 
 

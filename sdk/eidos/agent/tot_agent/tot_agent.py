@@ -16,8 +16,7 @@ from eidos.agent.tot_agent.thought import Thought
 from eidos.agent.tot_agent.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
 from eidos.cpu.agent_io import UserTextCPUMessage
 from eidos.cpu.llm_message import LLMMessage
-from eidos.system.reference_model import Specable, Reference
-from eidos.util.class_utils import fqn
+from eidos.system.reference_model import Specable, Reference, AnnotatedReference
 from eidos.util.logger import logger
 
 
@@ -25,8 +24,8 @@ class ToTAgentConfig(AgentSpec):
     num_iterations: int = Field(10, description="The maximum number of iterations to run the tree of thoughts algorithm.")
     question_prompt: str = Field(description="The prompt to use when asking the user for a question.")
     prompt_properties: Dict[str, Any] = Field(description="The json schema for the question input model.")
-    thought_generator: Reference(BaseThoughtGenerationStrategy, default=fqn(ProposePromptStrategy))
-    checker: Reference(ToTChecker, default=fqn(ToTChecker))
+    thought_generator: AnnotatedReference[BaseThoughtGenerationStrategy, ProposePromptStrategy] = Field(description="The thought generation strategy to use.")
+    checker: AnnotatedReference[ToTChecker, ToTChecker] = Field(description="The checker to use to evaluate thoughts.")
     fallback: Literal["ERROR", "LLM"] = "ERROR"
     output_format: Dict[str, Any] = Field(default=dict(type='string'), description="The requested output format of the INIT endpoint.")
     init_description: Optional[str] = Field(default=None, description="Overrides the description of the INIT endpoint.")

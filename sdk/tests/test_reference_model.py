@@ -1,10 +1,10 @@
 from contextlib import contextmanager
-from typing import Annotated
+from typing import Type
 
 from pydantic import BaseModel, Field
 
 from eidos.agent_os import AgentOS
-from eidos.system.reference_model import Reference, Specable
+from eidos.system.reference_model import Reference, Specable, AnnotatedReference
 from eidos.system.resources_base import Resource
 from eidos.util.class_utils import fqn
 
@@ -42,7 +42,7 @@ class Random(Base, Specable[RandomSpec]):
 
 
 class SimpleModel(BaseModel):
-    simple: Reference(Base, kind='TestResource', default=fqn(System))
+    simple: AnnotatedReference[Base, System]
 
 
 @contextmanager
@@ -75,7 +75,7 @@ def test_explicit_reference_override_spec():
 
 def test_explicit_named_reference_default_spec():
     with os_resource():
-        model = SimpleModel(simple="DEFAULT")
+        model = SimpleModel(simple='TestResource')
         instantiated = model.simple.instantiate()
         assert type(instantiated) == OS
         assert instantiated.spec.foo == 'os foo'
@@ -83,34 +83,10 @@ def test_explicit_named_reference_default_spec():
 
 def test_explicit_named_reference_spec_overriden_in_reference():
     with os_resource(spec=dict(foo='bar')):
-        model = SimpleModel(simple="DEFAULT")
+        model = SimpleModel(simple='TestResource')
         instantiated = model.simple.instantiate()
         assert type(instantiated) == OS
         assert instantiated.spec.foo == 'bar'
-
-
-def test_default_named_reference_default_spec():
-    with os_resource():
-        model = SimpleModel()
-        instantiated = model.simple.instantiate()
-        assert type(instantiated) == OS
-        assert instantiated.spec.foo == 'os foo'
-
-
-def test_default_named_reference_spec_overriden_in_reference():
-    with os_resource(spec=dict(foo='bar')):
-        model = SimpleModel()
-        instantiated = model.simple.instantiate()
-        assert type(instantiated) == OS
-        assert instantiated.spec.foo == 'bar'
-
-
-def test_default_named_reference_spec_overriden_in_simple_model():
-    with os_resource():
-        model = SimpleModel(simple=dict(spec=dict(foo='baz')))
-        instantiated = model.simple.instantiate()
-        assert type(instantiated) == OS
-        assert instantiated.spec.foo == 'baz'
 
 
 def test_system_fallback_default_spec():
@@ -127,12 +103,12 @@ def test_system_fallback_default_override_spec():
     assert instantiated.spec.foo == 'baz'
 
 
-class ExtendedModel(Reference(default=Random)):
+class ExtendedModel(Reference[object, Random]):
     ...
 
 
 class Wrapper(BaseModel):
-    extended: Annotated[ExtendedModel, Field(default_factory=ExtendedModel, validate_default=True)]
+    extended: ExtendedModel = ExtendedModel()
 
 
 def test_extending_reference_wrapped():
@@ -151,3 +127,16 @@ def test_extended_reference_raw():
     instantiated = ExtendedModel().instantiate()
     assert type(instantiated) == Random
     assert instantiated.spec.foo == 'random foo'
+
+
+def test_reference_with_no_default():
+    random_ = Reference[Random]
+    instantiated = random_().instantiate()
+    instantiated.spec.foo = 'random_foo'
+
+
+def test_annotated_ref_plays_nicely_with_descriptions():
+    class Fielded(BaseModel):
+        simple: AnnotatedReference[System] = Field(description="A simple reference")
+
+    Fielded().simple.instantiate().spec.foo = 'system foo'

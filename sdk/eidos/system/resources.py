@@ -2,16 +2,17 @@ from __future__ import annotations
 
 from typing import Literal, Type, Dict
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field
 
 from eidos.agent.generic_agent import GenericAgent
 from eidos.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory, AgentMemory
-from eidos.system.reference_model import Reference
+from eidos.memory.local_file_memory import LocalFileMemory
+from eidos.memory.mongo_symbolic_memory import MongoSymbolicMemory
+from eidos.system.reference_model import Reference, AnnotatedReference
 from eidos.system.resources_base import Resource
-from eidos.util.class_utils import fqn
 
 
 class MachineResource(Resource):
@@ -19,16 +20,16 @@ class MachineResource(Resource):
     spec: MachineSpec
 
 
-class CPUResource(Resource, Reference(AgentCPU, ConversationalAgentCPU, kind='CPU')):
+class CPUResource(Resource, Reference[AgentCPU, ConversationalAgentCPU]):
     kind: Literal['CPU']
 
 
-class AgentResource(Resource, Reference()):
+class AgentResource(Resource, Reference):
     kind: Literal['Agent']
 
 
 def _build_resource(clazz: Type) -> Type[Resource]:
-    class AutoAgentResource(Resource, Reference(bound=clazz, default=clazz)):
+    class AutoAgentResource(Resource, Reference[clazz, clazz]):
 
         @classmethod
         def kind_literal(cls) -> str:
@@ -45,9 +46,9 @@ agent_resources: Dict[str, Type[Resource]] = {r.kind_literal(): r for r in [
 
 
 class MachineSpec(BaseModel):
-    symbolic_memory: Reference(SymbolicMemory, description="The Symbolic Memory implementation.")
-    file_memory: Reference(FileMemory, description="The File Memory implementation.")
-    similarity_memory: Reference(VectorMemory, default=fqn(VectorMemory))
+    symbolic_memory: Reference[SymbolicMemory, MongoSymbolicMemory] = Field(description="The Symbolic Memory implementation.")
+    file_memory: Reference[FileMemory, LocalFileMemory] = Field(desciption="The File Memory implementation.")
+    similarity_memory: AnnotatedReference[VectorMemory]
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()

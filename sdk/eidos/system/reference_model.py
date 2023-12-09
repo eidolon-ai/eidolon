@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 import logging
-import typing
+from typing import TypeVar, Generic, Type, get_args, Annotated
 
 from pydantic import BaseModel, model_validator, Field
 
 from eidos.agent_os import AgentOS
 from eidos.util.class_utils import for_name, fqn
-from eidos.util.logger import logger
 
-T = typing.TypeVar('T', bound=BaseModel)
+T = TypeVar('T', bound=BaseModel)
 
 
-class Specable(typing.Generic[T]):
+class Specable(Generic[T]):
     """
     A generic type which can be used to describe a specable type. Specable types are expected to accept "spec" in kwarg.
     If Specable is not used, There will be no spec validation and the spec will be passed through as-is.
@@ -23,103 +22,48 @@ class Specable(typing.Generic[T]):
         self.spec = spec
 
 
-class ReferenceMeta(type):
-    def __getitem__(self, item) -> typing.Type[_GenericReference]:
-        return self(item)
-
-    def __call__(cls, bound: typing.Type = None, default: str | typing.Type = None, kind: str = None, **kwargs) -> typing.Type[_GenericReference]:
-        default = default if default is None or isinstance(default, str) else fqn(default)
-
-        class _SpecificReference(_GenericReference):
-            _bound = bound
-
-            @model_validator(mode='before')
-            def _transform(self):
-                if isinstance(self, str):
-                    if "." in self:
-                        bucket, name = self.split(".")
-                    else:
-                        bucket, name = kind, self
-                    found = AgentOS.get_resource(bucket, name).model_dump(exclude={'apiVersion', 'kind', 'metadata'})
-                    return found
-                elif isinstance(self, dict):
-                    os_default = AgentOS.get_resource(kind, default=None)
-
-                    if self.get('implementation'):  # First priority is explicit impl
-                        return self
-                    elif os_default:
-                        self.pop('implementation', None)  # then default resource set at OS level
-                        dump = os_default.model_dump(exclude={'apiVersion', 'kind', 'metadata'})
-                        dump.update(self)  # likely just spec is overwritten, but we should let everything flow through
-                        return dump
-                    elif default:  # then system default
-                        self['implementation'] = default
-                        return self
-                    elif bound:  # finally fallback to bound class
-                        logger.warning(f"Unable to find resource for {self}, falling back to bounding class")
-                        self['implementation'] = fqn(bound)
-                        return self
-                    else:
-                        raise ValueError(f"Unable to find class to reference")
-
-                else:
-                    raise ValueError(f"Unable to transform {self} to a reference")
-
-        return typing.Annotated[_SpecificReference, Field(default_factory=_SpecificReference, validate_default=True, **kwargs)]
+B = TypeVar('B')
+D = TypeVar('D')
 
 
-class Reference(metaclass=ReferenceMeta):
-    """
-    A wrapper to provide a generic reference to a class. Returns an annotated BaseModel which contains two fields
-    (implementation and optional spec) and an instantiate method.
-
-    References can be used as fields in a BaseModel to automatically wire up another portion of the system and
-    describe it within a spec. For example:
-
-    class AgentSpec(BaseModel):
-        foo: Reference(MyFoo, default=SubFoo, kind='Foo')
-        bar: Reference(MyBar, default=SubBar, kind='Bar')
-        baz: Reference(MyBaz, default=SubBaz)
-        qux: Reference(MyQux, default=SubQux)
-        corge: Reference(MyCorge)
-
-    apiVersion: eidolon/v1
-    kind: Agent
-    metadata:
-        name: MySpecableClass
-    spec:
-        foo:                                # overrides all defaults
-            implementation: fqn.SubSubFoo
-            spec: {...}
-        bar: named_bar_resource             # finds named resource on AgentOS
-        baz: Baz.named_bar_resource         # finds named resource on AgentOS, but requires kind prefix
-                                            # qux reverts to default SubQux
-                                            # corge reverts to default MyCorge
-
-    Note:   That the default is a class (or the fqn of a class) and not an instance of the class.
-    Note:   "spec" can be provided independently to override spec for whatever default is being used. Similarly, if
-            "spec" is not provided, the default spec will be used for the chosen implementation.
-    Note:   "kind" is not required, but allows for the default to be set at the OS level (used before code default if
-            defined) and a default bucket when referencing other resources.
-    Note:   This class and the implementation below are just syntactic sugar.
-            See _SpecificReference in the metaclass for the actual implementation.
-    Note:   Caution should be used when extending Reference. If the extended object is used as a field in a BaseModel,
-            it will not automatically receive the annotated default_factory.
-    """
+class Reference(BaseModel, Generic[B, D]):
+    bound: Type[B] = None
+    default: Type[D] = None
     implementation: str = None
     spec: dict = None
 
-    def instantiate(self, *args, **kwargs):
-        ...
+    def __class_getitem__(cls, params):
+        if not isinstance(params, tuple):
+            params = (params, D)
+        return super().__class_getitem__(params)
 
-
-class _GenericReference(BaseModel):
-    _bound: typing.Type
-    implementation: str
-    spec: dict = None
+    @model_validator(mode='before')
+    def _transform(self):
+        if isinstance(self, str):
+            split = list(self.split("."))
+            bucket = split.pop(0)
+            name = ".".join(split) if split else "DEFAULT"
+            found = AgentOS.get_resource(bucket, name)
+            return found.model_dump(exclude={'apiVersion', 'kind', 'metadata'})
+        else:
+            return self
 
     @model_validator(mode='after')
     def _validate(self):
+        if not self.bound:
+            generic_bound = get_args(self.__class__.model_fields['bound'].annotation)[0]
+            self.bound = object if isinstance(generic_bound, TypeVar) else generic_bound
+        if not self.default:
+            generic_default = get_args(self.__class__.model_fields['default'].annotation)[0]
+            self.default = None if isinstance(generic_default, TypeVar) else generic_default
+
+        if not self.implementation and self.default:
+            self.implementation = fqn(self.default)
+        if not self.implementation and self.bound != object:
+            self.implementation = fqn(self.bound)
+        if not self.implementation:
+            raise ValueError(f'Unable to determine implementation for "{self}"')
+
         self.build_reference_spec()
         return self
 
@@ -144,17 +88,9 @@ class _GenericReference(BaseModel):
         return self._get_reference_class()(*args, **kwargs)
 
     def _get_reference_class(self):
-        return for_name(self.implementation, self._bound or object)
+        return for_name(self.implementation, self.bound or object)
 
 
-V = typing.TypeVar('V')
-
-
-class WithDefault(typing.Generic[V]):
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v):
-        return v
+class AnnotatedReference(Reference):
+    def __class_getitem__(cls, params) -> Type[Reference]:
+        return Annotated[Reference[params], Field(default=Reference[params]())]
