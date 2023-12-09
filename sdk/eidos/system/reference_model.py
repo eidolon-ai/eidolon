@@ -103,6 +103,8 @@ class Reference(metaclass=ReferenceMeta):
             defined) and a default bucket when referencing other resources.
     Note:   This class and the implementation below are just syntactic sugar.
             See _SpecificReference in the metaclass for the actual implementation.
+    Note:   Caution should be used when extending Reference. If the extended object is used as a field in a BaseModel,
+            it will not automatically receive the annotated default_factory.
     """
     implementation: str = None
     spec: dict = None

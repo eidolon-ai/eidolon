@@ -28,17 +28,7 @@ class AgentResource(Resource, Reference()):
 
 
 def _build_resource(clazz: Type) -> Type[Resource]:
-    class AutoAgentResource(Resource, Reference()):
-        def __init__(self, **kwargs):
-            if 'implementation' not in kwargs:
-                kwargs['implementation'] = fqn(clazz)
-            super().__init__(**kwargs)
-
-        @field_validator('kind')
-        def _is_class_name(cls, v):
-            if v != clazz.__name__:
-                raise ValueError(f"Kind must be {clazz.__name__}")
-            return v
+    class AutoAgentResource(Resource, Reference(bound=clazz, default=clazz)):
 
         @classmethod
         def kind_literal(cls) -> str:

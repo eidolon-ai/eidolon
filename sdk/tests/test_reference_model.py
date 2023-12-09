@@ -1,6 +1,7 @@
 from contextlib import contextmanager
+from typing import Annotated
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidos.agent_os import AgentOS
 from eidos.system.reference_model import Reference, Specable
@@ -124,3 +125,29 @@ def test_system_fallback_default_override_spec():
     instantiated = model.simple.instantiate()
     assert type(instantiated) == System
     assert instantiated.spec.foo == 'baz'
+
+
+class ExtendedModel(Reference(default=Random)):
+    ...
+
+
+class Wrapper(BaseModel):
+    extended: Annotated[ExtendedModel, Field(default_factory=ExtendedModel, validate_default=True)]
+
+
+def test_extending_reference_wrapped():
+    instantiated = Wrapper().extended.instantiate()
+    assert type(instantiated) == Random
+    assert instantiated.spec.foo == 'random foo'
+
+
+def test_extended_reference_wrapped_with_overrides():
+    instantiated = Wrapper(extended=dict(spec=dict(foo='bar'))).extended.instantiate()
+    assert type(instantiated) == Random
+    assert instantiated.spec.foo == 'bar'
+
+
+def test_extended_reference_raw():
+    instantiated = ExtendedModel().instantiate()
+    assert type(instantiated) == Random
+    assert instantiated.spec.foo == 'random foo'
