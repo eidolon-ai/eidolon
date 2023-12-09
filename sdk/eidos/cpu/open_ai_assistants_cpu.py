@@ -6,6 +6,7 @@ from typing import List, Dict, Any, Type, Optional
 
 from openai import AsyncOpenAI
 from openai.types.beta import Assistant
+from openai.types.beta.assistant_create_params import ToolAssistantToolsFunction
 from openai.types.beta.threads import ThreadMessage
 from openai.types.beta.threads.run_submit_tool_outputs_params import ToolOutput
 from pydantic import Field
@@ -14,6 +15,7 @@ from eidos.agent_os import AgentOS
 from eidos.cpu.agent_cpu import AgentCPUSpec, AgentCPU, Thread
 from eidos.cpu.agent_io import CPUMessageTypes
 from eidos.cpu.call_context import CallContext
+from eidos.cpu.llm_message import ToolResponseMessage, LLMMessage
 from eidos.cpu.logic_unit import ToolDefType, LogicUnit
 from eidos.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidos.system.reference_model import Specable, Reference
@@ -176,34 +178,75 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         # start the run
         return await self.run_llm_and_tools(call_context, assistant.id, thread_id, last_message_id)
 
-    async def run_llm_and_tools(self, call_context: CallContext, assistant_id: str, thread_id: str, last_message_id: str):
+    async def _get_tools_defs(self, call_context: CallContext):
+        conversation = []
+        conversation_from_memory = AgentOS.symbolic_memory.find("open_ai_conversation_data", {
+            "process_id": call_context.process_id,
+            "thread_id": call_context.thread_id,
+        })
+        async for item in conversation_from_memory:
+            conversation.append(LLMMessage.from_dict(item["tool_result"]))
+
+        tool_defs = await self.get_tools(conversation)
+        return tool_defs
+
+    async def run_llm_and_tools(self, call_context: CallContext, assistant_id: str, assistant_thread_id: str, last_message_id: str):
         llm = self._getLLM()
-        run = await llm.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
+        tool_defs = await self._get_tools_defs(call_context)
+        tools = []
+        for tool_def in tool_defs.values():
+            tools.append(ToolAssistantToolsFunction(**{
+                "type": "function",
+                "function": {
+                    "name": tool_def.name,
+                    "description": tool_def.description,
+                    "parameters": tool_def.parameters
+                }
+            }))
+        if self.spec.enable_retrieval:
+            tools.append({"type": "retrieval"})
+
+        if self.spec.enable_code_interpreter:
+            tools.append({"type": "code_interpreter"})
+        request = {
+            "assistant_id": assistant_id,
+            "thread_id": assistant_thread_id
+        }
+        if len(tools) > 0:
+            request["tools"] = tools
+
+        run = await llm.beta.threads.runs.create(**request)
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            # todo -- need to fetch the conversation from local symbolic memory
-            conversation = []
-            tool_defs = await self.get_tools(conversation)
-            run = await self.run_llm(run.id, thread_id)
+            run = await self.run_llm(run.id, assistant_thread_id)
             if run.status == "requires_action":
                 results = []
 
                 for tool_call in run.required_action.submit_tool_outputs.tool_calls:
+                    print("executing tool " + tool_call.name + " with args " + str(tool_call.arguments))
                     tool_call_id = tool_call.id
                     function_call = tool_call.function
                     arguments = json.loads(function_call.arguments)
                     print("executing tool " + function_call.name + " with args " + str(function_call.arguments))
                     tool_def = tool_defs[function_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=arguments)
-                    # todo, store tool response result as Any (must be json serializable) so that it can be retrieved symmetrically
-                    message = ToolOutput(tool_call_id=tool_call_id, output=self._to_json(tool_result))
-                    # todo -- need to store the conversation tool call result in mongo for above get_tools call
+                    result_as_json_str = self._to_json(tool_result)
+                    message = ToolOutput(tool_call_id=tool_call_id, output=result_as_json_str)
+                    message_to_store = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=result_as_json_str, name=tool_call.name)
+                    await AgentOS.symbolic_memory.insert_one("open_ai_conversation_data", {
+                        "process_id": call_context.process_id,
+                        "thread_id": call_context.thread_id,
+                        "assistant_id": assistant_id,
+                        "assistant_thread_id": assistant_thread_id,
+                        "tool_call_id": tool_call_id,
+                        "tool_result": message_to_store.model_dump()
+                    })
                     results.append(message)
 
-                run = await llm.beta.threads.runs.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=results)
+                run = await llm.beta.threads.runs.submit_tool_outputs(thread_id=assistant_thread_id, run_id=run.id, tool_outputs=results)
                 num_iterations += 1
             else:
-                messages = await llm.beta.threads.messages.list(thread_id=thread_id, before=last_message_id)
+                messages = await llm.beta.threads.messages.list(thread_id=assistant_thread_id, before=last_message_id)
                 first_item: ThreadMessage = None
                 async for item in messages:
                     first_item = item
