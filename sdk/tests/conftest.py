@@ -57,9 +57,9 @@ def machine_manager(file_memory, symbolic_memory, similarity_memory):
                 apiVersion="eidolon/v1",
                 kind="Machine",
                 spec=dict(
-                    symbolic_memory=sm.model_dump(),
-                    file_memory=file_memory.model_dump(),
-                    similarity_memory=similarity_memory.model_dump(),
+                    symbolic_memory=sm,
+                    file_memory=file_memory,
+                    similarity_memory=similarity_memory,
                 )
             )
 
@@ -90,7 +90,7 @@ def symbolic_memory(module_identifier):
 def file_memory(tmp_path_factory, module_identifier):
     storage_loc = tmp_path_factory.mktemp(f"file_memory_{module_identifier}")
     spec = LocalFileMemoryConfig(root_dir=str(storage_loc))
-    return Reference[LocalFileMemory](spec=spec.model_dump())
+    return Reference[LocalFileMemory](spec=spec)
 
 
 @pytest.fixture(scope='module')

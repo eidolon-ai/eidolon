@@ -141,12 +141,20 @@ def test_annotated_ref_plays_nicely_with_descriptions():
     Fielded().simple.instantiate().spec.foo = 'system foo'
 
 
-# generics create a too strict type bound when validating with actual class instances, which is unfortunate
-# we can probably work around this by removing generics ans having a custom getitem method to inject the types to a non-pydantic field
-def test_loosly_validated_type_bounds():
+def test_loosely_validated_type_bounds_dumping_dict():
     class Fielded(BaseModel):
         simple: Reference[Base] = Field(description="A simple reference")
 
-    fielded = Fielded.model_validate(dict(simple=Reference[System]().model_dump()))
-    # fielded = Fielded(simple=Reference[System]())
+    dumped = dict(simple=Reference[System]().model_dump())
+    fielded = Fielded.model_validate(dumped)
     assert fielded.simple.instantiate().spec.foo == 'system foo'
+
+
+def test_loosely_validated_type_bounds():
+    class Fielded(BaseModel):
+        simple: Reference[Base] = Field(description="A simple reference")
+
+    reference = Reference(implementation=fqn(System))
+    fielded = Fielded(simple=reference)
+    assert fielded.simple.instantiate().spec.foo == 'system foo'
+

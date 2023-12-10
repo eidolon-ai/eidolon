@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TypeVar, Generic, Type, get_args, Annotated
+from typing import TypeVar, Generic, Type, Annotated, Optional
 
 from pydantic import BaseModel, model_validator, Field
 
@@ -26,41 +26,63 @@ B = TypeVar('B')
 D = TypeVar('D')
 
 
-class _ReferenceAlias(BaseModel, Generic[B, D]):
-    bound: Type[B]
-    default: Type[D]
-    implementation: str
-    spec: dict
+class Reference(BaseModel):
+    """
+    Used to create references to other classes. t is designed to be used with two type variables, `B` and `D` which are
+    the type bound and default type respectively. Neither are required, and if only one type is provided it is assumed
+    to be the bound. Bound is used as the default if no default is provided.
+
+    Examples:
+        Reference(implementation=fqn(Foo)                           # Returns an instance of Foo
+        Reference[FooBase](implementation=fqn(Foo).instantiate()    # Returns an instance of Foo
+        Reference[FooBase](implementation=fqn(Bar)                  # Raises ValueError
+        Reference[FooBase, Foo]().instantiate()                     # Returns an instance of Foo
+        Reference[FooBase]().instantiate()                          # Returns an instance of FooBase
+
+    Attributes:
+        _bound: This is a type variable `B` that represents the bound type of the reference. It defaults to `object`.
+        _default: This is a type variable `D` that represents the default type of the reference. It defaults to `None`.
+        implementation: This is a string that represents the fully qualified name of the class that the reference points to. It is optional and can be set to `None`.
+        spec: This is a dictionary that can hold any additional specifications for the reference. It is optional and can be set to `None`.
+
+    Methods:
+        instantiate: This method is used to create an instance of the class that the reference points to.
+    """
+    _bound: Type[B] = object
+    _default: Type[D] = None
+    implementation: str = None
+    spec: Optional[dict] = None
 
     def __class_getitem__(cls, params):
         if not isinstance(params, tuple):
-            params = (params, D)
-        return super().__class_getitem__(params)
+            params = (params, params)
+
+        class _Reference(Reference):
+            _bound = params[0]
+            _default = params[1]
+            @model_validator(mode='before')
+            def _dump_ref(cls, value):
+                return value.model_dump(exclude_defaults=True) if isinstance(value, Reference) else value
+
+        return _Reference
 
     @model_validator(mode='before')
-    def _transform(self):
-        if isinstance(self, str):
-            split = list(self.split("."))
+    def _transform(cls, value):
+        if isinstance(value, str):
+            split = list(value.split("."))
             bucket = split.pop(0)
             name = ".".join(split) if split else "DEFAULT"
             found = AgentOS.get_resource(bucket, name)
             return found.model_dump(exclude={'apiVersion', 'kind', 'metadata'})
         else:
-            return self
+            if 'spec' in value and isinstance(value['spec'], BaseModel):
+                value['spec'] = value['spec'].model_dump(exclude_defaults=True)
+            return value
 
     @model_validator(mode='after')
     def _validate(self):
-        if not self.bound:
-            generic_bound = get_args(self.__class__.model_fields['bound'].annotation)[0]
-            self.bound = object if isinstance(generic_bound, TypeVar) else generic_bound
-        if not self.default:
-            generic_default = get_args(self.__class__.model_fields['default'].annotation)[0]
-            self.default = None if isinstance(generic_default, TypeVar) else generic_default
-
-        if not self.implementation and self.default:
-            self.implementation = fqn(self.default)
-        if not self.implementation and self.bound != object:
-            self.implementation = fqn(self.bound)
+        if not self.implementation and self._default:
+            self.implementation = fqn(self._default)
         if not self.implementation:
             raise ValueError(f'Unable to determine implementation for "{self}"')
 
@@ -82,41 +104,13 @@ class _ReferenceAlias(BaseModel, Generic[B, D]):
             return self.spec
 
     def _get_reference_class(self):
-        return for_name(self.implementation, self.bound or object)
-
-
-class Reference(_ReferenceAlias[B, D], Generic[B, D]):
-    """
-    A class designed to allow references throughout the system. By defining a bound (B) and default (D), the Reference
-    can check that a optional spec is compatible with an implementation. Note that implementation must be of type
-    bound B, and if it is not provided will fall back to bound B. The provided spec will be validated against the
-    Specable type defined by the implementation (if implementation is a Specable) otherwise used unabated.
-
-
-    Attributes:
-        implementation (str): Represents the fully qualified name of the class that the reference points to. It is
-            optional and will default to the name of the default class or bound (from generics).
-        spec (dict): Holds any additional specifications for the reference. It is used to instantiate the reference.
-    """
-
-    bound: Type[B] = None
-    default: Type[D] = None
-    implementation: str = None
-    spec: dict = None
+        return for_name(self.implementation, self._bound or object)
 
     def instantiate(self, *args, **kwargs):
         spec = self._build_reference_spec()
         if spec is not None:
             kwargs['spec'] = spec
         return self._get_reference_class()(*args, **kwargs)
-
-    def model_dump(self, *args, **kwargs):
-        if 'exclude' not in kwargs:
-            kwargs['exclude'] = set()
-        kwargs['exclude'].update({'bound', 'default'})
-        kwargs['exclude_unset'] = True
-
-        return super().model_dump(*args, **kwargs)
 
 
 class AnnotatedReference(Reference):
