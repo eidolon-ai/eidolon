@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-from typing import Type
 
 from pydantic import BaseModel, Field
 
@@ -140,3 +139,14 @@ def test_annotated_ref_plays_nicely_with_descriptions():
         simple: AnnotatedReference[System] = Field(description="A simple reference")
 
     Fielded().simple.instantiate().spec.foo = 'system foo'
+
+
+# generics create a too strict type bound when validating with actual class instances, which is unfortunate
+# we can probably work around this by removing generics ans having a custom getitem method to inject the types to a non-pydantic field
+def test_loosly_validated_type_bounds():
+    class Fielded(BaseModel):
+        simple: Reference[Base] = Field(description="A simple reference")
+
+    fielded = Fielded.model_validate(dict(simple=Reference[System]().model_dump()))
+    # fielded = Fielded(simple=Reference[System]())
+    assert fielded.simple.instantiate().spec.foo == 'system foo'

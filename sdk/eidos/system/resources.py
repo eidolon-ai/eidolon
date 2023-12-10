@@ -25,7 +25,7 @@ class CPUResource(Resource, Reference[AgentCPU, ConversationalAgentCPU]):
 
 
 class AgentResource(Resource, Reference):
-    kind: Literal['Agent']
+    kind: Literal['Agent'] = 'Agent'
 
 
 def _build_resource(clazz: Type) -> Type[Resource]:

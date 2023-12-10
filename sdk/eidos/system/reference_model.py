@@ -110,6 +110,14 @@ class Reference(_ReferenceAlias[B, D], Generic[B, D]):
             kwargs['spec'] = spec
         return self._get_reference_class()(*args, **kwargs)
 
+    def model_dump(self, *args, **kwargs):
+        if 'exclude' not in kwargs:
+            kwargs['exclude'] = set()
+        kwargs['exclude'].update({'bound', 'default'})
+        kwargs['exclude_unset'] = True
+
+        return super().model_dump(*args, **kwargs)
+
 
 class AnnotatedReference(Reference):
     """

@@ -6,10 +6,10 @@ from unittest.mock import MagicMock, Mock
 import pytest
 
 from eidos.cpu.call_context import CallContext
+from eidos.cpu.llm.cache_llm_unit import CacheLLMSpec, CacheLLM
 from eidos.cpu.llm_message import AssistantMessage, SystemMessage
 from eidos.cpu.llm_unit import LLMCallFunction
 from eidos.memory.in_memory_file_memory import InMemoryFileMemory, InMemoryFileMemoryConfig
-from eidos.cpu.llm import CacheLLMSpec, CacheLLM
 
 
 # Assuming 'your_llm_reference' and 'your_module' are placeholders for actual implementations

@@ -43,3 +43,10 @@ class AgentOS:
             return cls._resources[bucket][name][1]
         except KeyError:
             raise ValueError(f"Resource {name} not found in bucket {bucket}")
+
+    @classmethod
+    def reset(cls):
+        cls._resources = {}
+        cls.file_memory = ...
+        cls.symbolic_memory = ...
+        cls.similarity_memory = ...

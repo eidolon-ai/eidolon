@@ -13,7 +13,8 @@ from starlette.requests import Request
 
 from eidos.agent_os import AgentOS
 from eidos.system.agent_machine import AgentMachine, error_logger
-from eidos.system.resources import Resource
+from eidos.system.resources_base import Resource
+from eidos.util.logger import logger
 
 dotenv.load_dotenv()
 
@@ -29,27 +30,35 @@ args = parser.parse_args()
 
 
 @asynccontextmanager
-async def start_os(app: FastAPI):
+async def _start_os(app: FastAPI):
+    async with start_os(app, load_resources(args.yaml_path), logging.DEBUG if args.debug else logging.INFO):
+        yield
+
+
+def load_resources(path):
+    for file in os.listdir(path):
+        file_loc = os.path.join(path, file)
+        with error_logger(file_loc), open(file_loc) as resource_yaml:
+            resource = Resource.model_validate(yaml.safe_load(resource_yaml))
+        yield resource, file_loc
+
+
+@asynccontextmanager
+async def start_os(app, resource_generator, log_level=logging.INFO):
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
-    logger = logging.getLogger("eidolon")
-    logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
+    logger.setLevel(log_level)
     try:
-        for file in os.listdir(args.yaml_path):
-            file_loc = os.path.join(args.yaml_path, file)
-            with error_logger(file_loc), open(file_loc) as resource_yaml:
-                resource_object = yaml.safe_load(resource_yaml)
-                AgentOS.register_resource(resource=Resource.model_validate(resource_object), source=file_loc)
-        machine = AgentMachine.from_os(AgentOS)
+        machine = AgentMachine.from_resources(resource_generator)
         AgentOS.load_machine(machine)
-        logger.info("Starting machine...")
         await machine.start(app)
         logger.info("Machine started")
     except Exception as e:
         logger.exception("Failed to start AgentOS")
         raise e
     yield
-    await machine.stop()
+    machine.stop()
+    AgentOS.reset()
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
@@ -65,7 +74,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         return response
 
 
-app = FastAPI(lifespan=start_os)
+app = FastAPI(lifespan=_start_os)
 app.add_middleware(LoggingMiddleware)
 
 
