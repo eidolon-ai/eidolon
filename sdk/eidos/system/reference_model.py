@@ -87,8 +87,11 @@ class _ReferenceAlias(BaseModel, Generic[B, D]):
 
 class Reference(_ReferenceAlias[B, D], Generic[B, D]):
     """
-    A subclass of _ReferenceAlias that is used to create references to other classes. It is designed to be used with
-    two type variables, B (type Bound) and D (default type). They are BaseModel attributes, but can be largely ignored.
+    A class designed to allow references throughout the system. By defining a bound (B) and default (D), the Reference
+    can check that a optional spec is compatible with an implementation. Note that implementation must be of type
+    bound B, and if it is not provided will fall back to bound B. The provided spec will be validated against the
+    Specable type defined by the implementation (if implementation is a Specable) otherwise used unabated.
+
 
     Attributes:
         implementation (str): Represents the fully qualified name of the class that the reference points to. It is
