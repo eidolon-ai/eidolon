@@ -22,6 +22,4 @@ spec:
   prompt_properties:
     instruction:
       type: string
-  files:
-    allow: true
-    allow_multiple: false
+  files: single

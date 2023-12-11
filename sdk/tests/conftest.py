@@ -1,6 +1,6 @@
-import asyncio
 import os
-from contextlib import asynccontextmanager, contextmanager
+import pathlib
+from contextlib import asynccontextmanager
 from typing import Iterable
 
 import pytest
@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from eidos.cpu.llm.cache_llm_unit import CacheLLM, CacheLLMSpec
 from eidos.memory.agent_memory import VectorMemory
 from eidos.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
 from eidos.memory.mongo_symbolic_memory import MongoSymbolicMemory
@@ -103,3 +104,12 @@ def similarity_memory():
 @pytest.fixture(scope='module', autouse=True)
 def module_identifier(request):
     return request.node.name.replace('.', '_')
+
+
+@pytest.fixture(scope='module')
+def caching_llm(module_identifier):
+    loc = str(pathlib.Path(__file__).parent / "llm_cache")
+    return Reference(implementation=fqn(CacheLLM), spec=CacheLLMSpec(
+        dir=module_identifier,
+        file_memory_override=dict(spec=LocalFileMemoryConfig(root_dir=loc))
+    ))

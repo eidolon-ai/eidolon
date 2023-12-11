@@ -1,25 +1,21 @@
-from typing import Annotated, Dict, Any
+from typing import Annotated, Dict, Any, Literal
 
 from fastapi import Body
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, field_validator, Field
 
-from eidos.agent.agent import Agent, register_action, AgentState, AgentSpec, register_program, spec_input_model, get_input_model, nest_with_fn
+from eidos.agent.agent import Agent, register_action, AgentState, AgentSpec, register_program, spec_input_model, \
+    get_input_model, nest_with_fn
 from eidos.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage
 from eidos.system.reference_model import Specable
-
-
-class FileOptions(BaseModel):
-    allow: bool = False
-    allow_multiple: bool = False
 
 
 # todo, this probably defines states and output schema, but leaving that out for now
 class GenericAgentSpec(AgentSpec):
     system_prompt: str
     question_prompt: str
-    prompt_properties: Dict[str,Any] = Field({}, description="A dictionary of properties to be used in the prompt")
-    files: FileOptions = Field(default=FileOptions())
+    prompt_properties: Dict[str, Any] = Field({}, description="A dictionary of properties to be used in the prompt")
+    files: Literal['disable', 'single', 'multiple'] = "disable"
 
     @field_validator('prompt_properties')
     def validate_prompt_properties(cls, input_dict):
@@ -38,20 +34,18 @@ class LlmResponse(BaseModel):
 
 
 def fixup_properties(spec: GenericAgentSpec):
-    properties = {}
+    properties: Dict[str, Any] = {}
     if spec.prompt_properties:
         properties['body'] = dict(
             type="object",
             properties=spec.prompt_properties,
         )
-    if spec.files.allow:
-        if spec.files.allow_multiple:
-            properties['files'] = dict(type="array", items=dict(type="string", format="binary"))
-        else:
-            properties['files'] = dict(type="string", format="binary")
+    if spec.files == 'single':
+        properties['files'] = dict(type="string", format="binary")
+    elif spec.files == 'multiple':
+        properties['files'] = dict(type="array", items=dict(type="string", format="binary"))
     elif 'files' in properties:
         del properties['files']
-
     return properties
 
 
