@@ -29,9 +29,9 @@ class TestGenericAgent:
 
     def test_llm_calls(self, client):
         post = client.post("/agents/GenericAgent/programs/question",
-                           json=dict(instruction="Hi! What would you like to be called?"))
+                           json=dict(instruction="Hi! What is the capital of France?"))
         post.raise_for_status()
-        assert "Assistant" in post.json()['data']['response']
+        assert "paris" in post.json()['data']['response'].lower()
 
     def test_continued_conversation(self, client):
         post = client.post("/agents/GenericAgent/programs/question", json=dict(instruction="Hi! my name is Luke"))
@@ -56,7 +56,6 @@ def test_generic_agent_supports_image(client_builder, generic_agent, dog):
         assert 'brown' in post.json()['data']['response'].lower()
 
 
-#  fails, followup response is not working
 def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
     generic_agent = generic_agent.model_copy(deep=True)
     generic_agent.spec.files = 'multiple'

@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm.open_ai_llm_unit import OpenAIGPT
-from eidos.cpu.llm_message import LLMMessage, AssistantMessage
+from eidos.cpu.llm_message import LLMMessage, AssistantMessage, UserMessage, UserMessageImageURL
 from eidos.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
 from eidos.memory.agent_memory import FileMemory
 from eidos.memory.local_file_memory import LocalFileMemory
@@ -39,13 +39,23 @@ class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
 
     async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: dict) -> AssistantMessage:
         try:
-            # Generate the hash
-            combined_str = ''.join(message.model_dump_json() for message in inMessages) + \
-                           ''.join(tool.model_dump_json() for tool in inTools) + \
-                           json.dumps(output_format)
+            combined = [json.dumps(output_format)]
+
+            for message in inMessages:
+                if isinstance(message, UserMessage):
+                    for content in message.content:
+                        if isinstance(content, UserMessageImageURL):
+                            combined.append(str(AgentOS.file_memory.read_file(content.image_url)))
+                        else:
+                            combined.append(content.model_dump_json())
+                else:
+                    combined.append(message.model_dump_json())
+
+            for tool in inTools:
+                combined.append(tool.model_dump_json())
 
             hash_object = hashlib.sha256()
-            hash_object.update(combined_str.encode())
+            hash_object.update("|".join(combined).encode())
             hash_hex = hash_object.hexdigest()
 
             file_name = f"{self.dir}/{hash_hex}.json"
