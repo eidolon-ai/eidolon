@@ -18,21 +18,17 @@ from eidos.util.logger import logger
 
 dotenv.load_dotenv()
 
-# Set up the argument parser
-parser = argparse.ArgumentParser(description="Start a FastAPI server.")
-parser.add_argument("-p", "--port", type=int, default=8080, help="Port to run the FastAPI server on. Defaults to 8080.")
-parser.add_argument("-r", "--reload", help="Reload the server when the code changes. Defaults to False.", action="store_true")
-parser.add_argument('--debug', action='store_true', help='Turn on debug logging')
-parser.add_argument("yaml_path", type=str, help="Path to a directory containing YAML files describing the agent machine to start.")
 
-# Parse command line arguments
-args = parser.parse_args()
+def parse_args():
+    # Set up the argument parser
+    parser = argparse.ArgumentParser(description="Start a FastAPI server.")
+    parser.add_argument("-p", "--port", type=int, default=8080, help="Port to run the FastAPI server on. Defaults to 8080.")
+    parser.add_argument("-r", "--reload", help="Reload the server when the code changes. Defaults to False.", action="store_true")
+    parser.add_argument('--debug', action='store_true', help='Turn on debug logging')
+    parser.add_argument("yaml_path", type=str, help="Path to a directory containing YAML files describing the agent machine to start.")
 
-
-@asynccontextmanager
-async def _start_os(app: FastAPI):
-    async with start_os(app, load_resources(args.yaml_path), logging.DEBUG if args.debug else logging.INFO):
-        yield
+    # Parse command line arguments
+    return parser.parse_args()
 
 
 def load_resources(path):
@@ -74,15 +70,15 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         return response
 
 
-app = FastAPI(lifespan=_start_os)
-app.add_middleware(LoggingMiddleware)
-
-
 def main():
+    args = parse_args()
     log_level_str = "debug" if args.debug else "info"
 
+    app = FastAPI(lifespan=lambda app: start_os(app, load_resources(args.yaml_path), logging.DEBUG if args.debug else logging.INFO))
+    app.add_middleware(LoggingMiddleware)
+
     # Run the server
-    uvicorn.run("eidos.system.agent_http_server:app", host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
+    uvicorn.run(app, host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
 
 
 if __name__ == "__main__":
