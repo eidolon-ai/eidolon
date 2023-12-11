@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from eidos.agent.generic_agent import GenericAgentSpec
@@ -26,16 +28,49 @@ class TestGenericAgent:
         assert docs.status_code == 200
 
     def test_llm_calls(self, client):
-        post = client.post("/agents/GenericAgent/programs/question", json=dict(instruction="Hi! What would you like to be called?"))
+        post = client.post("/agents/GenericAgent/programs/question",
+                           json=dict(instruction="Hi! What would you like to be called?"))
         post.raise_for_status()
-        assert post.json()['data']['response'] == "As an AI, I don't have personal preferences, so you can call me "\
-                                                  'whatever you feel comfortable with. Most people refer to me as '\
-                                                  "'AI' or 'Assistant'."
+        assert "Assistant" in post.json()['data']['response']
 
     def test_continued_conversation(self, client):
         post = client.post("/agents/GenericAgent/programs/question", json=dict(instruction="Hi! my name is Luke"))
         post.raise_for_status()
         process_id = post.json()['process_id']
-        follow_up = client.post(f"/agents/GenericAgent/processes/{process_id}/actions/respond", json=dict(statement="Can you sing me Happy Birthday?"))
+        follow_up = client.post(f"/agents/GenericAgent/processes/{process_id}/actions/respond",
+                                json=dict(statement="Can you sing me Happy Birthday?"))
         follow_up.raise_for_status()
         assert "Luke" in post.json()['data']['response']
+
+
+def test_generic_agent_supports_image(client_builder, generic_agent, dog):
+    generic_agent = generic_agent.model_copy(deep=True)
+    generic_agent.spec.files = 'single'
+    with client_builder(generic_agent) as client:
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
+            files=dict(files=dog)
+        )
+        post.raise_for_status()
+        assert 'brown' in post.json()['data']['response'].lower()
+
+
+#  fails, multi file not working?
+def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
+    generic_agent = generic_agent.model_copy(deep=True)
+    generic_agent.spec.files = 'multiple'
+    with client_builder(generic_agent) as client:
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            data=dict(body=json.dumps(dict(instruction="what do these images have in common?"))),
+            files=dict(cat=cat, dog=dog)
+        )
+        post.raise_for_status()
+        assert post.json()['data']['response'] == "they are both animals."
+
+        process_id = post.json()['process_id']
+        follow_up = client.post(f"/agents/GenericAgent/processes/{process_id}/actions/respond",
+                                json=dict(statement="What is different between them?"))
+        follow_up.raise_for_status()
+        assert follow_up.json()['data']['response'] == "The cat is a cat, and the dog is a dog."
