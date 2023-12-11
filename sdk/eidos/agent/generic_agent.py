@@ -41,11 +41,11 @@ def fixup_properties(spec: GenericAgentSpec):
             properties=spec.prompt_properties,
         )
     if spec.files == 'single':
-        properties['files'] = dict(type="string", format="binary")
+        properties['file'] = dict(type="string", format="binary")
     elif spec.files == 'multiple':
-        properties['files'] = dict(type="array", items=dict(type="string", format="binary"))
+        properties['file'] = dict(type="array", items=dict(type="string", format="binary"))
     elif 'files' in properties:
-        del properties['files']
+        del properties['file']
     return properties
 
 
@@ -57,7 +57,7 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
     async def question(self, process_id, **kwargs) -> AgentState[LlmResponse]:
         body = kwargs.get('body')
         body = dict(body) if body else {}
-        files = kwargs.get('files', [])
+        files = kwargs.get('file', [])
         if not isinstance(files, list):
             files = [files]
         schema = LlmResponse.model_json_schema()

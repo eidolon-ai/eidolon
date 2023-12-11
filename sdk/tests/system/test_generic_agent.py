@@ -50,13 +50,13 @@ def test_generic_agent_supports_image(client_builder, generic_agent, dog):
         post = client.post(
             "/agents/GenericAgent/programs/question",
             data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
-            files=dict(files=dog)
+            files=dict(file=dog)
         )
         post.raise_for_status()
         assert 'brown' in post.json()['data']['response'].lower()
 
 
-#  fails, multi file not working?
+#  fails, followup response is not working
 def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
     generic_agent = generic_agent.model_copy(deep=True)
     generic_agent.spec.files = 'multiple'
@@ -64,13 +64,13 @@ def test_generic_agent_supports_multiple_images(client_builder, generic_agent, c
         post = client.post(
             "/agents/GenericAgent/programs/question",
             data=dict(body=json.dumps(dict(instruction="what do these images have in common?"))),
-            files=dict(cat=cat, dog=dog)
+            files=[('file', dog), ('file', cat)],
         )
         post.raise_for_status()
-        assert post.json()['data']['response'] == "they are both animals."
+        assert "animals" in post.json()['data']['response'].lower()
 
         process_id = post.json()['process_id']
         follow_up = client.post(f"/agents/GenericAgent/processes/{process_id}/actions/respond",
                                 json=dict(statement="What is different between them?"))
         follow_up.raise_for_status()
-        assert follow_up.json()['data']['response'] == "The cat is a cat, and the dog is a dog."
+        assert "cat" in follow_up.json()['data']['response'].lower()

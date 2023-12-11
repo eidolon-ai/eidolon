@@ -18,6 +18,8 @@ from eidos.system.reference_model import Specable
 from PIL import Image
 from io import BytesIO
 
+from eidos.util.logger import logger
+
 
 def scale_dimensions(width, height, max_size=2048, min_size=768):
     # Check if the dimensions are less than or equal to max_size.
@@ -51,18 +53,15 @@ def scale_image(image_bytes):
     # Get the dimensions of the image
     width, height = image.size
 
-    print(f"Original image size: {width}x{height}")
+    logger.info(f"Original image size: {width}x{height}")
     new_width, new_height = scale_dimensions(width, height)
-    print(f"New image size: {new_width}x{new_height}")
+    logger.info(f"New image size: {new_width}x{new_height}")
 
     # Resize and return the image
     scaled_image = image.resize((new_width, new_height))
     output = BytesIO()
     scaled_image.save(output, format='PNG')
     return output.getvalue()
-
-
-logger = logging.getLogger("eidolon")
 
 
 def convert_to_openai(message: LLMMessage):
@@ -149,7 +148,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
         force_json_msg = f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
         if not self.spec.force_json:
-            force_json_msg += "\nThe response will be wrapped in a json section json```{...}```"
+            force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
         # add response rules to original system message for this call only
         if messages[0]['role'] == 'system':
             messages[0]['content'] += f"\n\n{force_json_msg}"
