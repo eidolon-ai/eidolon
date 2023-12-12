@@ -12,8 +12,19 @@ def generic_agent(caching_llm):
     resource = Resource(apiVersion="eidolon/v1", kind="GenericAgent", metadata=Metadata(name="GenericAgent"),
                         spec=GenericAgentSpec(cpu=dict(spec=ConversationalAgentCPUSpec(llm_unit=caching_llm)),
                                               system_prompt="You are a machine which follows instructions and returns a summary of your actions.",
-                                              question_prompt="{{instruction}}",
-                                              prompt_properties=dict(instruction=dict(type="string"))))
+                                              user_prompt="{{instruction}}",
+                                              input_schema=dict(instruction=dict(type="string")),
+                                              output_schema={
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "response": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": ["response"]
+                                              },
+                                              description="An agent which can follow instructions and return a summary of its actions."
+                                              ))
     return resource
 
 
