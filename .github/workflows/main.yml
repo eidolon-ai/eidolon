@@ -8,7 +8,29 @@ on:
   pull_request:
 
 jobs:
-  test:
+  rest-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: examples
+      - name: Start MongoDB
+        run: |
+          if ! docker ps | grep -q 'mongodb'; then
+            docker run --name mongodb -d -p 27017:27017 mongo:latest
+          else
+            echo "MongoDB is already running. Not starting a new instance."
+          fi
+      - run: poetry run pytest
+        working-directory: examples
+
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +51,6 @@ jobs:
           fi
       - run: poetry run pytest
         working-directory: sdk
-
 
 #      - name: Install dependencies
 #        run: |
