@@ -24,11 +24,12 @@ class ConversationalSpec(BaseModel):
 
 
 class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
-    _openapi_json: Optional[dict] = None
+    _openapi_json: Optional[dict]
 
-    def __init__(self, spec: ConversationalSpec, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.spec = spec
+        Specable.__init__(self, **kwargs)
+        self._openapi_json = None
 
     def set_openapi_json(self, openapi_json):
         self._openapi_json = jsonref.replace_refs(openapi_json)
@@ -44,9 +45,12 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         for agent in self.spec.agents:
             prefix = f'/agents/{agent}/programs/'
             for path in filter(lambda p: p.startswith(prefix), self._openapi_json['paths'].keys()):
-                action = path.removeprefix(prefix)
-                name = self._name(agent, action=action)
-                tools[name] = await self._build_tool_def(name, path, agent)
+                try:
+                    action = path.removeprefix(prefix)
+                    name = self._name(agent, action=action)
+                    tools[name] = await self._build_tool_def(name, path, agent)
+                except ValueError:
+                    logger.warning(f"unable to build tool {path}", exc_info=True)
 
         # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
         allowed_agent_prefix = tuple(self._name(agent) for agent in self.spec.agents)
@@ -62,14 +66,20 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         # newer process state should override older process state if there are multiple calls
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
             path = f'/agents/{response.program}/processes/{{process_id}}/actions/{action}'
-            name = self._name(response.program, action, response.process_id)
-            tools[name] = await self._build_tool_def(name, path, response.program, process_id=response.process_id)
+            try:
+                name = self._name(response.program, action, response.process_id)
+                tools[name] = await self._build_tool_def(name, path, response.program, process_id=response.process_id)
+            except ValueError:
+                logger.warning(f"unable to build tool {path}", exc_info=True)
 
         return tools
 
     async def _build_tool_def(self, name, path, agent_program, process_id=""):
         path = path.format(process_id="{process_id}")
-        json_schema = self._openapi_json['paths'][path]['post']['requestBody']['content']['application/json']['schema']
+        body = self._openapi_json['paths'][path]['post'].get('requestBody')
+        if body and 'application/json' not in body['content']:
+            raise ValueError(f"Agent action at {path} does not support application/json")
+        json_schema = body['content']['application/json']['schema'] if body else None
         description = self._openapi_json['paths'][path]['post'].get('description', '')
         if not description:
             self.logger.warning(f"Agent action at {path} does not have a description. LLM may not use it properly")

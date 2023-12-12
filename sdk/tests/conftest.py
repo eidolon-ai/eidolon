@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from eidos.cpu.llm.cache_llm_unit import CacheLLM, CacheLLMSpec
-from eidos.cpu.llm.open_ai_llm_unit import OpenAIGPT, OpenAiGPTSpec
+from eidos.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec
 from eidos.memory.agent_memory import VectorMemory
 from eidos.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
 from eidos.memory.mongo_symbolic_memory import MongoSymbolicMemory
@@ -73,7 +73,8 @@ def symbolic_memory(module_identifier):
     @asynccontextmanager
     async def fn():
         # Setup unique database for test suite
-        database_name = f"test_db_{module_identifier}_{ObjectId()}"  # Unique name for test database
+        identifier = module_identifier[:20]
+        database_name = f"test_db_{identifier}_{ObjectId()}"  # Unique name for test database
         ref = Reference(implementation=fqn(MongoSymbolicMemory), spec=dict(mongo_database_name=database_name))
         memory = ref.instantiate()
         memory.start()
