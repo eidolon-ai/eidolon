@@ -10,7 +10,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    defaults:
     steps:
       - uses: actions/checkout@v4
       - name: Install poetry
