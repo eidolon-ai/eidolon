@@ -1,8 +1,9 @@
 import base64
 import json
-import logging
-from typing import List, Optional
+from io import BytesIO
+from typing import List, Optional, Union, Literal, Dict, Any
 
+from PIL import Image
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
 from openai.types.chat.completion_create_params import ResponseFormat
@@ -14,10 +15,6 @@ from eidos.cpu.llm_message import LLMMessage, AssistantMessage, ToolCall, ToolRe
     SystemMessage
 from eidos.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
 from eidos.system.reference_model import Specable
-
-from PIL import Image
-from io import BytesIO
-
 from eidos.util.logger import logger
 
 
@@ -46,7 +43,6 @@ def scale_dimensions(width, height, max_size=2048, min_size=768):
 
 
 def scale_image(image_bytes):
-    max_size = 768
     # Load the image from bytes
     image = Image.open(BytesIO(image_bytes))
 
@@ -141,22 +137,25 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.model = spec.model
         self.temperature = spec.temperature
 
-    async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: dict) -> AssistantMessage:
+    async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction],
+                          output_format: Union[Literal['str'], Dict[str, Any]]) -> AssistantMessage:
         if not self.llm:
             self.llm = AsyncOpenAI()
         messages = [convert_to_openai(message) for message in inMessages]
 
-        force_json_msg = f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
-        if not self.spec.force_json:
-            force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
-        # add response rules to original system message for this call only
-        if messages[0]['role'] == 'system':
-            messages[0]['content'] += f"\n\n{force_json_msg}"
-        else:
-            messages.insert(0, {
-                "role": "system",
-                "content": force_json_msg
-            })
+        if not isinstance(output_format, str):
+            force_json_msg = f"Your response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}"
+            if not self.spec.force_json:
+                force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
+
+            # add response rules to original system message for this call only
+            if messages[0]['role'] == 'system':
+                messages[0]['content'] += f"\n\n{force_json_msg}"
+            else:
+                messages.insert(0, {
+                    "role": "system",
+                    "content": force_json_msg
+                })
 
         logger.debug(messages)
         tools = []
@@ -175,7 +174,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             "model": self.model,
             "temperature": self.temperature
         }
-        if self.spec.force_json:
+        if self.spec.force_json and isinstance(output_format, dict):
             request["response_format"] = ResponseFormat(type="json_object")
 
         if len(tools) > 0:
@@ -202,7 +201,10 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             message_text = message.content
 
         try:
-            content = json.loads(message_text) if message_text else {}
+            if output_format == 'str':
+                content = message_text
+            else:
+                content = json.loads(message_text) if message_text else {}
         except json.JSONDecodeError as e:
             print(message_text)
             raise RuntimeError("Error decoding response content") from e

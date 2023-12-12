@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Literal, Union
 
 from pydantic import BaseModel, Field
 
@@ -26,7 +26,7 @@ class AgentCPU(ABC, Specable[AgentCPUSpec]):
             self,
             call_context: CallContext,
             boot_messages: List[CPUMessageTypes],
-            output_format: Dict[str, Any] = None
+            output_format: Union[Literal['str'], Dict[str, Any]]
     ):
         pass
 
@@ -35,8 +35,8 @@ class AgentCPU(ABC, Specable[AgentCPUSpec]):
             self,
             call_context: CallContext,
             prompts: List[CPUMessageTypes],
-            output_format: Dict[str, Any] = None,
-    ) -> Dict[str, Any]:
+            output_format: Union[Literal['str'], Dict[str, Any]]
+    ) -> Any:
         pass
 
     def _to_json(self, obj):
@@ -70,10 +70,10 @@ class Thread:
         self._call_context = call_context
         self._cpu = cpu
 
-    async def set_boot_messages(self, output_format: Dict[str, Any] = None, *prompts: CPUMessageTypes):
+    async def set_boot_messages(self, output_format: Union[Literal['str'], Dict[str, Any]], *prompts: CPUMessageTypes):
         return await self._cpu.set_boot_messages(self._call_context, list(prompts), output_format)
 
-    async def schedule_request(self, prompts: List[CPUMessageTypes], output_format: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def schedule_request(self, prompts: List[CPUMessageTypes], output_format: Union[Literal['str'], Dict[str, Any]]) -> Any:
         return await self._cpu.schedule_request(self._call_context, prompts, output_format)
 
     async def clone(self) -> Thread:

@@ -2,7 +2,7 @@ import asyncio
 import json
 import time
 from io import IOBase
-from typing import List, Dict, Any, Type, Optional
+from typing import List, Dict, Any, Type, Optional, Literal, Union
 
 from openai import AsyncOpenAI
 from openai.types.beta import Assistant
@@ -84,17 +84,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         if file_ids and len(file_ids) > 0:
             request["file_ids"] = file_ids
 
-        # todo -- add tools from defs
-        tools = []
-        if self.spec.enable_retrieval:
-            tools.append({"type": "retrieval"})
-
-        if self.spec.enable_code_interpreter:
-            tools.append({"type": "code_interpreter"})
-
-        if len(tools) > 0:
-            request["tools"] = tools
-
+        print("creating assistant with request " + str(request))
         assistant = await llm.beta.assistants.create(**request)
         thread = await llm.beta.threads.create()
 
@@ -117,7 +107,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
             self,
             call_context: CallContext,
             boot_messages: List[CPUMessageTypes],
-            output_format: Dict[str, Any] = None
+            output_format: Union[Literal['str'], Dict[str, Any]]
     ):
         # separate out the system messages from the user messages
         system_message: str = ""
@@ -133,8 +123,9 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
             else:
                 raise ValueError(f"Unknown message type {message.type}")
 
-        system_message += f"\nYour response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}."
-        system_message += "\nOnly reply with JSON and no other text.\n"
+        if not isinstance(output_format, str):
+            system_message += f"\nYour response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}."
+            system_message += "\nALWAYS reply with json in the following format:\njson```<insert json here>```\n"
 
         assistant, thread_id = await self.get_or_create_assistant(call_context, system_message, file_ids)
         llm = self._getLLM()
@@ -145,8 +136,8 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
             self,
             call_context: CallContext,
             prompts: List[CPUMessageTypes],
-            output_format: Dict[str, Any] = None,
-    ) -> Dict[str, Any]:
+            output_format: Union[Literal['str'], Dict[str, Any]],
+    ) -> Any:
         # separate out the system messages from the user messages
         user_messages = []
         file_ids = []
@@ -194,6 +185,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         llm = self._getLLM()
         tool_defs = await self._get_tools_defs(call_context)
         tools = []
+        print("tool defs are " + str(tool_defs))
         for tool_def in tool_defs.values():
             tools.append(ToolAssistantToolsFunction(**{
                 "type": "function",
@@ -229,6 +221,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                     print("executing tool " + function_call.name + " with args " + str(function_call.arguments))
                     tool_def = tool_defs[function_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=arguments)
+                    print("tool result is " + str(tool_result))
                     result_as_json_str = self._to_json(tool_result)
                     message = ToolOutput(tool_call_id=tool_call_id, output=result_as_json_str)
                     message_to_store = ToolResponseMessage(tool_call_id=tool_call_id, result=result_as_json_str, name=function_call.name)
@@ -257,17 +250,9 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                         print("UGH!!! We got an image url")
                     else:
                         content += text.text.value + "\n"
-                try:
-                    # todo -- remove ```json...``` from the content
-                    content = content.replace("```json\n", "").replace("```", "")
-                    return json.loads(content)
-                except json.JSONDecodeError:
-                    print("content was " + content)
-                    raise
+                return content
 
         raise ValueError(f"Exceeded maximum number of function calls {self.spec.max_num_function_calls}")
-
-        pass
 
     async def run_llm(self, run_id: str, thread_id: str):
         llm = self._getLLM()

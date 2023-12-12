@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Literal, Union
 
 from pydantic import BaseModel, Field
 
@@ -57,5 +57,11 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
         self.spec = spec
 
     @abstractmethod
-    async def execute_llm(self, call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction], output_format: Dict[str, Any]) -> AssistantMessage:
+    async def execute_llm(
+            self,
+            call_context: CallContext,
+            messages: List[LLMMessage],
+            tools: List[LLMCallFunction],
+            output_format: Union[Literal['str'], Dict[str, Any]]
+    ) -> AssistantMessage:
         pass

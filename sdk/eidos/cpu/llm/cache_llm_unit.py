@@ -1,6 +1,6 @@
 import hashlib
 import json
-from typing import List, Optional
+from typing import List, Optional, Any, Dict, Literal, Union
 
 from pydantic import Field
 from pydantic import ValidationError
@@ -37,7 +37,8 @@ class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
         self.memory.mkdir(self.dir, exist_ok=True)
         self.llm = spec.llm.instantiate(processing_unit_locator=self.processing_unit_locator)
 
-    async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction], output_format: dict) -> AssistantMessage:
+    async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction],
+                          output_format: Union[Literal['str'], Dict[str, Any]]) -> AssistantMessage:
         try:
             combined = [json.dumps(output_format)]
 

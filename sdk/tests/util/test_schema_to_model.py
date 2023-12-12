@@ -86,6 +86,29 @@ class TestSchemaToModel:
         DefaultModel = schema_to_model(json_schema, 'DefaultModel')
         model = DefaultModel(age=30)
         assert model.name == 'Anonymous'
+        assert model.age == 30
+
+        model = DefaultModel()
+        assert model.name == 'Anonymous'
+        assert model.age is None
+
+    def test_required_values(self):
+        """Test that default values are correctly assigned."""
+        json_schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "default": "Anonymous"},
+                "age": {"type": "integer"}
+            },
+            "required": ["age"]
+        }
+        DefaultModel = schema_to_model(json_schema, 'DefaultModel')
+        with pytest.raises(ValueError) as exc_info:
+            DefaultModel()
+        assert ('1 validation error for DefaultModel\n'
+                'age\n'
+                '  Field required [type=missing, input_value={}, input_type=dict]\n'
+                '    For further information visit https://errors.pydantic.dev/2.5/v/missing') in str(exc_info.value)
 
     def test_invalid_schema(self):
         """Test that an invalid schema raises the appropriate error."""

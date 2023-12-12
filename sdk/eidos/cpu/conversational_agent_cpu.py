@@ -1,4 +1,4 @@
-from typing import List, Type, Dict, Any
+from typing import List, Type, Dict, Any, Union, Literal
 
 from fastapi import HTTPException
 
@@ -54,7 +54,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             self,
             call_context: CallContext,
             boot_messages: List[CPUMessageTypes],
-            output_format: Dict[str, Any] = None
+            output_format: Union[Literal['str'], Dict[str, Any]]
     ):
         conversation_messages = await self.io_unit.process_request(boot_messages)
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
@@ -63,8 +63,8 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             self,
             call_context: CallContext,
             prompts: List[CPUMessageTypes],
-            output_format: Dict[str, Any] = None,
-    ) -> Dict[str, Any]:
+            output_format: Union[Literal['str'], Dict[str, Any]]
+    ) -> Any:
         output_format = output_format or dict(type="str")
         try:
             conversation_messages = await self.io_unit.process_request(prompts)
@@ -82,7 +82,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             self.tool_defs.update(await logic_unit.build_tools(conversation))
         return self.tool_defs
 
-    async def _llm_execution_cycle(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Dict[str, Any]) -> AssistantMessage:
+    async def _llm_execution_cycle(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Union[Literal['str'], Dict[str, Any]]) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             tool_defs = await self.get_tools(conversation)

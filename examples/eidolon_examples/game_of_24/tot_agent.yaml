@@ -5,6 +5,10 @@ metadata:
   name: TOT
 
 spec:
+  description: |-
+    This agent is a game of 24 solver. It uses a tree of thoughts to generate possible solutions and then
+    checks if the solution is valid. It uses a simple heuristic to determine if the solution is valid.
+    It is not guaranteed to find a solution if one exists, but it will find a solution if one exists.
   num_iterations: 10
   checker:
     spec:
@@ -81,7 +85,7 @@ spec:
   thought_generators:
     spec:
       num_children: 3
-  question_prompt: |-
+  user_prompt: |-
     Evaluate if the given numbers can reach 24 using standard math operations. You may only use each number once,
     you must use all numbers, and you may use basic math operations (+, -, *, /). Think step by step.
     
@@ -108,7 +112,7 @@ spec:
     <question>
     Input: {{ first }} {{ second }} {{ third }} {{ fourth }}
     </question>
-  prompt_properties:
+  input_schema: :
     first:
       type: integer
     second:

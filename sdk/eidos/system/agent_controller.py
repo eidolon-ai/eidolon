@@ -41,19 +41,21 @@ class AgentController:
                 key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0)
         ):
             path = f"/agents/{self.name}"
+            handler_name = handler.name
             if handler.is_initializer():
-                path += f"/programs/{handler.name}"
+                path += f"/programs/{handler_name}"
             else:
-                path += f"/processes/{{process_id}}/actions/{handler.name}"
+                path += f"/processes/{{process_id}}/actions/{handler_name}"
             endpoint = self.process_action(handler)
 
             sig = inspect.signature(endpoint)
             params = dict(sig.parameters)
+            description = handler.description(self.agent, handler)
 
             app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
                 202: {"model": AsyncStateResponse},
                 200: {'model': self.create_response_model(handler)},
-            }, description=handler.description)
+            }, description=description)
 
         app.add_api_route(
             f"/agents/{self.name}/processes/{{process_id}}/status",
@@ -203,5 +205,4 @@ class AgentController:
         if inspect.isclass(return_type) and issubclass(return_type, AgentState):
             return_type = return_type.model_fields['data'].annotation
         fields['data'] = (return_type, Field(..., description=fields['data'][1].description))
-
         return create_model(f'{handler.name.capitalize()}ResponseModel', **fields)

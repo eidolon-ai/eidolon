@@ -42,19 +42,33 @@ class CodeAgent:
     pass
 
 
-def register_program(name: str = None, description: str = None, input_model: callable = None, output_model: callable = None):
+def register_program(
+        name: typing.Optional[typing.Callable[[object, EidolonHandler], str]] = None,
+        description: typing.Optional[typing.Callable[[object, EidolonHandler], str]] = None,
+        input_model: typing.Optional[typing.Callable[[object, EidolonHandler], typing.Type[BaseModel]]] = None,
+        output_model: typing.Optional[typing.Callable[[object, EidolonHandler], typing.Any]] = None):
     return register_action('UNINITIALIZED', name=name, description=description, input_model=input_model, output_model=output_model)
 
 
-def register_action(*allowed_states: str, name: str = None, description: str = None, input_model: callable = None, output_model: callable = None):
+def register_action(
+        *allowed_states: str,
+        name: str = None,
+        description: typing.Optional[typing.Callable[[object, EidolonHandler], str]] = None,
+        input_model: typing.Optional[typing.Callable[[object, EidolonHandler], BaseModel]] = None,
+        output_model: typing.Optional[typing.Callable[[object, EidolonHandler], typing.Any]] = None):
     if not allowed_states:
         raise ValueError("Must specify at least one valid state")
     if 'terminated' in allowed_states:
         raise ValueError("Action cannot transform terminated state")
 
+    def _str_fn(text: str):
+        def inner_fn(_: object, _handler: EidolonHandler):
+            return text
+        return inner_fn
+
     return lambda fn: _add_handler(fn, EidolonHandler(
         name=name or fn.__name__,
-        description=description or fn.__doc__,
+        description=description or _str_fn(fn.__doc__),
         allowed_states=list(allowed_states),
         fn=fn,
         input_model_fn=input_model or get_input_model,
@@ -82,7 +96,7 @@ class AgentState(BaseModel, Generic[T]):
     data: T
 
 
-def get_input_model(_obj, handler: EidolonHandler) -> BaseModel:
+def get_input_model(_obj, handler: EidolonHandler) -> typing.Type[BaseModel]:
     sig = inspect.signature(handler.fn).parameters
     hints = typing.get_type_hints(handler.fn, include_extras=True)
     fields = {}
@@ -96,7 +110,6 @@ def get_input_model(_obj, handler: EidolonHandler) -> BaseModel:
             # _empty default isn't being handled by create_model properly (still optional when it should be required)
             field = Field() if getattr(sig[param].default, "__name__", None) == '_empty' else Field(default=sig[param].default)
             fields[param] = (hint, field)
-
     input_model = create_model(f'{handler.name.capitalize()}InputModel', **fields)
     return input_model
 
@@ -116,32 +129,14 @@ def nest_with_fn(get_outer: callable, embed=None):
     return _fn
 
 
-def to_model(*args, schema, name):
-    return schema_to_model(schema, model_name=name)
-
-
-def spec_input_model(get_schema: callable, name=None, transformer: callable = nest_with_fn(get_input_model, 'body')):
-    return _spec_model_wrapper(get_schema, name, "InputModel", transformer)
-
-
-def spec_output_model(get_schema: callable, name=None, transformer: callable = to_model):
-    return _spec_model_wrapper(get_schema, name, "OutputModel", transformer)
-
-
-def _spec_model_wrapper(get_schema: callable, name: str, suffix: str, transformer: callable):
-    def _fn(_obj, handler):
-        return transformer(_obj, handler, schema=get_schema(_obj.spec), name=name or handler.name.capitalize() + suffix)
-    return _fn
-
-
 @dataclass
 class EidolonHandler:
     name: str
-    description: str
+    description: typing.Callable[[object, EidolonHandler], str]
     allowed_states: List[str]
     fn: callable
-    input_model_fn: callable
-    output_model_fn: callable
+    input_model_fn: typing.Callable[[object, EidolonHandler], typing.Type[BaseModel]]
+    output_model_fn: typing.Callable[[object, EidolonHandler], typing.Any]
 
     def is_initializer(self):
         return len(self.allowed_states) == 1 and self.allowed_states[0] == 'UNINITIALIZED'

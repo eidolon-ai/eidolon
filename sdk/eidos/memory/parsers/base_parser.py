@@ -171,7 +171,7 @@ class BaseParserSpec(BaseModel):
 
 class BaseParser(ABC, Specable[BaseParserSpec]):
     def __init__(self, spec: BaseParserSpec):
-        super().__init__()
+        super().__init__(spec)
         self.spec = spec
         self.logger = logging.getLogger("eidolon")
 

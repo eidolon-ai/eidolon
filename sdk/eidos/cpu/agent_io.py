@@ -73,6 +73,5 @@ class IOUnit(ProcessingUnit):
 
         return conv_messages
 
-    @validate_call
-    async def process_response(self, call_context: CallContext, response: Dict[str, Any]):
+    async def process_response(self, call_context: CallContext, response: Any):
         return response

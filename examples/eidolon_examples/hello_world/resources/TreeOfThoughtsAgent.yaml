@@ -5,8 +5,10 @@ metadata:
   name: TreeOfThoughts
 
 spec:
+  description: "This is an example of a generic agent which can be used to create a conversational agent."
   fallback: LLM
-  question_prompt: "{{question}}"
-  prompt_properties:
+  user_prompt: "{{question}}"
+  input_schema:
     question:
       type: string
+  output_schema: 'str'

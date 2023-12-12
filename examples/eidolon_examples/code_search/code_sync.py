@@ -104,7 +104,7 @@ class CodeSync:
         docs = list(language_parser.parse(DataBlob.from_path(path=str(file_path))))
         for doc in docs:
             doc.id = str(uuid.uuid4())
-        await AgentOS.similarity_memory().add("code_sync", docs, self.embedder)
+        await AgentOS.similarity_memory.add("code_sync", docs, self.embedder)
         await AgentOS.symbolic_memory.insert("code_sync", [
             {
                 "file_path": str(file_path.relative_to(self.root_dir)),
@@ -118,6 +118,6 @@ class CodeSync:
         doc = await AgentOS.symbolic_memory.find_one("code_sync", {"file_path": relative_path})
         if doc:
             # remove the docs from similarity memory
-            await AgentOS.similarity_memory().delete("code_sync", doc["doc_ids"])
+            await AgentOS.similarity_memory.delete("code_sync", doc["doc_ids"])
             # remove the file from symbolic memory
             await AgentOS.symbolic_memory.delete("code_sync", {"file_path": relative_path})

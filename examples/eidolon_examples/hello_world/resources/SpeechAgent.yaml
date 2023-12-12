@@ -7,10 +7,12 @@ metadata:
 implementation: "eidolon_examples.hello_world.AutonomousSpeechAgent.AutonomousSpeechAgent"
 
 spec:
+  description: "This is an example of a generic agent which can be used to create a conversational agent."
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
-  question_prompt: "{{instruction}}"
+  user_prompt: "{{instruction}}"
   question_json_schema:
     type: object
     properties:
       instruction:
         type: string
+  output_schema: 'str'

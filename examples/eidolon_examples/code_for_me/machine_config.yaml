@@ -26,8 +26,8 @@ agent_programs:
           Think carefully about how you want to solve the problem. Then make a 
           plan to implement the changes. Finally, you need to write the code and test it. You may need to repeat these
           steps multiple times until you have satisfied the user requirements.
-        question_prompt: "{{request}}"
-        prompt_properties:
+        user_prompt: "{{request}}"
+        input_schema: :
           request:
             type: string
     cpu:

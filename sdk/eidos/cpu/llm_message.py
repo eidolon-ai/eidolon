@@ -55,7 +55,7 @@ class ToolCall(BaseModel):
 # Derived AssistantMessage class
 class AssistantMessage(LLMMessage):
     type: str = "assistant"
-    content: Dict[str, Any]
+    content: Any
     tool_calls: List[ToolCall]
 
 
