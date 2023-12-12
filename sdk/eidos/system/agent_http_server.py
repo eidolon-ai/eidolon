@@ -48,7 +48,7 @@ async def start_os(app, resource_generator, log_level=logging.INFO):
         machine = AgentMachine.from_resources(resource_generator)
         AgentOS.load_machine(machine)
         await machine.start(app)
-        logger.info("Machine started")
+        logger.info("Server Started")
     except Exception as e:
         logger.exception("Failed to start AgentOS")
         raise e
@@ -73,12 +73,15 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 def main():
     args = parse_args()
     log_level_str = "debug" if args.debug else "info"
+    log_level = logging.DEBUG if args.debug else logging.INFO
 
-    app = FastAPI(lifespan=lambda app: start_os(app, load_resources(args.yaml_path), logging.DEBUG if args.debug else logging.INFO))
-    app.add_middleware(LoggingMiddleware)
+    _app = FastAPI(
+        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), log_level),
+    )
+    _app.add_middleware(LoggingMiddleware)
 
     # Run the server
-    uvicorn.run(app, host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
+    uvicorn.run(_app, host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
 
 
 if __name__ == "__main__":

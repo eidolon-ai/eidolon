@@ -101,7 +101,7 @@ def get_input_model(_obj, handler: EidolonHandler) -> BaseModel:
     return input_model
 
 
-def get_output_model(_obj, handler: EidolonHandler) -> BaseModel:
+def get_output_model(_obj, handler: EidolonHandler):
     return typing.get_type_hints(handler.fn, include_extras=True).get('return', typing.Any)
 
 
