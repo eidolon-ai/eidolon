@@ -11,28 +11,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     defaults:
-      run:
-        working-directory: sdk
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install Poetry
-        run: |
-          pip install poetry
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-          cache: poetry
-          cache-dependency-path: poetry.lock
-
-      - name: Set Poetry environment and install dependencies
-        run: |
-          poetry env use 3.11
-          poetry install --no-root
-
+#          cache: 'sdk/poetry'
+      - run: poetry install
+        working-directory: sdk
       - name: Start MongoDB
         run: |
           if ! docker ps | grep -q 'mongodb'; then
@@ -40,8 +28,9 @@ jobs:
           else
             echo "MongoDB is already running. Not starting a new instance."
           fi
-
       - run: poetry run pytest
+        working-directory: sdk
+
 
 #      - name: Install dependencies
 #        run: |
