@@ -8,19 +8,13 @@ on:
   pull_request:
 
 jobs:
-  start-mongodb:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start MongoDB
-        run: |
-          if ! docker ps | grep -q 'mongodb'; then
-            docker run --name mongodb -d -p 27017:27017 mongo:latest
-          else
-            echo "MongoDB is already running. Not starting a new instance."
-          fi
   rest-test:
-    needs: start-mongodb
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
     steps:
       - uses: actions/checkout@v4
       - name: Install poetry
@@ -32,11 +26,17 @@ jobs:
       - run: poetry install
         working-directory: examples
       - run: poetry run pytest
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         working-directory: examples
 
   unit-test:
-    needs: start-mongodb
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
     steps:
       - uses: actions/checkout@v4
       - name: Install poetry
