@@ -8,7 +8,18 @@ on:
   pull_request:
 
 jobs:
+  start-mongodb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start MongoDB
+        run: |
+          if ! docker ps | grep -q 'mongodb'; then
+            docker run --name mongodb -d -p 27017:27017 mongo:latest
+          else
+            echo "MongoDB is already running. Not starting a new instance."
+          fi
   rest-test:
+    needs: start-mongodb
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,6 +42,7 @@ jobs:
         working-directory: examples
 
   unit-test:
+    needs: start-mongodb
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
