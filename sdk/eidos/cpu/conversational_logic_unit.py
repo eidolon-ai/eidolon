@@ -79,7 +79,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         body = self._openapi_json['paths'][path]['post'].get('requestBody')
         if body and 'application/json' not in body['content']:
             raise ValueError(f"Agent action at {path} does not support application/json")
-        json_schema = body['content']['application/json']['schema'] if body else None
+        json_schema = body['content']['application/json']['schema'] if body else dict(type='object', properties={})
         description = self._openapi_json['paths'][path]['post'].get('description', '')
         if not description:
             self.logger.warning(f"Agent action at {path} does not have a description. LLM may not use it properly")
