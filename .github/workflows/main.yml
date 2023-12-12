@@ -31,13 +31,6 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: examples
-      - name: Start MongoDB
-        run: |
-          if ! docker ps | grep -q 'mongodb'; then
-            docker run --name mongodb -d -p 27017:27017 mongo:latest
-          else
-            echo "MongoDB is already running. Not starting a new instance."
-          fi
       - run: poetry run pytest
         working-directory: examples
 
@@ -54,13 +47,6 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: sdk
-      - name: Start MongoDB
-        run: |
-          if ! docker ps | grep -q 'mongodb'; then
-            docker run --name mongodb -d -p 27017:27017 mongo:latest
-          else
-            echo "MongoDB is already running. Not starting a new instance."
-          fi
       - run: poetry run pytest
         working-directory: sdk
 
