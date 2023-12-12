@@ -5,10 +5,21 @@ description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+eidos-client = "eidolon_cli.main:main"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 setuptools = "^68.2.2"
+aiohttp = "^3.9.1"
+python-dotenv = "^1.0.0"
+typer = "^0.9.0"
+rich = "^13.7.0"
+shellingham = "^1.5.4"
 
+
+[tool.poetry.group.all.dependencies]
+typer = "^0.9.0"
 
 [build-system]
 requires = ["poetry-core"]
