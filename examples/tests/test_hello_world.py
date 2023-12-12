@@ -20,7 +20,7 @@ def test_can_hit_generic_agent(server_loc):
         json=dict(instruction="Hi! What is the capital of France?")
     )
     assert response.status_code == 200
-    assert 'paris' in response.json()['data']['response'].lower()
+    assert 'paris' in response.json()['data'].lower()
 
 
 @pytest.mark.skip(reason="tool calls are broken")

@@ -39,6 +39,7 @@ class TestHelloWorld:
 
 class StateMachine:
     @register_program()
+    # async def idle(self, desired_state: Annotated[str, Body()], response: Annotated[str, Body()] = "default response"):
     async def idle(self, desired_state: Annotated[str, Body()], response: Annotated[str, Body()]):
         return AgentState(name=desired_state, data=response)
 
@@ -85,6 +86,12 @@ class TestStateMachine:
 
         to_church = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/to_church")
         assert to_church.status_code == 409
+
+    @pytest.mark.skip(reason="un comment idle signature when bug is fixed")
+    def test_default_in_body(self, client):
+        init = client.post("/agents/StateMachine/programs/idle", json=dict(desired_state="foo", response="low man on the totem pole"))
+        init.raise_for_status()
+        assert init.json()['data'] == "default response"
 
     def test_state_machine_termination(self, client):
         init = client.post("/agents/StateMachine/programs/idle", json=dict(desired_state="church", response="blurb"))
