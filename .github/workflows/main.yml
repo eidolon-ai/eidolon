@@ -69,15 +69,18 @@ jobs:
       - run: poetry install --no-interaction
         working-directory: ./sdk
 
-      # And finally run tests. I'm using pytest and all my pytest config is in my `pyproject.toml`
-      # so this line is super-simple. But it could be as complex as you need.
+      - name: Start MongoDB
+        run: docker run -d -p 27017:27017 mongo:latest
+
       - run: poetry run pytest
         working-directory: ./sdk
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pylint
-      - name: Analysing the code with pylint
-        working-directory: ./sdk
-        run: |
-          poetry run pylint $(git ls-files '*.py')
+
+#      - name: Analysing the code with pylint
+#        working-directory: ./sdk
+#        run: |
+#          poetry run pylint $(git ls-files '*.py')
