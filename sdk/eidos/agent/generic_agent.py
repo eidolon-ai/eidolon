@@ -91,7 +91,7 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         output_model=make_output_schema,
         description=make_description,
     )
-    async def question(self, process_id, **kwargs) -> AgentState[LlmResponse]:
+    async def question(self, process_id, **kwargs) -> AgentState[Any]:
         body = kwargs.get("body")
         body = dict(body) if body else {}
         files = kwargs.get("file", [])
@@ -120,7 +120,7 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         return AgentState(name="idle", data=response)
 
     @register_action("idle")
-    async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[LlmResponse]:
+    async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[Any]:
         t = await self.cpu.main_thread(process_id)
-        response = await t.schedule_request([UserTextCPUMessage(prompt=statement)], LlmResponse.model_json_schema())
+        response = await t.schedule_request([UserTextCPUMessage(prompt=statement)], self.spec.output_schema)
         return AgentState(name="idle", data=response)

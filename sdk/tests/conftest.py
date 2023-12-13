@@ -2,14 +2,16 @@ import os
 import pathlib
 from contextlib import asynccontextmanager
 from typing import Iterable
+from unittest.mock import patch
 
 import pytest
 from bson import ObjectId
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
+from vcr.request import Request as VcrRequest
+from vcr.stubs import httpx_stubs
 
-from eidos.cpu.llm.cache_llm_unit import CacheLLM, CacheLLMSpec
 from eidos.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec, OpenAIGPT
 from eidos.memory.agent_memory import VectorMemory
 from eidos.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
@@ -20,6 +22,24 @@ from eidos.system.reference_model import Reference
 from eidos.system.resources import AgentResource
 from eidos.system.resources_base import Resource, Metadata
 from eidos.util.class_utils import fqn
+
+
+# we want all tests using the client_builder to use vcr so we don't send requests to openai
+def pytest_collection_modifyitems(items):
+    for item in filter(lambda i: "client_builder" in i.fixturenames, items):
+        item.add_marker(pytest.mark.vcr)
+        item.fixturenames.append("patched_vcr_object_handling")
+
+
+@pytest.fixture(autouse=True)
+def vcr_config():
+    return dict(
+        filter_headers=[('authorization', 'XXXXXX')],
+        ignore_localhost=True,
+        ignore_hosts=["testserver"],
+        record_mode="new_episodes",
+        match_on=["method", "scheme", "host", "port", "path", "query", "raw_body"],
+    )
 
 
 @pytest.fixture(scope="module")
@@ -146,3 +166,19 @@ def cat(test_dir):
     loc = str(test_dir / "images" / "cat.png")
     with open(loc, "rb") as f:
         yield f
+
+
+@pytest.fixture
+def patched_vcr_object_handling():
+    """
+    vcr has a bug around how it handles multi-part requests, and it is wired in for everything,
+    even the fake test client requests, so we need to pipe the body through ourselves
+    """
+
+    def my_custom_function(httpx_request, **kwargs):
+        uri = str(httpx_request.url)
+        headers = dict(httpx_request.headers)
+        return VcrRequest(httpx_request.method, uri, httpx_request, headers)
+
+    with patch.object(httpx_stubs, '_make_vcr_request', new=my_custom_function):
+        yield

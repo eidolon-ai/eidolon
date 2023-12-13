@@ -14,7 +14,7 @@ class Metadata(BaseModel):
 T = TypeVar("T", bound=BaseModel)
 
 
-class Resource(BaseModel, extra=Extra.allow):
+class Resource(BaseModel, extra='allow'):
     apiVersion: Literal["eidolon/v1"]
     kind: str
     metadata: Metadata = Metadata(name="DEFAULT")

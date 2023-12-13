@@ -1,6 +1,9 @@
 import json
+from unittest.mock import patch
 
 import pytest
+from vcr.request import Request as VcrRequest
+from vcr.stubs import httpx_stubs
 
 from eidos.agent.generic_agent import GenericAgentSpec
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPUSpec
@@ -99,6 +102,7 @@ def test_generic_agent_supports_multiple_images(client_builder, generic_agent, c
         post.raise_for_status()
         assert "animals" in post.json()["data"].lower()
 
+        # followup question should still have access to the image
         process_id = post.json()["process_id"]
         follow_up = client.post(
             f"/agents/GenericAgent/processes/{process_id}/actions/respond",

@@ -1,9 +1,10 @@
 from fastapi import UploadFile, File
 from fastapi.responses import Response
+from pydantic import BaseModel
 from pydub import AudioSegment
 
 from eidos.agent.agent import register_program, Agent, AgentState
-from eidos.agent.generic_agent import GenericAgentSpec, LlmResponse
+from eidos.agent.generic_agent import GenericAgentSpec
 from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
@@ -14,6 +15,10 @@ from eidos.system.reference_model import Specable, AnnotatedReference
 class AutonomousSpeechAgentSpec(GenericAgentSpec):
     speech_llm: AnnotatedReference[OpenAiSpeech, OpenAiSpeech]
     cpu: AnnotatedReference[AgentCPU, ConversationalAgentCPU]
+
+
+class LlmResponse(BaseModel):
+    response: str
 
 
 class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):

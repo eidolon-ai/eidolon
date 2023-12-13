@@ -8,7 +8,7 @@ from pymongo.errors import DuplicateKeyError
 from eidos.agent_os import AgentOS
 
 
-class MongoDoc(BaseModel, extra=Extra.allow):
+class MongoDoc(BaseModel, extra='allow'):
     collection: ClassVar[str]
     created: str = None
     updated: str = None
