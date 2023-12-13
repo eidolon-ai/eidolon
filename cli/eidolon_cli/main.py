@@ -2,6 +2,7 @@ import asyncio
 from typing import Annotated
 
 import typer
+
 from eidolon_cli import terminal
 
 

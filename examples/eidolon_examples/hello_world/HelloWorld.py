@@ -21,4 +21,5 @@ class HelloWorld(CodeAgent):
         question: str = Body(..., embed=True, description="Your question about the image"),
         image: UploadFile = File(..., description="The image to describe"),
     ) -> IdleStateRepresentation:
-        return IdleStateRepresentation(welcome_message=f"Hello, World {question}!")
+        return IdleStateRepresentation(welcome_message=f"Hello, World {question}!  File name is {image.filename}. "
+                                                       f"file length is {image.size} bytes. content type is {image.content_type}")

@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 from rich.console import Console
 
-from eidolon_cli.eidolon_cli import EidolonClient
+from eidolon_cli.client import EidolonClient
 
 history_file = os.path.expanduser("~/.eidolon.history")
 history_file_size = 1000
@@ -13,7 +13,7 @@ client = EidolonClient()
 console = Console()
 
 
-commands = ["/list", "/conversation", "quit"]
+commands = ["/help", "/list", "/conversation", "quit"]
 
 
 def completer(text, state):
@@ -58,18 +58,30 @@ async def run(endpoint: str):
     while command != "quit":
         if current_conversation:
             agent = await client.get_client(current_conversation[0])
-            agent.schema.await_input()
-
+            user_input = agent.schema.await_input(console)
+            if user_input is None:
+                current_conversation = None
+                console.print()
+                continue
+            status_code, response = await client.send_request(agent, user_input)
+            if status_code != 200:
+                console.print(f"Error: {str(response)}")
+            else:
+                console.print(str(response))
         else:
             print_prompt()
             command = console.input()
             if command == "/list":
                 agents_ = await client.list_agents()
                 for agent in agents_:
-                    agent.print_to_console(console)
+                    console.print(agent, end="")
             elif command.startswith("/conversation "):
                 agent = command.split(" ")[1]
                 current_conversation = (agent, None)
+            elif command.startswith("/help"):
+                console.print("Available commands:")
+                console.print("/list - list available agents")
+                console.print("/conversation [agent] - start a conversation with an agent")
             elif command == "quit":
                 console.print("Goodbye!")
             else:
