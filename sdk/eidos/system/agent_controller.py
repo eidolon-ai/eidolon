@@ -195,8 +195,12 @@ class AgentController:
         )
         acc = []
         async for doc in cursor:
-            process = ProcessDoc.model_validate(doc).record_id
-            acc.append(StateSummary(process_id=process))
+            process = ProcessDoc.model_validate(doc)
+            acc.append(StateSummary(
+                process_id=process.record_id,
+                state=process.state,
+                available_actions=self.get_available_actions(process.state),
+            ))
             if len(acc) == limit:
                 break
         if len(acc) + skip <= count:
@@ -228,14 +232,17 @@ class AgentController:
                     process_id=latest_record.record_id,
                     state=latest_record.state,
                     data=latest_record.data,
-                    available_actions=[
-                        action
-                        for action, handler in self.handlers.items()
-                        if latest_record.state in handler.allowed_states
-                    ],
+                    available_actions=self.get_available_actions(latest_record.state),
                 ).model_dump(),
                 200,
             )
+
+    def get_available_actions(self, state):
+        return [
+            action
+            for action, handler in self.handlers.items()
+            if state in handler.allowed_states
+        ]
 
     @staticmethod
     async def get_latest_process_event(process_id) -> ProcessDoc:
