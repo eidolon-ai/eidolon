@@ -6,7 +6,7 @@ from rich.console import Console
 
 from eidolon_cli.eidolon_cli import EidolonClient
 
-history_file = os.path.expanduser('~/.eidolon.history')
+history_file = os.path.expanduser("~/.eidolon.history")
 history_file_size = 1000
 
 client = EidolonClient()
@@ -24,11 +24,11 @@ def completer(text, state):
         return None
 
 
-if 'libedit' in readline.__doc__:
+if "libedit" in readline.__doc__:
     readline.parse_and_bind("bind ^I rl_complete")
 else:
-    readline.set_completer_delims(' \t\n;')
-    readline.parse_and_bind('tab: complete')
+    readline.set_completer_delims(" \t\n;")
+    readline.parse_and_bind("tab: complete")
 
 readline.set_completer(completer)
 

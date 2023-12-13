@@ -10,7 +10,7 @@ from rich.console import Console
 @dataclass
 class Schema:
     body: Dict[str, Any]
-    files: Literal['disable', 'single', 'single-optional', 'multiple']
+    files: Literal["disable", "single", "single-optional", "multiple"]
 
     def await_input(self, console: Console):
         if self.files != "disable":
@@ -76,11 +76,12 @@ class AgentProgram:
         if self.schema.files != "disable":
             file_type = self.schema.files
             if file_type == "single-optional":
-                console.print(f"      file: single")
+                console.print("      file: single")
             else:
-                console.print(f"      file", end="")
+                console.print("      file", end="")
                 console.print("(required)", style="#bcbcbc", end="")
                 console.print(f": {self.schema.files}")
+
         def print_object(obj: Dict[str, Any], padding_level: int):
             for k, v in obj.items():
                 if isinstance(v, dict) and v.get("title"):
@@ -125,25 +126,32 @@ class EidolonClient:
 
     async def list_agents(self):
         await self.connect()
-        regex = '^/agents/([^/]+)/programs/([^/]+)$'
-        paths: List[str] = self.openapi_json['paths']
+        regex = "^/agents/([^/]+)/programs/([^/]+)$"
+        paths: List[str] = self.openapi_json["paths"]
         # iterate over paths and find the ones that match the regex returning a list of tuples of the form (agent, program)
         agents = []
         for path in paths:
             searchResults = re.search(regex, path)
             if searchResults:
-                agent_obj = self.openapi_json['paths'][path]['post']
-                description = agent_obj['description'] if 'description' in agent_obj else ""
-                if 'requestBody' not in agent_obj:
+                agent_obj = self.openapi_json["paths"][path]["post"]
+                description = agent_obj["description"] if "description" in agent_obj else ""
+                if "requestBody" not in agent_obj:
                     schema = Schema(body={}, files="disable")
                 else:
-                    content = agent_obj['requestBody']['content']
-                    if 'application/json' in content:
-                        schema = Schema.from_json_schema(self.openapi_json, content['application/json']['schema'])
+                    content = agent_obj["requestBody"]["content"]
+                    if "application/json" in content:
+                        schema = Schema.from_json_schema(self.openapi_json, content["application/json"]["schema"])
                     else:
-                        schema = Schema.from_json_schema(self.openapi_json, content['multipart/form-data']['schema'])
+                        schema = Schema.from_json_schema(self.openapi_json, content["multipart/form-data"]["schema"])
 
-                agents.append(AgentProgram(name=searchResults.group(1), description=description, program=searchResults.group(2), schema=schema))
+                agents.append(
+                    AgentProgram(
+                        name=searchResults.group(1),
+                        description=description,
+                        program=searchResults.group(2),
+                        schema=schema,
+                    )
+                )
 
         return agents
 
