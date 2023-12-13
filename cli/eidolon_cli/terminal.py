@@ -13,6 +13,26 @@ client = EidolonClient()
 console = Console()
 
 
+commands = ["/list", "/conversation", "quit"]
+
+
+def completer(text, state):
+    options = [i for i in commands if i.startswith(text)]
+    if state < len(options):
+        return options[state]
+    else:
+        return None
+
+
+if 'libedit' in readline.__doc__:
+    readline.parse_and_bind("bind ^I rl_complete")
+else:
+    readline.set_completer_delims(' \t\n;')
+    readline.parse_and_bind('tab: complete')
+
+readline.set_completer(completer)
+
+
 def print_prompt():
     if client.server_location is None:
         location = "[gray70](disconnected)[/gray70]"
