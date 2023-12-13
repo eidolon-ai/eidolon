@@ -63,6 +63,25 @@ class TestStateMachine:
         with client_builder(StateMachine) as client:
             yield client
 
+    def test_can_list_processes(self, client):
+        url = "/agents/StateMachine/programs/idle"
+
+        first = client.post(url, json=dict(desired_state="church", response="blurb")).json()["process_id"]
+        second = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
+        third = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
+
+        processes = client.get("/agents/StateMachine/processes/")
+        assert processes.status_code == 200
+        assert processes.json()["total"] == 3
+        assert {p["process_id"] for p in processes.json()["processes"]} == {first, second, third}
+
+        # update the first process: it should be at end of list now
+        assert first == client.post(f"/agents/StateMachine/processes/{first}/actions/terminate").json()["process_id"]
+
+        processes = client.get("/agents/StateMachine/processes/")
+        assert processes.json()["total"] == 3
+        assert [p["process_id"] for p in processes.json()["processes"]] == [second, third, first]
+
     def test_can_start(self, client):
         post = client.post(
             "/agents/StateMachine/programs/idle",

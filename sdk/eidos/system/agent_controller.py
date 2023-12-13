@@ -3,11 +3,9 @@ from __future__ import annotations
 import inspect
 import logging
 import typing
-from datetime import datetime
 from functools import cmp_to_key
 from inspect import Parameter
 
-from bson import ObjectId
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.params import Body, Param
 from pydantic import BaseModel, Field, create_model
@@ -16,7 +14,8 @@ from starlette.responses import JSONResponse
 
 from eidos.agent.agent import AgentState, EidolonHandler
 from eidos.agent_os import AgentOS
-from eidos.system.agent_contract import SyncStateResponse, AsyncStateResponse
+from eidos.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
+from eidos.system.processes import ProcessDoc
 from eidos.util.logger import logger
 
 
@@ -48,9 +47,6 @@ class AgentController:
             else:
                 path += f"/processes/{{process_id}}/actions/{handler_name}"
             endpoint = self.process_action(handler)
-
-            description = handler.description(self.agent, handler)
-
             app.add_api_route(
                 path,
                 endpoint=endpoint,
@@ -60,8 +56,16 @@ class AgentController:
                     202: {"model": AsyncStateResponse},
                     200: {"model": self.create_response_model(handler)},
                 },
-                description=description,
+                description=(handler.description(self.agent, handler)),
             )
+
+        app.add_api_route(
+            f"/agents/{self.name}/processes/",
+            endpoint=self.list_processes,
+            methods=["GET"],
+            response_model=ListProcessesResponse,
+            tags=[self.name],
+        )
 
         app.add_api_route(
             f"/agents/{self.name}/processes/{{process_id}}/status",
@@ -90,27 +94,25 @@ class AgentController:
             execution_mode = request.headers.get("execution-mode", "async" if callback else "sync").lower()
 
             if not process_id:
-                process_id = str(ObjectId())
-                state = "UNINITIALIZED"
+                if not handler.is_initializer():
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
+                    )
+                process = await ProcessDoc.create(agent=self.name, state="processing", data=dict(action=handler.name))
+                process_id = process.record_id
             else:
-                found = await self.get_latest_process_event(process_id)
-                if not found:
+                process = await self.get_latest_process_event(process_id)
+                if not process:
                     raise HTTPException(status_code=404, detail="Process not found")
-                state = found["state"]
-
-            if state not in handler.allowed_states:
-                raise HTTPException(
-                    status_code=409,
-                    detail=f'Action "{handler.name}" cannot process state "{state}"',
+                if process.state not in handler.allowed_states:
+                    raise HTTPException(
+                        status_code=409,
+                        detail=f'Action "{handler.name}" cannot process state "{process.state}"',
+                    )
+                process = await process.update(
+                    agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
                 )
-
-            state = dict(
-                process_id=process_id,
-                state="processing",
-                data=dict(action=handler.name),
-                date=str(datetime.now().isoformat()),
-            )
-            await AgentOS.symbolic_memory.insert_one("processes", state)
 
             async def run_and_store_response():
                 try:
@@ -124,32 +126,25 @@ class AgentController:
                     else:
                         state = "terminated"
                         data = response.model_dump() if isinstance(response, BaseModel) else response
-                    doc = dict(
-                        process_id=process_id,
+                    doc = await process.update(
                         state=state,
                         data=data,
-                        date=str(datetime.now().isoformat()),
                     )
                 except HTTPException as e:
-                    doc = dict(
-                        process_id=process_id,
+                    doc = await process.update(
                         state="http_error",
                         data=dict(detail=e.detail, status_code=e.status_code),
-                        date=str(datetime.now().isoformat()),
                     )
                     if e.status_code >= 500:
                         logging.exception("Unhandled error raised by handler")
                     else:
                         logging.debug(f"Handler {handler.name} raised a http error", exc_info=True)
                 except Exception as e:
-                    doc = dict(
-                        process_id=process_id,
+                    doc = await process.update(
                         state="unhandled_error",
                         data=dict(error=str(e)),
-                        date=str(datetime.now().isoformat()),
                     )
                     logging.exception("Unhandled error raised by handler")
-                await AgentOS.symbolic_memory.insert_one("processes", doc)
                 if callback:
                     raise Exception("Not implemented")
                 return doc
@@ -186,43 +181,70 @@ class AgentController:
         latest_record = await self.get_latest_process_event(process_id)
         return self.doc_to_response(latest_record)
 
-    def doc_to_response(self, latest_record: dict):
+    async def list_processes(
+        self,
+        request: Request,
+        limit: int = 20,
+        skip: int = 0,
+        sort: typing.Literal["ascending", "descending"] = "ascending",
+    ):
+        query = dict(agent=self.name)
+        count = await AgentOS.symbolic_memory.count(ProcessDoc.collection, query)
+        cursor = AgentOS.symbolic_memory.find(
+            ProcessDoc.collection, query, sort=dict(updated=1 if sort == "ascending" else -1), skip=skip
+        )
+        acc = []
+        async for doc in cursor:
+            process = ProcessDoc.model_validate(doc)
+            acc.append(
+                StateSummary(
+                    process_id=process.record_id,
+                    state=process.state,
+                    available_actions=self.get_available_actions(process.state),
+                )
+            )
+            if len(acc) == limit:
+                break
+        if len(acc) + skip <= count:
+            next_page_url = f"{request.url}agents/{self.name}/processes/?limit={limit}&skip={skip + limit}"
+        else:
+            next_page_url = None
+        return JSONResponse(
+            ListProcessesResponse(
+                total=count,
+                processes=acc,
+                next=next_page_url,
+            ).model_dump(),
+            200,
+        )
+
+    def doc_to_response(self, latest_record: ProcessDoc):
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
-        elif latest_record["state"] == "unhandled_error":
-            return JSONResponse(latest_record["data"], 500)
-        elif latest_record["state"] == "http_error":
+        elif latest_record.state == "unhandled_error":
+            return JSONResponse(latest_record.data, 500)
+        elif latest_record.state == "http_error":
             return JSONResponse(
-                dict(detail=latest_record["data"]["detail"]),
-                latest_record["data"]["status_code"],
+                dict(detail=latest_record.data["detail"]),
+                latest_record.data["status_code"],
             )
         else:
-            try:
-                del latest_record["_id"]
-            except KeyError:
-                pass
             return JSONResponse(
                 SyncStateResponse(
-                    process_id=latest_record["process_id"],
-                    state=latest_record["state"],
-                    data=latest_record["data"],
-                    available_actions=[
-                        action
-                        for action, handler in self.handlers.items()
-                        if latest_record["state"] in handler.allowed_states
-                    ],
+                    process_id=latest_record.record_id,
+                    state=latest_record.state,
+                    data=latest_record.data,
+                    available_actions=self.get_available_actions(latest_record.state),
                 ).model_dump(),
                 200,
             )
 
-    async def get_latest_process_event(self, process_id):
-        # todo, memory needs to include sorting
-        latest_record = None
-        records = AgentOS.symbolic_memory.find("processes", dict(process_id=process_id))
-        async for record in records:
-            if not latest_record or record["date"] > latest_record["date"]:
-                latest_record = record
-        return latest_record
+    def get_available_actions(self, state):
+        return [action for action, handler in self.handlers.items() if state in handler.allowed_states]
+
+    @staticmethod
+    async def get_latest_process_event(process_id) -> ProcessDoc:
+        return await ProcessDoc.find(query=dict(_id=process_id), sort=dict(updated=-1))
 
     def create_response_model(self, handler: EidolonHandler):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
