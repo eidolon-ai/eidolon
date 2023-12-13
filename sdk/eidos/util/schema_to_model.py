@@ -1,6 +1,6 @@
 import json
 from datetime import date, datetime, time
-from typing import Dict, Any, Type, Optional
+from typing import Dict, Any, Type
 from typing import List
 from uuid import UUID
 

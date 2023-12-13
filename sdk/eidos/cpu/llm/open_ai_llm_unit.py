@@ -197,7 +197,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         message = llm_response.choices[0].message
 
         logger.info(
-            f"open ai llm response",
+            "open ai llm response",
             extra=dict(content=message.content, tool_calls=message.tool_calls),
         )
 

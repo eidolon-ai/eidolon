@@ -49,8 +49,6 @@ class AgentController:
                 path += f"/processes/{{process_id}}/actions/{handler_name}"
             endpoint = self.process_action(handler)
 
-            sig = inspect.signature(endpoint)
-            params = dict(sig.parameters)
             description = handler.description(self.agent, handler)
 
             app.add_api_route(
@@ -140,7 +138,7 @@ class AgentController:
                         date=str(datetime.now().isoformat()),
                     )
                     if e.status_code >= 500:
-                        logging.exception(f"Unhandled error raised by handler")
+                        logging.exception("Unhandled error raised by handler")
                     else:
                         logging.debug(f"Handler {handler.name} raised a http error", exc_info=True)
                 except Exception as e:
@@ -150,7 +148,7 @@ class AgentController:
                         data=dict(error=str(e)),
                         date=str(datetime.now().isoformat()),
                     )
-                    logging.exception(f"Unhandled error raised by handler")
+                    logging.exception("Unhandled error raised by handler")
                 await AgentOS.symbolic_memory.insert_one("processes", doc)
                 if callback:
                     raise Exception("Not implemented")

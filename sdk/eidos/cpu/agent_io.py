@@ -5,8 +5,7 @@ from abc import abstractmethod, ABC
 from io import IOBase
 from typing import List, Any, Dict, Literal
 
-from fastapi import UploadFile
-from pydantic import BaseModel, validate_call
+from pydantic import BaseModel
 
 from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext

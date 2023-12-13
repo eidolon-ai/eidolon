@@ -81,13 +81,13 @@ class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
                 return result
         except ValidationError as ve:
             # Handle Pydantic validation errors
-            raise ValueError(f"Input validation error") from ve
+            raise ValueError("Input validation error") from ve
         except json.JSONDecodeError:
             # Handle JSON errors
             raise ValueError("Error in JSON processing")
         except IOError as io_err:
             # Handle File IO errors
-            raise IOError(f"File operation error") from io_err
+            raise IOError("File operation error") from io_err
         except Exception as e:
             # Handle other exceptions
-            raise Exception(f"Unexpected error occurred") from e
+            raise Exception("Unexpected error occurred") from e

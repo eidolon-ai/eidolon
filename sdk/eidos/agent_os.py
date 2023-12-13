@@ -4,10 +4,10 @@ from typing import Dict, Tuple
 
 
 class AgentOS:
-    _resources: Dict[str, Dict[str, Tuple["Resource", str]]] = {}
-    file_memory: "FileMemory" = ...
-    symbolic_memory: "SymbolicMemory" = ...
-    similarity_memory: "VectorMemory" = ...
+    _resources: Dict[str, Dict[str, Tuple["Resource", str]]] = {}  # noqa: F821
+    file_memory: "FileMemory" = ...  # noqa: F821
+    symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
+    similarity_memory: "VectorMemory" = ...  # noqa: F821
 
     @classmethod
     def load_machine(cls, machine):
@@ -16,7 +16,7 @@ class AgentOS:
         cls.similarity_memory = machine.memory.similarity_memory
 
     @classmethod
-    def register_resource(cls, resource: "Resource", source=None):
+    def register_resource(cls, resource: "Resource", source=None):  # noqa: F821
         if resource.kind not in cls._resources:
             cls._resources[resource.kind] = {}
         bucket = cls._resources[resource.kind]
@@ -27,11 +27,11 @@ class AgentOS:
         bucket[resource.metadata.name] = (resource, source)
 
     @classmethod
-    def get_resources(cls, bucket) -> Dict[str, "Resource"]:
+    def get_resources(cls, bucket) -> Dict[str, "Resource"]:  # noqa: F821
         return {k: tu[0].model_copy() for k, tu in cls._resources.get(bucket, {}).items()}
 
     @classmethod
-    def get_resource(cls, bucket: str, name: str = "DEFAULT", default=...) -> "Resource":
+    def get_resource(cls, bucket: str, name: str = "DEFAULT", default=...) -> "Resource":  # noqa: F821
         try:
             return cls._resources[bucket][name][0].model_copy(deep=True)
         except KeyError:
