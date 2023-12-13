@@ -87,7 +87,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
             name=name,
             description=description,
             parameters=json_schema,
-            fn=self._make_agent_request(
+            fn=self._make_tool_fn(
                 path=path.replace("{process_id}", process_id),
                 agent_program=agent_program,
             ),
@@ -103,12 +103,17 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent_program + process_id + action
 
-    def _make_agent_request(self, path, agent_program):
+    def _make_tool_fn(self, path, agent_program):
         async def fn(_self, **kwargs):
-            async with aiohttp.ClientSession() as session:
-                async with session.post(urljoin(self.spec.location, path), json=kwargs) as resp:
-                    json_ = await resp.json()
-                    json_["program"] = agent_program
-                    return ConversationalResponse.model_validate(json_).model_dump()
+            url = urljoin(self.spec.location, path)
+            json_ = await _agent_request(url, kwargs)
+            json_["program"] = agent_program
+            return ConversationalResponse.model_validate(json_).model_dump()
 
         return fn
+
+
+async def _agent_request(url, args):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=args) as resp:
+            return await resp.json()

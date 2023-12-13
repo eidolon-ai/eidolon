@@ -1,13 +1,14 @@
 import os
 import pathlib
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 from typing import Iterable
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 
 import pytest
 from bson import ObjectId
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from motor.motor_asyncio import AsyncIOMotorClient
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
@@ -58,6 +59,7 @@ def app_builder(machine_manager):
 
 @pytest.fixture(scope="module")
 def client_builder(app_builder):
+    @contextmanager
     def fn(*agents):
         resources = [
             a
@@ -69,7 +71,20 @@ def client_builder(app_builder):
             )
             for a in agents
         ]
-        return TestClient(app_builder(resources))
+        app = app_builder(resources)
+        with TestClient(app) as client:
+            with patch('eidos.cpu.conversational_logic_unit._agent_request') as mock_agent_request:
+                # Define a custom function
+                async def custom_function(url, args):
+                    # You can add your custom logic here
+                    async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as client:
+                        found = await client.post(url, json=args)
+                        return found.json()
+
+                # Set the side_effect of the mock to the custom function
+                mock_agent_request.side_effect = custom_function
+
+                yield client
 
     return fn
 
