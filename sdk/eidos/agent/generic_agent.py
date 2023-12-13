@@ -23,6 +23,7 @@ class GenericAgentSpec(AgentSpec):
     user_prompt: str
     input_schema: Dict[str, Any] = Field({}, description="The json schema for the input model.")
     output_schema: Union[Literal["str"], Dict[str, Any]] = Field(
+        default='str',
         description="The json schema for the output model or the literal 'str' for text output."
     )
     files: Literal["disable", "single", "single-optional", "multiple"] = "disable"

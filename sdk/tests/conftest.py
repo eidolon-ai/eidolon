@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from eidos.cpu.llm.cache_llm_unit import CacheLLM, CacheLLMSpec
-from eidos.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec
+from eidos.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec, OpenAIGPT
 from eidos.memory.agent_memory import VectorMemory
 from eidos.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
 from eidos.memory.mongo_symbolic_memory import MongoSymbolicMemory
@@ -123,20 +123,13 @@ def test_dir():
 
 
 @pytest.fixture(scope="module")
-def caching_llm(test_dir, module_identifier):
-    loc = str(test_dir / "llm_cache")
+def llm(test_dir, module_identifier):
     return Reference(
-        implementation=fqn(CacheLLM),
-        spec=CacheLLMSpec(
-            llm=dict(
-                spec=OpenAiGPTSpec(
-                    model="gpt-4-vision-preview",
-                    force_json=False,
-                    max_tokens=4096,
-                )
-            ),
-            dir=module_identifier,
-            file_memory_override=dict(spec=LocalFileMemoryConfig(root_dir=loc)),
+        implementation=fqn(OpenAIGPT),
+        spec=OpenAiGPTSpec(
+            model="gpt-4-vision-preview",
+            force_json=False,
+            max_tokens=4096,
         ),
     )
 

@@ -197,12 +197,12 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         message = llm_response.choices[0].message
 
         logger.info(
-            "open ai llm response",
+            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}\n",
             extra=dict(content=message.content, tool_calls=message.tool_calls),
         )
 
         tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
-        if not self.spec.force_json:
+        if not self.spec.force_json and output_format != "str":
             # message format looks like json```{...}```, parse content and pull out the json
             message_text = message.content[message.content.find("{") : message.content.rfind("}") + 1]
         else:
