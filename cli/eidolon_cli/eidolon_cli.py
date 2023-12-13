@@ -29,23 +29,19 @@ class Schema:
                     ref_obj = ref_obj[ref_part]
 
                 return process_schema_obj(ref_obj)
+
             elif obj.get("type") == "object":
                 required = obj.get("required", None)
                 properties = obj.get("properties", {})
-                ret_obj = {}
-                if "title" in obj:
-                    ret_obj["title"] = obj["title"]
-
+                ret_obj = properties
                 for k, v in properties.items():
                     ret_obj[k] = process_schema_obj(v)
                     if not required or k in required:
                         ret_obj[k]["required"] = True
                 return ret_obj
             elif obj.get("type") == "array":
-                ret_array = []
-                for item in obj["items"]:
-                    ret_array.append(process_schema_obj(item))
-                return ret_array
+                obj["items"] = process_schema_obj(obj["items"])
+                return obj
             else:
                 return obj
 
@@ -84,7 +80,7 @@ class AgentProgram:
             else:
                 console.print(f"      file", end="")
                 console.print("(required)", style="#bcbcbc", end="")
-                console.print(": {self.schema.files}")
+                console.print(f": {self.schema.files}")
         def print_object(obj: Dict[str, Any], padding_level: int):
             for k, v in obj.items():
                 if isinstance(v, dict) and v.get("title"):
@@ -92,15 +88,17 @@ class AgentProgram:
                     if v.get("required"):
                         console.print("(required)", style="#bcbcbc", end="")
                     console.print(": ", end="")
-                    if isinstance(v, dict) and not v.get("type"):
+                    if v.get("type") == "object":
                         console.print()
-                        print_object(v, padding_level + 2)
-                    elif isinstance(v, list):
-                        if len(v) > 1 and isinstance(v[0], dict):
+                        print_object(v["properties"], padding_level + 2)
+                    elif v.get("type") == "array":
+                        if v["items"].get("type") == "object":
                             console.print("[")
                             for item in v:
                                 print_object(item, padding_level + 2)
                             console.print("]")
+                        else:
+                            console.print(f'[{v["items"]["type"]}]')
                     else:
                         console.print(v["type"])
 
@@ -135,12 +133,15 @@ class EidolonClient:
             searchResults = re.search(regex, path)
             if searchResults:
                 agent_obj = self.openapi_json['paths'][path]['post']
-                description = agent_obj['description']
-                content = agent_obj['requestBody']['content']
-                if 'application/json' in content:
-                    schema = Schema.from_json_schema(self.openapi_json, content['application/json']['schema'])
+                description = agent_obj['description'] if 'description' in agent_obj else ""
+                if 'requestBody' not in agent_obj:
+                    schema = Schema(body={}, files="disable")
                 else:
-                    schema = Schema.from_json_schema(self.openapi_json, content['multipart/form-data']['schema'])
+                    content = agent_obj['requestBody']['content']
+                    if 'application/json' in content:
+                        schema = Schema.from_json_schema(self.openapi_json, content['application/json']['schema'])
+                    else:
+                        schema = Schema.from_json_schema(self.openapi_json, content['multipart/form-data']['schema'])
 
                 agents.append(AgentProgram(name=searchResults.group(1), description=description, program=searchResults.group(2), schema=schema))
 
