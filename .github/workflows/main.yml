@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  linters:
+  cli-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,29 +18,16 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
-
-      - run: poetry install
-        working-directory: sdk
-      - run: poetry run ruff format .
-        working-directory: sdk
-      - run: poetry run ruff check .
-        working-directory: sdk
-
-      - run: poetry install
-        working-directory: examples
-      - run: poetry run ruff format .
-        working-directory: examples
-      - run: poetry run ruff check .
-        working-directory: examples
-
       - run: poetry install
         working-directory: cli
       - run: poetry run ruff format .
         working-directory: cli
       - run: poetry run ruff check .
         working-directory: cli
+      - run: poetry run pytest
+        working-directory: cli
 
-  rest-test:
+  examples-test:
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -56,13 +43,17 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - run: poetry install
+        working-directory: examples
+      - run: poetry run ruff format .
+        working-directory: examples
+      - run: poetry run ruff check .
         working-directory: examples
       - run: poetry run pytest
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         working-directory: examples
 
-  unit-test:
+  sdk-test:
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -78,6 +69,10 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - run: poetry install
+        working-directory: sdk
+      - run: poetry run ruff format .
+        working-directory: sdk
+      - run: poetry run ruff check .
         working-directory: sdk
       - run: poetry run pytest
         working-directory: sdk
