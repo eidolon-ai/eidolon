@@ -126,6 +126,8 @@ class SymbolicMemory(ABC):
         symbol_collection: str,
         query: dict[str, Any],
         projection: Union[List[str], Dict[str, int]] = None,
+        sort: dict = None,
+        skip: int = None,
     ) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
@@ -136,6 +138,9 @@ class SymbolicMemory(ABC):
             projection (Union[List[str], Dict[str, int]]): The fields to include or exclude from the results. If a list,
                 the fields will be included. If a dictionary, the fields will be included or excluded based on the
                 value of the dictionary. A value of 1 will include the field, and a value of 0 will exclude it.
+            sort (dict): The fields to sort the results by. The key is the field to sort by, and the value is the direction
+                to sort by. A value of 1 will sort in ascending order, and a value of -1 will sort in descending order.
+            skip (int): The number of results to skip.
 
         Returns:
             Iterable[dict[str, Any]]: A list of symbols that match the query, each represented as a dictionary.

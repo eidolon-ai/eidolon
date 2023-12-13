@@ -30,16 +30,29 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return await self.database[symbol_collection].count_documents(query)
 
-    def find(
+    async def find(
         self,
         symbol_collection: str,
         query: dict[str, Any],
         projection: Union[List[str], Dict[str, int]] = None,
+        sort: dict = None,
+        skip: int = None,
     ) -> AsyncIterable[dict[str, Any]]:
-        return self.database[symbol_collection].find(query, projection=projection)
+        cursor = self.database[symbol_collection].find(query, projection=projection)
+        if sort:
+            cursor = cursor.sort(sort)
+        if skip:
+            cursor = cursor.skip(skip)
+        async for document in cursor:
+            yield document
 
-    async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
-        return await self.database[symbol_collection].find_one(query)
+    async def find_one(
+        self, symbol_collection: str, query: dict[str, Any], sort: dict = None
+    ) -> Optional[dict[str, Any]]:
+        kwargs = dict(filter=query)
+        if sort:
+            kwargs["sort"] = sort
+        return await self.database[symbol_collection].find_one(**kwargs)
 
     async def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
         return await self.database[symbol_collection].insert_many(documents)
@@ -51,7 +64,7 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
         return await self.database[symbol_collection].update_many(query, document)
 
     async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
-        return await self.database[symbol_collection].update_one(query, document, upsert=True)
+        return await self.database[symbol_collection].update_one(query, {"$set": document}, upsert=True)
 
     async def delete(self, symbol_collection, query):
         return await self.database[symbol_collection].delete_many(query)

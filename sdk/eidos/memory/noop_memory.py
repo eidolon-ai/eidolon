@@ -43,6 +43,8 @@ class NoopSymbolicMemory(SymbolicMemory):
         symbol_collection: str,
         query: dict[str, Any],
         projection: Union[List[str], Dict[str, int]] = None,
+        sort: dict = None,
+        skip: int = None,
     ):
         pass
 
