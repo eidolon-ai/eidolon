@@ -27,6 +27,8 @@ class ObjInput:
             if not os.path.isfile(file):
                 raise ValueError(f"File {file} does not exist")
 
+        return files
+
     def print_field(self, padding: int, name: str, default: Optional[str], required: bool):
         prompt = f"{' ' * padding}{name}"
         if required:
@@ -37,14 +39,14 @@ class ObjInput:
         prompt += ": "
         self.console.print(prompt, end="")
 
-    def get_file_input(self, required: bool, multiple: bool, padding_level: int) -> Union[Optional[str], List[str]]:
+    def get_file_input(self, name: str, required: bool, multiple: bool, padding_level: int) -> Union[Optional[str], List[str]]:
         if multiple:
             default = "[file path, file path, ...]"
         else:
             default = "[file path]"
-        self.console.print(f"{' ' * padding_level}file{'*' if required else ''} {default}: ", end="")
+        self.console.print(f"{' ' * padding_level}{name}{'*' if required else ''} {default}: ", end="")
         user_files = self.console.input()
-        self._verify_files(user_files)
+        user_files = self._verify_files(user_files)
 
         if not required and user_files == "":
             user_files = None
@@ -67,12 +69,12 @@ class ObjInput:
                             self.console.print(f"{' ' * padding_level}add item? (y/n): ", end="")
                         obj_input[k] = arr_input
                     elif v["items"].get("type") == "string" and v["items"].get("format") == "binary":
-                        obj_input[k] = self.get_file_input(v["items"].get("required", False), True, padding_level)
+                        obj_input[k] = self.get_file_input(k, v["items"].get("required", False), True, padding_level)
                     else:
                         arr_input = self.console.input()
                         obj_input[k] = json.loads(arr_input)
                 elif v.get("type") == "string" and v.get("format") == "binary":
-                    obj_input[k] = self.get_file_input(v.get("required", False), False, padding_level)
+                    obj_input[k] = self.get_file_input(k, v.get("required", False), False, padding_level)
                 else:
                     self.print_field(padding_level, k, v.get("default"), v.get("required", False))
                     obj_input[k] = self.console.input()
@@ -87,8 +89,7 @@ class Schema:
     def await_input(self, console: Console):
         try:
             input_processor = ObjInput(console)
-            return_obj = input_processor.get_input_from_obj(self.schema, 2)
-
+            return_obj = input_processor.get_input_from_obj(self.schema["properties"], 2)
             return return_obj
         except KeyboardInterrupt:
             return None
@@ -119,6 +120,8 @@ class Schema:
                     elif v.get("type") == "string" and v.get("format") == "binary":
                         yield rt("file\n")
                     else:
+                        if "type" not in v:
+                            print(str(obj))
                         yield rt(v["type"] + "\n")
 
         yield rt(f"  Schema:", style="#666666")
@@ -126,7 +129,8 @@ class Schema:
             yield rt(" multipart/form-data\n")
         else:
             yield rt(" application/json\n")
-        yield from print_object(self.schema, 4)
+
+        yield from print_object(self.schema["properties"], 4)
 
     @classmethod
     def from_json_schema(cls, json_schema: Dict[str, Any], obj_to_process: Dict[str, Any]):
@@ -145,12 +149,13 @@ class Schema:
             elif obj.get("type") == "object":
                 required = obj.get("required", None)
                 properties = obj.get("properties", {})
-                ret_obj = properties
                 for k, v in properties.items():
-                    ret_obj[k] = process_schema_obj(v)
-                    if not required or k in required:
-                        ret_obj[k]["required"] = True
-                return ret_obj
+                    if isinstance(v, dict):
+                        properties[k] = process_schema_obj(v)
+                        if not required or k in required:
+                            properties[k]["required"] = True
+                obj["properties"] = properties
+                return obj
             elif obj.get("type") == "array":
                 obj["items"] = process_schema_obj(obj["items"])
                 return obj
@@ -186,39 +191,30 @@ class AgentProgram:
 
 
 class EidolonClient:
-    openapi_json: Optional[Dict[str, Any]] = None
     server_location: Optional[str] = None
-    agent: Optional[str] = None
-    endpoint: Optional[str] = None
     timeout = httpx.Timeout(5.0, read=600.0)
+    agents = None
 
     async def set_server_location(self, server_location: str):
         self.server_location = server_location
-        self.openapi_json = None
-        await self.connect()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(urljoin(self.server_location, "openapi.json")) as resp:
+                openapi_json = await resp.json()
 
-    async def connect(self):
-        if not self.openapi_json:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(urljoin(self.server_location, "openapi.json")) as resp:
-                    self.openapi_json = await resp.json()
-
-    async def list_agents(self):
-        await self.connect()
         regex = "^/agents/([^/]+)/programs/([^/]+)$"
-        paths: List[str] = self.openapi_json["paths"]
+        paths: List[str] = openapi_json["paths"]
         # iterate over paths and find the ones that match the regex returning a list of tuples of the form (agent, program)
         agents = []
         for path in paths:
             searchResults = re.search(regex, path)
             if searchResults:
-                agent_obj = self.openapi_json["paths"][path]["post"]
+                agent_obj = openapi_json["paths"][path]["post"]
                 description = agent_obj["description"] if "description" in agent_obj else ""
                 if "requestBody" not in agent_obj:
-                    schema = Schema(is_multipart=False, schema={})
+                    schema = Schema(is_multipart=False, schema={"properties": {}, "type": "object", "required": []})
                 else:
                     content = agent_obj["requestBody"]["content"]
-                    schema = Schema.from_json_schema(self.openapi_json, content)
+                    schema = Schema.from_json_schema(openapi_json, content)
 
                 agents.append(
                     AgentProgram(
@@ -229,13 +225,12 @@ class EidolonClient:
                     )
                 )
 
-        return agents
+        self.agents = agents
 
     async def get_client(self, agent_str: str):
         user_agent, user_program = agent_str.strip().split("/")
-        agents = await self.list_agents()
 
-        for agent in agents:
+        for agent in self.agents:
             if agent.name == user_agent and agent.program == user_program:
                 return agent
         return None
@@ -243,18 +238,19 @@ class EidolonClient:
     async def send_request(self, agent, user_input):
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             if agent.schema.is_multipart:
-                files = {}
+                files = []
                 data = {}
 
                 def read_file(path: str):
                     with open(path, "rb") as f:
                         return f.read()
 
-                for k, v in agent.schema.schema.items():
+                for k, v in agent.schema.schema["properties"].items():
                     if v.get("type") == "string" and v.get("format") == "binary":
-                        files[k] = (os.path.basename(user_input[k]), read_file(user_input[k]))
+                        files.append((os.path.basename(user_input[k][0]), read_file(user_input[k][0])))
                     elif v.get("type") == "array" and v["items"].get("type") == "string" and v["items"].get("format") == "binary":
-                        files[k] = [(os.path.basename(user_input[k]), read_file(file)) for file in user_input[k]]
+                        for file in user_input[k]:
+                            files.append(((os.path.basename(file)), read_file(file)))
                     else:
                         data[k] = json.dumps(user_input[k])
                 response = await client.post(

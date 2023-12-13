@@ -38,12 +38,7 @@ def print_prompt():
         location = "[gray70](disconnected)[/gray70]"
     else:
         url = urlparse(client.server_location)
-        location = f"[#8a8a8a]({url.hostname}:{url.port}"
-        if client.agent:
-            location += f"/agents/{client.agent}"
-            if client.endpoint:
-                location += f"/programs/{client.endpoint}"
-        location += ")[/#8a8a8a]"
+        location = f"[#8a8a8a]({url.hostname}:{url.port})[/#8a8a8a]"
     console.print(location, end="")
     console.print(" eidolon % ", end="")
 
@@ -72,8 +67,7 @@ async def run(endpoint: str):
             print_prompt()
             command = console.input()
             if command == "/list":
-                agents_ = await client.list_agents()
-                for agent in agents_:
+                for agent in client.agents:
                     console.print(agent, end="")
             elif command.startswith("/conversation "):
                 agent = command.split(" ")[1]
