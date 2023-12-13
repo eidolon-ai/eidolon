@@ -42,17 +42,19 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         Get the contents of a file in the project
         """
         try:
-            with open(os.path.join(self.spec.root_dir, file_path), 'r') as f:
+            with open(os.path.join(self.spec.root_dir, file_path), "r") as f:
                 return dict(exists=True, content=f.read())
         except FileNotFoundError:
             return dict(exists=False)
 
     @llm_function
     async def upsert_file(
-            self,
-            update_summary: Annotated[str, Field(description="A summary of the changes. Will be included in commit message")],
-            file_path: Annotated[str, Field(description="The path to the file to be updated")],
-            content: Annotated[str, Field(description="The new content of the file")],
+        self,
+        update_summary: Annotated[
+            str, Field(description="A summary of the changes. Will be included in commit message")
+        ],
+        file_path: Annotated[str, Field(description="The path to the file to be updated")],
+        content: Annotated[str, Field(description="The new content of the file")],
     ) -> dict:
         """
         replace the contents a file or create it if it doesn't exist and commit the changes.
@@ -60,7 +62,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         # todo, limit to files in project
         file_path = os.path.join(self.spec.root_dir, file_path)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             f.write(content)
         self.repo.git.add(file_path)
         self.repo.index.commit(update_summary)
@@ -71,7 +73,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         """
         Revert the project to a previous revision.
         """
-        self.repo.git.reset('--hard', revision)
+        self.repo.git.reset("--hard", revision)
         return dict(revision=self.repo.head.commit.hexsha)
 
     @llm_function
@@ -80,7 +82,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         Run pytest in the project directory and return the results.
         :return:
         """
-        with tempfile.NamedTemporaryFile(suffix='.json', mode='w+', delete=True) as tmpfile:
+        with tempfile.NamedTemporaryFile(suffix=".json", mode="w+", delete=True) as tmpfile:
             cmd = ["pytest", self.spec.root_dir, "--json-report", "--json-report-file=" + tmpfile.name]
 
             # Run pytest in a new process

@@ -15,6 +15,7 @@ class CodePackage(BaseModel):
     """
     A package is a collection of python files.
     """
+
     package_directory: str = Field(description="The directory that contains the package")
     files: List[str] = Field(description="The files that make up the package")
 
@@ -23,6 +24,7 @@ class SourceCode(BaseModel):
     """
     Source code is a collection of lines of code for a given file
     """
+
     file_name: str = Field(description="The name of the file")
     source_code: str = Field(description="The source code for the file")
 
@@ -31,6 +33,7 @@ class SearchResult(BaseModel):
     """
     A search result is a snippet of source code that matched the query
     """
+
     file_name: str = Field(description="The name of the file")
     source_code_snippet: str = Field(description="A snippet of the source code that matched the query")
 
@@ -64,9 +67,9 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
         package_directories = {}
 
         for root, dirs, files in os.walk(self.root_dir):
-            if '__init__.py' in files:
+            if "__init__.py" in files:
                 package_name = str(Path(root).relative_to(self.root_dir))
-                package_files = [f for f in files if f.endswith('.py')]
+                package_files = [f for f in files if f.endswith(".py")]
                 package_directories[root] = CodePackage(
                     package_directory=package_name,
                     files=package_files,
@@ -76,8 +79,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
 
     @llm_function
     async def get_code(
-            self,
-            file_name: Annotated[str, Field(description="The name of the file to get code from")]
+        self, file_name: Annotated[str, Field(description="The name of the file to get code from")]
     ) -> SourceCode:
         """
         Get the source code for a given file
@@ -95,7 +97,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
         if not file_name.startswith(self.root_dir):
             raise ValueError(f"File {file_name} is not in root dir {self.root_dir}")
 
-        with open(os.path.join(self.root_dir, file_name), 'r') as f:
+        with open(os.path.join(self.root_dir, file_name), "r") as f:
             return SourceCode(
                 file_name=file_name,
                 source_code=f.read(),
@@ -103,8 +105,11 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
 
     @llm_function
     async def search_code(
-            self,
-            query: Annotated[str, Field(description="The query to search for. The query will be embedded and searched using a vector store")]
+        self,
+        query: Annotated[
+            str,
+            Field(description="The query to search for. The query will be embedded and searched using a vector store"),
+        ],
     ) -> List[SearchResult]:
         """
         Search for code that matches the query
@@ -112,7 +117,10 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
         """
         await self._init()
         results = await AgentOS.similarity_memory.query("code_sync", self.embedder, query, 10, {})
-        return [SearchResult(
-            file_name=result.metadata["file_path"],
-            source_code_snippet=result.page_content,
-        ) for result in results]
+        return [
+            SearchResult(
+                file_name=result.metadata["file_path"],
+                source_code_snippet=result.page_content,
+            )
+            for result in results
+        ]

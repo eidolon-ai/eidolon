@@ -13,12 +13,12 @@ class IdleStateRepresentation(BaseModel):
 class HelloWorld(CodeAgent):
     @register_program()
     async def execute(self, name: Annotated[str, Body(description="Your name", embed=True)]) -> IdleStateRepresentation:
-        return IdleStateRepresentation(welcome_message=f'Hello, World {name}!')
+        return IdleStateRepresentation(welcome_message=f"Hello, World {name}!")
 
     @register_program()
     async def describe_image(
-            self,
-            question: str = Body(..., embed=True, description="Your question about the image"),
-            image: UploadFile = File(..., description="The image to describe")
+        self,
+        question: str = Body(..., embed=True, description="Your question about the image"),
+        image: UploadFile = File(..., description="The image to describe"),
     ) -> IdleStateRepresentation:
-        return IdleStateRepresentation(welcome_message=f'Hello, World {question}!')
+        return IdleStateRepresentation(welcome_message=f"Hello, World {question}!")

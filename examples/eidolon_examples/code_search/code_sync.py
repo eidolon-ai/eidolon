@@ -21,7 +21,7 @@ def hash_file(file_path, chunk_size=8192):
     :return: Hexadecimal string of the hash.
     """
     hasher = hashlib.sha256()
-    with open(file_path, 'rb') as file:
+    with open(file_path, "rb") as file:
         chunk = file.read(chunk_size)
         while chunk:
             hasher.update(chunk)
@@ -62,7 +62,7 @@ class CodeSync:
         added = {}
         modified = {}
         # iterate over all python files in the root_dir
-        for file in self.root_dir.glob('**/*.py'):
+        for file in self.root_dir.glob("**/*.py"):
             # get the file path relavtive to the root_dir
             file_path = str(file.relative_to(self.root_dir))
             # create a hash of the file at file path
@@ -105,12 +105,16 @@ class CodeSync:
         for doc in docs:
             doc.id = str(uuid.uuid4())
         await AgentOS.similarity_memory.add("code_sync", docs, self.embedder)
-        await AgentOS.symbolic_memory.insert("code_sync", [
-            {
-                "file_path": str(file_path.relative_to(self.root_dir)),
-                "file_hash": hash_file(file_path),
-                "doc_ids": [doc.id for doc in docs]
-             }])
+        await AgentOS.symbolic_memory.insert(
+            "code_sync",
+            [
+                {
+                    "file_path": str(file_path.relative_to(self.root_dir)),
+                    "file_hash": hash_file(file_path),
+                    "doc_ids": [doc.id for doc in docs],
+                }
+            ],
+        )
 
     async def removeFile(self, file_path: Path):
         # get the doc ids for the file

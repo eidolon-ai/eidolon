@@ -8,8 +8,9 @@ from transformers import AutoTokenizer, AutoModelWithLMHead
 
 
 class CustomSummarizer(MessageSummarizer):
-
-    async def summarize_messages(self, call_context: CallContext, existing_messages: List[LLMMessage], llm_unit: LLMUnit) -> LLMMessage:
+    async def summarize_messages(
+        self, call_context: CallContext, existing_messages: List[LLMMessage], llm_unit: LLMUnit
+    ) -> LLMMessage:
         """
         Summarizes a list of messages into a single message using a new thread from the cpu.
 
@@ -25,9 +26,9 @@ class CustomSummarizer(MessageSummarizer):
         # format prompt with word limit and existing_messages using jinja2
         message = self.template.render(WORD_LIMIT=self.spec.summary_word_limit, messages=existing_messages)
 
-        tokenizer = AutoTokenizer.from_pretrained('t5-small')
-        model = AutoModelWithLMHead.from_pretrained('t5-small', return_dict=True)
-        input_ids = tokenizer.encode(message, return_tensors='pt')
+        tokenizer = AutoTokenizer.from_pretrained("t5-small")
+        model = AutoModelWithLMHead.from_pretrained("t5-small", return_dict=True)
+        input_ids = tokenizer.encode(message, return_tensors="pt")
         outputs = model.generate(input_ids=input_ids, max_length=self.spec.summary_word_limit)
         summary = tokenizer.decode(outputs[0])
 

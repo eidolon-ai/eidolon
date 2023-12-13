@@ -26,20 +26,14 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
 
     async def call_llm(self, process_id, text: str):
         schema = LlmResponse.model_json_schema()
-        schema['type'] = 'object'
+        schema["type"] = "object"
 
         t = await self.cpu.main_thread(process_id)
-        await t.set_boot_messages(
-            schema,
-            SystemCPUMessage(prompt=self.spec.system_prompt)
-        )
+        await t.set_boot_messages(schema, SystemCPUMessage(prompt=self.spec.system_prompt))
 
-        response = await t.schedule_request(
-            prompts=[UserTextCPUMessage(prompt=text)],
-            output_format=schema
-        )
+        response = await t.schedule_request(prompts=[UserTextCPUMessage(prompt=text)], output_format=schema)
         response = LlmResponse(**response)
-        return AgentState(name='idle', data=response)
+        return AgentState(name="idle", data=response)
 
     @register_program()
     async def speech_question(self, process_id, file: UploadFile = File(...)) -> bytes:

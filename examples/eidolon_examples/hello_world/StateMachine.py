@@ -29,7 +29,9 @@ class StateMachine(CodeAgent):
         return AgentState(name="a", data="here is something to transform")
 
     @register_action("a", "b")
-    async def transform(self, requested_state: Annotated[str, Body(embed=True)]) -> AgentState[Union[AState, BState, CState]]:
+    async def transform(
+        self, requested_state: Annotated[str, Body(embed=True)]
+    ) -> AgentState[Union[AState, BState, CState]]:
         if requested_state == "a":
             return AgentState(name="a", data=AState(foo="here ya foo"))
         elif requested_state == "b":

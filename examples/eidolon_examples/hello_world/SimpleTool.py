@@ -5,6 +5,7 @@ class MathsTool(LogicUnit):
     """
     A simple tool that performs basic math operations.
     """
+
     @llm_function
     async def add(self, a: float, b: float) -> float:
         """

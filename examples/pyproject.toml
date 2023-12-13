@@ -11,9 +11,15 @@ setuptools = "^69.0.2"
 transformers = "^4.35.2"
 eidos = {path = "../sdk", develop = true}
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.7"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 eidos-server = "eidos.system.agent_http_server:main"
+
+[tool.ruff]
+line-length = 121

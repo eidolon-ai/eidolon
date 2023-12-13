@@ -12,10 +12,13 @@ class IdleStateRepresentation(BaseModel):
 
 
 class AutonomousAgent(Agent):
-
     @register_program()
-    @register_action('idle')
-    async def converse(self, process_id, question: Annotated[str, Body(description="A question", embed=True)]) -> AgentState[IdleStateRepresentation]:
+    @register_action("idle")
+    async def converse(
+        self, process_id, question: Annotated[str, Body(description="A question", embed=True)]
+    ) -> AgentState[IdleStateRepresentation]:
         thread = await self.cpu.main_thread(process_id)
-        response = await thread.schedule_request([UserTextCPUMessage(prompt=question)], IdleStateRepresentation.model_json_schema())
+        response = await thread.schedule_request(
+            [UserTextCPUMessage(prompt=question)], IdleStateRepresentation.model_json_schema()
+        )
         return AgentState(name="idle", data=IdleStateRepresentation(**response))
