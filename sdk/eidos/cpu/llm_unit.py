@@ -58,10 +58,10 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
 
     @abstractmethod
     async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal['str'], Dict[str, Any]]
+        self,
+        call_context: CallContext,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AssistantMessage:
         pass

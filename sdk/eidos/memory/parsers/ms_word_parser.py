@@ -10,16 +10,11 @@ class MsWordParser(BaseParser):
             from unstructured.partition.doc import partition_doc
             from unstructured.partition.docx import partition_docx
         except ImportError as e:
-            raise ImportError(
-                "Could not import unstructured, please install with `pip install "
-                "unstructured`."
-            ) from e
+            raise ImportError("Could not import unstructured, please install with `pip install " "unstructured`.") from e
 
         mime_type_parser = {
             "application/msword": partition_doc,
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": (
-                partition_docx
-            ),
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": (partition_docx),
         }
         if blob.mimetype not in (
             "application/msword",

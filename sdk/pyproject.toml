@@ -54,3 +54,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 pythonpath = "project"
+
+[tool.ruff]
+line-length = 121

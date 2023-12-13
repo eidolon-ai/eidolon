@@ -29,15 +29,11 @@ from eidos.memory.transformer.document_transformer import TextSplitter, TextSpli
 TS = TypeVar("TS", bound="TextSplitter")
 
 
-def _make_spacy_pipeline_for_splitting(
-        pipeline: str, *, max_length: int = 1_000_000
-) -> Any:  # avoid importing spacy
+def _make_spacy_pipeline_for_splitting(pipeline: str, *, max_length: int = 1_000_000) -> Any:  # avoid importing spacy
     try:
         import spacy
     except ImportError:
-        raise ImportError(
-            "Spacy is not installed, please install it with `pip install spacy`."
-        )
+        raise ImportError("Spacy is not installed, please install it with `pip install spacy`.")
     if pipeline == "sentencizer":
         from spacy.lang.en import English
 
@@ -49,9 +45,7 @@ def _make_spacy_pipeline_for_splitting(
     return sentencizer
 
 
-def _split_text_with_regex(
-        text: str, separator: str, keep_separator: bool
-) -> List[str]:
+def _split_text_with_regex(text: str, separator: str, keep_separator: bool) -> List[str]:
     # Now that we have the separator, split the text
     if separator:
         if keep_separator:
@@ -76,9 +70,7 @@ class CharacterTextSplitterSpec(TextSplitterSpec):
 class CharacterTextSplitter(TextSplitter, Specable[CharacterTextSplitterSpec]):
     """Splitting text that looks at characters."""
 
-    def __init__(
-            self, spec: CharacterTextSplitterSpec, **kwargs: Any
-    ) -> None:
+    def __init__(self, spec: CharacterTextSplitterSpec, **kwargs: Any) -> None:
         """Create a new TextSplitter."""
         super().__init__(**kwargs)
         self._separator = spec.separator
@@ -87,9 +79,7 @@ class CharacterTextSplitter(TextSplitter, Specable[CharacterTextSplitterSpec]):
     def split_text(self, text: str) -> List[str]:
         """Split incoming text and return chunks."""
         # First we naively split the large input into a bunch of smaller ones.
-        separator = (
-            self._separator if self._is_separator_regex else re.escape(self._separator)
-        )
+        separator = self._separator if self._is_separator_regex else re.escape(self._separator)
         splits = _split_text_with_regex(text, separator, self._keep_separator)
         _separator = "" if self._keep_separator else self._separator
         return self._merge_splits(splits, _separator, len)
@@ -118,10 +108,7 @@ def aggregate_lines_to_chunks(lines: List[LineType]) -> List[Document]:
     aggregated_chunks: List[LineType] = []
 
     for line in lines:
-        if (
-                aggregated_chunks
-                and aggregated_chunks[-1]["metadata"] == line["metadata"]
-        ):
+        if aggregated_chunks and aggregated_chunks[-1]["metadata"] == line["metadata"]:
             # If the last line in the aggregated list
             # has the same metadata as the current line,
             # append the current content to the last lines's content
@@ -130,10 +117,7 @@ def aggregate_lines_to_chunks(lines: List[LineType]) -> List[Document]:
             # Otherwise, append the current line to the aggregated list
             aggregated_chunks.append(line)
 
-    return [
-        Document(page_content=chunk["content"], metadata=chunk["metadata"])
-        for chunk in aggregated_chunks
-    ]
+    return [Document(page_content=chunk["content"], metadata=chunk["metadata"]) for chunk in aggregated_chunks]
 
 
 class MarkdownHeaderTextSplitterSpec(TextSplitterSpec):
@@ -149,9 +133,7 @@ class MarkdownHeaderTextSplitterSpec(TextSplitterSpec):
 class MarkdownHeaderTextSplitter(TextSplitter, Specable[MarkdownHeaderTextSplitterSpec]):
     """Splitting markdown files based on specified headers."""
 
-    def __init__(
-            self, spec: MarkdownHeaderTextSplitterSpec, **kwargs: Any
-    ):
+    def __init__(self, spec: MarkdownHeaderTextSplitterSpec, **kwargs: Any):
         """Create a new MarkdownHeaderTextSplitter.
 
         Args:
@@ -163,9 +145,7 @@ class MarkdownHeaderTextSplitter(TextSplitter, Specable[MarkdownHeaderTextSplitt
         self.return_each_line = spec.return_each_line
         # Given the headers we want to split on,
         # (e.g., "#, ##, etc") order by length
-        self.headers_to_split_on = sorted(
-            spec.headers_to_split_on, key=lambda split: len(split[0]), reverse=True
-        )
+        self.headers_to_split_on = sorted(spec.headers_to_split_on, key=lambda split: len(split[0]), reverse=True)
 
     def split_text(self, text: str) -> List[Document]:
         """Split markdown file
@@ -211,9 +191,9 @@ class MarkdownHeaderTextSplitter(TextSplitter, Specable[MarkdownHeaderTextSplitt
             for sep, name in self.headers_to_split_on:
                 # Check if line starts with a header that we intend to split on
                 if stripped_line.startswith(sep) and (
-                        # Header with no text OR header is followed by space
-                        # Both are valid conditions that sep is being used a header
-                        len(stripped_line) == len(sep) or stripped_line[len(sep)] == " "
+                    # Header with no text OR header is followed by space
+                    # Both are valid conditions that sep is being used a header
+                    len(stripped_line) == len(sep) or stripped_line[len(sep)] == " "
                 ):
                     # Ensure we are tracking the header as metadata
                     if name is not None:
@@ -221,10 +201,7 @@ class MarkdownHeaderTextSplitter(TextSplitter, Specable[MarkdownHeaderTextSplitt
                         current_header_level = sep.count("#")
 
                         # Pop out headers of lower or same level from the stack
-                        while (
-                                header_stack
-                                and header_stack[-1]["level"] >= current_header_level
-                        ):
+                        while header_stack and header_stack[-1]["level"] >= current_header_level:
                             # We have encountered a new header
                             # at the same or higher level
                             popped_header = header_stack.pop()
@@ -237,7 +214,7 @@ class MarkdownHeaderTextSplitter(TextSplitter, Specable[MarkdownHeaderTextSplitt
                         header: HeaderType = {
                             "level": current_header_level,
                             "name": name,
-                            "data": stripped_line[len(sep):].strip(),
+                            "data": stripped_line[len(sep) :].strip(),
                         }
                         header_stack.append(header)
                         # Update initial_metadata with the current header
@@ -270,19 +247,14 @@ class MarkdownHeaderTextSplitter(TextSplitter, Specable[MarkdownHeaderTextSplitt
             current_metadata = initial_metadata.copy()
 
         if current_content:
-            lines_with_metadata.append(
-                {"content": "\n".join(current_content), "metadata": current_metadata}
-            )
+            lines_with_metadata.append({"content": "\n".join(current_content), "metadata": current_metadata})
 
         # lines_with_metadata has each line with associated header metadata
         # aggregate these into chunks based on common metadata
         if not self.return_each_line:
             return aggregate_lines_to_chunks(lines_with_metadata)
         else:
-            return [
-                Document(page_content=chunk["content"], metadata=chunk["metadata"])
-                for chunk in lines_with_metadata
-            ]
+            return [Document(page_content=chunk["content"], metadata=chunk["metadata"]) for chunk in lines_with_metadata]
 
 
 class ElementType(TypedDict):
@@ -310,11 +282,7 @@ class HTMLHeaderTextSplitter(TextSplitter, Specable[HTMLHeaderTextSplitterSpec])
     Requires lxml package.
     """
 
-    def __init__(
-            self,
-            spec: HTMLHeaderTextSplitterSpec,
-            **kwargs: Any
-    ):
+    def __init__(self, spec: HTMLHeaderTextSplitterSpec, **kwargs: Any):
         """Create a new HTMLHeaderTextSplitter.
 
         Args:
@@ -354,19 +322,14 @@ class HTMLHeaderTextSplitter(TextSplitter, Specable[HTMLHeaderTextSplitterSpec])
         try:
             from lxml import etree
         except ImportError as e:
-            raise ImportError(
-                "Unable to import lxml, please install with `pip install lxml`."
-            ) from e
+            raise ImportError("Unable to import lxml, please install with `pip install lxml`.") from e
         # use lxml library to parse html document and return xml ElementTree
         parser = etree.HTMLParser()
         tree = etree.parse(file, parser)
 
         # document transformation for "structure-aware" chunking is handled with xsl.
         # see comments in html_chunks_with_headers.xslt for more detailed information.
-        xslt_path = (
-                pathlib.Path(__file__).parent
-                / "document_transformers/xsl/html_chunks_with_headers.xslt"
-        )
+        xslt_path = pathlib.Path(__file__).parent / "document_transformers/xsl/html_chunks_with_headers.xslt"
         xslt_tree = etree.parse(xslt_path)
         transform = etree.XSLT(xslt_tree)
         result = transform(tree)
@@ -382,24 +345,12 @@ class HTMLHeaderTextSplitter(TextSplitter, Specable[HTMLHeaderTextSplitterSpec])
         # build list of elements from DOM
         elements = []
         for element in result_dom.findall("*//*", ns_map):
-            if element.findall("*[@class='headers']") or element.findall(
-                    "*[@class='chunk']"
-            ):
+            if element.findall("*[@class='headers']") or element.findall("*[@class='chunk']"):
                 elements.append(
                     ElementType(
                         url=file,
-                        xpath="".join(
-                            [
-                                node.text
-                                for node in element.findall("*[@class='xpath']", ns_map)
-                            ]
-                        ),
-                        content="".join(
-                            [
-                                node.text
-                                for node in element.findall("*[@class='chunk']", ns_map)
-                            ]
-                        ),
+                        xpath="".join([node.text for node in element.findall("*[@class='xpath']", ns_map)]),
+                        content="".join([node.text for node in element.findall("*[@class='chunk']", ns_map)]),
                         metadata={
                             # Add text of specified headers to metadata using header
                             # mapping.
@@ -415,10 +366,7 @@ class HTMLHeaderTextSplitter(TextSplitter, Specable[HTMLHeaderTextSplitterSpec])
         if not self.return_each_element:
             return aggregate_lines_to_chunks(elements)
         else:
-            return [
-                Document(page_content=chunk["content"], metadata=chunk["metadata"])
-                for chunk in elements
-            ]
+            return [Document(page_content=chunk["content"], metadata=chunk["metadata"]) for chunk in elements]
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
@@ -461,9 +409,9 @@ class TokenTextSplitter(TextSplitter, Specable[TokenTextSplitterSpec]):
     """Splitting text to tokens using model tokenizer."""
 
     def __init__(
-            self,
-            spec: TokenTextSplitterSpec,
-            **kwargs: Any,
+        self,
+        spec: TokenTextSplitterSpec,
+        **kwargs: Any,
     ) -> None:
         """Create a new TextSplitter."""
         super().__init__(**kwargs)
@@ -518,9 +466,9 @@ class SentenceTransformersTokenTextSplitter(TextSplitter, Specable[SentenceTrans
     """Splitting text to tokens using sentence model tokenizer."""
 
     def __init__(
-            self,
-            spec: SentenceTransformersTokenTextSplitterSpec,
-            **kwargs: Any,
+        self,
+        spec: SentenceTransformersTokenTextSplitterSpec,
+        **kwargs: Any,
     ) -> None:
         """Create a new TextSplitter."""
         super().__init__(**kwargs)
@@ -539,9 +487,7 @@ class SentenceTransformersTokenTextSplitter(TextSplitter, Specable[SentenceTrans
         self.tokenizer = self._model.tokenizer
         self._initialize_chunk_configuration(tokens_per_chunk=spec.tokens_per_chunk)
 
-    def _initialize_chunk_configuration(
-            self, *, tokens_per_chunk: Optional[int]
-    ) -> None:
+    def _initialize_chunk_configuration(self, *, tokens_per_chunk: Optional[int]) -> None:
         self.maximum_tokens_per_chunk = cast(int, self._model.max_seq_length)
 
         if tokens_per_chunk is None:
@@ -573,7 +519,7 @@ class SentenceTransformersTokenTextSplitter(TextSplitter, Specable[SentenceTrans
     def count_tokens(self, *, text: str) -> int:
         return len(self._encode(text))
 
-    _max_length_equal_32_bit_integer: int = 2 ** 32
+    _max_length_equal_32_bit_integer: int = 2**32
 
     def _encode(self, text: str) -> List[int]:
         token_ids_with_start_and_end_token_ids = self.tokenizer.encode(
@@ -628,9 +574,9 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
     """
 
     def __init__(
-            self,
-            spec: RecursiveCharacterTextSplitterSpec,
-            **kwargs: Any,
+        self,
+        spec: RecursiveCharacterTextSplitterSpec,
+        **kwargs: Any,
     ) -> None:
         """Create a new TextSplitter."""
         super().__init__(**kwargs)
@@ -651,7 +597,7 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
                 break
             if re.search(_separator, text):
                 separator = _s
-                new_separators = separators[i + 1:]
+                new_separators = separators[i + 1 :]
                 break
 
         _separator = separator if self._is_separator_regex else re.escape(separator)
@@ -682,9 +628,7 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
         return self._split_text(text, self._separators)
 
     @classmethod
-    def from_language(
-            cls, language: Language, **kwargs: Any
-    ) -> RecursiveCharacterTextSplitter:
+    def from_language(cls, language: Language, **kwargs: Any) -> RecursiveCharacterTextSplitter:
         separators = cls.get_separators_for_language(language)
         return cls(separators=separators, is_separator_regex=True, **kwargs)
 
@@ -1145,10 +1089,7 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
             ]
 
         else:
-            raise ValueError(
-                f"Language {language} is not supported! "
-                f"Please choose from {list(Language)}"
-            )
+            raise ValueError(f"Language {language} is not supported! " f"Please choose from {list(Language)}")
 
 
 class NLTKTextSplitterSpec(TextSplitterSpec):
@@ -1165,11 +1106,7 @@ class NLTKTextSplitterSpec(TextSplitterSpec):
 class NLTKTextSplitter(TextSplitter, Specable[NLTKTextSplitterSpec]):
     """Splitting text using NLTK package."""
 
-    def __init__(
-            self,
-            spec: NLTKTextSplitterSpec,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, spec: NLTKTextSplitterSpec, **kwargs: Any) -> None:
         """Initialize the NLTK splitter."""
         super().__init__(**kwargs)
         try:
@@ -1177,9 +1114,7 @@ class NLTKTextSplitter(TextSplitter, Specable[NLTKTextSplitterSpec]):
 
             self._tokenizer = sent_tokenize
         except ImportError:
-            raise ImportError(
-                "NLTK is not installed, please install it with `pip install nltk`."
-            )
+            raise ImportError("NLTK is not installed, please install it with `pip install nltk`.")
         self._separator = spec.separator
         self._language = spec.language
 
@@ -1216,15 +1151,13 @@ class SpacyTextSplitter(TextSplitter, Specable[SpacyTextSplitterSpec]):
     """
 
     def __init__(
-            self,
-            spec: SpacyTextSplitterSpec,
-            **kwargs: Any,
+        self,
+        spec: SpacyTextSplitterSpec,
+        **kwargs: Any,
     ) -> None:
         """Initialize the spacy text splitter."""
         super().__init__(**kwargs)
-        self._tokenizer = _make_spacy_pipeline_for_splitting(
-            spec.pipeline, max_length=spec.max_length
-        )
+        self._tokenizer = _make_spacy_pipeline_for_splitting(spec.pipeline, max_length=spec.max_length)
         self._separator = spec.separator
 
     def split_text(self, text: str) -> List[str]:

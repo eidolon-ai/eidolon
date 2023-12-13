@@ -9,12 +9,16 @@ from eidos.system.reference_model import Specable
 
 
 class MongoSymbolicMemoryConfig(BaseModel):
-    mongo_connection_string: Optional[str] = Field(default=None, description="The connection string to the MongoDB instance.")
+    mongo_connection_string: Optional[str] = Field(
+        default=None, description="The connection string to the MongoDB instance."
+    )
     mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
 
 
 class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
-    mongo_connection_string: Optional[str] = Field(default=None, description="The connection string to the MongoDB instance.")
+    mongo_connection_string: Optional[str] = Field(
+        default=None, description="The connection string to the MongoDB instance."
+    )
     mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
     database: AsyncIOMotorDatabase = None
 
@@ -26,8 +30,13 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return await self.database[symbol_collection].count_documents(query)
 
-    def find(self, symbol_collection: str, query: dict[str, Any], projection: Union[List[str], Dict[str, int]] = None) -> AsyncIterable[dict[str, Any]]:
-        return self.database[symbol_collection].find(query, projection = projection)
+    def find(
+        self,
+        symbol_collection: str,
+        query: dict[str, Any],
+        projection: Union[List[str], Dict[str, int]] = None,
+    ) -> AsyncIterable[dict[str, Any]]:
+        return self.database[symbol_collection].find(query, projection=projection)
 
     async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
         return await self.database[symbol_collection].find_one(query)
@@ -53,9 +62,9 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
         """
         if self.database is None:
             if self.mongo_connection_string is None:
-                self.mongo_connection_string = os.getenv('MONGO_CONNECTION_STRING')
+                self.mongo_connection_string = os.getenv("MONGO_CONNECTION_STRING")
             if self.mongo_database_name is None:
-                self.mongo_database_name = os.getenv('MONGO_DATABASE_NAME')
+                self.mongo_database_name = os.getenv("MONGO_DATABASE_NAME")
 
             client = AsyncIOMotorClient(self.mongo_connection_string)
             self.database = client.get_database(self.mongo_database_name)

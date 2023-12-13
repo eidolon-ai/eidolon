@@ -9,12 +9,12 @@ class TestStrUtils:
     # Test fixture to set environment variables
     @pytest.fixture(autouse=True)
     def set_env_vars(self):
-        os.environ['FOO'] = '/somepath'
-        os.environ['BAR'] = '/anotherpath'
+        os.environ["FOO"] = "/somepath"
+        os.environ["BAR"] = "/anotherpath"
         yield  # this line is where the testing happens
         # Teardown (if necessary)
-        del os.environ['FOO']
-        del os.environ['BAR']
+        del os.environ["FOO"]
+        del os.environ["BAR"]
 
     def test_single_replacement(self):
         assert replace_env_var_in_string("Path: ${FOO}/app") == "Path: /somepath/app"

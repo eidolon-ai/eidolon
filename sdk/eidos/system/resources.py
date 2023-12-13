@@ -8,7 +8,12 @@ from eidos.agent.generic_agent import GenericAgent
 from eidos.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidos.cpu.agent_cpu import AgentCPU
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
-from eidos.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory, AgentMemory
+from eidos.memory.agent_memory import (
+    FileMemory,
+    SymbolicMemory,
+    VectorMemory,
+    AgentMemory,
+)
 from eidos.memory.local_file_memory import LocalFileMemory
 from eidos.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos.system.reference_model import Reference, AnnotatedReference
@@ -16,21 +21,20 @@ from eidos.system.resources_base import Resource
 
 
 class MachineResource(Resource):
-    kind: Literal['Machine']
+    kind: Literal["Machine"]
     spec: MachineSpec
 
 
 class CPUResource(Resource, Reference[AgentCPU, ConversationalAgentCPU]):
-    kind: Literal['CPU']
+    kind: Literal["CPU"]
 
 
 class AgentResource(Resource, Reference):
-    kind: Literal['Agent'] = 'Agent'
+    kind: Literal["Agent"] = "Agent"
 
 
 def _build_resource(clazz: Type) -> Type[Resource]:
     class AutoAgentResource(Resource, Reference[clazz, clazz]):
-
         @classmethod
         def kind_literal(cls) -> str:
             return clazz.__name__
@@ -38,15 +42,20 @@ def _build_resource(clazz: Type) -> Type[Resource]:
     return AutoAgentResource
 
 
-agent_resources: Dict[str, Type[Resource]] = {r.kind_literal(): r for r in [
-    AgentResource,
-    _build_resource(GenericAgent),
-    _build_resource(TreeOfThoughtsAgent),
-]}
+agent_resources: Dict[str, Type[Resource]] = {
+    r.kind_literal(): r
+    for r in [
+        AgentResource,
+        _build_resource(GenericAgent),
+        _build_resource(TreeOfThoughtsAgent),
+    ]
+}
 
 
 class MachineSpec(BaseModel):
-    symbolic_memory: Reference[SymbolicMemory, MongoSymbolicMemory] = Field(description="The Symbolic Memory implementation.")
+    symbolic_memory: Reference[SymbolicMemory, MongoSymbolicMemory] = Field(
+        description="The Symbolic Memory implementation."
+    )
     file_memory: Reference[FileMemory, LocalFileMemory] = Field(desciption="The File Memory implementation.")
     similarity_memory: AnnotatedReference[VectorMemory]
 
@@ -54,4 +63,8 @@ class MachineSpec(BaseModel):
         file_memory = self.file_memory.instantiate()
         symbolic_memory = self.symbolic_memory.instantiate()
         vector_memory = self.similarity_memory.instantiate(file_memory)
-        return AgentMemory(file_memory=file_memory, symbolic_memory=symbolic_memory, similarity_memory=vector_memory)
+        return AgentMemory(
+            file_memory=file_memory,
+            symbolic_memory=symbolic_memory,
+            similarity_memory=vector_memory,
+        )

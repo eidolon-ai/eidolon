@@ -27,15 +27,16 @@ class TestHelloWorld:
     def test_hello_world(self, client):
         post = client.post("/agents/HelloWorld/programs/idle", json="world")
         assert post.status_code == 200
-        assert post.json()['data'] == "Hello, world!"
+        assert post.json()["data"] == "Hello, world!"
 
     def test_automatic_state_transition(self, client):
         post = client.post("/agents/HelloWorld/programs/idle", json="world")
         assert post.status_code == 200
-        assert post.json()['state'] == "terminated"
+        assert post.json()["state"] == "terminated"
 
 
 # todo, we have a bug with defaults in str Body fields like below
+
 
 class StateMachine:
     @register_program()
@@ -63,43 +64,58 @@ class TestStateMachine:
             yield client
 
     def test_can_start(self, client):
-        post = client.post("/agents/StateMachine/programs/idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+        post = client.post(
+            "/agents/StateMachine/programs/idle",
+            json=dict(desired_state="bar", response="low man on the totem pole"),
+        )
         assert post.status_code == 200
-        assert post.json()['state'] == "bar"
-        assert post.json()['data'] == "low man on the totem pole"
+        assert post.json()["state"] == "bar"
+        assert post.json()["data"] == "low man on the totem pole"
 
     def test_can_transition_state(self, client):
-        init = client.post("/agents/StateMachine/programs/idle", json=dict(desired_state="foo", response="low man on the totem pole"))
+        init = client.post(
+            "/agents/StateMachine/programs/idle",
+            json=dict(desired_state="foo", response="low man on the totem pole"),
+        )
         assert init.status_code == 200
-        assert init.json()['state'] == "foo"
+        assert init.json()["state"] == "foo"
 
         to_bar = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/to_bar")
         assert to_bar.status_code == 200
-        assert to_bar.json()['state'] == "bar"
+        assert to_bar.json()["state"] == "bar"
 
     def test_allowed_actions(self, client):
-        init = client.post("/agents/StateMachine/programs/idle", json=dict(desired_state="foo", response="low man on the totem pole"))
-        assert 'to_church' in init.json()['available_actions']
+        init = client.post(
+            "/agents/StateMachine/programs/idle",
+            json=dict(desired_state="foo", response="low man on the totem pole"),
+        )
+        assert "to_church" in init.json()["available_actions"]
 
         to_bar = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/to_bar")
-        assert 'to_church' not in to_bar.json()['available_actions']
+        assert "to_church" not in to_bar.json()["available_actions"]
 
         to_church = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/to_church")
         assert to_church.status_code == 409
 
     @pytest.mark.skip(reason="un comment idle signature when bug is fixed")
     def test_default_in_body(self, client):
-        init = client.post("/agents/StateMachine/programs/idle", json=dict(desired_state="foo", response="low man on the totem pole"))
+        init = client.post(
+            "/agents/StateMachine/programs/idle",
+            json=dict(desired_state="foo", response="low man on the totem pole"),
+        )
         init.raise_for_status()
-        assert init.json()['data'] == "default response"
+        assert init.json()["data"] == "default response"
 
     def test_state_machine_termination(self, client):
-        init = client.post("/agents/StateMachine/programs/idle", json=dict(desired_state="church", response="blurb"))
+        init = client.post(
+            "/agents/StateMachine/programs/idle",
+            json=dict(desired_state="church", response="blurb"),
+        )
         assert init.status_code == 200
-        assert init.json()['state'] == "church"
+        assert init.json()["state"] == "church"
 
         terminated = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/terminate")
         assert terminated.status_code == 200
-        assert terminated.json()['state'] == "terminated"
-        assert terminated.json()['data'] == "Only God can terminate me"
-        assert terminated.json()['available_actions'] == []
+        assert terminated.json()["state"] == "terminated"
+        assert terminated.json()["data"] == "Only God can terminate me"
+        assert terminated.json()["available_actions"] == []

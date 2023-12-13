@@ -12,8 +12,7 @@ class JavaScriptASTGenerator(CodeASTGenerator):
             import esprima  # noqa: F401
         except ImportError:
             raise ImportError(
-                "Could not import esprima Python package. "
-                "Please install it with `pip install esprima`."
+                "Could not import esprima Python package. " "Please install it with `pip install esprima`."
             )
 
     def is_valid(self) -> bool:

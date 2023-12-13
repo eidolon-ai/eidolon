@@ -14,9 +14,11 @@ from eidos.util.str_utils import replace_env_var_in_string
 
 
 class ChromaVectorStoreConfig(BaseModel):
-    url: str = Field(description="The url of the chroma database. " +
-                                 "Use http(s)://$HOST:$PORT?header1=value1&header2=value2 to pass headers to the database." +
-                                 "Use file://$PATH to use a local file database.")
+    url: str = Field(
+        description="The url of the chroma database. "
+        + "Use http(s)://$HOST:$PORT?header1=value1&header2=value2 to pass headers to the database."
+        + "Use file://$PATH to use a local file database."
+    )
 
     # noinspection PyMethodParameters,HttpUrlsUsage
     @field_validator("url")
@@ -79,9 +81,7 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
 
         return self.client.get_or_create_collection(name=name)
 
-    async def add(self, collection: str,
-                  docs: List[EmbeddedDocument],
-                  **add_kwargs: Any):
+    async def add(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
         collection = self._get_collection(name=collection)
         doc_ids = [doc.id for doc in docs]
         embeddings = [doc.embedding for doc in docs]
@@ -92,7 +92,14 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
         collection = self._get_collection(name=collection)
         collection.delete(ids=doc_ids, **delete_kwargs)
 
-    async def query(self, collection: str, query: List[float], num_results: int, metadata_where: Dict[str, str], include_embeddings: bool = False) -> List[QueryItem]:
+    async def query(
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Dict[str, str],
+        include_embeddings: bool = False,
+    ) -> List[QueryItem]:
         collection = self._get_collection(name=collection)
         thingsToInclude: Include = ["metadatas", "distances"]
         if include_embeddings:
@@ -102,17 +109,19 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
             query_embeddings=[query],
             n_results=num_results,
             where=metadata_where,
-            include=thingsToInclude
+            include=thingsToInclude,
         )
 
         ret = []
         for doc_id, i in enumerate(results["ids"][0]):
             embedding = results["embeddings"][0][doc_id] if include_embeddings else None
-            ret.append(QueryItem(
-                id=i,
-                distance=results["distances"][0][doc_id],
-                embedding=embedding,
-                metadata=results["metadatas"][0][doc_id]
-            ))
+            ret.append(
+                QueryItem(
+                    id=i,
+                    distance=results["distances"][0][doc_id],
+                    embedding=embedding,
+                    metadata=results["metadatas"][0][doc_id],
+                )
+            )
 
         return ret

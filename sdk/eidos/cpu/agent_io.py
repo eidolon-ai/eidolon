@@ -10,7 +10,13 @@ from pydantic import BaseModel, validate_call
 
 from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
-from eidos.cpu.llm_message import UserMessageText, SystemMessage, UserMessageImageURL, UserMessage, LLMMessage
+from eidos.cpu.llm_message import (
+    UserMessageText,
+    SystemMessage,
+    UserMessageImageURL,
+    UserMessage,
+    LLMMessage,
+)
 from eidos.cpu.processing_unit import ProcessingUnit
 
 
@@ -27,16 +33,16 @@ class CPUMessage(BaseModel):
 
 
 class UserTextCPUMessage(CPUMessage):
-    type: Literal['user'] = "user"
+    type: Literal["user"] = "user"
 
 
 class SystemCPUMessage(CPUMessage):
-    type: Literal['system'] = "system"
+    type: Literal["system"] = "system"
     is_boot_prompt: bool = True
 
 
 class ImageCPUMessage(CPUMessage):
-    type: Literal['image_url'] = "image"
+    type: Literal["image_url"] = "image"
     image: IOBase
 
     class Config:

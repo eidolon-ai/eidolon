@@ -51,19 +51,19 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         raise ValueError(f"Could not locate {unit_type}")
 
     async def set_boot_messages(
-            self,
-            call_context: CallContext,
-            boot_messages: List[CPUMessageTypes],
-            output_format: Union[Literal['str'], Dict[str, Any]]
+        self,
+        call_context: CallContext,
+        boot_messages: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ):
         conversation_messages = await self.io_unit.process_request(boot_messages)
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal['str'], Dict[str, Any]]
+        self,
+        call_context: CallContext,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> Any:
         output_format = output_format or dict(type="str")
         try:
@@ -82,11 +82,18 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             self.tool_defs.update(await logic_unit.build_tools(conversation))
         return self.tool_defs
 
-    async def _llm_execution_cycle(self, call_context: CallContext, conversation: List[LLMMessage], output_format: Union[Literal['str'], Dict[str, Any]]) -> AssistantMessage:
+    async def _llm_execution_cycle(
+        self,
+        call_context: CallContext,
+        conversation: List[LLMMessage],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             tool_defs = await self.get_tools(conversation)
-            assistant_message = await self.llm_unit.execute_llm(call_context, conversation, list(tool_defs.values()), output_format)
+            assistant_message = await self.llm_unit.execute_llm(
+                call_context, conversation, list(tool_defs.values()), output_format
+            )
             await self.memory_unit.storeMessages(call_context, [assistant_message])
             if assistant_message.tool_calls:
                 results = []
@@ -95,7 +102,11 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
                     # todo, store tool response result as Any (must be json serializable) so that it can be retrieved symmetrically
-                    message = ToolResponseMessage(tool_call_id=tool_call.tool_call_id, result=self._to_json(tool_result), name=tool_call.name)
+                    message = ToolResponseMessage(
+                        tool_call_id=tool_call.tool_call_id,
+                        result=self._to_json(tool_result),
+                        name=tool_call.name,
+                    )
                     await self.memory_unit.storeMessages(call_context, [message])
                     results.append(message)
 
@@ -116,6 +127,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         new_context = call_context.derive_call_context()
         messages = await self.memory_unit.getConversationHistory(call_context)
         for m in messages:
-            m['thread_id'] = new_context.thread_id
+            m["thread_id"] = new_context.thread_id
         await self.memory_unit.storeMessages(new_context, messages)
         return Thread(call_context=new_context, cpu=self)

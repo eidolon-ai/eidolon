@@ -38,7 +38,12 @@ class NoopSymbolicMemory(SymbolicMemory):
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return 0
 
-    def find(self, symbol_collection: str, query: dict[str, Any], projection: Union[List[str], Dict[str, int]] = None):
+    def find(
+        self,
+        symbol_collection: str,
+        query: dict[str, Any],
+        projection: Union[List[str], Dict[str, int]] = None,
+    ):
         pass
 
     async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
@@ -73,5 +78,11 @@ class NoopVectorStore(VectorStore):
     async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
         pass
 
-    async def query(self, collection: str, query: List[float], num_results: int, metadata_where: Dict[str, str]) -> List[QueryItem]:
+    async def query(
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Dict[str, str],
+    ) -> List[QueryItem]:
         pass

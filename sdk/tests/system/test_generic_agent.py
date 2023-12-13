@@ -9,22 +9,23 @@ from eidos.system.resources_base import Resource, Metadata
 
 @pytest.fixture(scope="module")
 def generic_agent(caching_llm):
-    resource = Resource(apiVersion="eidolon/v1", kind="GenericAgent", metadata=Metadata(name="GenericAgent"),
-                        spec=GenericAgentSpec(cpu=dict(spec=ConversationalAgentCPUSpec(llm_unit=caching_llm)),
-                                              system_prompt="You are a machine which follows instructions and returns a summary of your actions.",
-                                              user_prompt="{{instruction}}",
-                                              input_schema=dict(instruction=dict(type="string")),
-                                              output_schema={
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "response": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "required": ["response"]
-                                              },
-                                              description="An agent which can follow instructions and return a summary of its actions."
-                                              ))
+    resource = Resource(
+        apiVersion="eidolon/v1",
+        kind="GenericAgent",
+        metadata=Metadata(name="GenericAgent"),
+        spec=GenericAgentSpec(
+            cpu=dict(spec=ConversationalAgentCPUSpec(llm_unit=caching_llm)),
+            system_prompt="You are a machine which follows instructions and returns a summary of your actions.",
+            user_prompt="{{instruction}}",
+            input_schema=dict(instruction=dict(type="string")),
+            output_schema={
+                "type": "object",
+                "properties": {"response": {"type": "string"}},
+                "required": ["response"],
+            },
+            description="An agent which can follow instructions and return a summary of its actions.",
+        ),
+    )
     return resource
 
 
@@ -39,48 +40,57 @@ class TestGenericAgent:
         assert docs.status_code == 200
 
     def test_llm_calls(self, client):
-        post = client.post("/agents/GenericAgent/programs/question",
-                           json=dict(instruction="Hi! What is the capital of France?"))
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! What is the capital of France?"),
+        )
         post.raise_for_status()
-        assert "paris" in post.json()['data']['response'].lower()
+        assert "paris" in post.json()["data"]["response"].lower()
 
     def test_continued_conversation(self, client):
-        post = client.post("/agents/GenericAgent/programs/question", json=dict(instruction="Hi! my name is Luke"))
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke"),
+        )
         post.raise_for_status()
-        process_id = post.json()['process_id']
-        follow_up = client.post(f"/agents/GenericAgent/processes/{process_id}/actions/respond",
-                                json=dict(statement="Can you sing me Happy Birthday?"))
+        process_id = post.json()["process_id"]
+        follow_up = client.post(
+            f"/agents/GenericAgent/processes/{process_id}/actions/respond",
+            json=dict(statement="Can you sing me Happy Birthday?"),
+        )
         follow_up.raise_for_status()
-        assert "Luke" in post.json()['data']['response']
+        assert "Luke" in post.json()["data"]["response"]
 
 
 def test_generic_agent_supports_image(client_builder, generic_agent, dog):
     generic_agent = generic_agent.model_copy(deep=True)
-    generic_agent.spec.files = 'single'
+    generic_agent.spec.files = "single"
     with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",
             data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
-            files=dict(file=dog)
+            files=dict(file=dog),
         )
         post.raise_for_status()
-        assert 'brown' in post.json()['data']['response'].lower()
+        assert "brown" in post.json()["data"]["response"].lower()
 
 
 def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
     generic_agent = generic_agent.model_copy(deep=True)
-    generic_agent.spec.files = 'multiple'
+    generic_agent.spec.files = "multiple"
     with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",
             data=dict(body=json.dumps(dict(instruction="what do these images have in common?"))),
-            files=[('file', dog), ('file', cat)],
+            files=[("file", dog), ("file", cat)],
         )
         post.raise_for_status()
-        assert "animals" in post.json()['data']['response'].lower()
+        assert "animals" in post.json()["data"]["response"].lower()
 
-        process_id = post.json()['process_id']
-        follow_up = client.post(f"/agents/GenericAgent/processes/{process_id}/actions/respond",
-                                json=dict(statement="What is different between them?"))
+        process_id = post.json()["process_id"]
+        follow_up = client.post(
+            f"/agents/GenericAgent/processes/{process_id}/actions/respond",
+            json=dict(statement="What is different between them?"),
+        )
         follow_up.raise_for_status()
-        assert "cat" in follow_up.json()['data']['response'].lower()
+        assert "cat" in follow_up.json()["data"]["response"].lower()

@@ -10,7 +10,7 @@ from eidos.util.str_utils import replace_env_var_in_string
 class LocalFileMemoryConfig(BaseModel):
     root_dir: str = Field(..., description="The root directory to store files in.")
 
-    @field_validator('root_dir', mode='before')
+    @field_validator("root_dir", mode="before")
     def validate_root_dir(cls, inValue: str):
         """
         Validates that the provided root directory is an absolute path and exists.
@@ -76,7 +76,7 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         safe_file_path = self.resolve(file_path)
 
         # Read the file and return its contents
-        with open(safe_file_path, 'rb') as file:
+        with open(safe_file_path, "rb") as file:
             return file.read()
 
     def write_file(self, file_path: str, file_contents: bytes) -> None:
@@ -94,7 +94,7 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         safe_file_path = self.resolve(file_path)
 
         # Write the contents to the file
-        with open(safe_file_path, 'wb') as file:
+        with open(safe_file_path, "wb") as file:
             file.write(file_contents)
 
     def delete_file(self, file_path: str) -> None:

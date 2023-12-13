@@ -62,12 +62,17 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         file = await llm.files.create(file=image_data, purpose="assistants")
         return file.id
 
-    async def get_or_create_assistant(self, call_context: CallContext, system_message: str = "", file_ids=None) -> (Assistant, str):
+    async def get_or_create_assistant(
+        self, call_context: CallContext, system_message: str = "", file_ids=None
+    ) -> (Assistant, str):
         # fetch the existing conversation from symbolic memory
-        existingConversation = await AgentOS.symbolic_memory.find_one("open_ai_conversations", {
-            "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id
-        })
+        existingConversation = await AgentOS.symbolic_memory.find_one(
+            "open_ai_conversations",
+            {
+                "process_id": call_context.process_id,
+                "thread_id": call_context.thread_id,
+            },
+        )
 
         llm = self._getLLM()
         if existingConversation:
@@ -75,9 +80,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
             assistant = await llm.beta.assistants.retrieve(existingConversation["assistant_id"])
             return assistant, assistant_thread_id
 
-        request = {
-            "model": self.spec.model
-        }
+        request = {"model": self.spec.model}
         if len(system_message) > 0:
             request["instructions"] = system_message
 
@@ -88,12 +91,15 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         assistant = await llm.beta.assistants.create(**request)
         thread = await llm.beta.threads.create()
 
-        await AgentOS.symbolic_memory.insert_one("open_ai_conversations", {
-            "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id,
-            "assistant_id": assistant.id,
-            "assistant_thread_id": thread.id
-        })
+        await AgentOS.symbolic_memory.insert_one(
+            "open_ai_conversations",
+            {
+                "process_id": call_context.process_id,
+                "thread_id": call_context.thread_id,
+                "assistant_id": assistant.id,
+                "assistant_thread_id": thread.id,
+            },
+        )
 
         return assistant, thread.id
 
@@ -104,10 +110,10 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         return self.tool_defs
 
     async def set_boot_messages(
-            self,
-            call_context: CallContext,
-            boot_messages: List[CPUMessageTypes],
-            output_format: Union[Literal['str'], Dict[str, Any]]
+        self,
+        call_context: CallContext,
+        boot_messages: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ):
         # separate out the system messages from the user messages
         system_message: str = ""
@@ -124,7 +130,9 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                 raise ValueError(f"Unknown message type {message.type}")
 
         if not isinstance(output_format, str):
-            system_message += f"\nYour response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}."
+            system_message += (
+                f"\nYour response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}."
+            )
             system_message += "\nALWAYS reply with json in the following format:\njson```<insert json here>```\n"
 
         assistant, thread_id = await self.get_or_create_assistant(call_context, system_message, file_ids)
@@ -133,10 +141,10 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
             await llm.beta.threads.messages.create(thread_id=thread_id, content=user_message, role="user")
 
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal['str'], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> Any:
         # separate out the system messages from the user messages
         user_messages = []
@@ -156,11 +164,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
 
         last_message_id = None
         for idx, user_message in enumerate(user_messages):
-            request = {
-                "thread_id": thread_id,
-                "content": user_message,
-                "role": "user"
-            }
+            request = {"thread_id": thread_id, "content": user_message, "role": "user"}
             if idx == len(user_messages) - 1:
                 request["file_ids"] = file_ids
             last_message = await llm.beta.threads.messages.create(**request)
@@ -171,39 +175,49 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
 
     async def _get_tools_defs(self, call_context: CallContext):
         conversation = []
-        conversation_from_memory = AgentOS.symbolic_memory.find("open_ai_conversation_data", {
-            "process_id": call_context.process_id,
-            "thread_id": call_context.thread_id,
-        })
+        conversation_from_memory = AgentOS.symbolic_memory.find(
+            "open_ai_conversation_data",
+            {
+                "process_id": call_context.process_id,
+                "thread_id": call_context.thread_id,
+            },
+        )
         async for item in conversation_from_memory:
             conversation.append(LLMMessage.from_dict(item["tool_result"]))
 
         tool_defs = await self.get_tools(conversation)
         return tool_defs
 
-    async def run_llm_and_tools(self, call_context: CallContext, assistant_id: str, assistant_thread_id: str, last_message_id: str):
+    async def run_llm_and_tools(
+        self,
+        call_context: CallContext,
+        assistant_id: str,
+        assistant_thread_id: str,
+        last_message_id: str,
+    ):
         llm = self._getLLM()
         tool_defs = await self._get_tools_defs(call_context)
         tools = []
         print("tool defs are " + str(tool_defs))
         for tool_def in tool_defs.values():
-            tools.append(ToolAssistantToolsFunction(**{
-                "type": "function",
-                "function": {
-                    "name": tool_def.name,
-                    "description": tool_def.description,
-                    "parameters": tool_def.parameters
-                }
-            }))
+            tools.append(
+                ToolAssistantToolsFunction(
+                    **{
+                        "type": "function",
+                        "function": {
+                            "name": tool_def.name,
+                            "description": tool_def.description,
+                            "parameters": tool_def.parameters,
+                        },
+                    }
+                )
+            )
         if self.spec.enable_retrieval:
             tools.append({"type": "retrieval"})
 
         if self.spec.enable_code_interpreter:
             tools.append({"type": "code_interpreter"})
-        request = {
-            "assistant_id": assistant_id,
-            "thread_id": assistant_thread_id
-        }
+        request = {"assistant_id": assistant_id, "thread_id": assistant_thread_id}
         if len(tools) > 0:
             request["tools"] = tools
 
@@ -224,18 +238,27 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                     print("tool result is " + str(tool_result))
                     result_as_json_str = self._to_json(tool_result)
                     message = ToolOutput(tool_call_id=tool_call_id, output=result_as_json_str)
-                    message_to_store = ToolResponseMessage(tool_call_id=tool_call_id, result=result_as_json_str, name=function_call.name)
-                    await AgentOS.symbolic_memory.insert_one("open_ai_conversation_data", {
-                        "process_id": call_context.process_id,
-                        "thread_id": call_context.thread_id,
-                        "assistant_id": assistant_id,
-                        "assistant_thread_id": assistant_thread_id,
-                        "tool_call_id": tool_call_id,
-                        "tool_result": message_to_store.model_dump()
-                    })
+                    message_to_store = ToolResponseMessage(
+                        tool_call_id=tool_call_id,
+                        result=result_as_json_str,
+                        name=function_call.name,
+                    )
+                    await AgentOS.symbolic_memory.insert_one(
+                        "open_ai_conversation_data",
+                        {
+                            "process_id": call_context.process_id,
+                            "thread_id": call_context.thread_id,
+                            "assistant_id": assistant_id,
+                            "assistant_thread_id": assistant_thread_id,
+                            "tool_call_id": tool_call_id,
+                            "tool_result": message_to_store.model_dump(),
+                        },
+                    )
                     results.append(message)
 
-                run = await llm.beta.threads.runs.submit_tool_outputs(thread_id=assistant_thread_id, run_id=run.id, tool_outputs=results)
+                run = await llm.beta.threads.runs.submit_tool_outputs(
+                    thread_id=assistant_thread_id, run_id=run.id, tool_outputs=results
+                )
                 num_iterations += 1
             else:
                 messages = await llm.beta.threads.messages.list(thread_id=assistant_thread_id, before=last_message_id)
@@ -256,7 +279,13 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
 
     async def run_llm(self, run_id: str, thread_id: str):
         llm = self._getLLM()
-        finished_states = ["completed", "requires_action", "cancelled", "failed", "expired"]
+        finished_states = [
+            "completed",
+            "requires_action",
+            "cancelled",
+            "failed",
+            "expired",
+        ]
         start_time = time.time()
         run = await llm.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
         while (time.time() - start_time) < self.spec.max_wait_time_secs:
@@ -275,7 +304,9 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
             raise RuntimeError("LLM run was cancelled")
         else:
             is_rate_limit = run.last_error.code == "rate_limit"
-            raise RuntimeError("LLM run failed because " + run.last_error.message + (" (rate limit)" if is_rate_limit else ""))
+            raise RuntimeError(
+                "LLM run failed because " + run.last_error.message + (" (rate limit)" if is_rate_limit else "")
+            )
 
     async def main_thread(self, process_id: str) -> Thread:
         return Thread(CallContext(process_id=process_id), self)

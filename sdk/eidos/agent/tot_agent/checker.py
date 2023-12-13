@@ -42,14 +42,20 @@ class ToTChecker(Specable[TotCheckerConfig]):
         Evaluate the response to the problem description and return the solution type.
         """
 
-        checker_prompt = Environment(undefined=StrictUndefined).from_string(self.spec.prompt).render(
-            problem=problem_description, thoughts=thoughts, examples=self.spec.examples
+        checker_prompt = (
+            Environment(undefined=StrictUndefined)
+            .from_string(self.spec.prompt)
+            .render(
+                problem=problem_description,
+                thoughts=thoughts,
+                examples=self.spec.examples,
+            )
         )
 
         thread = await self.cpu.new_thread(process_id)
         resp = await thread.schedule_request(
             prompts=[UserTextCPUMessage(prompt=checker_prompt)],
-            output_format=ThoughtValidity.model_json_schema()
+            output_format=ThoughtValidity.model_json_schema(),
         )
 
         return ThoughtValidity.model_validate(resp)

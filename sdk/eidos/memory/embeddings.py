@@ -48,11 +48,11 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
 
 class OpenAIEmbeddingSpec(EmbeddingSpec):
     model: Literal[
-        'text-embedding-davinci-001',
-        'text-embedding-babbage-001',
-        'text-embedding-curie-001',
-        'text-embedding-ada-002',
-    ] = Field(default='text-embedding-ada-002', description="The name of the model to use.")
+        "text-embedding-davinci-001",
+        "text-embedding-babbage-001",
+        "text-embedding-curie-001",
+        "text-embedding-ada-002",
+    ] = Field(default="text-embedding-ada-002", description="The name of the model to use.")
 
 
 class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
@@ -67,7 +67,7 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
             self.llm = AsyncOpenAI()
         response = await self.llm.embeddings.create(
             input=text,
-            model=self.spec.model  # Choose the model as per your requirement
+            model=self.spec.model,  # Choose the model as per your requirement
         )
 
         embedding_vector = response.data[0].embedding

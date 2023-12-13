@@ -18,7 +18,7 @@ class ConversationalResponse(SyncStateResponse):
 
 
 class ConversationalSpec(BaseModel):
-    location: str = 'http://localhost:8080'
+    location: str = "http://localhost:8080"
     tool_prefix: str = "convo"
     agents: List[str]
 
@@ -43,8 +43,8 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         tools = {}
 
         for agent in self.spec.agents:
-            prefix = f'/agents/{agent}/programs/'
-            for path in filter(lambda p: p.startswith(prefix), self._openapi_json['paths'].keys()):
+            prefix = f"/agents/{agent}/programs/"
+            for path in filter(lambda p: p.startswith(prefix), self._openapi_json["paths"].keys()):
                 try:
                     action = path.removeprefix(prefix)
                     name = self._name(agent, action=action)
@@ -65,7 +65,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
         # newer process state should override older process state if there are multiple calls
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
-            path = f'/agents/{response.program}/processes/{{process_id}}/actions/{action}'
+            path = f"/agents/{response.program}/processes/{{process_id}}/actions/{action}"
             try:
                 name = self._name(response.program, action, response.process_id)
                 tools[name] = await self._build_tool_def(name, path, response.program, process_id=response.process_id)
@@ -76,19 +76,22 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
     async def _build_tool_def(self, name, path, agent_program, process_id=""):
         path = path.format(process_id="{process_id}")
-        body = self._openapi_json['paths'][path]['post'].get('requestBody')
-        if body and 'application/json' not in body['content']:
+        body = self._openapi_json["paths"][path]["post"].get("requestBody")
+        if body and "application/json" not in body["content"]:
             raise ValueError(f"Agent action at {path} does not support application/json")
-        json_schema = body['content']['application/json']['schema'] if body else dict(type='object', properties={})
-        description = self._openapi_json['paths'][path]['post'].get('description', '')
+        json_schema = body["content"]["application/json"]["schema"] if body else dict(type="object", properties={})
+        description = self._openapi_json["paths"][path]["post"].get("description", "")
         if not description:
             self.logger.warning(f"Agent action at {path} does not have a description. LLM may not use it properly")
         return ToolDefType(
             name=name,
             description=description,
             parameters=json_schema,
-            fn=self._make_agent_request(path=path.replace("{process_id}", process_id), agent_program=agent_program),
-            _logic_unit=self
+            fn=self._make_agent_request(
+                path=path.replace("{process_id}", process_id),
+                agent_program=agent_program,
+            ),
+            _logic_unit=self,
         )
 
     # needs to be under 64 characters
@@ -105,7 +108,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
             async with aiohttp.ClientSession() as session:
                 async with session.post(urljoin(self.spec.location, path), json=kwargs) as resp:
                     json_ = await resp.json()
-                    json_['program'] = agent_program
+                    json_["program"] = agent_program
                     return ConversationalResponse.model_validate(json_).model_dump()
 
         return fn

@@ -32,7 +32,10 @@ class TextSplitterSpec(BaseModel):
     chunk_size: int = Field(default=4000, description="Maximum size of chunks to return")
     chunk_overlap: int = Field(default=200, description="Overlap in characters between chunks")
     keep_separator: bool = Field(default=False, description="Whether to keep the separator in the chunks")
-    strip_whitespace: bool = Field(default=True, description="If `True`, strips whitespace from the start and end of every document")
+    strip_whitespace: bool = Field(
+        default=True,
+        description="If `True`, strips whitespace from the start and end of every document",
+    )
 
     # noinspection PyMethodParameters
     @field_validator("chunk_overlap")
@@ -58,9 +61,7 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
     def split_text(self, text: str) -> List[str]:
         """Split text into multiple components."""
 
-    def transform_documents(
-        self, documents: Sequence[Document], **kwargs: Any
-    ) -> Sequence[Document]:
+    def transform_documents(self, documents: Sequence[Document], **kwargs: Any) -> Sequence[Document]:
         """Transform sequence of documents by splitting them."""
         for doc in documents:
             index = -1
@@ -80,7 +81,12 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
         else:
             return text
 
-    def _merge_splits(self, splits: Iterable[str], separator: str, length_function: Callable[[str], int]) -> List[str]:
+    def _merge_splits(
+        self,
+        splits: Iterable[str],
+        separator: str,
+        length_function: Callable[[str], int],
+    ) -> List[str]:
         # We now want to combine these smaller pieces into medium size
         # chunks to send to the LLM.
         separator_len = length_function(separator)
@@ -90,14 +96,10 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
         total = 0
         for d in splits:
             _len = length_function(d)
-            if (
-                total + _len + (separator_len if len(current_doc) > 0 else 0)
-                > self._chunk_size
-            ):
+            if total + _len + (separator_len if len(current_doc) > 0 else 0) > self._chunk_size:
                 if total > self._chunk_size:
                     logger.warning(
-                        f"Created a chunk of size {total}, "
-                        f"which is longer than the specified {self._chunk_size}"
+                        f"Created a chunk of size {total}, " f"which is longer than the specified {self._chunk_size}"
                     )
                 if len(current_doc) > 0:
                     doc = self._join_docs(current_doc, separator)
@@ -107,13 +109,9 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
                     # - we have a larger chunk than in the chunk overlap
                     # - or if we still have any chunks and the length is long
                     while total > self._chunk_overlap or (
-                        total + _len + (separator_len if len(current_doc) > 0 else 0)
-                        > self._chunk_size
-                        and total > 0
+                        total + _len + (separator_len if len(current_doc) > 0 else 0) > self._chunk_size and total > 0
                     ):
-                        total -= length_function(current_doc[0]) + (
-                            separator_len if len(current_doc) > 1 else 0
-                        )
+                        total -= length_function(current_doc[0]) + (separator_len if len(current_doc) > 1 else 0)
                         current_doc = current_doc[1:]
             current_doc.append(d)
             total += _len + (separator_len if len(current_doc) > 1 else 0)

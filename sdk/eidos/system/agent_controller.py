@@ -30,15 +30,16 @@ class AgentController:
         self.agent = agent
         self.handlers = {
             handler.name: handler
-            for method_name in dir(self.agent) if hasattr(getattr(self.agent, method_name), 'eidolon_handlers')
-            for handler in getattr(getattr(self.agent, method_name), 'eidolon_handlers')
+            for method_name in dir(self.agent)
+            if hasattr(getattr(self.agent, method_name), "eidolon_handlers")
+            for handler in getattr(getattr(self.agent, method_name), "eidolon_handlers")
         }
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent {self.name}")
         for handler in sorted(
-                self.handlers.values().__reversed__(),
-                key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0)
+            self.handlers.values().__reversed__(),
+            key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0),
         ):
             path = f"/agents/{self.name}"
             handler_name = handler.name
@@ -52,10 +53,17 @@ class AgentController:
             params = dict(sig.parameters)
             description = handler.description(self.agent, handler)
 
-            app.add_api_route(path, endpoint=endpoint, methods=["POST"], tags=[self.name], responses={
-                202: {"model": AsyncStateResponse},
-                200: {'model': self.create_response_model(handler)},
-            }, description=description)
+            app.add_api_route(
+                path,
+                endpoint=endpoint,
+                methods=["POST"],
+                tags=[self.name],
+                responses={
+                    202: {"model": AsyncStateResponse},
+                    200: {"model": self.create_response_model(handler)},
+                },
+                description=description,
+            )
 
         app.add_api_route(
             f"/agents/{self.name}/processes/{{process_id}}/status",
@@ -75,49 +83,61 @@ class AgentController:
 
     def process_action(self, handler: EidolonHandler):
         async def run_program(
-                request: Request,
-                background_tasks: BackgroundTasks,
-                process_id: typing.Optional[str] = None,
-                **kwargs
+            request: Request,
+            background_tasks: BackgroundTasks,
+            process_id: typing.Optional[str] = None,
+            **kwargs,
         ):
-            callback = request.headers.get('callback-url')
-            execution_mode = request.headers.get('execution-mode', 'async' if callback else 'sync').lower()
+            callback = request.headers.get("callback-url")
+            execution_mode = request.headers.get("execution-mode", "async" if callback else "sync").lower()
 
             if not process_id:
                 process_id = str(ObjectId())
-                state = 'UNINITIALIZED'
+                state = "UNINITIALIZED"
             else:
                 found = await self.get_latest_process_event(process_id)
                 if not found:
                     raise HTTPException(status_code=404, detail="Process not found")
-                state = found['state']
+                state = found["state"]
 
             if state not in handler.allowed_states:
-                raise HTTPException(status_code=409, detail=f"Action \"{handler.name}\" cannot process state \"{state}\"")
+                raise HTTPException(
+                    status_code=409,
+                    detail=f'Action "{handler.name}" cannot process state "{state}"',
+                )
 
-            state = dict(process_id=process_id, state="processing", data=dict(action=handler.name),
-                         date=str(datetime.now().isoformat()))
-            await AgentOS.symbolic_memory.insert_one('processes', state)
+            state = dict(
+                process_id=process_id,
+                state="processing",
+                data=dict(action=handler.name),
+                date=str(datetime.now().isoformat()),
+            )
+            await AgentOS.symbolic_memory.insert_one("processes", state)
 
             async def run_and_store_response():
                 try:
                     sig = inspect.signature(handler.fn)
                     if "process_id" in dict(sig.parameters):
-                        kwargs['process_id'] = process_id
+                        kwargs["process_id"] = process_id
                     response = await handler.fn(self.agent, **kwargs)
                     if isinstance(response, AgentState):
                         state = response.name
                         data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data
                     else:
-                        state = 'terminated'
+                        state = "terminated"
                         data = response.model_dump() if isinstance(response, BaseModel) else response
-                    doc = dict(process_id=process_id, state=state, data=data, date=str(datetime.now().isoformat()))
+                    doc = dict(
+                        process_id=process_id,
+                        state=state,
+                        data=data,
+                        date=str(datetime.now().isoformat()),
+                    )
                 except HTTPException as e:
                     doc = dict(
                         process_id=process_id,
                         state="http_error",
                         data=dict(detail=e.detail, status_code=e.status_code),
-                        date=str(datetime.now().isoformat())
+                        date=str(datetime.now().isoformat()),
                     )
                     if e.status_code >= 500:
                         logging.exception(f"Unhandled error raised by handler")
@@ -128,15 +148,15 @@ class AgentController:
                         process_id=process_id,
                         state="unhandled_error",
                         data=dict(error=str(e)),
-                        date=str(datetime.now().isoformat())
+                        date=str(datetime.now().isoformat()),
                     )
                     logging.exception(f"Unhandled error raised by handler")
-                await AgentOS.symbolic_memory.insert_one('processes', doc)
+                await AgentOS.symbolic_memory.insert_one("processes", doc)
                 if callback:
                     raise Exception("Not implemented")
                 return doc
 
-            if execution_mode == 'sync':
+            if execution_mode == "sync":
                 state = await run_and_store_response()
                 return self.doc_to_response(state)
             else:
@@ -150,17 +170,17 @@ class AgentController:
         for field in model.model_fields:
             kwargs = dict(annotation=model.model_fields[field].annotation)
             if isinstance(model.model_fields[field], Body) or isinstance(model.model_fields[field], Param):
-                kwargs['annotation'] = typing.Annotated[model.model_fields[field].annotation, model.model_fields[field]]
+                kwargs["annotation"] = typing.Annotated[model.model_fields[field].annotation, model.model_fields[field]]
             if model.model_fields[field].default is not PydanticUndefined:
-                kwargs['default'] = model.model_fields[field].default
+                kwargs["default"] = model.model_fields[field].default
 
             params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
         if handler.is_initializer():
-            del params['process_id']
+            del params["process_id"]
         else:
-            replace: Parameter = params['process_id'].replace(annotation=str)
-            params['process_id'] = replace
-        del params['kwargs']
+            replace: Parameter = params["process_id"].replace(annotation=str)
+            params["process_id"] = replace
+        del params["kwargs"]
         run_program.__signature__ = sig.replace(parameters=params.values())
         return run_program
 
@@ -171,30 +191,38 @@ class AgentController:
     def doc_to_response(self, latest_record: dict):
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
-        elif latest_record['state'] == 'unhandled_error':
-            return JSONResponse(latest_record['data'], 500)
-        elif latest_record['state'] == 'http_error':
-            return JSONResponse(dict(detail=latest_record['data']['detail']), latest_record['data']['status_code'])
+        elif latest_record["state"] == "unhandled_error":
+            return JSONResponse(latest_record["data"], 500)
+        elif latest_record["state"] == "http_error":
+            return JSONResponse(
+                dict(detail=latest_record["data"]["detail"]),
+                latest_record["data"]["status_code"],
+            )
         else:
             try:
-                del latest_record['_id']
+                del latest_record["_id"]
             except KeyError:
                 pass
-            return JSONResponse(SyncStateResponse(
-                process_id=latest_record['process_id'],
-                state=latest_record['state'],
-                data=latest_record['data'],
-                available_actions=[
-                    action for action, handler in self.handlers.items() if latest_record['state'] in handler.allowed_states
-                ],
-            ).model_dump(), 200)
+            return JSONResponse(
+                SyncStateResponse(
+                    process_id=latest_record["process_id"],
+                    state=latest_record["state"],
+                    data=latest_record["data"],
+                    available_actions=[
+                        action
+                        for action, handler in self.handlers.items()
+                        if latest_record["state"] in handler.allowed_states
+                    ],
+                ).model_dump(),
+                200,
+            )
 
     async def get_latest_process_event(self, process_id):
         # todo, memory needs to include sorting
         latest_record = None
-        records = AgentOS.symbolic_memory.find('processes', dict(process_id=process_id))
+        records = AgentOS.symbolic_memory.find("processes", dict(process_id=process_id))
         async for record in records:
-            if not latest_record or record['date'] > latest_record['date']:
+            if not latest_record or record["date"] > latest_record["date"]:
                 latest_record = record
         return latest_record
 
@@ -203,6 +231,9 @@ class AgentController:
         fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
         return_type = handler.output_model_fn(self.agent, handler)
         if inspect.isclass(return_type) and issubclass(return_type, AgentState):
-            return_type = return_type.model_fields['data'].annotation
-        fields['data'] = (return_type, Field(..., description=fields['data'][1].description))
-        return create_model(f'{handler.name.capitalize()}ResponseModel', **fields)
+            return_type = return_type.model_fields["data"].annotation
+        fields["data"] = (
+            return_type,
+            Field(..., description=fields["data"][1].description),
+        )
+        return create_model(f"{handler.name.capitalize()}ResponseModel", **fields)

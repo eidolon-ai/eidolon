@@ -8,7 +8,12 @@ from pydantic import ValidationError
 from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm.open_ai_llm_unit import OpenAIGPT
-from eidos.cpu.llm_message import LLMMessage, AssistantMessage, UserMessage, UserMessageImageURL
+from eidos.cpu.llm_message import (
+    LLMMessage,
+    AssistantMessage,
+    UserMessage,
+    UserMessageImageURL,
+)
 from eidos.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
 from eidos.memory.agent_memory import FileMemory
 from eidos.memory.local_file_memory import LocalFileMemory
@@ -16,6 +21,7 @@ from eidos.system.reference_model import Specable, AnnotatedReference, Reference
 
 
 # Assuming CallContext, LLMMessage, LLMCallFunction, AssistantMessage are defined elsewhere
+
 
 class CacheLLMSpec(LLMUnitConfig):
     dir: str = Field(default="llm_cache", description="The directory to store the cache in.")
@@ -37,8 +43,13 @@ class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
         self.memory.mkdir(self.dir, exist_ok=True)
         self.llm = spec.llm.instantiate(processing_unit_locator=self.processing_unit_locator)
 
-    async def execute_llm(self, call_context: CallContext, inMessages: List[LLMMessage], inTools: List[LLMCallFunction],
-                          output_format: Union[Literal['str'], Dict[str, Any]]) -> AssistantMessage:
+    async def execute_llm(
+        self,
+        call_context: CallContext,
+        inMessages: List[LLMMessage],
+        inTools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AssistantMessage:
         try:
             combined = [json.dumps(output_format)]
 

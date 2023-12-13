@@ -23,21 +23,19 @@ class VectorStore(ABC):
         pass
 
     @abstractmethod
-    async def add(self, collection: str,
-                  docs: List[EmbeddedDocument],
-                  **add_kwargs: Any):
+    async def add(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
         pass
 
     @abstractmethod
-    async def delete(self,
-                     collection: str,
-                     doc_ids: List[str], **delete_kwargs: Any):
+    async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
         pass
 
     @abstractmethod
-    async def query(self,
-                    collection: str,
-                    query: List[float],
-                    num_results: int,
-                    metadata_where: Dict[str, str]) -> List[QueryItem]:
+    async def query(
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Dict[str, str],
+    ) -> List[QueryItem]:
         pass

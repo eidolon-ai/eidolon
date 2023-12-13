@@ -27,7 +27,6 @@ class LanguageParserSpec(BaseParserSpec):
 
 
 class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
-
     def __init__(self, spec: LanguageParserSpec):
         super().__init__(spec)
         self.language = spec.language
@@ -37,9 +36,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
         code = blob.as_string()
 
         language = self.language or (
-            LANGUAGE_EXTENSIONS.get(blob.path.rsplit(".", 1)[-1])
-            if isinstance(blob.path, str)
-            else None
+            LANGUAGE_EXTENSIONS.get(blob.path.rsplit(".", 1)[-1]) if isinstance(blob.path, str) else None
         )
 
         if language is None:

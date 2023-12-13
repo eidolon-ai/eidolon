@@ -38,8 +38,8 @@ def llm_function(fn):
     sig = inspect.signature(fn).parameters
     hints = typing.get_type_hints(fn, include_extras=True)
     fields = {}
-    for param, hint in filter(lambda tu: tu[0] != 'return', hints.items()):
-        if hasattr(hint, '__metadata__') and isinstance(hint.__metadata__[0], FieldInfo):
+    for param, hint in filter(lambda tu: tu[0] != "return", hints.items()):
+        if hasattr(hint, "__metadata__") and isinstance(hint.__metadata__[0], FieldInfo):
             field: FieldInfo = hint.__metadata__[0]
             if sig[param].default is not inspect.Parameter.empty:
                 field.default = sig[param].default
@@ -48,19 +48,23 @@ def llm_function(fn):
             fields[param] = (hint.__origin__, field)
         else:
             # _empty default isn't being handled by create_model properly (still optional when it should be required)
-            default = ... if getattr(sig[param].default, "__name__", None) == '_empty' else sig[param].default
+            default = ... if getattr(sig[param].default, "__name__", None) == "_empty" else sig[param].default
             fields[param] = (hint, default)
 
     function_name, clazz = get_function_details(fn)
-    logger.debug("creating model " + f'{clazz}_{function_name}InputModel' + " with fields " + str(fields))
-    input_model = create_model(f'{clazz}_{function_name}InputModel', **fields)
+    logger.debug("creating model " + f"{clazz}_{function_name}InputModel" + " with fields " + str(fields))
+    input_model = create_model(f"{clazz}_{function_name}InputModel", **fields)
 
-    setattr(fn, 'llm_function', dict(
-        name=function_name,
-        description=fn.__doc__,
-        input_model=input_model,
-        fn=fn,
-    ))
+    setattr(
+        fn,
+        "llm_function",
+        dict(
+            name=function_name,
+            description=fn.__doc__,
+            input_model=input_model,
+            fn=fn,
+        ),
+    )
     return fn
 
 
@@ -74,21 +78,22 @@ class LogicUnit(ProcessingUnit, ABC):
 
     def _find_base_tools(self):
         for name, llm_function_ in (
-                (method_name, getattr(method, 'llm_function'))
-                for method_name in dir(self) for method in [getattr(self, method_name)]
-                if hasattr(method, 'llm_function')
+            (method_name, getattr(method, "llm_function"))
+            for method_name in dir(self)
+            for method in [getattr(self, method_name)]
+            if hasattr(method, "llm_function")
         ):
             unique_name = name + "_" + str(ObjectId())
-            fn = llm_function_['fn']
+            fn = llm_function_["fn"]
             logger.debug("registering tool " + unique_name + " with fn " + str(fn))
-            schema = llm_function_['input_model'].model_json_schema()
-            description_ = llm_function_['description']
+            schema = llm_function_["input_model"].model_json_schema()
+            description_ = llm_function_["description"]
             self._base_tools[unique_name] = ToolDefType(
                 name=unique_name,
                 description=description_,
                 parameters=schema,
                 fn=fn,
-                _logic_unit=self
+                _logic_unit=self,
             )
 
     async def build_tools(self, conversation: List[LLMMessage]) -> Dict[str, ToolDefType]:
@@ -99,7 +104,14 @@ class LogicUnit(ProcessingUnit, ABC):
         return True
 
     # todo, response type here should not be limited to dict
-    async def execute(self, call_context: CallContext, name, parameter_schema, fn: Callable, args: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(
+        self,
+        call_context: CallContext,
+        name,
+        parameter_schema,
+        fn: Callable,
+        args: Dict[str, Any],
+    ) -> Dict[str, Any]:
         try:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
             if self.is_sync():

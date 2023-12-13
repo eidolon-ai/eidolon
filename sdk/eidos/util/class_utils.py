@@ -41,24 +41,25 @@ def for_name(implementation_fqn: str, sub_class: Type) -> Type:
             print(sub_class)
             print(issubclass(implementation_class, sub_class))
             raise ValueError(
-                f"Implementation class '{implementation_fqn}' not found or is not a subclass of '{sub_class}'.")
+                f"Implementation class '{implementation_fqn}' not found or is not a subclass of '{sub_class}'."
+            )
     raise ValueError("Implementation not provided.")
 
 
 def fqn(clazz=Type) -> str:
-    return clazz.__module__ + '.' + clazz.__name__
+    return clazz.__module__ + "." + clazz.__name__
 
 
 def get_function_details(func):
     function_name = func.__name__
     owning_class = None
 
-    if hasattr(func, '__self__'):
+    if hasattr(func, "__self__"):
         # This is a bound method; it will have a '__self__' attribute.
         owning_class = func.__self__.__class__.__name__
-    elif hasattr(func, '__qualname__'):
+    elif hasattr(func, "__qualname__"):
         # This is an unbound method or a function; try to parse the class name out of the __qualname__
-        qualname_parts = func.__qualname__.split('.')
+        qualname_parts = func.__qualname__.split(".")
         if len(qualname_parts) > 1:
             owning_class = qualname_parts[-2]
 

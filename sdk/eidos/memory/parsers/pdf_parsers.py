@@ -27,7 +27,7 @@ _PDF_FILTER_WITHOUT_LOSS = [
 
 
 def extract_from_images_with_rapidocr(
-        images: Sequence[Union[Iterable[np.ndarray], bytes]]
+    images: Sequence[Union[Iterable[np.ndarray], bytes]],
 ) -> str:
     """Extract text from images with RapidOCR.
 
@@ -44,8 +44,7 @@ def extract_from_images_with_rapidocr(
         from rapidocr_onnxruntime import RapidOCR
     except ImportError:
         raise ImportError(
-            "`rapidocr-onnxruntime` package not found, please install it with "
-            "`pip install rapidocr-onnxruntime`"
+            "`rapidocr-onnxruntime` package not found, please install it with " "`pip install rapidocr-onnxruntime`"
         )
     ocr = RapidOCR()
     text = ""
@@ -69,7 +68,6 @@ class PyPDFParser(BaseParser, Specable[PyPDFParserSpec]):
         self.extract_images = spec.extract_images
 
     def parse(self, blob: DataBlob) -> Iterable[Document]:
-
         with blob.as_bytes() as pdf_file_obj:
             pdf_reader = pypdf.PdfReader(pdf_file_obj, password=self.password)
             yield from [
@@ -94,11 +92,7 @@ class PyPDFParser(BaseParser, Specable[PyPDFParserSpec]):
                 if xObject[obj]["/Filter"][1:] in _PDF_FILTER_WITHOUT_LOSS:
                     height, width = xObject[obj]["/Height"], xObject[obj]["/Width"]
 
-                    images.append(
-                        np.frombuffer(xObject[obj].get_data(), dtype=np.uint8).reshape(
-                            height, width, -1
-                        )
-                    )
+                    images.append(np.frombuffer(xObject[obj].get_data(), dtype=np.uint8).reshape(height, width, -1))
                 elif xObject[obj]["/Filter"][1:] in _PDF_FILTER_WITH_LOSS:
                     images.append(xObject[obj].get_data())
                 else:

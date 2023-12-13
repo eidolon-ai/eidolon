@@ -12,7 +12,10 @@ from eidos.agent.tot_agent.checker import ToTChecker
 from eidos.agent.tot_agent.controller import ToTController
 from eidos.agent.tot_agent.memory import ToTDFSMemory
 from eidos.agent.tot_agent.thought import Thought
-from eidos.agent.tot_agent.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
+from eidos.agent.tot_agent.thought_generators import (
+    BaseThoughtGenerationStrategy,
+    ProposePromptStrategy,
+)
 from eidos.cpu.agent_io import UserTextCPUMessage
 from eidos.cpu.llm_message import LLMMessage
 from eidos.system.reference_model import Specable, AnnotatedReference
@@ -22,11 +25,18 @@ from eidos.util.schema_to_model import schema_to_model
 
 class ToTAgentConfig(AgentSpec):
     description: str
-    num_iterations: int = Field(10, description="The maximum number of iterations to run the tree of thoughts algorithm.")
+    num_iterations: int = Field(
+        10,
+        description="The maximum number of iterations to run the tree of thoughts algorithm.",
+    )
     user_prompt: str = Field(description="The prompt to use when asking the user for a question.")
     input_schema: Dict[str, Any] = Field(description="The json schema for the question input model.")
-    output_schema: Union[Literal['str'], Dict[str, Any]] = Field(description="The json schema for the output model or the literal 'str' for text output.")
-    thought_generator: AnnotatedReference[BaseThoughtGenerationStrategy, ProposePromptStrategy] = Field(description="The thought generation strategy to use.")
+    output_schema: Union[Literal["str"], Dict[str, Any]] = Field(
+        description="The json schema for the output model or the literal 'str' for text output."
+    )
+    thought_generator: AnnotatedReference[BaseThoughtGenerationStrategy, ProposePromptStrategy] = Field(
+        description="The thought generation strategy to use."
+    )
     checker: AnnotatedReference[ToTChecker, ToTChecker] = Field(description="The checker to use to evaluate thoughts.")
     fallback: Literal["ERROR", "LLM"] = "ERROR"
     init_description: Optional[str] = Field(default=None, description="Overrides the description of the INIT endpoint.")
@@ -43,26 +53,22 @@ def make_input_schema(agent: object, handler: EidolonHandler) -> Type[BaseModel]
     spec = agent.spec
     properties: Dict[str, Any] = {}
     if spec.input_schema:
-        properties['body'] = dict(
+        properties["body"] = dict(
             type="object",
             properties=spec.input_schema,
         )
     required = ["body"]
-    schema = {
-        "type": "object",
-        "properties": properties,
-        "required": required
-    }
-    return schema_to_model(schema, f'{handler.name.capitalize()}InputModel')
+    schema = {"type": "object", "properties": properties, "required": required}
+    return schema_to_model(schema, f"{handler.name.capitalize()}InputModel")
 
 
 def make_output_schema(agent: object, handler: EidolonHandler) -> Type[Any]:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
-    if spec.output_schema == 'str':
+    if spec.output_schema == "str":
         return str
     elif spec.output_schema:
-        return schema_to_model(spec.output_schema, f'{handler.name.capitalize()}OutputModel')
+        return schema_to_model(spec.output_schema, f"{handler.name.capitalize()}OutputModel")
     else:
         raise ValueError("output_schema must be specified")
 
@@ -97,7 +103,11 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         text = indent(f"Thought ({thought.validity}): {thought.text}", prefix="    " * level)
         logger.info(text)
 
-    @register_program(input_model=make_input_schema, output_model=make_output_schema, description=make_description)
+    @register_program(
+        input_model=make_input_schema,
+        output_model=make_output_schema,
+        description=make_description,
+    )
     async def question(self, process_id, body) -> TotResponse:
         """
         Answers a question using the tree of thoughts algorithm. This is computationally expensive, but will provide
@@ -111,7 +121,11 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         level = 0
         question = Environment(undefined=StrictUndefined).from_string(self.spec.user_prompt).render(**body.model_dump())
 
-        async def exec_request(_boot_messages: List[LLMMessage], _messages: List[LLMMessage], _output_format: Dict[str, Any]) -> Dict[str, Any]:
+        async def exec_request(
+            _boot_messages: List[LLMMessage],
+            _messages: List[LLMMessage],
+            _output_format: Dict[str, Any],
+        ) -> Dict[str, Any]:
             t2 = await self.cpu.new_thread(process_id)
             await t2.set_boot_messages(_output_format, *_boot_messages)
             return await t2.schedule_request(_messages, _output_format)
@@ -121,7 +135,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             thought_validity = await self.checker.evaluate(
                 process_id,
                 problem_description=question,
-                thoughts=thoughts_path + [thought_text]
+                thoughts=thoughts_path + [thought_text],
             )
             thought = Thought(text=thought_text, validity=thought_validity.validity)
             self.tot_memory.store(thought)
@@ -129,21 +143,31 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             if thought.validity == "VALID":
                 mainThread = await self.cpu.main_thread(process_id)
                 # go back to llm now with the tree of thoughts and the requested output format
-                conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text])))]
+                conversation = [
+                    UserTextCPUMessage(prompt=question),
+                    UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text]))),
+                ]
                 resp = await mainThread.schedule_request(conversation, self.spec.output_schema)
                 return TotResponse(answer=resp, thoughts=thoughts_path)
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
         synopsis = self.tot_controller.exploration_synopsis(self.tot_memory)
         if self.spec.fallback == "ERROR":
-            raise HTTPException(status_code=400, detail=dict(
-                error=f"Could not find a valid thought within {self.spec.num_iterations} iterations.",
-                remaining_thoughts=synopsis
-            ))
+            raise HTTPException(
+                status_code=400,
+                detail=dict(
+                    error=f"Could not find a valid thought within {self.spec.num_iterations} iterations.",
+                    remaining_thoughts=synopsis,
+                ),
+            )
         elif self.spec.fallback == "LLM":
-            conversation = [UserTextCPUMessage(prompt=question), UserTextCPUMessage(
-                prompt="You have had some helpful thoughts on the question. Please use them to provide an answer\n\n" + str(synopsis)
-            )]
+            conversation = [
+                UserTextCPUMessage(prompt=question),
+                UserTextCPUMessage(
+                    prompt="You have had some helpful thoughts on the question. Please use them to provide an answer\n\n"
+                    + str(synopsis)
+                ),
+            ]
             thread = await self.cpu.new_thread(process_id)
             resp = await thread.schedule_request(conversation, self.spec.output_schema)
             return TotResponse(answer=resp, thoughts=thoughts_path)

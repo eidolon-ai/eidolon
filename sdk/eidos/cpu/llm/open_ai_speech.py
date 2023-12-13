@@ -7,10 +7,19 @@ from eidos.system.reference_model import Specable
 
 
 class OpenAiSpeechSpec(BaseModel):
-    text_to_speech_model: Literal["tts-1", "tts-1-hd"] = Field(default="tts-1-hd", description="The model to use for text to speech.")
-    text_to_speech_voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = Field(default="alloy", description="The voice to use for text to speech.")
-    speech_to_text_model: Literal["whisper-1"] = Field(default="whisper-1", description="The model to use for speech to text.")
-    speech_to_text_temperature: float = Field(default=0.3, description="The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use log probability to automatically increase the temperature until certain thresholds are hit.")
+    text_to_speech_model: Literal["tts-1", "tts-1-hd"] = Field(
+        default="tts-1-hd", description="The model to use for text to speech."
+    )
+    text_to_speech_voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = Field(
+        default="alloy", description="The voice to use for text to speech."
+    )
+    speech_to_text_model: Literal["whisper-1"] = Field(
+        default="whisper-1", description="The model to use for speech to text."
+    )
+    speech_to_text_temperature: float = Field(
+        default=0.3,
+        description="The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use log probability to automatically increase the temperature until certain thresholds are hit.",
+    )
 
 
 class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
@@ -37,7 +46,7 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
         response = await self.llm.audio.speech.create(
             model=self.spec.text_to_speech_model,
             voice=self.spec.text_to_speech_voice,
-            input=text
+            input=text,
         )
 
         return response.content
@@ -59,7 +68,7 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
         request = {
             "file": audio,
             "model": self.spec.speech_to_text_model,
-            "temperature": self.spec.speech_to_text_temperature
+            "temperature": self.spec.speech_to_text_temperature,
         }
 
         if language:

@@ -6,9 +6,7 @@ from eidos.memory.parsers.code_ast_parsers.base_ast_generator import CodeASTGene
 
 class CobolASTGenerator(CodeASTGenerator):
     PARAGRAPH_PATTERN = re.compile(r"^[A-Z0-9\-]+(\s+.*)?\.$", re.IGNORECASE)
-    DIVISION_PATTERN = re.compile(
-        r"^\s*(IDENTIFICATION|DATA|PROCEDURE|ENVIRONMENT)\s+DIVISION.*$", re.IGNORECASE
-    )
+    DIVISION_PATTERN = re.compile(r"^\s*(IDENTIFICATION|DATA|PROCEDURE|ENVIRONMENT)\s+DIVISION.*$", re.IGNORECASE)
     SECTION_PATTERN = re.compile(r"^\s*[A-Z0-9\-]+\s+SECTION.$", re.IGNORECASE)
 
     def __init__(self, code: str):
@@ -41,8 +39,7 @@ class CobolASTGenerator(CodeASTGenerator):
                 inside_relevant_section = True
 
             if inside_relevant_section and (
-                self.PARAGRAPH_PATTERN.match(line.strip().split(" ")[0])
-                or self.SECTION_PATTERN.match(line.strip())
+                self.PARAGRAPH_PATTERN.match(line.strip().split(" ")[0]) or self.SECTION_PATTERN.match(line.strip())
             ):
                 if start_idx is not None:
                     func(elements, start_idx, i)
@@ -63,9 +60,7 @@ class CobolASTGenerator(CodeASTGenerator):
     def simplify_code(self) -> str:
         simplified_lines: List[str] = []
         inside_relevant_section = False
-        omitted_code_added = (
-            False  # To track if "* OMITTED CODE *" has been added after the last header
-        )
+        omitted_code_added = False  # To track if "* OMITTED CODE *" has been added after the last header
 
         for line in self.source_lines:
             is_header = (

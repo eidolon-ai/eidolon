@@ -51,7 +51,7 @@ class DataBlob:
         *,
         encoding: str = "utf-8",
         mimetype: Optional[str] = None,
-        guess_type: bool = True
+        guess_type: bool = True,
     ) -> "DataBlob":
         """Load the blob from a path like object.
 
@@ -67,6 +67,7 @@ class DataBlob:
         """
         if guess_type and mimetype is None:
             import filetype
+
             mimetype = filetype.guess_mime(path)
 
         return cls(
@@ -84,7 +85,7 @@ class DataBlob:
         path: Optional[str],
         mimetype: Optional[str] = None,
         encoding: str = "utf-8",
-        guess_type: bool = True
+        guess_type: bool = True,
     ) -> "DataBlob":
         """Load the blob from a bytes object.
 
@@ -101,6 +102,7 @@ class DataBlob:
         """
         if guess_type and mimetype is None:
             import filetype
+
             mimetype = filetype.guess_mime(data)
 
         return cls(
@@ -144,7 +146,7 @@ class DataBlob:
         *,
         path: Optional[str],
         mimetype: Optional[str] = None,
-        encoding: str = "utf-8"
+        encoding: str = "utf-8",
     ) -> "DataBlob":
         """Load the blob from a string object.
 

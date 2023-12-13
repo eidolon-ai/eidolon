@@ -6,7 +6,11 @@ from fastapi import Body
 from pydantic import BaseModel
 
 from eidos.agent.agent import register_program, register_action
-from eidos.cpu.conversational_logic_unit import ConversationalLogicUnit, ConversationalSpec, ConversationalResponse
+from eidos.cpu.conversational_logic_unit import (
+    ConversationalLogicUnit,
+    ConversationalSpec,
+    ConversationalResponse,
+)
 from eidos.cpu.llm_message import ToolResponseMessage
 
 
@@ -48,13 +52,17 @@ def open_api_json(client_builder):
 def conversational_logic_unit(open_api_json):
     @contextmanager
     def fn(*agents):
-        unit = ConversationalLogicUnit(spec=ConversationalSpec(
-            location="http://localhost:8080",
-            tool_prefix="convo",
-            agents=[a.__name__ for a in agents]
-        ), processing_unit_locator=None)
+        unit = ConversationalLogicUnit(
+            spec=ConversationalSpec(
+                location="http://localhost:8080",
+                tool_prefix="convo",
+                agents=[a.__name__ for a in agents],
+            ),
+            processing_unit_locator=None,
+        )
         unit.set_openapi_json(open_api_json)
         yield unit
+
     return fn
 
 
@@ -68,17 +76,21 @@ async def test_can_build_tools(conversational_logic_unit):
 @pytest.mark.asyncio
 async def test_builds_tools_from_other_messages(conversational_logic_unit):
     with conversational_logic_unit(Foo) as clu:
-        tools = await clu.build_tools([ToolResponseMessage(
-            name="convo_Foo_program_init",
-            tool_call_id="1234",
-            result=ConversationalResponse(
-                program="Foo",
-                process_id="pid",
-                state='idle',
-                data="foo",
-                available_actions=["progress_active", "progress_idle"]
-            ).model_dump_json(),
-        )])
+        tools = await clu.build_tools(
+            [
+                ToolResponseMessage(
+                    name="convo_Foo_program_init",
+                    tool_call_id="1234",
+                    result=ConversationalResponse(
+                        program="Foo",
+                        process_id="pid",
+                        state="idle",
+                        data="foo",
+                        available_actions=["progress_active", "progress_idle"],
+                    ).model_dump_json(),
+                )
+            ]
+        )
         assert len(tools) == 3
 
 

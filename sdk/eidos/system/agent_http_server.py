@@ -22,10 +22,25 @@ dotenv.load_dotenv()
 def parse_args():
     # Set up the argument parser
     parser = argparse.ArgumentParser(description="Start a FastAPI server.")
-    parser.add_argument("-p", "--port", type=int, default=8080, help="Port to run the FastAPI server on. Defaults to 8080.")
-    parser.add_argument("-r", "--reload", help="Reload the server when the code changes. Defaults to False.", action="store_true")
-    parser.add_argument('--debug', action='store_true', help='Turn on debug logging')
-    parser.add_argument("yaml_path", type=str, help="Path to a directory containing YAML files describing the agent machine to start.")
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        default=8080,
+        help="Port to run the FastAPI server on. Defaults to 8080.",
+    )
+    parser.add_argument(
+        "-r",
+        "--reload",
+        help="Reload the server when the code changes. Defaults to False.",
+        action="store_true",
+    )
+    parser.add_argument("--debug", action="store_true", help="Turn on debug logging")
+    parser.add_argument(
+        "yaml_path",
+        type=str,
+        help="Path to a directory containing YAML files describing the agent machine to start.",
+    )
 
     # Parse command line arguments
     return parser.parse_args()
@@ -81,7 +96,13 @@ def main():
     _app.add_middleware(LoggingMiddleware)
 
     # Run the server
-    uvicorn.run(_app, host="0.0.0.0", port=args.port, log_level=log_level_str, reload=args.reload)
+    uvicorn.run(
+        _app,
+        host="0.0.0.0",
+        port=args.port,
+        log_level=log_level_str,
+        reload=args.reload,
+    )
 
 
 if __name__ == "__main__":

@@ -78,7 +78,6 @@ class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
         self.files[safe_file_path] = file_contents
 
     def delete_file(self, file_path: str) -> None:
-
         # Resolve the safe path
         safe_file_path = self.resolve(file_path)
 

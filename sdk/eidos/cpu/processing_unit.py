@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import TypeVar, Type, Optional
 
-PU_T = TypeVar('PU_T', bound='ProcessingUnit')
+PU_T = TypeVar("PU_T", bound="ProcessingUnit")
 
 
 class ProcessingUnitLocator:

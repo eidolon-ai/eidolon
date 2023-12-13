@@ -53,7 +53,12 @@ class LocalSymbolicMemory(SymbolicMemory):
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return len([doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)])
 
-    async def find(self, symbol_collection: str, query: dict[str, Any], projection: Optional[List[str]] = None) -> AsyncIterable[dict[str, Any]]:
+    async def find(
+        self,
+        symbol_collection: str,
+        query: dict[str, Any],
+        projection: Optional[List[str]] = None,
+    ) -> AsyncIterable[dict[str, Any]]:
         for doc in [doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)]:
             if projection is not None:
                 # handle projection, both list and dict.

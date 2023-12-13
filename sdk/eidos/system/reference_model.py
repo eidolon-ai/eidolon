@@ -8,7 +8,7 @@ from pydantic import BaseModel, model_validator, Field
 from eidos.agent_os import AgentOS
 from eidos.util.class_utils import for_name, fqn
 
-T = TypeVar('T', bound=BaseModel)
+T = TypeVar("T", bound=BaseModel)
 
 
 class Specable(Generic[T]):
@@ -16,14 +16,15 @@ class Specable(Generic[T]):
     A generic type which can be used to describe a specable type. Specable types are expected to accept "spec" in kwarg.
     If Specable is not used, There will be no spec validation and the spec will be passed through as-is.
     """
+
     spec: T
 
     def __init__(self, spec: T, **kwargs: object):
         self.spec = spec
 
 
-B = TypeVar('B')
-D = TypeVar('D')
+B = TypeVar("B")
+D = TypeVar("D")
 
 
 class Reference(BaseModel):
@@ -48,6 +49,7 @@ class Reference(BaseModel):
     Methods:
         instantiate: This method is used to create an instance of the class that the reference points to.
     """
+
     _bound: Type[B] = object
     _default: Type[D] = None
     implementation: str = None
@@ -60,26 +62,27 @@ class Reference(BaseModel):
         class _Reference(Reference):
             _bound = params[0]
             _default = params[1]
-            @model_validator(mode='before')
+
+            @model_validator(mode="before")
             def _dump_ref(cls, value):
                 return value.model_dump(exclude_defaults=True) if isinstance(value, Reference) else value
 
         return _Reference
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     def _transform(cls, value):
         if isinstance(value, str):
             split = list(value.split("."))
             bucket = split.pop(0)
             name = ".".join(split) if split else "DEFAULT"
             found = AgentOS.get_resource(bucket, name)
-            return found.model_dump(exclude={'apiVersion', 'kind', 'metadata'})
+            return found.model_dump(exclude={"apiVersion", "kind", "metadata"})
         else:
-            if 'spec' in value and isinstance(value['spec'], BaseModel):
-                value['spec'] = value['spec'].model_dump(exclude_defaults=True)
+            if "spec" in value and isinstance(value["spec"], BaseModel):
+                value["spec"] = value["spec"].model_dump(exclude_defaults=True)
             return value
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def _validate(self):
         if not self.implementation and self._default:
             self.implementation = fqn(self._default)
@@ -92,10 +95,13 @@ class Reference(BaseModel):
     def _build_reference_spec(self):
         reference_class = self._get_reference_class()
         if issubclass(reference_class, Specable):
-            bases = getattr(reference_class, '__orig_bases__', [])
-            specable = next((base for base in bases if getattr(base, '__origin__', None) is Specable), None)
+            bases = getattr(reference_class, "__orig_bases__", [])
+            specable = next(
+                (base for base in bases if getattr(base, "__origin__", None) is Specable),
+                None,
+            )
             if specable:
-                spec_type, = specable.__args__
+                (spec_type,) = specable.__args__
                 return spec_type.model_validate(self.spec or {})
             else:
                 logging.warning(f'Unable to find Specable definition on "{reference_class}", skipping validation')
@@ -109,7 +115,7 @@ class Reference(BaseModel):
     def instantiate(self, *args, **kwargs):
         spec = self._build_reference_spec()
         if spec is not None:
-            kwargs['spec'] = spec
+            kwargs["spec"] = spec
         return self._get_reference_class()(*args, **kwargs)
 
 
@@ -132,5 +138,6 @@ class AnnotatedReference(Reference):
     Note:
         The description can still be added via a Field annotation without affecting default behavior
     """
+
     def __class_getitem__(cls, params) -> Type[Reference]:
         return Annotated[Reference[params], Field(default=Reference[params]())]

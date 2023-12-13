@@ -121,7 +121,12 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
-    def find(self, symbol_collection: str, query: dict[str, Any], projection: Union[List[str], Dict[str, int]] = None) -> AsyncIterable[dict[str, Any]]:
+    def find(
+        self,
+        symbol_collection: str,
+        query: dict[str, Any],
+        projection: Union[List[str], Dict[str, int]] = None,
+    ) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
 
@@ -205,8 +210,13 @@ class SymbolicMemory(ABC):
 
 
 class VectorMemorySpec(BaseModel):
-    root_document_directory: str = Field(default="vector_memory", description="The root directory where the vector memory will store documents.")
-    vector_store: AnnotatedReference[VectorStore] = Field(description="The vector store to use for storing and querying documents.")
+    root_document_directory: str = Field(
+        default="vector_memory",
+        description="The root directory where the vector memory will store documents.",
+    )
+    vector_store: AnnotatedReference[VectorStore] = Field(
+        description="The vector store to use for storing and querying documents."
+    )
 
 
 class VectorMemory(Specable[VectorMemorySpec]):
@@ -230,31 +240,39 @@ class VectorMemory(Specable[VectorMemorySpec]):
             embeddedDocs.append(embeddedDoc)
         await self.vector_store.add(collection, embeddedDocs)
         for doc in docs:
-            self.file_memory.write_file(self.spec.root_document_directory + "/" + collection + "/" + doc.id, doc.page_content.encode())
+            self.file_memory.write_file(
+                self.spec.root_document_directory + "/" + collection + "/" + doc.id,
+                doc.page_content.encode(),
+            )
 
     @abstractmethod
-    async def delete(self,
-                     collection: str,
-                     doc_ids: List[str], **delete_kwargs: Any):
+    async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
         await self.vector_store.delete(collection, doc_ids)
         for doc_id in doc_ids:
             self.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
 
     @abstractmethod
-    async def query(self,
-                    collection: str,
-                    embedder: Embedding,
-                    query: str,
-                    num_results: int,
-                    metadata_where: Dict[str, str]) -> List[Document]:
+    async def query(
+        self,
+        collection: str,
+        embedder: Embedding,
+        query: str,
+        num_results: int,
+        metadata_where: Dict[str, str],
+    ) -> List[Document]:
         text = await embedder.embed_text(query)
         results = await self.vector_store.query(collection, text, num_results, metadata_where)
         returnDocuments = []
         for result in results:
-            returnDocuments.append(Document(
-                id=result.id,
-                metadata=result.metadata,
-                page_content=self.file_memory.read_file(self.spec.root_document_directory + "/" + collection + "/" + result.id).decode()))
+            returnDocuments.append(
+                Document(
+                    id=result.id,
+                    metadata=result.metadata,
+                    page_content=self.file_memory.read_file(
+                        self.spec.root_document_directory + "/" + collection + "/" + result.id
+                    ).decode(),
+                )
+            )
         return returnDocuments
 
 
@@ -263,7 +281,12 @@ class AgentMemory:
     symbolic_memory: SymbolicMemory
     similarity_memory: VectorMemory
 
-    def __init__(self, file_memory: FileMemory = None, symbolic_memory: SymbolicMemory = None, similarity_memory: VectorMemory = None):
+    def __init__(
+        self,
+        file_memory: FileMemory = None,
+        symbolic_memory: SymbolicMemory = None,
+        similarity_memory: VectorMemory = None,
+    ):
         self.file_memory = file_memory
         self.symbolic_memory = symbolic_memory
         self.similarity_memory = similarity_memory

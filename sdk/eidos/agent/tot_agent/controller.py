@@ -26,11 +26,7 @@ class ToTController:
     def thoughts(self, memory: ToTDFSMemory) -> List[str]:
         next_thought = memory.top()
         parent_thought = memory.top_parent()
-        validity = (
-            "INTERMEDIATE"
-            if next_thought is None
-            else next_thought.validity
-        )
+        validity = "INTERMEDIATE" if next_thought is None else next_thought.validity
 
         # 1 if the current partial solution is invalid, backtrack to the parent
         # thought.
@@ -43,11 +39,7 @@ class ToTController:
         # 2 if the current partial solution is valid but C children were
         # explored and yet failed to find a final solution, backtrack to the
         # parent thought.
-        elif (
-            validity == "INTERMEDIATE"
-            and parent_thought
-            and len(parent_thought.children) >= self.c
-        ):
+        elif validity == "INTERMEDIATE" and parent_thought and len(parent_thought.children) >= self.c:
             memory.pop(2)
 
         return [t.text for t in memory.current_path()]
@@ -59,11 +51,12 @@ class ToTController:
         An intermediate path is remaining if it has not yet been explored to the
         maximum depth and has INTERMEDIATE validity.
         """
+
         def recurse(path: List[Thought]) -> dict:
             rtn = {}
             unexplored_branch_count = self.c - len(path)
             if unexplored_branch_count > 0:
-                rtn['UNEXPLORED_BRANCHES'] = unexplored_branch_count
+                rtn["UNEXPLORED_BRANCHES"] = unexplored_branch_count
             for child in path:
                 if child.validity != "INVALID":
                     recursed_child = recurse(child.children)
@@ -75,4 +68,3 @@ class ToTController:
             return {}
         else:
             return {memory.stack[0].text: recurse(memory.stack[0].children)}
-
