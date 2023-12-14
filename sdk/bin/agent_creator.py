@@ -5,23 +5,31 @@ import pkgutil
 import readline
 import sys
 import tempfile
+from contextlib import contextmanager
 from functools import cache
-from typing import Annotated, Type, get_origin
+from typing import Type, get_origin, Optional
 
 import typer
 import yaml
 from click import Choice, BadParameter
 from pydantic import BaseModel
 from pydantic_core import PydanticUndefinedType
-from rich import print
+from rich import print as richprint
 from rich.syntax import Syntax
+from termcolor import colored
+from termcolor._types import Color
 
 from eidos.system.reference_model import Reference
 from eidos.system.resources import agent_resources, AgentResource
 from eidos.util.class_utils import for_name, fqn
 
+echo = lambda text, **kwargs: typer.echo(pad(text), **kwargs)  # noqa
+confirm = lambda text, **kwargs: typer.confirm(pad(colored(text, "blue")), **kwargs)  # noqa
 
-def prompt(text, default=None, choices: list[str] = None, case_sensitive=False, **kwargs):
+
+def prompt(
+    text, default=None, choices: list[str] = None, case_sensitive=False, color: Optional[Color] = "blue", **kwargs
+):
     def completer(text, state):
         if case_sensitive:
             options = [i for i in choices if i.startswith(text)]
@@ -30,14 +38,15 @@ def prompt(text, default=None, choices: list[str] = None, case_sensitive=False, 
         return options[state] if state < len(options) else None
 
     if choices:
-        kwargs['type'] = Choice(choices, case_sensitive=case_sensitive)
-    kwargs['default'] = default
-    return prompt_with_completer(text, completer, **kwargs)
+        kwargs["type"] = Choice(choices, case_sensitive=case_sensitive)
+    kwargs["default"] = default
+    return prompt_with_completer(text, completer, color, **kwargs)
 
 
-def prompt_with_completer(text, completer: callable, **kwargs):
+def prompt_with_completer(text, completer: callable, color: Optional[Color] = "blue", **kwargs):
     readline.set_completer(completer)
-    rtn = typer.prompt(text, **kwargs)
+    s = colored(text, color) if color else text
+    rtn = typer.prompt(pad(s), **kwargs)
     readline.set_completer(None)
     return rtn
 
@@ -50,7 +59,7 @@ def autocomplete_modules(package_name: str, substring: str):
         # if we are at a module, we want all the classes within it
         for loader, name, is_pkg in pkgutil.walk_packages(package.__path__):
             if name.startswith(substring):
-                submodules.append(package_name + '.' + name + '.')
+                submodules.append(package_name + "." + name + ".")
         return submodules
     except ModuleNotFoundError:
         return []
@@ -58,20 +67,20 @@ def autocomplete_modules(package_name: str, substring: str):
 
 @cache
 def autocomplete_packages(substring: str):
-    installed_packages = (dist.metadata['Name'] for dist in importlib.metadata.distributions())
+    installed_packages = (dist.metadata["Name"] for dist in importlib.metadata.distributions())
     rtn = [pkg for pkg in installed_packages if pkg.startswith(substring)]
     return rtn
 
 
 def fqn_completer(text, state):
     # Split the text by dots and get the last part that's being typed
-    parts = text.split('.')
+    parts = text.split(".")
     packages = autocomplete_packages(parts[0])
     if len(packages) > 1:
         options = packages
     else:
         if len(parts) > 1:
-            package_name = '.'.join(parts[:-1])
+            package_name = ".".join(parts[:-1])
             substring = parts[-1]
         else:
             package_name = packages[0]
@@ -84,19 +93,20 @@ def fqn_completer(text, state):
     return options[state] if state < len(options) else None
 
 
-def create_agent(
-        name: Annotated[str, typer.Option(help="The name of the Agent", prompt=True)] = "NewAgent",
-):
+def create_agent():
     agents = [a for a in agent_resources.keys() if a != "Agent"] + ["Custom"]
 
+    name = prompt("What is the name of the agent?", default="NewAgent")
     kind = prompt(f"What type of agent is {name}?", default="GenericAgent", choices=agents)
     args = dict(apiVersion="eidolon/v1")
-    args["kind"] = kind if kind != "Custom" else 'Agent'
+    args["kind"] = kind if kind != "Custom" else "Agent"
 
     # todo, This is just a reference, so we don't need the duplicate logic here
     if kind == "Custom":
         agent_resource = AgentResource
-        fqn_ = prompt_with_completer(f"What is the fully qualified name to the implementation?", fqn_completer, value_proc=impl_proc)
+        fqn_ = prompt_with_completer(
+            "What is the fully qualified name to the implementation?", fqn_completer, value_proc=impl_proc
+        )
         agent_class = for_name(fqn_, object)
         args["implementation"] = fqn_
     else:
@@ -105,20 +115,23 @@ def create_agent(
 
     spec_type = Reference.get_spec_type(agent_class)
     if spec_type:
-        if typer.confirm("Would you like to modify the spec?", default=False):
+        if confirm("Would you like to modify the spec?", default=False):
             try:
-                args['spec'] = build_model(spec_type)
+                with indented():
+                    args["spec"] = build_model(spec_type)
             except Abort:
-                print(f"Aborted, leaving spec blank")
+                echo("Aborted, leaving spec blank")
     else:
-        print(f"{agent_class.__name__} does not have a spec.")
+        echo(f"{agent_class.__name__} does not have a spec.")
 
-    raw_edit_loop(args, agent_resource)
-
-    print(Syntax(yaml.safe_dump(args), "yaml"))
-    save_loc = typer.prompt("Where do you want to save the resource?", default=f'{name}.yaml')
-    with open(save_loc, 'w') as file:
-        yaml.dump(args, file)
+    try:
+        raw_edit_loop(args, agent_resource)
+        richprint(Syntax(yaml.safe_dump(args), "yaml", padding=Indenter.depth * 2))
+        save_loc = prompt("Where do you want to save the resource?", default=f"{name}.yaml")
+        with open(save_loc, "w") as file:
+            yaml.dump(args, file)
+    except Abort:
+        echo(colored("Aborted.", "red"))
 
 
 # todo, it would be nice to add indentation as we recurse
@@ -134,14 +147,16 @@ def build_model(model: Type[BaseModel]):
         # todo, it is lame we need to special case references, we should upgrade spec to be typed
         try:
             if isinstance(field_info.annotation, type) and issubclass(field_info.annotation, Reference):
-                print(prompt_text + ":")
-                reference = build_reference(field_info)
+                echo(prompt_text + ":")
+                with indented():
+                    reference = build_reference(field_info)
                 if reference:
                     rtn[field_name] = reference
             elif isinstance(field_info.annotation, type) and issubclass(field_info.annotation, BaseModel):
-                print(f"{prompt_text} [{default or field_info.annotation}]")
-                if typer.confirm(f"Would you like to modify modify the nested field?", default=False):
-                    rtn[field_name] = build_model(field_info.annotation)
+                echo(f"{prompt_text} [{default or field_info.annotation}]")
+                if confirm("Would you like to modify modify the nested field?", default=False):
+                    with indented():
+                        rtn[field_name] = build_model(field_info.annotation)
 
             else:
                 # todo, we should support unions, literals, ect nicely with custom prompts
@@ -151,11 +166,11 @@ def build_model(model: Type[BaseModel]):
                 if type_ not in [dict, list]:
                     type_ = str
 
-                user_value = typer.prompt(prompt_text, default=default, type=type_)
+                user_value = prompt(prompt_text, default=default, type=type_)
                 if user_value != default:
                     rtn[field_name] = user_value
         except Abort:
-            print(f"Aborted, accepting defaults for {field_name}")
+            echo(f"Aborted, accepting defaults for {field_name}")
 
     return raw_edit_loop(rtn, model)
 
@@ -166,23 +181,24 @@ def raw_edit_loop(obj, model: Type[BaseModel]):
     :raises Abort: If user chooses to abort
     """
 
-    with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp:
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp:
         yaml.dump(obj, temp)
         while True:
             try:
                 model.model_validate(obj).model_dump(exclude_defaults=True)
                 break
             except ValueError as e:
-                print(e)
-                action = typer.prompt(
+                echo(colored(str(e), "red"))
+                action = prompt(
                     f"{model.__name__} validation failed.",
+                    color=None,
                     default="Edit",
-                    type=Choice(["Edit", "Ignore", "Abort"], case_sensitive=False)
+                    choices=["Edit", "Ignore", "Abort"],
                 )
                 if action == "Ignore":
                     break
                 elif action == "Edit":
-                    os.system(f'vim {temp.name}')
+                    os.system(f"vim {temp.name}")
                     with open(temp.name) as file:
                         obj = yaml.safe_load(file)
                 elif action == "Abort":
@@ -208,13 +224,14 @@ def build_reference(field_info):
     ref_object = {}
     default_type = field_info.annotation._default.default
     default_impl = fqn(default_type) if default_type else None
-    impl_value = prompt_with_completer(f"implementation", fqn_completer, default=default_impl, value_proc=impl_proc)
+    impl_value = prompt_with_completer("implementation", fqn_completer, default=default_impl, value_proc=impl_proc)
     if impl_value != default_impl:
         ref_object["implementation"] = impl_value
     spec_type = Reference.get_spec_type(for_name(impl_value, object))
     if spec_type:
-        if spec_type and typer.confirm("Would you like to modify the spec?", default=False):
-            spec = build_model(spec_type)
+        if spec_type and confirm("Would you like to modify the spec?", default=False):
+            with indented():
+                spec = build_model(spec_type)
             if spec:
                 ref_object["spec"] = spec
     return raw_edit_loop(ref_object, field_info.annotation) if ref_object else None
@@ -231,3 +248,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+class Indenter:
+    depth = 0
+
+
+@contextmanager
+def indented():
+    Indenter.depth += 1
+    try:
+        yield
+    finally:
+        Indenter.depth -= 1
+
+
+def pad(text):
+    return "".join("  " * Indenter.depth + line for line in text.splitlines(True))

@@ -1,9 +1,6 @@
 import json
-from unittest.mock import patch
 
 import pytest
-from vcr.request import Request as VcrRequest
-from vcr.stubs import httpx_stubs
 
 from eidos.agent.generic_agent import GenericAgentSpec
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPUSpec
@@ -66,17 +63,16 @@ class TestGenericAgent:
 
 
 def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):
-    generic_agent.spec.output_schema = {"type": "object", "properties": {
-        "capital": {"type": "string"},
-        "population": {"type": "number"}
-    }}
+    generic_agent.spec.output_schema = {
+        "type": "object",
+        "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
+    }
     with client_builder(generic_agent) as client:
         post = client.post(
-            "/agents/GenericAgent/programs/question",
-            json=dict(instruction="Tell me about france please")
+            "/agents/GenericAgent/programs/question", json=dict(instruction="Tell me about france please")
         )
         post.raise_for_status()
-        assert "paris" in post.json()["data"]['capital'].lower()
+        assert "paris" in post.json()["data"]["capital"].lower()
 
 
 def test_generic_agent_supports_image(client_builder, generic_agent, dog):

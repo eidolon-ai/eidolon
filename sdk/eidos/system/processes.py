@@ -2,13 +2,13 @@ from datetime import datetime
 from typing import ClassVar, Any
 
 from bson import ObjectId
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from pymongo.errors import DuplicateKeyError
 
 from eidos.agent_os import AgentOS
 
 
-class MongoDoc(BaseModel, extra='allow'):
+class MongoDoc(BaseModel, extra="allow"):
     collection: ClassVar[str]
     created: str = None
     updated: str = None

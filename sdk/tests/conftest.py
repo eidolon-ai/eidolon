@@ -34,7 +34,7 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture(autouse=True)
 def vcr_config():
     return dict(
-        filter_headers=[('authorization', 'XXXXXX')],
+        filter_headers=[("authorization", "XXXXXX")],
         ignore_localhost=True,
         ignore_hosts=["testserver"],
         record_mode="new_episodes",
@@ -180,5 +180,5 @@ def patched_vcr_object_handling():
         headers = dict(httpx_request.headers)
         return VcrRequest(httpx_request.method, uri, httpx_request, headers)
 
-    with patch.object(httpx_stubs, '_make_vcr_request', new=my_custom_function):
+    with patch.object(httpx_stubs, "_make_vcr_request", new=my_custom_function):
         yield
