@@ -182,6 +182,7 @@ class AgentProgram:
     description: str
     program: str
     schema: Schema
+    is_program: bool
 
     def __rich_console__(self, _console: Console, _options: Console.options):
         yield rt(f"{self.name}/{self.program}\n", style="bold")

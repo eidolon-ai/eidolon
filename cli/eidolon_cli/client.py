@@ -45,18 +45,17 @@ class EidolonClient:
             if "requestBody" not in agent_obj:
                 schema = Schema(is_multipart=False, schema={"properties": {}, "type": "object", "required": []})
             else:
-                content = agent_obj["requestBody"]["content"]
-                schema = Schema.from_json_schema(openapi_json, content)
+                schema = Schema.from_json_schema(openapi_json, agent_obj["requestBody"]["content"])
 
-            if is_program:
-                agent_programs.append(
-                    AgentProgram(
-                        name=name,
-                        description=description,
-                        program=program,
-                        schema=schema,
-                    )
+            agent_programs.append(
+                AgentProgram(
+                    name=name,
+                    description=description,
+                    program=program,
+                    schema=schema,
+                    is_program=is_program
                 )
+            )
 
         self.agent_programs = agent_programs
 
@@ -68,8 +67,13 @@ class EidolonClient:
                 return agent
         return None
 
-    async def send_request(self, agent, user_input):
+    async def send_request(self, agent, user_input, process_id):
         async with httpx.AsyncClient(timeout=self.timeout) as client:
+            if agent.is_program:
+                agent_url = f"/agents/{agent.name}/programs/{agent.program}"
+            else:
+                agent_url = f"/agents/{agent.name}/processes/{process_id}/actions/{agent.program}"
+            print("url", urljoin(self.server_location, agent_url))
             if agent.schema.is_multipart:
                 files = None
                 data = {}
@@ -88,16 +92,15 @@ class EidolonClient:
                 for file_name, file in files:
                     print("file", file_name, len(file))
                 request = {
-                    "url": urljoin(self.server_location, f"/agents/{agent.name}/programs/{agent.program}"),
+                    "url": urljoin(self.server_location, agent_url),
                     "data": data
                 }
                 if files:
                     request["files"] = files
-                response = await client.post(**request)
-                return response.status_code, response.json()
             else:
-                response = await client.post(
-                    urljoin(self.server_location, f"/agents/{agent.name}/programs/{agent.program}"),
-                    json=user_input,
-                )
-                return response.status_code, response.json()
+                request = {
+                    "url": urljoin(self.server_location, agent_url),
+                    "json": user_input
+                }
+            response = await client.post(**request)
+            return response.status_code, response.json()

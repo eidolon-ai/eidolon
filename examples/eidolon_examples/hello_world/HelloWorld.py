@@ -23,3 +23,7 @@ class HelloWorld(CodeAgent):
     ) -> IdleStateRepresentation:
         return IdleStateRepresentation(welcome_message=f"Hello, World {question}!  File name is {image.filename}. "
                                                        f"file length is {image.size} bytes. content type is {image.content_type}")
+
+    @register_program()
+    async def return_string(self, name: Annotated[str, Body(description="Your name", embed=True)]) -> str:
+        return f"Hello, World {name}!"
