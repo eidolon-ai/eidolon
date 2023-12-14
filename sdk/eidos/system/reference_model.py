@@ -92,8 +92,8 @@ class Reference(BaseModel):
         self._build_reference_spec()
         return self
 
-    def _build_reference_spec(self):
-        reference_class = self._get_reference_class()
+    @staticmethod
+    def get_spec_type(reference_class) -> Optional[Type[BaseModel]]:
         if issubclass(reference_class, Specable):
             bases = getattr(reference_class, "__orig_bases__", [])
             specable = next(
@@ -101,11 +101,16 @@ class Reference(BaseModel):
                 None,
             )
             if specable:
-                (spec_type,) = specable.__args__
-                return spec_type.model_validate(self.spec or {})
+                return specable.__args__[0]
             else:
                 logging.warning(f'Unable to find Specable definition on "{reference_class}", skipping validation')
-                return self.spec
+                return None
+        return None
+
+    def _build_reference_spec(self):
+        spec_type = self.get_spec_type(self._get_reference_class())
+        if spec_type:
+            return spec_type.model_validate(self.spec or {})
         else:
             return self.spec
 
