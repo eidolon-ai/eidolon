@@ -125,7 +125,7 @@ class Schema:
                             print(str(obj))
                         yield rt(v["type"] + "\n")
 
-        yield rt(f"  Schema:", style="#666666")
+        yield rt("  Schema:", style="#666666")
         if self.is_multipart:
             yield rt(" multipart/form-data\n")
         else:
