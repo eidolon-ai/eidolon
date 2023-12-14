@@ -67,7 +67,7 @@ async def run(endpoint: str):
             print_prompt()
             command = console.input()
             if command == "/list":
-                for agent in client.agents:
+                for agent in client.agent_programs:
                     console.print(agent, end="")
             elif command.startswith("/conversation "):
                 agent = command.split(" ")[1]
