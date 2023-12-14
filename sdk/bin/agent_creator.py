@@ -1,5 +1,11 @@
+import importlib.metadata
+import inspect
 import os
+import pkgutil
+import readline
+import sys
 import tempfile
+from functools import cache
 from typing import Annotated, Type, get_origin
 
 import typer
@@ -14,22 +20,85 @@ from eidos.system.reference_model import Reference
 from eidos.system.resources import agent_resources, AgentResource
 from eidos.util.class_utils import for_name, fqn
 
-agent_choices = Choice([a for a in agent_resources.keys() if a != "Agent"] + ["Custom"], case_sensitive=False)
+
+def prompt(text, default=None, choices: list[str] = None, case_sensitive=False, **kwargs):
+    def completer(text, state):
+        if case_sensitive:
+            options = [i for i in choices if i.startswith(text)]
+        else:
+            options = [i for i in choices if i.lower().startswith(text.lower())]
+        return options[state] if state < len(options) else None
+
+    if choices:
+        kwargs['type'] = Choice(choices, case_sensitive=case_sensitive)
+    kwargs['default'] = default
+    return prompt_with_completer(text, completer, **kwargs)
+
+
+def prompt_with_completer(text, completer: callable, **kwargs):
+    readline.set_completer(completer)
+    rtn = typer.prompt(text, **kwargs)
+    readline.set_completer(None)
+    return rtn
+
+
+@cache
+def autocomplete_modules(package_name: str, substring: str):
+    try:
+        package = importlib.import_module(package_name)
+        submodules = []
+        # if we are at a module, we want all the classes within it
+        for loader, name, is_pkg in pkgutil.walk_packages(package.__path__):
+            if name.startswith(substring):
+                submodules.append(package_name + '.' + name + '.')
+        return submodules
+    except ModuleNotFoundError:
+        return []
+
+
+@cache
+def autocomplete_packages(substring: str):
+    installed_packages = (dist.metadata['Name'] for dist in importlib.metadata.distributions())
+    rtn = [pkg for pkg in installed_packages if pkg.startswith(substring)]
+    return rtn
+
+
+def fqn_completer(text, state):
+    # Split the text by dots and get the last part that's being typed
+    parts = text.split('.')
+    packages = autocomplete_packages(parts[0])
+    if len(packages) > 1:
+        options = packages
+    else:
+        if len(parts) > 1:
+            package_name = '.'.join(parts[:-1])
+            substring = parts[-1]
+        else:
+            package_name = packages[0]
+            substring = ""
+        if hasattr(importlib.import_module(package_name), "__path__"):
+            options = autocomplete_modules(package_name, substring)
+        else:
+            classes = (n for n, v in inspect.getmembers(sys.modules[package_name], inspect.isclass))
+            options = [package_name + "." + c for c in classes if c.startswith(substring)]
+    return options[state] if state < len(options) else None
 
 
 def create_agent(
-        name: Annotated[str, typer.Option( help="The name of the Agent", prompt=True)] = "NewAgent",
+        name: Annotated[str, typer.Option(help="The name of the Agent", prompt=True)] = "NewAgent",
 ):
-    kind = typer.prompt(f"What type of agent is {name}?", default="GenericAgent", type=agent_choices)
+    agents = [a for a in agent_resources.keys() if a != "Agent"] + ["Custom"]
+
+    kind = prompt(f"What type of agent is {name}?", default="GenericAgent", choices=agents)
     args = dict(apiVersion="eidolon/v1")
     args["kind"] = kind if kind != "Custom" else 'Agent'
 
     # todo, This is just a reference, so we don't need the duplicate logic here
     if kind == "Custom":
         agent_resource = AgentResource
-        fqn = typer.prompt(f"What is the fully qualified name to the implementation?", type=str, value_proc=impl_proc)
-        agent_class = for_name(fqn, object)
-        args["implementation"] = fqn
+        fqn_ = prompt_with_completer(f"What is the fully qualified name to the implementation?", fqn_completer, value_proc=impl_proc)
+        agent_class = for_name(fqn_, object)
+        args["implementation"] = fqn_
     else:
         agent_resource = agent_resources[kind]
         agent_class = agent_resource.clazz
@@ -139,9 +208,7 @@ def build_reference(field_info):
     ref_object = {}
     default_type = field_info.annotation._default.default
     default_impl = fqn(default_type) if default_type else None
-    impl_value = typer.prompt(
-        "Fully qualified name of the reference:", default=default_impl, value_proc=impl_proc
-    )
+    impl_value = prompt_with_completer(f"implementation", fqn_completer, default=default_impl, value_proc=impl_proc)
     if impl_value != default_impl:
         ref_object["implementation"] = impl_value
     spec_type = Reference.get_spec_type(for_name(impl_value, object))
@@ -154,6 +221,11 @@ def build_reference(field_info):
 
 
 def main():
+    if "libedit" in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.set_completer_delims(" \t\n;")
+        readline.parse_and_bind("tab: complete")
     typer.run(create_agent)
 
 
