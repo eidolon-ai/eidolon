@@ -7,6 +7,7 @@ readme = "README.md"
 
 [tool.poetry.scripts]
 eidos-server = "eidos.system.agent_http_server:main"
+create-agent = "bin.agent_creator:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
@@ -40,6 +41,7 @@ contextvars = "^2.4"
 python-multipart = "^0.0.6"
 pillow = "^10.1.0"
 pydub = "^0.25.1"
+typer = {extras = ["all"], version = "^0.9.0"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"

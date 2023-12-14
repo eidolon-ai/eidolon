@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, Type, Dict
+from typing import Literal, Type, Dict, ClassVar
 
 from pydantic import BaseModel, Field
 
@@ -33,11 +33,13 @@ class AgentResource(Resource, Reference):
     kind: Literal["Agent"] = "Agent"
 
 
-def _build_resource(clazz: Type) -> Type[Resource]:
-    class AutoAgentResource(Resource, Reference[clazz, clazz]):
+def _build_resource(clazz_: Type) -> Type[Resource]:
+    class AutoAgentResource(Resource, Reference[clazz_, clazz_]):
+        clazz: ClassVar[Type] = clazz_
+
         @classmethod
         def kind_literal(cls) -> str:
-            return clazz.__name__
+            return cls.clazz.__name__
 
     return AutoAgentResource
 
