@@ -75,6 +75,8 @@ jobs:
       - run: poetry run ruff check .
         working-directory: sdk
       - run: poetry run pytest
+        env:
+          OPENAI_API_KEY: intentionally_unused
         working-directory: sdk
 
 #      - name: Install dependencies
