@@ -52,6 +52,7 @@ def create_agent(
         yaml.dump(args, file)
 
 
+# todo, it would be nice to add indentation as we recurse
 def build_model(model: Type[BaseModel]):
     """
     Recursively prompts user for values for a model
@@ -64,7 +65,7 @@ def build_model(model: Type[BaseModel]):
         # todo, it is lame we need to special case references, we should upgrade spec to be typed
         try:
             if isinstance(field_info.annotation, type) and issubclass(field_info.annotation, Reference):
-                print(prompt_text)
+                print(prompt_text + ":")
                 reference = build_reference(field_info)
                 if reference:
                     rtn[field_name] = reference
