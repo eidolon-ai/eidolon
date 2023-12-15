@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union
+from typing import Any, List, Dict, Literal, Union, Generic, TypeVar
 
 from pydantic import BaseModel, Field
 
