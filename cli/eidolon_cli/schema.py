@@ -188,5 +188,3 @@ class AgentProgram:
         yield rt(f"{self.name}/{self.program}\n", style="bold")
         if self.description:
             yield rt("      " + self.description + "\n")
-        yield self.schema
-        yield rt("\n")

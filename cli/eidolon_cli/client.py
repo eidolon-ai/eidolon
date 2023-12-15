@@ -4,7 +4,6 @@ import re
 from typing import Optional, List
 from urllib.parse import urljoin
 
-import aiohttp
 import httpx
 
 from eidolon_cli.schema import Schema, AgentProgram
@@ -15,11 +14,13 @@ class EidolonClient:
     timeout = httpx.Timeout(5.0, read=600.0)
     agent_programs = None
 
-    async def set_server_location(self, server_location: str):
+    def __init__(self):
+        self.set_server_location("http://localhost:8080")
+
+    def set_server_location(self, server_location: str):
         self.server_location = server_location
-        async with aiohttp.ClientSession() as session:
-            async with session.get(urljoin(self.server_location, "openapi.json")) as resp:
-                openapi_json = await resp.json()
+        with httpx.Client(timeout=self.timeout) as client:
+            openapi_json = client.get(urljoin(self.server_location, "openapi.json")).json()
 
         programs_re = "^/agents/([^/]+)/programs/([^/]+)$"
         processes_re = "^/agents/([^/]+)/processes/{process_id}/actions/([^/]+)$"
@@ -59,7 +60,7 @@ class EidolonClient:
 
         self.agent_programs = agent_programs
 
-    async def get_client(self, agent_str: str):
+    def get_client(self, agent_str: str):
         user_agent, user_program = agent_str.strip().split("/")
 
         for agent in self.agent_programs:
@@ -67,8 +68,8 @@ class EidolonClient:
                 return agent
         return None
 
-    async def send_request(self, agent, user_input, process_id):
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
+    def send_request(self, agent, user_input, process_id):
+        with httpx.Client(timeout=self.timeout) as client:
             if agent.is_program:
                 agent_url = f"/agents/{agent.name}/programs/{agent.program}"
             else:
@@ -102,5 +103,10 @@ class EidolonClient:
                     "url": urljoin(self.server_location, agent_url),
                     "json": user_input
                 }
-            response = await client.post(**request)
+            response = client.post(**request)
             return response.status_code, response.json()
+
+    def get_processes(self):
+        with httpx.Client(timeout=self.timeout) as client:
+            ""
+        pass
