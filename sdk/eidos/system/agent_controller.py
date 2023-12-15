@@ -60,7 +60,7 @@ class AgentController:
             )
 
         app.add_api_route(
-            f"/agents/{self.name}/processes/",
+            f"/agents/{self.name}/processes",
             endpoint=self.list_processes,
             methods=["GET"],
             response_model=ListProcessesResponse,

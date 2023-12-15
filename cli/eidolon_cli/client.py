@@ -74,7 +74,6 @@ class EidolonClient:
                 agent_url = f"/agents/{agent.name}/programs/{agent.program}"
             else:
                 agent_url = f"/agents/{agent.name}/processes/{process_id}/actions/{agent.program}"
-            print("url", urljoin(self.server_location, agent_url))
             if agent.schema.is_multipart:
                 files = None
                 data = {}
@@ -106,7 +105,8 @@ class EidolonClient:
             response = client.post(**request)
             return response.status_code, response.json()
 
-    def get_processes(self):
+    def get_processes(self, agent_name):
         with httpx.Client(timeout=self.timeout) as client:
-            ""
-        pass
+            processes_url = f"/agents/{agent_name}/processes"
+            processes_obj = client.get(urljoin(self.server_location, processes_url), params={"limit": 999}).json()
+            return processes_obj["processes"]
