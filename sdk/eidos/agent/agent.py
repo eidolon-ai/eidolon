@@ -154,9 +154,9 @@ def nest_with_fn(get_outer: callable, embed=None):
 @dataclass
 class EidolonHandler:
     name: str
-    description: typing.Callable[[object, EidolonHandler], str]
     allowed_states: List[str]
     fn: callable
+    description: typing.Callable[[object, EidolonHandler], str]
     input_model_fn: typing.Callable[[object, EidolonHandler], typing.Type[BaseModel]]
     output_model_fn: typing.Callable[[object, EidolonHandler], typing.Any]
 

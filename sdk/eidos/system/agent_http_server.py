@@ -65,9 +65,9 @@ async def start_os(app, resource_generator, log_level=logging.INFO):
         await machine.start(app)
         logger.info("Server Started")
         yield
-    except Exception as e:
+    except Exception:
         logger.exception("Failed to start AgentOS")
-        raise e
+        raise
     machine.stop()
     AgentOS.reset()
 
