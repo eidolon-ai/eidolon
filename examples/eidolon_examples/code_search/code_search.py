@@ -46,7 +46,8 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
     syncer: CodeSync = None
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        LogicUnit.__init__(self, **kwargs)
+        Specable.__init__(self, **kwargs)
         self.root_dir = os.path.abspath(os.path.expandvars(self.spec.root_dir))
         self.embedder = OpenAIEmbedding(OpenAIEmbeddingSpec())
 
