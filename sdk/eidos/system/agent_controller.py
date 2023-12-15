@@ -3,7 +3,6 @@ from __future__ import annotations
 import inspect
 import logging
 import typing
-from functools import cmp_to_key
 from inspect import Parameter
 
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
@@ -12,9 +11,10 @@ from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined
 from starlette.responses import JSONResponse
 
-from eidos.agent.agent import AgentState, EidolonHandler
+from eidos.agent.agent import AgentState
 from eidos.agent_os import AgentOS
 from eidos.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
+from eidos.system.eidos_handler import EidosHandler
 from eidos.system.processes import ProcessDoc
 from eidos.util.logger import logger
 
@@ -22,8 +22,8 @@ from eidos.util.logger import logger
 class AgentController:
     name: str
     agent: object
-    programs: typing.Dict[str, EidolonHandler]
-    actions: typing.Dict[str, EidolonHandler]
+    programs: typing.Dict[str, EidosHandler]
+    actions: typing.Dict[str, EidosHandler]
 
     def __init__(self, name, agent):
         self.name = name
@@ -35,20 +35,17 @@ class AgentController:
                 if hasattr(getattr(self.agent, name), "eidolon_handlers")
                 for handler in getattr(getattr(self.agent, name), "eidolon_handlers")
         ):
-            if handler.is_initializer():
+            if handler.extra['type'] == "program":
                 self.programs[name] = handler
             else:
                 self.actions[name] = handler
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent {self.name}")
-        for handler in [*self.programs.values(), *sorted(
-            self.actions.values().__reversed__(),
-            key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0),
-        )]:
+        for handler in [*self.programs.values(), *self.actions.values().__reversed__()]:
             path = f"/agents/{self.name}"
             handler_name = handler.name
-            if handler.is_initializer():
+            if handler.extra['type'] == "program":
                 path += f"/programs/{handler_name}"
             else:
                 path += f"/processes/{{process_id}}/actions/{handler_name}"
@@ -62,7 +59,7 @@ class AgentController:
                     202: {"model": AsyncStateResponse},
                     200: {"model": self.create_response_model(handler)},
                 },
-                description=(handler.description(self.agent, handler)),
+                description=handler.description(self.agent, handler),
             )
 
         app.add_api_route(
@@ -89,7 +86,7 @@ class AgentController:
         self.stop(app)
         await self.start(app)
 
-    def process_action(self, handler: EidolonHandler):
+    def process_action(self, handler: EidosHandler):
         async def run_program(
             request: Request,
             background_tasks: BackgroundTasks,
@@ -100,7 +97,7 @@ class AgentController:
             execution_mode = request.headers.get("execution-mode", "async" if callback else "sync").lower()
 
             if not process_id:
-                if not handler.is_initializer():
+                if not handler.extra['type'] == "program":
                     raise HTTPException(
                         status_code=400,
                         detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
@@ -111,7 +108,7 @@ class AgentController:
                 process = await self.get_latest_process_event(process_id)
                 if not process:
                     raise HTTPException(status_code=404, detail="Process not found")
-                if process.state not in handler.allowed_states:
+                if process.state not in handler.extra['allowed_states']:
                     raise HTTPException(
                         status_code=409,
                         detail=f'Action "{handler.name}" cannot process state "{process.state}"',
@@ -174,7 +171,7 @@ class AgentController:
                 kwargs["default"] = model.model_fields[field].default
 
             params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
-        if handler.is_initializer():
+        if handler.extra['type'] == 'program':
             del params["process_id"]
         else:
             replace: Parameter = params["process_id"].replace(annotation=str)
@@ -246,13 +243,13 @@ class AgentController:
             )
 
     def get_available_actions(self, state):
-        return [action for action, handler in self.actions.items() if state in handler.allowed_states]
+        return [action for action, handler in self.actions.items() if state in handler.extra['allowed_states']]
 
     @staticmethod
     async def get_latest_process_event(process_id) -> ProcessDoc:
         return await ProcessDoc.find(query=dict(_id=process_id), sort=dict(updated=-1))
 
-    def create_response_model(self, handler: EidolonHandler):
+    def create_response_model(self, handler: EidosHandler):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
         fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
         return_type = handler.output_model_fn(self.agent, handler)

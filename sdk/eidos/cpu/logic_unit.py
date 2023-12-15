@@ -8,6 +8,7 @@ from typing import Dict, Any, Callable, List
 
 from bson import ObjectId
 from pydantic import BaseModel, create_model
+from pydantic.dataclasses import dataclass
 from pydantic.fields import FieldInfo
 
 from eidos.cpu.call_context import CallContext

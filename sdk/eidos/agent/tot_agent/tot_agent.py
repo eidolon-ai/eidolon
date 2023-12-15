@@ -7,7 +7,8 @@ from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidos.agent.agent import register_program, Agent, AgentSpec, EidolonHandler
+from eidos.agent.agent import register_program, Agent, AgentSpec
+from eidos.system.eidos_handler import EidosHandler
 from eidos.agent.tot_agent.checker import ToTChecker
 from eidos.agent.tot_agent.controller import ToTController
 from eidos.agent.tot_agent.memory import ToTDFSMemory
@@ -42,13 +43,13 @@ class ToTAgentConfig(AgentSpec):
     init_description: Optional[str] = Field(default=None, description="Overrides the description of the INIT endpoint.")
 
 
-def make_description(agent: object, _handler: EidolonHandler) -> str:
+def make_description(agent: object, _handler: EidosHandler) -> str:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     return spec.description
 
 
-def make_input_schema(agent: object, handler: EidolonHandler) -> Type[BaseModel]:
+def make_input_schema(agent: object, handler: EidosHandler) -> Type[BaseModel]:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     properties: Dict[str, Any] = {}
@@ -62,7 +63,7 @@ def make_input_schema(agent: object, handler: EidolonHandler) -> Type[BaseModel]
     return schema_to_model(schema, f"{handler.name.capitalize()}InputModel")
 
 
-def make_output_schema(agent: object, handler: EidolonHandler) -> Type[Any]:
+def make_output_schema(agent: object, handler: EidosHandler) -> Type[Any]:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     if spec.output_schema == "str":
