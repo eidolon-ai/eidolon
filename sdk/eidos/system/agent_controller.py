@@ -22,24 +22,30 @@ from eidos.util.logger import logger
 class AgentController:
     name: str
     agent: object
-    handlers: typing.Dict[str, EidolonHandler]
+    programs: typing.Dict[str, EidolonHandler]
+    actions: typing.Dict[str, EidolonHandler]
 
     def __init__(self, name, agent):
         self.name = name
+        self.programs = {}
+        self.actions = {}
         self.agent = agent
-        self.handlers = {
-            handler.name: handler
-            for method_name in dir(self.agent)
-            if hasattr(getattr(self.agent, method_name), "eidolon_handlers")
-            for handler in getattr(getattr(self.agent, method_name), "eidolon_handlers")
-        }
+        for name, handler in (
+                (name, handler) for name in dir(self.agent)
+                if hasattr(getattr(self.agent, name), "eidolon_handlers")
+                for handler in getattr(getattr(self.agent, name), "eidolon_handlers")
+        ):
+            if handler.is_initializer():
+                self.programs[name] = handler
+            else:
+                self.actions[name] = handler
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent {self.name}")
-        for handler in sorted(
-            self.handlers.values().__reversed__(),
+        for handler in [*self.programs.values(), *sorted(
+            self.actions.values().__reversed__(),
             key=cmp_to_key(lambda x, y: -1 if x.is_initializer() else 1 if y.is_initializer() else 0),
-        ):
+        )]:
             path = f"/agents/{self.name}"
             handler_name = handler.name
             if handler.is_initializer():
@@ -240,7 +246,7 @@ class AgentController:
             )
 
     def get_available_actions(self, state):
-        return [action for action, handler in self.handlers.items() if state in handler.allowed_states]
+        return [action for action, handler in self.actions.items() if state in handler.allowed_states]
 
     @staticmethod
     async def get_latest_process_event(process_id) -> ProcessDoc:
