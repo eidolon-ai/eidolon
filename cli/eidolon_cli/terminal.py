@@ -6,11 +6,10 @@
 This example shows an easy way for a single command to have many subcommands, each of which takes different arguments
 and provides separate contextual help.
 """
-import json
 from typing import List, Dict
 
 import cmd2
-from cmd2 import style, Fg, Bg, ansi
+from cmd2 import style, Fg, Bg
 from rich.console import Console
 
 from eidolon_cli.client import EidolonClient
@@ -86,51 +85,7 @@ class SubcommandsExample(cmd2.Cmd):
         """Start a process with an agent"""
         agent = self.client.get_client(arg.endpoint, is_program=True)
         process_id = None
-        self.have_conversation(agent, process_id)
-
-    def have_conversation(self, agent, process_id):
-        current_conversation = agent.name + "/" + agent.program
-        while True:
-            if current_conversation:
-                self.console.print(f"Conversation: {current_conversation}")
-                user_input = agent.schema.await_input(self.console)
-                if user_input is None:
-                    self.console.print()
-                    break
-                status_code, response = self.client.send_request(agent, user_input, process_id)
-                if status_code != 200:
-                    self.console.print(f"Error: {str(response)}")
-                else:
-                    # self.console.print(f"{str(response)}")
-
-                    if isinstance(response["data"], dict):
-                        self.console.print_json(json.dumps(response["data"]))
-                    else:
-                        self.console.print(response["data"], style="blue")
-
-                    if response["state"] == "terminated":
-                        break
-                    else:
-                        actions = response["available_actions"]
-                        if len(actions) > 1:
-                            action = ""
-                            valid_input = False
-                            while not valid_input:
-                                self.console.print(f"action [{','.join(actions)}]: ", markup=False, end="")
-                                action = self.console.input()
-                                if action in actions:
-                                    valid_input = True
-                                else:
-                                    self.console.print("Invalid action")
-                            current_conversation = agent.name + "/" + action
-                            agent = self.client.get_client(current_conversation, False)
-                        elif len(actions) == 1:
-                            action = actions[0]
-                            current_conversation = agent.name + "/" + action
-                            agent = self.client.get_client(current_conversation, False)
-
-                        # else leave current_conversation as is
-                        process_id = response["process_id"]
+        self.client.have_conversation(agent.name, [agent.program], process_id, self.console)
 
     def agent_provider(self) -> List[str]:
         """A choices provider is useful when the choice list is based on instance data of your application"""
@@ -155,5 +110,12 @@ class SubcommandsExample(cmd2.Cmd):
     @cmd2.with_argparser(resume_parser)
     def do_resume(self, arg):
         """Resume a process with an agent"""
-        agent = self.client.get_client(arg.agent, None)
-        self.have_conversation(agent, arg.process_id)
+        agent_name = arg.agent
+        processes = self.client.get_processes(agent_name)
+        # find the process by process_id
+        process = next(process for process in processes if process["process_id"] == arg.process_id)
+        if not process:
+            self.console.print("Invalid process id")
+            return
+
+        self.client.have_conversation(agent_name, process["available_actions"], arg.process_id, self.console)

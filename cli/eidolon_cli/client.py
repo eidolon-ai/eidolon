@@ -5,6 +5,7 @@ from typing import Optional, List
 from urllib.parse import urljoin
 
 import httpx
+from rich.console import Console
 
 from eidolon_cli.schema import Schema, AgentProgram
 
@@ -110,3 +111,46 @@ class EidolonClient:
             processes_url = f"/agents/{agent_name}/processes"
             processes_obj = client.get(urljoin(self.server_location, processes_url), params={"limit": 999}).json()
             return processes_obj["processes"]
+
+    def have_conversation(self, agent_name, actions: List[str], process_id, console: Console):
+        while True:
+            if len(actions) > 1:
+                action = ""
+                valid_input = False
+                while not valid_input:
+                    console.print(f"action [{','.join(actions)}]: ", markup=False, end="")
+                    action = console.input()
+                    if action in actions:
+                        valid_input = True
+                    else:
+                        console.print("Invalid action")
+                current_conversation = agent_name + "/" + action
+                agent = self.get_client(current_conversation, False)
+            elif len(actions) == 1:
+                action = actions[0]
+                current_conversation = agent_name + "/" + action
+                agent = self.get_client(current_conversation, False)
+            else:
+                raise Exception("No actions available")
+
+            user_input = agent.schema.await_input(console)
+            if user_input is None:
+                console.print()
+                break
+            status_code, response = self.send_request(agent, user_input, process_id)
+            if status_code != 200:
+                console.print(f"Error: {str(response)}", style="red")
+            else:
+                # console.print(f"{str(response)}")
+
+                if isinstance(response["data"], dict):
+                    console.print_json(json.dumps(response["data"]))
+                else:
+                    console.print(response["data"], style="blue")
+
+                if response["state"] == "terminated":
+                    break
+                else:
+                    actions = response["available_actions"]
+                    # else leave current_conversation as is
+                    process_id = response["process_id"]
