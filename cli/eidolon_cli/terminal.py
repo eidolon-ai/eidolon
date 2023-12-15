@@ -10,7 +10,7 @@ import json
 from typing import List, Dict
 
 import cmd2
-from cmd2 import style, Fg, Bg
+from cmd2 import style, Fg, Bg, ansi
 from rich.console import Console
 
 from eidolon_cli.client import EidolonClient
@@ -48,16 +48,19 @@ class SubcommandsExample(cmd2.Cmd):
         self.default_category = "Builtin Tools"
 
         self.client = EidolonClient()
-        self.agents = [f"{agent.name}/{agent.program}" for agent in self.client.agent_programs]
-        self.programs = [f"{agent.name}/{agent.program}" for agent in self.client.agent_programs if agent.is_program]
 
     def endpoints_provider(self) -> List[str]:
         """A choices provider is useful when the choice list is based on instance data of your application"""
-        return self.agents
+        names = []
+        for agent in self.client.agent_programs:
+            name = f"{agent.name}/{agent.program}"
+            names.append(name)
+
+        return list(set(names))
 
     def programs_provider(self) -> List[str]:
         """A choices provider is useful when the choice list is based on instance data of your application"""
-        return self.programs
+        return [f"{agent.name}/{agent.program}" for agent in self.client.agent_programs if agent.is_program]
 
     info_parser = cmd2.Cmd2ArgumentParser()
     info_arg = info_parser.add_argument('endpoint', help='Enter the name of the endpoint', choices_provider=endpoints_provider, nargs='?')
@@ -70,7 +73,7 @@ class SubcommandsExample(cmd2.Cmd):
             for agent in self.client.agent_programs:
                 self.console.print(agent)
         else:
-            agent = self.client.get_client(arg.endpoint)
+            agent = self.client.get_client(arg.endpoint, None)
             self.console.print(agent)
             self.console.print(agent.schema)
 
@@ -81,7 +84,7 @@ class SubcommandsExample(cmd2.Cmd):
     @cmd2.with_argparser(start_parser)
     def do_start(self, arg):
         """Start a process with an agent"""
-        agent = self.client.get_client(arg.endpoint)
+        agent = self.client.get_client(arg.endpoint, is_program=True)
         process_id = None
         self.have_conversation(agent, process_id)
 
@@ -89,7 +92,7 @@ class SubcommandsExample(cmd2.Cmd):
         current_conversation = agent.name + "/" + agent.program
         while True:
             if current_conversation:
-                print(f"Conversation: {current_conversation}")
+                self.console.print(f"Conversation: {current_conversation}")
                 user_input = agent.schema.await_input(self.console)
                 if user_input is None:
                     self.console.print()
@@ -98,7 +101,7 @@ class SubcommandsExample(cmd2.Cmd):
                 if status_code != 200:
                     self.console.print(f"Error: {str(response)}")
                 else:
-                    self.console.print(f"{str(response)}")
+                    # self.console.print(f"{str(response)}")
 
                     if isinstance(response["data"], dict):
                         self.console.print_json(json.dumps(response["data"]))
@@ -120,9 +123,12 @@ class SubcommandsExample(cmd2.Cmd):
                                 else:
                                     self.console.print("Invalid action")
                             current_conversation = agent.name + "/" + action
+                            agent = self.client.get_client(current_conversation, False)
                         elif len(actions) == 1:
                             action = actions[0]
                             current_conversation = agent.name + "/" + action
+                            agent = self.client.get_client(current_conversation, False)
+
                         # else leave current_conversation as is
                         process_id = response["process_id"]
 
@@ -149,5 +155,5 @@ class SubcommandsExample(cmd2.Cmd):
     @cmd2.with_argparser(resume_parser)
     def do_resume(self, arg):
         """Resume a process with an agent"""
-        agent = self.client.get_client(arg.agent)
+        agent = self.client.get_client(arg.agent, None)
         self.have_conversation(agent, arg.process_id)

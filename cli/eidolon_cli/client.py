@@ -57,14 +57,14 @@ class EidolonClient:
                     is_program=is_program
                 )
             )
-
+        agent_programs.sort(key=lambda x: x.name)
         self.agent_programs = agent_programs
 
-    def get_client(self, agent_str: str):
+    def get_client(self, agent_str: str, is_program: Optional[bool]):
         user_agent, user_program = agent_str.strip().split("/")
 
         for agent in self.agent_programs:
-            if agent.name == user_agent and agent.program == user_program:
+            if agent.name == user_agent and agent.program == user_program and (is_program is None or agent.is_program == is_program):
                 return agent
         return None
 
@@ -89,8 +89,8 @@ class EidolonClient:
                         files = [(k, read_file(file)) for file in user_input[k]]
                     else:
                         data[k] = json.dumps(user_input[k])
-                for file_name, file in files:
-                    print("file", file_name, len(file))
+                # for file_name, file in files:
+                #     print("file", file_name, len(file))
                 request = {
                     "url": urljoin(self.server_location, agent_url),
                     "data": data
