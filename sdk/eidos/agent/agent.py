@@ -83,5 +83,3 @@ T = TypeVar("T")
 class AgentState(BaseModel, Generic[T]):
     name: str
     data: T
-
-

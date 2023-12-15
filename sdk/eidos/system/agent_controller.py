@@ -31,7 +31,7 @@ class AgentController:
         self.actions = {}
         self.agent = agent
         for handler in get_handlers(self.agent):
-            if handler.extra['type'] == "program":
+            if handler.extra["type"] == "program":
                 self.programs[handler.name] = handler
             else:
                 self.actions[handler.name] = handler
@@ -41,7 +41,7 @@ class AgentController:
         for handler in [*self.programs.values(), *self.actions.values().__reversed__()]:
             path = f"/agents/{self.name}"
             handler_name = handler.name
-            if handler.extra['type'] == "program":
+            if handler.extra["type"] == "program":
                 path += f"/programs/{handler_name}"
             else:
                 path += f"/processes/{{process_id}}/actions/{handler_name}"
@@ -93,7 +93,7 @@ class AgentController:
             execution_mode = request.headers.get("execution-mode", "async" if callback else "sync").lower()
 
             if not process_id:
-                if not handler.extra['type'] == "program":
+                if not handler.extra["type"] == "program":
                     raise HTTPException(
                         status_code=400,
                         detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
@@ -104,7 +104,7 @@ class AgentController:
                 process = await self.get_latest_process_event(process_id)
                 if not process:
                     raise HTTPException(status_code=404, detail="Process not found")
-                if process.state not in handler.extra['allowed_states']:
+                if process.state not in handler.extra["allowed_states"]:
                     raise HTTPException(
                         status_code=409,
                         detail=f'Action "{handler.name}" cannot process state "{process.state}"',
@@ -167,7 +167,7 @@ class AgentController:
                 kwargs["default"] = model.model_fields[field].default
 
             params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
-        if handler.extra['type'] == 'program':
+        if handler.extra["type"] == "program":
             del params["process_id"]
         else:
             replace: Parameter = params["process_id"].replace(annotation=str)
@@ -239,7 +239,7 @@ class AgentController:
             )
 
     def get_available_actions(self, state):
-        return [action for action, handler in self.actions.items() if state in handler.extra['allowed_states']]
+        return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]
 
     @staticmethod
     async def get_latest_process_event(process_id) -> ProcessDoc:

@@ -19,18 +19,18 @@ class EidosHandler:
 
 
 def register_handler(
-        name: str = None,
-        description: str | typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-        input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
-        output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
-        **extra,
+    name: str = None,
+    description: str | typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    **extra,
 ):
     if isinstance(description, str):
-        docs_fn = lambda fn: lambda self, handler: description
+        docs_fn = lambda fn: lambda self, handler: description  # noqa: E731
     elif description is None:
-        docs_fn = lambda fn: lambda self, handler: fn.__doc__
+        docs_fn = lambda fn: lambda self, handler: fn.__doc__  # noqa: E731
     else:
-        docs_fn = lambda fn: description
+        docs_fn = lambda fn: description  # noqa: E731
     return lambda fn: _add_handler(
         fn,
         EidosHandler(

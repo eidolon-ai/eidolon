@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import AssistantMessage, LLMMessage
 from eidos.cpu.processing_unit import ProcessingUnit
-from eidos.system.reference_model import Specable
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,

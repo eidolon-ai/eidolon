@@ -147,5 +147,7 @@ class TestStateMachine:
     def test_can_register_function_as_action_and_program(self, client):
         program = client.post("/agents/StateMachine/programs/action_program")
         assert program.status_code == 200
-        action = client.post(f"/agents/StateMachine/processes/{program.json()['process_id']}/actions/action_program",)
+        action = client.post(
+            f"/agents/StateMachine/processes/{program.json()['process_id']}/actions/action_program",
+        )
         assert action.status_code == 200

@@ -94,7 +94,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
                 path=path.replace("{process_id}", process_id),
                 agent_program=agent_program,
             ),
-            extra={}
+            extra={},
         )
 
     # needs to be under 64 characters

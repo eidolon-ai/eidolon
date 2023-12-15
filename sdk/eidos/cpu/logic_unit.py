@@ -72,10 +72,10 @@ class LLMToolWrapper:
 
 
 def llm_function(
-        name: str = None,
-        description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-        input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
-        output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    name: str = None,
+    description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
 ):
     return register_handler(name=name, description=description, input_model=input_model, output_model=output_model)
 
