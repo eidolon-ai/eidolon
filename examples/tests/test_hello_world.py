@@ -2,7 +2,7 @@ import pytest
 from jsonref import requests
 
 
-# @pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def http_server(eidolon_server, eidolon_examples):
     with eidolon_server(eidolon_examples / "hello_world" / "resources") as server:
         yield server
