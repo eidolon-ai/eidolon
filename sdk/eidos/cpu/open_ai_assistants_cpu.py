@@ -200,7 +200,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                         "type": "function",
                         "function": {
                             "name": tool_def.llm_message.name,
-                            "description": tool_def.llm_message.parameters,
+                            "description": tool_def.llm_message.description,
                             "parameters": tool_def.llm_message.parameters,
                         },
                     }
