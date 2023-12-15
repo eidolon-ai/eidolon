@@ -14,7 +14,7 @@ from starlette.responses import JSONResponse
 from eidos.agent.agent import AgentState
 from eidos.agent_os import AgentOS
 from eidos.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
-from eidos.system.eidos_handler import EidosHandler
+from eidos.system.eidos_handler import EidosHandler, get_handlers
 from eidos.system.processes import ProcessDoc
 from eidos.util.logger import logger
 
@@ -30,15 +30,11 @@ class AgentController:
         self.programs = {}
         self.actions = {}
         self.agent = agent
-        for name, handler in (
-                (name, handler) for name in dir(self.agent)
-                if hasattr(getattr(self.agent, name), "eidolon_handlers")
-                for handler in getattr(getattr(self.agent, name), "eidolon_handlers")
-        ):
+        for handler in get_handlers(self.agent):
             if handler.extra['type'] == "program":
-                self.programs[name] = handler
+                self.programs[handler.name] = handler
             else:
-                self.actions[name] = handler
+                self.actions[handler.name] = handler
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent {self.name}")

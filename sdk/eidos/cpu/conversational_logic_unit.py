@@ -1,16 +1,18 @@
 import json
-from typing import Dict, List, Optional
+from typing import List, Optional, Any
 from urllib.parse import urljoin
 
 import aiohttp
 import jsonref as jsonref
 from pydantic import BaseModel, ValidationError
 
-from eidos.system.agent_contract import SyncStateResponse
 from eidos.cpu.llm_message import LLMMessage, ToolResponseMessage
-from eidos.cpu.logic_unit import LogicUnit, ToolDefType
+from eidos.cpu.logic_unit import LogicUnit
+from eidos.system.agent_contract import SyncStateResponse
+from eidos.system.eidos_handler import EidosHandler
 from eidos.system.reference_model import Specable
 from eidos.util.logger import logger
+from eidos.util.schema_to_model import schema_to_model
 
 
 class ConversationalResponse(SyncStateResponse):
@@ -34,13 +36,13 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
     def set_openapi_json(self, openapi_json):
         self._openapi_json = jsonref.replace_refs(openapi_json)
 
-    async def build_tools(self, conversation: List[LLMMessage]) -> Dict[str, ToolDefType]:
+    async def build_tools(self, conversation: List[LLMMessage]) -> List[EidosHandler]:
         if not self._openapi_json:
             async with aiohttp.ClientSession() as session:
                 async with session.get(urljoin(self.spec.location, "openapi.json")) as resp:
                     self.set_openapi_json(await resp.json())
 
-        tools = {}
+        tools = []
 
         for agent in self.spec.agents:
             prefix = f"/agents/{agent}/programs/"
@@ -48,7 +50,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
                 try:
                     action = path.removeprefix(prefix)
                     name = self._name(agent, action=action)
-                    tools[name] = await self._build_tool_def(name, path, agent)
+                    tools.append(await self._build_tool_def(name, path, agent))
                 except ValueError:
                     logger.warning(f"unable to build tool {path}", exc_info=True)
 
@@ -68,13 +70,13 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
             path = f"/agents/{response.program}/processes/{{process_id}}/actions/{action}"
             try:
                 name = self._name(response.program, action, response.process_id)
-                tools[name] = await self._build_tool_def(name, path, response.program, process_id=response.process_id)
+                tools.append(await self._build_tool_def(name, path, response.program, process_id=response.process_id))
             except ValueError:
                 logger.warning(f"unable to build tool {path}", exc_info=True)
 
         return tools
 
-    async def _build_tool_def(self, name, path, agent_program, process_id=""):
+    async def _build_tool_def(self, name, path, agent_program, process_id="") -> EidosHandler:
         path = path.format(process_id="{process_id}")
         body = self._openapi_json["paths"][path]["post"].get("requestBody")
         if body and "application/json" not in body["content"]:
@@ -83,15 +85,16 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         description = self._openapi_json["paths"][path]["post"].get("description", "")
         if not description:
             self.logger.warning(f"Agent action at {path} does not have a description. LLM may not use it properly")
-        return ToolDefType(
+        return EidosHandler(
             name=name,
-            description=description,
-            parameters=json_schema,
+            description=lambda a, b: description,
+            input_model_fn=lambda a, b: schema_to_model(json_schema, name + "Input"),
+            output_model_fn=lambda a, b: Any,
             fn=self._make_agent_request(
                 path=path.replace("{process_id}", process_id),
                 agent_program=agent_program,
             ),
-            _logic_unit=self,
+            extra={}
         )
 
     # needs to be under 64 characters

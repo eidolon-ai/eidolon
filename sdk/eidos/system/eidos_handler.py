@@ -20,17 +20,22 @@ class EidosHandler:
 
 def register_handler(
         name: str = None,
-        description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
+        description: str | typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
         input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
         output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
         **extra,
 ):
-    docs_fn = lambda fn: lambda self, handler: fn.__doc__
+    if isinstance(description, str):
+        docs_fn = lambda fn: lambda self, handler: description
+    elif description is None:
+        docs_fn = lambda fn: lambda self, handler: fn.__doc__
+    else:
+        docs_fn = lambda fn: description
     return lambda fn: _add_handler(
         fn,
         EidosHandler(
             name=name or fn.__name__,
-            description=description or docs_fn(fn),
+            description=docs_fn(fn),
             fn=fn,
             input_model_fn=input_model or get_input_model,
             output_model_fn=output_model or get_output_model,
@@ -75,3 +80,11 @@ def get_input_model(_obj, handler: EidosHandler) -> typing.Type[BaseModel]:
 
 def get_output_model(_obj, handler: EidosHandler):
     return typing.get_type_hints(handler.fn, include_extras=True).get("return", typing.Any)
+
+
+def get_handlers(obj) -> typing.List[EidosHandler]:
+    acc = []
+    for name in dir(obj):
+        if hasattr(getattr(obj, name), "eidolon_handlers"):
+            acc.extend(getattr(getattr(obj, name), "eidolon_handlers"))
+    return acc

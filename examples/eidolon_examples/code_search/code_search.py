@@ -55,7 +55,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
             self.syncer = CodeSync(os.path.abspath(self.root_dir))
             await self.syncer.sync_all()
 
-    @llm_function
+    @llm_function()
     async def list_packages(self) -> List[CodePackage]:
         """
         Recursively search for Python modules in the code.
@@ -76,7 +76,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
 
         return list(package_directories.values())
 
-    @llm_function
+    @llm_function()
     async def get_code(
         self, file_name: Annotated[str, Field(description="The name of the file to get code from")]
     ) -> SourceCode:
@@ -102,7 +102,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
                 source_code=f.read(),
             )
 
-    @llm_function
+    @llm_function()
     async def search_code(
         self,
         query: Annotated[

@@ -76,12 +76,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         except Exception as e:
             raise RuntimeError("Error in cpu while processing request") from e
 
-    async def get_tools(self, conversation) -> Dict[str, ToolDefType]:
-        self.tool_defs = {}
-        for logic_unit in self.logic_units:
-            self.tool_defs.update(await logic_unit.build_tools(conversation))
-        return self.tool_defs
-
     async def _llm_execution_cycle(
         self,
         call_context: CallContext,
@@ -90,7 +84,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
     ) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            tool_defs = await self.get_tools(conversation)
+            tool_defs = await ToolDefType.from_logic_units(self.logic_units, conversation=conversation)
             assistant_message = await self.llm_unit.execute_llm(
                 call_context, conversation, list(tool_defs.values()), output_format
             )

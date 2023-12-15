@@ -25,7 +25,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         self.spec.root_dir = os.path.expandvars(self.spec.root_dir)
         self.repo = Repo(self.spec.root_dir)
 
-    @llm_function
+    @llm_function()
     async def list_files(self) -> List[str]:
         """
         List all files in the project
@@ -36,7 +36,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
                 all_files.append(os.path.relpath(os.path.join(root, file), self.spec.root_dir))
         return all_files
 
-    @llm_function
+    @llm_function()
     async def get_file(self, file_path: str) -> dict:
         """
         Get the contents of a file in the project
@@ -47,7 +47,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         except FileNotFoundError:
             return dict(exists=False)
 
-    @llm_function
+    @llm_function()
     async def upsert_file(
         self,
         update_summary: Annotated[
@@ -68,7 +68,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         self.repo.index.commit(update_summary)
         return dict(revision=self.repo.head.commit.hexsha)
 
-    @llm_function
+    @llm_function()
     async def revert(self, revision: Annotated[str, Field(description="The commit hexsha to revert to")]) -> dict:
         """
         Revert the project to a previous revision.
@@ -76,7 +76,7 @@ class FileManager(LogicUnit, Specable[FileManagerConfig]):
         self.repo.git.reset("--hard", revision)
         return dict(revision=self.repo.head.commit.hexsha)
 
-    @llm_function
+    @llm_function()
     async def run_pytest(self) -> dict:
         """
         Run pytest in the project directory and return the results.

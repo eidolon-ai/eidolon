@@ -31,15 +31,13 @@ class OpenAIAssistantsCPUSpec(AgentCPUSpec):
     enable_code_interpreter: bool = True
 
 
-class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], ProcessingUnitLocator):
+class OpenAIAssistantsCPU(Specable[OpenAIAssistantsCPUSpec], AgentCPU, ProcessingUnitLocator):
     llm: AsyncOpenAI = None
     logic_units: List[LogicUnit] = None
 
-    def __init__(self, spec: OpenAIAssistantsCPUSpec = None):
-        super().__init__(spec)
-        self.tool_defs = None
-        kwargs = dict(processing_unit_locator=self)
-        self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.logic_units = [logic_unit.instantiate(processing_unit_locator=self) for logic_unit in self.spec.logic_units]
 
     def locate_unit(self, unit_type: Type[PU_T]) -> Optional[PU_T]:
         for unit in self.logic_units:
@@ -102,12 +100,6 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         )
 
         return assistant, thread.id
-
-    async def get_tools(self, conversation) -> Dict[str, ToolDefType]:
-        self.tool_defs = {}
-        for logic_unit in self.logic_units:
-            self.tool_defs.update(await logic_unit.build_tools(conversation))
-        return self.tool_defs
 
     async def set_boot_messages(
         self,
@@ -185,7 +177,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         async for item in conversation_from_memory:
             conversation.append(LLMMessage.from_dict(item["tool_result"]))
 
-        tool_defs = await self.get_tools(conversation)
+        tool_defs = await ToolDefType.from_logic_units(self.logic_units, conversation=conversation)
         return tool_defs
 
     async def run_llm_and_tools(
