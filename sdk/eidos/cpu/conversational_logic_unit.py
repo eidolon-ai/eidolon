@@ -38,9 +38,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
     async def build_tools(self, conversation: List[LLMMessage]) -> List[EidosHandler]:
         if not self._openapi_json:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(urljoin(self.spec.location, "openapi.json")) as resp:
-                    self.set_openapi_json(await resp.json())
+            self.set_openapi_json(await _get_openapi_schema(urljoin(self.spec.location, "openapi.json")))
 
         tools = []
 
@@ -88,7 +86,10 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         return EidosHandler(
             name=name,
             description=lambda a, b: description,
-            input_model_fn=lambda a, b: schema_to_model(json_schema, name + "Input"),
+            input_model_fn=lambda a, b: schema_to_model(
+                dict(type="object", properties=dict(body=json_schema)),
+                name + "Input",
+            ),
             output_model_fn=lambda a, b: Any,
             fn=self._make_tool_fn(
                 path=path.replace("{process_id}", process_id),
@@ -107,11 +108,13 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         return self.spec.tool_prefix + "_" + agent_program + process_id + action
 
     def _make_tool_fn(self, path, agent_program):
-        async def fn(_self, **kwargs):
+        async def fn(_self, body):
             url = urljoin(self.spec.location, path)
-            json_ = await _agent_request(url, kwargs)
-            json_["program"] = agent_program
-            return ConversationalResponse.model_validate(json_).model_dump()
+            if isinstance(body, BaseModel):
+                body = body.model_dump()
+            response = await _agent_request(url, body)
+            response["program"] = agent_program
+            return ConversationalResponse.model_validate(response).model_dump()
 
         return fn
 
@@ -119,4 +122,10 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 async def _agent_request(url, args):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=args) as resp:
+            return await resp.json()
+
+
+async def _get_openapi_schema(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
             return await resp.json()

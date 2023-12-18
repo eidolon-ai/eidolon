@@ -1,7 +1,11 @@
 import json
+from collections import defaultdict
+from typing import Annotated, List
 
 import pytest
+from fastapi import Body
 
+from eidos.agent.agent import register_program
 from eidos.agent.generic_agent import GenericAgentSpec
 from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPUSpec
 from eidos.system.resources_base import Resource, Metadata
@@ -9,7 +13,7 @@ from eidos.system.resources_base import Resource, Metadata
 
 @pytest.fixture(scope="module")
 def generic_agent_root(llm):
-    resource = Resource(
+    return Resource(
         apiVersion="eidolon/v1",
         kind="GenericAgent",
         metadata=Metadata(name="GenericAgent"),
@@ -21,7 +25,6 @@ def generic_agent_root(llm):
             description="An agent which can follow instructions and return a summary of its actions.",
         ),
     )
-    return resource
 
 
 @pytest.fixture
@@ -60,6 +63,74 @@ class TestGenericAgent:
         )
         follow_up.raise_for_status()
         assert "Luke" in post.json()["data"]
+
+
+@pytest.fixture(scope="module")
+def generic_agent_with_refs():
+    return Resource(
+        apiVersion="eidolon/v1",
+        kind="GenericAgent",
+        metadata=Metadata(name="GenericAgent"),
+        spec=GenericAgentSpec(
+            system_prompt="You are a machine which follows instructions",
+            user_prompt="{{instruction}}",
+            agent_refs=["HelloWorld"],
+            description="An agent which can follow instructions and return a summary of its actions.",
+            input_schema=dict(instruction=dict(type="string")),
+        ),
+    )
+
+
+class HelloWorld:
+    calls = defaultdict(list)
+
+    @register_program()
+    async def greeter1(self, name: Annotated[str, Body(embed=True)]):
+        return self._greet("greeter1", name=name)
+
+    @register_program()
+    async def greeter2(self, name: Annotated[str, Body(description="The name to greet")]):
+        return self._greet("greeter2", name=name)
+
+    @register_program()
+    async def greeter3(self, name: Annotated[List[str], Body(embed=True)]):
+        return self._greet("greeter3", name=name[0], called_with=name)
+
+    def _greet(self, greeter, **kwargs):
+        self.calls[greeter].append(kwargs)
+        return f"Hello, {kwargs['name']}!"
+
+
+# Image model does not support tool usage, so we need to break this out into a seporate test suite
+class TestAgentsWithReferences:
+    @pytest.fixture(scope="class")
+    def client(self, client_builder, generic_agent_with_refs):
+        with client_builder(generic_agent_with_refs, HelloWorld) as client:
+            yield client
+
+    def test_can_communicate(self, client):
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
+        )
+        post.raise_for_status()
+        assert HelloWorld.calls["greeter1"] == [{"name": "Luke"}]
+
+    def test_string_only_body(self, client):
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter2 to greet me?"),
+        )
+        post.raise_for_status()
+        assert HelloWorld.calls["greeter2"] == [{"name": "Luke"}]
+
+    def test_list_body(self, client):
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter3 to greet me?"),
+        )
+        post.raise_for_status()
+        assert HelloWorld.calls["greeter3"] == [{"name": "Luke", "called_with": ["Luke"]}]
 
 
 def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):

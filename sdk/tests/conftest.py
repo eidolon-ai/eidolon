@@ -2,7 +2,7 @@ import os
 import pathlib
 from contextlib import asynccontextmanager, contextmanager
 from typing import Iterable
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch
 
 import pytest
 from bson import ObjectId
@@ -39,7 +39,7 @@ def vcr_config():
         ignore_localhost=True,
         ignore_hosts=["testserver"],
         record_mode="new_episodes",
-        match_on=["method", "scheme", "host", "port", "path", "query", "raw_body"],
+        match_on=["method", "scheme", "host", "port", "path", "query", "body"],
     )
 
 
@@ -72,19 +72,20 @@ def client_builder(app_builder):
             for a in agents
         ]
         app = app_builder(resources)
-        with TestClient(app) as client:
-            with patch('eidos.cpu.conversational_logic_unit._agent_request') as mock_agent_request:
-                # Define a custom function
-                async def custom_function(url, args):
-                    # You can add your custom logic here
-                    async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as client:
-                        found = await client.post(url, json=args)
-                        return found.json()
 
-                # Set the side_effect of the mock to the custom function
-                mock_agent_request.side_effect = custom_function
+        def make_request(method):
+            async def fn(url, args=None):
+                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as client:
+                    return (await client.request(method, url, json=args)).json()
 
-                yield client
+            return fn
+
+        with TestClient(app) as client, patch(
+            "eidos.cpu.conversational_logic_unit._agent_request"
+        ) as _agent_request, patch("eidos.cpu.conversational_logic_unit._get_openapi_schema") as _get_openapi_schema:
+            _agent_request.side_effect = make_request("POST")
+            _get_openapi_schema.side_effect = make_request("GET")
+            yield client
 
     return fn
 
