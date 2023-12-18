@@ -7,7 +7,7 @@ import sys
 import tempfile
 from contextlib import contextmanager
 from functools import cache
-from typing import Type, get_origin, Optional
+from typing import Type, get_origin
 
 import typer
 import yaml
@@ -16,19 +16,17 @@ from pydantic import BaseModel
 from pydantic_core import PydanticUndefinedType
 from rich import print as richprint
 from rich.syntax import Syntax
-from termcolor import colored
-from termcolor._types import Color
 
 from eidos.system.reference_model import Reference
 from eidos.system.resources import agent_resources, AgentResource
 from eidos.util.class_utils import for_name, fqn
 
 echo = lambda text, **kwargs: typer.echo(pad(text), **kwargs)  # noqa
-confirm = lambda text, **kwargs: typer.confirm(pad(colored(text, "blue")), **kwargs)  # noqa
+confirm = lambda text, **kwargs: typer.confirm(pad(text), **kwargs)  # noqa
 
 
 def prompt(
-    text, default=None, choices: list[str] = None, case_sensitive=False, color: Optional[Color] = "blue", **kwargs
+        text, default=None, choices: list[str] = None, case_sensitive=False, **kwargs
 ):
     def completer(text, state):
         if case_sensitive:
@@ -40,13 +38,12 @@ def prompt(
     if choices:
         kwargs["type"] = Choice(choices, case_sensitive=case_sensitive)
     kwargs["default"] = default
-    return prompt_with_completer(text, completer, color, **kwargs)
+    return prompt_with_completer(text, completer, **kwargs)
 
 
-def prompt_with_completer(text, completer: callable, color: Optional[Color] = "blue", **kwargs):
+def prompt_with_completer(text, completer: callable, **kwargs):
     readline.set_completer(completer)
-    s = colored(text, color) if color else text
-    rtn = typer.prompt(pad(s), **kwargs)
+    rtn = typer.prompt(pad(text), **kwargs)
     readline.set_completer(None)
     return rtn
 
@@ -131,7 +128,7 @@ def create_agent():
         with open(save_loc, "w") as file:
             yaml.dump(args, file)
     except Abort:
-        echo(colored("Aborted.", "red"))
+        echo("Aborted.", color="red")
 
 
 # todo, it would be nice to add indentation as we recurse
@@ -188,7 +185,7 @@ def raw_edit_loop(obj, model: Type[BaseModel]):
                 model.model_validate(obj).model_dump(exclude_defaults=True)
                 break
             except ValueError as e:
-                echo(colored(str(e), "red"))
+                echo(str(e), color="red")
                 action = prompt(
                     f"{model.__name__} validation failed.",
                     color=None,
