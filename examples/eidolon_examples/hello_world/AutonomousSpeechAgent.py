@@ -3,13 +3,13 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 from pydub import AudioSegment
 
-from eidos.agent.agent import register_program, Agent, AgentState
-from eidos.agent.generic_agent import GenericAgentSpec
-from eidos.cpu.agent_cpu import AgentCPU
-from eidos.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
-from eidos.cpu.conversational_agent_cpu import ConversationalAgentCPU
-from eidos.cpu.llm.open_ai_speech import OpenAiSpeech
-from eidos.system.reference_model import Specable, AnnotatedReference
+from eidos_sdk.agent.agent import register_program, Agent, AgentState
+from eidos_sdk.agent.generic_agent import GenericAgentSpec
+from eidos_sdk.cpu.agent_cpu import AgentCPU
+from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidos_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
+from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class AutonomousSpeechAgentSpec(GenericAgentSpec):

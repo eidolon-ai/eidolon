@@ -1,9 +1,9 @@
 from typing import List
 
-from eidos.cpu.call_context import CallContext
-from eidos.cpu.llm_message import LLMMessage, AssistantMessage
-from eidos.cpu.llm_unit import LLMUnit
-from eidos.cpu.message_summarizer import MessageSummarizer
+from eidos_sdk.cpu.call_context import CallContext
+from eidos_sdk.cpu.llm_message import LLMMessage, AssistantMessage
+from eidos_sdk.cpu.llm_unit import LLMUnit
+from eidos_sdk.cpu.message_summarizer import MessageSummarizer
 from transformers import AutoTokenizer, AutoModelWithLMHead
 
 

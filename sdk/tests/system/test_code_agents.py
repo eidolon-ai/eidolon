@@ -3,7 +3,7 @@ from typing import Annotated
 import pytest
 from fastapi import Body
 
-from eidos.agent.agent import register_program, AgentState, register_action
+from eidos_sdk.agent.agent import register_program, AgentState, register_action
 
 
 class HelloWorld:

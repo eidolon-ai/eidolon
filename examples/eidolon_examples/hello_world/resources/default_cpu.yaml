@@ -1,6 +1,6 @@
 apiVersion: eidolon/v1
 kind: CPU
-implementation: "eidos.cpu.conversational_agent_cpu.ConversationalAgentCPU"
+implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
 spec:
   llm_unit:
     spec:

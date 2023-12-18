@@ -4,7 +4,7 @@ from importlib.util import module_from_spec
 
 import pytest
 
-from eidos.util.class_utils import for_name
+from eidos_sdk.util.class_utils import for_name
 
 
 # Test class for grouping the tests

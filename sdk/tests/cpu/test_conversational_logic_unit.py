@@ -5,13 +5,13 @@ import pytest
 from fastapi import Body
 from pydantic import BaseModel
 
-from eidos.agent.agent import register_program, register_action
-from eidos.cpu.conversational_logic_unit import (
+from eidos_sdk.agent.agent import register_program, register_action
+from eidos_sdk.cpu.conversational_logic_unit import (
     ConversationalLogicUnit,
     ConversationalSpec,
     ConversationalResponse,
 )
-from eidos.cpu.llm_message import ToolResponseMessage
+from eidos_sdk.cpu.llm_message import ToolResponseMessage
 
 
 class FooModel(BaseModel):

@@ -2,14 +2,14 @@ apiVersion: eidolon/v1
 kind: Machine
 spec:
   file_memory:
-    implementation: "eidos.memory.local_file_memory.LocalFileMemory"
+    implementation: "eidos_sdk.memory.local_file_memory.LocalFileMemory"
     spec:
       root_dir: "/tmp/hello_world"
   symbolic_memory:
-    implementation: "eidos.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    implementation: "eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
     spec:
       mongo_database_name: "eidolon"
   similarity_memory:
     spec:
       vector_store:
-        implementation: "eidos.memory.noop_memory.NoopVectorStore"
+        implementation: "eidos_sdk.memory.noop_memory.NoopVectorStore"

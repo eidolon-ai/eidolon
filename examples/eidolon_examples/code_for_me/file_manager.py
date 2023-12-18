@@ -8,8 +8,8 @@ from typing import List, Annotated
 from git import Repo
 from pydantic import Field, BaseModel
 
-from eidos.cpu.logic_unit import LogicUnit, llm_function
-from eidos.system.reference_model import Specable
+from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidos_sdk.system.reference_model import Specable
 
 
 class FileManagerConfig(BaseModel):

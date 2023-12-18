@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import UploadFile, Body, File
 from pydantic import BaseModel
 
-from eidos.agent.agent import register_program
+from eidos_sdk.agent.agent import register_program
 
 
 class IdleStateRepresentation(BaseModel):

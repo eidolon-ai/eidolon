@@ -1,4 +1,4 @@
-from eidos.cpu.logic_unit import llm_function, LogicUnit
+from eidos_sdk.cpu.logic_unit import llm_function, LogicUnit
 
 
 class MathsTool(LogicUnit):

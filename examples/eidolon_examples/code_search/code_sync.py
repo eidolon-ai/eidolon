@@ -3,10 +3,10 @@ import logging
 import uuid
 from pathlib import Path
 
-from eidos.agent_os import AgentOS
-from eidos.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
-from eidos.memory.parsers.base_parser import DataBlob
-from eidos.memory.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
+from eidos_sdk.memory.parsers.base_parser import DataBlob
+from eidos_sdk.memory.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
 from watchdog.events import FileSystemEvent, FileSystemMovedEvent
 
 from eidolon_examples.code_search.file_system_watcher import FileSystemWatcher

@@ -7,11 +7,11 @@ metadata:
 spec:
   description: "This is an example of a generic agent which can be used to create a conversational agent."
   cpu:
-    implementation: "eidos.cpu.conversational_agent_cpu.ConversationalAgentCPU"
+    implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
     spec:
       llm_unit:
         #    todo, we should not need to specify implementation here if it matches default
-        implementation: "eidos.cpu.llm.open_ai_llm_unit.OpenAIGPT"
+        implementation: "eidos_sdk.cpu.llm.open_ai_llm_unit.OpenAIGPT"
         spec:
           model: "gpt-4-vision-preview"
           temperature: 0.3

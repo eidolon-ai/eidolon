@@ -9,7 +9,7 @@ import pytest
 def eidolon_server(eidolon_examples):
     @contextmanager
     def fn(resources_loc):
-        http_server_loc = eidolon_examples.parent.parent / "sdk" / "eidos" / "bin" / "agent_http_server.py"
+        http_server_loc = eidolon_examples.parent.parent / "sdk" / "eidos_sdk" / "bin" / "agent_http_server.py"
 
         # Command to start the HTTP server
         cmd = ["python", str(http_server_loc), str(resources_loc)]

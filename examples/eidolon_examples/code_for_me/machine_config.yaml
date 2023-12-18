@@ -1,21 +1,21 @@
 agent_memory:
   file_memory:
-    implementation: "eidos.memory.local_file_memory.LocalFileMemory"
+    implementation: "eidos_sdk.memory.local_file_memory.LocalFileMemory"
     spec:
       root_dir: "/tmp/code_for_me"
   symbolic_memory:
-    implementation: "eidos.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    implementation: "eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
     spec:
       mongo_database_name: "eidolon"
   similarity_memory:
     spec:
       vector_store:
-        implementation: "eidos.memory.noop_memory.NoopVectorStore"
+        implementation: "eidos_sdk.memory.noop_memory.NoopVectorStore"
 
 agent_programs:
   Coder:
     agent:
-      implementation: "eidos.agent.generic_agent.GenericAgent"
+      implementation: "eidos_sdk.agent.generic_agent.GenericAgent"
       spec:
         system_prompt:
           You are a software developer responsible for maintaining a project and trying to prove yourself. You ask for 
@@ -32,11 +32,11 @@ agent_programs:
             type: string
     cpu:
       control_unit:
-        implementation: "eidos.cpu.control_unit.ControlUnit"
+        implementation: "eidos_sdk.cpu.control_unit.ControlUnit"
         spec:
           max_num_function_calls: 20
       llm_unit:
-        implementation: "eidos.cpu.llm.open_ai_llm_unit.OpenAIGPT"
+        implementation: "eidos_sdk.cpu.llm.open_ai_llm_unit.OpenAIGPT"
         spec:
           model: "gpt-4-1106-preview"
           temperature: 0.3

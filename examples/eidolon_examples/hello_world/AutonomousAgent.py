@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import Body
 from pydantic import BaseModel
 
-from eidos.agent.agent import register_program, AgentState, register_action, Agent
-from eidos.cpu.agent_io import UserTextCPUMessage
+from eidos_sdk.agent.agent import register_program, AgentState, register_action, Agent
+from eidos_sdk.cpu.agent_io import UserTextCPUMessage
 
 
 class IdleStateRepresentation(BaseModel):

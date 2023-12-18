@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "eidos"
+name = "eidos-sdk"
 version = "0.1.0"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-eidos-server = "eidos.bin.agent_http_server:main"
-eidos-create-agent = "eidos.bin.agent_creator:main"
+eidos-server = "eidos_sdk.bin.agent_http_server:main"
+eidos-create-agent = "eidos_sdk.bin.agent_creator:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"

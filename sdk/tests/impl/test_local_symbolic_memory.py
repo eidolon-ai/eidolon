@@ -1,6 +1,6 @@
 import pytest
 
-from eidos.memory.local_symbolic_memory import LocalSymbolicMemory, _DB
+from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory, _DB
 
 
 @pytest.fixture

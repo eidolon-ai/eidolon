@@ -4,10 +4,10 @@ from typing import List, Annotated
 
 from pydantic import Field, BaseModel
 
-from eidos.agent_os import AgentOS
-from eidos.cpu.logic_unit import LogicUnit, llm_function
-from eidos.memory.embeddings import OpenAIEmbeddingSpec, OpenAIEmbedding
-from eidos.system.reference_model import Specable
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidos_sdk.memory.embeddings import OpenAIEmbeddingSpec, OpenAIEmbedding
+from eidos_sdk.system.reference_model import Specable
 from eidolon_examples.code_search.code_sync import CodeSync
 
 

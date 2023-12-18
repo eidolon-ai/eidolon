@@ -2,10 +2,10 @@ from contextlib import contextmanager
 
 from pydantic import BaseModel, Field
 
-from eidos.agent_os import AgentOS
-from eidos.system.reference_model import Reference, Specable, AnnotatedReference
-from eidos.system.resources_base import Resource
-from eidos.util.class_utils import fqn
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.system.reference_model import Reference, Specable, AnnotatedReference
+from eidos_sdk.system.resources_base import Resource
+from eidos_sdk.util.class_utils import fqn
 
 
 class BaseSpec(BaseModel):
