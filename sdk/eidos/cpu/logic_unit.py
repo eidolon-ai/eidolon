@@ -31,7 +31,7 @@ class LLMToolWrapper:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
             if self.logic_unit.is_sync():
                 input_model = self.eidos_handler.input_model_fn(self.logic_unit, self.eidos_handler)
-                result = await self.eidos_handler.fn(self, **dict(input_model.model_validate(args)))
+                result = await self.eidos_handler.fn(self.logic_unit, **dict(input_model.model_validate(args)))
                 # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
                 if isinstance(result, BaseModel):
                     result = result.model_dump()

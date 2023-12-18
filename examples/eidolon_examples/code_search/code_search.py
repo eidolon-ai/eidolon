@@ -89,7 +89,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
         # first expand the file name wrt the root dir
         file_name = os.path.expandvars(file_name)
         # now process relative paths for file name wrt the root dir
-        file_name = os.path.relpath(file_name, self.root_dir)
+        file_name = os.path.join(self.root_dir, file_name)
         # now convert to absolute path
         file_name = os.path.abspath(file_name)
 
@@ -110,13 +110,19 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
             str,
             Field(description="The query to search for. The query will be embedded and searched using a vector store"),
         ],
+        max_results: Annotated[
+            int,
+            Field(
+                description="The maximum number of results to return. The results will be sorted by similarity to the query"
+            ),
+        ] = 10,
     ) -> List[SearchResult]:
         """
         Search for code that matches the query
         :return: The code snippets that match the query
         """
         await self._init()
-        results = await AgentOS.similarity_memory.query("code_sync", self.embedder, query, 10, {})
+        results = await AgentOS.similarity_memory.query("code_sync", self.embedder, query, max_results, {})
         return [
             SearchResult(
                 file_name=result.metadata["file_path"],

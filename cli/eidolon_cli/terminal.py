@@ -17,6 +17,7 @@ from eidolon_cli.client import EidolonClient
 
 class SubcommandsExample(cmd2.Cmd):
     CUSTOM_CATEGORY = 'Eidolon CLI'
+    markdown = True
 
     """
     Example cmd2 application where we a base command which has a couple subcommands
@@ -85,7 +86,7 @@ class SubcommandsExample(cmd2.Cmd):
         """Start a process with an agent"""
         agent = self.client.get_client(arg.endpoint, is_program=True)
         process_id = None
-        self.client.have_conversation(agent.name, [agent.program], process_id, self.console)
+        self.client.have_conversation(agent.name, [agent.program], process_id, self.console, True, self.markdown)
 
     def agent_provider(self) -> List[str]:
         """A choices provider is useful when the choice list is based on instance data of your application"""
@@ -118,4 +119,11 @@ class SubcommandsExample(cmd2.Cmd):
             self.console.print("Invalid process id")
             return
 
-        self.client.have_conversation(agent_name, process["available_actions"], arg.process_id, self.console)
+        self.client.have_conversation(agent_name, process["available_actions"], arg.process_id, self.console, False, self.markdown)
+
+    def do_markdown(self, arg):
+        """
+        Toggle markdown rendering of output
+        """
+        self.markdown = not self.markdown
+        self.console.print(f"Markdown rendering is now {'on' if self.markdown else 'off'}")

@@ -6,9 +6,13 @@ metadata:
 
 spec:
   description: A documentation producer that creates and edits documentation for a project.
-  agent_refs: ["Searcher"]
   cpu:
     implementation: "eidos.cpu.open_ai_assistants_cpu.OpenAIAssistantsCPU"
+    spec:
+      logic_units:
+        - implementation: "eidolon_examples.code_search.code_search.CodeSearch"
+          spec:
+            root_dir: "$HOME//Development/augustdata/eidolon/sdk"
 
   system_prompt:
     You are a software documentation expert responsible for maintaining a project and trying to prove yourself. Your job is to
@@ -21,7 +25,9 @@ spec:
     documentation in a professional manner similar to other documentation you have seen.
   
     You have available a tool that can search for code, list the packages and files in the project, and open individual files. Use the tool to
-    create the documentation.
+    create the documentation. Make sure you results are accurate and complete.
+  
+    Think step-by-step about how you want to create the documentation. Reason about the documentation and call tools to help you create the documentation.
 
   user_prompt: "{{instruction}}"
   input_schema:

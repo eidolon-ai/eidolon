@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 
 import httpx
 from rich.console import Console
+from rich.markdown import Markdown
 
 from eidolon_cli.schema import Schema, AgentProgram
 
@@ -112,7 +113,7 @@ class EidolonClient:
             processes_obj = client.get(urljoin(self.server_location, processes_url), params={"limit": 999}).json()
             return processes_obj["processes"]
 
-    def have_conversation(self, agent_name, actions: List[str], process_id, console: Console):
+    def have_conversation(self, agent_name, actions: List[str], process_id, console: Console, start_of_conversation: bool, show_markdown: bool):
         while True:
             if len(actions) > 1:
                 action = ""
@@ -125,11 +126,11 @@ class EidolonClient:
                     else:
                         console.print("Invalid action")
                 current_conversation = agent_name + "/" + action
-                agent = self.get_client(current_conversation, False)
+                agent = self.get_client(current_conversation, start_of_conversation)
             elif len(actions) == 1:
                 action = actions[0]
                 current_conversation = agent_name + "/" + action
-                agent = self.get_client(current_conversation, False)
+                agent = self.get_client(current_conversation, start_of_conversation)
             else:
                 raise Exception("No actions available")
 
@@ -146,7 +147,11 @@ class EidolonClient:
                 if isinstance(response["data"], dict):
                     console.print_json(json.dumps(response["data"]))
                 else:
-                    console.print(response["data"], style="blue")
+                    if show_markdown:
+                        md = Markdown(response["data"])
+                        console.print(md)
+                    else:
+                        console.print(response["data"])
 
                 if response["state"] == "terminated":
                     break
