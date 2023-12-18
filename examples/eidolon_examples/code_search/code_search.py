@@ -79,27 +79,27 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
 
     @llm_function()
     async def get_code(
-        self, file_name: Annotated[str, Field(description="The name of the file to get code from")]
+        self, file_path: Annotated[str, Field(description="The path to the file to get the source code for")]
     ) -> SourceCode:
         """
-        Get the source code for a given file
+        Get the source code for a given file. Make sure the complete file path is passed in and not just the file name.
         :return: The source code for the file
         """
         await self._init()
         # first expand the file name wrt the root dir
-        file_name = os.path.expandvars(file_name)
+        file_path = os.path.expandvars(file_path)
         # now process relative paths for file name wrt the root dir
-        file_name = os.path.join(self.root_dir, file_name)
+        file_path = os.path.join(self.root_dir, file_path)
         # now convert to absolute path
-        file_name = os.path.abspath(file_name)
+        file_path = os.path.abspath(file_path)
 
         # now check that the file is in the root dir
-        if not file_name.startswith(self.root_dir):
-            raise ValueError(f"File {file_name} is not in root dir {self.root_dir}")
+        if not file_path.startswith(self.root_dir):
+            raise ValueError(f"File {file_path} is not in root dir {self.root_dir}")
 
-        with open(os.path.join(self.root_dir, file_name), "r") as f:
+        with open(os.path.join(self.root_dir, file_path), "r") as f:
             return SourceCode(
-                file_name=file_name,
+                file_name=file_path,
                 source_code=f.read(),
             )
 

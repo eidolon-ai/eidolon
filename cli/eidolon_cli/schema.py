@@ -51,6 +51,18 @@ class ObjInput:
             user_files = None
         return user_files
 
+    def get_multiline_input(self) -> str:
+        self.console.print("  Enter text, end with ctrl-d or ctrl-z (windows):")
+        contents = []
+        while True:
+            try:
+                line = input()
+            except EOFError:
+                break
+            contents.append(line)
+
+        return "\n".join(contents)
+
     def get_input_from_obj(self, obj: Dict[str, Any], padding_level: int) -> Dict[str, Any]:
         obj_input = {}
         for k, v in obj.items():
@@ -78,7 +90,17 @@ class ObjInput:
                     obj_input[k] = self.get_file_input(k, v.get("required", False), False, padding_level)
                 else:
                     self.print_field(padding_level, k, v.get("default"), v.get("required", False))
-                    obj_input[k] = self.console.input()
+                    if v.get("type") == "integer":
+                        obj_input[k] = int(self.console.input())
+                    elif v.get("type") == "number":
+                        obj_input[k] = float(self.console.input())
+                    elif v.get("type") == "boolean":
+                        user_input = self.console.input().lower()
+                        obj_input[k] = user_input == "y" or user_input == "yes"
+                    elif v.get("type") == "string":
+                        obj_input[k] = self.get_multiline_input()
+                    else:
+                        obj_input[k] = self.console.input()
         return obj_input
 
 

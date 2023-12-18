@@ -138,6 +138,7 @@ class EidolonClient:
             if user_input is None:
                 console.print()
                 break
+            console.print("Sending request...", style="dim")
             status_code, response = self.send_request(agent, user_input, process_id)
             if status_code != 200:
                 console.print(f"Error: {str(response)}", style="red")
