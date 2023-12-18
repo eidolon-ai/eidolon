@@ -1,14 +1,12 @@
-import asyncio
-from typing import Annotated
-
-import typer
-
-from eidolon_cli import terminal
+from eidolon_cli.terminal import SubcommandsExample
 
 
-def main(endpoint: Annotated[str, typer.Option(help="The endpoint to use.")] = "http://localhost:8080"):
-    asyncio.run(terminal.run(endpoint))
+def main():
+    import sys
+
+    app = SubcommandsExample()
+    sys.exit(app.cmdloop())
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    main()

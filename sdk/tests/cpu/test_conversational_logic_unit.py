@@ -105,4 +105,4 @@ async def test_no_body(conversational_logic_unit):
 async def test_docs(conversational_logic_unit):
     with conversational_logic_unit(Foo) as clu:
         tools = await clu.build_tools([])
-        assert tools["convo_Foo_init"].description == "init docs"
+        assert tools[0].description(None, None) == "init docs"

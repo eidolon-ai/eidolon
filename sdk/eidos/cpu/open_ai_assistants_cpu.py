@@ -16,9 +16,10 @@ from eidos.cpu.agent_cpu import AgentCPUSpec, AgentCPU, Thread
 from eidos.cpu.agent_io import CPUMessageTypes
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import ToolResponseMessage, LLMMessage
-from eidos.cpu.logic_unit import ToolDefType, LogicUnit
+from eidos.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidos.system.reference_model import Specable, Reference
+from eidos.util.logger import logger
 
 
 class OpenAIAssistantsCPUSpec(AgentCPUSpec):
@@ -87,7 +88,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         if file_ids and len(file_ids) > 0:
             request["file_ids"] = file_ids
 
-        print("creating assistant with request " + str(request))
+        logger.info("creating assistant with request " + str(request))
         assistant = await llm.beta.assistants.create(**request)
         thread = await llm.beta.threads.create()
 
@@ -102,12 +103,6 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         )
 
         return assistant, thread.id
-
-    async def get_tools(self, conversation) -> Dict[str, ToolDefType]:
-        self.tool_defs = {}
-        for logic_unit in self.logic_units:
-            self.tool_defs.update(await logic_unit.build_tools(conversation))
-        return self.tool_defs
 
     async def set_boot_messages(
         self,
@@ -185,8 +180,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         async for item in conversation_from_memory:
             conversation.append(LLMMessage.from_dict(item["tool_result"]))
 
-        tool_defs = await self.get_tools(conversation)
-        return tool_defs
+        return await LLMToolWrapper.from_logic_units(self.logic_units, conversation=conversation)
 
     async def run_llm_and_tools(
         self,
@@ -198,16 +192,16 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         llm = self._getLLM()
         tool_defs = await self._get_tools_defs(call_context)
         tools = []
-        print("tool defs are " + str(tool_defs))
+        logger.info("tool defs are " + str(tool_defs.keys()))
         for tool_def in tool_defs.values():
             tools.append(
                 ToolAssistantToolsFunction(
                     **{
                         "type": "function",
                         "function": {
-                            "name": tool_def.name,
-                            "description": tool_def.description,
-                            "parameters": tool_def.parameters,
+                            "name": tool_def.llm_message.name,
+                            "description": tool_def.llm_message.description,
+                            "parameters": tool_def.llm_message.parameters,
                         },
                     }
                 )
@@ -232,10 +226,10 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                     tool_call_id = tool_call.id
                     function_call = tool_call.function
                     arguments = json.loads(function_call.arguments)
-                    print("executing tool " + function_call.name + " with args " + str(function_call.arguments))
+                    logger.info("executing tool " + function_call.name + " with args " + str(function_call.arguments))
                     tool_def = tool_defs[function_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=arguments)
-                    print("tool result is " + str(tool_result))
+                    logger.info("tool result is " + str(tool_result))
                     result_as_json_str = self._to_json(tool_result)
                     message = ToolOutput(tool_call_id=tool_call_id, output=result_as_json_str)
                     message_to_store = ToolResponseMessage(
@@ -270,7 +264,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                 content = ""
                 for text in first_item.content:
                     if text.type == "image_url":
-                        print("UGH!!! We got an image url")
+                        logger.warning("Unsupported image url")
                     else:
                         content += text.text.value + "\n"
                 return content

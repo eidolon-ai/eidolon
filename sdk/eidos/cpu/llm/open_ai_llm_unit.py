@@ -7,7 +7,7 @@ from PIL import Image
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
 from openai.types.chat.completion_create_params import ResponseFormat
-from pydantic import Field
+from pydantic import Field, BaseModel
 
 from eidos.agent_os import AgentOS
 from eidos.cpu.call_context import CallContext
@@ -19,7 +19,7 @@ from eidos.cpu.llm_message import (
     UserMessage,
     SystemMessage,
 )
-from eidos.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
+from eidos.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidos.system.reference_model import Specable
 from eidos.util.logger import logger
 
@@ -117,7 +117,7 @@ def convert_to_openai(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-class OpenAiGPTSpec(LLMUnitConfig):
+class OpenAiGPTSpec(BaseModel):
     model: str = Field(default="gpt-4-1106-preview", description="The model to use for the LLM.")
     temperature: float = 0.3
     force_json: bool = True
@@ -129,10 +129,12 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
     temperature: float
     llm: AsyncOpenAI = None
 
-    def __init__(self, spec: OpenAiGPTSpec, **kwargs):
-        super().__init__(spec, **kwargs)
-        self.model = spec.model
-        self.temperature = spec.temperature
+    def __init__(self, **kwargs):
+        LLMUnit.__init__(self, **kwargs)
+        Specable.__init__(self, **kwargs)
+
+        self.model = self.spec.model
+        self.temperature = self.spec.temperature
 
     async def execute_llm(
         self,

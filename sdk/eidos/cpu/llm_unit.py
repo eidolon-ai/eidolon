@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import AssistantMessage, LLMMessage
 from eidos.cpu.processing_unit import ProcessingUnit
-from eidos.system.reference_model import Specable
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,
@@ -46,15 +45,9 @@ class LLMCallFunction(BaseModel):
     parameters: Dict[str, object] = Field(..., description="The json schema for the function parameters.")
 
 
-class LLMUnitConfig(BaseModel):
-    pass
-
-
-# todo, llm unit config probably doesn't belong at this level
-class LLMUnit(ProcessingUnit, Specable[LLMUnitConfig], ABC):
-    def __init__(self, spec: LLMUnitConfig = None, **kwargs):
+class LLMUnit(ProcessingUnit, ABC):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.spec = spec
 
     @abstractmethod
     async def execute_llm(

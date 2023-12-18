@@ -1,90 +1,129 @@
-import os
-import readline
-from urllib.parse import urlparse
+#!/usr/bin/env python3
+# coding=utf-8
+"""A simple example demonstrating how to use Argparse to support subcommands.
 
+
+This example shows an easy way for a single command to have many subcommands, each of which takes different arguments
+and provides separate contextual help.
+"""
+from typing import List, Dict
+
+import cmd2
+from cmd2 import style, Fg, Bg
 from rich.console import Console
 
 from eidolon_cli.client import EidolonClient
 
-history_file = os.path.expanduser("~/.eidolon.history")
-history_file_size = 1000
 
-client = EidolonClient()
-console = Console()
+class SubcommandsExample(cmd2.Cmd):
+    CUSTOM_CATEGORY = 'Eidolon CLI'
+    markdown = True
 
+    """
+    Example cmd2 application where we a base command which has a couple subcommands
+    and the "sport" subcommand has tab completion enabled.
+    """
 
-commands = ["/help", "/list", "/conversation", "quit"]
+    def __init__(self):
+        super().__init__(
+            multiline_commands=['echo'],
+            persistent_history_file='eidolon_history.dat',
+            # startup_script='scripts/startup.txt',
+            include_ipy=False,
+        )
+        del cmd2.Cmd.do_py  # disable the "py" command
+        del cmd2.Cmd.do_shell
+        del cmd2.Cmd.do_ipy
+        del cmd2.Cmd.do_run_pyscript
+        del cmd2.Cmd.do_edit
+        del cmd2.Cmd.do_shortcuts
+        self.console = Console()
 
+        self.intro = style('Eidolon command line tool. Type help for the list of commands.', fg=Fg.RED, bg=Bg.WHITE, bold=True)
 
-def completer(text, state):
-    options = [i for i in commands if i.startswith(text)]
-    if state < len(options):
-        return options[state]
-    else:
-        return None
+        # Allow access to your application in py and ipy via self
+        self.self_in_py = False
 
+        # Set the default category name
+        self.default_category = "Builtin Tools"
 
-if "libedit" in readline.__doc__:
-    readline.parse_and_bind("bind ^I rl_complete")
-else:
-    readline.set_completer_delims(" \t\n;")
-    readline.parse_and_bind("tab: complete")
+        self.client = EidolonClient()
 
-readline.set_completer(completer)
+    def endpoints_provider(self) -> List[str]:
+        """A choices provider is useful when the choice list is based on instance data of your application"""
+        names = []
+        for agent in self.client.agent_programs:
+            name = f"{agent.name}/{agent.program}"
+            names.append(name)
 
+        return list(set(names))
 
-def print_prompt():
-    if client.server_location is None:
-        location = "[gray70](disconnected)[/gray70]"
-    else:
-        url = urlparse(client.server_location)
-        location = f"[#8a8a8a]({url.hostname}:{url.port}"
-        if client.agent:
-            location += f"/agents/{client.agent}"
-            if client.endpoint:
-                location += f"/programs/{client.endpoint}"
-        location += ")[/#8a8a8a]"
-    console.print(location, end="")
-    console.print(" eidolon % ", end="")
+    def programs_provider(self) -> List[str]:
+        """A choices provider is useful when the choice list is based on instance data of your application"""
+        return [f"{agent.name}/{agent.program}" for agent in self.client.agent_programs if agent.is_program]
 
+    info_parser = cmd2.Cmd2ArgumentParser()
+    info_arg = info_parser.add_argument('endpoint', help='Enter the name of the endpoint', choices_provider=endpoints_provider, nargs='?')
 
-async def run(endpoint: str):
-    await client.set_server_location(endpoint)
-    console.print(f"Connected to {endpoint}")
-    current_conversation = None
-    command = ""
-    if readline and os.path.exists(history_file):
-        readline.read_history_file(history_file)
-    while command != "quit":
-        if current_conversation:
-            agent = await client.get_client(current_conversation[0])
-            user_input = agent.schema.await_input(console)
-            if user_input is None:
-                current_conversation = None
-                console.print()
-                continue
-            status_code, response = await client.send_request(agent, user_input)
-            if status_code != 200:
-                console.print(f"Error: {str(response)}")
-            else:
-                console.print(str(response))
+    @cmd2.with_category(CUSTOM_CATEGORY)
+    @cmd2.with_argparser(info_parser)
+    def do_info(self, arg):
+        """Show information about agents endpoints"""
+        if not arg.endpoint or len(arg.endpoint) == 0:
+            for agent in self.client.agent_programs:
+                self.console.print(agent)
         else:
-            print_prompt()
-            command = console.input()
-            if command == "/list":
-                agents_ = await client.list_agents()
-                for agent in agents_:
-                    console.print(agent, end="")
-            elif command.startswith("/conversation "):
-                agent = command.split(" ")[1]
-                current_conversation = (agent, None)
-            elif command.startswith("/help"):
-                console.print("Available commands:")
-                console.print("/list - list available agents")
-                console.print("/conversation [agent] - start a conversation with an agent")
-            elif command == "quit":
-                console.print("Goodbye!")
-            else:
-                console.print("Unknown command")
-        readline.set_history_length(history_file_size)
-        readline.write_history_file(history_file)
+            agent = self.client.get_client(arg.endpoint, None)
+            self.console.print(agent)
+            self.console.print(agent.schema)
+
+    start_parser = cmd2.Cmd2ArgumentParser()
+    start_arg = start_parser.add_argument('endpoint', help='Enter the name of the endpoint', choices_provider=programs_provider)
+
+    @cmd2.with_category(CUSTOM_CATEGORY)
+    @cmd2.with_argparser(start_parser)
+    def do_start(self, arg):
+        """Start a process with an agent"""
+        agent = self.client.get_client(arg.endpoint, is_program=True)
+        process_id = None
+        self.client.have_conversation(agent.name, [agent.program], process_id, self.console, True, self.markdown)
+
+    def agent_provider(self) -> List[str]:
+        """A choices provider is useful when the choice list is based on instance data of your application"""
+        agents = [agent.name for agent in self.client.agent_programs]
+        # now deduplicate the list
+        agent_names = list(set(agents))
+        agent_names.sort(reverse=True)
+        return agent_names
+
+    def agent_process_id_provider(self, arg_tokens: Dict[str, List[str]]) -> List[str]:
+        """A choices provider is useful when the choice list is based on instance data of your application"""
+        processes = self.client.get_processes(arg_tokens["agent"][0])
+        # now we just want the processes in the "idle" state and just the process id
+        process_ids = [process["process_id"] for process in processes if process["state"] != "terminated"]
+        return process_ids
+
+    resume_parser = cmd2.Cmd2ArgumentParser()
+    resume_arg = resume_parser.add_argument('agent', help='Enter the name of the agent', choices_provider=agent_provider)
+    resume_parser.add_argument('process_id', help='Enter the process id', choices_provider=agent_process_id_provider)
+
+    @cmd2.with_category(CUSTOM_CATEGORY)
+    @cmd2.with_argparser(resume_parser)
+    def do_resume(self, arg):
+        """Resume a process with an agent"""
+        agent_name = arg.agent
+        processes = self.client.get_processes(agent_name)
+        # find the process by process_id
+        process = next(process for process in processes if process["process_id"] == arg.process_id)
+        if not process:
+            self.console.print("Invalid process id")
+            return
+
+        self.client.have_conversation(agent_name, process["available_actions"], arg.process_id, self.console, False, self.markdown)
+
+    def do_markdown(self, arg):
+        """
+        Toggle markdown rendering of output
+        """
+        self.markdown = not self.markdown
+        self.console.print(f"Markdown rendering is now {'on' if self.markdown else 'off'}")

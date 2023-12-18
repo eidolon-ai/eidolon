@@ -39,6 +39,11 @@ class TestHelloWorld:
 
 
 class StateMachine:
+    @register_action("ap")
+    @register_program()
+    async def action_program(self):
+        return AgentState[str](name="ap", data="default response")
+
     @register_program()
     # async def idle(self, desired_state: Annotated[str, Body()], response: Annotated[str, Body()] = "default response"):
     async def idle(self, desired_state: Annotated[str, Body()], response: Annotated[str, Body()]):
@@ -138,3 +143,11 @@ class TestStateMachine:
         assert terminated.json()["state"] == "terminated"
         assert terminated.json()["data"] == "Only God can terminate me"
         assert terminated.json()["available_actions"] == []
+
+    def test_can_register_function_as_action_and_program(self, client):
+        program = client.post("/agents/StateMachine/programs/action_program")
+        assert program.status_code == 200
+        action = client.post(
+            f"/agents/StateMachine/processes/{program.json()['process_id']}/actions/action_program",
+        )
+        assert action.status_code == 200

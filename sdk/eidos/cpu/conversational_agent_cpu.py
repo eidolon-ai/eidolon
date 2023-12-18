@@ -9,10 +9,10 @@ from eidos.cpu.conversation_memory_unit import ConversationalMemoryUnit
 from eidos.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos.cpu.llm_message import LLMMessage, AssistantMessage, ToolResponseMessage
 from eidos.cpu.llm_unit import LLMUnit
-from eidos.cpu.logic_unit import LogicUnit, ToolDefType
+from eidos.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos.cpu.memory_unit import MemoryUnit
 from eidos.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidos.system.reference_model import Reference, Specable, AnnotatedReference
+from eidos.system.reference_model import Reference, AnnotatedReference, Specable
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
@@ -76,12 +76,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         except Exception as e:
             raise RuntimeError("Error in cpu while processing request") from e
 
-    async def get_tools(self, conversation) -> Dict[str, ToolDefType]:
-        self.tool_defs = {}
-        for logic_unit in self.logic_units:
-            self.tool_defs.update(await logic_unit.build_tools(conversation))
-        return self.tool_defs
-
     async def _llm_execution_cycle(
         self,
         call_context: CallContext,
@@ -90,15 +84,14 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
     ) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            tool_defs = await self.get_tools(conversation)
+            tool_defs = await LLMToolWrapper.from_logic_units(self.logic_units, conversation=conversation)
             assistant_message = await self.llm_unit.execute_llm(
-                call_context, conversation, list(tool_defs.values()), output_format
+                call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format
             )
             await self.memory_unit.storeMessages(call_context, [assistant_message])
             if assistant_message.tool_calls:
                 results = []
                 for tool_call in assistant_message.tool_calls:
-                    print("executing tool " + tool_call.name + " with args " + str(tool_call.arguments))
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
                     # todo, store tool response result as Any (must be json serializable) so that it can be retrieved symmetrically

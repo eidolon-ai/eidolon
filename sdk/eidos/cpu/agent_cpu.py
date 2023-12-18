@@ -18,11 +18,7 @@ class AgentCPUSpec(BaseModel):
     )
 
 
-class AgentCPU(ABC, Specable[AgentCPUSpec]):
-    def __init__(self, spec: AgentCPUSpec = None):
-        super().__init__(spec)
-        self.tool_defs = None
-
+class AgentCPU(Specable[AgentCPUSpec], ABC):
     @abstractmethod
     async def set_boot_messages(
         self,

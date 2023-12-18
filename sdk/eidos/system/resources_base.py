@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Literal, Type, Optional, TypeVar
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 
 
 class Metadata(BaseModel):
@@ -14,7 +14,7 @@ class Metadata(BaseModel):
 T = TypeVar("T", bound=BaseModel)
 
 
-class Resource(BaseModel, extra='allow'):
+class Resource(BaseModel, extra="allow"):
     apiVersion: Literal["eidolon/v1"]
     kind: str
     metadata: Metadata = Metadata(name="DEFAULT")

@@ -1,123 +1,37 @@
 from __future__ import annotations
 
-import inspect
 import logging
 import typing
 from abc import ABC
-from typing import Dict, Any, Callable, List
+from dataclasses import dataclass
+from typing import Dict, Any, List
 
-from bson import ObjectId
-from pydantic import BaseModel, create_model
-from pydantic.fields import FieldInfo
+from pydantic import BaseModel
 
 from eidos.cpu.call_context import CallContext
 from eidos.cpu.llm_message import LLMMessage
 from eidos.cpu.llm_unit import LLMCallFunction
 from eidos.cpu.processing_unit import ProcessingUnit
-from eidos.util.class_utils import get_function_details
+from eidos.system.eidos_handler import register_handler, EidosHandler, get_handlers
 from eidos.util.logger import logger
-from eidos.util.schema_to_model import schema_to_model
 
 
-class ToolDefType(LLMCallFunction):
-    fn: Callable
-    _logic_unit: LogicUnit
+@dataclass
+class LLMToolWrapper:
+    logic_unit: LogicUnit
+    llm_message: LLMCallFunction
+    eidos_handler: EidosHandler
+    input_model: typing.Type[BaseModel]
 
-    def __init__(self, _logic_unit: LogicUnit, **data):
-        super().__init__(**data)
-        self._logic_unit = _logic_unit
-
+    # todo we should support any type response, not just dict
     async def execute(self, call_context: CallContext, args: Dict[str, Any]) -> Dict[str, Any]:
-        logger.info("executing tool " + self.name)
-        logger.debug("args: " + str(args) + " | fn: " + str(self.fn))
-        return await self._logic_unit.execute(call_context, self.name, self.parameters, self.fn, args)
-
-
-# todo, llm function should require annotations and error if they are not present
-def llm_function(fn):
-    sig = inspect.signature(fn).parameters
-    hints = typing.get_type_hints(fn, include_extras=True)
-    fields = {}
-    for param, hint in filter(lambda tu: tu[0] != "return", hints.items()):
-        if hasattr(hint, "__metadata__") and isinstance(hint.__metadata__[0], FieldInfo):
-            field: FieldInfo = hint.__metadata__[0]
-            if sig[param].default is not inspect.Parameter.empty:
-                field.default = sig[param].default
-            else:
-                field.default = None
-            fields[param] = (hint.__origin__, field)
-        else:
-            # _empty default isn't being handled by create_model properly (still optional when it should be required)
-            default = ... if getattr(sig[param].default, "__name__", None) == "_empty" else sig[param].default
-            fields[param] = (hint, default)
-
-    function_name, clazz = get_function_details(fn)
-    logger.debug("creating model " + f"{clazz}_{function_name}InputModel" + " with fields " + str(fields))
-    input_model = create_model(f"{clazz}_{function_name}InputModel", **fields)
-
-    setattr(
-        fn,
-        "llm_function",
-        dict(
-            name=function_name,
-            description=fn.__doc__,
-            input_model=input_model,
-            fn=fn,
-        ),
-    )
-    return fn
-
-
-class LogicUnit(ProcessingUnit, ABC):
-    _base_tools: Dict[str, ToolDefType]
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._base_tools = {}
-        self._find_base_tools()
-
-    def _find_base_tools(self):
-        for name, llm_function_ in (
-            (method_name, getattr(method, "llm_function"))
-            for method_name in dir(self)
-            for method in [getattr(self, method_name)]
-            if hasattr(method, "llm_function")
-        ):
-            unique_name = name + "_" + str(ObjectId())
-            fn = llm_function_["fn"]
-            logger.debug("registering tool " + unique_name + " with fn " + str(fn))
-            schema = llm_function_["input_model"].model_json_schema()
-            description_ = llm_function_["description"]
-            self._base_tools[unique_name] = ToolDefType(
-                name=unique_name,
-                description=description_,
-                parameters=schema,
-                fn=fn,
-                _logic_unit=self,
-            )
-
-    async def build_tools(self, conversation: List[LLMMessage]) -> Dict[str, ToolDefType]:
-        return self._base_tools
-        # return {k: v.model_copy(deep=True) for k, v in self._base_tools.items()}
-
-    def is_sync(self):
-        return True
-
-    # todo, response type here should not be limited to dict
-    async def execute(
-        self,
-        call_context: CallContext,
-        name,
-        parameter_schema,
-        fn: Callable,
-        args: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        logger.info("calling tool " + self.eidos_handler.name)
+        logger.debug("args: " + str(args) + " | fn: " + str(self.eidos_handler.fn))
         try:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
-            if self.is_sync():
-                converted_input = schema_to_model(parameter_schema, name + "_input").model_validate(args)
-                logging.getLogger("eidolon").info("calling tool " + name + " with args " + str(converted_input))
-                result = await fn(self, **dict(converted_input))
+            if self.logic_unit.is_sync():
+                input_model = self.eidos_handler.input_model_fn(self.logic_unit, self.eidos_handler)
+                result = await self.eidos_handler.fn(self.logic_unit, **dict(input_model.model_validate(args)))
                 # if result is a base model, call model_dump on it. If it is a string wrap it in an object with a "text" key
                 if isinstance(result, BaseModel):
                     result = result.model_dump()
@@ -130,5 +44,45 @@ class LogicUnit(ProcessingUnit, ABC):
                 # todo -- store the conversation and args in memory
                 raise NotImplementedError("Async tools are not yet supported.")
         except Exception as e:
-            logging.exception("error calling tool " + name)
+            logging.exception("error calling tool " + self.eidos_handler.name)
             return dict(error=str(e))
+
+    @classmethod
+    async def from_logic_units(cls, logic_units: List[LogicUnit], conversation) -> Dict[str, LLMToolWrapper]:
+        acc = {}
+        for logic_unit in logic_units:
+            for handler in await logic_unit.build_tools(conversation):
+                new_name = logic_unit.__class__.__name__ + "_" + handler.name
+                i = 0
+                while new_name in acc:
+                    new_name = new_name + logic_unit.__class__.__name__ + "_" + handler.name + "_" + str(i)
+                    i += 1
+                input_model = handler.input_model_fn(logic_unit, handler)
+                acc[new_name] = LLMToolWrapper(
+                    logic_unit=logic_unit,
+                    llm_message=LLMCallFunction(
+                        name=new_name,
+                        description=handler.description(logic_unit, handler),
+                        parameters=input_model.model_json_schema(),
+                    ),
+                    eidos_handler=handler,
+                    input_model=input_model,
+                )
+        return acc
+
+
+def llm_function(
+    name: str = None,
+    description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+):
+    return register_handler(name=name, description=description, input_model=input_model, output_model=output_model)
+
+
+class LogicUnit(ProcessingUnit, ABC):
+    async def build_tools(self, conversation: List[LLMMessage]) -> List[EidosHandler]:
+        return get_handlers(self)
+
+    def is_sync(self):
+        return True

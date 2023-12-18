@@ -2,7 +2,7 @@ from typing import Union, Annotated
 
 from fastapi.params import Body
 
-from eidos.agent.agent import CodeAgent, register_program, AgentState, register_action
+from eidos.agent.agent import register_program, AgentState, register_action
 from fastapi import HTTPException
 from pydantic import BaseModel
 
@@ -19,7 +19,7 @@ class CState(BaseModel):
     baz: str
 
 
-class StateMachine(CodeAgent):
+class StateMachine:
     """
     Initializes in state a, can transform a or b to any state. Can terminate b or c.
     """
