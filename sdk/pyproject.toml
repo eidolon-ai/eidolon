@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "eidos-sdk"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
+include = ["logging.conf"]
 
 [tool.poetry.scripts]
 eidos-server = "eidos_sdk.bin.agent_http_server:main"
