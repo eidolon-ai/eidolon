@@ -1,6 +1,6 @@
 import os
 import pathlib
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 from typing import Iterable
 from unittest.mock import patch
 
@@ -8,6 +8,7 @@ import pytest
 from bson import ObjectId
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from motor.motor_asyncio import AsyncIOMotorClient
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
@@ -22,6 +23,7 @@ from eidos.system.reference_model import Reference
 from eidos.system.resources import AgentResource
 from eidos.system.resources_base import Resource, Metadata
 from eidos.util.class_utils import fqn
+import eidos.system.processes as processes
 
 
 # we want all tests using the client_builder to use vcr so we don't send requests to openai
@@ -29,6 +31,7 @@ def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "client_builder" in i.fixturenames, items):
         item.add_marker(pytest.mark.vcr)
         item.fixturenames.append("patched_vcr_object_handling")
+        item.fixturenames.append("deterministic_process_ids")
 
 
 @pytest.fixture(autouse=True)
@@ -38,7 +41,7 @@ def vcr_config():
         ignore_localhost=True,
         ignore_hosts=["testserver"],
         record_mode="new_episodes",
-        match_on=["method", "scheme", "host", "port", "path", "query", "raw_body"],
+        match_on=["method", "scheme", "host", "port", "path", "query", "body"],
     )
 
 
@@ -58,6 +61,7 @@ def app_builder(machine_manager):
 
 @pytest.fixture(scope="module")
 def client_builder(app_builder):
+    @contextmanager
     def fn(*agents):
         resources = [
             a
@@ -69,7 +73,21 @@ def client_builder(app_builder):
             )
             for a in agents
         ]
-        return TestClient(app_builder(resources))
+        app = app_builder(resources)
+
+        def make_request(method):
+            async def fn(url, args=None):
+                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as client:
+                    return (await client.request(method, url, json=args)).json()
+
+            return fn
+
+        with TestClient(app) as client, patch(
+            "eidos.cpu.conversational_logic_unit._agent_request"
+        ) as _agent_request, patch("eidos.cpu.conversational_logic_unit._get_openapi_schema") as _get_openapi_schema:
+            _agent_request.side_effect = make_request("POST")
+            _get_openapi_schema.side_effect = make_request("GET")
+            yield client
 
     return fn
 
@@ -181,4 +199,27 @@ def patched_vcr_object_handling():
         return VcrRequest(httpx_request.method, uri, httpx_request, headers)
 
     with patch.object(httpx_stubs, "_make_vcr_request", new=my_custom_function):
+        yield
+
+
+def deterministic_id_generator(test_name):
+    count = 0
+    while True:
+        yield f"{test_name}_{count}"
+        count += 1
+
+
+@pytest.fixture()
+def deterministic_process_ids(request):
+    """
+    Tool call responses contain the process id, which means it does name make cache hits for vcr.
+    This method patches object id for processes so that it returns a deterministic id based on the test name.
+    """
+
+    test_name = request.node.name
+    id_generator = deterministic_id_generator(test_name)
+    def patched_ObjectId(*args, **kwargs):
+        return next(id_generator)
+
+    with patch.object(processes.bson, "ObjectId", new=patched_ObjectId):
         yield

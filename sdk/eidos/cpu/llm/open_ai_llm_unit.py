@@ -199,7 +199,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         message = llm_response.choices[0].message
 
         logger.info(
-            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}\n",
+            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
             extra=dict(content=message.content, tool_calls=message.tool_calls),
         )
 
@@ -216,7 +216,6 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             else:
                 content = json.loads(message_text) if message_text else {}
         except json.JSONDecodeError as e:
-            print(message_text)
             raise RuntimeError("Error decoding response content") from e
         return AssistantMessage(content=content, tool_calls=tool_response)
 
