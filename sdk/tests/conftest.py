@@ -18,7 +18,7 @@ from eidos.memory.agent_memory import VectorMemory
 from eidos.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
 from eidos.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos.memory.noop_memory import NoopVectorStore
-from eidos.system.agent_http_server import start_os
+from eidos.bin.agent_http_server import start_os
 from eidos.system.reference_model import Reference
 from eidos.system.resources import AgentResource
 from eidos.system.resources_base import Resource, Metadata

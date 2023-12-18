@@ -23,7 +23,6 @@ def test_can_hit_generic_agent(server_loc):
     assert "paris" in response.json()["data"].lower()
 
 
-@pytest.mark.skip(reason="tool calls are broken")
 def test_tool_calls(server_loc):
     # prep with some information to use on the subsequent response to demonstrate is handled well
     response = requests.post(
@@ -36,5 +35,4 @@ def test_tool_calls(server_loc):
         json=dict(statement="Please use the HelloWorld tool."),
     )
     response2.raise_for_status()
-    assert "Luke" in response2.json()["data"]["response"]
-    assert False, "TODO: test tool calls are broken"
+    assert "Luke" in response2.json()["data"]

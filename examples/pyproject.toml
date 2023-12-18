@@ -19,7 +19,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-eidos-server = "eidos.system.agent_http_server:main"
+eidos-server = "eidos.bin.agent_http_server:main"
 
 [tool.ruff]
 line-length = 121

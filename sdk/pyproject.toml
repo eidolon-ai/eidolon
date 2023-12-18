@@ -6,8 +6,8 @@ authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-eidos-server = "eidos.system.agent_http_server:main"
-create-agent = "bin.agent_creator:main"
+eidos-server = "eidos.bin.agent_http_server:main"
+eidos-create-agent = "eidos.bin.agent_creator:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
