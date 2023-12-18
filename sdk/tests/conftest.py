@@ -23,6 +23,7 @@ from eidos.system.reference_model import Reference
 from eidos.system.resources import AgentResource
 from eidos.system.resources_base import Resource, Metadata
 from eidos.util.class_utils import fqn
+import eidos.system.processes as processes
 
 
 # we want all tests using the client_builder to use vcr so we don't send requests to openai
@@ -30,6 +31,7 @@ def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "client_builder" in i.fixturenames, items):
         item.add_marker(pytest.mark.vcr)
         item.fixturenames.append("patched_vcr_object_handling")
+        item.fixturenames.append("deterministic_process_ids")
 
 
 @pytest.fixture(autouse=True)
@@ -197,4 +199,27 @@ def patched_vcr_object_handling():
         return VcrRequest(httpx_request.method, uri, httpx_request, headers)
 
     with patch.object(httpx_stubs, "_make_vcr_request", new=my_custom_function):
+        yield
+
+
+def deterministic_id_generator(test_name):
+    count = 0
+    while True:
+        yield f"{test_name}_{count}"
+        count += 1
+
+
+@pytest.fixture()
+def deterministic_process_ids(request):
+    """
+    Tool call responses contain the process id, which means it does name make cache hits for vcr.
+    This method patches object id for processes so that it returns a deterministic id based on the test name.
+    """
+
+    test_name = request.node.name
+    id_generator = deterministic_id_generator(test_name)
+    def patched_ObjectId(*args, **kwargs):
+        return next(id_generator)
+
+    with patch.object(processes.bson, "ObjectId", new=patched_ObjectId):
         yield

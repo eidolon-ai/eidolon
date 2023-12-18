@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import ClassVar, Any
 
-from bson import ObjectId
+import bson
 from pydantic import BaseModel
 from pymongo.errors import DuplicateKeyError
 
@@ -33,7 +33,7 @@ class MongoDoc(BaseModel, extra="allow"):
         if "updated" not in data:
             data["updated"] = t
         if "_id" not in data:
-            data["_id"] = str(ObjectId())
+            data["_id"] = str(bson.ObjectId())
         doc = cls(**data)
         await AgentOS.symbolic_memory.insert_one(cls.collection, doc.model_dump())
         return doc
