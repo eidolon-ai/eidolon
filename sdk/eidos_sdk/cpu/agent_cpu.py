@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union
+from typing import Any, List, Dict, Literal, Union, Type
 
 from pydantic import BaseModel, Field
 
@@ -70,17 +70,24 @@ class Thread:
 
     async def set_boot_messages(
         self,
-        output_format: Union[Literal["str"], Dict[str, Any]],
-        *prompts: CPUMessageTypes,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ):
         return await self._cpu.set_boot_messages(self._call_context, list(prompts), output_format)
 
     async def schedule_request(
         self,
         prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+        output_format: Union[Literal["str"], Dict[str, Any], Type[BaseModel]] = "str",
     ) -> Any:
-        return await self._cpu.schedule_request(self._call_context, prompts, output_format)
+        if isinstance(output_format, type):
+            if issubclass(output_format, BaseModel):
+                rtn = await self._cpu.schedule_request(self._call_context, prompts, output_format.model_json_schema())
+                return output_format.model_validate(rtn)
+            else:
+                raise ValueError("type output_format must be a pydantic BaseModel")
+        else:
+            return await self._cpu.schedule_request(self._call_context, prompts, output_format)
 
     async def clone(self) -> Thread:
         return await self._cpu.clone_thread(self._call_context)

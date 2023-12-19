@@ -99,8 +99,8 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         env = Environment(undefined=StrictUndefined)
         t = await self.cpu.main_thread(process_id)
         await t.set_boot_messages(
-            self.spec.output_schema,
-            SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**body))),
+            output_format=self.spec.output_schema,
+            prompts=[SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**body)))],
         )
 
         # pull out any kwargs that are UploadFile and put them in a list of UserImageCPUMessage

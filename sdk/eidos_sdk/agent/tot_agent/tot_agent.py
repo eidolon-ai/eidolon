@@ -128,7 +128,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             _output_format: Dict[str, Any],
         ) -> Dict[str, Any]:
             t2 = await self.cpu.new_thread(process_id)
-            await t2.set_boot_messages(_output_format, *_boot_messages)
+            await t2.set_boot_messages(output_format=_output_format, prompts=_boot_messages)
             return await t2.schedule_request(_messages, _output_format)
 
         for i in range(self.spec.num_iterations):

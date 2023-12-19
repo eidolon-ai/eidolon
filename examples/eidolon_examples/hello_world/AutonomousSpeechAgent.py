@@ -36,7 +36,7 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         t = await self.cpu.main_thread(process_id)
         await t.set_boot_messages(SystemCPUMessage(prompt=self.spec.system_prompt), output_format=schema)
 
-        response = await t.schedule_request(UserTextCPUMessage(prompt=text), output_format=schema)
+        response = await t.schedule_request([UserTextCPUMessage(prompt=text)], output_format=schema)
         response = LlmResponse(**response)
         return AgentState(name="idle", data=response)
 
