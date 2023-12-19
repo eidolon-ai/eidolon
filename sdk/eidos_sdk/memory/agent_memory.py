@@ -148,13 +148,16 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
-    async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
+    async def find_one(
+        self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None
+    ) -> Optional[dict[str, Any]]:
         """
         Searches for a single symbol within a specified collection that matches the given query.
 
         Args:
             symbol_collection (str): The name of the collection to search within.
             query (dict[str, Any]): The search criteria used to filter symbols.
+            sort (dict[str, int]): The fields to sort the results by. The key is the field to sort by, and the value is the direction
 
         Returns:
             Optional[dict[str, Any]]: A single symbol that matches the query, represented as a dictionary,

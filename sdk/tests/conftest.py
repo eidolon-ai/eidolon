@@ -17,6 +17,7 @@ import eidos_sdk.system.processes as processes
 from eidos_sdk.bin.agent_http_server import start_os
 from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec, OpenAIGPT
 from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
+from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.noop_memory import NoopVectorMemory
 from eidos_sdk.system.reference_model import Reference
@@ -110,7 +111,21 @@ def machine_manager(file_memory, symbolic_memory, similarity_memory):
 
 
 @pytest.fixture(scope="module")
-def symbolic_memory(module_identifier):
+def local_symbolic_memory(module_identifier):
+    @asynccontextmanager
+    async def fn():
+        ref = Reference(implementation=fqn(LocalSymbolicMemory))
+        memory = ref.instantiate()
+        memory.start()
+        yield ref
+        memory.stop()
+        # Teardown: drop the test database
+
+    return fn
+
+
+@pytest.fixture(scope="module")
+def mongo_symbolic_memory(module_identifier):
     @asynccontextmanager
     async def fn():
         # Setup unique database for test suite
@@ -131,6 +146,20 @@ def symbolic_memory(module_identifier):
         client.close()
 
     return fn
+
+
+def pytest_addoption(parser):
+    parser.addoption("--symbolic_memory", action="store", default="mongo", help="Symbolic memory implementation to use")
+
+
+@pytest.fixture(scope="module")
+def symbolic_memory(mongo_symbolic_memory, local_symbolic_memory, pytestconfig):
+    if pytestconfig.getoption("symbolic_memory").lower() == "local":
+        print("Using local symbolic memory")
+        return local_symbolic_memory
+    else:
+        print("Using mongo symbolic memory")
+        return mongo_symbolic_memory
 
 
 @pytest.fixture(scope="module")

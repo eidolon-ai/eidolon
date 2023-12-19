@@ -1,6 +1,7 @@
 from copy import deepcopy
 from typing import Any, Union, List, Dict, AsyncIterable, Optional
 
+from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from eidos_sdk.memory.agent_memory import SymbolicMemory
@@ -31,10 +32,14 @@ class LocalSymbolicMemory(SymbolicMemory):
                 return False
         return True
 
-    def _apply_projection(self, doc: dict, projection: dict) -> dict:
-        return {field: doc[field] for field in doc if field in projection and projection[field] == 1}
+    @staticmethod
+    def _apply_projection(doc: dict, projection: dict) -> dict:
+        rtn = {field: doc[field] for field in doc if field in projection and projection[field] == 1}
+        if not rtn:
+            rtn = {k: v for k, v in doc.items() if projection.get(k, 1)}
+        return rtn
 
-    def find(
+    async def find(
         self,
         symbol_collection: str,
         query: dict[str, Any],
@@ -44,17 +49,20 @@ class LocalSymbolicMemory(SymbolicMemory):
     ) -> AsyncIterable[dict[str, Any]]:
         if symbol_collection not in self.db:
             return
-        for doc in self.db[symbol_collection]:
-            if self._matches_query(doc, query):
-                yield deepcopy(self._apply_projection(doc, projection) if projection else doc)
+        matching_docs = [doc for doc in self.db[symbol_collection] if self._matches_query(doc, query)]
+        if sort:
+            for field, direction in reversed(sort.items()):
+                matching_docs = sorted(matching_docs, key=lambda doc: doc.get(field, None), reverse=direction == -1)
+        if skip:
+            matching_docs = matching_docs[skip:]
+        for doc in matching_docs:
+            yield deepcopy(self._apply_projection(doc, projection) if projection else doc)
 
-    async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
-        if symbol_collection not in self.db:
-            return None
-        for doc in self.db[symbol_collection]:
-            if self._matches_query(doc, query):
-                return deepcopy(doc)
-        return None
+    async def find_one(
+        self, symbol_collection: str, query: dict[str, Any], sort: dict = None
+    ) -> Optional[dict[str, Any]]:
+        async for doc in self.find(symbol_collection, query, sort=sort, skip=0):
+            return doc
 
     async def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
         if symbol_collection not in self.db:
@@ -67,6 +75,8 @@ class LocalSymbolicMemory(SymbolicMemory):
         if symbol_collection not in self.db:
             self.db[symbol_collection] = []
         for document in documents:
+            if "_id" not in document:
+                document["_id"] = str(ObjectId())
             if any(doc.get("_id") == document.get("_id") for doc in self.db[symbol_collection]):
                 raise DuplicateKeyError(f"Duplicate key error: _id {document.get('_id')} already exists.")
         self.db[symbol_collection].extend(deepcopy(documents))
@@ -76,7 +86,7 @@ class LocalSymbolicMemory(SymbolicMemory):
             self.db[symbol_collection] = []
         for i, doc in enumerate(self.db[symbol_collection]):
             if self._matches_query(doc, query):
-                self.db[symbol_collection][i] = deepcopy(document)
+                doc.update(deepcopy(document))
                 return
         if any(doc.get("_id") == document.get("_id") for doc in self.db[symbol_collection]):
             raise DuplicateKeyError(f"Duplicate key error: _id {document.get('_id')} already exists.")
