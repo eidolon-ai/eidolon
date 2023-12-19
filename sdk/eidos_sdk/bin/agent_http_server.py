@@ -3,6 +3,7 @@ import logging.config
 import os
 import pathlib
 from contextlib import asynccontextmanager
+from itertools import chain
 
 import dotenv
 import uvicorn
@@ -13,6 +14,7 @@ from starlette.requests import Request
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.agent_machine import AgentMachine, error_logger
+from eidos_sdk.system.resources import builtin_resources
 from eidos_sdk.system.resources_base import Resource
 from eidos_sdk.util.logger import logger
 
@@ -41,6 +43,13 @@ def parse_args():
         type=str,
         help="Path to a directory containing YAML files describing the agent machine to start.",
     )
+    parser.add_argument(
+        "-m",
+        "--machine",
+        type=str,
+        help="The name of the machine to start.",
+        default="DEFAULT",
+    )
 
     # Parse command line arguments
     return parser.parse_args()
@@ -55,12 +64,12 @@ def load_resources(path):
 
 
 @asynccontextmanager
-async def start_os(app, resource_generator, log_level=logging.INFO):
+async def start_os(app, resource_generator, log_level=logging.INFO, machine_name="DEFAULT"):
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
     try:
-        machine = AgentMachine.from_resources(resource_generator)
+        machine = AgentMachine.from_resources(chain(builtin_resources, resource_generator), machine_name)
         AgentOS.load_machine(machine)
         await machine.start(app)
         logger.info("Server Started")

@@ -5,7 +5,6 @@ from eidos_sdk.memory.agent_memory import AgentMemory
 from .agent_controller import AgentController
 from .resources import MachineResource, agent_resources, Resource
 from ..agent_os import AgentOS
-from ..util.logger import logger
 
 
 class AgentMachine:
@@ -33,7 +32,7 @@ class AgentMachine:
             self.app = None
 
     @staticmethod
-    def from_resources(resources: Iterable[Resource | Tuple[Resource, str]]):
+    def from_resources(resources: Iterable[Resource | Tuple[Resource, str]], machine_name: str = "DEFAULT"):
         for resource_or_tuple in resources:
             if isinstance(resource_or_tuple, Resource):
                 resource, source = resource_or_tuple, None
@@ -41,12 +40,8 @@ class AgentMachine:
                 resource, source = resource_or_tuple
             AgentOS.register_resource(resource=resource, source=source)
 
-        machine = AgentOS.get_resource(MachineResource.kind_literal(), default=None)
-        if machine is None:
-            logger.warning("No machine resource found, using defaults")
-            machine = MachineResource()
-        else:
-            machine = machine.promote(MachineResource)
+        machine = AgentOS.get_resource(MachineResource.kind_literal(), machine_name)
+        machine = machine.promote(MachineResource)
 
         agents = {}
         for kind, agent_resource_class in agent_resources.items():

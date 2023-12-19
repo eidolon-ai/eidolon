@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, Tuple
 
+from eidos_sdk.util.logger import logger
+
 
 class AgentOS:
     _resources: Dict[str, Dict[str, Tuple["Resource", str]]] = {}  # noqa: F821
@@ -21,9 +23,12 @@ class AgentOS:
             cls._resources[resource.kind] = {}
         bucket = cls._resources[resource.kind]
         if resource.metadata.name in bucket:
-            raise ValueError(
-                f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"
-            )
+            if bucket[resource.metadata.name][1] == "builtin":
+                logger.info(f"Overriding builtin resource {resource.kind}.{resource.metadata.name}")
+            else:
+                raise ValueError(
+                    f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"
+                )
         bucket[resource.metadata.name] = (resource, source)
 
     @classmethod

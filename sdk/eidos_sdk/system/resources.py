@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, Type, Dict, ClassVar
+from typing import Literal, Type, Dict, ClassVar, List, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -14,11 +14,11 @@ from eidos_sdk.memory.agent_memory import (
     AgentMemory,
     VectorMemory,
 )
-from eidos_sdk.memory.local_file_memory import LocalFileMemory
-from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
+from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
+from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory, MongoSymbolicMemoryConfig
 from eidos_sdk.memory.noop_memory import NoopVectorMemory
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference
-from eidos_sdk.system.resources_base import Resource
+from eidos_sdk.system.resources_base import Resource, Metadata
 
 
 class MachineSpec(BaseModel):
@@ -73,3 +73,37 @@ agent_resources: Dict[str, Type[Resource]] = {
         _build_resource(TreeOfThoughtsAgent),
     ]
 }
+
+builtin_resources: List[Tuple[Resource, str]] = [
+    (r, "builtin")
+    for r in [
+        MachineResource(
+            apiVersion="eidolon/v1",
+            kind="Machine",
+            metadata=Metadata(name="local_dev"),
+            spec=MachineSpec(
+                symbolic_memory=Reference[MongoSymbolicMemory](
+                    spec=MongoSymbolicMemoryConfig(mongo_database_name="eidos").model_dump()
+                ),
+                file_memory=Reference[LocalFileMemory](
+                    spec=LocalFileMemoryConfig(root_dir="/tmp/eidos/file_memory").model_dump()
+                ),
+                similarity_memory=Reference[NoopVectorMemory](),
+            ),
+        ),
+        MachineResource(
+            apiVersion="eidolon/v1",
+            kind="Machine",
+            metadata=Metadata(name="DEFAULT"),
+            spec=MachineSpec(
+                symbolic_memory=Reference[MongoSymbolicMemory](
+                    spec=MongoSymbolicMemoryConfig(mongo_database_name="eidos").model_dump()
+                ),
+                file_memory=Reference[LocalFileMemory](
+                    spec=LocalFileMemoryConfig(root_dir="/etc/eidos/file_memory").model_dump()
+                ),
+                similarity_memory=Reference[NoopVectorMemory](),
+            ),
+        ),
+    ]
+]
