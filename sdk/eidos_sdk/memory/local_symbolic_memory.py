@@ -1,139 +1,97 @@
-from typing import Any, List, Optional, AsyncIterable
+from copy import deepcopy
+from typing import Any, Union, List, Dict, AsyncIterable, Optional
+
+from pymongo.errors import DuplicateKeyError
 
 from eidos_sdk.memory.agent_memory import SymbolicMemory
 
 
-_DB = {}
-
-
 class LocalSymbolicMemory(SymbolicMemory):
-    implementation: str = "local_symbolic_memory"
+    db = {}
 
     def start(self):
-        _DB = {}
+        LocalSymbolicMemory.db = {}
 
     def stop(self):
-        _DB.clear()
+        LocalSymbolicMemory.db = {}
 
-    def _matches_query(self, document, query):
-        # Handle MongoDB-like query operations.
-        for k, v in query.items():
-            if isinstance(v, dict):
-                if any(op in v for op in ["$eq", "$ne", "$lt", "$lte", "$gt", "$gte"]):
-                    if not self._evaluate_query_op(document.get(k), v):
-                        return False
-                else:
-                    return self._matches_query(document.get(k), v)
-            elif not document.get(k) == v:
+    async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
+        if symbol_collection not in self.db:
+            return 0
+        return sum(1 for doc in self.db[symbol_collection] if all(item in doc.items() for item in query.items()))
+
+    def _matches_query(self, doc: dict, query: dict) -> bool:
+        for key, value in query.items():
+            if key not in doc:
+                return False
+            if isinstance(value, dict):
+                if not self._matches_query(doc[key], value):
+                    return False
+            elif doc[key] != value:
                 return False
         return True
 
-    def _evaluate_query_op(self, doc_value, query_value):
-        for op, val in query_value.items():
-            if op == "$eq":
-                if doc_value != val:
-                    return False
-            elif op == "$ne":
-                if doc_value == val:
-                    return False
-            elif op == "$lt":
-                if doc_value >= val:
-                    return False
-            elif op == "$lte":
-                if doc_value > val:
-                    return False
-            elif op == "$gt":
-                if doc_value <= val:
-                    return False
-            elif op == "$gte":
-                if doc_value < val:
-                    return False
-        return True
+    def _apply_projection(self, doc: dict, projection: dict) -> dict:
+        return {field: doc[field] for field in doc if field in projection and projection[field] == 1}
 
-    async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
-        return len([doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)])
-
-    # TODO: Add support for sort / skip.
-    async def find(
+    def find(
         self,
         symbol_collection: str,
         query: dict[str, Any],
-        projection: Optional[List[str]] = None,
-        **kwargs,
+        projection: Union[List[str], Dict[str, int]] = None,
+        sort: dict = None,
+        skip: int = None,
     ) -> AsyncIterable[dict[str, Any]]:
-        for doc in [doc for doc in _DB.get(symbol_collection, []) if self._matches_query(doc, query)]:
-            if projection is not None:
-                # handle projection, both list and dict.
-                if isinstance(projection, list):
-                    yield {k: v for k, v in doc.items() if k in projection}
-                elif isinstance(projection, dict):
-                    # Remember, the dict version is indicating which fields to include, not exclude.
-                    yield {k: v for k, v in doc.items() if k in projection}
-                else:
-                    raise ValueError(f"Invalid projection type {type(projection)}")
-            else:
-                yield doc
+        if symbol_collection not in self.db:
+            return
+        for doc in self.db[symbol_collection]:
+            if self._matches_query(doc, query):
+                yield deepcopy(self._apply_projection(doc, projection) if projection else doc)
 
     async def find_one(self, symbol_collection: str, query: dict[str, Any]) -> Optional[dict[str, Any]]:
-        for doc in _DB.get(symbol_collection, []):
+        if symbol_collection not in self.db:
+            return None
+        for doc in self.db[symbol_collection]:
             if self._matches_query(doc, query):
-                return doc
+                return deepcopy(doc)
         return None
 
-    async def insert(self, symbol_collection: str, documents: List[dict[str, Any]]) -> None:
-        if symbol_collection not in _DB:
-            _DB[symbol_collection] = []
-        _DB[symbol_collection].extend(documents)
-
     async def insert_one(self, symbol_collection: str, document: dict[str, Any]) -> None:
-        if symbol_collection not in _DB:
-            _DB[symbol_collection] = []
-        _DB[symbol_collection].append(document)
+        if symbol_collection not in self.db:
+            self.db[symbol_collection] = []
+        if any(doc.get("_id") == document.get("_id") for doc in self.db[symbol_collection]):
+            raise DuplicateKeyError(f"Duplicate key error: _id {document.get('_id')} already exists.")
+        self.db[symbol_collection].append(deepcopy(document))
 
-    def _apply_update_modifiers(self, existing_document, modifiers):
-        for op, change in modifiers.items():
-            if op == "$set":
-                for field, value in change.items():
-                    existing_document[field] = value
-            elif op == "$unset":
-                for field in change:
-                    existing_document.pop(field, None)
-            elif op == "$push":
-                for field, value in change.items():
-                    if field not in existing_document:
-                        existing_document[field] = []
-                    if isinstance(value, dict) and "$each" in value:
-                        existing_document[field].extend(value["$each"])
-                    else:
-                        existing_document[field].append(value)
-            elif op == "$pop":
-                for field, value in change.items():
-                    if field in existing_document and isinstance(existing_document[field], list):
-                        if value == 1:
-                            existing_document[field].pop()
-                        elif value == -1:
-                            existing_document[field].pop(0)
-            elif op == "$pull":
-                for field, value in change.items():
-                    if field in existing_document and isinstance(existing_document[field], list):
-                        existing_document[field] = [item for item in existing_document[field] if item != value]
+    async def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
+        if symbol_collection not in self.db:
+            self.db[symbol_collection] = []
+        for document in documents:
+            if any(doc.get("_id") == document.get("_id") for doc in self.db[symbol_collection]):
+                raise DuplicateKeyError(f"Duplicate key error: _id {document.get('_id')} already exists.")
+        self.db[symbol_collection].extend(deepcopy(documents))
 
     async def upsert_one(self, symbol_collection: str, document: dict[str, Any], query: dict[str, Any]) -> None:
-        global _DB
-        existing_document = await self.find_one(symbol_collection, query)
-        if existing_document is not None:
-            self._apply_update_modifiers(existing_document, document)
-            _DB[symbol_collection].append(existing_document)
-        else:
-            await self.insert_one(symbol_collection, document)
+        if symbol_collection not in self.db:
+            self.db[symbol_collection] = []
+        for i, doc in enumerate(self.db[symbol_collection]):
+            if self._matches_query(doc, query):
+                self.db[symbol_collection][i] = deepcopy(document)
+                return
+        if any(doc.get("_id") == document.get("_id") for doc in self.db[symbol_collection]):
+            raise DuplicateKeyError(f"Duplicate key error: _id {document.get('_id')} already exists.")
+        self.db[symbol_collection].append(deepcopy(document))
 
     async def update_many(self, symbol_collection: str, query: dict[str, Any], document: dict[str, Any]) -> None:
-        global _DB
-        for doc in _DB.get(symbol_collection, []):
+        if symbol_collection not in self.db:
+            return
+        for doc in self.db[symbol_collection]:
             if self._matches_query(doc, query):
-                self._apply_update_modifiers(doc, document)
+                doc.update(deepcopy(document))
 
     async def delete(self, symbol_collection, query):
-        for doc in _DB.get(symbol_collection, []):
-            if self._matches_query(doc, query):
-                _DB[symbol_collection].remove(doc)
+        if symbol_collection not in self.db:
+            return
+        self.db[symbol_collection] = [
+            doc for doc in self.db[symbol_collection] if not all(item in doc.items() for item in query.items())
+        ]
