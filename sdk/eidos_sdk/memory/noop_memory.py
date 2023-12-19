@@ -1,8 +1,10 @@
 from typing import Any, Optional, List, Dict, Union
 
-from eidos_sdk.memory.agent_memory import FileMemory, SymbolicMemory
+from eidos_sdk.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory, VectorMemorySpec
 from eidos_sdk.memory.document import EmbeddedDocument
 from eidos_sdk.memory.vector_store import VectorStore, QueryItem
+from eidos_sdk.system.reference_model import Reference
+from eidos_sdk.util.class_utils import fqn
 
 
 class NoopFileMemory(FileMemory):
@@ -88,3 +90,11 @@ class NoopVectorStore(VectorStore):
         metadata_where: Dict[str, str],
     ) -> List[QueryItem]:
         pass
+
+
+class NoopVectorMemory(VectorMemory):
+    def __init__(self, file_memory: FileMemory, **kwargs):
+        super().__init__(
+            file_memory=file_memory,
+            spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(NoopVectorStore)))
+        )

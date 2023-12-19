@@ -13,17 +13,16 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
+import eidos_sdk.system.processes as processes
+from eidos_sdk.bin.agent_http_server import start_os
 from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec, OpenAIGPT
-from eidos_sdk.memory.agent_memory import VectorMemory
 from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
-from eidos_sdk.memory.noop_memory import NoopVectorStore
-from eidos_sdk.bin.agent_http_server import start_os
+from eidos_sdk.memory.noop_memory import NoopVectorMemory
 from eidos_sdk.system.reference_model import Reference
 from eidos_sdk.system.resources import AgentResource
 from eidos_sdk.system.resources_base import Resource, Metadata
 from eidos_sdk.util.class_utils import fqn
-import eidos_sdk.system.processes as processes
 
 
 # we want all tests using the client_builder to use vcr so we don't send requests to openai
@@ -143,11 +142,7 @@ def file_memory(tmp_path_factory, module_identifier):
 
 @pytest.fixture(scope="module")
 def similarity_memory():
-    return Reference[VectorMemory](
-        spec=dict(
-            vector_store=dict(implementation=fqn(NoopVectorStore)),
-        )
-    )
+    return Reference[NoopVectorMemory]()
 
 
 @pytest.fixture(scope="module", autouse=True)

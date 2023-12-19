@@ -7,9 +7,11 @@ from chromadb import Include, QueryResult
 from chromadb.api.models.Collection import Collection
 from pydantic import BaseModel, Field, field_validator
 
+from eidos_sdk.memory.agent_memory import VectorMemory, FileMemory, VectorMemorySpec
 from eidos_sdk.memory.document import EmbeddedDocument
 from eidos_sdk.memory.vector_store import QueryItem, VectorStore
-from eidos_sdk.system.reference_model import Specable
+from eidos_sdk.system.reference_model import Specable, Reference
+from eidos_sdk.util.class_utils import fqn
 from eidos_sdk.util.str_utils import replace_env_var_in_string
 
 
@@ -125,3 +127,11 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
             )
 
         return ret
+
+
+class ChromaVectorMemory(Specable[ChromaVectorStoreConfig], VectorMemory):
+    def __init__(self, file_memory: FileMemory, spec):
+        super().__init__(
+            file_memory=file_memory,
+            spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(ChromaVectorMemory), spec=spec))
+        )
