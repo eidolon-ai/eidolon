@@ -1,10 +1,13 @@
 from contextlib import contextmanager
 from typing import List, Iterable, Tuple
 
+import yaml
+
 from eidos_sdk.memory.agent_memory import AgentMemory
 from .agent_controller import AgentController
 from .resources import MachineResource, agent_resources, Resource
 from ..agent_os import AgentOS
+from ..util.logger import logger
 
 
 class AgentMachine:
@@ -32,22 +35,24 @@ class AgentMachine:
             self.app = None
 
     @staticmethod
-    def from_resources(resources: Iterable[Resource | Tuple[Resource, str]], machine_name: str = "DEFAULT"):
+    def from_resources(resources: Iterable[Resource | Tuple[Resource, str]], machine_name: str):
         for resource_or_tuple in resources:
             if isinstance(resource_or_tuple, Resource):
                 resource, source = resource_or_tuple, None
             else:
                 resource, source = resource_or_tuple
             AgentOS.register_resource(resource=resource, source=source)
-
         machine = AgentOS.get_resource(MachineResource.kind_literal(), machine_name)
-        machine = machine.promote(MachineResource)
+        machine: MachineResource = machine.promote(MachineResource)
 
         agents = {}
         for kind, agent_resource_class in agent_resources.items():
             for name, r in AgentOS.get_resources(kind).items():
                 with _error_wrapper(r):
                     agents[name] = r.promote(agent_resource_class).instantiate()
+
+        logger.info(f"Building machine '{machine_name}'")
+        logger.debug(yaml.safe_dump(machine.model_dump()))
 
         return AgentMachine(
             agent_memory=(machine.spec.get_agent_memory()),

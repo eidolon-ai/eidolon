@@ -80,7 +80,7 @@ builtin_resources: List[Tuple[Resource, str]] = [
         MachineResource(
             apiVersion="eidolon/v1",
             kind="Machine",
-            metadata=Metadata(name="local_dev"),
+            metadata=Metadata(name="DEFAULT"),
             spec=MachineSpec(
                 symbolic_memory=Reference[MongoSymbolicMemory](
                     spec=MongoSymbolicMemoryConfig(mongo_database_name="eidos").model_dump()
@@ -94,13 +94,13 @@ builtin_resources: List[Tuple[Resource, str]] = [
         MachineResource(
             apiVersion="eidolon/v1",
             kind="Machine",
-            metadata=Metadata(name="DEFAULT"),
+            metadata=Metadata(name="local_dev"),
             spec=MachineSpec(
                 symbolic_memory=Reference[MongoSymbolicMemory](
                     spec=MongoSymbolicMemoryConfig(mongo_database_name="eidos").model_dump()
                 ),
                 file_memory=Reference[LocalFileMemory](
-                    spec=LocalFileMemoryConfig(root_dir="/etc/eidos/file_memory").model_dump()
+                    spec=LocalFileMemoryConfig(root_dir="/tmp/eidos/file_memory").model_dump()
                 ),
                 similarity_memory=Reference[NoopVectorMemory](),
             ),

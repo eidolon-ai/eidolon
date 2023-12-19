@@ -100,7 +100,7 @@ def main():
     log_level = logging.DEBUG if args.debug else logging.INFO
 
     _app = FastAPI(
-        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), log_level),
+        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), log_level, args.machine),
     )
     _app.add_middleware(LoggingMiddleware)
 
