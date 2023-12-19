@@ -19,6 +19,6 @@ class AutonomousAgent(Agent):
     ) -> AgentState[IdleStateRepresentation]:
         thread = await self.cpu.main_thread(process_id)
         response = await thread.schedule_request(
-            [UserTextCPUMessage(prompt=question)], IdleStateRepresentation.model_json_schema()
+            UserTextCPUMessage(prompt=question), output_format=IdleStateRepresentation.model_json_schema()
         )
         return AgentState(name="idle", data=IdleStateRepresentation(**response))

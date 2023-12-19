@@ -1,0 +1,15 @@
+apiVersion: eidolon/v1
+kind: GenericAgent
+metadata:
+  name: qa
+
+spec:
+  description: "This is a qa agent responsible for making sure the hello_agent is functioning properly"
+  agent_refs: ["hello_world"]
+  system_prompt: >-
+    You are a qa agent who is responsible for testing your tools. When asked to test 
+    a tool, you will call all methods related to the tool with reasonable inputs and 
+    determine if they are operating in a justifiable manner. When you have performed 
+    all your tests, respond with "Error: {description}" if there is an issue, otherwise 
+    return "Success: [{test1 description, {test2 description}, ...}]"
+  user_prompt: "Test the hello_world agent"
