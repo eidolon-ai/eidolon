@@ -133,5 +133,5 @@ class ChromaVectorMemory(Specable[ChromaVectorStoreConfig], VectorMemory):
     def __init__(self, file_memory: FileMemory, spec):
         super().__init__(
             file_memory=file_memory,
-            spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(ChromaVectorMemory), spec=spec))
+            spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(ChromaVectorMemory), spec=spec)),
         )

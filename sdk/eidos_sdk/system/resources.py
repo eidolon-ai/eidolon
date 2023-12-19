@@ -11,7 +11,8 @@ from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos_sdk.memory.agent_memory import (
     FileMemory,
     SymbolicMemory,
-    AgentMemory, VectorMemory,
+    AgentMemory,
+    VectorMemory,
 )
 from eidos_sdk.memory.local_file_memory import LocalFileMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
@@ -25,7 +26,9 @@ class MachineSpec(BaseModel):
         description="The Symbolic Memory implementation."
     )
     file_memory: AnnotatedReference[FileMemory, LocalFileMemory] = Field(desciption="The File Memory implementation.")
-    similarity_memory: AnnotatedReference[VectorMemory, NoopVectorMemory] = Field(description="The Vector Memory implementation.")
+    similarity_memory: AnnotatedReference[VectorMemory, NoopVectorMemory] = Field(
+        description="The Vector Memory implementation."
+    )
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()

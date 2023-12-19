@@ -95,6 +95,5 @@ class NoopVectorStore(VectorStore):
 class NoopVectorMemory(VectorMemory):
     def __init__(self, file_memory: FileMemory, **kwargs):
         super().__init__(
-            file_memory=file_memory,
-            spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(NoopVectorStore)))
+            file_memory=file_memory, spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(NoopVectorStore)))
         )
