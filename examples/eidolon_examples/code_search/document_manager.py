@@ -6,9 +6,9 @@ from pydantic import BaseModel, Field
 
 from eidolon_examples.code_search.code_sync import MarkdownSync
 from eidolon_examples.code_search.vector_search_directory_sync import VectorSearchDirSync
-from eidos.cpu.logic_unit import llm_function, LogicUnit
-from eidos.memory.embeddings import OpenAIEmbeddingSpec, OpenAIEmbedding
-from eidos.system.reference_model import Specable
+from eidos_sdk.cpu.logic_unit import llm_function, LogicUnit
+from eidos_sdk.memory.embeddings import OpenAIEmbeddingSpec, OpenAIEmbedding
+from eidos_sdk.system.reference_model import Specable
 
 
 class SearchResult(BaseModel):

@@ -1,23 +1,11 @@
 from typing import List
 
 from eidolon_examples.code_search.vector_search_directory_sync import VectorSearchDirSync
-from eidos.memory.document import Document
-from eidos.memory.parsers.base_parser import DataBlob, BaseParserSpec
-from eidos.memory.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
-from eidos.memory.parsers.text_parsers import TextParser
-from eidos.memory.transformer.text_splitters import MarkdownTextSplitter, RecursiveCharacterTextSplitterSpec
-from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
-from eidos_sdk.memory.parsers.base_parser import DataBlob
+from eidos_sdk.memory.document import Document
+from eidos_sdk.memory.parsers.base_parser import BaseParserSpec, DataBlob
 from eidos_sdk.memory.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
-from watchdog.events import FileSystemEvent, FileSystemMovedEvent
-
-from eidolon_examples.code_search.file_system_watcher import FileSystemWatcher
-
-
-def hash_file(file_path, chunk_size=8192):
-    """
-    Hash the contents of a file using SHA-256.
+from eidos_sdk.memory.parsers.text_parsers import TextParser
+from eidos_sdk.memory.transformer.text_splitters import MarkdownTextSplitter, RecursiveCharacterTextSplitterSpec
 
 
 class CodeSync(VectorSearchDirSync):

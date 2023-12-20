@@ -3,15 +3,15 @@ from pathlib import Path
 from typing import List, Annotated
 
 from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.cpu.llm_message import LLMMessage
 from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidos_sdk.memory.embeddings import OpenAIEmbeddingSpec, OpenAIEmbedding
+from eidos_sdk.system.eidos_handler import EidosHandler
 from eidos_sdk.system.reference_model import Specable
 from pydantic import Field, BaseModel
 
 from eidolon_examples.code_search.code_sync import CodeSync
 from eidolon_examples.code_search.vector_search_directory_sync import VectorSearchDirSync
-from eidos.cpu.llm_message import LLMMessage
-from eidos.system.eidos_handler import EidosHandler
 
 
 class CodePackage(BaseModel):
