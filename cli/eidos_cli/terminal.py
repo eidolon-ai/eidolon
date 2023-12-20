@@ -7,19 +7,18 @@ This example shows an easy way for a single command to have many subcommands, ea
 and provides separate contextual help.
 """
 import argparse
-from typing import List, Dict, Union, Optional, Iterable, Any
+from typing import List, Dict, Optional, Iterable, Any
 
 import cmd2
 from cmd2 import style, Fg, Bg, utils
 from cmd2.argparse_custom import ChoicesProviderFunc, CompleterFunc
-from cmd2.history import HistoryItem
 from rich.console import Console
 
 from eidos_cli.client import EidolonClient
 
 
 class SubcommandsExample(cmd2.Cmd):
-    CUSTOM_CATEGORY = 'Eidolon CLI'
+    CUSTOM_CATEGORY = "Eidolon CLI"
     markdown = True
 
     """
@@ -29,8 +28,8 @@ class SubcommandsExample(cmd2.Cmd):
 
     def __init__(self):
         super().__init__(
-            multiline_commands=['echo'],
-            persistent_history_file='eidolon_history.dat',
+            multiline_commands=["echo"],
+            persistent_history_file="eidolon_history.dat",
             # startup_script='scripts/startup.txt',
             include_ipy=False,
         )
@@ -44,7 +43,9 @@ class SubcommandsExample(cmd2.Cmd):
         self.console = Console()
         # readline.parse_and_bind("Shift-Enter: #-#-#\n")
 
-        self.intro = style('Eidolon command line tool. Type help for the list of commands.', fg=Fg.RED, bg=Bg.WHITE, bold=True)
+        self.intro = style(
+            "Eidolon command line tool. Type help for the list of commands.", fg=Fg.RED, bg=Bg.WHITE, bold=True
+        )
 
         # Allow access to your application in py and ipy via self
         self.self_in_py = False
@@ -54,14 +55,31 @@ class SubcommandsExample(cmd2.Cmd):
 
         self.client = EidolonClient()
 
-    def read_input(self, prompt: str, *, history: Optional[List[str]] = None, completion_mode: utils.CompletionMode = utils.CompletionMode.NONE, preserve_quotes: bool = False,
-                   choices: Optional[Iterable[Any]] = None, choices_provider: Optional[ChoicesProviderFunc] = None, completer: Optional[CompleterFunc] = None,
-                   parser: Optional[argparse.ArgumentParser] = None) -> str:
+    def read_input(
+        self,
+        prompt: str,
+        *,
+        history: Optional[List[str]] = None,
+        completion_mode: utils.CompletionMode = utils.CompletionMode.NONE,
+        preserve_quotes: bool = False,
+        choices: Optional[Iterable[Any]] = None,
+        choices_provider: Optional[ChoicesProviderFunc] = None,
+        completer: Optional[CompleterFunc] = None,
+        parser: Optional[argparse.ArgumentParser] = None,
+    ) -> str:
         try:
-            return super().read_input(prompt, history=history, completion_mode=completion_mode, preserve_quotes=preserve_quotes, choices=choices, choices_provider=choices_provider,
-                                  completer=completer, parser=parser)
+            return super().read_input(
+                prompt,
+                history=history,
+                completion_mode=completion_mode,
+                preserve_quotes=preserve_quotes,
+                choices=choices,
+                choices_provider=choices_provider,
+                completer=completer,
+                parser=parser,
+            )
         except KeyboardInterrupt:
-            return 'eof'
+            return "eof"
 
     def endpoints_provider(self) -> List[str]:
         """A choices provider is useful when the choice list is based on instance data of your application"""
@@ -77,7 +95,9 @@ class SubcommandsExample(cmd2.Cmd):
         return [f"{agent.name}/{agent.program}" for agent in self.client.agent_programs if agent.is_program]
 
     info_parser = cmd2.Cmd2ArgumentParser()
-    info_arg = info_parser.add_argument('endpoint', help='Enter the name of the endpoint', choices_provider=endpoints_provider, nargs='?')
+    info_arg = info_parser.add_argument(
+        "endpoint", help="Enter the name of the endpoint", choices_provider=endpoints_provider, nargs="?"
+    )
 
     @cmd2.with_category(CUSTOM_CATEGORY)
     @cmd2.with_argparser(info_parser)
@@ -92,7 +112,9 @@ class SubcommandsExample(cmd2.Cmd):
             self.console.print(agent.schema)
 
     start_parser = cmd2.Cmd2ArgumentParser()
-    start_arg = start_parser.add_argument('endpoint', help='Enter the name of the endpoint', choices_provider=programs_provider)
+    start_arg = start_parser.add_argument(
+        "endpoint", help="Enter the name of the endpoint", choices_provider=programs_provider
+    )
 
     @cmd2.with_category(CUSTOM_CATEGORY)
     @cmd2.with_argparser(start_parser)
@@ -118,8 +140,8 @@ class SubcommandsExample(cmd2.Cmd):
         return process_ids
 
     resume_parser = cmd2.Cmd2ArgumentParser()
-    resume_arg = resume_parser.add_argument('agent', help='Enter the name of the agent', choices_provider=agent_provider)
-    resume_parser.add_argument('process_id', help='Enter the process id', choices_provider=agent_process_id_provider)
+    resume_arg = resume_parser.add_argument("agent", help="Enter the name of the agent", choices_provider=agent_provider)
+    resume_parser.add_argument("process_id", help="Enter the process id", choices_provider=agent_process_id_provider)
 
     @cmd2.with_category(CUSTOM_CATEGORY)
     @cmd2.with_argparser(resume_parser)
@@ -133,7 +155,9 @@ class SubcommandsExample(cmd2.Cmd):
             self.console.print("Invalid process id")
             return
 
-        self.client.have_conversation(agent_name, process["available_actions"], arg.process_id, self.console, False, self.markdown)
+        self.client.have_conversation(
+            agent_name, process["available_actions"], arg.process_id, self.console, False, self.markdown
+        )
 
     def do_markdown(self, arg):
         """

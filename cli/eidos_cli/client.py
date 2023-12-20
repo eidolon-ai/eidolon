@@ -51,13 +51,7 @@ class EidolonClient:
                 schema = Schema.from_json_schema(openapi_json, agent_obj["requestBody"]["content"])
 
             agent_programs.append(
-                AgentProgram(
-                    name=name,
-                    description=description,
-                    program=program,
-                    schema=schema,
-                    is_program=is_program
-                )
+                AgentProgram(name=name, description=description, program=program, schema=schema, is_program=is_program)
             )
         agent_programs.sort(key=lambda x: x.name)
         self.agent_programs = agent_programs
@@ -66,7 +60,11 @@ class EidolonClient:
         user_agent, user_program = agent_str.strip().split("/")
 
         for agent in self.agent_programs:
-            if agent.name == user_agent and agent.program == user_program and (is_program is None or agent.is_program == is_program):
+            if (
+                agent.name == user_agent
+                and agent.program == user_program
+                and (is_program is None or agent.is_program == is_program)
+            ):
                 return agent
         return None
 
@@ -87,23 +85,21 @@ class EidolonClient:
                 for k, v in agent.schema.schema["properties"].items():
                     if v.get("type") == "string" and v.get("format") == "binary":
                         files = {k: (os.path.basename(user_input[k][0]), read_file(user_input[k][0]))}
-                    elif v.get("type") == "array" and v["items"].get("type") == "string" and v["items"].get("format") == "binary":
+                    elif (
+                        v.get("type") == "array"
+                        and v["items"].get("type") == "string"
+                        and v["items"].get("format") == "binary"
+                    ):
                         files = [(k, read_file(file)) for file in user_input[k]]
                     else:
                         data[k] = json.dumps(user_input[k])
                 # for file_name, file in files:
                 #     print("file", file_name, len(file))
-                request = {
-                    "url": urljoin(self.server_location, agent_url),
-                    "data": data
-                }
+                request = {"url": urljoin(self.server_location, agent_url), "data": data}
                 if files:
                     request["files"] = files
             else:
-                request = {
-                    "url": urljoin(self.server_location, agent_url),
-                    "json": user_input
-                }
+                request = {"url": urljoin(self.server_location, agent_url), "json": user_input}
             response = client.post(**request)
             return response.status_code, response.json()
 
@@ -113,7 +109,15 @@ class EidolonClient:
             processes_obj = client.get(urljoin(self.server_location, processes_url), params={"limit": 999}).json()
             return processes_obj["processes"]
 
-    def have_conversation(self, agent_name, actions: List[str], process_id, console: Console, start_of_conversation: bool, show_markdown: bool):
+    def have_conversation(
+        self,
+        agent_name,
+        actions: List[str],
+        process_id,
+        console: Console,
+        start_of_conversation: bool,
+        show_markdown: bool,
+    ):
         while True:
             if len(actions) > 1:
                 action = ""

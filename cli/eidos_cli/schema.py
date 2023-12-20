@@ -37,7 +37,9 @@ class ObjInput:
         prompt += ": "
         self.console.print(prompt, end="")
 
-    def get_file_input(self, name: str, required: bool, multiple: bool, padding_level: int) -> Union[Optional[str], List[str]]:
+    def get_file_input(
+        self, name: str, required: bool, multiple: bool, padding_level: int
+    ) -> Union[Optional[str], List[str]]:
         if multiple:
             file_default = "[file path, file path, ...]"
         else:
