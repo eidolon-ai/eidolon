@@ -24,6 +24,7 @@ class DocumentDirectory(BaseModel):
     """
     A package is a collection of python files.
     """
+
     directory: str = Field(description="The name of the directory")
     files: List[str] = Field(description="The files that make up the package")
 
@@ -67,8 +68,7 @@ class DocumentManager(LogicUnit, Specable[DocumentManagerSpec]):
 
     @llm_function()
     async def get_document(
-            self,
-            file_path: Annotated[str, Field(description="The path to the file to be retrieved")]
+        self, file_path: Annotated[str, Field(description="The path to the file to be retrieved")]
     ) -> str:
         """
         Gets a document from the document manager. The document is specified by the path.
@@ -91,9 +91,9 @@ class DocumentManager(LogicUnit, Specable[DocumentManagerSpec]):
 
     @llm_function()
     async def write_document(
-            self,
-            file_path: Annotated[str, Field(description="The path to the file to be saved")],
-            contents: Annotated[str, Field(description="The contents of the file to be saved")]
+        self,
+        file_path: Annotated[str, Field(description="The path to the file to be saved")],
+        contents: Annotated[str, Field(description="The contents of the file to be saved")],
     ) -> None:
         """
         Writes a document to the document manager. The document is specified by the path.

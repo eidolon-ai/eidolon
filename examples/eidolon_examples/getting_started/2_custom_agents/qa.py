@@ -22,10 +22,12 @@ class QAResponse(BaseModel):
     synopsis: str
 
 
-system_message = dedent("""\
+system_message = dedent(
+    """\
     You are a qa agent who is responsible for testing your tools. When asked to test 
     a tool, you will call all methods related to the tool with reasonable inputs and 
-    determine if they are operating in a justifiable manner.""")
+    determine if they are operating in a justifiable manner."""
+)
 
 
 class QASpec(AgentSpec):
@@ -50,5 +52,7 @@ class QualityAssurance(Agent, Specable[QASpec]):
             output_format=QAResponse,
         )
         if response.outcome != "success":
-            logger.error(f"QA failed for agent {agent}, somebody fix it!\n{response.synopsis}",)
+            logger.error(
+                f"QA failed for agent {agent}, somebody fix it!\n{response.synopsis}",
+            )
         return response

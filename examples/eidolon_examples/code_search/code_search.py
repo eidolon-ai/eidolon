@@ -58,6 +58,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
 
     async def build_tools(self, conversation: List[LLMMessage]) -> List[EidosHandler]:
         tools = await super().build_tools(conversation)
+
         def add_description(spec, handler):
             ret = handler.description(spec, handler)
             if len(self.spec.description_preamble) > 0:
@@ -65,18 +66,21 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
 
             def desc_wrapper(_spec, _handler):
                 return ret
+
             return desc_wrapper
 
         ret_tools = []
         for tool in tools:
-            ret_tools.append(EidosHandler(
-                name=self.spec.name + "_" + tool.name,
-                description=add_description(self.spec, tool),
-                fn=tool.fn,
-                input_model_fn=tool.input_model_fn,
-                output_model_fn=tool.output_model_fn,
-                extra=tool.extra
-            ))
+            ret_tools.append(
+                EidosHandler(
+                    name=self.spec.name + "_" + tool.name,
+                    description=add_description(self.spec, tool),
+                    fn=tool.fn,
+                    input_model_fn=tool.input_model_fn,
+                    output_model_fn=tool.output_model_fn,
+                    extra=tool.extra,
+                )
+            )
 
         return ret_tools
 
