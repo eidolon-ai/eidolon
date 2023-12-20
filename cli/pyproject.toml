@@ -10,17 +10,9 @@ eidos-client = "eidos_cli.main:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-setuptools = "^68.2.2"
-aiohttp = "^3.9.1"
-python-dotenv = "^1.0.0"
-typer = "^0.9.0"
 rich = "^13.7.0"
-shellingham = "^1.5.4"
 httpx = "^0.25.2"
 cmd2 = "^2.4.3"
-
-[tool.poetry.group.all.dependencies]
-typer = "^0.9.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"

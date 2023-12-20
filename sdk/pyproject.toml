@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eidos-sdk"
-version = "0.1.5"
+version = "0.1.6"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
@@ -8,11 +8,10 @@ include = ["logging.conf"]
 
 [tool.poetry.scripts]
 eidos-server = "eidos_sdk.bin.agent_http_server:main"
-eidos-create-agent = "eidos_sdk.bin.agent_creator:main"
+#eidos-create-agent = "eidos_sdk.bin.agent_creator:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-setuptools = "^69.0.2"
 fastapi = "^0.104.1"
 pyyaml = "^6.0.1"
 jsonschema = "^4.19.2"
@@ -21,10 +20,8 @@ uvicorn = "^0.24.0.post1"
 numpy = "^1.26.2"
 motor = "^3.3.1"
 python-dotenv = "^1.0.0"
-pytest-asyncio = "^0.23.2"
 openai = "^1.2.4"
 jinja2 = "^3.1.2"
-gitpython = "^3.1.40"
 pytest-json-report = "^1.5.0"
 tiktoken = "^0.5.1"
 jsonref = "^1.1.0"
@@ -35,12 +32,8 @@ filetype = "^1.2.0"
 pypdf = "^3.17.1"
 esprima = "^4.0.1"
 unstructured = "^0.11.2"
-watchdog = "^3.0.0"
-contextvars = "^2.4"
 python-multipart = "^0.0.6"
 pillow = "^10.1.0"
-pydub = "^0.25.1"
-typer = {extras = ["all"], version = "^0.9.0"}
 aiohttp = "^3.9.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -48,6 +41,7 @@ pytest = "^7.4.3"
 pylint = "^3.0.2"
 ruff = "^0.1.7"
 pytest-recording = "^0.13.1"
+pytest-asyncio = "^0.23.2"
 
 [build-system]
 requires = ["poetry-core"]
