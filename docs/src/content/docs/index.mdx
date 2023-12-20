@@ -1,0 +1,33 @@
+---
+title: Welcome to Eidolon
+description: The operating system for LLM agents.
+template: splash
+hero:
+  tagline: The operating system for LLM agents.
+  image:
+    file: ../../assets/eidos.png
+  actions:
+    - text: Example Guide
+      link: /guides/example/
+      icon: right-arrow
+      variant: primary
+    - text: Read the Starlight docs
+      link: https://starlight.astro.build
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Explore
+
+<CardGrid stagger>
+	<Card title="EidOS" icon="pencil">
+		The operating system for LLM agents. [Learn More](reference/example/)
+	</Card>
+	<Card title="Eidolon CLI" icon="add-document">
+		The command line tool for EidOS.
+	</Card>
+	<Card title="Examples" icon="setting">
+		 [Explore](https://github.com/eidolon-ai/eidOS/examples) example LLM agents.
+	</Card>
+</CardGrid>
