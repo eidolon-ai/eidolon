@@ -129,7 +129,7 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
         return ret
 
 
-class ChromaVectorMemory(Specable[ChromaVectorStoreConfig], VectorMemory):
+class ChromaVectorMemory(VectorMemory, Specable[ChromaVectorStoreConfig]):
     def __init__(self, file_memory: FileMemory, spec):
         super().__init__(
             file_memory=file_memory,

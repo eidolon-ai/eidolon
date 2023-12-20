@@ -253,13 +253,11 @@ class VectorMemory(Specable[VectorMemorySpec]):
                 doc.page_content.encode(),
             )
 
-    @abstractmethod
     async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
         await self.vector_store.delete(collection, doc_ids)
         for doc_id in doc_ids:
             self.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
 
-    @abstractmethod
     async def query(
         self,
         collection: str,
