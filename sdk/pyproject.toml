@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eidos-sdk"
-version = "0.1.4"
+version = "0.1.5"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
@@ -11,7 +11,7 @@ eidos-server = "eidos_sdk.bin.agent_http_server:main"
 eidos-create-agent = "eidos_sdk.bin.agent_creator:main"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.12"
+python = ">=3.11,<4"
 setuptools = "^69.0.2"
 fastapi = "^0.104.1"
 pyyaml = "^6.0.1"
