@@ -4,7 +4,7 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
     site: 'https://eidolon-ai.github.io/eidOS/',
-    // base: '/my-repo',
+    base: '/eidOS',
     integrations: [
         starlight({
             title: 'Eidolon',
