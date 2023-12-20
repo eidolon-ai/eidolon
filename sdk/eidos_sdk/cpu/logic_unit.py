@@ -55,7 +55,7 @@ class LLMToolWrapper:
                 new_name = logic_unit.__class__.__name__ + "_" + handler.name
                 i = 0
                 while new_name in acc:
-                    new_name = new_name + logic_unit.__class__.__name__ + "_" + handler.name + "_" + str(i)
+                    new_name = logic_unit.__class__.__name__ + "_" + handler.name + "_" + str(i)
                     i += 1
                 input_model = handler.input_model_fn(logic_unit, handler)
                 acc[new_name] = LLMToolWrapper(

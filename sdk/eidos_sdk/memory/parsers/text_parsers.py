@@ -1,4 +1,4 @@
-from typing import Iterable, Dict, Union
+from typing import Iterable, Dict, Union, Sequence
 
 from bs4 import BeautifulSoup
 
@@ -8,8 +8,8 @@ from eidos_sdk.memory.document import Document
 
 
 class TextParser(BaseParser):
-    def parse(self, blob: DataBlob) -> Iterable[Document]:
-        yield Document(page_content=blob.as_string(), metadata={"source": blob.path})
+    def parse(self, blob: DataBlob) -> Sequence[Document]:
+        yield [Document(page_content=blob.as_string(), metadata={"source": blob.path})]
 
 
 class PyPDFParserSpec(BaseParserSpec):

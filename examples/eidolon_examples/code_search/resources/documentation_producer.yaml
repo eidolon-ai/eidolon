@@ -12,7 +12,19 @@ spec:
       logic_units:
         - implementation: "eidolon_examples.code_search.code_search.CodeSearch"
           spec:
+            name: "sdk_code"
+            description_preamble: "Searches the source code for the eidolon sdk."
             root_dir: "$HOME//Development/augustdata/eidolon/sdk"
+        - implementation: "eidolon_examples.code_search.code_search.CodeSearch"
+          spec:
+            name: "examples"
+            description_preamble: "Searches the examples for the eidolon platform."
+            root_dir: "$HOME//Development/augustdata/eidolon/examples"
+        - implementation: "eidolon_examples.code_search.document_manager.DocumentManager"
+          spec:
+            name: "documentation"
+            description_preamble: "Searches the examples for the eidolon platform."
+            root_dir: "$HOME//Development/augustdata/eidOS.wiki"
 
   system_prompt:
     You are a software documentation expert responsible for maintaining a project and trying to prove yourself. Your job is to
@@ -26,12 +38,19 @@ spec:
   
     You have available a tool that can search for code, list the packages and files in the project, and open individual files. Use the tool to
     create the documentation. Make sure you results are accurate and complete.
+    
+    You should load the documents given, then you should load the packages for the sdk and the examples. The user will ask questions about the code and documentation.
   
     Think step-by-step about how you want to create the documentation. Reason about the documentation and call tools to help you create the documentation.
 
-  user_prompt: "{{instruction}}"
+  user_prompt:
+    List the files and directories using the documentation tool.
+    List the packages and files using the sdk tool.
+    List the packages and files using the examples tool.
+    
+    Follow the instructions below
+    {{instruction}}
   input_schema:
     instruction:
       type: string
   output_schema: 'str'
-  files: 'single-optional'

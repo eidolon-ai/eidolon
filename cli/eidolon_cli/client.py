@@ -144,6 +144,7 @@ class EidolonClient:
                 console.print(f"Error: {str(response)}", style="red")
             else:
                 # console.print(f"{str(response)}")
+                start_of_conversation = False
 
                 if isinstance(response["data"], dict):
                     console.print_json(json.dumps(response["data"]))

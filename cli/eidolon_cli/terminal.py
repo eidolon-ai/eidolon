@@ -38,6 +38,7 @@ class SubcommandsExample(cmd2.Cmd):
         del cmd2.Cmd.do_edit
         del cmd2.Cmd.do_shortcuts
         self.console = Console()
+        # readline.parse_and_bind("Shift-Enter: #-#-#\n")
 
         self.intro = style('Eidolon command line tool. Type help for the list of commands.', fg=Fg.RED, bg=Bg.WHITE, bold=True)
 

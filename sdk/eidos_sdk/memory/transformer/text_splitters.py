@@ -579,7 +579,7 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
         **kwargs: Any,
     ) -> None:
         """Create a new TextSplitter."""
-        super().__init__(**kwargs)
+        super().__init__(spec, **kwargs)
         self._separators = spec.separators or ["\n\n", "\n", " ", ""]
         self._is_separator_regex = spec.is_separator_regex
         self._length_function = len

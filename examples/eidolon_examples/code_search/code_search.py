@@ -2,13 +2,16 @@ import os
 from pathlib import Path
 from typing import List, Annotated
 
-from pydantic import Field, BaseModel
-
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidos_sdk.memory.embeddings import OpenAIEmbeddingSpec, OpenAIEmbedding
 from eidos_sdk.system.reference_model import Specable
+from pydantic import Field, BaseModel
+
 from eidolon_examples.code_search.code_sync import CodeSync
+from eidolon_examples.code_search.vector_search_directory_sync import VectorSearchDirSync
+from eidos.cpu.llm_message import LLMMessage
+from eidos.system.eidos_handler import EidosHandler
 
 
 class CodePackage(BaseModel):
@@ -40,20 +43,46 @@ class SearchResult(BaseModel):
 
 class CodeSearchConfig(BaseModel):
     root_dir: str = Field(description="The root directory to search for code in")
+    name: str = Field(default="Code Search", description="The name of the tool")
+    description_preamble: str = Field(default="", description="The description preamble for all tools")
 
 
 class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
-    syncer: CodeSync = None
+    syncer: VectorSearchDirSync = None
 
-    def __init__(self, **kwargs):
-        LogicUnit.__init__(self, **kwargs)
-        Specable.__init__(self, **kwargs)
+    def __init__(self, spec: CodeSearchConfig, **kwargs):
+        super().__init__(**kwargs)
+        self.spec = spec
         self.root_dir = os.path.abspath(os.path.expandvars(self.spec.root_dir))
         self.embedder = OpenAIEmbedding(OpenAIEmbeddingSpec())
 
+    async def build_tools(self, conversation: List[LLMMessage]) -> List[EidosHandler]:
+        tools = await super().build_tools(conversation)
+        def add_description(spec, handler):
+            ret = handler.description(spec, handler)
+            if len(self.spec.description_preamble) > 0:
+                ret = self.spec.description_preamble + "\n" + ret
+
+            def desc_wrapper(_spec, _handler):
+                return ret
+            return desc_wrapper
+
+        ret_tools = []
+        for tool in tools:
+            ret_tools.append(EidosHandler(
+                name=self.spec.name + "_" + tool.name,
+                description=add_description(self.spec, tool),
+                fn=tool.fn,
+                input_model_fn=tool.input_model_fn,
+                output_model_fn=tool.output_model_fn,
+                extra=tool.extra
+            ))
+
+        return ret_tools
+
     async def _init(self):
         if not self.syncer:
-            self.syncer = CodeSync(os.path.abspath(self.root_dir))
+            self.syncer = CodeSync(os.path.abspath(self.root_dir), self.spec.name)
             await self.syncer.sync_all()
 
     @llm_function()
@@ -69,7 +98,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
         for root, dirs, files in os.walk(self.root_dir):
             if "__init__.py" in files:
                 package_name = str(Path(root).relative_to(self.root_dir))
-                package_files = [f for f in files if f.endswith(".py")]
+                package_files = [f for f in files]
                 package_directories[root] = CodePackage(
                     package_directory=package_name,
                     files=package_files,
