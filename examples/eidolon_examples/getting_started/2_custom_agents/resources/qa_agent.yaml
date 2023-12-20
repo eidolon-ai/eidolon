@@ -5,5 +5,6 @@ metadata:
 
 implementation: "eidolon_examples.getting_started.2_custom_agents.qa.QualityAssurance"
 spec:
-  description: "This is a qa agent responsible for making sure the hello_agent is functioning properly"
   agent_refs: ["hello_world"]
+  validate_agent: true
+

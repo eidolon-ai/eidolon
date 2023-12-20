@@ -1,11 +1,12 @@
 from textwrap import dedent
 from typing import Annotated, Literal, List
 
-from fastapi import Body
+from fastapi import Body, HTTPException
 from pydantic import BaseModel
 
-from eidos_sdk.agent.agent import register_program, Agent
+from eidos_sdk.agent.agent import register_program, Agent, AgentSpec
 from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
 
 
@@ -27,9 +28,19 @@ system_message = dedent("""\
     determine if they are operating in a justifiable manner.""")
 
 
-class QualityAssurance(Agent):
+class QASpec(AgentSpec):
+    validate_agent: bool
+
+
+class QualityAssurance(Agent, Specable[QASpec]):
+    def __init__(self, **kwargs):
+        Agent.__init__(self, **kwargs)
+
     @register_program()
     async def test(self, process_id, agent: Annotated[str, Body()]) -> QAResponse:
+        if self.spec.validate_agent and agent not in self.spec.agent_refs:
+            raise HTTPException(status_code=404, detail=f"Unable to communicate with {agent}")
+
         thread = await self.cpu.main_thread(process_id)
         await thread.set_boot_messages([SystemCPUMessage(prompt=system_message)])
         await thread.schedule_request(prompts=[UserTextCPUMessage(prompt=f"Please test all tools related to {agent}")])
