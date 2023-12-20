@@ -1,4 +1,3 @@
-from textwrap import dedent
 from typing import Annotated, Literal, List
 
 from fastapi import Body, HTTPException
@@ -22,16 +21,11 @@ class QAResponse(BaseModel):
     synopsis: str
 
 
-system_message = dedent(
-    """\
-    You are a qa agent who is responsible for testing your tools. When asked to test 
-    a tool, you will call all methods related to the tool with reasonable inputs and 
-    determine if they are operating in a justifiable manner."""
-)
+system_message = "You are a qa agent who is responsible for testing your tools. When asked to test a tool, you will call all methods related to the tool with reasonable inputs and determine if they are operating in a justifiable manner."
 
 
 class QASpec(AgentSpec):
-    validate_agent: bool
+    validate_agent: bool = False
 
 
 class QualityAssurance(Agent, Specable[QASpec]):

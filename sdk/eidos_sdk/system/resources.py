@@ -6,8 +6,6 @@ from pydantic import BaseModel, Field
 
 from eidos_sdk.agent.generic_agent import GenericAgent
 from eidos_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
-from eidos_sdk.cpu.agent_cpu import AgentCPU
-from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos_sdk.memory.agent_memory import (
     FileMemory,
     SymbolicMemory,
@@ -44,10 +42,6 @@ class MachineSpec(BaseModel):
 class MachineResource(Resource):
     kind: Literal["Machine"]
     spec: MachineSpec = MachineSpec()
-
-
-class CPUResource(Resource, Reference[AgentCPU, ConversationalAgentCPU]):
-    kind: Literal["CPU"]
 
 
 class AgentResource(Resource, Reference):

@@ -37,7 +37,7 @@ class AgentController:
                 self.actions[handler.name] = handler
 
     async def start(self, app: FastAPI):
-        logger.info(f"Starting agent {self.name}")
+        logger.info(f"Starting agent '{self.name}'")
         for handler in [*self.programs.values(), *self.actions.values().__reversed__()]:
             path = f"/agents/{self.name}"
             handler_name = handler.name
