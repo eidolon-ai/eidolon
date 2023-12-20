@@ -6,10 +6,13 @@
 This example shows an easy way for a single command to have many subcommands, each of which takes different arguments
 and provides separate contextual help.
 """
-from typing import List, Dict
+import argparse
+from typing import List, Dict, Union, Optional, Iterable, Any
 
 import cmd2
-from cmd2 import style, Fg, Bg
+from cmd2 import style, Fg, Bg, utils
+from cmd2.argparse_custom import ChoicesProviderFunc, CompleterFunc
+from cmd2.history import HistoryItem
 from rich.console import Console
 
 from eidos_cli.client import EidolonClient
@@ -37,6 +40,7 @@ class SubcommandsExample(cmd2.Cmd):
         del cmd2.Cmd.do_run_pyscript
         del cmd2.Cmd.do_edit
         del cmd2.Cmd.do_shortcuts
+
         self.console = Console()
         # readline.parse_and_bind("Shift-Enter: #-#-#\n")
 
@@ -49,6 +53,15 @@ class SubcommandsExample(cmd2.Cmd):
         self.default_category = "Builtin Tools"
 
         self.client = EidolonClient()
+
+    def read_input(self, prompt: str, *, history: Optional[List[str]] = None, completion_mode: utils.CompletionMode = utils.CompletionMode.NONE, preserve_quotes: bool = False,
+                   choices: Optional[Iterable[Any]] = None, choices_provider: Optional[ChoicesProviderFunc] = None, completer: Optional[CompleterFunc] = None,
+                   parser: Optional[argparse.ArgumentParser] = None) -> str:
+        try:
+            return super().read_input(prompt, history=history, completion_mode=completion_mode, preserve_quotes=preserve_quotes, choices=choices, choices_provider=choices_provider,
+                                  completer=completer, parser=parser)
+        except KeyboardInterrupt:
+            return 'eof'
 
     def endpoints_provider(self) -> List[str]:
         """A choices provider is useful when the choice list is based on instance data of your application"""
