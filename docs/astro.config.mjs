@@ -13,15 +13,20 @@ export default defineConfig({
             },
             sidebar: [
                 {
-                    label: 'Guides',
+                    label: 'Architecture',
                     items: [
-                        // Each item here is one entry in the navigation menu.
-                        {label: 'Example Guide', link: '/guides/example/'},
-                    ],
-                },
-                {
-                    label: 'Reference',
-                    autogenerate: {directory: 'reference'},
+                        { label: 'Fundamentals', link: '/architecture/fundamentals/' },
+                        {label: 'Agent Program', link: '/architecture/agent_program/' },
+						{ label: 'Agent CPU', link: '/architecture/agent_cpu/' },
+					],
+				},
+				{
+					label: 'Getting Started',
+					items: [
+						{ label: 'Quickstart', link: '/getting_started/quickstart/' },
+						{ label: 'Advanced', link: '/getting_started/advanced/' },
+					],
+// 					autogenerate: { directory: 'getting_started'},
                 },
             ],
         }),
