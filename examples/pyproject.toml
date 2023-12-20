@@ -6,7 +6,7 @@ authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<4"
+python = ">=3.11,<3.12"
 setuptools = "^69.0.2"
 transformers = "^4.35.2"
 eidos-sdk = {path = "../sdk", develop = true}
