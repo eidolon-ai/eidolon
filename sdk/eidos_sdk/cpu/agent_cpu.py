@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union, Type
+from typing import Any, List, Dict, Literal, Union, Type, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -78,7 +78,7 @@ class Thread:
     async def schedule_request(
         self,
         prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any], Type[BaseModel]] = "str",
+        output_format: Union[Literal["str"], Dict[str, Any], type] = "str",
     ) -> Any:
         if isinstance(output_format, type):
             if issubclass(output_format, BaseModel):
