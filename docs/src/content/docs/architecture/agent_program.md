@@ -175,5 +175,3 @@ specifics of agent specifications by presenting YAML configurations and explaini
 As a conclusion to this section, we can say that an agent in the Eidolon platform is an intricate and modular construct, capable of varying degrees of autonomy and complexity. Agents are designed to interact seamlessly with users, other agents, and
 the LLM, underpinned by a well-defined structure that facilitates the development and operation of versatile, task-specific programs within a larger, cohesive system. Whether dealing with simple question-answer interactions or complex, stateful
 conversations, each agent is built with the core principles of modularity, flexibility, and scalability in mind, ensuring their adaptability to a wide array of applications within the platform.
-
-[previous](Fundamentals.md) / [next](AgentCPU.md)

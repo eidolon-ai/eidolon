@@ -46,5 +46,3 @@ Agents within the eidolon framework are designed to work both independently and 
 exchange data and messages in a standardized format, delineated by their specifications, making it possible for them to cooperate on complex tasks or distribute workloads.
 
 As part of this communication strategy, the AgentMachine manages the necessary networking and messaging protocols, ensuring that agents can discover each other and coordinate their actions reliably within the network.
-
-[previous](Introduction.md) / [next](AgentProgram.md)
