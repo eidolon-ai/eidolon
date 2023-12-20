@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "eidolon-cli"
+name = "eidos-cli"
 version = "0.1.0"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-eidos-client = "eidolon_cli.main:main"
+eidos-client = "eidos_cli.main:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -18,7 +18,6 @@ rich = "^13.7.0"
 shellingham = "^1.5.4"
 httpx = "^0.25.2"
 cmd2 = "^2.4.3"
-gnureadline = "^8.1.2"
 
 [tool.poetry.group.all.dependencies]
 typer = "^0.9.0"

@@ -6,7 +6,7 @@ from typing import Optional, Union, List, Dict, Any
 
 from rich.console import Console
 
-from eidolon_cli.util import rt
+from eidos_cli.util import rt
 
 
 def _verify_files(user_input: str):

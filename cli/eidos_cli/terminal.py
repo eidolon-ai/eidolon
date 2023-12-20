@@ -12,7 +12,7 @@ import cmd2
 from cmd2 import style, Fg, Bg
 from rich.console import Console
 
-from eidolon_cli.client import EidolonClient
+from eidos_cli.client import EidolonClient
 
 
 class SubcommandsExample(cmd2.Cmd):

@@ -1,4 +1,4 @@
-from eidolon_cli.terminal import SubcommandsExample
+from eidos_cli.terminal import SubcommandsExample
 
 
 def main():

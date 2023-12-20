@@ -8,7 +8,7 @@ import httpx
 from rich.console import Console
 from rich.markdown import Markdown
 
-from eidolon_cli.schema import Schema, AgentProgram
+from eidos_cli.schema import Schema, AgentProgram
 
 
 class EidolonClient:
