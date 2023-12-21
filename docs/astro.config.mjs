@@ -12,6 +12,14 @@ export default defineConfig({
                 github: 'https://github.com/eidolon-ai/eidOS',
             },
             sidebar: [
+				{
+					label: 'Getting Started',
+					items: [
+						{ label: 'Quickstart', link: '/getting_started/quickstart/' },
+						{ label: 'Next Steps', link: '/getting_started/advanced/' },
+					],
+// 					autogenerate: { directory: 'getting_started'},
+                },
                 {
                     label: 'Architecture',
                     items: [
@@ -23,14 +31,6 @@ export default defineConfig({
 						{ label: 'Conclusion', link: '/architecture/conclusion/' },
 					],
 				},
-				{
-					label: 'Getting Started',
-					items: [
-						{ label: 'Quickstart', link: '/getting_started/quickstart/' },
-						{ label: 'Advanced', link: '/getting_started/advanced/' },
-					],
-// 					autogenerate: { directory: 'getting_started'},
-                },
             ],
         }),
     ],

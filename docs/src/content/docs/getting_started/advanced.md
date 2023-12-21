@@ -1,5 +1,5 @@
 ---
-title: Advanced
+title: Next Steps
 description: Dive deeper into developing with EidOS.
 ---
 

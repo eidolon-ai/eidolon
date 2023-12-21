@@ -8,10 +8,10 @@ from typing import List
 from watchdog.events import FileSystemEvent, FileSystemMovedEvent
 
 from eidolon_examples.code_search.file_system_watcher import FileSystemWatcher
-from eidos.agent_os import AgentOS
-from eidos.memory.document import Document
-from eidos.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
-from eidos.memory.parsers.base_parser import DataBlob
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.memory.document import Document
+from eidos_sdk.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
+from eidos_sdk.memory.parsers.base_parser import DataBlob
 
 
 def hash_file(file_path, chunk_size=8192):
