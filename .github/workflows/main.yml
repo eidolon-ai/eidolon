@@ -49,6 +49,23 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         working-directory: examples
 
+  test-quickstart-no-mongodb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: examples
+      - run: poetry run pytest tests/test_quickstart.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        working-directory: examples
+
   sdk-test:
     runs-on: ubuntu-latest
     services:
@@ -71,6 +88,23 @@ jobs:
       - run: poetry run ruff check .
         working-directory: sdk
       - run: poetry run pytest
+        env:
+          OPENAI_API_KEY: intentionally_unused
+        working-directory: sdk
+
+  sdk-test-local-memory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: sdk
+      - run: poetry run pytest --symbolic_memory local
         env:
           OPENAI_API_KEY: intentionally_unused
         working-directory: sdk
