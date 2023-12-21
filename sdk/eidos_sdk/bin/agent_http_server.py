@@ -56,11 +56,13 @@ def parse_args():
 
 
 def load_resources(path):
-    for file in os.listdir(path):
-        file_loc = os.path.join(path, file)
+    for file_loc in (os.path.join(p, f) for p, _, files in os.walk(path) for f in files):
         with error_logger(file_loc), open(file_loc) as resource_yaml:
-            resource = Resource.model_validate(yaml.safe_load(resource_yaml))
-        yield resource, file_loc
+            loaded = yaml.safe_load(resource_yaml) if file_loc.endswith(".yaml") else None
+            if loaded:
+                yield Resource.model_validate(loaded), file_loc
+            else:
+                logger.info(f"Skipping {file_loc}")
 
 
 @asynccontextmanager

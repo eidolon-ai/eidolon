@@ -16,7 +16,7 @@ export default defineConfig({
 					label: 'Getting Started',
 					items: [
 						{ label: 'Quickstart', link: '/getting_started/quickstart/' },
-						{ label: 'Next Steps', link: '/getting_started/advanced/' },
+						{ label: 'Next Steps', link: '/getting_started/slowstart/' },
 					],
 // 					autogenerate: { directory: 'getting_started'},
                 },
