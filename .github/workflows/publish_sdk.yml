@@ -23,7 +23,7 @@ jobs:
       - run: |
           poetry version patch
           poetry lock
-          poetry publish --build --dry-run
+          poetry publish --build
           echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
         env:
           POETRY_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
