@@ -1,0 +1,30 @@
+name: Publish SDK to PyPI
+on:
+  release:
+    types: [created]
+jobs:
+  format-code:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: sdk
+      - run: |
+          poetry version $(git describe --tags --abbrev=0 | sed 's/^v//')
+          poetry lock
+          poetry publish --build --dry-run
+        env:
+          POETRY_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Bump version and publish to PyPI"
