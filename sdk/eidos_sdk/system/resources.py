@@ -13,6 +13,7 @@ from eidos_sdk.memory.agent_memory import (
     VectorMemory,
 )
 from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
+from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory, MongoSymbolicMemoryConfig
 from eidos_sdk.memory.noop_memory import NoopVectorMemory
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference
@@ -90,9 +91,7 @@ builtin_resources: List[Tuple[Resource, str]] = [
             kind="Machine",
             metadata=Metadata(name="local_dev"),
             spec=MachineSpec(
-                symbolic_memory=Reference[MongoSymbolicMemory](
-                    spec=MongoSymbolicMemoryConfig(mongo_database_name="eidos").model_dump()
-                ),
+                symbolic_memory=Reference[LocalSymbolicMemory](),
                 file_memory=Reference[LocalFileMemory](
                     spec=LocalFileMemoryConfig(root_dir="/tmp/eidos/file_memory").model_dump()
                 ),

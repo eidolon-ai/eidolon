@@ -480,13 +480,13 @@ numpy = "*"
 
 [[package]]
 name = "chromadb"
-version = "0.4.20"
+version = "0.4.21"
 description = "Chroma."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "chromadb-0.4.20-py3-none-any.whl", hash = "sha256:0b8ca7d22483273b12a282af7a4fbad0a804207d4431324a4673741fe3c92028"},
-    {file = "chromadb-0.4.20.tar.gz", hash = "sha256:69eb699ad6a5e46a2b558c8770ab91041dc32061ad66403aa8224fe5750229c5"},
+    {file = "chromadb-0.4.21-py3-none-any.whl", hash = "sha256:bda9b37578f0cf45a79d49e9bd30880960d28c52b54337a3cf7d2dd55095b96d"},
+    {file = "chromadb-0.4.21.tar.gz", hash = "sha256:7fa66c2908e2e1f04da90b97039f0aa7105ef4751041c3ddf73387ba5edef9df"},
 ]
 
 [package.dependencies]
@@ -3976,13 +3976,13 @@ typing-extensions = ">=3.7.4"
 
 [[package]]
 name = "unstructured"
-version = "0.11.5"
+version = "0.11.6"
 description = "A library that prepares raw documents for downstream ML tasks."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "unstructured-0.11.5-py3-none-any.whl", hash = "sha256:90c4d027ba8462776c22880daacedd8e379af285c8df7c42598379e258f2a600"},
-    {file = "unstructured-0.11.5.tar.gz", hash = "sha256:b50f2d9ca665a000ff8462a9eb57bda997257c7d3df6c2d5bace1569f7f0ebf7"},
+    {file = "unstructured-0.11.6-py3-none-any.whl", hash = "sha256:f3e95dd82574bd1e082e2f65bcbc83664928488a426e1ff1c8b1b04b76852dfc"},
+    {file = "unstructured-0.11.6.tar.gz", hash = "sha256:f748e1b15010f63b178af8117c17f69ced7a14b0b18edda0bb9199ff84a22a2f"},
 ]
 
 [package.dependencies]
@@ -4013,6 +4013,7 @@ azure-cognitive-search = ["azure-search-documents"]
 bedrock = ["boto3", "langchain"]
 biomed = ["bs4"]
 box = ["boxfs", "fsspec (==2023.9.1)"]
+chroma = ["chromadb"]
 confluence = ["atlassian-python-api"]
 csv = ["pandas"]
 delta-table = ["deltalake", "fsspec (==2023.9.1)"]
