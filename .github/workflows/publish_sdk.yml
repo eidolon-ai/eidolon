@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
