@@ -21,12 +21,10 @@ jobs:
       - run: poetry install
         working-directory: sdk
       - run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
           poetry version patch
-          poetry lock
           poetry publish --build
           echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
-        env:
-          POETRY_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         working-directory: sdk
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
