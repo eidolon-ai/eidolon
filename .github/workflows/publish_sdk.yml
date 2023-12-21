@@ -24,14 +24,11 @@ jobs:
           poetry version patch
           poetry lock
           poetry publish --build --dry-run
+          echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
         env:
           POETRY_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        working-directory: sdk
-      - name: Get poetry version
-        id: poetry-version
-        run: echo "::set-output name=version::$(poetry version -s)"
         working-directory: sdk
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump version and publish to PyPI"
-          tagging_message: v${{ steps.poetry-version.outputs.version }}
+          tagging_message: v${{ env.VERSION }}
