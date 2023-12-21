@@ -3,7 +3,7 @@ on:
   release:
     types: [created]
 jobs:
-  format-code:
+  publish:
     runs-on: ubuntu-latest
 
     permissions:
@@ -25,6 +25,7 @@ jobs:
           poetry publish --build --dry-run
         env:
           POETRY_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        working-directory: sdk
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump version and publish to PyPI"
