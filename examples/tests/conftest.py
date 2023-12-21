@@ -8,11 +8,11 @@ import pytest
 @pytest.fixture(scope="session")
 def eidolon_server(eidolon_examples):
     @contextmanager
-    def fn(resources_loc):
+    def fn(resources_loc, *args):
         http_server_loc = eidolon_examples.parent.parent / "sdk" / "eidos_sdk" / "bin" / "agent_http_server.py"
 
         # Command to start the HTTP server
-        cmd = ["python", str(http_server_loc), str(resources_loc)]
+        cmd = ["python", str(http_server_loc), str(resources_loc), *args]
 
         # Start the server as a separate process
         server = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
