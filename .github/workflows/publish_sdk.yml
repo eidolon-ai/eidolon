@@ -1,4 +1,4 @@
-name: Publish SDK to PyPI
+name: Release and Publish SDK
 on:
   - workflow_dispatch
 jobs:
@@ -27,7 +27,11 @@ jobs:
         env:
           POETRY_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         working-directory: sdk
+      - name: Get poetry version
+        id: poetry-version
+        run: echo "::set-output name=version::$(poetry version -s)"
+        working-directory: sdk
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump version and publish to PyPI"
-          tagging_message: v$(poetry version -s)
+          tagging_message: v${{ steps.poetry-version.outputs.version }}
