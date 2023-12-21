@@ -10,6 +10,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -28,3 +30,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump version and publish to PyPI"
+          tagging_message: v$(poetry version -s)
