@@ -24,7 +24,7 @@ spec:
           spec:
             name: "documentation"
             description_preamble: "Searches the examples for the eidolon platform."
-            root_dir: "$HOME//Development/augustdata/eidOS.wiki"
+            root_dir: "$HOME//Development/augustdata/eidolon/docs/src/content/docs"
 
   system_prompt:
     You are a software documentation expert responsible for maintaining a project and trying to prove yourself. Your job is to
