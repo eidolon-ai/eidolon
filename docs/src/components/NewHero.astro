@@ -15,13 +15,13 @@ const imageAttrs = {
 	alt: '',
 };
 
-let darkImage: ImageMetadata | undefined;
-let lightImage: ImageMetadata | undefined;
 let rawHtml: string | undefined;
 // pick a random image from the image_dir
 const images = await Astro.glob('../assets/main_images/*.png');
 const image = images[Math.floor(Math.random() * images.length)].default;
-darkImage = image;
+let darkImage: ImageMetadata | undefined;
+let lightImage: ImageMetadata | undefined;
+darkImage = lightImage = image;
 ---
 
 <div class="hero">

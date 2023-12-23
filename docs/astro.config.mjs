@@ -7,9 +7,9 @@ export default defineConfig({
     integrations: [
         starlight({
             title: 'Eidolon',
-            components: {
-              Hero: './src/components/NewHero.astro',
-            },
+            // components: {
+            //   Hero: './src/components/NewHero.astro',
+            // },
             social: {
                 github: 'https://github.com/eidolon-ai/eidOS',
             },
