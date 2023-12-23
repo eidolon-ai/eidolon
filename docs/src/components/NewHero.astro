@@ -1,11 +1,11 @@
 ---
 import { Image } from 'astro:assets';
-import { PAGE_TITLE_ID } from '@astrojs/starlight/constants';
 import type { Props } from '@astrojs/starlight/props';
 import CallToAction from '@astrojs/starlight/components/CallToAction.astro';
 
 const { data } = Astro.props.entry;
 const { title = data.title, tagline, actions = [] } = data.hero || {};
+export const PAGE_TITLE_ID = '_top';
 
 const imageAttrs = {
 	loading: 'eager' as const,
