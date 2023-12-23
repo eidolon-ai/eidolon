@@ -3,9 +3,6 @@ title: AgentOS
 description: An overview of the agent operating system within EidOS.
 ---
 
-
-# AgentOS
-
 The AgentOS is designed for the autonomation and orchestration of software agents within the EidOS framework. In the following documentation, we will delve into the systems-level agent management, resource registry, and I/O communication processes that establish AgentOS as a vital component of the Eidolon platform. 
 
 ## System memory
