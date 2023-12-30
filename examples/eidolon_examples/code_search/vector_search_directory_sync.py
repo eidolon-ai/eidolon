@@ -11,7 +11,7 @@ from eidolon_examples.code_search.file_system_watcher import FileSystemWatcher
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.memory.document import Document
 from eidos_sdk.memory.embeddings import OpenAIEmbedding, OpenAIEmbeddingSpec
-from eidos_sdk.memory.parsers.base_parser import DataBlob
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 
 
 def hash_file(file_path, chunk_size=8192):
@@ -106,7 +106,7 @@ class VectorSearchDirSync(ABC):
         docs = await self.parse_file(DataBlob.from_path(path=str(file_path)))
         for doc in docs:
             doc.id = str(uuid.uuid4())
-        await AgentOS.similarity_memory.add(f"doc_sync_{self.name}", docs, self.embedder)
+        await AgentOS.similarity_memory.add(f"doc_sync_{self.name}", docs)
         await AgentOS.symbolic_memory.insert(
             f"doc_sync_{self.name}",
             [
@@ -129,7 +129,7 @@ class VectorSearchDirSync(ABC):
             await AgentOS.symbolic_memory.delete(f"doc_sync_{self.name}", {"file_path": relative_path})
 
     async def query(self, query: str, max_results: int = 10):
-        return await AgentOS.similarity_memory.query(f"doc_sync_{self.name}", self.embedder, query, max_results, {})
+        return await AgentOS.similarity_memory.query(f"doc_sync_{self.name}", self.embedder, query, max_results)
 
     @abstractmethod
     async def parse_file(self, data: DataBlob) -> List[Document]:

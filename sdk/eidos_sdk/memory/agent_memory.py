@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
+from pydantic import BaseModel, Field
 from typing import Any, Optional, AsyncIterable, List, Dict, Sequence, Union
 
-from pydantic import BaseModel, Field
-
+from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.memory.document import Document
 from eidos_sdk.memory.embeddings import Embedding
-from eidos_sdk.memory.vector_store import VectorStore
+from eidos_sdk.memory.vector_store import VectorStore, QueryItem
 from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
@@ -122,12 +122,12 @@ class SymbolicMemory(ABC):
 
     @abstractmethod
     def find(
-        self,
-        symbol_collection: str,
-        query: dict[str, Any],
-        projection: Union[List[str], Dict[str, int]] = None,
-        sort: dict = None,
-        skip: int = None,
+            self,
+            symbol_collection: str,
+            query: dict[str, Any],
+            projection: Union[List[str], Dict[str, int]] = None,
+            sort: dict = None,
+            skip: int = None,
     ) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
@@ -148,9 +148,7 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
-    async def find_one(
-        self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None
-    ) -> Optional[dict[str, Any]]:
+    async def find_one(self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None) -> Optional[dict[str, Any]]:
         """
         Searches for a single symbol within a specified collection that matches the given query.
 
@@ -240,11 +238,11 @@ class VectorMemory(Specable[VectorMemorySpec]):
     def stop(self):
         pass
 
-    async def add(self, collection: str, docs: Sequence[Document], embedder: Embedding):
+    async def add(self, collection: str, docs: Sequence[Document]):
         self.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
         # Asynchronously collect embedded documents
         embeddedDocs = []
-        async for embeddedDoc in embedder.embed(docs):
+        async for embeddedDoc in AgentOS.embedder.embed(docs):
             embeddedDocs.append(embeddedDoc)
         await self.vector_store.add(collection, embeddedDocs)
         for doc in docs:
@@ -253,21 +251,20 @@ class VectorMemory(Specable[VectorMemorySpec]):
                 doc.page_content.encode(),
             )
 
-    async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
+    async def delete(self, collection: str, doc_ids: List[str]):
         await self.vector_store.delete(collection, doc_ids)
         for doc_id in doc_ids:
             self.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
 
     async def query(
-        self,
-        collection: str,
-        embedder: Embedding,
-        query: str,
-        num_results: int,
-        metadata_where: Dict[str, str],
+            self,
+            collection: str,
+            query: str,
+            num_results: int,
+            metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:
-        text = await embedder.embed_text(query)
-        results = await self.vector_store.query(collection, text, num_results, metadata_where)
+        text = await AgentOS.embedder.embed_text(query)
+        results = await self.vector_store.query(collection, text, num_results, metadata_where, False)
         returnDocuments = []
         for result in results:
             returnDocuments.append(
@@ -281,21 +278,45 @@ class VectorMemory(Specable[VectorMemorySpec]):
             )
         return returnDocuments
 
+    async def raw_query(
+            self,
+            collection: str,
+            query: Sequence[float],
+            num_results: int,
+            metadata_where: Optional[Dict[str, str]] = None,
+            include_embeddings: bool = False,
+    ) -> List[QueryItem]:
+        return await self.vector_store.query(collection, query, num_results, metadata_where, include_embeddings)
+
+    async def get_docs(self, collection: str, doc_ids: List[str]) -> List[Document]:
+        metadatas = await self.vector_store.get_metadata(collection, doc_ids)
+        for i, doc_id in enumerate(doc_ids):
+            yield Document(
+                id=doc_id,
+                metadata=metadatas[i],
+                page_content=self.file_memory.read_file(
+                    self.spec.root_document_directory + "/" + collection + "/" + doc_id
+                ).decode(),
+            )
+
 
 class AgentMemory:
     file_memory: FileMemory
     symbolic_memory: SymbolicMemory
     similarity_memory: VectorMemory
+    embedder: Embedding
 
     def __init__(
-        self,
-        file_memory: FileMemory = None,
-        symbolic_memory: SymbolicMemory = None,
-        similarity_memory: VectorMemory = None,
+            self,
+            file_memory: FileMemory = None,
+            symbolic_memory: SymbolicMemory = None,
+            similarity_memory: VectorMemory = None,
+            embedder: Embedding = None
     ):
         self.file_memory = file_memory
         self.symbolic_memory = symbolic_memory
         self.similarity_memory = similarity_memory
+        self.embedder = embedder
 
     def start(self):
         if self.file_memory:
@@ -304,6 +325,8 @@ class AgentMemory:
             self.symbolic_memory.start()
         if self.similarity_memory:
             self.similarity_memory.start()
+        if self.embedder:
+            self.embedder.start()
 
     def stop(self):
         if self.file_memory:
@@ -312,3 +335,5 @@ class AgentMemory:
             self.symbolic_memory.stop()
         if self.similarity_memory:
             self.similarity_memory.stop()
+        if self.embedder:
+            self.embedder.stop()

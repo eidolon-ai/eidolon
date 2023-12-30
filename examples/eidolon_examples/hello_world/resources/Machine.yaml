@@ -10,6 +10,8 @@ spec:
     spec:
       mongo_database_name: "eidolon"
   similarity_memory:
-    spec:
-      vector_store:
-        implementation: "eidos_sdk.memory.noop_memory.NoopVectorStore"
+      implementation: "eidos_sdk.memory.chroma_vector_store.ChromaVectorMemory"
+      spec:
+        url: "file://${EIDOLON_DATA_DIR}/hello_world"
+  embedder:
+    implementation: "eidos_sdk.memory.embeddings.OpenAIEmbedding"

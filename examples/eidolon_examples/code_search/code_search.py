@@ -156,7 +156,7 @@ class CodeSearch(LogicUnit, Specable[CodeSearchConfig]):
         :return: The code snippets that match the query
         """
         await self._init()
-        results = await AgentOS.similarity_memory.query("code_sync", self.embedder, query, max_results, {})
+        results = await AgentOS.similarity_memory.query("code_sync", self.embedder, query, max_results)
         return [
             SearchResult(
                 file_name=result.metadata["file_path"],

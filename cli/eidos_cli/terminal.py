@@ -29,7 +29,7 @@ class SubcommandsExample(cmd2.Cmd):
     def __init__(self):
         super().__init__(
             multiline_commands=["echo"],
-            persistent_history_file="eidolon_history.dat",
+            persistent_history_file="~/eidolon_history.dat",
             # startup_script='scripts/startup.txt',
             include_ipy=False,
         )

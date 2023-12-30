@@ -1,11 +1,11 @@
 from typing import List
 
 from eidolon_examples.code_search.vector_search_directory_sync import VectorSearchDirSync
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DataBlob, BaseParserSpec
+from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
+from eidos_sdk.agent.doc_manager.parsers.text_parsers import TextParser
+from eidos_sdk.agent.doc_manager.transformer.text_splitters import RecursiveCharacterTextSplitterSpec, MarkdownTextSplitter
 from eidos_sdk.memory.document import Document
-from eidos_sdk.memory.parsers.base_parser import BaseParserSpec, DataBlob
-from eidos_sdk.memory.parsers.code_ast_parsers.programing_language_parser import LanguageParser, LanguageParserSpec
-from eidos_sdk.memory.parsers.text_parsers import TextParser
-from eidos_sdk.memory.transformer.text_splitters import MarkdownTextSplitter, RecursiveCharacterTextSplitterSpec
 
 
 class CodeSync(VectorSearchDirSync):

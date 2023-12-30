@@ -1,0 +1,19 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: DownloadsRetriever
+
+implementation: "eidos_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent"
+spec:
+  doc_store_name: "downloads"
+  question_transformer:
+    implementation: "eidos_sdk.agent.retriever_agent.multi_question_transformer.MultiQuestionTransformer"
+  document_manager:
+    implementation: "eidos_sdk.agent.doc_manager.document_manager.DocumentManager"
+    spec:
+      name: "downloads"
+      loader:
+        implementation: "eidos_sdk.agent.doc_manager.loaders.filesystem_loader.FilesystemLoader"
+        spec:
+          name: "downloads"
+          root_dir: "${EIDOLON_DATA_DIR}/sample_docs/"

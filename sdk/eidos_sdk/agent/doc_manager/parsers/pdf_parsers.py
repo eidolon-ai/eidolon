@@ -1,12 +1,10 @@
-from ctypes import Union
-from typing import Optional, Iterable, Sequence
-
 import numpy as np
 import pypdf
+from typing import Optional, Iterable, Union
 
-from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.memory.parsers.base_parser import BaseParser, BaseParserSpec, DataBlob
+from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser, BaseParserSpec, DataBlob
 from eidos_sdk.memory.document import Document
+from eidos_sdk.system.reference_model import Specable
 
 _PDF_FILTER_WITH_LOSS = ["DCTDecode", "DCT", "JPXDecode"]
 _PDF_FILTER_WITHOUT_LOSS = [
@@ -27,7 +25,7 @@ _PDF_FILTER_WITHOUT_LOSS = [
 
 
 def extract_from_images_with_rapidocr(
-    images: Sequence[Union[Iterable[np.ndarray], bytes]],
+        images: Iterable[Union[Iterable[np.ndarray], bytes]],
 ) -> str:
     """Extract text from images with RapidOCR.
 
@@ -73,7 +71,7 @@ class PyPDFParser(BaseParser, Specable[PyPDFParserSpec]):
             yield from [
                 Document(
                     page_content=page.extract_text() + self._extract_images_from_page(page),
-                    metadata={"source": blob.path, "page": page_number},
+                    metadata={"source": blob.path, "page": page_number, "mime_type": blob.mimetype},
                 )
                 for page_number, page in enumerate(pdf_reader.pages)
             ]
