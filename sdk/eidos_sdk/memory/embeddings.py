@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Any, Literal, AsyncGenerator
+from typing import Sequence, Any, Literal, AsyncGenerator, Optional
 
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
+from eidos_sdk.memory.vector_store import EmbeddedDocument
 from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.memory.document import Document, EmbeddedDocument
+from eidos_sdk.memory.document import Document
 
 
 class EmbeddingSpec(BaseModel):
@@ -45,6 +46,17 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
                 metadata=document.metadata,
             )
 
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+
+class NoopEmbedding(Embedding, Specable[EmbeddingSpec]):
+    async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
+        return []
+
 
 class OpenAIEmbeddingSpec(EmbeddingSpec):
     model: Literal[
@@ -56,15 +68,22 @@ class OpenAIEmbeddingSpec(EmbeddingSpec):
 
 
 class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
-    llm: AsyncOpenAI = None
+    llm: Optional[AsyncOpenAI] = None
 
     def __init__(self, spec: OpenAIEmbeddingSpec):
         super().__init__(spec)
         self.spec = spec
 
+    def start(self):
+        super().start()
+        self.llm = AsyncOpenAI()
+
+    def stop(self):
+        super().stop()
+        self.llm.close()
+        self.llm = None
+
     async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
-        if not self.llm:
-            self.llm = AsyncOpenAI()
         response = await self.llm.embeddings.create(
             input=text,
             model=self.spec.model,  # Choose the model as per your requirement

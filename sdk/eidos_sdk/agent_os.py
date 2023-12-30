@@ -10,12 +10,14 @@ class AgentOS:
     file_memory: "FileMemory" = ...  # noqa: F821
     symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
     similarity_memory: "VectorMemory" = ...  # noqa: F821
+    embedder: "Embedding" = ...  # noqa: F821
 
     @classmethod
     def load_machine(cls, machine):
         cls.file_memory = machine.memory.file_memory
         cls.symbolic_memory = machine.memory.symbolic_memory
         cls.similarity_memory = machine.memory.similarity_memory
+        cls.embedder = machine.memory.embedder
 
     @classmethod
     def register_resource(cls, resource: "Resource", source=None):  # noqa: F821
@@ -57,3 +59,4 @@ class AgentOS:
         cls.file_memory = ...
         cls.symbolic_memory = ...
         cls.similarity_memory = ...
+        cls.embedder = ...

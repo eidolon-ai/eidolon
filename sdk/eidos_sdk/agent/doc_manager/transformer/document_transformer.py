@@ -17,7 +17,7 @@ logger = logging.getLogger("eidolon")
 
 class BaseDocumentTransformer(ABC):
     @abstractmethod
-    def transform_documents(self, documents: List[Document], **kwargs: Any) -> Sequence[Document]:
+    def transform_documents(self, documents: Iterable[Document], **kwargs: Any) -> Iterable[Document]:
         """Transform a list of documents.
 
         Args:
@@ -61,7 +61,7 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
     def split_text(self, text: str) -> List[str]:
         """Split text into multiple components."""
 
-    def transform_documents(self, documents: Sequence[Document], **kwargs: Any) -> Sequence[Document]:
+    def transform_documents(self, documents: Iterable[Document], **kwargs: Any) -> Iterable[Document]:
         """Transform sequence of documents by splitting them."""
         for doc in documents:
             index = -1

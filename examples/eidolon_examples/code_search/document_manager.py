@@ -1,8 +1,7 @@
 import os
 from pathlib import Path
-from typing import Annotated, List
-
 from pydantic import BaseModel, Field
+from typing import Annotated, List
 
 from eidolon_examples.code_search.code_sync import MarkdownSync
 from eidolon_examples.code_search.vector_search_directory_sync import VectorSearchDirSync
@@ -36,9 +35,9 @@ class DocumentManagerSpec(BaseModel):
 class DocumentManager(LogicUnit, Specable[DocumentManagerSpec]):
     syncer: VectorSearchDirSync = None
 
-    def __init__(self, spec: DocumentManagerSpec, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.spec = spec
+        Specable.__init__(self, **kwargs)
         self.root_dir = os.path.abspath(os.path.expandvars(self.spec.root_dir))
         self.embedder = OpenAIEmbedding(OpenAIEmbeddingSpec())
 
@@ -68,7 +67,7 @@ class DocumentManager(LogicUnit, Specable[DocumentManagerSpec]):
 
     @llm_function()
     async def get_document(
-        self, file_path: Annotated[str, Field(description="The path to the file to be retrieved")]
+            self, file_path: Annotated[str, Field(description="The path to the file to be retrieved")]
     ) -> str:
         """
         Gets a document from the document manager. The document is specified by the path.
@@ -91,9 +90,9 @@ class DocumentManager(LogicUnit, Specable[DocumentManagerSpec]):
 
     @llm_function()
     async def write_document(
-        self,
-        file_path: Annotated[str, Field(description="The path to the file to be saved")],
-        contents: Annotated[str, Field(description="The contents of the file to be saved")],
+            self,
+            file_path: Annotated[str, Field(description="The path to the file to be saved")],
+            contents: Annotated[str, Field(description="The contents of the file to be saved")],
     ) -> None:
         """
         Writes a document to the document manager. The document is specified by the path.
@@ -116,17 +115,17 @@ class DocumentManager(LogicUnit, Specable[DocumentManagerSpec]):
 
     @llm_function()
     async def search_documents(
-        self,
-        query: Annotated[
-            str,
-            Field(description="The query to search for. The query will be embedded and searched using a vector store"),
-        ],
-        max_results: Annotated[
-            int,
-            Field(
-                description="The maximum number of results to return. The results will be sorted by similarity to the query"
-            ),
-        ] = 10,
+            self,
+            query: Annotated[
+                str,
+                Field(description="The query to search for. The query will be embedded and searched using a vector store"),
+            ],
+            max_results: Annotated[
+                int,
+                Field(
+                    description="The maximum number of results to return. The results will be sorted by similarity to the query"
+                ),
+            ] = 10,
     ) -> List[SearchResult]:
         """
         Search for code that matches the query
