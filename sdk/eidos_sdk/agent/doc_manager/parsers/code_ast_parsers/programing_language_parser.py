@@ -1,4 +1,4 @@
-from typing import Dict, Any, Literal, Sequence, Iterable, Optional
+from typing import Dict, Any, Literal, Iterable, Optional
 
 from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParserSpec, BaseParser, DataBlob
 from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.cobol import CobolASTGenerator

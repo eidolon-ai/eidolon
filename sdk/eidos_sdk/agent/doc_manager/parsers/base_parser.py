@@ -5,7 +5,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from io import BufferedReader, BytesIO, IOBase
-from typing import Union, Optional, Generator, Sequence, Iterable
+from typing import Union, Optional, Generator, Iterable
 
 from pydantic import BaseModel
 

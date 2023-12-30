@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Sequence, List, Callable, Optional, Iterable
+from typing import Any, List, Callable, Optional, Iterable
 from uuid import uuid4
 
 from pydantic import BaseModel, Field, field_validator
