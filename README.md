@@ -69,4 +69,6 @@ You should now see something like `Hello, World! 🌍👋`
 
 And that's it! You have successfully set up and used a basic project using the Eidos SDK. To see more endpoints on your agent machine, visit the [swagger ui](http://0.0.0.0:8080/docs).
 
+## Further Reading
+
 For full documentation, visit [www.eidolonai.com](https://www.eidolonai.com/).
