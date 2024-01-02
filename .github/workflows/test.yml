@@ -45,6 +45,8 @@ jobs:
         working-directory: examples
       - run: poetry run ruff check .
         working-directory: examples
+      - run: mkdir -p /tmp/eidolon
+        working-directory: examples
       - run: poetry run pytest
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
