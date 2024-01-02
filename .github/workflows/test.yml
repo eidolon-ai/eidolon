@@ -48,6 +48,7 @@ jobs:
       - run: poetry run pytest
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          EIDOLON_DATA_DIR: /tmp/eidolon
         working-directory: examples
 
   test-quickstart-no-mongodb:
