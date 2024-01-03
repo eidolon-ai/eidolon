@@ -22,7 +22,7 @@ from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.noop_memory import NoopVectorMemory
 from eidos_sdk.system.reference_model import Reference
 from eidos_sdk.system.resources import AgentResource
-from eidos_sdk.system.resources_base import Resource, Metadata
+from eidos_sdk.system.resources.resources_base import Resource, Metadata
 from eidos_sdk.util.class_utils import fqn
 
 

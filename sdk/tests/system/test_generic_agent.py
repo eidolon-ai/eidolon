@@ -8,7 +8,7 @@ from fastapi import Body
 from eidos_sdk.agent.agent import register_program
 from eidos_sdk.agent.generic_agent import GenericAgentSpec
 from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPUSpec
-from eidos_sdk.system.resources_base import Resource, Metadata
+from eidos_sdk.system.resources.resources_base import Resource, Metadata
 
 
 @pytest.fixture(scope="module")

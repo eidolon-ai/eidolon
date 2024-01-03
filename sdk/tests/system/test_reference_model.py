@@ -1,10 +1,11 @@
 from contextlib import contextmanager
 
+import pytest
 from pydantic import BaseModel, Field
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.reference_model import Reference, Specable, AnnotatedReference
-from eidos_sdk.system.resources_base import Resource
+from eidos_sdk.system.resources.resources_base import Resource, Metadata
 from eidos_sdk.util.class_utils import fqn
 
 
@@ -45,14 +46,15 @@ class SimpleModel(BaseModel):
 
 
 @contextmanager
-def os_resource(**kwargs):
+def resource(name="TestResource", implementation=fqn(OS), spec=None):
+    spec = spec or {}
     try:
         AgentOS.register_resource(
             Resource(
                 apiVersion="eidolon/v1",
-                kind="TestResource",
-                implementation=fqn(OS),
-                **kwargs,
+                kind="EidosRef",
+                metadata=Metadata(name=name),
+                spec=dict(implementation=implementation, **spec),
             )
         )
         yield
@@ -68,14 +70,14 @@ def test_explicit_reference_default_spec():
 
 
 def test_explicit_reference_override_spec():
-    model = SimpleModel(simple=dict(implementation=fqn(Random), spec=dict(foo="bar")))
+    model = SimpleModel(simple=dict(implementation=fqn(Random), foo="bar"))
     instantiated = model.simple.instantiate()
     assert type(instantiated) == Random
     assert instantiated.spec.foo == "bar"
 
 
 def test_explicit_named_reference_default_spec():
-    with os_resource():
+    with resource():
         model = SimpleModel(simple="TestResource")
         instantiated = model.simple.instantiate()
         assert type(instantiated) == OS
@@ -83,11 +85,33 @@ def test_explicit_named_reference_default_spec():
 
 
 def test_explicit_named_reference_spec_overriden_in_reference():
-    with os_resource(spec=dict(foo="bar")):
+    with resource(spec=dict(foo="bar")):
         model = SimpleModel(simple="TestResource")
         instantiated = model.simple.instantiate()
         assert type(instantiated) == OS
         assert instantiated.spec.foo == "bar"
+
+
+@pytest.fixture
+def nested_random_resource():
+    with resource(name="outer", implementation="middle"):
+        with resource(name="middle", implementation="inner", spec=dict(foo="bar")):
+            with resource(name="inner", implementation=fqn(Random)):
+                yield
+
+
+def test_nested_resources(nested_random_resource):
+    model = SimpleModel(simple="outer")
+    instantiated = model.simple.instantiate()
+    assert type(instantiated) == Random
+    assert instantiated.spec.foo == "bar"  # bar comes from override on middle resource
+
+
+def test_nested_resources_with_override(nested_random_resource):
+    model = SimpleModel(simple=dict(implementation="outer", foo="baz"))
+    instantiated = model.simple.instantiate()
+    assert type(instantiated) == Random
+    assert instantiated.spec.foo == "baz"
 
 
 def test_system_fallback_default_spec():
@@ -98,7 +122,7 @@ def test_system_fallback_default_spec():
 
 
 def test_system_fallback_default_override_spec():
-    model = SimpleModel(simple=dict(spec=dict(foo="baz")))
+    model = SimpleModel(simple=dict(foo="baz"))
     instantiated = model.simple.instantiate()
     assert type(instantiated) == System
     assert instantiated.spec.foo == "baz"
@@ -119,7 +143,7 @@ def test_extending_reference_wrapped():
 
 
 def test_extended_reference_wrapped_with_overrides():
-    instantiated = Wrapper(extended=dict(spec=dict(foo="bar"))).extended.instantiate()
+    instantiated = Wrapper(extended=dict(foo="bar")).extended.instantiate()
     assert type(instantiated) == Random
     assert instantiated.spec.foo == "bar"
 
@@ -134,6 +158,20 @@ def test_reference_with_no_default():
     random_ = Reference[Random]
     instantiated = random_().instantiate()
     instantiated.spec.foo = "random_foo"
+
+
+def test_reference_with_default():
+    random_ = Reference[Base, Random]
+    instantiated = random_().instantiate()
+    instantiated.spec.foo = "random_foo"
+
+
+def test_reference_with_string_default():
+    with resource():
+        test_resource = Reference[Base, "TestResource"]
+        instantiated = test_resource().instantiate()
+        assert type(instantiated) == OS
+        assert instantiated.spec.foo == "os foo"
 
 
 def test_annotated_ref_plays_nicely_with_descriptions():

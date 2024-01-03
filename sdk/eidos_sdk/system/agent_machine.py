@@ -5,7 +5,9 @@ import yaml
 
 from eidos_sdk.memory.agent_memory import AgentMemory
 from .agent_controller import AgentController
-from .resources import MachineResource, agent_resources, Resource
+from .resources.agent_resource import AgentResource
+from .resources.machine_resource import MachineResource
+from .resources.resources_base import Resource
 from ..agent_os import AgentOS
 from ..util.logger import logger
 
@@ -42,14 +44,12 @@ class AgentMachine:
             else:
                 resource, source = resource_or_tuple
             AgentOS.register_resource(resource=resource, source=source)
-        machine = AgentOS.get_resource(MachineResource.kind_literal(), machine_name)
-        machine: MachineResource = machine.promote(MachineResource)
+        machine = AgentOS.get_resource(MachineResource, machine_name)
 
         agents = {}
-        for kind, agent_resource_class in agent_resources.items():
-            for name, r in AgentOS.get_resources(kind).items():
-                with _error_wrapper(r):
-                    agents[name] = r.promote(agent_resource_class).instantiate()
+        for name, r in AgentOS.get_resources(AgentResource).items():
+            with _error_wrapper(r):
+                agents[name] = r.spec.instantiate()
 
         logger.info(f"Building machine '{machine_name}'")
         logger.debug(yaml.safe_dump(machine.model_dump()))

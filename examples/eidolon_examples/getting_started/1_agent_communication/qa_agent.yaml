@@ -1,9 +1,11 @@
 apiVersion: eidolon/v1
-kind: GenericAgent
+kind: Agent
+
 metadata:
   name: qa
 
 spec:
+  implementation: GenericAgent
   description: "This is a qa agent responsible for making sure the hello_agent is functioning properly"
   agent_refs: ["hello_world"]
   system_prompt: >-

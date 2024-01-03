@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Literal, Type, Optional, TypeVar
+from typing import List, Literal, Optional, TypeVar
 
 from pydantic import BaseModel
 
@@ -22,6 +22,3 @@ class Resource(BaseModel, extra="allow"):
     @classmethod
     def kind_literal(cls) -> Optional[str]:
         return getattr(cls.model_fields["kind"].annotation, "__args__", [None])[0]
-
-    def promote(self, clazz: Type[T]) -> T:
-        return clazz.model_validate(self.model_dump())

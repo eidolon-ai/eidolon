@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, TypeVar, Type
 
 from eidos_sdk.util.logger import logger
+
+
+T = TypeVar("T", bound="Resource")
 
 
 class AgentOS:
@@ -32,11 +35,12 @@ class AgentOS:
         bucket[resource.metadata.name] = (resource, source)
 
     @classmethod
-    def get_resources(cls, bucket) -> Dict[str, "Resource"]:  # noqa: F821
-        return {k: tu[0].model_copy() for k, tu in cls._resources.get(bucket, {}).items()}
+    def get_resources(cls, kind: Type[T]) -> Dict[str, T]:  # noqa: F821
+        return {k: tu[0].model_copy() for k, tu in cls._resources.get(kind.kind_literal(), {}).items()}
 
     @classmethod
-    def get_resource(cls, bucket: str, name: str = "DEFAULT", default=...) -> "Resource":  # noqa: F821
+    def get_resource(cls, kind: Type[T], name: str = "DEFAULT", default=...) -> T:
+        bucket = kind.kind_literal()
         try:
             return cls._resources[bucket][name][0].model_copy(deep=True)
         except KeyError:
