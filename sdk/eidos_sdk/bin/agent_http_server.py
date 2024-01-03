@@ -15,6 +15,7 @@ from starlette.requests import Request
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.agent_machine import AgentMachine, error_logger
 from eidos_sdk.system.resources.resource_parser import parse_resource
+from eidos_sdk.system.resources.resources_base import Resource
 from eidos_sdk.util.logger import logger
 
 dotenv.load_dotenv()
@@ -59,7 +60,7 @@ def load_resources(path, source_override=None):
         with error_logger(file_loc), open(file_loc) as resource_yaml:
             loaded = yaml.safe_load(resource_yaml) if file_loc.endswith(".yaml") else None
             if loaded:
-                yield parse_resource(loaded), source_override or file_loc
+                yield Resource.model_validate(loaded), source_override or file_loc
             else:
                 logger.info(f"Skipping {file_loc}")
 
