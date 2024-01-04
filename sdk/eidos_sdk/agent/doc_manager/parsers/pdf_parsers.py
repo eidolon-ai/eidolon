@@ -25,7 +25,7 @@ _PDF_FILTER_WITHOUT_LOSS = [
 
 
 def extract_from_images_with_rapidocr(
-        images: Iterable[Union[Iterable[np.ndarray], bytes]],
+    images: Iterable[Union[Iterable[np.ndarray], bytes]],
 ) -> str:
     """Extract text from images with RapidOCR.
 

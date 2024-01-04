@@ -5,7 +5,6 @@ from eidos_sdk.agent.doc_manager.parsers.pdf_parsers import PyPDFParser, PyPDFPa
 
 
 class TestPDFParser:
-
     def test_parse(self):
         data = DataBlob.from_path(os.path.dirname(os.path.abspath(__file__)) + "/AgentXOS.pdf")
         parser = PyPDFParser(PyPDFParserSpec())
@@ -14,7 +13,9 @@ class TestPDFParser:
         doc = docs[0]
         assert doc.metadata["source"] == os.path.dirname(os.path.abspath(__file__)) + "/AgentXOS.pdf"
         assert doc.metadata["mime_type"] == "application/pdf"
-        assert doc.page_content == """ Agent  X  OS 
+        assert (
+            doc.page_content
+            == """ Agent  X  OS 
  Overview 
  LLM Agents have been shown capable of solving a wide variety of tasks. 
  For example, in the paper  “Generative Agents: Interactive Simulacra of Human Behavior”  a group 
@@ -38,3 +39,4 @@ class TestPDFParser:
  congue nihil imperdiet doming id quod mazim placerat facer possim assum. 
  What is an Agent? 
 """
+        )

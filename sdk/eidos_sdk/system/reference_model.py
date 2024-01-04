@@ -70,12 +70,12 @@ class Reference(BaseModel):
 
     @model_validator(mode="before")
     def _transform(cls, value):
-
         if isinstance(value, str):
             split = list(value.split("."))
             bucket = split.pop(0)
             name = ".".join(split) if split else "DEFAULT"
             from eidos_sdk.agent_os import AgentOS
+
             found = AgentOS.get_resource(bucket, name)
             return found.model_dump(exclude={"apiVersion", "kind", "metadata"})
         else:

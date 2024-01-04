@@ -40,16 +40,18 @@ class NoopSymbolicMemory(SymbolicMemory):
         return 0
 
     def find(
-            self,
-            symbol_collection: str,
-            query: dict[str, Any],
-            projection: Union[List[str], Dict[str, int]] = None,
-            sort: dict = None,
-            skip: int = None,
+        self,
+        symbol_collection: str,
+        query: dict[str, Any],
+        projection: Union[List[str], Dict[str, int]] = None,
+        sort: dict = None,
+        skip: int = None,
     ):
         pass
 
-    async def find_one(self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None) -> Optional[dict[str, Any]]:
+    async def find_one(
+        self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None
+    ) -> Optional[dict[str, Any]]:
         pass
 
     async def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
@@ -81,10 +83,19 @@ class NoopVectorStore(VectorStore):
     async def delete(self, collection: str, doc_ids: List[str]):
         pass
 
-    async def query(self, collection: str, query: str, num_results: int, metadata_where: Optional[Dict[str, str]] = None) -> List[Document]:
+    async def query(
+        self, collection: str, query: str, num_results: int, metadata_where: Optional[Dict[str, str]] = None
+    ) -> List[Document]:
         return []
 
-    async def raw_query(self, collection: str, query: List[float], num_results: int, metadata_where: Optional[Dict[str, str]] = None, include_embeddings: bool = False) -> List[QueryItem]:
+    async def raw_query(
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Optional[Dict[str, str]] = None,
+        include_embeddings: bool = False,
+    ) -> List[QueryItem]:
         pass
 
     async def get_docs(self, collection: str, doc_ids: List[str]) -> Iterable[Document]:

@@ -31,22 +31,22 @@ class VectorStore(ABC):
 
     @abstractmethod
     async def query(
-            self,
-            collection: str,
-            query: str,
-            num_results: int,
-            metadata_where: Optional[Dict[str, str]] = None,
+        self,
+        collection: str,
+        query: str,
+        num_results: int,
+        metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:
         pass
 
     @abstractmethod
     async def raw_query(
-            self,
-            collection: str,
-            query: List[float],
-            num_results: int,
-            metadata_where: Optional[Dict[str, str]] = None,
-            include_embeddings: bool = False,
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Optional[Dict[str, str]] = None,
+        include_embeddings: bool = False,
     ) -> List[QueryItem]:
         pass
 

@@ -13,7 +13,10 @@ class AutoParser(BaseParser):
             from eidos_sdk.agent.doc_manager.parsers.pdf_parsers import PyPDFParser
 
             yield from PyPDFParser(PyPDFParserSpec()).parse(blob)
-        elif blob.mimetype == "application/msword" or blob.mimetype == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        elif (
+            blob.mimetype == "application/msword"
+            or blob.mimetype == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ):
             from eidos_sdk.agent.doc_manager.parsers.ms_word_parser import MsWordParser
 
             yield from MsWordParser(BaseParserSpec()).parse(blob)
@@ -33,8 +36,14 @@ class AutoParser(BaseParser):
             from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import LanguageParser
 
             yield from LanguageParser(LanguageParserSpec(language="cobol")).parse(blob)
-        elif blob.mimetype.startswith(
-                "text/") or blob.mimetype == "application/json" or blob.mimetype == "application/xml" or blob.mimetype == "application/yaml" or blob.mimetype == "application/x-yaml" or blob.mimetype == "application/x-yml":
+        elif (
+            blob.mimetype.startswith("text/")
+            or blob.mimetype == "application/json"
+            or blob.mimetype == "application/xml"
+            or blob.mimetype == "application/yaml"
+            or blob.mimetype == "application/x-yaml"
+            or blob.mimetype == "application/x-yml"
+        ):
             from eidos_sdk.agent.doc_manager.parsers.text_parsers import TextParser
 
             yield from TextParser(BaseParserSpec()).parse(blob)

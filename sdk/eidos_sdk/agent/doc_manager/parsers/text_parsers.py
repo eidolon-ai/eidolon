@@ -36,9 +36,5 @@ class BS4HTMLParser(BaseParser, Specable[BS4HTMLParserSpec]):
         else:
             title = ""
 
-        metadata: Dict[str, Union[str, None]] = {
-            "source": blob.path,
-            "title": title,
-            "mime_type": blob.mimetype
-        }
+        metadata: Dict[str, Union[str, None]] = {"source": blob.path, "title": title, "mime_type": blob.mimetype}
         yield Document(page_content=text, metadata=metadata)

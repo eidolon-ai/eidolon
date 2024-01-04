@@ -42,18 +42,18 @@ class NoMemoryCPU(AgentCPU, Specable[NoMemoryCPUSpec], ProcessingUnitLocator):
         raise ValueError(f"Could not locate {unit_type}")
 
     async def set_boot_messages(
-            self,
-            call_context: CallContext,
-            boot_messages: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        boot_messages: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ):
         raise NotImplementedError("NoMemoryCPU does not support boot messages")
 
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> Any:
         output_format = output_format or dict(type="str")
         try:
@@ -66,10 +66,10 @@ class NoMemoryCPU(AgentCPU, Specable[NoMemoryCPUSpec], ProcessingUnitLocator):
             raise RuntimeError("Error in cpu while processing request") from e
 
     async def _llm_execution_cycle(
-            self,
-            call_context: CallContext,
-            conversation: List[LLMMessage],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        conversation: List[LLMMessage],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:

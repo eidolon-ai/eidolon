@@ -16,7 +16,8 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
-    cast, Iterable,
+    cast,
+    Iterable,
 )
 
 import requests
@@ -563,7 +564,12 @@ class Language(str, Enum):
             return cls.JS
         elif mimetype == "text/x-cobol":
             return cls.COBOL
-        elif mimetype == "text/x-c++src" or mimetype == "text/x-c++hdr" or mimetype == "text/x-csrc" or mimetype == "text/x-chdr":
+        elif (
+            mimetype == "text/x-c++src"
+            or mimetype == "text/x-c++hdr"
+            or mimetype == "text/x-csrc"
+            or mimetype == "text/x-chdr"
+        ):
             return cls.CPP
         elif mimetype == "text/x-csharp":
             return cls.CSHARP
@@ -979,8 +985,7 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
                 # then by commas
                 ",",
                 # then by spaces, which really, really sucks
-                " "
-                "",
+                " " "",
             ]
         elif language == Language.LATEX:
             return [

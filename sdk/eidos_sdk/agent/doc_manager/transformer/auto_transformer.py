@@ -2,7 +2,11 @@ import json
 from typing import Any, Iterable
 
 from eidos_sdk.agent.doc_manager.transformer.document_transformer import BaseDocumentTransformer
-from eidos_sdk.agent.doc_manager.transformer.text_splitters import Language, RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterSpec
+from eidos_sdk.agent.doc_manager.transformer.text_splitters import (
+    Language,
+    RecursiveCharacterTextSplitter,
+    RecursiveCharacterTextSplitterSpec,
+)
 from eidos_sdk.memory.document import Document
 
 
@@ -28,5 +32,7 @@ class AutoTransformer(BaseDocumentTransformer):
             if progLang is None:
                 spec = RecursiveCharacterTextSplitterSpec()
             else:
-                spec = RecursiveCharacterTextSplitterSpec(separators=RecursiveCharacterTextSplitter.get_separators_for_language(progLang))
+                spec = RecursiveCharacterTextSplitterSpec(
+                    separators=RecursiveCharacterTextSplitter.get_separators_for_language(progLang)
+                )
             yield from RecursiveCharacterTextSplitter(spec).transform_documents([document])
