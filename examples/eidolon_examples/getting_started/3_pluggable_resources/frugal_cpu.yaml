@@ -1,7 +1,7 @@
 apiVersion: eidolon/v1
-kind: CPU
+kind: EidosRef
 metadata:
-  name: frugal
+  name: frugal_cpu
 
 spec:
   implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
