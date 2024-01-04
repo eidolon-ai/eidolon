@@ -1,10 +1,11 @@
 apiVersion: eidolon/v1
-kind: GenericAgent
+kind: Agent
 
 metadata:
   name: doc_producer
 
 spec:
+  implementation: GenericAgent
   description: A documentation producer that creates and edits documentation for a project.
   cpu:
     implementation: "eidos_sdk.cpu.open_ai_assistants_cpu.OpenAIAssistantsCPU"

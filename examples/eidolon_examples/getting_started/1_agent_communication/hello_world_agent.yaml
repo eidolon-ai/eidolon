@@ -1,9 +1,7 @@
 apiVersion: eidolon/v1
 kind: Agent
-
 metadata:
   name: hello_world
-
 spec:
   implementation: GenericAgent
   description: "This is an example of a generic agent which greets people by name."

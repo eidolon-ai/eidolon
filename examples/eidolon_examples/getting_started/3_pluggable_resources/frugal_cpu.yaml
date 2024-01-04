@@ -3,8 +3,8 @@ kind: CPU
 metadata:
   name: frugal
 
-implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
 spec:
+  implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
   cpu:
     spec:
       llm_unit:

@@ -1,10 +1,11 @@
 apiVersion: eidolon/v1
-kind: GenericAgent
+kind: Agent
 
 metadata:
   name: ExampleGeneric
 
 spec:
+  implementation: GenericAgent
   description: "This is an example of a generic agent which can be used to create a conversational agent."
   agent_refs: ["StateMachine", "HelloWorld", "TreeOfThoughts"]
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."

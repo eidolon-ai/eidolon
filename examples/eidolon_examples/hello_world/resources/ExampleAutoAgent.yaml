@@ -3,4 +3,4 @@ kind: Agent
 metadata:
   name: ExampleAuto
 
-implementation: "eidolon_examples.hello_world.AutonomousAgent.AutonomousAgent"
+spec: "eidolon_examples.hello_world.AutonomousAgent.AutonomousAgent"

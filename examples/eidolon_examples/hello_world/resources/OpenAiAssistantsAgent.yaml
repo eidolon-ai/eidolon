@@ -1,10 +1,11 @@
 apiVersion: eidolon/v1
-kind: GenericAgent
+kind: Agent
 
 metadata:
   name: OpenAIAssistants
 
 spec:
+  implementation: GenericAgent
   description: "This is an example of a generic agent which can be used to create a conversational agent."
   cpu:
     implementation: "eidos_sdk.cpu.open_ai_assistants_cpu.OpenAIAssistantsCPU"
