@@ -284,7 +284,7 @@ This is pretty verbose in our qa_agent.yaml, and would be redundant if we wanted
 _frugal_cpu.yaml_
 ```yaml
 apiVersion: eidolon/v1
-kind: EidosRef
+kind: Reference
 metadata:
   name: frugal_cpu
 

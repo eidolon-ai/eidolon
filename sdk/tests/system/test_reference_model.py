@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.reference_model import Reference, Specable, AnnotatedReference
-from eidos_sdk.system.resources.eidos_ref_resource import EidosRef
+from eidos_sdk.system.resources.eidos_ref_resource import Reference
 from eidos_sdk.system.resources.resources_base import Metadata
 from eidos_sdk.util.class_utils import fqn
 
@@ -51,7 +51,7 @@ def resource(name="TestResource", implementation=fqn(OS), spec=None):
     spec = spec or {}
     try:
         AgentOS.register_resource(
-            EidosRef(
+            Reference(
                 apiVersion="eidolon/v1",
                 metadata=Metadata(name=name),
                 spec=dict(implementation=implementation, **spec),
