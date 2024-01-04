@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.reference_model import Reference, Specable, AnnotatedReference
-from eidos_sdk.system.resources.reference_resource import ReferenceResource
 from eidos_sdk.system.resources.resources_base import Metadata, Resource
 from eidos_sdk.util.class_utils import fqn
 
