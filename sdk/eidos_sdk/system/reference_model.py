@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import copy
 import logging
-from typing import TypeVar, Generic, Type, Annotated, Optional
+from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 
-from pydantic import BaseModel, model_validator, Field
+from pydantic import BaseModel, model_validator, Field, ConfigDict
 
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.system.resources.reference_resource import ReferenceResource
 from eidos_sdk.util.class_utils import for_name, fqn
 
 T = TypeVar("T", bound=BaseModel)
@@ -43,22 +46,25 @@ class Reference(BaseModel):
         _bound: This is a type variable `B` that represents the bound type of the reference. It defaults to `object`.
         _default: This is a type variable `D` that represents the default type of the reference. It defaults to `None`.
         implementation: This is a string that represents the fully qualified name of the class that the reference points to. It is optional and can be set to `None`.
-        spec: This is a dictionary that can hold any additional specifications for the reference. It is optional and can be set to `None`.
+        **extra: This is a dictionary that can hold any additional specifications for the reference. It is optional and can be set to `None`.
 
     Methods:
         instantiate: This method is used to create an instance of the class that the reference points to.
     """
 
-    _bound: Type[B] = object
-    _default: Type[D] = None
+    _bound: ClassVar[Type[B]] = object
+    _default: ClassVar[Type[D]] = None
     implementation: str = None
-    spec: Optional[dict] = None
+
+    model_config = ConfigDict(
+        extra="allow",
+    )
 
     def __class_getitem__(cls, params):
         if not isinstance(params, tuple):
             params = (params, params)
 
-        class _Reference(Reference):
+        class _Reference(cls):
             _bound = params[0]
             _default = params[1]
 
@@ -71,25 +77,39 @@ class Reference(BaseModel):
     @model_validator(mode="before")
     def _transform(cls, value):
         if isinstance(value, str):
-            split = list(value.split("."))
-            bucket = split.pop(0)
-            name = ".".join(split) if split else "DEFAULT"
-            from eidos_sdk.agent_os import AgentOS
-
-            found = AgentOS.get_resource(bucket, name)
-            return found.model_dump(exclude={"apiVersion", "kind", "metadata"})
+            impl = value
+            spec = {}
         else:
-            if "spec" in value and isinstance(value["spec"], BaseModel):
-                value["spec"] = value["spec"].model_dump(exclude_defaults=True)
-            return value
+            spec = value.model_dump(exclude_defaults=True) if isinstance(value, BaseModel) else copy.deepcopy(value)
+            impl = spec.pop("implementation", fqn(cls._default) if isinstance(cls._default, type) else cls._default)
+            if not impl:
+                raise ValueError(f'Unable to determine implementation for "{value}"')
+
+        impl, spec = cls._expand(impl, spec)
+        return dict(implementation=impl, **spec)
+
+    @classmethod
+    def _merge(cls, d1, d2):
+        for k, v in d1.items():
+            if isinstance(v, dict):
+                d2[k] = d2.get(k, {})
+                cls._merge(v, d2.get(k, {}))
+            else:
+                d2[k] = v
+
+    @classmethod
+    def _expand(cls, impl, extra):
+        ref = AgentOS.get_resource(ReferenceResource, impl, default=None)
+        if not ref:
+            return impl, extra
+        else:
+            inner_spec = copy.deepcopy(ref.spec)
+            impl = inner_spec.pop("implementation")
+            cls._merge(extra or {}, inner_spec)
+            return cls._expand(impl, inner_spec)
 
     @model_validator(mode="after")
     def _validate(self):
-        if not self.implementation and self._default:
-            self.implementation = fqn(self._default)
-        if not self.implementation:
-            raise ValueError(f'Unable to determine implementation for "{self}"')
-
         self._build_reference_spec()
         return self
 
@@ -111,9 +131,9 @@ class Reference(BaseModel):
     def _build_reference_spec(self):
         spec_type = self.get_spec_type(self._get_reference_class())
         if spec_type:
-            return spec_type.model_validate(self.spec or {})
+            return spec_type.model_validate(self.model_extra or {})
         else:
-            return self.spec
+            return self.model_extra or None
 
     def _get_reference_class(self):
         return for_name(self.implementation, self._bound or object)

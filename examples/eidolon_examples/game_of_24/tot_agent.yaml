@@ -1,10 +1,11 @@
 apiVersion: eidolon/v1
-kind: TreeOfThoughtsAgent
+kind: Agent
 
 metadata:
   name: TOT
 
 spec:
+  implementation: "TreeOfThoughtsAgent"
   description: |-
     This agent is a game of 24 solver. It uses a tree of thoughts to generate possible solutions and then
     checks if the solution is valid. It uses a simple heuristic to determine if the solution is valid.

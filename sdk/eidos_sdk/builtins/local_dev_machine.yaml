@@ -1,0 +1,15 @@
+apiVersion: eidolon/v1
+kind: Machine
+
+metadata:
+  name: local_dev
+
+spec:
+  symbolic_memory: eidos_sdk.memory.local_symbolic_memory.LocalSymbolicMemory
+  file_memory:
+    implementation: eidos_sdk.memory.local_file_memory.LocalFileMemory
+    root_dir: "/tmp/eidos/file_memory"
+  similarity_memory:
+    implementation: eidos_sdk.memory.similarity_memory.SimilarityMemory
+    embedder: eidos_sdk.memory.embeddings.NoopEmbedding
+    vector_store: eidos_sdk.memory.noop_memory.NoopVectorStore

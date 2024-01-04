@@ -14,8 +14,7 @@ from starlette.requests import Request
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.agent_machine import AgentMachine, error_logger
-from eidos_sdk.system.resources import builtin_resources
-from eidos_sdk.system.resources_base import Resource
+from eidos_sdk.system.resources.resources_base import Resource
 from eidos_sdk.util.logger import logger
 
 dotenv.load_dotenv()
@@ -55,12 +54,12 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_resources(path):
+def load_resources(path, source_override=None):
     for file_loc in (os.path.join(p, f) for p, _, files in os.walk(path) for f in files):
         with error_logger(file_loc), open(file_loc) as resource_yaml:
             loaded = yaml.safe_load(resource_yaml) if file_loc.endswith(".yaml") else None
             if loaded:
-                yield Resource.model_validate(loaded), file_loc
+                yield Resource.model_validate(loaded), source_override or file_loc
             else:
                 logger.info(f"Skipping {file_loc}")
 
@@ -71,6 +70,8 @@ async def start_os(app, resource_generator, log_level=logging.INFO, machine_name
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
     try:
+        builtin_loc = pathlib.Path(__file__).parent.parent / "builtins"
+        builtin_resources = load_resources(builtin_loc, source_override="builtin")
         machine = AgentMachine.from_resources(chain(builtin_resources, resource_generator), machine_name)
         AgentOS.load_machine(machine)
         await machine.start(app)

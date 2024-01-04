@@ -50,11 +50,12 @@ EidOS simplifies agent-to-agent communication with a built-in mechanism enabling
 _hello_world_agent.yaml_
 ```yaml
 apiVersion: eidolon/v1
-kind: GenericAgent
+kind: Agent
 metadata:
   name: hello_world
 
 spec:
+  implementation: GenericAgent
   description: "This is an example of a generic agent which greets people by name."
   system_prompt: "You are a friendly greeter who greets people by name while using emojis"
   user_prompt: "Hi, my name is {{name}}"
@@ -67,11 +68,12 @@ spec:
 _qa_agent.yaml_
 ```yaml
 apiVersion: eidolon/v1
-kind: GenericAgent
+kind: Agent
 metadata:
   name: qa
 
 spec:
+  implementation: GenericAgent
   description: "This is a qa agent responsible for making sure the hello_agent is functioning properly"
   agent_refs: ["hello_world"]
   system_prompt: >-
@@ -113,7 +115,7 @@ kind: Agent
 metadata:
   name: hello_world
 
-implementation: "getting_started.hello_world.HelloWorld"
+spec: "getting_started.hello_world.HelloWorld"
 ```
 
 The python class should look very similar to a [FastAPI endpoint](https://fastapi.tiangolo.com/tutorial/first-steps/). That is all it is. You can transparently use FastAPI types and annotations to define the contract for your program. You will get the swagger ui and validation under the covers for free. This can be dynamically defined through the program or action registration decorator as well.
@@ -206,8 +208,8 @@ kind: Agent
 metadata:
   name: qa
 
-implementation: "getting_started.qa.QualityAssurance"
 spec:
+  implementation: "getting_started.qa.QualityAssurance"
   description: "This is a qa agent responsible for making sure the hello_agent is functioning properly"
   agent_refs: ["hello_world"]
 ```
@@ -240,8 +242,8 @@ kind: Agent
 metadata:
   name: qa
 
-implementation: "getting_started.qa.QualityAssurance"
 spec:
+  implementation: "getting_started.qa.QualityAssurance"
   agent_refs: ["hello_world"]
   validate_agent: true
 ```
@@ -258,12 +260,12 @@ Agents can include pluggable references to various components like CPUs. Let's u
 _qa_agent.yaml_
 ```yaml
 apiVersion: eidolon/v1
-implementation: getting_started.qa.QualityAssurance
 kind: Agent
 metadata:
   name: qa
 
 spec:
+  implementation: getting_started.qa.QualityAssurance
   agent_refs: ["hello_world"]
   cpu:
     spec:
@@ -282,9 +284,9 @@ This is pretty verbose in our qa_agent.yaml, and would be redundant if we wanted
 _frugal_cpu.yaml_
 ```yaml
 apiVersion: eidolon/v1
-kind: CPU
+kind: Reference
 metadata:
-  name: frugal
+  name: frugal_cpu
 
 implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
 spec:
@@ -306,10 +308,10 @@ kind: Agent
 metadata:
   name: qa
 
-implementation: getting_started.qa.QualityAssurance
 spec:
+  implementation: getting_started.qa.QualityAssurance
   agent_refs: ["hello_world"]
-  cpu: "CPU.frugal"
+  cpu: frugal_cpu
 ```
 
 We refer to our named resource as `{kind}.{metadata.name}`, or in this case `CPU.default`. We can create named resources 
@@ -333,8 +335,7 @@ metadata:
 spec:
   symbolic_memory:
     implementation: "eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
-    spec:
-      mongo_database_name: "eidolon"
+    mongo_database_name: "eidolon"
 ```
 
 Now you can specify the machine when we start the server.

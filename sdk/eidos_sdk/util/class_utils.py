@@ -27,7 +27,10 @@ def for_name(implementation_fqn: str, sub_class: Type) -> Type:
     """
 
     if implementation_fqn:
-        module_name, class_name = implementation_fqn.rsplit(".", 1)
+        try:
+            module_name, class_name = implementation_fqn.rsplit(".", 1)
+        except ValueError:
+            raise ValueError(f"Implementation class '{implementation_fqn}' is not a valid fully qualified class name.")
         try:
             module = importlib.import_module(module_name)
             implementation_class = getattr(module, class_name)

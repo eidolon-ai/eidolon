@@ -6,19 +6,18 @@ import pytest
 from fastapi import Body
 
 from eidos_sdk.agent.agent import register_program
-from eidos_sdk.agent.generic_agent import GenericAgentSpec
-from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPUSpec
-from eidos_sdk.system.resources_base import Resource, Metadata
+from eidos_sdk.system.resources.resources_base import Metadata, Resource
 
 
 @pytest.fixture(scope="module")
 def generic_agent_root(llm):
     return Resource(
         apiVersion="eidolon/v1",
-        kind="GenericAgent",
+        kind="Agent",
         metadata=Metadata(name="GenericAgent"),
-        spec=GenericAgentSpec(
-            cpu=dict(spec=ConversationalAgentCPUSpec(llm_unit=llm)),
+        spec=dict(
+            implementation="GenericAgent",
+            cpu=dict(llm_unit=llm),
             system_prompt="You are a machine which follows instructions and returns a summary of your actions.",
             user_prompt="{{instruction}}",
             input_schema=dict(instruction=dict(type="string")),
@@ -69,9 +68,10 @@ class TestGenericAgent:
 def generic_agent_with_refs():
     return Resource(
         apiVersion="eidolon/v1",
-        kind="GenericAgent",
+        kind="Agent",
         metadata=Metadata(name="GenericAgent"),
-        spec=GenericAgentSpec(
+        spec=dict(
+            implementation="GenericAgent",
             system_prompt="You are a machine which follows instructions",
             user_prompt="{{instruction}}",
             agent_refs=["HelloWorld"],
@@ -134,7 +134,7 @@ class TestAgentsWithReferences:
 
 
 def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):
-    generic_agent.spec.output_schema = {
+    generic_agent.spec["output_schema"] = {
         "type": "object",
         "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
     }
@@ -147,7 +147,7 @@ def test_generic_agent_supports_object_output(client_builder, generic_agent, dog
 
 
 def test_generic_agent_supports_image(client_builder, generic_agent, dog):
-    generic_agent.spec.files = "single"
+    generic_agent.spec["files"] = "single"
     with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",
@@ -159,7 +159,7 @@ def test_generic_agent_supports_image(client_builder, generic_agent, dog):
 
 
 def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
-    generic_agent.spec.files = "multiple"
+    generic_agent.spec["files"] = "multiple"
     with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",

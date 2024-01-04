@@ -1,0 +1,8 @@
+apiVersion: eidolon/v1
+kind: Reference
+
+metadata:
+  name: TreeOfThoughtsAgent
+
+spec:
+  implementation: eidos_sdk.agent.tot_agent.tot_agent.TreeOfThoughtsAgent

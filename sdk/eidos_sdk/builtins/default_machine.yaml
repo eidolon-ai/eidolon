@@ -1,0 +1,17 @@
+apiVersion: eidolon/v1
+kind: Machine
+
+metadata:
+  name: DEFAULT
+
+spec:
+  symbolic_memory:
+    implementation: eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory
+    mongo_database_name: eidos
+  file_memory:
+    implementation: eidos_sdk.memory.local_file_memory.LocalFileMemory
+    root_dir: "/tmp/eidos/file_memory"
+  similarity_memory:
+    implementation: eidos_sdk.memory.similarity_memory.SimilarityMemory
+    embedder: eidos_sdk.memory.embeddings.NoopEmbedding
+    vector_store: eidos_sdk.memory.noop_memory.NoopVectorStore

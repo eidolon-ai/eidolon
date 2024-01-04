@@ -15,18 +15,19 @@ from vcr.stubs import httpx_stubs
 
 import eidos_sdk.system.processes as processes
 from eidos_sdk.bin.agent_http_server import start_os
-from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec, OpenAIGPT
-from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
+from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
+from eidos_sdk.memory.local_file_memory import LocalFileMemory
 from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
 from eidos_sdk.system.reference_model import Reference
-from eidos_sdk.system.resources import AgentResource
-from eidos_sdk.system.resources_base import Resource, Metadata
+from eidos_sdk.system.resources.agent_resource import AgentResource
+from eidos_sdk.system.resources.machine_resource import MachineResource
+from eidos_sdk.system.resources.resources_base import Resource, Metadata
 from eidos_sdk.util.class_utils import fqn
 
 
-# we want all tests using the client_builder to use vcr so we don't send requests to openai
+# we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "client_builder" in i.fixturenames, items):
         item.add_marker(pytest.mark.vcr)
@@ -53,6 +54,7 @@ def app_builder(machine_manager):
             async with machine_manager() as _machine:
                 async with start_os(_app, [_machine, *resources] if _machine else resources):
                     yield
+                    print("done")
 
         return FastAPI(lifespan=manage_lifecycle)
 
@@ -68,7 +70,7 @@ def client_builder(app_builder):
             if isinstance(a, Resource)
             else AgentResource(
                 apiVersion="eidolon/v1",
-                implementation=fqn(a),
+                spec=Reference(implementation=fqn(a)),
                 metadata=Metadata(name=a.__name__),
             )
             for a in agents
@@ -76,11 +78,11 @@ def client_builder(app_builder):
         app = app_builder(resources)
 
         def make_request(method):
-            async def fn(url, args=None):
-                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as client:
-                    return (await client.request(method, url, json=args)).json()
+            async def _fn(url, args=None):
+                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as _client:
+                    return (await _client.request(method, url, json=args)).json()
 
-            return fn
+            return _fn
 
         with TestClient(app) as client, patch(
             "eidos_sdk.cpu.conversational_logic_unit._agent_request"
@@ -97,7 +99,7 @@ def machine_manager(file_memory, symbolic_memory, similarity_memory):
     @asynccontextmanager
     async def fn():
         async with symbolic_memory() as sm:
-            yield Resource(
+            yield MachineResource(
                 apiVersion="eidolon/v1",
                 kind="Machine",
                 spec=dict(
@@ -133,7 +135,7 @@ def mongo_symbolic_memory(module_identifier):
         database_name = f"test_db_{identifier}_{ObjectId()}"  # Unique name for test database
         ref = Reference(
             implementation=fqn(MongoSymbolicMemory),
-            spec=dict(mongo_database_name=database_name),
+            mongo_database_name=database_name,
         )
         memory = ref.instantiate()
         memory.start()
@@ -165,8 +167,7 @@ def symbolic_memory(mongo_symbolic_memory, local_symbolic_memory, pytestconfig):
 @pytest.fixture(scope="module")
 def file_memory(tmp_path_factory, module_identifier):
     storage_loc = tmp_path_factory.mktemp(f"file_memory_{module_identifier}")
-    spec = LocalFileMemoryConfig(root_dir=str(storage_loc))
-    return Reference[LocalFileMemory](spec=spec)
+    return Reference[LocalFileMemory](root_dir=str(storage_loc))
 
 
 @pytest.fixture(scope="module")
@@ -189,11 +190,9 @@ def test_dir():
 def llm(test_dir, module_identifier):
     return Reference(
         implementation=fqn(OpenAIGPT),
-        spec=OpenAiGPTSpec(
-            model="gpt-4-vision-preview",
-            force_json=False,
-            max_tokens=4096,
-        ),
+        model="gpt-4-vision-preview",
+        force_json=False,
+        max_tokens=4096,
     )
 
 
@@ -214,7 +213,7 @@ def cat(test_dir):
 @pytest.fixture
 def patched_vcr_object_handling():
     """
-    vcr has a bug around how it handles multi-part requests, and it is wired in for everything,
+    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
     even the fake test client requests, so we need to pipe the body through ourselves
     """
 

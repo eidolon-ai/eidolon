@@ -1,7 +1,7 @@
 apiVersion: eidolon/v1
-kind: CPU
+kind: Reference
 metadata:
-  name: custom
+  name: custom_cpu
 spec:
   cpu:
     llm_unit:

@@ -1,5 +1,7 @@
 apiVersion: eidolon/v1
-kind: CPU
+kind: Reference
+metadata:
+  name: default_cpu
 spec:
   llm_unit:
     model: "gpt-4-1106-preview"

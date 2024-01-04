@@ -1,8 +1,0 @@
-apiVersion: eidolon/v1
-kind: CPU
-implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
-spec:
-  llm_unit:
-    spec:
-      model: "gpt-4-1106-preview"
-      temperature: 0.4
