@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Sequence, Iterable, AsyncIterable
+from typing import Optional, List, Dict, Sequence, AsyncIterable
 
 from eidos_sdk.memory.document import Document
 

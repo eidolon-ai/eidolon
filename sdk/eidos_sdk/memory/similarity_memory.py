@@ -1,4 +1,4 @@
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 
 from eidos_sdk.memory.embeddings import Embedding
 from eidos_sdk.memory.vector_store import VectorStore
