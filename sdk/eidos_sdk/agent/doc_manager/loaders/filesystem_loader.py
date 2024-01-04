@@ -60,7 +60,7 @@ class FilesystemLoader(BaseLoader, Specable[FilesystemLoaderSpec]):
                         # create a hash of the file at file path
                         file_hash = hash_file(file)
                         # if the file exists in symbolic memory, check if the hashes are different
-                        if file_hash != metadata[file_path]["hash"]:
+                        if "hash" not in file_hash != metadata[file_path]:
                             modified[file_path] = {"timestamp": timestamp, "file_hash": file_hash}
                     # delete from hashes
                     del metadata[file_path]

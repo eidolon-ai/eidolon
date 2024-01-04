@@ -43,7 +43,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
                     "mime_type": blob.mimetype,
                 },
             )
@@ -53,7 +53,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
                     "language": language,
                     "mime_type": blob.mimetype,
                 },
@@ -65,7 +65,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
                     "mime_type": blob.mimetype,
                 },
             )
@@ -75,7 +75,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=functions_classes,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
                     "content_type": "functions_classes",
                     "language": language,
                     "mime_type": blob.mimetype,
@@ -84,7 +84,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
         yield Document(
             page_content=generator.simplify_code(),
             metadata={
-                "file_path": blob.path,
+                "source": blob.path,
                 "content_type": "simplified_code",
                 "language": language,
                 "mime_type": blob.mimetype,

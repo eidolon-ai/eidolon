@@ -4,7 +4,7 @@ from typing import Any, Union, List, Dict, AsyncIterable, Optional
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from eidos_sdk.memory.agent_memory import SymbolicMemory
+from eidos_sdk.memory.semantic_memory import SymbolicMemory
 
 
 class LocalSymbolicMemory(SymbolicMemory):

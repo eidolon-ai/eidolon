@@ -4,7 +4,7 @@ from typing import Any, Optional, AsyncIterable, Union, Dict, List
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field, BaseModel
 
-from eidos_sdk.memory.agent_memory import SymbolicMemory
+from eidos_sdk.memory.semantic_memory import SymbolicMemory
 from eidos_sdk.system.reference_model import Specable
 
 

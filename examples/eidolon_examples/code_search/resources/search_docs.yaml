@@ -1,0 +1,10 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: SearchDocs
+
+implementation: "eidos_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent"
+spec:
+  name: "search_docs"
+  description: "Searches for snippets in the documentation"
+  loader_root_location: "file://../docs/src/content/docs"

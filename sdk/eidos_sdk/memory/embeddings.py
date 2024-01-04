@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Any, Literal, AsyncGenerator, Optional
+from typing import Sequence, Any, Literal, AsyncGenerator, Optional, List
 
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
-from eidos_sdk.memory.vector_store import EmbeddedDocument
 from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.memory.document import Document
+from eidos_sdk.memory.document import Document, EmbeddedDocument
 
 
 class EmbeddingSpec(BaseModel):
@@ -19,7 +18,7 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
         self.spec = spec
 
     @abstractmethod
-    async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
+    async def embed_text(self, text: str, **kwargs: Any) -> List[float]:
         """Create an embedding for a single piece of text.
 
         Args:

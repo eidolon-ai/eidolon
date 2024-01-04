@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from pydantic import BaseModel, Field
-from typing import Optional, List, Any, Dict
+from typing import Optional, List, Dict, Sequence, Iterable, AsyncIterable
 
-from eidos_sdk.memory.document import EmbeddedDocument
+from eidos_sdk.memory.document import Document
 
 
 class QueryItem(BaseModel):
@@ -22,19 +22,25 @@ class VectorStore(ABC):
         pass
 
     @abstractmethod
-    async def add(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
+    async def add(self, collection: str, docs: Sequence[Document]):
         pass
 
     @abstractmethod
-    async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
-        pass
-
-    @abstractmethod
-    async def get_metadata(self, collection: str, doc_ids: List[str]):
+    async def delete(self, collection: str, doc_ids: List[str]):
         pass
 
     @abstractmethod
     async def query(
+            self,
+            collection: str,
+            query: str,
+            num_results: int,
+            metadata_where: Optional[Dict[str, str]] = None,
+    ) -> List[Document]:
+        pass
+
+    @abstractmethod
+    async def raw_query(
             self,
             collection: str,
             query: List[float],
@@ -42,4 +48,8 @@ class VectorStore(ABC):
             metadata_where: Optional[Dict[str, str]] = None,
             include_embeddings: bool = False,
     ) -> List[QueryItem]:
+        pass
+
+    @abstractmethod
+    def get_docs(self, collection: str, doc_ids: List[str]) -> AsyncIterable[Document]:
         pass

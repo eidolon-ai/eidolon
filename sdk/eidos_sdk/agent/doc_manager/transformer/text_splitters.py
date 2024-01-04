@@ -16,7 +16,7 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
-    cast,
+    cast, Iterable,
 )
 
 import requests
@@ -76,7 +76,7 @@ class CharacterTextSplitter(TextSplitter, Specable[CharacterTextSplitterSpec]):
         self._separator = spec.separator
         self._is_separator_regex = spec.is_separator_regex
 
-    def split_text(self, text: str) -> List[str]:
+    def split_text(self, text: str) -> Iterable[str]:
         """Split incoming text and return chunks."""
         # First we naively split the large input into a bunch of smaller ones.
         separator = self._separator if self._is_separator_regex else re.escape(self._separator)
@@ -548,6 +548,7 @@ class Language(str, Enum):
     SCALA = "scala"
     SWIFT = "swift"
     MARKDOWN = "markdown"
+    JSON = "json"
     LATEX = "latex"
     HTML = "html"
     SOL = "sol"
@@ -556,7 +557,7 @@ class Language(str, Enum):
 
     @classmethod
     def from_mimetype(cls, mimetype: str) -> Optional[Language]:
-        if mimetype == "text/x-python":
+        if mimetype == "text/x-python" or mimetype == "text/x-python-code":
             return cls.PYTHON
         elif mimetype == "application/javascript":
             return cls.JS
@@ -592,6 +593,8 @@ class Language(str, Enum):
             return cls.HTML
         elif mimetype == "text/x-solidity":
             return cls.SOL
+        elif mimetype == "application/json":
+            return cls.JSON
         else:
             return None
 
@@ -966,6 +969,17 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
                 "\n\n",
                 "\n",
                 " ",
+                "",
+            ]
+        elif language == Language.JSON:
+            return [
+                # First, try to split along newlines to handle json-nl
+                "\n\n",
+                "\n",
+                # then by commas
+                ",",
+                # then by spaces, which really, really sucks
+                " "
                 "",
             ]
         elif language == Language.LATEX:

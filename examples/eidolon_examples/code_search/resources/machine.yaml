@@ -10,6 +10,10 @@ spec:
     spec:
       mongo_database_name: "eidolon"
   similarity_memory:
-      implementation: "eidos_sdk.memory.chroma_vector_store.ChromaVectorMemory"
-      spec:
-        url: "file://${EIDOLON_DATA_DIR}/doc_producer"
+    spec:
+      vector_store:
+        implementation: "eidos_sdk.memory.chroma_vector_store.ChromaVectorStore"
+        spec:
+          url: "file://${EIDOLON_DATA_DIR}/doc_producer"
+      embedder:
+        implementation: "eidos_sdk.memory.embeddings.OpenAIEmbedding"

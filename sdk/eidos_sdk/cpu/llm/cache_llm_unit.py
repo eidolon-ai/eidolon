@@ -15,7 +15,7 @@ from eidos_sdk.cpu.llm_message import (
     UserMessageImageURL,
 )
 from eidos_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
-from eidos_sdk.memory.agent_memory import FileMemory
+from eidos_sdk.memory.file_memory import FileMemory
 from eidos_sdk.memory.local_file_memory import LocalFileMemory
 from eidos_sdk.system.reference_model import Specable, AnnotatedReference, Reference
 
