@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from typing import Dict, Tuple, TypeVar, Type
 
-from eidos_sdk.memory.similarity_memory import SimilarityMemory
-from eidos_sdk.memory.semantic_memory import SymbolicMemory
-from eidos_sdk.memory.file_memory import FileMemory
 from eidos_sdk.util.logger import logger
 
 
@@ -13,9 +10,9 @@ T = TypeVar("T", bound="Resource")
 
 class AgentOS:
     _resources: Dict[str, Dict[str, Tuple["Resource", str]]] = {}  # noqa: F821
-    file_memory: FileMemory = ...  # noqa: F821
-    symbolic_memory: SymbolicMemory = ...  # noqa: F821
-    similarity_memory: SimilarityMemory = ...  # noqa: F821
+    file_memory: "FileMemory" = ...  # noqa: F821
+    symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
+    similarity_memory: "SimilarityMemory" = ...  # noqa: F821
 
     @classmethod
     def load_machine(cls, machine):

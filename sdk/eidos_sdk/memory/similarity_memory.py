@@ -1,13 +1,14 @@
 from pydantic import BaseModel
 
-from eidos_sdk.memory.embeddings import Embedding
+from eidos_sdk.memory.embeddings import Embedding, NoopEmbedding
+from eidos_sdk.memory.noop_memory import NoopVectorStore
 from eidos_sdk.memory.vector_store import VectorStore
-from eidos_sdk.system.reference_model import Specable, Reference
+from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class SimilarityMemorySpec(BaseModel):
-    embedder: Reference[Embedding] = Reference(implementation="eidos_sdk.memory.embeddings.NoopEmbedding")
-    vector_store: Reference[VectorStore] = Reference(implementation="eidos_sdk.memory.noop_memory.NoopVectorStore")
+    embedder: AnnotatedReference[Embedding, NoopEmbedding]
+    vector_store: AnnotatedReference[VectorStore, NoopVectorStore]
 
 
 class SimilarityMemory(Specable[SimilarityMemorySpec]):

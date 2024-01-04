@@ -15,8 +15,8 @@ from vcr.stubs import httpx_stubs
 
 import eidos_sdk.system.processes as processes
 from eidos_sdk.bin.agent_http_server import start_os
-from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec, OpenAIGPT
-from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
+from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
+from eidos_sdk.memory.local_file_memory import LocalFileMemory
 from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
@@ -167,8 +167,7 @@ def symbolic_memory(mongo_symbolic_memory, local_symbolic_memory, pytestconfig):
 @pytest.fixture(scope="module")
 def file_memory(tmp_path_factory, module_identifier):
     storage_loc = tmp_path_factory.mktemp(f"file_memory_{module_identifier}")
-    spec = LocalFileMemoryConfig(root_dir=str(storage_loc))
-    return Reference[LocalFileMemory](spec=spec)
+    return Reference[LocalFileMemory](root_dir=str(storage_loc))
 
 
 @pytest.fixture(scope="module")
