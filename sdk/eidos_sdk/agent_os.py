@@ -5,7 +5,7 @@ from typing import Dict, Tuple, TypeVar, Type
 from eidos_sdk.util.logger import logger
 
 
-T = TypeVar("T", bound="Resource")
+T = TypeVar("T", bound="Resource")  # noqa: F821
 
 
 class AgentOS:

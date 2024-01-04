@@ -45,12 +45,12 @@ class SymbolicMemory(ABC):
 
     @abstractmethod
     def find(
-            self,
-            symbol_collection: str,
-            query: dict[str, Any],
-            projection: Union[List[str], Dict[str, int]] = None,
-            sort: dict = None,
-            skip: int = None,
+        self,
+        symbol_collection: str,
+        query: dict[str, Any],
+        projection: Union[List[str], Dict[str, int]] = None,
+        sort: dict = None,
+        skip: int = None,
     ) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
@@ -71,7 +71,9 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
-    async def find_one(self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None) -> Optional[dict[str, Any]]:
+    async def find_one(
+        self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None
+    ) -> Optional[dict[str, Any]]:
         """
         Searches for a single symbol within a specified collection that matches the given query.
 

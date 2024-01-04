@@ -40,12 +40,12 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
 
     @abstractmethod
     async def query_embedding(
-            self,
-            collection: str,
-            query: List[float],
-            num_results: int,
-            metadata_where: Optional[Dict[str, str]] = None,
-            include_embeddings: bool = False,
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Optional[Dict[str, str]] = None,
+        include_embeddings: bool = False,
     ) -> List[QueryItem]:
         pass
 
@@ -68,11 +68,11 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
             AgentOS.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
 
     async def query(
-            self,
-            collection: str,
-            query: str,
-            num_results: int,
-            metadata_where: Optional[Dict[str, str]] = None,
+        self,
+        collection: str,
+        query: str,
+        num_results: int,
+        metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:
         text = await AgentOS.similarity_memory.embedder.embed_text(query)
         results = await self.query_embedding(collection, text, num_results, metadata_where, False)
@@ -90,12 +90,12 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         return returnDocuments
 
     async def raw_query(
-            self,
-            collection: str,
-            query: List[float],
-            num_results: int,
-            metadata_where: Optional[Dict[str, str]] = None,
-            include_embeddings: bool = False,
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Optional[Dict[str, str]] = None,
+        include_embeddings: bool = False,
     ) -> List[QueryItem]:
         return await self.query_embedding(collection, query, num_results, metadata_where, include_embeddings)
 

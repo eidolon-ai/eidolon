@@ -12,7 +12,6 @@ class DocumentReranker(ABC):
 
 
 class SimpleSortedReranker(DocumentReranker):
-
     async def rerank(self, documents: Dict[str, Dict[str, float]]) -> List[tuple[str, float]]:
         reranked_results = {}
         for docs in documents.values():

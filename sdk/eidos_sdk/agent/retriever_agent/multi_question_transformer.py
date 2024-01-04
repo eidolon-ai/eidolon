@@ -19,7 +19,7 @@ class MultiQuestionTransformerSpec(QuestionTransformerSpec):
     question to retrieve relevant documents from a vector  database. By generating multiple perspectives on the user question, 
     your goal is to help the user overcome some of the limitations of distance-based similarity search. Provide these alternative 
     questions separated by newlines. Original question: {{question}}""",
-        description="The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}"
+        description="The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}",
     )
 
 
@@ -35,7 +35,9 @@ class MultiQuestionTransformer(QuestionTransformer, Specable[MultiQuestionTransf
     async def transform(self, question: str) -> List[str]:
         thread = await self.cpu.main_thread(str(uuid.uuid4()))
         env = Environment(undefined=StrictUndefined)
-        userPrompt = env.from_string(self.spec.prompt).render(question=question, number_to_generate=self.spec.number_to_generate)
+        userPrompt = env.from_string(self.spec.prompt).render(
+            question=question, number_to_generate=self.spec.number_to_generate
+        )
         response = await thread.schedule_request(
             prompts=[UserTextCPUMessage(prompt=userPrompt)], output_format=QuestionList.model_json_schema()
         )

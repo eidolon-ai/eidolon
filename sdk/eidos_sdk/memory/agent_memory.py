@@ -9,10 +9,10 @@ class AgentMemory:
     similarity_memory: SimilarityMemory
 
     def __init__(
-            self,
-            file_memory: FileMemory = None,
-            symbolic_memory: SymbolicMemory = None,
-            similarity_memory: SimilarityMemory = None,
+        self,
+        file_memory: FileMemory = None,
+        symbolic_memory: SymbolicMemory = None,
+        similarity_memory: SimilarityMemory = None,
     ):
         self.file_memory = file_memory
         self.symbolic_memory = symbolic_memory

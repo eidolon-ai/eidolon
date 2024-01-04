@@ -14,7 +14,6 @@ from starlette.requests import Request
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.agent_machine import AgentMachine, error_logger
-from eidos_sdk.system.resources.resource_parser import parse_resource
 from eidos_sdk.system.resources.resources_base import Resource
 from eidos_sdk.util.logger import logger
 

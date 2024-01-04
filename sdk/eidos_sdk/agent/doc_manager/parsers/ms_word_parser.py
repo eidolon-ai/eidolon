@@ -17,8 +17,8 @@ class MsWordParser(BaseParser):
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document": partition_docx,
         }
         if blob.mimetype not in (
-                "application/msword",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         ):
             raise ValueError("This blob type is not supported for this parser.")
         with blob.as_bytes() as word_document:

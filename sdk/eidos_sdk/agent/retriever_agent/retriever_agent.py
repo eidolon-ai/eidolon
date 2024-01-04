@@ -53,7 +53,8 @@ class RetrieverAgentSpec(BaseModel):
     # these three fields are required and override the defaults of the subcomponents
     name: str = Field(description="The name of the document store to use.")
     description: str = Field(
-        description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...")
+        description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
+    )
     loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
 
     loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
@@ -77,7 +78,9 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         Specable.__init__(self, **kwargs)
         self.document_manager = self.spec.document_manager.instantiate()
 
-        self.question_transformer = self.spec.question_transformer.instantiate() if self.spec.question_transformer else None
+        self.question_transformer = (
+            self.spec.question_transformer.instantiate() if self.spec.question_transformer else None
+        )
         self.document_reranker = self.spec.document_reranker.instantiate()
 
     @register_program()
@@ -89,10 +92,10 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         files = [item async for item in await self.document_manager.list_files()]
         return AgentState(name="idle", data=files)
 
-    @register_program(
-        description=make_description
-    )
-    async def search(self, question: Annotated[str, Body(description="The question to search for", embed=True)]) -> List[DocSummary]:
+    @register_program(description=make_description)
+    async def search(
+        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+    ) -> List[DocSummary]:
         """
         Process the question by searching the document store.
         :param question: The question to process
@@ -107,7 +110,9 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         question_to_docs = {}
         for question in questions:
             embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
-            results_ = await AgentOS.similarity_memory.vector_store.raw_query(f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results)
+            results_ = await AgentOS.similarity_memory.vector_store.raw_query(
+                f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results
+            )
             question_to_docs[question] = results_
         rerank_questions = {}
         for question, docs in question_to_docs.items():
@@ -116,17 +121,16 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         reranked_docs = await self.document_reranker.rerank(rerank_questions)
 
         # now limit reranked_docs to max_num_results
-        reranked_docs = reranked_docs[:self.spec.max_num_results]
+        reranked_docs = reranked_docs[: self.spec.max_num_results]
 
-        docs = AgentOS.similarity_memory.vector_store.get_docs(f"doc_contents_{self.spec.name}", [doc[0] for doc in reranked_docs])
+        docs = AgentOS.similarity_memory.vector_store.get_docs(
+            f"doc_contents_{self.spec.name}", [doc[0] for doc in reranked_docs]
+        )
         summaries = []
         async for doc in docs:
             file_path = doc.metadata["source"]
-            summaries.append(DocSummary(
-                id=doc.id,
-                file_name=file_path.split("/")[-1],
-                file_path=file_path,
-                text=doc.page_content
-            ))
+            summaries.append(
+                DocSummary(id=doc.id, file_name=file_path.split("/")[-1], file_path=file_path, text=doc.page_content)
+            )
 
         return summaries

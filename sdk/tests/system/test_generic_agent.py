@@ -134,7 +134,7 @@ class TestAgentsWithReferences:
 
 
 def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):
-    generic_agent.spec['output_schema'] = {
+    generic_agent.spec["output_schema"] = {
         "type": "object",
         "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
     }
@@ -147,7 +147,7 @@ def test_generic_agent_supports_object_output(client_builder, generic_agent, dog
 
 
 def test_generic_agent_supports_image(client_builder, generic_agent, dog):
-    generic_agent.spec['files'] = "single"
+    generic_agent.spec["files"] = "single"
     with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",
@@ -159,7 +159,7 @@ def test_generic_agent_supports_image(client_builder, generic_agent, dog):
 
 
 def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
-    generic_agent.spec['files'] = "multiple"
+    generic_agent.spec["files"] = "multiple"
     with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",

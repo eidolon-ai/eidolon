@@ -57,7 +57,7 @@ class Reference(BaseModel):
     implementation: str = None
 
     model_config = ConfigDict(
-        extra='allow',
+        extra="allow",
     )
 
     def __class_getitem__(cls, params):
@@ -76,13 +76,12 @@ class Reference(BaseModel):
 
     @model_validator(mode="before")
     def _transform(cls, value):
-
         if isinstance(value, str):
             impl = value
             spec = {}
         else:
             spec = value.model_dump(exclude_defaults=True) if isinstance(value, BaseModel) else copy.deepcopy(value)
-            impl = spec.pop('implementation', fqn(cls._default) if isinstance(cls._default, type) else cls._default)
+            impl = spec.pop("implementation", fqn(cls._default) if isinstance(cls._default, type) else cls._default)
             if not impl:
                 raise ValueError(f'Unable to determine implementation for "{value}"')
 
@@ -105,7 +104,7 @@ class Reference(BaseModel):
             return impl, extra
         else:
             inner_spec = copy.deepcopy(ref.spec)
-            impl = inner_spec.pop('implementation')
+            impl = inner_spec.pop("implementation")
             cls._merge(extra or {}, inner_spec)
             return cls._expand(impl, inner_spec)
 

@@ -96,7 +96,14 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         collection = self._get_collection(name=collection)
         return collection.get(ids=doc_ids, include=["metadatas"])["metadatas"]
 
-    async def query_embedding(self, collection: str, query: List[float], num_results: int, metadata_where: Optional[Dict[str, str]] = None, include_embeddings=False) -> List[QueryItem]:
+    async def query_embedding(
+        self,
+        collection: str,
+        query: List[float],
+        num_results: int,
+        metadata_where: Optional[Dict[str, str]] = None,
+        include_embeddings=False,
+    ) -> List[QueryItem]:
         collection = self._get_collection(name=collection)
         thingsToInclude: Include = ["metadatas", "distances"]
         if include_embeddings:

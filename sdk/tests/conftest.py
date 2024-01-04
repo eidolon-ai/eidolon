@@ -27,7 +27,7 @@ from eidos_sdk.system.resources.resources_base import Resource, Metadata
 from eidos_sdk.util.class_utils import fqn
 
 
-# we want all tests using the client_builder to use vcr so we don't send requests to openai
+# we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "client_builder" in i.fixturenames, items):
         item.add_marker(pytest.mark.vcr)
@@ -78,11 +78,11 @@ def client_builder(app_builder):
         app = app_builder(resources)
 
         def make_request(method):
-            async def fn(url, args=None):
-                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as client:
-                    return (await client.request(method, url, json=args)).json()
+            async def _fn(url, args=None):
+                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as _client:
+                    return (await _client.request(method, url, json=args)).json()
 
-            return fn
+            return _fn
 
         with TestClient(app) as client, patch(
             "eidos_sdk.cpu.conversational_logic_unit._agent_request"
@@ -213,7 +213,7 @@ def cat(test_dir):
 @pytest.fixture
 def patched_vcr_object_handling():
     """
-    vcr has a bug around how it handles multi-part requests, and it is wired in for everything,
+    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
     even the fake test client requests, so we need to pipe the body through ourselves
     """
 

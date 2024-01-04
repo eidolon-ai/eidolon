@@ -61,7 +61,7 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                     "file_path": file_info.path,
                     "data": file_info.metadata,
                     "doc_ids": [doc.id for doc in docs],
-                }
+                },
             )
             if len(docs) == 0:
                 self.logger.warning(f"File contained no text {file_info.path}")

@@ -14,7 +14,7 @@ class HydeQuestionTransformerSpec(QuestionTransformerSpec):
     cpu: AnnotatedReference[AgentCPU, NoMemoryCPU]
     prompt: str = Field(
         default="Please write a passage to answer the question \nQuestion: {{question}}?\nPassage:",
-        description="The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}"
+        description="The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}",
     )
 
 
@@ -27,8 +27,6 @@ class HydeQuestionTransformer(QuestionTransformer, Specable[HydeQuestionTransfor
         thread = await self.cpu.main_thread(str(uuid.uuid4()))
         env = Environment(undefined=StrictUndefined)
         userPrompt = env.from_string(self.spec.prompt).render(question=question)
-        response = await thread.schedule_request(
-            prompts=[UserTextCPUMessage(prompt=userPrompt)], output_format="str"
-        )
+        response = await thread.schedule_request(prompts=[UserTextCPUMessage(prompt=userPrompt)], output_format="str")
 
         return [response]

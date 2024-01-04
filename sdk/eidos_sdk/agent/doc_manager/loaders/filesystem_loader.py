@@ -32,7 +32,6 @@ class FilesystemLoaderSpec(BaseLoaderSpec):
 
 # noinspection PyShadowingNames
 class FilesystemLoader(BaseLoader, Specable[FilesystemLoaderSpec]):
-
     def __init__(self, spec: T, **kwargs: object):
         super().__init__(spec, **kwargs)
         root_dir = os.path.expanduser(os.path.expandvars(self.spec.root_dir))
@@ -85,8 +84,4 @@ class FilesystemLoader(BaseLoader, Specable[FilesystemLoaderSpec]):
             for file_path in metadata:
                 yield file_path
 
-        return FileChangeset(
-            added_files=added_files(),
-            modified_files=modified_files(),
-            removed_files=deleted_files()
-        )
+        return FileChangeset(added_files=added_files(), modified_files=modified_files(), removed_files=deleted_files())

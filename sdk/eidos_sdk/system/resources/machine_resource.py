@@ -21,9 +21,7 @@ class MachineSpec(BaseModel):
         description="The Symbolic Memory implementation."
     )
     file_memory: AnnotatedReference[FileMemory, LocalFileMemory] = Field(desciption="The File Memory implementation.")
-    similarity_memory: AnnotatedReference[SimilarityMemory] = Field(
-        description="The Vector Memory implementation."
-    )
+    similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
@@ -39,5 +37,3 @@ class MachineSpec(BaseModel):
 class MachineResource(Resource):
     kind: Literal["Machine"] = "Machine"
     spec: MachineSpec = MachineSpec()
-
-
