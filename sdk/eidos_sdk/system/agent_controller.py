@@ -16,6 +16,7 @@ from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
+from eidos_sdk.util.json_util import model_to_json
 from eidos_sdk.util.logger import logger
 
 
@@ -121,10 +122,10 @@ class AgentController:
                     response = await handler.fn(self.agent, **kwargs)
                     if isinstance(response, AgentState):
                         state = response.name
-                        data = response.data.model_dump() if isinstance(response.data, BaseModel) else response.data
+                        data = model_to_json(response.data)
                     else:
                         state = "terminated"
-                        data = response.model_dump() if isinstance(response, BaseModel) else response
+                        data = model_to_json(response)
                     doc = await process.update(
                         state=state,
                         data=data,

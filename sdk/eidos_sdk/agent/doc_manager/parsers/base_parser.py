@@ -1,9 +1,11 @@
+import mimetypes
+
 import contextlib
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from io import BufferedReader, BytesIO, IOBase
-from typing import Union, Optional, Generator, Sequence
+from typing import Union, Optional, Generator, Iterable
 
 from pydantic import BaseModel
 
@@ -69,6 +71,13 @@ class DataBlob:
             import filetype
 
             mimetype = filetype.guess_mime(path)
+            if mimetype is None and path is not None:
+                mimetype = mimetypes.guess_type(path)[0]
+            if mimetype is None:
+                if path.endswith(".md"):
+                    mimetype = "text/x-markdown"
+                else:
+                    mimetype = "text/plain"
 
         return cls(
             data=None,
@@ -104,61 +113,14 @@ class DataBlob:
             import filetype
 
             mimetype = filetype.guess_mime(data)
+            if mimetype is None and path is not None:
+                mimetype = mimetypes.guess_type(path)[0]
+            if mimetype is None:
+                if path.endswith(".md"):
+                    mimetype = "text/x-markdown"
+                else:
+                    mimetype = "text/plain"
 
-        return cls(
-            data=data,
-            path=path,
-            encoding=encoding,
-            mimetype=mimetype,
-        )
-
-    @classmethod
-    def from_bytes_buffer(
-        cls,
-        data: IOBase,
-        *,
-        path: Optional[str],
-        mimetype: Optional[str] = None,
-        encoding: str = "utf-8",
-    ) -> "DataBlob":
-        """Load the blob from a bytes object.
-
-        Args:
-            data: bytes object to be read
-            path: path to file that the bytes object was read from or None if not applicable
-            mimetype: if provided, will be set as the mime-type of the data
-            encoding: Encoding to use if decoding the bytes into a string
-
-        Returns:
-            Blob instance
-        """
-        return cls(
-            data=data,
-            path=path,
-            encoding=encoding,
-            mimetype=mimetype,
-        )
-
-    @classmethod
-    def from_string(
-        cls,
-        data: str,
-        *,
-        path: Optional[str],
-        mimetype: Optional[str] = None,
-        encoding: str = "utf-8",
-    ) -> "DataBlob":
-        """Load the blob from a string object.
-
-        Args:
-            data: string object to be read
-            path: path to file that the string object was read from or None if not applicable
-            mimetype: if provided, will be set as the mime-type of the data
-            encoding: Encoding to use if decoding the bytes into a string
-
-        Returns:
-            Blob instance
-        """
         return cls(
             data=data,
             path=path,
@@ -178,5 +140,5 @@ class BaseParser(ABC, Specable[BaseParserSpec]):
         self.logger = logging.getLogger("eidolon")
 
     @abstractmethod
-    def parse(self, blob: DataBlob) -> Sequence[Document]:
+    def parse(self, blob: DataBlob) -> Iterable[Document]:
         pass

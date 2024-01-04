@@ -1,21 +1,19 @@
-from pathlib import Path
-from typing import List, Dict, Any
-from urllib.parse import urlparse, parse_qs
-
 import chromadb
 from chromadb import Include, QueryResult
 from chromadb.api.models.Collection import Collection
-from pydantic import BaseModel, Field, field_validator
+from pathlib import Path
+from pydantic import Field, field_validator
+from typing import List, Dict, Any, Optional
+from urllib.parse import urlparse, parse_qs
 
-from eidos_sdk.memory.agent_memory import VectorMemory, FileMemory, VectorMemorySpec
 from eidos_sdk.memory.document import EmbeddedDocument
-from eidos_sdk.memory.vector_store import QueryItem, VectorStore
-from eidos_sdk.system.reference_model import Specable, Reference
-from eidos_sdk.util.class_utils import fqn
+from eidos_sdk.memory.file_system_vector_store import FileSystemVectorStore, FileSystemVectorStoreSpec
+from eidos_sdk.memory.vector_store import QueryItem
+from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.str_utils import replace_env_var_in_string
 
 
-class ChromaVectorStoreConfig(BaseModel):
+class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
     url: str = Field(
         description="The url of the chroma database. "
         + "Use http(s)://$HOST:$PORT?header1=value1&header2=value2 to pass headers to the database."
@@ -47,7 +45,7 @@ class ChromaVectorStoreConfig(BaseModel):
             raise ValueError("url must start with file://, http://, or https://")
 
 
-class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
+class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]):
     spec: ChromaVectorStoreConfig
     client: chromadb.Client
 
@@ -83,25 +81,22 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
 
         return self.client.get_or_create_collection(name=name)
 
-    async def add(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
+    async def add_embedding(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
         collection = self._get_collection(name=collection)
         doc_ids = [doc.id for doc in docs]
         embeddings = [doc.embedding for doc in docs]
         metadata = [doc.metadata for doc in docs]
         collection.upsert(embeddings=embeddings, ids=doc_ids, metadatas=metadata, **add_kwargs)
 
-    async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
+    async def delete_embedding(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
         collection = self._get_collection(name=collection)
         collection.delete(ids=doc_ids, **delete_kwargs)
 
-    async def query(
-        self,
-        collection: str,
-        query: List[float],
-        num_results: int,
-        metadata_where: Dict[str, str],
-        include_embeddings: bool = False,
-    ) -> List[QueryItem]:
+    async def get_metadata(self, collection: str, doc_ids: List[str]):
+        collection = self._get_collection(name=collection)
+        return collection.get(ids=doc_ids, include=["metadatas"])["metadatas"]
+
+    async def query_embedding(self, collection: str, query: List[float], num_results: int, metadata_where: Optional[Dict[str, str]] = None, include_embeddings=False) -> List[QueryItem]:
         collection = self._get_collection(name=collection)
         thingsToInclude: Include = ["metadatas", "distances"]
         if include_embeddings:
@@ -115,23 +110,15 @@ class ChromaVectorStore(VectorStore, Specable[ChromaVectorStoreConfig]):
         )
 
         ret = []
-        for doc_id, i in enumerate(results["ids"][0]):
-            embedding = results["embeddings"][0][doc_id] if include_embeddings else None
+        for i, doc_id in enumerate(results["ids"][0]):
+            embedding = results["embeddings"][0][i] if include_embeddings else None
             ret.append(
                 QueryItem(
-                    id=i,
-                    distance=results["distances"][0][doc_id],
+                    id=doc_id,
+                    score=results["distances"][0][i],
                     embedding=embedding,
-                    metadata=results["metadatas"][0][doc_id],
+                    metadata=results["metadatas"][0][i],
                 )
             )
 
         return ret
-
-
-class ChromaVectorMemory(VectorMemory, Specable[ChromaVectorStoreConfig]):
-    def __init__(self, file_memory: FileMemory, spec):
-        super().__init__(
-            file_memory=file_memory,
-            spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(ChromaVectorMemory), spec=spec)),
-        )

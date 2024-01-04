@@ -1,0 +1,12 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: SearchCode
+
+implementation: "eidos_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent"
+spec:
+  name: "search_code"
+  description: "Searches for code snippets in the source code"
+  loader_root_location: "file://../sdk/eidos_sdk"
+  loader_pattern: "**/*.py"
+  max_num_results: 50

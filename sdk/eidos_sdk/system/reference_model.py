@@ -76,6 +76,7 @@ class Reference(BaseModel):
 
     @model_validator(mode="before")
     def _transform(cls, value):
+
         if isinstance(value, str):
             impl = value
             spec = {}

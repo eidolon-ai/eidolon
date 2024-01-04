@@ -19,7 +19,7 @@ from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAiGPTSpec, OpenAIGPT
 from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
 from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
-from eidos_sdk.memory.noop_memory import NoopVectorMemory
+from eidos_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
 from eidos_sdk.system.reference_model import Reference
 from eidos_sdk.system.resources.agent_resource import AgentResource
 from eidos_sdk.system.resources.machine_resource import MachineResource
@@ -173,7 +173,8 @@ def file_memory(tmp_path_factory, module_identifier):
 
 @pytest.fixture(scope="module")
 def similarity_memory():
-    return Reference[NoopVectorMemory]()
+    spec = SimilarityMemorySpec()
+    return Reference[SimilarityMemory](spec=spec)
 
 
 @pytest.fixture(scope="module", autouse=True)

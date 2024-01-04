@@ -10,4 +10,6 @@ spec:
   similarity_memory:
     vector_store:
       implementation: "eidos_sdk.memory.chroma_vector_store.ChromaVectorStore"
-      url: "file://${EIDOLON_DATA_DIR}/code_search"
+      url: "file://${EIDOLON_DATA_DIR}/doc_producer"
+    embedder:
+      implementation: "eidos_sdk.memory.embeddings.OpenAIEmbedding"

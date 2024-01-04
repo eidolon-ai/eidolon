@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Sequence, List, Callable, Optional, Iterable
+from typing import Any, List, Callable, Optional, Iterable
 from uuid import uuid4
 
 from pydantic import BaseModel, Field, field_validator
@@ -17,7 +17,7 @@ logger = logging.getLogger("eidolon")
 
 class BaseDocumentTransformer(ABC):
     @abstractmethod
-    def transform_documents(self, documents: List[Document], **kwargs: Any) -> Sequence[Document]:
+    def transform_documents(self, documents: Iterable[Document], **kwargs: Any) -> Iterable[Document]:
         """Transform a list of documents.
 
         Args:
@@ -61,7 +61,7 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
     def split_text(self, text: str) -> List[str]:
         """Split text into multiple components."""
 
-    def transform_documents(self, documents: Sequence[Document], **kwargs: Any) -> Sequence[Document]:
+    def transform_documents(self, documents: Iterable[Document], **kwargs: Any) -> Iterable[Document]:
         """Transform sequence of documents by splitting them."""
         for doc in documents:
             index = -1
@@ -69,7 +69,6 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
                 metadata = copy.deepcopy(doc.metadata)
                 index = doc.page_content.find(chunk, index + 1)
                 metadata["start_index"] = index
-                metadata["parent_doc_id"] = doc.id
                 yield Document(id=uuid4().hex, page_content=chunk, metadata=metadata)
 
     def _join_docs(self, docs: List[str], separator: str) -> Optional[str]:

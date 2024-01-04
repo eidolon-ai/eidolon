@@ -1,11 +1,11 @@
-from typing import Sequence
+from typing import Iterable
 
-from eidos_sdk.memory.parsers.base_parser import BaseParser, DataBlob
+from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser, DataBlob
 from eidos_sdk.memory.document import Document
 
 
 class MsWordParser(BaseParser):
-    def parse(self, blob: DataBlob) -> Sequence[Document]:
+    def parse(self, blob: DataBlob) -> Iterable[Document]:
         try:
             from unstructured.partition.doc import partition_doc
             from unstructured.partition.docx import partition_docx
@@ -14,15 +14,15 @@ class MsWordParser(BaseParser):
 
         mime_type_parser = {
             "application/msword": partition_doc,
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": (partition_docx),
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": partition_docx,
         }
         if blob.mimetype not in (
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         ):
             raise ValueError("This blob type is not supported for this parser.")
         with blob.as_bytes() as word_document:
             elements = mime_type_parser[blob.mimetype](file=word_document)
             text = "\n\n".join([str(el) for el in elements])
-            metadata = {"source": blob.path}
+            metadata = {"source": blob.path, "mime_type": blob.mimetype}
             yield Document(page_content=text, metadata=metadata)

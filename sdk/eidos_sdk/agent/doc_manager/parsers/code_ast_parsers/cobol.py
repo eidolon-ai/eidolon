@@ -1,7 +1,7 @@
 import re
 from typing import Callable, List
 
-from eidos_sdk.memory.parsers.code_ast_parsers.base_ast_generator import CodeASTGenerator
+from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.base_ast_generator import CodeASTGenerator
 
 
 class CobolASTGenerator(CodeASTGenerator):

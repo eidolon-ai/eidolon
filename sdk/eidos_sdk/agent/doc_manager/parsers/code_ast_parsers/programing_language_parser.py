@@ -1,12 +1,12 @@
-from typing import Dict, Any, Literal, Sequence
+from typing import Dict, Any, Literal, Iterable, Optional
 
-from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.memory.parsers.base_parser import BaseParser, DataBlob, BaseParserSpec
-from eidos_sdk.memory.parsers.code_ast_parsers.cobol import CobolASTGenerator
-from eidos_sdk.memory.parsers.code_ast_parsers.javascript import JavaScriptASTGenerator
-from eidos_sdk.memory.parsers.code_ast_parsers.python import PythonASTGenerator
+from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParserSpec, BaseParser, DataBlob
+from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.cobol import CobolASTGenerator
+from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.javascript import JavaScriptASTGenerator
+from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.python import PythonASTGenerator
+from eidos_sdk.agent.doc_manager.transformer.text_splitters import Language
 from eidos_sdk.memory.document import Document
-from eidos_sdk.memory.transformer.text_splitters import Language
+from eidos_sdk.system.reference_model import Specable
 
 LANGUAGE_EXTENSIONS: Dict[str, str] = {
     "py": Language.PYTHON,
@@ -22,7 +22,7 @@ LANGUAGE_AST_GENERATORS: Dict[str, Any] = {
 
 
 class LanguageParserSpec(BaseParserSpec):
-    language: Literal["python", "javascript", "cobol"] = "python"
+    language: Optional[Literal["python", "javascript", "cobol"]] = None
     parser_threshold: int = 0
 
 
@@ -32,7 +32,7 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
         self.language = spec.language
         self.parser_threshold = spec.parser_threshold
 
-    def parse(self, blob: DataBlob) -> Sequence[Document]:
+    def parse(self, blob: DataBlob) -> Iterable[Document]:
         code = blob.as_string()
 
         language = self.language or (
@@ -43,7 +43,8 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
+                    "mime_type": blob.mimetype,
                 },
             )
             return
@@ -52,8 +53,9 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
                     "language": language,
+                    "mime_type": blob.mimetype,
                 },
             )
             return
@@ -63,7 +65,8 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=code,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
+                    "mime_type": blob.mimetype,
                 },
             )
             return
@@ -72,16 +75,18 @@ class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
             yield Document(
                 page_content=functions_classes,
                 metadata={
-                    "file_path": blob.path,
+                    "source": blob.path,
                     "content_type": "functions_classes",
                     "language": language,
+                    "mime_type": blob.mimetype,
                 },
             )
         yield Document(
             page_content=generator.simplify_code(),
             metadata={
-                "file_path": blob.path,
+                "source": blob.path,
                 "content_type": "simplified_code",
                 "language": language,
+                "mime_type": blob.mimetype,
             },
         )

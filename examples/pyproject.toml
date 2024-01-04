@@ -10,6 +10,7 @@ python = ">=3.11,<3.12"
 setuptools = "^69.0.2"
 transformers = "^4.35.2"
 eidos-sdk = {path = "../sdk", develop = true}
+pydub = "^0.25.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"

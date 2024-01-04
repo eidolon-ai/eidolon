@@ -16,15 +16,15 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
-    cast,
+    cast, Iterable,
 )
 
 import requests
 from pydantic import Field
 
+from eidos_sdk.agent.doc_manager.transformer.document_transformer import TextSplitterSpec, TextSplitter
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.memory.document import Document
-from eidos_sdk.memory.transformer.document_transformer import TextSplitter, TextSplitterSpec
 
 TS = TypeVar("TS", bound="TextSplitter")
 
@@ -76,7 +76,7 @@ class CharacterTextSplitter(TextSplitter, Specable[CharacterTextSplitterSpec]):
         self._separator = spec.separator
         self._is_separator_regex = spec.is_separator_regex
 
-    def split_text(self, text: str) -> List[str]:
+    def split_text(self, text: str) -> Iterable[str]:
         """Split incoming text and return chunks."""
         # First we naively split the large input into a bunch of smaller ones.
         separator = self._separator if self._is_separator_regex else re.escape(self._separator)
@@ -548,11 +548,55 @@ class Language(str, Enum):
     SCALA = "scala"
     SWIFT = "swift"
     MARKDOWN = "markdown"
+    JSON = "json"
     LATEX = "latex"
     HTML = "html"
     SOL = "sol"
     CSHARP = "csharp"
     COBOL = "cobol"
+
+    @classmethod
+    def from_mimetype(cls, mimetype: str) -> Optional[Language]:
+        if mimetype == "text/x-python" or mimetype == "text/x-python-code":
+            return cls.PYTHON
+        elif mimetype == "application/javascript":
+            return cls.JS
+        elif mimetype == "text/x-cobol":
+            return cls.COBOL
+        elif mimetype == "text/x-c++src" or mimetype == "text/x-c++hdr" or mimetype == "text/x-csrc" or mimetype == "text/x-chdr":
+            return cls.CPP
+        elif mimetype == "text/x-csharp":
+            return cls.CSHARP
+        elif mimetype == "text/x-go":
+            return cls.GO
+        elif mimetype == "text/x-java-source":
+            return cls.JAVA
+        elif mimetype == "text/x-kotlin":
+            return cls.KOTLIN
+        elif mimetype == "text/x-php":
+            return cls.PHP
+        elif mimetype == "text/x-protobuf":
+            return cls.PROTO
+        elif mimetype == "text/x-ruby":
+            return cls.RUBY
+        elif mimetype == "text/x-rust":
+            return cls.RUST
+        elif mimetype == "text/x-scala":
+            return cls.SCALA
+        elif mimetype == "text/x-swift":
+            return cls.SWIFT
+        elif mimetype == "text/x-markdown":
+            return cls.MARKDOWN
+        elif mimetype == "text/x-latex":
+            return cls.LATEX
+        elif mimetype == "text/html":
+            return cls.HTML
+        elif mimetype == "text/x-solidity":
+            return cls.SOL
+        elif mimetype == "application/json":
+            return cls.JSON
+        else:
+            return None
 
 
 class RecursiveCharacterTextSplitterSpec(TextSplitterSpec):
@@ -626,11 +670,6 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
 
     def split_text(self, text: str) -> List[str]:
         return self._split_text(text, self._separators)
-
-    @classmethod
-    def from_language(cls, language: Language, **kwargs: Any) -> RecursiveCharacterTextSplitter:
-        separators = cls.get_separators_for_language(language)
-        return cls(separators=separators, is_separator_regex=True, **kwargs)
 
     @staticmethod
     def get_separators_for_language(language: Language) -> List[str]:
@@ -930,6 +969,17 @@ class RecursiveCharacterTextSplitter(TextSplitter, Specable[RecursiveCharacterTe
                 "\n\n",
                 "\n",
                 " ",
+                "",
+            ]
+        elif language == Language.JSON:
+            return [
+                # First, try to split along newlines to handle json-nl
+                "\n\n",
+                "\n",
+                # then by commas
+                ",",
+                # then by spaces, which really, really sucks
+                " "
                 "",
             ]
         elif language == Language.LATEX:
