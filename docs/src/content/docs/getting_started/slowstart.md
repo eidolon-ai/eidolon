@@ -288,8 +288,8 @@ kind: Reference
 metadata:
   name: frugal_cpu
 
-implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
 spec:
+  implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
   cpu:
     spec:
       llm_unit:
@@ -302,7 +302,7 @@ spec:
 ```
 
 _qa_agent.yaml_
-```
+```yaml
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
@@ -332,6 +332,7 @@ apiVersion: eidolon/v1
 kind: Machine
 metadata:
   name: mongo_machine
+
 spec:
   symbolic_memory:
     implementation: "eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
