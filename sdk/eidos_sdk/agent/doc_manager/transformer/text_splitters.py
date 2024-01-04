@@ -401,7 +401,7 @@ def split_text_on_tokens(*, text: str, tokenizer: Tokenizer) -> List[str]:
 
 class TokenTextSplitterSpec(TextSplitterSpec):
     encoding_name: str = Field(default="gpt2", description="Encoding name")
-    model_name: Optional[str] = Field(default=None, description="Model name")
+    model: Optional[str] = Field(default=None, description="Model name")
     allowed_special: Union[Literal["all"], List[str]] = Field(default=set(), description="Allowed special tokens")
     disallowed_special: Union[Literal["all"], List[str]] = Field(default="all", description="Disallowed special tokens")
 
@@ -425,8 +425,8 @@ class TokenTextSplitter(TextSplitter, Specable[TokenTextSplitterSpec]):
                 "Please install it with `pip install tiktoken`."
             )
 
-        if spec.model_name is not None:
-            enc = tiktoken.encoding_for_model(spec.model_name)
+        if spec.model is not None:
+            enc = tiktoken.encoding_for_model(spec.model)
         else:
             enc = tiktoken.get_encoding(spec.encoding_name)
         self._tokenizer = enc
@@ -452,7 +452,7 @@ class TokenTextSplitter(TextSplitter, Specable[TokenTextSplitterSpec]):
 
 
 class SentenceTransformersTokenTextSplitterSpec(TextSplitterSpec):
-    model_name: str = Field(
+    model: str = Field(
         default="sentence-transformers/all-mpnet-base-v2",
         description="Model name",
     )
@@ -483,7 +483,7 @@ class SentenceTransformersTokenTextSplitter(TextSplitter, Specable[SentenceTrans
                 "Please install it with `pip install sentence-transformers`."
             )
 
-        self.model_name = spec.model_name
+        self.model_name = spec.model
         self._model = SentenceTransformer(self.model_name)
         self.tokenizer = self._model.tokenizer
         self._initialize_chunk_configuration(tokens_per_chunk=spec.tokens_per_chunk)

@@ -9,13 +9,12 @@ import pytest
 def eidolon_server(eidolon_examples):
     @contextmanager
     def fn(resources_loc, *args):
-        http_server_loc = eidolon_examples.parent.parent / "sdk" / "eidos_sdk" / "bin" / "agent_http_server.py"
-
         # Command to start the HTTP server
-        cmd = ["python", str(http_server_loc), str(resources_loc), *args]
+        cmd = ["eidos-server", str(resources_loc), *args]
 
+        cwd = eidolon_examples.parent
         # Start the server as a separate process
-        server = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        server = subprocess.Popen(args=cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         # Wait until "Server Started" is printed
         for line in server.stdout:
