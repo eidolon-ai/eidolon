@@ -73,6 +73,11 @@ class DataBlob:
             mimetype = filetype.guess_mime(path)
             if mimetype is None and path is not None:
                 mimetype = mimetypes.guess_type(path)[0]
+            if mimetype is None:
+                if path.endswith(".md"):
+                    mimetype = "text/x-markdown"
+                else:
+                    mimetype = "text/plain"
 
         return cls(
             data=None,
@@ -110,6 +115,11 @@ class DataBlob:
             mimetype = filetype.guess_mime(data)
             if mimetype is None and path is not None:
                 mimetype = mimetypes.guess_type(path)[0]
+            if mimetype is None:
+                if path.endswith(".md"):
+                    mimetype = "text/x-markdown"
+                else:
+                    mimetype = "text/plain"
 
         return cls(
             data=data,

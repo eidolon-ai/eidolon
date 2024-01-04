@@ -69,7 +69,6 @@ class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
                 metadata = copy.deepcopy(doc.metadata)
                 index = doc.page_content.find(chunk, index + 1)
                 metadata["start_index"] = index
-                metadata["parent_doc_id"] = doc.id
                 yield Document(id=uuid4().hex, page_content=chunk, metadata=metadata)
 
     def _join_docs(self, docs: List[str], separator: str) -> Optional[str]:

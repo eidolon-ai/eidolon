@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import Field, field_validator, BaseModel
 
-from eidos_sdk.memory.agent_memory import FileMemory
+from eidos_sdk.memory.file_memory import FileMemory
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.str_utils import replace_env_var_in_string
 

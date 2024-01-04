@@ -1,6 +1,5 @@
 import logging
-
-import uuid
+import time
 from pydantic import BaseModel, Field
 from typing import List
 
@@ -33,12 +32,15 @@ class DocumentDirectory(BaseModel):
 
 class DocumentManagerSpec(BaseModel):
     name: str
+    recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
     loader: Reference[BaseLoader]
     parser: AnnotatedReference[BaseParser, AutoParser]
     splitter: AnnotatedReference[BaseDocumentTransformer, AutoTransformer]
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
+    last_reload = 0
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
@@ -47,35 +49,58 @@ class DocumentManager(Specable[DocumentManagerSpec]):
         self.parser = self.spec.parser.instantiate()
         self.splitter = self.spec.splitter.instantiate()
         self.logger = logging.getLogger("eidolon")
+        self.collection_name = f"doc_sync_{self.spec.name}"
 
     async def _addFile(self, file_info: FileInfo):
         try:
-            docs = self.parser.parse(file_info.data)
-            docs = list(self.splitter.transform_documents(docs))
-            for doc in docs:
-                doc.id = str(uuid.uuid4())
-            await AgentOS.similarity_memory.add(f"doc_contents_{self.spec.name}", docs)
+            parsedDocs = list(self.parser.parse(file_info.data))
+            docs = list(self.splitter.transform_documents(parsedDocs))
+            await AgentOS.symbolic_memory.insert_one(
+                self.collection_name,
+                {
+                    "file_path": file_info.path,
+                    "data": file_info.metadata,
+                    "doc_ids": [doc.id for doc in docs],
+                }
+            )
+            if len(docs) == 0:
+                self.logger.warning(f"File contained no text {file_info.path}")
+                return
+            await AgentOS.similarity_memory.vector_store.add(f"doc_contents_{self.spec.name}", docs)
+            self.logger.info(f"Added file {file_info.path}")
         except Exception as e:
             self.logger.warning(f"Failed to parse file {file_info.path}: {e}")
 
-    async def _removeFile(self, file_info: FileInfo):
+    async def _removeFile(self, path: str):
         # get the doc ids for the file
-        docs = await AgentOS.symbolic_memory.find_one(f"doc_contents_{self.spec.name}", {"file_path": file_info.path})
-        for doc in docs:
-            # remove the docs from similarity memory
-            await AgentOS.similarity_memory.delete(f"doc_contents_{self.spec.name}", doc.id)
+        file_info = await AgentOS.symbolic_memory.find_one(self.collection_name, {"file_path": path})
+        if file_info is not None:
+            doc_ids = file_info["doc_ids"]
+            await AgentOS.similarity_memory.vector_store.delete(f"doc_contents_{self.spec.name}", doc_ids)
+            await AgentOS.symbolic_memory.delete(self.collection_name, {"file_path": path})
 
     async def list_files(self):
         return self.loader.list_files()
 
-    async def sync_docs(self):
-        changes = await self.loader.load_changes()
-        async for file_info in changes.added_files:
-            await self._addFile(file_info)
+    async def sync_docs(self, force: bool = False):
+        if force or self.last_reload + self.spec.recheck_frequency < time.time():
+            self.last_reload = time.time()
+            data = {}
+            async for file in AgentOS.symbolic_memory.find(self.collection_name, {}):
+                data[file["file_path"]] = file["data"]
 
-        async for file_info in changes.removed_files:
-            await self._removeFile(file_info)
+            self.logger.info(f"Found {len(data)} files in symbolic memory")
 
-        async for file_info in changes.modified_files:
-            await self._removeFile(file_info)
-            await self._addFile(file_info)
+            ret = await self.loader.get_changes(data)
+
+            async for file_info in ret.added_files:
+                await self._addFile(file_info)
+
+            async for file_info in ret.modified_files:
+                await self._removeFile(file_info.path)
+                await self._addFile(file_info)
+
+            async for file_path in ret.removed_files:
+                await self._removeFile(file_path)
+
+            self.last_reload = time.time()

@@ -1,22 +1,21 @@
 from __future__ import annotations
 
-from typing import Literal, Type, Dict, ClassVar, List, Tuple
-
 from pydantic import BaseModel, Field
+from typing import Literal, Type, Dict, ClassVar, List, Tuple
 
 from eidos_sdk.agent.generic_agent import GenericAgent
 from eidos_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidos_sdk.memory.agent_memory import (
-    FileMemory,
-    SymbolicMemory,
     AgentMemory,
-    VectorMemory,
 )
-from eidos_sdk.memory.embeddings import Embedding, NoopEmbedding
+from eidos_sdk.memory.embeddings import NoopEmbedding
+from eidos_sdk.memory.file_memory import FileMemory
 from eidos_sdk.memory.local_file_memory import LocalFileMemory, LocalFileMemoryConfig
 from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory, MongoSymbolicMemoryConfig
-from eidos_sdk.memory.noop_memory import NoopVectorMemory
+from eidos_sdk.memory.noop_memory import NoopVectorStore
+from eidos_sdk.memory.semantic_memory import SymbolicMemory
+from eidos_sdk.memory.similarity_memory import SimilarityMemory, SimilarityMemorySpec
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference
 from eidos_sdk.system.resources_base import Resource, Metadata
 
@@ -26,23 +25,18 @@ class MachineSpec(BaseModel):
         description="The Symbolic Memory implementation."
     )
     file_memory: AnnotatedReference[FileMemory, LocalFileMemory] = Field(desciption="The File Memory implementation.")
-    similarity_memory: AnnotatedReference[VectorMemory, NoopVectorMemory] = Field(
+    similarity_memory: AnnotatedReference[SimilarityMemory, SimilarityMemory] = Field(
         description="The Vector Memory implementation."
-    )
-    embedder: AnnotatedReference[Embedding, NoopEmbedding] = Field(
-        description="The Embedding implementation."
     )
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
         symbolic_memory = self.symbolic_memory.instantiate()
-        vector_memory = self.similarity_memory.instantiate(file_memory)
-        embedder = self.embedder.instantiate()
+        vector_memory = self.similarity_memory.instantiate()
         return AgentMemory(
             file_memory=file_memory,
             symbolic_memory=symbolic_memory,
             similarity_memory=vector_memory,
-            embedder=embedder,
         )
 
 
@@ -89,8 +83,12 @@ builtin_resources: List[Tuple[Resource, str]] = [
                 file_memory=Reference[LocalFileMemory](
                     spec=LocalFileMemoryConfig(root_dir="/tmp/eidos/file_memory").model_dump()
                 ),
-                similarity_memory=Reference[NoopVectorMemory](),
-                embedder=Reference[NoopEmbedding](),
+                similarity_memory=Reference[SimilarityMemory](
+                    spec=SimilarityMemorySpec(
+                        embedder=Reference[NoopEmbedding](),
+                        vector_store=Reference[NoopVectorStore](),
+                    ).model_dump()
+                ),
             ),
         ),
         MachineResource(
@@ -102,8 +100,7 @@ builtin_resources: List[Tuple[Resource, str]] = [
                 file_memory=Reference[LocalFileMemory](
                     spec=LocalFileMemoryConfig(root_dir="/tmp/eidos/file_memory").model_dump()
                 ),
-                similarity_memory=Reference[NoopVectorMemory](),
-                embedder=Reference[NoopEmbedding](),
+                similarity_memory=Reference[SimilarityMemory](),
             ),
         ),
     ]

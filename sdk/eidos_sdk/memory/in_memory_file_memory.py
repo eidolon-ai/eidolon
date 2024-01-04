@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import Field, BaseModel
 
-from eidos_sdk.memory.agent_memory import FileMemory
+from eidos_sdk.memory.file_memory import FileMemory
 from eidos_sdk.system.reference_model import Specable
 
 

@@ -5,7 +5,6 @@ from typing import TypeVar, Generic, Type, Annotated, Optional
 
 from pydantic import BaseModel, model_validator, Field
 
-from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.util.class_utils import for_name, fqn
 
 T = TypeVar("T", bound=BaseModel)
@@ -71,10 +70,12 @@ class Reference(BaseModel):
 
     @model_validator(mode="before")
     def _transform(cls, value):
+
         if isinstance(value, str):
             split = list(value.split("."))
             bucket = split.pop(0)
             name = ".".join(split) if split else "DEFAULT"
+            from eidos_sdk.agent_os import AgentOS
             found = AgentOS.get_resource(bucket, name)
             return found.model_dump(exclude={"apiVersion", "kind", "metadata"})
         else:

@@ -1,10 +1,9 @@
-from typing import Any, Optional, List, Dict, Union
+from typing import Any, Optional, List, Dict, Union, Sequence, Iterable
 
-from eidos_sdk.memory.agent_memory import FileMemory, SymbolicMemory, VectorMemory, VectorMemorySpec
-from eidos_sdk.memory.document import EmbeddedDocument
+from eidos_sdk.memory.semantic_memory import SymbolicMemory
+from eidos_sdk.memory.file_memory import FileMemory
+from eidos_sdk.memory.document import Document
 from eidos_sdk.memory.vector_store import VectorStore, QueryItem
-from eidos_sdk.system.reference_model import Reference
-from eidos_sdk.util.class_utils import fqn
 
 
 class NoopFileMemory(FileMemory):
@@ -76,21 +75,17 @@ class NoopVectorStore(VectorStore):
     def stop(self):
         pass
 
-    async def add(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
+    async def add(self, collection: str, docs: Sequence[Document]):
         pass
 
-    async def delete(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
+    async def delete(self, collection: str, doc_ids: List[str]):
         pass
 
-    async def get_metadata(self, collection: str, doc_ids: List[str]):
+    async def query(self, collection: str, query: str, num_results: int, metadata_where: Optional[Dict[str, str]] = None) -> List[Document]:
+        return []
+
+    async def raw_query(self, collection: str, query: List[float], num_results: int, metadata_where: Optional[Dict[str, str]] = None, include_embeddings: bool = False) -> List[QueryItem]:
         pass
 
-    async def query(self, collection: str, query: List[float], num_results: int, metadata_where: Optional[Dict[str, str]] = None, include_embeddings=False) -> List[QueryItem]:
+    async def get_docs(self, collection: str, doc_ids: List[str]) -> Iterable[Document]:
         pass
-
-
-class NoopVectorMemory(VectorMemory):
-    def __init__(self, file_memory: FileMemory, **kwargs):
-        super().__init__(
-            file_memory=file_memory, spec=VectorMemorySpec(vector_store=Reference(implementation=fqn(NoopVectorStore)))
-        )
