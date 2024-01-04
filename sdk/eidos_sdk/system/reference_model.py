@@ -7,7 +7,7 @@ from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 from pydantic import BaseModel, model_validator, Field, ConfigDict
 
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.system.resources.eidos_ref_resource import Reference
+from eidos_sdk.system.resources.reference_resource import ReferenceResource
 from eidos_sdk.util.class_utils import for_name, fqn
 
 T = TypeVar("T", bound=BaseModel)
@@ -99,7 +99,7 @@ class Reference(BaseModel):
 
     @classmethod
     def _expand(cls, impl, extra):
-        ref = AgentOS.get_resource(Reference, impl, default=None)
+        ref = AgentOS.get_resource(ReferenceResource, impl, default=None)
         if not ref:
             return impl, extra
         else:
