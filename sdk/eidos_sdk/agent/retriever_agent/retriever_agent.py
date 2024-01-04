@@ -27,9 +27,7 @@ class RetrieverAgentSpec(BaseModel):
         spec = value
         if "document_manager" not in spec:
             spec["document_manager"] = dict()
-        if "spec" not in spec["document_manager"]:
-            spec["document_manager"]["spec"] = dict()
-        doc_manager_spec = spec["document_manager"]["spec"]
+        doc_manager_spec = spec["document_manager"]
         # always set name
         doc_manager_spec["name"] = spec["name"]
         if "loader" not in doc_manager_spec:
@@ -42,11 +40,11 @@ class RetrieverAgentSpec(BaseModel):
         loader_url = urlparse(spec["loader_root_location"])
         if loader_url.scheme == "file":
             doc_manager_spec["loader"]["implementation"] = fqn(FilesystemLoader)
-            doc_manager_spec["loader"]["spec"]["root_dir"] = spec["loader_root_location"][7:]
+            doc_manager_spec["loader"]["root_dir"] = spec["loader_root_location"][7:]
         else:
             raise ValueError("loader_root_location spec must be a file:// url")
         if "loader_pattern" in spec:
-            doc_manager_spec["loader"]["spec"]["pattern"] = spec["loader_pattern"]
+            doc_manager_spec["loader"]["pattern"] = spec["loader_pattern"]
 
         return value
 
