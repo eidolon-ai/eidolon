@@ -46,7 +46,7 @@ class AgentOS:
                 raise ValueError(
                     f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"
                 )
-        logger.info(f"Registering resource {resource.kind}.{resource.metadata.name}")
+        logger.debug(f"Registering resource {resource.kind}.{resource.metadata.name}")
         bucket[resource.metadata.name] = (resource, source)
 
     @classmethod
@@ -54,7 +54,7 @@ class AgentOS:
         return {k: tu[0].promote(kind) for k, tu in cls._get_or_load_resources().get(kind.kind_literal(), {}).items()}
 
     @classmethod
-    def get_resource(cls, kind: Type[T], name: str = "DEFAULT", default=...) -> T:
+    def get_resource(cls, kind: Type[T], name: str, default=...) -> T:
         bucket = kind.kind_literal()
         try:
             return cls._get_or_load_resources()[bucket][name][0].promote(kind)
@@ -64,7 +64,7 @@ class AgentOS:
             raise ValueError(f"Resource {name} not found in bucket {bucket}")
 
     @classmethod
-    def get_resource_source(cls, bucket, name: str = "DEFAULT") -> str:
+    def get_resource_source(cls, bucket, name: str) -> str:
         try:
             return cls._get_or_load_resources()[bucket][name][1]
         except KeyError:

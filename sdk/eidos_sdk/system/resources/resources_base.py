@@ -10,7 +10,7 @@ from eidos_sdk.util.logger import logger
 
 
 class Metadata(BaseModel):
-    name: str
+    name: str = "DEFAULT"
     annotations: List[str] = []
     labels: List[str] = []
 
@@ -21,7 +21,7 @@ T = TypeVar("T", bound=BaseModel)
 class Resource(BaseModel, extra="allow"):
     apiVersion: Literal["eidolon/v1"]
     kind: str
-    metadata: Metadata = Metadata(name="DEFAULT")
+    metadata: Metadata = Metadata()
 
     @classmethod
     def kind_literal(cls) -> Optional[str]:

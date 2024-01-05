@@ -35,6 +35,7 @@ from eidos_sdk.memory.noop_memory import NoopVectorStore
 from eidos_sdk.memory.semantic_memory import SymbolicMemory
 from eidos_sdk.memory.similarity_memory import SimilarityMemory
 from eidos_sdk.memory.vector_store import VectorStore
+from eidos_sdk.system.agent_machine import AgentMachine
 from eidos_sdk.system.resources.reference_resource import ReferenceResource
 from eidos_sdk.system.resources.resources_base import Metadata
 from eidos_sdk.util.class_utils import fqn
@@ -66,6 +67,8 @@ def named_builtins():
     """
 
     builtin_list = [
+        AgentMachine,
+
         # agents
         GenericAgent,
         TreeOfThoughtsAgent,

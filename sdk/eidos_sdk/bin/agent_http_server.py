@@ -2,17 +2,17 @@ import argparse
 import logging.config
 import pathlib
 from contextlib import asynccontextmanager
-from itertools import chain
 
 import dotenv
 import uvicorn
+import yaml
 from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.system.agent_machine import AgentMachine
-from eidos_sdk.system.resources.resources_base import load_resources
+from eidos_sdk.system.resources.machine_resource import MachineResource
+from eidos_sdk.system.resources.resources_base import load_resources, Resource
 from eidos_sdk.util.logger import logger
 
 dotenv.load_dotenv()
@@ -53,12 +53,23 @@ def parse_args():
 
 
 @asynccontextmanager
-async def start_os(app, resource_generator, log_level=logging.INFO, machine_name="DEFAULT"):
+async def start_os(app, resource_generator, machine_name, log_level=logging.INFO):
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
+
     try:
-        machine = AgentMachine.from_resources(chain(resource_generator), machine_name)
+        for resource_or_tuple in resource_generator:
+            if isinstance(resource_or_tuple, Resource):
+                resource, source = resource_or_tuple, None
+            else:
+                resource, source = resource_or_tuple
+            AgentOS.register_resource(resource=resource, source=source)
+
+        logger.info(f"Building machine '{machine_name}'")
+        machine_spec = AgentOS.get_resource(MachineResource, machine_name).spec
+        logger.debug(yaml.safe_dump(machine_spec.model_dump()))
+        machine = machine_spec.instantiate()
         AgentOS.load_machine(machine)
         await machine.start(app)
         logger.info("Server Started")
@@ -89,7 +100,7 @@ def main():
     log_level = logging.DEBUG if args.debug else logging.INFO
 
     _app = FastAPI(
-        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), log_level, args.machine),
+        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), args.machine, log_level),
     )
     _app.add_middleware(LoggingMiddleware)
 

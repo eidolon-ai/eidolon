@@ -5,7 +5,7 @@ from pydantic import Field, BaseModel
 
 from eidos_sdk.cpu.call_context import CallContext
 from eidos_sdk.cpu.llm_message import LLMMessage, SystemMessage
-from eidos_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig
+from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.system.reference_model import Specable
 
 PROMPT = """
@@ -41,8 +41,6 @@ class MessageSummarizerConfig(BaseModel):
 
 
 class MessageSummarizer(Specable[MessageSummarizerConfig]):
-    llm_config: LLMUnitConfig = None
-
     def __init__(self, spec: MessageSummarizerConfig = None):
         super().__init__(spec)
         self.spec = spec
