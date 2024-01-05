@@ -1,5 +1,7 @@
 from typing import Tuple
 
+from eidos_sdk.agent.doc_manager.loaders.base_loader import BaseLoader
+from eidos_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidos_sdk.agent.doc_manager.parsers.auto_parser import AutoParser
 from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser
 from eidos_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
@@ -19,7 +21,9 @@ from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.memory_unit import MemoryUnit
+from eidos_sdk.cpu.message_summarizer import MessageSummarizer
 from eidos_sdk.cpu.no_memory_cpu import NoMemoryCPU
+from eidos_sdk.cpu.summarization_memory_unit import SummarizationMemoryUnit
 from eidos_sdk.memory.chroma_vector_store import ChromaVectorStore
 from eidos_sdk.memory.embeddings import NoopEmbedding, Embedding, OpenAIEmbedding
 from eidos_sdk.memory.file_memory import FileMemory
@@ -79,6 +83,7 @@ def named_builtins():
 
         (MemoryUnit, ConversationalMemoryUnit),
         ConversationalMemoryUnit,
+        SummarizationMemoryUnit,
 
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
@@ -87,8 +92,8 @@ def named_builtins():
 
         (FileMemory, LocalFileMemory),
         LocalFileMemory,
-
         SimilarityMemory,
+
         (Embedding, NoopEmbedding),
         NoopEmbedding,
         OpenAIEmbedding,
@@ -113,8 +118,11 @@ def named_builtins():
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
 
-        ToTChecker,
+        (BaseLoader, FilesystemLoader),
+        FilesystemLoader,
 
+        ToTChecker,
         OpenAiSpeech,
+        MessageSummarizer,
     ]
     return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list]

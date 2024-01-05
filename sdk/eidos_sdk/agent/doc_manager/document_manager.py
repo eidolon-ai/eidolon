@@ -7,7 +7,7 @@ from eidos_sdk.agent.doc_manager.loaders.base_loader import BaseLoader, FileInfo
 from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser
 from eidos_sdk.agent.doc_manager.transformer.document_transformer import BaseDocumentTransformer
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.system.reference_model import Specable, AnnotatedReference, Reference
+from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class SearchResult(BaseModel):
@@ -31,7 +31,7 @@ class DocumentDirectory(BaseModel):
 class DocumentManagerSpec(BaseModel):
     name: str
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
-    loader: Reference[BaseLoader]
+    loader: AnnotatedReference[BaseLoader]
     parser: AnnotatedReference[BaseParser]
     splitter: AnnotatedReference[BaseDocumentTransformer]
 
