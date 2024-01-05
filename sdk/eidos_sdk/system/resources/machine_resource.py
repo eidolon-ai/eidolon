@@ -9,18 +9,16 @@ from eidos_sdk.memory.agent_memory import (
     SymbolicMemory,
     AgentMemory,
 )
-from eidos_sdk.memory.local_file_memory import LocalFileMemory
-from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.similarity_memory import SimilarityMemory
 from eidos_sdk.system.reference_model import AnnotatedReference
 from eidos_sdk.system.resources.resources_base import Resource
 
 
 class MachineSpec(BaseModel):
-    symbolic_memory: AnnotatedReference[SymbolicMemory, MongoSymbolicMemory] = Field(
+    symbolic_memory: AnnotatedReference[SymbolicMemory] = Field(
         description="The Symbolic Memory implementation."
     )
-    file_memory: AnnotatedReference[FileMemory, LocalFileMemory] = Field(desciption="The File Memory implementation.")
+    file_memory: AnnotatedReference[FileMemory] = Field(desciption="The File Memory implementation.")
     similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
 
     def get_agent_memory(self):
@@ -36,4 +34,4 @@ class MachineSpec(BaseModel):
 
 class MachineResource(Resource):
     kind: Literal["Machine"] = "Machine"
-    spec: MachineSpec = MachineSpec()
+    spec: MachineSpec = Field(default_factory=MachineSpec)

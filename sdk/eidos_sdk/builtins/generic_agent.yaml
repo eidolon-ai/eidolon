@@ -1,8 +1,0 @@
-apiVersion: eidolon/v1
-kind: Reference
-
-metadata:
-  name: GenericAgent
-
-spec:
-  implementation: eidos_sdk.agent.generic_agent.GenericAgent

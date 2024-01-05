@@ -1,32 +1,26 @@
 import hashlib
 import json
-from typing import List, Optional, Any, Dict, Literal, Union
+from typing import List, Any, Dict, Literal, Union
 
-from pydantic import Field
+from pydantic import Field, BaseModel
 from pydantic import ValidationError
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos_sdk.cpu.llm_message import (
     LLMMessage,
     AssistantMessage,
     UserMessage,
     UserMessageImageURL,
 )
-from eidos_sdk.cpu.llm_unit import LLMUnit, LLMUnitConfig, LLMCallFunction
+from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidos_sdk.memory.file_memory import FileMemory
-from eidos_sdk.memory.local_file_memory import LocalFileMemory
-from eidos_sdk.system.reference_model import Specable, AnnotatedReference, Reference
+from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
-# Assuming CallContext, LLMMessage, LLMCallFunction, AssistantMessage are defined elsewhere
-
-
-class CacheLLMSpec(LLMUnitConfig):
+class CacheLLMSpec(BaseModel):
     dir: str = Field(default="llm_cache", description="The directory to store the cache in.")
-    llm: AnnotatedReference[LLMUnit, OpenAIGPT]
-    file_memory_override: Optional[Reference[FileMemory, LocalFileMemory]] = None
+    llm: AnnotatedReference[LLMUnit]
 
 
 class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
@@ -36,10 +30,7 @@ class CacheLLM(LLMUnit, Specable[CacheLLMSpec]):
     def __init__(self, spec: CacheLLMSpec, **kwargs):
         super().__init__(spec, **kwargs)
         self.dir = spec.dir
-        if self.spec.file_memory_override:
-            self.memory = self.spec.file_memory_override.instantiate()
-        else:
-            self.memory = AgentOS.file_memory
+        self.memory = AgentOS.file_memory
         self.memory.mkdir(self.dir, exist_ok=True)
         self.llm = spec.llm.instantiate(processing_unit_locator=self.processing_unit_locator)
 

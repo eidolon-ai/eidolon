@@ -6,8 +6,7 @@ from urllib.parse import urlparse
 from eidos_sdk.agent.agent import register_program, AgentState
 from eidos_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidos_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
-from eidos_sdk.agent.retriever_agent.document_reranker import DocumentReranker, RAGFusionReranker
-from eidos_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
+from eidos_sdk.agent.retriever_agent.document_reranker import DocumentReranker
 from eidos_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.eidos_handler import EidosHandler
@@ -59,8 +58,8 @@ class RetrieverAgentSpec(BaseModel):
     max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
 
     document_manager: Reference[DocumentManager]
-    question_transformer: AnnotatedReference[QuestionTransformer, MultiQuestionTransformer]
-    document_reranker: AnnotatedReference[DocumentReranker, RAGFusionReranker]
+    question_transformer: AnnotatedReference[QuestionTransformer]
+    document_reranker: AnnotatedReference[DocumentReranker]
 
 
 class DocSummary(BaseModel):
