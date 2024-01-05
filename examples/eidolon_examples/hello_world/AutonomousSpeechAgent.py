@@ -13,8 +13,8 @@ from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class AutonomousSpeechAgentSpec(GenericAgentSpec):
-    speech_llm: AnnotatedReference[OpenAiSpeech, OpenAiSpeech]
-    cpu: AnnotatedReference[AgentCPU, ConversationalAgentCPU]
+    speech_llm: AnnotatedReference[OpenAiSpeech]
+    cpu: AnnotatedReference[AgentCPU]
 
 
 class LlmResponse(BaseModel):

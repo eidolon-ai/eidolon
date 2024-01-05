@@ -11,5 +11,5 @@ spec:
     root_dir: "/tmp/eidos/file_memory"
   similarity_memory:
     implementation: SimilarityMemory
-    embedder: eidos_sdk.memory.embeddings.NoopEmbedding
-    vector_store: eidos_sdk.memory.noop_memory.NoopVectorStore
+    embedder: NoopEmbedding
+    vector_store: NoopVectorStore

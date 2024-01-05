@@ -16,17 +16,21 @@ from eidos_sdk.cpu.agent_io import IOUnit
 from eidos_sdk.cpu.conversation_memory_unit import ConversationalMemoryUnit
 from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
+from eidos_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.memory_unit import MemoryUnit
 from eidos_sdk.cpu.no_memory_cpu import NoMemoryCPU
-from eidos_sdk.memory.embeddings import NoopEmbedding, Embedding
+from eidos_sdk.memory.chroma_vector_store import ChromaVectorStore
+from eidos_sdk.memory.embeddings import NoopEmbedding, Embedding, OpenAIEmbedding
 from eidos_sdk.memory.file_memory import FileMemory
+from eidos_sdk.memory.file_system_vector_store import FileSystemVectorStore
 from eidos_sdk.memory.local_file_memory import LocalFileMemory
 from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.noop_memory import NoopVectorStore
 from eidos_sdk.memory.semantic_memory import SymbolicMemory
 from eidos_sdk.memory.similarity_memory import SimilarityMemory
+from eidos_sdk.memory.vector_store import VectorStore
 from eidos_sdk.system.resources.reference_resource import ReferenceResource
 from eidos_sdk.system.resources.resources_base import Metadata
 from eidos_sdk.util.class_utils import fqn
@@ -87,7 +91,12 @@ def named_builtins():
         SimilarityMemory,
         (Embedding, NoopEmbedding),
         NoopEmbedding,
+        OpenAIEmbedding,
+
+        (VectorStore, NoopVectorStore),
         NoopVectorStore,
+        FileSystemVectorStore,
+        ChromaVectorStore,
 
         # sub components
         (BaseParser, AutoParser),
@@ -105,5 +114,7 @@ def named_builtins():
         RAGFusionReranker,
 
         ToTChecker,
+
+        OpenAiSpeech,
     ]
     return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list]

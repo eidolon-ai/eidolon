@@ -2,14 +2,14 @@ apiVersion: eidolon/v1
 kind: Machine
 spec:
   file_memory:
-    implementation: "eidos_sdk.memory.local_file_memory.LocalFileMemory"
+    implementation: "LocalFileMemory"
     root_dir: "${EIDOLON_DATA_DIR}/code_search/file_memory"
   symbolic_memory:
-    implementation: "eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    implementation: "MongoSymbolicMemory"
     mongo_database_name: "eidolon"
   similarity_memory:
     vector_store:
-      implementation: "eidos_sdk.memory.chroma_vector_store.ChromaVectorStore"
+      implementation: "ChromaVectorStore"
       url: "file://${EIDOLON_DATA_DIR}/doc_producer"
     embedder:
-      implementation: "eidos_sdk.memory.embeddings.OpenAIEmbedding"
+      implementation: "OpenAIEmbedding"
