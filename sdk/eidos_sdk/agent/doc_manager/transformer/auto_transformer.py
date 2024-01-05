@@ -1,7 +1,7 @@
 import json
 from typing import Any, Iterable
 
-from eidos_sdk.agent.doc_manager.transformer.document_transformer import BaseDocumentTransformer
+from eidos_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidos_sdk.agent.doc_manager.transformer.text_splitters import (
     Language,
     RecursiveCharacterTextSplitter,
@@ -24,7 +24,7 @@ def is_json_nl(text: str) -> bool:
             return False
 
 
-class AutoTransformer(BaseDocumentTransformer):
+class AutoTransformer(DocumentTransformer):
     def transform_documents(self, documents: Iterable[Document], **kwargs: Any) -> Iterable[Document]:
         for document in documents:
             progLang = Language.from_mimetype(document.metadata["mime_type"])

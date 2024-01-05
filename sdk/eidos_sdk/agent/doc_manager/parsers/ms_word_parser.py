@@ -1,10 +1,10 @@
 from typing import Iterable
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser, DataBlob
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DataBlob
 from eidos_sdk.memory.document import Document
 
 
-class MsWordParser(BaseParser):
+class MsWordParser(DocumentParser):
     def parse(self, blob: DataBlob) -> Iterable[Document]:
         try:
             from unstructured.partition.doc import partition_doc

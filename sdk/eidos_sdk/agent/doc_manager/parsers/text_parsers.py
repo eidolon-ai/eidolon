@@ -3,21 +3,21 @@ from typing import Iterable, Dict, Union, Sequence
 from bs4 import BeautifulSoup
 
 from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser, DataBlob, BaseParserSpec
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DataBlob, DocumentParserSpec
 from eidos_sdk.memory.document import Document
 
 
-class TextParser(BaseParser):
+class TextParser(DocumentParser):
     def parse(self, blob: DataBlob) -> Sequence[Document]:
         yield Document(page_content=blob.as_string(), metadata={"source": blob.path, "mime_type": blob.mimetype})
 
 
-class BS4HTMLParserSpec(BaseParserSpec):
+class BS4HTMLParserSpec(DocumentParserSpec):
     features: str = "lxml"
     text_separator: str = ""
 
 
-class BS4HTMLParser(BaseParser, Specable[BS4HTMLParserSpec]):
+class BS4HTMLParser(DocumentParser, Specable[BS4HTMLParserSpec]):
     """Pparse HTML files using `Beautiful Soup`."""
 
     def __init__(self, spec: BS4HTMLParserSpec):

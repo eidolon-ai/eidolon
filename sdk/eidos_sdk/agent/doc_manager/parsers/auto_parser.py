@@ -1,13 +1,13 @@
 from typing import Iterable
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser, DataBlob, BaseParserSpec
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DataBlob, DocumentParserSpec
 from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import LanguageParserSpec
 from eidos_sdk.agent.doc_manager.parsers.pdf_parsers import PyPDFParserSpec
 from eidos_sdk.agent.doc_manager.parsers.text_parsers import BS4HTMLParserSpec
 from eidos_sdk.memory.document import Document
 
 
-class AutoParser(BaseParser):
+class AutoParser(DocumentParser):
     def parse(self, blob: DataBlob) -> Iterable[Document]:
         if blob.mimetype == "application/pdf":
             from eidos_sdk.agent.doc_manager.parsers.pdf_parsers import PyPDFParser
@@ -19,7 +19,7 @@ class AutoParser(BaseParser):
         ):
             from eidos_sdk.agent.doc_manager.parsers.ms_word_parser import MsWordParser
 
-            yield from MsWordParser(BaseParserSpec()).parse(blob)
+            yield from MsWordParser(DocumentParserSpec()).parse(blob)
         elif blob.mimetype == "text/html":
             from eidos_sdk.agent.doc_manager.parsers.text_parsers import BS4HTMLParser
 
@@ -46,6 +46,6 @@ class AutoParser(BaseParser):
         ):
             from eidos_sdk.agent.doc_manager.parsers.text_parsers import TextParser
 
-            yield from TextParser(BaseParserSpec()).parse(blob)
+            yield from TextParser(DocumentParserSpec()).parse(blob)
         else:
             raise ValueError(f"Unsupported mimetype: {blob.mimetype}")

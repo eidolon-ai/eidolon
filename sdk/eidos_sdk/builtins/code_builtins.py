@@ -1,21 +1,21 @@
 from typing import Tuple
 
-from eidos_sdk.agent.doc_manager.loaders.base_loader import BaseLoader
+from eidos_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidos_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidos_sdk.agent.doc_manager.parsers.auto_parser import AutoParser
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidos_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
-from eidos_sdk.agent.doc_manager.transformer.document_transformer import BaseDocumentTransformer
+from eidos_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidos_sdk.agent.generic_agent import GenericAgent
 from eidos_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidos_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidos_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
 from eidos_sdk.agent.tot_agent.checker import ToTChecker
-from eidos_sdk.agent.tot_agent.thought_generators import BaseThoughtGenerationStrategy, ProposePromptStrategy
+from eidos_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidos_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidos_sdk.cpu.agent_cpu import AgentCPU
 from eidos_sdk.cpu.agent_io import IOUnit
-from eidos_sdk.cpu.conversation_memory_unit import ConversationalMemoryUnit
+from eidos_sdk.cpu.conversation_memory_unit import RawMemoryUnit
 from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
@@ -89,8 +89,8 @@ def named_builtins():
         (LLMUnit, OpenAIGPT),
         OpenAIGPT,
 
-        (MemoryUnit, ConversationalMemoryUnit),
-        ConversationalMemoryUnit,
+        (MemoryUnit, RawMemoryUnit),
+        RawMemoryUnit,
         SummarizationMemoryUnit,
 
         # machine components
@@ -100,33 +100,33 @@ def named_builtins():
 
         (FileMemory, LocalFileMemory),
         LocalFileMemory,
-        SimilarityMemory,
 
+        SimilarityMemory,
         (Embedding, NoopEmbedding),
         NoopEmbedding,
         OpenAIEmbedding,
-
         (VectorStore, NoopVectorStore),
         NoopVectorStore,
         FileSystemVectorStore,
         ChromaVectorStore,
 
         # sub components
-        (BaseParser, AutoParser),
+        (DocumentParser, AutoParser),
         AutoParser,
 
-        (BaseDocumentTransformer, AutoTransformer),
+        (DocumentTransformer, AutoTransformer),
         AutoTransformer,
 
-        (BaseThoughtGenerationStrategy, ProposePromptStrategy),
+        (ThoughtGenerationStrategy, ProposePromptStrategy),
         ProposePromptStrategy,
 
         (QuestionTransformer, MultiQuestionTransformer),
         MultiQuestionTransformer,
+
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
 
-        (BaseLoader, FilesystemLoader),
+        (DocumentLoader, FilesystemLoader),
         FilesystemLoader,
 
         ToTChecker,

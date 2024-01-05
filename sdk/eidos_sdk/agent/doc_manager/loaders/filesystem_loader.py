@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Dict, Any, Iterable
 
-from eidos_sdk.agent.doc_manager.loaders.base_loader import BaseLoader, FileChangeset, FileInfo, BaseLoaderSpec
+from eidos_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader, FileChangeset, FileInfo, DocumentLoaderSpec
 from eidos_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidos_sdk.system.reference_model import Specable, T
 
@@ -25,13 +25,13 @@ def hash_file(file_path, chunk_size=8192):
     return hasher.hexdigest()
 
 
-class FilesystemLoaderSpec(BaseLoaderSpec):
+class FilesystemLoaderSpec(DocumentLoaderSpec):
     root_dir: str
     pattern: str = "**/*"
 
 
 # noinspection PyShadowingNames
-class FilesystemLoader(BaseLoader, Specable[FilesystemLoaderSpec]):
+class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
     def __init__(self, spec: T, **kwargs: object):
         super().__init__(spec, **kwargs)
         root_dir = os.path.expanduser(os.path.expandvars(self.spec.root_dir))

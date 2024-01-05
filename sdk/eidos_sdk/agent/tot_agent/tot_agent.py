@@ -14,7 +14,7 @@ from eidos_sdk.agent.tot_agent.controller import ToTController
 from eidos_sdk.agent.tot_agent.memory import ToTDFSMemory
 from eidos_sdk.agent.tot_agent.thought import Thought
 from eidos_sdk.agent.tot_agent.thought_generators import (
-    BaseThoughtGenerationStrategy,
+    ThoughtGenerationStrategy,
 )
 from eidos_sdk.cpu.agent_io import UserTextCPUMessage
 from eidos_sdk.cpu.llm_message import LLMMessage
@@ -34,7 +34,7 @@ class ToTAgentConfig(AgentSpec):
     output_schema: Union[Literal["str"], Dict[str, Any]] = Field(
         description="The json schema for the output model or the literal 'str' for text output."
     )
-    thought_generator: AnnotatedReference[BaseThoughtGenerationStrategy] = Field(
+    thought_generator: AnnotatedReference[ThoughtGenerationStrategy] = Field(
         description="The thought generation strategy to use."
     )
     checker: AnnotatedReference[ToTChecker] = Field(description="The checker to use to evaluate thoughts.")
@@ -79,7 +79,7 @@ class TotResponse(BaseModel):
 
 
 class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
-    thought_generator: BaseThoughtGenerationStrategy
+    thought_generator: ThoughtGenerationStrategy
     tot_memory: ToTDFSMemory
     tot_controller: ToTController
     checker: ToTChecker

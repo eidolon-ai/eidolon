@@ -3,9 +3,9 @@ import time
 from pydantic import BaseModel, Field
 from typing import List
 
-from eidos_sdk.agent.doc_manager.loaders.base_loader import BaseLoader, FileInfo
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser
-from eidos_sdk.agent.doc_manager.transformer.document_transformer import BaseDocumentTransformer
+from eidos_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader, FileInfo
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
+from eidos_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
@@ -31,9 +31,9 @@ class DocumentDirectory(BaseModel):
 class DocumentManagerSpec(BaseModel):
     name: str
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
-    loader: AnnotatedReference[BaseLoader]
-    parser: AnnotatedReference[BaseParser]
-    splitter: AnnotatedReference[BaseDocumentTransformer]
+    loader: AnnotatedReference[DocumentLoader]
+    parser: AnnotatedReference[DocumentParser]
+    splitter: AnnotatedReference[DocumentTransformer]
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
