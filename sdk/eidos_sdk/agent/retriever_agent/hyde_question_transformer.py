@@ -11,7 +11,7 @@ from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class HydeQuestionTransformerSpec(QuestionTransformerSpec):
-    cpu: AnnotatedReference[AgentCPU, NoMemoryCPU]
+    cpu: AnnotatedReference[AgentCPU, "NoMemoryCPU"]
     prompt: str = Field(
         default="Please write a passage to answer the question \nQuestion: {{question}}?\nPassage:",
         description="The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}",

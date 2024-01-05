@@ -6,7 +6,6 @@ from typing import List, TypeVar, Generic
 from pydantic import BaseModel
 
 from eidos_sdk.cpu.agent_cpu import AgentCPU
-from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos_sdk.cpu.conversational_logic_unit import (
     ConversationalLogicUnit,
     ConversationalSpec,
@@ -21,7 +20,7 @@ class ProcessContext(BaseModel):
 
 
 class AgentSpec(BaseModel):
-    cpu: AnnotatedReference[AgentCPU, ConversationalAgentCPU]
+    cpu: AnnotatedReference[AgentCPU]
     agent_refs: List[str] = []
 
 

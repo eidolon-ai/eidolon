@@ -5,8 +5,6 @@ from fastapi import HTTPException
 from eidos_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread
 from eidos_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.cpu.conversation_memory_unit import ConversationalMemoryUnit
-from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolResponseMessage
 from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
@@ -17,8 +15,8 @@ from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Spec
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
     io_unit: AnnotatedReference[IOUnit]
-    memory_unit: AnnotatedReference[MemoryUnit, ConversationalMemoryUnit]
-    llm_unit: AnnotatedReference[LLMUnit, OpenAIGPT]
+    memory_unit: AnnotatedReference[MemoryUnit]
+    llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
 
 

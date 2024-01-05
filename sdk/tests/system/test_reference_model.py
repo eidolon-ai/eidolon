@@ -59,7 +59,7 @@ def resource(name="TestResource", implementation=fqn(OS), spec=None):
         )
         yield
     finally:
-        AgentOS._resources = {}
+        AgentOS.reset()
 
 
 def test_explicit_reference_default_spec():
@@ -178,7 +178,8 @@ def test_annotated_ref_plays_nicely_with_descriptions():
     class Fielded(BaseModel):
         simple: AnnotatedReference[System] = Field(description="A simple reference")
 
-    Fielded().simple.instantiate().spec.foo = "system foo"
+    with resource(name="System", implementation=fqn(System)):
+        Fielded().simple.instantiate().spec.foo = "system foo"
 
 
 def test_loosely_validated_type_bounds_dumping_dict():

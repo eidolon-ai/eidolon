@@ -1,9 +1,7 @@
 import argparse
 import logging.config
-import os
 import pathlib
 from contextlib import asynccontextmanager
-from itertools import chain
 
 import dotenv
 import uvicorn
@@ -13,8 +11,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.system.agent_machine import AgentMachine, error_logger
-from eidos_sdk.system.resources.resources_base import Resource
+from eidos_sdk.system.resources.machine_resource import MachineResource
+from eidos_sdk.system.resources.resources_base import load_resources, Resource
 from eidos_sdk.util.logger import logger
 
 dotenv.load_dotenv()
@@ -54,25 +52,24 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_resources(path, source_override=None):
-    for file_loc in (os.path.join(p, f) for p, _, files in os.walk(path) for f in files):
-        with error_logger(file_loc), open(file_loc) as resource_yaml:
-            loaded = yaml.safe_load(resource_yaml) if file_loc.endswith(".yaml") else None
-            if loaded:
-                yield Resource.model_validate(loaded), source_override or file_loc
-            else:
-                logger.info(f"Skipping {file_loc}")
-
-
 @asynccontextmanager
-async def start_os(app, resource_generator, log_level=logging.INFO, machine_name="DEFAULT"):
+async def start_os(app, resource_generator, machine_name, log_level=logging.INFO):
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
+
     try:
-        builtin_loc = pathlib.Path(__file__).parent.parent / "builtins"
-        builtin_resources = load_resources(builtin_loc, source_override="builtin")
-        machine = AgentMachine.from_resources(chain(builtin_resources, resource_generator), machine_name)
+        for resource_or_tuple in resource_generator:
+            if isinstance(resource_or_tuple, Resource):
+                resource, source = resource_or_tuple, None
+            else:
+                resource, source = resource_or_tuple
+            AgentOS.register_resource(resource=resource, source=source)
+
+        logger.info(f"Building machine '{machine_name}'")
+        machine_spec = AgentOS.get_resource(MachineResource, machine_name).spec
+        logger.debug(yaml.safe_dump(machine_spec.model_dump()))
+        machine = machine_spec.instantiate()
         AgentOS.load_machine(machine)
         await machine.start(app)
         logger.info("Server Started")
@@ -103,7 +100,7 @@ def main():
     log_level = logging.DEBUG if args.debug else logging.INFO
 
     _app = FastAPI(
-        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), log_level, args.machine),
+        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), args.machine, log_level),
     )
     _app.add_middleware(LoggingMiddleware)
 

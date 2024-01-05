@@ -1,0 +1,15 @@
+apiVersion: eidolon/v1
+kind: Machine
+
+metadata:
+  name: DEFAULT
+
+---
+apiVersion: eidolon/v1
+kind: Machine
+
+metadata:
+  name: local_dev
+
+spec:
+  symbolic_memory: LocalSymbolicMemory

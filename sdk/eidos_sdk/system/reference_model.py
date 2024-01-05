@@ -33,7 +33,8 @@ class Reference(BaseModel):
     """
     Used to create references to other classes. t is designed to be used with two type variables, `B` and `D` which are
     the type bound and default type respectively. Neither are required, and if only one type is provided it is assumed
-    to be the bound. Bound is used as the default if no default is provided.
+    to be the bound. Bound is used as the default if no default is provided. default can also be a string which will be
+    looked up from the OS ReferenceResources.
 
     Examples:
         Reference(implementation=fqn(Foo)                           # Returns an instance of Foo
@@ -53,7 +54,7 @@ class Reference(BaseModel):
     """
 
     _bound: ClassVar[Type[B]] = object
-    _default: ClassVar[Type[D]] = None
+    _default: ClassVar[Type[D] | str] = None
     implementation: str = None
 
     model_config = ConfigDict(
@@ -147,23 +148,19 @@ class Reference(BaseModel):
 
 class AnnotatedReference(Reference):
     """
-    Helper class to manage References with defaults so that they do not need to be declared.
-    Wraps the returned type in Annotated so that the default can be defined in the type annotation.
+    Helper class to manage References with defaults.
 
-    This is important since defaults should be partially defined so that partial references can be defined.
-    Ie, providing only the spec and accepting the default implementation or defining the implementation only, but
-    accepting that implementation's default spec.
-
-    One may be tempted to leave the Default off of the type annotation since it is declared later, but this would
-    prevent users from overriding just the spec
+    Default is set to the class name, which should be as a builtin pointing to the FQN of the class
 
     Example:
         class MySpec(BaseModel):
-            ref1: AnnotatedReference[MyBound, MyDefaultImpl)] = Field(description="My description")
+            ref1: AnnotatedReference[MyBound] = Field(description="My description")
 
     Note:
         The description can still be added via a Field annotation without affecting default behavior
     """
 
     def __class_getitem__(cls, params) -> Type[Reference]:
-        return Annotated[Reference[params], Field(default=Reference[params]())]
+        if not isinstance(params, tuple):
+            params = (params, params.__name__)
+        return Annotated[Reference[params], Field(default_factory=Reference[params])]

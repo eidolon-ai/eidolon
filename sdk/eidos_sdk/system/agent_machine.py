@@ -1,24 +1,50 @@
 from contextlib import contextmanager
-from typing import List, Iterable, Tuple
+from typing import List, Optional
 
-import yaml
+from fastapi import FastAPI
+from pydantic import BaseModel, Field
 
 from eidos_sdk.memory.agent_memory import AgentMemory
 from .agent_controller import AgentController
+from .reference_model import AnnotatedReference, Specable
 from .resources.agent_resource import AgentResource
-from .resources.machine_resource import MachineResource
 from .resources.resources_base import Resource
 from ..agent_os import AgentOS
-from ..util.logger import logger
+from ..memory.file_memory import FileMemory
+from ..memory.semantic_memory import SymbolicMemory
+from ..memory.similarity_memory import SimilarityMemory
 
 
-class AgentMachine:
+class MachineSpec(BaseModel):
+    symbolic_memory: AnnotatedReference[SymbolicMemory] = Field(description="The Symbolic Memory implementation.")
+    file_memory: AnnotatedReference[FileMemory] = Field(desciption="The File Memory implementation.")
+    similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
+
+    def get_agent_memory(self):
+        file_memory = self.file_memory.instantiate()
+        symbolic_memory = self.symbolic_memory.instantiate()
+        vector_memory = self.similarity_memory.instantiate()
+        return AgentMemory(
+            file_memory=file_memory,
+            symbolic_memory=symbolic_memory,
+            similarity_memory=vector_memory,
+        )
+
+
+class AgentMachine(Specable[MachineSpec]):
     memory: AgentMemory
     agent_controllers: List[AgentController]
+    app: Optional[FastAPI]
 
-    def __init__(self, agent_memory: AgentMemory, agent_programs: List[AgentController] = None):
-        self.memory = agent_memory
-        self.agent_controllers = agent_programs or []
+    def __init__(self, spec: MachineSpec):
+        super().__init__(spec)
+        agents = {}
+        for name, r in AgentOS.get_resources(AgentResource).items():
+            with _error_wrapper(r):
+                agents[name] = r.spec.instantiate()
+
+        self.memory = self.spec.get_agent_memory()
+        self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
         self.app = None
 
     async def start(self, app):
@@ -36,29 +62,6 @@ class AgentMachine:
             self.memory.stop()
             self.app = None
 
-    @staticmethod
-    def from_resources(resources: Iterable[Resource | Tuple[Resource, str]], machine_name: str):
-        for resource_or_tuple in resources:
-            if isinstance(resource_or_tuple, Resource):
-                resource, source = resource_or_tuple, None
-            else:
-                resource, source = resource_or_tuple
-            AgentOS.register_resource(resource=resource, source=source)
-        machine = AgentOS.get_resource(MachineResource, machine_name)
-
-        agents = {}
-        for name, r in AgentOS.get_resources(AgentResource).items():
-            with _error_wrapper(r):
-                agents[name] = r.spec.instantiate()
-
-        logger.info(f"Building machine '{machine_name}'")
-        logger.debug(yaml.safe_dump(machine.model_dump()))
-
-        return AgentMachine(
-            agent_memory=(machine.spec.get_agent_memory()),
-            agent_programs=[AgentController(name, agent) for name, agent in agents.items()],
-        )
-
 
 @contextmanager
 def error_logger(filename: str = None):
@@ -70,8 +73,3 @@ def error_logger(filename: str = None):
 
 def _error_wrapper(resource: Resource):
     return error_logger(AgentOS.get_resource_source(resource.kind, resource.metadata.name))
-
-
-def _error_wrapped_fn(resource, fn):
-    with _error_wrapper(resource):
-        return fn()

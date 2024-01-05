@@ -12,20 +12,19 @@ class MongoSymbolicMemoryConfig(BaseModel):
     mongo_connection_string: Optional[str] = Field(
         default=None, description="The connection string to the MongoDB instance."
     )
-    mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
+    mongo_database_name: str = Field(default="eidos", description="The name of the MongoDB database to use.")
 
 
 class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
-    mongo_connection_string: Optional[str] = Field(
-        default=None, description="The connection string to the MongoDB instance."
-    )
-    mongo_database_name: str = Field(default=None, description="The name of the MongoDB database to use.")
-    database: AsyncIOMotorDatabase = None
+    mongo_connection_string: Optional[str]
+    mongo_database_name: str
+    database: Optional[AsyncIOMotorDatabase]
 
     def __init__(self, spec: MongoSymbolicMemoryConfig):
         super().__init__(spec)
         self.mongo_connection_string = spec.mongo_connection_string
         self.mongo_database_name = spec.mongo_database_name
+        self.database = None
 
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return await self.database[symbol_collection].count_documents(query)

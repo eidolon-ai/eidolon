@@ -11,7 +11,7 @@ from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class MultiQuestionTransformerSpec(QuestionTransformerSpec):
-    cpu: AnnotatedReference[AgentCPU, NoMemoryCPU]
+    cpu: AnnotatedReference[AgentCPU, "NoMemoryCPU"]
     keep_original: bool = Field(default=True, description="Whether to keep the original question in the output")
     number_to_generate: int = Field(default=3, description="The number of questions to generate")
     prompt: str = Field(
