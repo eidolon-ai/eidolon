@@ -1,6 +1,6 @@
 import pytest
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParserSpec, DataBlob
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParserSpec, DataBlob
 from eidos_sdk.agent.doc_manager.parsers.text_parsers import TextParser
 from eidos_sdk.agent.doc_manager.transformer.text_splitters import (
     RecursiveCharacterTextSplitter,
@@ -12,12 +12,12 @@ class TestRecursiveCharacterTextSplitter:
     @pytest.fixture()
     def small_data(self):
         data = "1234567890"
-        return TextParser(BaseParserSpec()).parse(DataBlob(path="path/file.txt", mimetype="text/plain", data=data))
+        return TextParser(DocumentParserSpec()).parse(DataBlob(path="path/file.txt", mimetype="text/plain", data=data))
 
     @pytest.fixture()
     def large_data(self):
         data = (("1234567890 " * 10) + "\n") * 100
-        return TextParser(BaseParserSpec()).parse(DataBlob(path="path/file.txt", mimetype="text/plain", data=data))
+        return TextParser(DocumentParserSpec()).parse(DataBlob(path="path/file.txt", mimetype="text/plain", data=data))
 
     @pytest.fixture()
     def splitter(self):

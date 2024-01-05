@@ -1,6 +1,6 @@
 from typing import Dict, Any, Literal, Iterable, Optional
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParserSpec, BaseParser, DataBlob
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParserSpec, DocumentParser, DataBlob
 from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.cobol import CobolASTGenerator
 from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.javascript import JavaScriptASTGenerator
 from eidos_sdk.agent.doc_manager.parsers.code_ast_parsers.python import PythonASTGenerator
@@ -21,12 +21,12 @@ LANGUAGE_AST_GENERATORS: Dict[str, Any] = {
 }
 
 
-class LanguageParserSpec(BaseParserSpec):
+class LanguageParserSpec(DocumentParserSpec):
     language: Optional[Literal["python", "javascript", "cobol"]] = None
     parser_threshold: int = 0
 
 
-class LanguageParser(BaseParser, Specable[LanguageParserSpec]):
+class LanguageParser(DocumentParser, Specable[LanguageParserSpec]):
     def __init__(self, spec: LanguageParserSpec):
         super().__init__(spec)
         self.language = spec.language

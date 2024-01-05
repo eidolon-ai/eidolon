@@ -2,7 +2,7 @@ import numpy as np
 import pypdf
 from typing import Optional, Iterable, Union
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import BaseParser, BaseParserSpec, DataBlob
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DocumentParserSpec, DataBlob
 from eidos_sdk.memory.document import Document
 from eidos_sdk.system.reference_model import Specable
 
@@ -54,12 +54,12 @@ def extract_from_images_with_rapidocr(
     return text
 
 
-class PyPDFParserSpec(BaseParserSpec):
+class PyPDFParserSpec(DocumentParserSpec):
     password: Optional[Union[str, bytes]] = None
     extract_images: bool = False
 
 
-class PyPDFParser(BaseParser, Specable[PyPDFParserSpec]):
+class PyPDFParser(DocumentParser, Specable[PyPDFParserSpec]):
     def __init__(self, spec: PyPDFParserSpec):
         super().__init__(spec)
         self.password = spec.password

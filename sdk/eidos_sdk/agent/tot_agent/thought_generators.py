@@ -30,7 +30,7 @@ class TGSConfig(BaseModel):
     num_children: int = Field(3, description="The number of thoughts to generate.")
 
 
-class BaseThoughtGenerationStrategy(Specable[TGSConfig]):
+class ThoughtGenerationStrategy(Specable[TGSConfig]):
     """
     Base class for a thought generation strategy.
     """
@@ -78,7 +78,7 @@ class SampleCoTStrategyOutput(BaseModel):
     thought: str
 
 
-class SampleCoTStrategy(BaseThoughtGenerationStrategy):
+class SampleCoTStrategy(ThoughtGenerationStrategy):
     """
     Sample thoughts from a Chain-of-Thought (CoT) prompt.
 
@@ -109,7 +109,7 @@ class ProposePromptStrategyConfig(TGSConfig):
     post_amble: str = POST_AMBLE_MULTI
 
 
-class ProposePromptStrategy(BaseThoughtGenerationStrategy, Specable[ProposePromptStrategyConfig]):
+class ProposePromptStrategy(ThoughtGenerationStrategy, Specable[ProposePromptStrategyConfig]):
     """
     Propose thoughts sequentially using a "propose prompt".
 

@@ -22,11 +22,11 @@ class FileChangeset:
     removed_files: AsyncIterable[str]
 
 
-class BaseLoaderSpec(BaseModel):
+class DocumentLoaderSpec(BaseModel):
     pass
 
 
-class BaseLoader(ABC, Specable[BaseLoaderSpec]):
+class DocumentLoader(ABC, Specable[DocumentLoaderSpec]):
     logger = logging.getLogger("eidolon")
 
     @abstractmethod

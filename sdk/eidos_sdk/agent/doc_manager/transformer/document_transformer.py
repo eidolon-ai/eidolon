@@ -15,7 +15,7 @@ from eidos_sdk.memory.document import Document
 logger = logging.getLogger("eidolon")
 
 
-class BaseDocumentTransformer(ABC):
+class DocumentTransformer(ABC):
     @abstractmethod
     def transform_documents(self, documents: Iterable[Document], **kwargs: Any) -> Iterable[Document]:
         """Transform a list of documents.
@@ -47,7 +47,7 @@ class TextSplitterSpec(BaseModel):
             )
 
 
-class TextSplitter(BaseDocumentTransformer, ABC, Specable[TextSplitterSpec]):
+class TextSplitter(DocumentTransformer, ABC, Specable[TextSplitterSpec]):
     length_function: Callable[[str], int] = len
 
     def __init__(self, spec: TextSplitterSpec) -> None:

@@ -1,13 +1,13 @@
 import pytest
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import DataBlob, BaseParserSpec
+from eidos_sdk.agent.doc_manager.parsers.base_parser import DataBlob, DocumentParserSpec
 from eidos_sdk.agent.doc_manager.parsers.text_parsers import TextParser
 
 
 class TestTextParser:
     @pytest.fixture()
     def text_parser(self):
-        return TextParser(BaseParserSpec())
+        return TextParser(DocumentParserSpec())
 
     def test_parse_simple_string(self, text_parser: TextParser):
         data = DataBlob(path="path/file.txt", mimetype="text/plain", data="data")

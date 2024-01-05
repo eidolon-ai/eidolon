@@ -8,7 +8,7 @@ from eidos_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
 from eidos_sdk.system.reference_model import Specable
 
 
-class ConversationalMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
+class RawMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
     async def writeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
         conversationItems = [
             {

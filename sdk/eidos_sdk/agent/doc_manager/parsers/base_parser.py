@@ -129,12 +129,12 @@ class DataBlob:
         )
 
 
-class BaseParserSpec(BaseModel):
+class DocumentParserSpec(BaseModel):
     pass
 
 
-class BaseParser(ABC, Specable[BaseParserSpec]):
-    def __init__(self, spec: BaseParserSpec):
+class DocumentParser(ABC, Specable[DocumentParserSpec]):
+    def __init__(self, spec: DocumentParserSpec):
         super().__init__(spec)
         self.spec = spec
         self.logger = logging.getLogger("eidolon")
