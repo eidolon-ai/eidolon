@@ -1,3 +1,4 @@
+---
 apiVersion: eidolon/v1
 kind: Machine
 
@@ -8,6 +9,23 @@ spec:
   symbolic_memory:
     implementation: MongoSymbolicMemory
     mongo_database_name: eidos
+  file_memory:
+    implementation: LocalFileMemory
+    root_dir: "/tmp/eidos/file_memory"
+  similarity_memory:
+    implementation: SimilarityMemory
+    embedder: NoopEmbedding
+    vector_store: NoopVectorStore
+
+---
+apiVersion: eidolon/v1
+kind: Machine
+
+metadata:
+  name: local_dev
+
+spec:
+  symbolic_memory: LocalSymbolicMemory
   file_memory:
     implementation: LocalFileMemory
     root_dir: "/tmp/eidos/file_memory"
