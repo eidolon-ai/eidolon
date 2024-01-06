@@ -77,5 +77,3 @@ For full documentation, visit [www.eidolonai.com](https://www.eidolonai.com/).
 Don't want to read documentation? Just run some agents and ask them questions about the framework. (You still need an OpenAI api key)
 
 [![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run?git_repo=https://github.com/eidolon-ai/eidOS&revision=ll/google_cloud)
-
-
