@@ -27,11 +27,6 @@ jobs:
         working-directory: sdk
       - run: |
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-          poetry version patch
           poetry publish --build
           echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
         working-directory: sdk
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Bump version and publish to PyPI"
-          tagging_message: v${{ env.VERSION }}
