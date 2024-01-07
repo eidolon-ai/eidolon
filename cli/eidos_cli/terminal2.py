@@ -116,7 +116,7 @@ class EidolonCLI:
                 if len(args) > 2:
                     raise ValidationError(message=f"Too many arguments: {args[2:]}", cursor_position=start_pos + len(agent) + len(program) + 2)
             else:
-                raise ValidationError(message=f"Missing endpoint", cursor_position=start_pos + len(agent) + 1)
+                raise ValidationError(message="Missing endpoint", cursor_position=start_pos + len(agent) + 1)
 
     def validate_start(self, command: str, start_pos: int):
         args = command.split()
@@ -133,7 +133,7 @@ class EidolonCLI:
                 if len(args) > 2:
                     raise ValidationError(message=f"Too many arguments: {args[2:]}", cursor_position=start_pos + len(agent) + len(program) + 2)
             else:
-                raise ValidationError(message=f"Missing program", cursor_position=start_pos + len(agent) + 1)
+                raise ValidationError(message="Missing program", cursor_position=start_pos + len(agent) + 1)
 
     def validate_resume(self, command: str, start_pos: int):
         args = command.split()
@@ -151,7 +151,7 @@ class EidolonCLI:
                 if len(args) > 2:
                     raise ValidationError(message=f"Too many arguments: {args[2:]}", cursor_position=start_pos + len(agent) + len(pid) + 2)
             else:
-                raise ValidationError(message=f"Missing process id", cursor_position=start_pos + len(agent) + 1)
+                raise ValidationError(message="Missing process id", cursor_position=start_pos + len(agent) + 1)
 
     def do_markdown(self):
         self.markdown = not self.markdown
