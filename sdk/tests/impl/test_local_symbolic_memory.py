@@ -27,7 +27,9 @@ class TestLocalSymbolicMemory:
     async def test_insert_one(self, memory):
         await memory.insert_one("collection", {"key": "value"})
         assert "collection" in LocalSymbolicMemory.db
-        assert LocalSymbolicMemory.db["collection"][0] == {"key": "value"}
+        collection_ = LocalSymbolicMemory.db["collection"][0]
+        assert collection_.pop("_id")
+        assert collection_ == {"key": "value"}
 
     @pytest.mark.asyncio
     async def test_insert(self, memory):
@@ -41,6 +43,7 @@ class TestLocalSymbolicMemory:
     async def test_matches_query_simple(self, memory):
         await memory.insert_one("collection", {"key": "value"})
         result = await memory.find_one("collection", {"key": "value"})
+        assert result.pop("_id")
         assert result == {"key": "value"}
 
     @pytest.mark.asyncio
@@ -53,6 +56,7 @@ class TestLocalSymbolicMemory:
         query = {"name": "John", "address": {"city": "New York"}}
         await memory.insert_one("collection", document)
         result = await memory.find_one("collection", query)
+        assert result.pop("_id")
         assert result == document
 
     # Tests for MongoDB-like query operations

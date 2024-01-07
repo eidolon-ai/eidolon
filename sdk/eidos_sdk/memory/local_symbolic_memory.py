@@ -69,7 +69,10 @@ class LocalSymbolicMemory(SymbolicMemory):
             self.db[symbol_collection] = []
         if any(doc.get("_id") == document.get("_id") for doc in self.db[symbol_collection]):
             raise DuplicateKeyError(f"Duplicate key error: _id {document.get('_id')} already exists.")
-        self.db[symbol_collection].append(deepcopy(document))
+        copied = deepcopy(document)
+        if "_id" not in copied:
+            copied["_id"] = str(ObjectId())
+        self.db[symbol_collection].append(copied)
 
     async def insert(self, symbol_collection: str, documents: list[dict[str, Any]]) -> None:
         if symbol_collection not in self.db:

@@ -708,15 +708,6 @@ idna = ["idna (>=2.1,<4.0)"]
 trio = ["trio (>=0.14,<0.23)"]
 wmi = ["wmi (>=1.5.1,<2.0.0)"]
 
-[[package]]
-name = "eidos-sdk"
-version = "0.1.9"
-description = ""
-optional = false
-python-versions = ">=3.11,<3.12"
-files = []
-develop = true
-
 [package.dependencies]
 aiohttp = "^3.9.1"
 chromadb = "^0.4.18"

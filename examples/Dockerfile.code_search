@@ -1,0 +1,10 @@
+ARG EIDOS_VERSION=latest
+FROM docker.io/eidosai/sdk:$EIDOS_VERSION
+
+ENV PYTHONUNBUFFERED 1
+
+COPY eidolon_examples/code_search/resources /usr/src/code_search/resources
+COPY dist/code_search/ /usr/src/
+
+WORKDIR /usr/src/code_search
+CMD exec eidos-server resources -m local_dev

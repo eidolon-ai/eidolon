@@ -1,11 +1,6 @@
-name: Publish SDK
+name: Bump SDK Version
 on:
-  workflow_run:
-    workflows: [ "Bump SDK Version" ]
-    types:
-      - completed
-  workflow_dispatch:
-
+  - workflow_dispatch
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -23,9 +18,11 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: poetry install
-        working-directory: sdk
       - run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-          poetry publish --build
+          poetry version patch
+          echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
         working-directory: sdk
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Bump minor version"
+          tagging_message: v${{ env.VERSION }}

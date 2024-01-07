@@ -1,15 +1,27 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: openai_chroma_similarity_memory
+spec:
+  implementation: SimilarityMemory
+  vector_store:
+    implementation: "ChromaVectorStore"
+    url: "file://${EIDOLON_DATA_DIR}/doc_producer"
+  embedder:
+    implementation: "OpenAIEmbedding"
+
+---
 apiVersion: eidolon/v1
 kind: Machine
 spec:
-  file_memory:
-    implementation: "LocalFileMemory"
-    root_dir: "${EIDOLON_DATA_DIR}/code_search/file_memory"
-  symbolic_memory:
-    implementation: "MongoSymbolicMemory"
-    mongo_database_name: "eidolon"
-  similarity_memory:
-    vector_store:
-      implementation: "ChromaVectorStore"
-      url: "file://${EIDOLON_DATA_DIR}/doc_producer"
-    embedder:
-      implementation: "OpenAIEmbedding"
+  similarity_memory: openai_chroma_similarity_memory
+
+---
+apiVersion: eidolon/v1
+kind: Machine
+metadata:
+  name: local_dev
+spec:
+  symbolic_memory: LocalSymbolicMemory
+  similarity_memory: openai_chroma_similarity_memory
