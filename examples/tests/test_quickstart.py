@@ -4,7 +4,7 @@ from jsonref import requests
 
 @pytest.fixture(scope="module", autouse=True)
 def http_server(eidolon_server, eidolon_examples):
-    with eidolon_server(eidolon_examples / "quickstart", "-m", "local_dev") as server:
+    with eidolon_server(eidolon_examples / "quickstart", "-m", "local_dev", log_file="quickstart_log.txt") as server:
         yield server
 
 
