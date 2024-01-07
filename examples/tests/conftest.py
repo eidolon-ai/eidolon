@@ -8,7 +8,7 @@ import pytest
 
 
 def tail(file_path, sleep_sec=0.1):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         # Move to the end of the file
         file.seek(0, 2)
         while True:
@@ -34,16 +34,12 @@ def eidolon_server(eidolon_examples, log_dir):
         # Command to start the HTTP server
         cmd = ["eidos-server", str(resources_loc), *args]
         cwd = eidolon_examples.parent
-        log_file = os.path.join(log_dir, log_file or f"logs.txt")
+        log_file = os.path.join(log_dir, log_file or "logs.txt")
 
         # Using "a" to append to the log file since multiple tests may use the same file.
         with open(log_file, "a") as file:
             print(f"Logging to {log_file}")
-            file.writelines([
-                "-"*20+"\n",
-                f"Running subprocess with command: {' '.join(cmd)}\n",
-                "-"*20+"\n",
-            ])
+            file.writelines(["-" * 20 + "\n", f"Running subprocess with command: {' '.join(cmd)}\n", "-" * 20 + "\n"])
             file.flush()  # Otherwise the lines will end up after the server logs
             server = subprocess.Popen(args=cmd, cwd=cwd, stdout=file, stderr=subprocess.STDOUT)
 

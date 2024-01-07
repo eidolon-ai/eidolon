@@ -44,22 +44,27 @@ class HelloWorld:
 
     @register_program()
     async def describe_image(
-            self,
-            question: str = Body(..., embed=True, description="Your question about the image"),
-            image: UploadFile = File(..., description="The image to describe"),
+        self,
+        question: str = Body(..., embed=True, description="Your question about the image"),
+        image: UploadFile = File(..., description="The image to describe"),
     ) -> IdleStateRepresentation:
         return IdleStateRepresentation(
             welcome_message=f"Hello, World {question}!  File name is {image.filename}. "
-                            f"file length is {image.size} bytes. content type is {image.content_type}"
+            f"file length is {image.size} bytes. content type is {image.content_type}"
         )
 
     @register_program()
     async def describe_images(
-            self,
-            question: str = Body(..., embed=True, description="Your question about the image"),
-            images: List[UploadFile] = File(description="The images to describe"),
+        self,
+        question: str = Body(..., embed=True, description="Your question about the image"),
+        images: List[UploadFile] = File(description="The images to describe"),
     ) -> IdleStateRepresentation:
-        files_msg = "\n".join([f"File name is {image.filename}. file length is {image.size} bytes. content type is {image.content_type}" for image in images])
+        files_msg = "\n".join(
+            [
+                f"File name is {image.filename}. file length is {image.size} bytes. content type is {image.content_type}"
+                for image in images
+            ]
+        )
         return IdleStateRepresentation(welcome_message=f"Hello, World {question}!\n{files_msg}")
 
     @register_program()
