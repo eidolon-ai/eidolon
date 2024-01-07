@@ -8,7 +8,6 @@ on:
 
 jobs:
   docker:
-    needs: publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
