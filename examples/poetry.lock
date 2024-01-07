@@ -708,6 +708,33 @@ idna = ["idna (>=2.1,<4.0)"]
 trio = ["trio (>=0.14,<0.23)"]
 wmi = ["wmi (>=1.5.1,<2.0.0)"]
 
+[[package]]
+name = "ecdsa"
+version = "0.18.0"
+description = "ECDSA cryptographic signature library (pure python)"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+files = [
+    {file = "ecdsa-0.18.0-py2.py3-none-any.whl", hash = "sha256:80600258e7ed2f16b9aa1d7c295bd70194109ad5a30fdee0eaeefef1d4c559dd"},
+    {file = "ecdsa-0.18.0.tar.gz", hash = "sha256:190348041559e21b22a1d65cee485282ca11a6f81d503fddb84d5017e9ed1e49"},
+]
+
+[package.dependencies]
+six = ">=1.9.0"
+
+[package.extras]
+gmpy = ["gmpy"]
+gmpy2 = ["gmpy2"]
+
+[[package]]
+name = "eidos-sdk"
+version = "0.1.10"
+description = ""
+optional = false
+python-versions = ">=3.11,<3.12"
+files = []
+develop = true
+
 [package.dependencies]
 aiohttp = "^3.9.1"
 chromadb = "^0.4.18"
@@ -727,6 +754,7 @@ pypdf = "^3.17.1"
 pytest-json-report = "^1.5.0"
 python-docx = "^1.1.0"
 python-dotenv = "^1.0.0"
+python-jose = "^3.3.0"
 python-multipart = "^0.0.6"
 pyyaml = "^6.0.1"
 spacy = "^3.7.2"
@@ -944,13 +972,13 @@ tqdm = ["tqdm"]
 
 [[package]]
 name = "google-auth"
-version = "2.26.0"
+version = "2.26.1"
 description = "Google Authentication Library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-auth-2.26.0.tar.gz", hash = "sha256:5d8bf0a5143baa45368c3d08bf157babda468db1c5dd987cd2c824b788524196"},
-    {file = "google_auth-2.26.0-py2.py3-none-any.whl", hash = "sha256:11f56129d30902cc9f4b93ed0c84ef7323f7328e6520eab1716740f3171afe35"},
+    {file = "google-auth-2.26.1.tar.gz", hash = "sha256:54385acca5c0fbdda510cd8585ba6f3fcb06eeecf8a6ecca39d3ee148b092590"},
+    {file = "google_auth-2.26.1-py2.py3-none-any.whl", hash = "sha256:2c8b55e3e564f298122a02ab7b97458ccfcc5617840beb5d0ac757ada92c9780"},
 ]
 
 [package.dependencies]
@@ -1154,13 +1182,13 @@ socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "huggingface-hub"
-version = "0.20.1"
+version = "0.20.2"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "huggingface_hub-0.20.1-py3-none-any.whl", hash = "sha256:ecfdea395a8bc68cd160106c5bd857f7e010768d95f9e1862a779010cc304831"},
-    {file = "huggingface_hub-0.20.1.tar.gz", hash = "sha256:8c88c4c3c8853e22f2dfb4d84c3d493f4e1af52fb3856a90e1eeddcf191ddbb1"},
+    {file = "huggingface_hub-0.20.2-py3-none-any.whl", hash = "sha256:53752eda2239d30a470c307a61cf9adcf136bc77b0a734338c7d04941af560d8"},
+    {file = "huggingface_hub-0.20.2.tar.gz", hash = "sha256:215c5fceff631030c7a3d19ba7b588921c908b3f21eef31d160ebc245b200ff6"},
 ]
 
 [package.dependencies]
@@ -2862,6 +2890,27 @@ files = [
 dev = ["black (==23.12.1)", "build (==1.0.3)", "flake8 (==6.1.0)", "pytest (==7.4.4)", "twine (==4.0.2)"]
 
 [[package]]
+name = "python-jose"
+version = "3.3.0"
+description = "JOSE implementation in Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-jose-3.3.0.tar.gz", hash = "sha256:55779b5e6ad599c6336191246e95eb2293a9ddebd555f796a65f838f07e5d78a"},
+    {file = "python_jose-3.3.0-py2.py3-none-any.whl", hash = "sha256:9b1376b023f8b298536eedd47ae1089bcdb848f1535ab30555cd92002d78923a"},
+]
+
+[package.dependencies]
+ecdsa = "!=0.15"
+pyasn1 = "*"
+rsa = "*"
+
+[package.extras]
+cryptography = ["cryptography (>=3.4.0)"]
+pycrypto = ["pyasn1", "pycrypto (>=2.6.0,<2.7.0)"]
+pycryptodome = ["pyasn1", "pycryptodome (>=3.3.1,<4.0.0)"]
+
+[[package]]
 name = "python-magic"
 version = "0.4.27"
 description = "File type identification using libmagic"
@@ -3049,13 +3098,13 @@ full = ["numpy"]
 
 [[package]]
 name = "referencing"
-version = "0.32.0"
+version = "0.32.1"
 description = "JSON Referencing + Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "referencing-0.32.0-py3-none-any.whl", hash = "sha256:bdcd3efb936f82ff86f993093f6da7435c7de69a3b3a5a06678a6050184bee99"},
-    {file = "referencing-0.32.0.tar.gz", hash = "sha256:689e64fe121843dcfd57b71933318ef1f91188ffb45367332700a86ac8fd6161"},
+    {file = "referencing-0.32.1-py3-none-any.whl", hash = "sha256:7e4dc12271d8e15612bfe35792f5ea1c40970dadf8624602e33db2758f7ee554"},
+    {file = "referencing-0.32.1.tar.gz", hash = "sha256:3c57da0513e9563eb7e203ebe9bb3a1b509b042016433bd1e45a2853466c3dd3"},
 ]
 
 [package.dependencies]
@@ -4141,13 +4190,13 @@ typing-extensions = ">=3.7.4"
 
 [[package]]
 name = "unstructured"
-version = "0.11.7"
+version = "0.11.8"
 description = "A library that prepares raw documents for downstream ML tasks."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "unstructured-0.11.7-py3-none-any.whl", hash = "sha256:8d06c1273eeb21d838c95fd13d4fe0738ed40a6cb8890ecec194dcc77de9cb98"},
-    {file = "unstructured-0.11.7.tar.gz", hash = "sha256:9638dc37c16d3773058dc03123dff530b450e4415fcbbce8fd5503d52a43c253"},
+    {file = "unstructured-0.11.8-py3-none-any.whl", hash = "sha256:71e8d135a723d8c692a0a43683e3dca4a9b3e0fd8a1d255f57689591ed3860c0"},
+    {file = "unstructured-0.11.8.tar.gz", hash = "sha256:dba8b2d54fdc781acef6c9590510e1f55e7467abaaf00403031331903d415f07"},
 ]
 
 [package.dependencies]

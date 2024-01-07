@@ -1,0 +1,18 @@
+import httpx
+
+from eidos_sdk.security.jwt_middleware import BaseJWTMiddleware
+
+
+class OKTAAuth(BaseJWTMiddleware):
+    OKTA_DOMAIN = "your_okta_domain"
+    JWKS_URL = f"https://{OKTA_DOMAIN}/oauth2/default/v1/keys"
+    AUDIENCE = "your_api_audience"
+    ISSUER = f"https://{OKTA_DOMAIN}/oauth2/default"
+
+    async def get_signing_keys(self):
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(self.JWKS_URL)
+            return resp.json()["keys"]
+
+    async def get_audience_and_issuer(self):
+        return self.AUDIENCE, self.ISSUER

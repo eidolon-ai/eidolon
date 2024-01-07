@@ -25,3 +25,5 @@ metadata:
 spec:
   symbolic_memory: LocalSymbolicMemory
   similarity_memory: openai_chroma_similarity_memory
+  security_manager:
+    authorization_processor: eidos_sdk.security.google_authorizor.GoogleJWTMiddleware

@@ -14,6 +14,7 @@ class AgentOS:
     file_memory: "FileMemory" = ...  # noqa: F821
     symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
     similarity_memory: "SimilarityMemory" = ...  # noqa: F821
+    security_manager: "SecurityManager" = ...  # noqa: F821
 
     @classmethod
     def _get_or_load_resources(cls) -> Dict[str, Dict[str, Tuple[Resource, str]]]:
@@ -32,6 +33,7 @@ class AgentOS:
         cls.file_memory = machine.memory.file_memory
         cls.symbolic_memory = machine.memory.symbolic_memory
         cls.similarity_memory = machine.memory.similarity_memory
+        cls.security_manager = machine.security_manager
 
     @classmethod
     def register_resource(cls, resource: Resource, source=None):  # noqa: F821

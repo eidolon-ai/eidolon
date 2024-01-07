@@ -7,8 +7,9 @@ import dotenv
 import uvicorn
 import yaml
 from fastapi import FastAPI
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
+from starlette.responses import Response
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.resources.machine_resource import MachineResource
@@ -94,6 +95,16 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         return response
 
 
+class SecurityMiddleware(BaseHTTPMiddleware):
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        resp = await AgentOS.security_manager.authorization_processor.dispatch(request)
+        if not resp:
+            return await call_next(request)
+        else:
+            return resp
+
+
 def main():
     args = parse_args()
     log_level_str = "debug" if args.debug else "info"
@@ -103,6 +114,7 @@ def main():
         lifespan=lambda app: start_os(app, load_resources(args.yaml_path), args.machine, log_level),
     )
     _app.add_middleware(LoggingMiddleware)
+    _app.add_middleware(SecurityMiddleware)
 
     # Run the server
     uvicorn.run(

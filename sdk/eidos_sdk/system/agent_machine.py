@@ -1,8 +1,7 @@
 from contextlib import contextmanager
-from typing import List, Optional
-
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
+from typing import List, Optional
 
 from eidos_sdk.memory.agent_memory import AgentMemory
 from .agent_controller import AgentController
@@ -13,12 +12,14 @@ from ..agent_os import AgentOS
 from ..memory.file_memory import FileMemory
 from ..memory.semantic_memory import SymbolicMemory
 from ..memory.similarity_memory import SimilarityMemory
+from ..security.security_manager import SecurityManager
 
 
 class MachineSpec(BaseModel):
     symbolic_memory: AnnotatedReference[SymbolicMemory] = Field(description="The Symbolic Memory implementation.")
     file_memory: AnnotatedReference[FileMemory] = Field(desciption="The File Memory implementation.")
     similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
+    security_manager: AnnotatedReference[SecurityManager] = Field(description="The Security Manager implementation.")
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
@@ -33,6 +34,7 @@ class MachineSpec(BaseModel):
 
 class AgentMachine(Specable[MachineSpec]):
     memory: AgentMemory
+    security_manager: SecurityManager
     agent_controllers: List[AgentController]
     app: Optional[FastAPI]
 
@@ -46,6 +48,7 @@ class AgentMachine(Specable[MachineSpec]):
         self.memory = self.spec.get_agent_memory()
         self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
         self.app = None
+        self.security_manager = self.spec.security_manager.instantiate()
 
     async def start(self, app):
         if self.app:
