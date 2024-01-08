@@ -1,11 +1,32 @@
+import jsonref
 import pytest
-from pydantic import BaseModel, ValidationError
+from fastapi import UploadFile
+from pydantic import BaseModel, ValidationError, Field
 
 from eidos_sdk.util.schema_to_model import schema_to_model
 
 
+class NestedObject(BaseModel):
+    int_field: int = None
+
+
+class ComplexInput(BaseModel):
+    nested_object: NestedObject = Field(default=None, description="A nested object")
+    optional_nested_object: NestedObject = Field(default=None, description="A nested object")
+    optional_array_of_strings: list[str] = Field(default=None, description="An array of strings")
+    array_of_objects: list[NestedObject] = Field(default=None, description="An array of objects")
+    multiple_files: list[UploadFile] = Field(default=None, description="A list of files")
+    optional_file: UploadFile = Field(default=None, description="A single file")
+    optional_multiple_files: list[UploadFile] = Field(default=None, description="A list of files")
+
+
 # Define a pytest class for grouping the tests
 class TestSchemaToModel:
+    def test_complex_model(self):
+        schema = ComplexInput.model_json_schema()
+        duped = schema_to_model(jsonref.replace_refs(schema), "Dupe")
+        assert duped.model_validate(dict(nested_object=dict(int_field=1))).nested_object.int_field == 1
+
     def test_simple_model_creation(self):
         """Test creation of a simple model with primitive types."""
         json_schema = {
@@ -94,11 +115,11 @@ class TestSchemaToModel:
         with pytest.raises(ValueError) as exc_info:
             DefaultModel()
         assert (
-            "1 validation error for DefaultModel\n"
-            "age\n"
-            "  Field required [type=missing, input_value={}, input_type=dict]\n"
-            "    For further information visit https://errors.pydantic.dev/2.5/v/missing"
-        ) in str(exc_info.value)
+                   "1 validation error for DefaultModel\n"
+                   "age\n"
+                   "  Field required [type=missing, input_value={}, input_type=dict]\n"
+                   "    For further information visit https://errors.pydantic.dev/2.5/v/missing"
+               ) in str(exc_info.value)
 
     def test_invalid_schema(self):
         """Test that an invalid schema raises the appropriate error."""
@@ -116,7 +137,6 @@ class TestSchemaToModel:
         with pytest.raises(ValueError) as exc_info:
             schema_to_model(json_schema, "UnsupportedModel")
         assert "Error creating field 'name'" in str(exc_info.value)
-
 
 # Run the tests with pytest from the command line
 # pytest test_schema_to_model.py
