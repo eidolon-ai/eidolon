@@ -137,6 +137,3 @@ class TestSchemaToModel:
         with pytest.raises(ValueError) as exc_info:
             schema_to_model(json_schema, "UnsupportedModel")
         assert "Error creating field 'name'" in str(exc_info.value)
-
-# Run the tests with pytest from the command line
-# pytest test_schema_to_model.py
