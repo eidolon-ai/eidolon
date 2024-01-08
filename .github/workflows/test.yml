@@ -52,8 +52,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           EIDOLON_DATA_DIR: /tmp/eidolon
         working-directory: examples
-        continue-on-error: true
       - uses: actions/upload-artifact@v4
+        if: ${{ !success() }}
         with:
           name: server-logs
           path: /tmp/eidolon_test_logs/
