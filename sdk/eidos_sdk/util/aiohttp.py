@@ -1,9 +1,9 @@
-from aiohttp import ClientSession as _ClientSession
+from aiohttp import ClientSession
 
 from eidos_sdk.system.request_context import RequestContext
 
 
-class ContextualClientSession(_ClientSession):
+class ContextualClientSession(ClientSession):
     def __init__(self, *args, **kwargs):
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
