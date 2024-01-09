@@ -2,8 +2,12 @@ from __future__ import annotations
 
 from contextvars import ContextVar
 from typing import Any, Dict
+from urllib.request import Request
 
 from pydantic import BaseModel
+from starlette.middleware.base import BaseHTTPMiddleware
+
+from eidos_sdk.util.logger import logger
 
 _request_context = ContextVar('request_context')
 
@@ -34,8 +38,12 @@ class _RequestContextMeta(type):
 
     @staticmethod
     def set(key: str, value: str | Any, propagate=False):
+        logger.debug(f"setting context {key}={value}, propagate={propagate}")
+
         if propagate and not isinstance(value, str):
             raise ValueError('can only propagate string values')
+        if "," in key:
+            raise ValueError("key cannot contain commas")
         _get_context()[key] = _Record(key=key, value=value, propagate=propagate)
 
     def get(self, key, default=None):
@@ -43,8 +51,25 @@ class _RequestContextMeta(type):
 
     @property
     def headers(self):
-        return {v.key: v.value for v in _get_context().values() if v.propagate}
+        to_propagate = {v.key: v.value for v in _get_context().values() if v.propagate}
+        if to_propagate:
+            to_propagate['X-Eidos-Context'] = ",".join(f"{k}" for k in to_propagate.keys())
+        return to_propagate
 
 
 class RequestContext(metaclass=_RequestContextMeta):
     pass
+
+
+class ContextMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        context_headers = request.headers.get('X-Eidos-Context', '') or []
+        if context_headers:
+            context_headers = context_headers.split(',')
+        for header in context_headers:
+            try:
+                RequestContext.set(header, request.headers[header], propagate=True)
+            except KeyError:
+                logger.warning(f"Expected context header {header} not found")
+
+        return await call_next(request)

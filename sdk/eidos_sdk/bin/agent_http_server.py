@@ -12,6 +12,7 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.system.request_context import ContextMiddleware
 from eidos_sdk.system.resources.machine_resource import MachineResource
 from eidos_sdk.system.resources.resources_base import load_resources, Resource
 from eidos_sdk.util.logger import logger
@@ -110,11 +111,7 @@ def main():
     log_level_str = "debug" if args.debug else "info"
     log_level = logging.DEBUG if args.debug else logging.INFO
 
-    _app = FastAPI(
-        lifespan=lambda app: start_os(app, load_resources(args.yaml_path), args.machine, log_level),
-    )
-    _app.add_middleware(LoggingMiddleware)
-    _app.add_middleware(SecurityMiddleware)
+    _app = start_app(lambda app: start_os(app, load_resources(args.yaml_path), args.machine, log_level))
 
     # Run the server
     uvicorn.run(
@@ -124,6 +121,14 @@ def main():
         log_level=log_level_str,
         reload=args.reload,
     )
+
+
+def start_app(lifespan):
+    _app = FastAPI(lifespan=lifespan)
+    _app.add_middleware(LoggingMiddleware)
+    _app.add_middleware(SecurityMiddleware)
+    _app.add_middleware(ContextMiddleware)
+    return _app
 
 
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
 import eidos_sdk.system.processes as processes
-from eidos_sdk.bin.agent_http_server import start_os
+from eidos_sdk.bin.agent_http_server import start_os, start_app
 from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos_sdk.memory.local_file_memory import LocalFileMemory
 from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
@@ -60,7 +60,7 @@ def app_builder(machine_manager):
                     yield
                     print("done")
 
-        return FastAPI(lifespan=manage_lifecycle)
+        return start_app(lifespan=manage_lifecycle)
 
     return fn
 
