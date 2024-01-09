@@ -10,6 +10,7 @@ from starlette.responses import JSONResponse
 
 from eidos_sdk.security.security_manager import BaseTokenProcessor
 from eidos_sdk.system.reference_model import Specable
+from eidos_sdk.system.request_context import RequestContext
 
 
 class BaseJWTMiddlewareSpec(BaseModel):
@@ -65,6 +66,8 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
             payload = jwt.decode(token, jwks, algorithms=self.get_algorithms(), audience=audience, issuer=issuer)
             request.state.payload = payload
 
+            RequestContext.set('Authorization', auth_header, propagate=True)
+            RequestContext.set('jwt', payload)
             return None
         except JWTError as e:
             return JSONResponse(status_code=401, content={"detail": str(e)})
