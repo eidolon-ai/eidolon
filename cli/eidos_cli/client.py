@@ -1,7 +1,7 @@
 import json
 import os.path
 import re
-from typing import Optional, List
+from typing import Optional, List, Dict
 from urllib.parse import urljoin
 
 import httpx
@@ -17,13 +17,14 @@ class EidolonClient:
     timeout = httpx.Timeout(5.0, read=600.0)
     agent_endpoints = None
 
-    def __init__(self):
+    def __init__(self, security_headers: Dict[str, str] = None):
+        self.security_headers = security_headers
         self.set_server_location("http://localhost:8080")
 
     def set_server_location(self, server_location: str):
         self.server_location = server_location
         with httpx.Client(timeout=self.timeout) as client:
-            openapi_json = client.get(urljoin(self.server_location, "openapi.json")).json()
+            openapi_json = client.get(urljoin(self.server_location, "openapi.json"), headers=self.security_headers).json()
 
         programs_re = "^/agents/([^/]+)/programs/([^/]+)$"
         processes_re = "^/agents/([^/]+)/processes/{process_id}/actions/([^/]+)$"
@@ -101,13 +102,13 @@ class EidolonClient:
                     request["files"] = files
             else:
                 request = {"url": urljoin(self.server_location, agent_url), "json": user_input}
-            response = client.post(**request)
+            response = client.post(**request, headers=self.security_headers)
             return response.status_code, response.json()
 
     def get_processes(self, agent_name):
         with httpx.Client(timeout=self.timeout) as client:
             processes_url = f"/agents/{agent_name}/processes"
-            processes_obj = client.get(urljoin(self.server_location, processes_url), params={"limit": 999}).json()
+            processes_obj = client.get(urljoin(self.server_location, processes_url), params={"limit": 999}, headers=self.security_headers).json()
             return processes_obj["processes"]
 
     def have_conversation(
