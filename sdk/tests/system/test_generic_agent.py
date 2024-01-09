@@ -6,6 +6,7 @@ import pytest
 from fastapi import Body
 
 from eidos_sdk.agent.agent import register_program
+from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.system.resources.resources_base import Metadata, Resource
 
 
@@ -96,12 +97,17 @@ class HelloWorld:
     async def greeter3(self, name: Annotated[List[str], Body(embed=True)]):
         return self._greet("greeter3", name=name[0], called_with=name)
 
+    @register_program()
+    async def greeter4(self):
+        self.calls["greeter4"].append(RequestContext.get('foo'))
+        return "leave me alone"
+
     def _greet(self, greeter, **kwargs):
         self.calls[greeter].append(kwargs)
         return f"Hello, {kwargs['name']}!"
 
 
-# Image model does not support tool usage, so we need to break this out into a seporate test suite
+# Image model does not support tool usage, so we need to break this out into a separate test suite
 class TestAgentsWithReferences:
     @pytest.fixture(scope="class")
     def client(self, client_builder, generic_agent_with_refs):
@@ -131,6 +137,16 @@ class TestAgentsWithReferences:
         )
         post.raise_for_status()
         assert HelloWorld.calls["greeter3"] == [{"name": "Luke", "called_with": ["Luke"]}]
+
+    def test_passes_context(self, client):
+        RequestContext.set('foo', 'bar')
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            headers=RequestContext.headers,
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter4 to greet me?"),
+        )
+        post.raise_for_status()
+        assert HelloWorld.calls["greeter4"] == ['bar']
 
 
 def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):
