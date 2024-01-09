@@ -34,9 +34,10 @@ def add_security_options():
             env_vars = [os.environ.get(v['env_var']) for k, v in args.items()]
             if len(args.keys()) == 1:
                 env_vars = env_vars[0]
+            metavars = [k + "=${" + v['env_var'] + "}" for k, v in args.items()]
             func = click.option(f"--security:{provider_name}", f"security_{provider_name}",
                                 nargs=len(args.keys()), help=provider["help"], callback=_validate_security_options,
-                                is_flag=False, flag_value=env_vars, metavar=list(args.keys()))(func)
+                                is_flag=False, flag_value=env_vars, metavar=metavars)(func)
         return func
 
     return _add_security_options
