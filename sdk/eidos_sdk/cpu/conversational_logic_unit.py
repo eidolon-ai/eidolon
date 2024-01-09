@@ -11,6 +11,7 @@ from eidos_sdk.cpu.logic_unit import LogicUnit
 from eidos_sdk.system.agent_contract import SyncStateResponse
 from eidos_sdk.system.eidos_handler import EidosHandler
 from eidos_sdk.system.reference_model import Specable
+from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.util.logger import logger
 from eidos_sdk.util.schema_to_model import schema_to_model
 
@@ -120,7 +121,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
 
 async def _agent_request(url, args):
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=RequestContext.headers) as session:
         async with session.post(url, json=args) as resp:
             return await resp.json()
 
