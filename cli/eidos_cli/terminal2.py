@@ -1,4 +1,4 @@
-from typing import Iterable, Dict, Callable
+from typing import Iterable, Dict, Callable, Optional
 
 from prompt_toolkit import PromptSession, print_formatted_text
 from prompt_toolkit.completion import NestedCompleter, CompleteEvent, Completion, WordCompleter
@@ -11,6 +11,7 @@ from pygments.token import Generic, Name, Text, String, Keyword
 from rich.console import Console
 
 from eidos_cli.client import EidolonClient
+from eidos_cli.security import OAuth2CLI
 from eidos_cli.util import VarExpandingFileHistory
 
 
@@ -66,8 +67,13 @@ class CommandValidator(Validator):
 
 
 class EidolonCLI:
-    def __init__(self):
-        self.client = EidolonClient()
+    def __init__(self, security: Optional[OAuth2CLI]):
+        if security:
+            token = security.get_token()
+            security_headers = {"Authorization": f"Bearer {token}"}
+        else:
+            security_headers = {}
+        self.client = EidolonClient(security_headers)
         endpoints = self.client.agent_endpoints
         self.endpoints_by_agent = {}
         self.programs_by_agent = {}
