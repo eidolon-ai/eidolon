@@ -46,18 +46,18 @@ class Agent(BaseModel):
                 return await _process_status_from_resp(self.machine, self.agent, resp)
 
     def process(self, process_id: str) -> Process:
-        return ProcessStatus(machine=self.machine, agent=self.agent, pid=process_id)
+        return Process(machine=self.machine, agent=self.agent, pid=process_id)
 
     @classmethod
-    def resource(cls, agent_ref: str) -> Agent:
+    def get(cls, location: str) -> Agent:
         """
         Convenience method to create Agents from dot notation. Ie: machine_loc.agent_name
         """
-        if "." in agent_ref:
-            parts = agent_ref.split()
+        if "." in location:
+            parts = location.split()
             return cls(machine=".".join(parts[:-1]), agent=parts[-1])
         else:
-            return cls(agent=agent_ref)
+            return cls(agent=location)
 
 
 class Process(BaseModel):
