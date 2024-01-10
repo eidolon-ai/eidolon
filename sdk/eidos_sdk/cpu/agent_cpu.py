@@ -89,5 +89,8 @@ class Thread:
         else:
             return await self._cpu.schedule_request(self._call_context, prompts, output_format)
 
+    def call_context(self) -> CallContext:
+        return self._call_context
+
     async def clone(self) -> Thread:
         return await self._cpu.clone_thread(self._call_context)
