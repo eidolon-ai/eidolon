@@ -14,5 +14,3 @@ class OKTAAuth(BaseJWTMiddleware):
             resp = await client.get(self.JWKS_URL)
             return resp.json()["keys"]
 
-    async def get_audience_and_issuer(self):
-        return self.AUDIENCE, self.ISSUER

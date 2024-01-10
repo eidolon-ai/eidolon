@@ -27,7 +27,7 @@ class OAuth2CLI:
         return OAuth2Session(client=client, redirect_uri=None, scope=self.scope)
 
     def get_authorization_url(self):
-        return self.oauth.authorization_url(self.authorization_base_url)
+        return self.oauth.authorization_url(self.authorization_base_url, audience=self.client_id)
 
     def fetch_token(self, authorization_response):
         return self.oauth.fetch_token(self.token_url, authorization_response=authorization_response,
@@ -45,13 +45,13 @@ class OAuth2CLI:
         oauth2_code = server.wait_for_token()
         token = self.fetch_token(oauth2_code)
 
-        return token
+        return token["access_token"]
 
 
 class GoogleOAuth2CLI(OAuth2CLI):
     def __init__(self, client_id, client_secret, scope=None):
         if scope is None:
-            scope = ["openid", "email"]
+            scope = ["openid", "profile", "email"]
         super().__init__(
             client_id=client_id,
             client_secret=client_secret,
