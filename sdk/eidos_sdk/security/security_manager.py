@@ -10,10 +10,6 @@ from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 class BaseTokenProcessor(ABC):
     @abstractmethod
-    def add_login_route(self, app: FastAPI):
-        pass
-
-    @abstractmethod
     async def dispatch(self, request: Request) -> Optional[Response]:
         pass
 
