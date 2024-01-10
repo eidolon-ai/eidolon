@@ -54,7 +54,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         if statement.speaker != self.spec.agent_name:
             t = await self.cpu.main_thread(process_id)
-            await self.cpu.memory_unit.storeMessages(t.call_context(), [UserMessage(content=UserMessageText(prompt=statement.format()))])
+            await self.cpu.memory_unit.storeMessages(t.call_context(), [UserMessage(content=[UserMessageText(text=statement.format())])])
 
         return AgentState(name="idle", data="...recorded...")
 
@@ -66,7 +66,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         t = await self.cpu.main_thread(process_id)
         existing_messages = await self.cpu.memory_unit.getConversationHistory(t.call_context())
         if not isinstance(existing_messages[-1], UserMessage):
-            await self.cpu.memory_unit.storeMessages(t.call_context(), [UserMessage(content=UserMessageText(text="Interesting...continue"))])
+            await self.cpu.memory_unit.storeMessages(t.call_context(), [UserMessage(content=[UserMessageText(text="Interesting...continue")])])
 
         response = await t.schedule_request(prompts=[])
 

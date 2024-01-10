@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from eidos_sdk.util.aiohttp import ContextualClientSession
 
-_default_machine = os.environ.get("EIDOS_LOCAL_MACHINE", "localhost:8080")
+_default_machine = os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
 
 
 async def _process_status_from_resp(machine: str, agent: str, resp: ClientResponse) -> ProcessStatus:
@@ -46,7 +46,7 @@ class Agent(BaseModel):
                 return await _process_status_from_resp(self.machine, self.agent, resp)
 
     def process(self, process_id: str) -> Process:
-        return Process(machine=self.machine, agent=self.agent, pid=process_id)
+        return Process(machine=self.machine, agent=self.agent, process_id=process_id)
 
     @classmethod
     def get(cls, location: str) -> Agent:
