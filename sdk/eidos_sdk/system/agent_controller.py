@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.params import Body, Param
 from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
-from pydantic_core import PydanticUndefined, to_json, to_jsonable_python
+from pydantic_core import PydanticUndefined, to_jsonable_python
 from starlette.responses import JSONResponse
 
 from eidos_sdk.agent.agent import AgentState
