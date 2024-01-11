@@ -29,7 +29,7 @@ class Statement(BaseModel):
     def format(self, agent_name: str):
         speaker = self.speaker
         if self.speaker == agent_name:
-            speaker = f"<your inner voice>"
+            speaker = "<your inner voice>"
         return f"{speaker} (mood:{self.mood()}): {self.text}\n\n"
 
 

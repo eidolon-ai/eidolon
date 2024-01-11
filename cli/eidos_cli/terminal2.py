@@ -1,4 +1,4 @@
-from typing import Iterable, Dict, Callable, Optional, List
+from typing import Iterable, Dict, Callable, Optional
 
 from prompt_toolkit import PromptSession, print_formatted_text
 from prompt_toolkit.completion import NestedCompleter, CompleteEvent, Completion, WordCompleter
