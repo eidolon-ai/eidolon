@@ -6,10 +6,10 @@ from fastapi import Body
 from pydantic import BaseModel
 
 from eidos_sdk.agent.agent import register_program, register_action
+from eidos_sdk.agent.client import ProcessStatus
 from eidos_sdk.cpu.conversational_logic_unit import (
     ConversationalLogicUnit,
     ConversationalSpec,
-    ConversationalResponse,
 )
 from eidos_sdk.cpu.llm_message import ToolResponseMessage
 
@@ -43,27 +43,20 @@ class Bar:
 
 
 @pytest.fixture(scope="module")
-def open_api_json(client_builder):
-    with client_builder(Foo, Bar) as client:
-        yield client.get("/openapi.json").json()
-
-
-@pytest.fixture
-def conversational_logic_unit(open_api_json):
+def conversational_logic_unit(client_builder):
     @contextmanager
     def fn(*agents):
         unit = ConversationalLogicUnit(
             spec=ConversationalSpec(
-                location="http://localhost:8080",
                 tool_prefix="convo",
                 agents=[a.__name__ for a in agents],
             ),
             processing_unit_locator=None,
         )
-        unit.set_openapi_json(open_api_json)
         yield unit
 
-    return fn
+    with client_builder(Foo, Bar):
+        yield fn
 
 
 @pytest.mark.asyncio
@@ -81,8 +74,8 @@ async def test_builds_tools_from_other_messages(conversational_logic_unit):
                 ToolResponseMessage(
                     name="convo_Foo_program_init",
                     tool_call_id="1234",
-                    result=ConversationalResponse(
-                        program="Foo",
+                    result=ProcessStatus(
+                        agent="Foo",
                         process_id="pid",
                         state="idle",
                         data="foo",
