@@ -3,12 +3,11 @@ from __future__ import annotations
 import inspect
 import logging
 import typing
-from inspect import Parameter
-
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.params import Body, Param
+from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
-from pydantic_core import PydanticUndefined
+from pydantic_core import PydanticUndefined, to_json, to_jsonable_python
 from starlette.responses import JSONResponse
 
 from eidos_sdk.agent.agent import AgentState
@@ -16,7 +15,6 @@ from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
-from eidos_sdk.util.json_util import model_to_json
 from eidos_sdk.util.logger import logger
 
 
@@ -122,10 +120,10 @@ class AgentController:
                     response = await handler.fn(self.agent, **kwargs)
                     if isinstance(response, AgentState):
                         state = response.name
-                        data = model_to_json(response.data)
+                        data = to_jsonable_python(response.data)
                     else:
                         state = "terminated"
-                        data = model_to_json(response)
+                        data = to_jsonable_python(response)
                     doc = await process.update(
                         state=state,
                         data=data,

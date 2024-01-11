@@ -5,9 +5,10 @@ from typing import Optional, List, Dict
 from urllib.parse import urljoin
 
 import httpx
-from prompt_toolkit import PromptSession
+import markdown
+from prompt_toolkit import PromptSession, print_formatted_text, HTML
+from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
-from rich.markdown import Markdown
 
 from eidos_cli.schema import Schema, AgentEndpoint
 
@@ -122,18 +123,26 @@ class EidolonClient:
     ):
         session = PromptSession()
         while True:
+            skip_prompt = False
             if isinstance(actions, str):
-                action = actions
-                agent = self.get_client(agent_name, action, start_of_conversation)
-            else:
+                agent = self.get_client(agent_name, actions, start_of_conversation)
+                skip_prompt = True
+            elif len(actions) == 1:
+                agent = self.get_client(agent_name, actions[0], start_of_conversation)
+                if len(agent.schema.schema["properties"]) != 0:
+                    skip_prompt = True
+
+            if not skip_prompt:
                 action = ""
                 valid_input = False
                 if len(actions) == 1:
                     default = actions[0]
                 else:
-                    default = None
+                    default = ""
                 while not valid_input:
+                    session.completer = WordCompleter(actions)
                     action = session.prompt(f"action [{','.join(actions)}]: ", default=default)
+                    session.completer = None
                     if action in actions:
                         valid_input = True
                     else:
@@ -157,8 +166,8 @@ class EidolonClient:
                     console.print_json(json.dumps(response["data"]))
                 else:
                     if show_markdown:
-                        md = Markdown(response["data"])
-                        console.print(md)
+                        html = markdown.markdown(response["data"].strip())
+                        print_formatted_text(HTML(html))
                     else:
                         console.print(response["data"])
 
