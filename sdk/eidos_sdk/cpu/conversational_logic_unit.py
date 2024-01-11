@@ -1,7 +1,6 @@
 import json
 from typing import List, Any, Dict
 
-import jsonref as jsonref
 from pydantic import BaseModel, ValidationError
 
 from eidos_sdk.agent.client import Machine, ProcessStatus, Agent, Process
