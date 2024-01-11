@@ -1,5 +1,4 @@
 import json
-from functools import cache
 from typing import List, Any, Dict
 
 import jsonref as jsonref
@@ -84,10 +83,12 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
         return tools
 
     def _build_tool_def(self, name, endpoint_schema, tool_call):
+        description = self._description(endpoint_schema, name)
+        model = self._body_model(endpoint_schema, name)
         return EidosHandler(
             name=name,
-            description=lambda a, b: self._description(endpoint_schema, name),
-            input_model_fn=lambda a, b: self._body_model(endpoint_schema, name),
+            description=lambda a, b: description,
+            input_model_fn=lambda a, b: model,
             output_model_fn=lambda a, b: Any,
             fn=tool_call,
             extra={},

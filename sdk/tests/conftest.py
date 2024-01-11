@@ -2,7 +2,7 @@ import os
 import pathlib
 from contextlib import asynccontextmanager, contextmanager
 from typing import Iterable
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 from bson import ObjectId
@@ -21,7 +21,6 @@ from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
 from eidos_sdk.system.reference_model import Reference
-from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.system.resources.agent_resource import AgentResource
 from eidos_sdk.system.resources.machine_resource import MachineResource
 from eidos_sdk.system.resources.resources_base import Resource, Metadata

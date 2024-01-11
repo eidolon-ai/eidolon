@@ -10,7 +10,6 @@ from eidos_sdk.agent.client import ProcessStatus
 from eidos_sdk.cpu.conversational_logic_unit import (
     ConversationalLogicUnit,
     ConversationalSpec,
-    ConversationalResponse,
 )
 from eidos_sdk.cpu.llm_message import ToolResponseMessage
 
