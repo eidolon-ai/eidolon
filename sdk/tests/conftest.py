@@ -2,7 +2,7 @@ import os
 import pathlib
 from contextlib import asynccontextmanager, contextmanager
 from typing import Iterable
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
 from bson import ObjectId
@@ -21,6 +21,7 @@ from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidos_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
 from eidos_sdk.system.reference_model import Reference
+from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.system.resources.agent_resource import AgentResource
 from eidos_sdk.system.resources.machine_resource import MachineResource
 from eidos_sdk.system.resources.resources_base import Resource, Metadata
@@ -82,17 +83,17 @@ def client_builder(app_builder):
         app = app_builder(resources)
 
         def make_request(method):
-            async def _fn(url, args=None):
+            async def _fn(url, json=None):
                 async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as _client:
-                    return (await _client.request(method, url, json=args)).json()
+                    return (await _client.request(method, url, json=json)).json()
 
             return _fn
 
-        with TestClient(app) as client, patch(
-            "eidos_sdk.cpu.conversational_logic_unit._agent_request"
-        ) as _agent_request, patch("eidos_sdk.cpu.conversational_logic_unit._get_openapi_schema") as _get_openapi_schema:
-            _agent_request.side_effect = make_request("POST")
-            _get_openapi_schema.side_effect = make_request("GET")
+        client_get = "eidos_sdk.agent.client._get"
+        client_post = "eidos_sdk.agent.client._post"
+        with TestClient(app) as client, patch(client_get) as _get, patch(client_post) as _post:
+            _post.side_effect = make_request("POST")
+            _get.side_effect = make_request("GET")
             yield client
 
     return fn

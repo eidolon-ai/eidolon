@@ -6,6 +6,7 @@ from fastapi import Body
 from pydantic import BaseModel
 
 from eidos_sdk.agent.agent import register_program, register_action
+from eidos_sdk.agent.client import ProcessStatus
 from eidos_sdk.cpu.conversational_logic_unit import (
     ConversationalLogicUnit,
     ConversationalSpec,
@@ -74,8 +75,8 @@ async def test_builds_tools_from_other_messages(conversational_logic_unit):
                 ToolResponseMessage(
                     name="convo_Foo_program_init",
                     tool_call_id="1234",
-                    result=ConversationalResponse(
-                        program="Foo",
+                    result=ProcessStatus(
+                        agent="Foo",
                         process_id="pid",
                         state="idle",
                         data="foo",
