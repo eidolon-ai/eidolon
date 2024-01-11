@@ -183,7 +183,7 @@ class EidolonCLI:
         user_agent, user_program = endpoint.strip().split()
         agent = self.client.get_client(user_agent, user_program, is_program=True)
         process_id = None
-        self.client.have_conversation(agent.agent_name, [agent.program], process_id, self.console, True, self.markdown)
+        self.client.have_conversation(agent.agent_name, agent.program, process_id, self.console, True, self.markdown)
 
     def do_resume(self, command: str):
         """Resume a process with an agent"""

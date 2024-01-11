@@ -114,7 +114,7 @@ class EidolonClient:
     def have_conversation(
             self,
             agent_name,
-            actions: List[str],
+            actions: str | List[str],
             process_id,
             console: Console,
             start_of_conversation: bool,
@@ -122,21 +122,23 @@ class EidolonClient:
     ):
         session = PromptSession()
         while True:
-            if len(actions) > 1:
+            if isinstance(actions, str):
+                action = actions
+                agent = self.get_client(agent_name, action, start_of_conversation)
+            else:
                 action = ""
                 valid_input = False
+                if len(actions) == 1:
+                    default = actions[0]
+                else:
+                    default = None
                 while not valid_input:
-                    action = session.prompt(f"action [{','.join(actions)}]: ")
+                    action = session.prompt(f"action [{','.join(actions)}]: ", default=default)
                     if action in actions:
                         valid_input = True
                     else:
                         console.print("Invalid action")
                 agent = self.get_client(agent_name, action, start_of_conversation)
-            elif len(actions) == 1:
-                action = actions[0]
-                agent = self.get_client(agent_name, action, start_of_conversation)
-            else:
-                raise Exception("No actions available")
 
             agentSession = PromptSession()
             user_input = agent.schema.await_input(agentSession)
