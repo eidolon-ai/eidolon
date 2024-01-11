@@ -5,30 +5,19 @@ from typing import List, Any
 from urllib.parse import urljoin
 
 import jsonref
-from aiohttp import ClientResponse
 from pydantic import BaseModel
 
 from eidos_sdk.util.aiohttp import ContextualClientSession
 
 _default_machine = os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
 
-
-async def _process_status_from_resp(machine: str, agent: str, resp: ClientResponse) -> ProcessStatus:
-    resp.raise_for_status()
-    json_ = await resp.json()
-    return ProcessStatus(machine=machine, agent=agent, **json_)
-
-
 class Machine(BaseModel):
     machine: str = _default_machine
 
     async def get_schema(self) -> dict:
         url = urljoin(self.machine, "openapi.json")
-        async with ContextualClientSession() as session:
-            async with session.get(url) as resp:
-                resp.raise_for_status()
-                json_ = await resp.json()
-                return jsonref.replace_refs(json_)
+        json_ = await _get(url)
+        return jsonref.replace_refs(json_)
 
     def agent(self, agent_name: str) -> Agent:
         return Agent(machine=self.machine, agent=agent_name)
@@ -41,9 +30,8 @@ class Agent(BaseModel):
     async def program(self, program_name: str, body: dict | BaseModel) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
         body = body.model_dump() if isinstance(body, BaseModel) else body
-        async with ContextualClientSession() as session:
-            async with session.post(url, json=body) as resp:
-                return await _process_status_from_resp(self.machine, self.agent, resp)
+        json_ = await _post(url, body)
+        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def process(self, process_id: str) -> Process:
         return Process(machine=self.machine, agent=self.agent, process_id=process_id)
@@ -68,18 +56,32 @@ class Process(BaseModel):
     async def action(self, action_name: str, body: dict | BaseModel) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/actions/{action_name}")
         body = body.model_dump() if isinstance(body, BaseModel) else body
-        async with ContextualClientSession() as session:
-            async with session.post(url, json=body) as resp:
-                return await _process_status_from_resp(self.machine, self.agent, resp)
+        json_ = await _post(url, body)
+        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     async def status(self) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/status")
-        async with ContextualClientSession() as session:
-            async with session.get(url) as resp:
-                return await _process_status_from_resp(self.machine, self.agent, resp)
+        json_ = await _get(url)
+        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
 
 class ProcessStatus(Process):
     state: str
     available_actions: List[str]
     data: Any
+
+
+#  _get and _post are separated to be easily mocked by tests
+
+async def _get(url):
+    async with ContextualClientSession() as session:
+        async with session.get(url) as resp:
+            resp.raise_for_status()
+            return await resp.json()
+
+
+async def _post(url, json):
+    async with ContextualClientSession() as session:
+        async with session.post(url, json=json) as resp:
+            resp.raise_for_status()
+            return await resp.json()

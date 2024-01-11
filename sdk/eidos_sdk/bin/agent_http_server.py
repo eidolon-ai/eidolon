@@ -85,7 +85,6 @@ async def start_os(app, resource_generator, machine_name, log_level=logging.INFO
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        logger = logging.getLogger("eidolon")
         logger.info(f"Request: {request.method} {request.url}")
         try:
             response = await call_next(request)
