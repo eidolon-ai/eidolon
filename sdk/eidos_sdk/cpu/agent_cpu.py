@@ -20,12 +20,7 @@ class AgentCPUSpec(BaseModel):
 
 class AgentCPU(Specable[AgentCPUSpec], ABC):
     @abstractmethod
-    async def set_boot_messages(
-            self,
-            call_context: CallContext,
-            boot_messages: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]],
-    ):
+    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         pass
 
     @abstractmethod
@@ -62,6 +57,7 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
 
 T = TypeVar("T", bound=type)
 
+
 class Thread:
     _call_context: CallContext
     _cpu: AgentCPU
@@ -73,26 +69,25 @@ class Thread:
     async def set_boot_messages(
             self,
             prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ):
-        return await self._cpu.set_boot_messages(self._call_context, list(prompts), output_format)
+        return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
-    async def schedule_request(
+    async def schedule_request_with_model(
             self,
             prompts: List[CPUMessageTypes],
-            output_format: T = str,
-    ) -> T:
-        if get_origin(output_format) == list:
-            class Wrapper(BaseModel):
-                items: output_format
-
-            rtn = await self.schedule_request(prompts, Wrapper)
-            return rtn.items
-
+            output_format: type,
+    ) -> Any:
         model = TypeAdapter(output_format)
         schema = model.json_schema()
         rtn = await self._cpu.schedule_request(self._call_context, prompts, schema)
         return model.validate_python(rtn)
+
+    async def schedule_request(
+            self,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+    ) -> Any:
+        return await self._cpu.schedule_request(self._call_context, prompts, output_format)
 
     def call_context(self) -> CallContext:
         return self._call_context

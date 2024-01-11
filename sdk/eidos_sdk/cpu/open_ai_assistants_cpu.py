@@ -104,12 +104,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
 
         return assistant, thread.id
 
-    async def set_boot_messages(
-        self,
-        call_context: CallContext,
-        boot_messages: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
-    ):
+    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         # separate out the system messages from the user messages
         system_message: str = ""
         user_messages = []
@@ -123,12 +118,6 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                 file_ids.append(await self.processFile(message))
             else:
                 raise ValueError(f"Unknown message type {message.type}")
-
-        if not isinstance(output_format, str):
-            system_message += (
-                f"\nYour response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}."
-            )
-            system_message += "\nALWAYS reply with json in the following format:\njson```<insert json here>```\n"
 
         assistant, thread_id = await self.get_or_create_assistant(call_context, system_message, file_ids)
         llm = self._getLLM()
@@ -151,6 +140,12 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                 file_ids.append(await self.processFile(message))
             else:
                 raise ValueError(f"Unknown message type {message.type}")
+        if not output_format == "str":
+            schema_message = (
+                f"\nYour response MUST be valid JSON satisfying the following schema:\n{json.dumps(output_format)}."
+            )
+            schema_message += "\nALWAYS reply with json in the following format:\njson```<insert json here>```\n"
+            user_messages.append(schema_message)
 
         assistant, thread_id = await self.get_or_create_assistant(call_context)
         llm = self._getLLM()

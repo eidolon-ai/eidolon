@@ -147,7 +147,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             self.llm = AsyncOpenAI()
         messages = [convert_to_openai(message) for message in inMessages]
 
-        if not isinstance(output_format, str):
+        if not (isinstance(output_format, str) or output_format == "str"):
             force_json_msg = (
                 f"Your response MUST be valid JSON satisfying the following JSON schema:\n{json.dumps(output_format)}"
             )

@@ -137,7 +137,8 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             else:
                 color = "red"
 
-            output += f"**{agent_name}**({agent_response.mood()}){agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
+            output += f"**{agent_name}**💭💭💭: <span color='gray'>{agent_response.inner_dialog}</span>\n\n"
+            output += f"**{agent_name}**{agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
 
             for agent_name, _ in conversation_state.agent_pids:
                 await AgentOS.symbolic_memory.upsert_one("conversation_coordinator_messages",

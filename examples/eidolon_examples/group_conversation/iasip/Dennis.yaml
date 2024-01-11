@@ -1,7 +1,7 @@
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
-  name: Bob
+  name: Dennis
 
 spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent

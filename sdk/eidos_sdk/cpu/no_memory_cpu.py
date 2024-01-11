@@ -40,12 +40,7 @@ class NoMemoryCPU(AgentCPU, Specable[NoMemoryCPUSpec], ProcessingUnitLocator):
 
         raise ValueError(f"Could not locate {unit_type}")
 
-    async def set_boot_messages(
-        self,
-        call_context: CallContext,
-        boot_messages: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
-    ):
+    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         raise NotImplementedError("NoMemoryCPU does not support boot messages")
 
     async def schedule_request(
