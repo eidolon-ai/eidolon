@@ -43,27 +43,20 @@ class Bar:
 
 
 @pytest.fixture(scope="module")
-def open_api_json(client_builder):
-    with client_builder(Foo, Bar) as client:
-        yield client.get("/openapi.json").json()
-
-
-@pytest.fixture
-def conversational_logic_unit(open_api_json):
+def conversational_logic_unit(client_builder):
     @contextmanager
     def fn(*agents):
         unit = ConversationalLogicUnit(
             spec=ConversationalSpec(
-                location="http://localhost:8080",
                 tool_prefix="convo",
                 agents=[a.__name__ for a in agents],
             ),
             processing_unit_locator=None,
         )
-        unit.set_openapi_json(open_api_json)
         yield unit
 
-    return fn
+    with client_builder(Foo, Bar):
+        yield fn
 
 
 @pytest.mark.asyncio

@@ -5,6 +5,7 @@ from urllib.parse import urljoin
 import jsonref as jsonref
 from pydantic import BaseModel, ValidationError
 
+from eidos_sdk.agent.client import Machine, ProcessStatus
 from eidos_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
 from eidos_sdk.cpu.logic_unit import LogicUnit
 from eidos_sdk.system.agent_contract import SyncStateResponse
@@ -20,25 +21,25 @@ class ConversationalResponse(SyncStateResponse):
 
 
 class ConversationalSpec(BaseModel):
-    location: str = "http://localhost:8080"
+    location: str = "localhost:8080"
     tool_prefix: str = "convo"
     agents: List[str]
 
 
 class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
     _openapi_json: Optional[dict]
+    _machine: Machine
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
+        self._machine = Machine(machine=self.spec.location)
         self._openapi_json = None
-
-    def set_openapi_json(self, openapi_json):
-        self._openapi_json = jsonref.replace_refs(openapi_json)
 
     async def build_tools(self, conversation: List[LLMMessage]) -> List[EidosHandler]:
         if not self._openapi_json:
-            self.set_openapi_json(await _get_openapi_schema(urljoin(self.spec.location, "openapi.json")))
+            schema = await self._machine.get_schema()
+            self._openapi_json = jsonref.replace_refs(schema)
 
         tools = []
 
@@ -46,66 +47,80 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
             prefix = f"/agents/{agent}/programs/"
             for path in filter(lambda p: p.startswith(prefix), self._openapi_json["paths"].keys()):
                 try:
-                    action = path.removeprefix(prefix)
-                    name = self._name(agent, action=action)
-                    tools.append(await self._build_tool_def(name, path, agent))
+                    program = path.removeprefix(prefix)
+                    name = self._name(agent, action=program)
+                    tool = self._build_tool_def(name, path, self._program_tool(agent, program))
+                    tools.append(tool)
                 except ValueError:
                     logger.warning(f"unable to build tool {path}", exc_info=True)
 
         # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
         allowed_agent_prefix = tuple(self._name(agent) for agent in self.spec.agents)
-        processes = {}
+        processes: List[ProcessStatus] = []
         for message in conversation:
             if isinstance(message, ToolResponseMessage) and message.name.startswith(allowed_agent_prefix):
                 try:
-                    last = ConversationalResponse.model_validate(json.loads(message.result))
-                    processes[last.process_id] = last
+                    processes.append(ProcessStatus.model_validate(json.loads(message.result)))
                 except ValidationError:
-                    logger.warning("unable to parse conversation response", exc_info=True)
+                    logger.warning("unable to parse conversation response, skipping", exc_info=True)
 
         # newer process state should override older process state if there are multiple calls
         for action, response in ((a, r) for r in processes.values() for a in r.available_actions):
             path = f"/agents/{response.program}/processes/{{process_id}}/actions/{action}"
             try:
-                name = self._name(response.program, action, response.process_id)
-                tools.append(await self._build_tool_def(name, path, response.program, process_id=response.process_id))
+                name = self._name(response.agent, action=program)
+                tool = self._build_tool_def(name, path, self._program_tool(agent, program))
+                tools.append(tool)
             except ValueError:
                 logger.warning(f"unable to build tool {path}", exc_info=True)
 
         return tools
 
-    async def _build_tool_def(self, name, path, agent_program, process_id="") -> EidosHandler:
-        path = path.format(process_id="{process_id}")
-        body = self._openapi_json["paths"][path]["post"].get("requestBody")
-        if body and "application/json" not in body["content"]:
-            raise ValueError(f"Agent action at {path} does not support application/json")
-        json_schema = body["content"]["application/json"]["schema"] if body else dict(type="object", properties={})
-        description = self._openapi_json["paths"][path]["post"].get("description", "")
-        if not description:
-            self.logger.warning(f"Agent action at {path} does not have a description. LLM may not use it properly")
+    def _build_tool_def(self, name, path, tool_call):
         return EidosHandler(
             name=name,
-            description=lambda a, b: description,
-            input_model_fn=lambda a, b: schema_to_model(
-                dict(type="object", properties=dict(body=json_schema)),
-                name + "Input",
-            ),
+            description=lambda a, b: self._description(path),
+            input_model_fn=lambda a, b: self._body_model(path),
             output_model_fn=lambda a, b: Any,
-            fn=self._make_tool_fn(
-                path=path.replace("{process_id}", process_id),
-                agent_program=agent_program,
-            ),
+            fn=tool_call,
             extra={},
         )
 
+    def _body_model(self, path):
+        body = self._openapi_json["paths"][path]["post"]['requestBody']
+        if body and "application/json" not in body["content"]:
+            raise ValueError(f"Agent action at {path} does not support application/json")
+        json_schema = body["content"]["application/json"]["schema"] if body else dict(type="object", properties={})
+        return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+
+    def _description(self, path):
+        description = self._openapi_json["paths"][path]["post"].get("description", "")
+        if not description:
+            self.logger.warning(f"Agent program at {path} does not have a description. LLM may not use it properly")
+        return description
+
     # needs to be under 64 characters
-    def _name(self, agent_program, action="", process_id=""):
-        agent_program = agent_program[:15]
+    def _name(self, agent, action="", process_id=""):
+        agent = agent[:15]
         process_id = process_id[:25]
         process_id = "_" + process_id if process_id else ""
         action = action[:15]
         action = "_" + action if action else ""
-        return self.spec.tool_prefix + "_" + agent_program + process_id + action
+        return self.spec.tool_prefix + "_" + agent + process_id + action
+
+    def _program_tool(self, agent, program):
+        return self._tool_call(lambda body: self._machine.agent(agent).program(program, body))
+
+    def _process_tool(self, agent, process_id, action):
+        return self._tool_call(lambda body: self._machine.agent(agent).process(process_id).action(action, body))
+
+    @staticmethod
+    def _tool_call(fn):
+        async def _fn(_self, body):
+            resp = await fn(body)
+            return resp.model_dump()
+
+        return _fn
 
     def _make_tool_fn(self, path, agent_program):
         async def fn(_self, body):
