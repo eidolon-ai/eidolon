@@ -95,7 +95,7 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
 
     @staticmethod
     def _body_model(endpoint_schema, name):
-        body = endpoint_schema.get('requestBody')
+        body = endpoint_schema.get("requestBody")
         if body and "application/json" not in body["content"]:
             raise ValueError(f"Agent action at {name} does not support application/json")
         json_schema = body["content"]["application/json"]["schema"] if body else dict(type="object", properties={})

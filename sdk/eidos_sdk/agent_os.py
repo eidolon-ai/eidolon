@@ -20,14 +20,15 @@ class AgentOS:
     def _get_or_load_resources(cls) -> Dict[str, Dict[str, Tuple[Resource, str]]]:
         if cls._resources is ...:
             from eidos_sdk.builtins.code_builtins import named_builtins
+
             cls._resources = {}
             for resource in named_builtins():
                 cls.register_resource(resource, source="builtin")
             for resource in load_resources(pathlib.Path(__file__).parent / "builtins" / "resources"):
                 cls.register_resource(resource, source="builtin")
-        
+
         return cls._resources
-    
+
     @classmethod
     def load_machine(cls, machine):
         cls.file_memory = machine.memory.file_memory

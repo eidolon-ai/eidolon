@@ -69,38 +69,29 @@ def named_builtins():
 
     builtin_list = [
         AgentMachine,
-
         # security manager
         (SecurityManager, SecurityManager),
         SecurityManager,
-
         # agents
         GenericAgent,
         TreeOfThoughtsAgent,
-
         # cpu
         (AgentCPU, ConversationalAgentCPU),
         ConversationalAgentCPU,
         NoMemoryCPU,
-
         # cpu components
         IOUnit,
-
         (LLMUnit, OpenAIGPT),
         OpenAIGPT,
-
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
         SummarizationMemoryUnit,
-
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
         MongoSymbolicMemory,
         LocalSymbolicMemory,
-
         (FileMemory, LocalFileMemory),
         LocalFileMemory,
-
         SimilarityMemory,
         (Embedding, NoopEmbedding),
         NoopEmbedding,
@@ -109,26 +100,19 @@ def named_builtins():
         NoopVectorStore,
         FileSystemVectorStore,
         ChromaVectorStore,
-
         # sub components
         (DocumentParser, AutoParser),
         AutoParser,
-
         (DocumentTransformer, AutoTransformer),
         AutoTransformer,
-
         (ThoughtGenerationStrategy, ProposePromptStrategy),
         ProposePromptStrategy,
-
         (QuestionTransformer, MultiQuestionTransformer),
         MultiQuestionTransformer,
-
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
-
         (DocumentLoader, FilesystemLoader),
         FilesystemLoader,
-
         ToTChecker,
         OpenAiSpeech,
         MessageSummarizer,

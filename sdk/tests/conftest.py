@@ -53,9 +53,9 @@ def app_builder(machine_manager):
         async def manage_lifecycle(_app: FastAPI):
             async with machine_manager() as _machine:
                 async with start_os(
-                        app=_app,
-                        resource_generator=[_machine, *resources] if _machine else resources,
-                        machine_name=_machine.metadata.name,
+                    app=_app,
+                    resource_generator=[_machine, *resources] if _machine else resources,
+                    machine_name=_machine.metadata.name,
                 ):
                     yield
                     print("done")

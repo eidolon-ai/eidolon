@@ -84,8 +84,8 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
 
     required = schema.get("required", [])
     for property_name, property_schema in schema.get("properties", {}).items():
-        if 'allOf' in property_schema and len(property_schema['allOf']) == 1:
-            property_schema.update(property_schema.pop('allOf')[0])
+        if "allOf" in property_schema and len(property_schema["allOf"]) == 1:
+            property_schema.update(property_schema.pop("allOf")[0])
 
         def makeFieldOrDefaultValue():
             description = property_schema.get("description")

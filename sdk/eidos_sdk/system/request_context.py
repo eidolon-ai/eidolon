@@ -9,7 +9,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from eidos_sdk.util.logger import logger
 
-_request_context = ContextVar('request_context')
+_request_context = ContextVar("request_context")
 
 
 class _Record(BaseModel):
@@ -41,7 +41,7 @@ class _RequestContextMeta(type):
         logger.debug(f"setting context {key}={value}, propagate={propagate}")
 
         if propagate and not isinstance(value, str):
-            raise ValueError('can only propagate string values')
+            raise ValueError("can only propagate string values")
         if "," in key:
             raise ValueError("key cannot contain commas")
         _get_context()[key] = _Record(key=key, value=value, propagate=propagate)
@@ -53,7 +53,7 @@ class _RequestContextMeta(type):
     def headers(self):
         to_propagate = {v.key: v.value for v in _get_context().values() if v.propagate}
         if to_propagate:
-            to_propagate['X-Eidos-Context'] = ",".join(f"{k}" for k in to_propagate.keys())
+            to_propagate["X-Eidos-Context"] = ",".join(f"{k}" for k in to_propagate.keys())
         return to_propagate
 
 
@@ -63,9 +63,9 @@ class RequestContext(metaclass=_RequestContextMeta):
 
 class ContextMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        context_headers = request.headers.get('X-Eidos-Context', '') or []
+        context_headers = request.headers.get("X-Eidos-Context", "") or []
         if context_headers:
-            context_headers = context_headers.split(',')
+            context_headers = context_headers.split(",")
         for header in context_headers:
             try:
                 RequestContext.set(header, request.headers[header], propagate=True)

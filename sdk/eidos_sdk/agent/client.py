@@ -11,6 +11,7 @@ from eidos_sdk.util.aiohttp import ContextualClientSession
 
 _default_machine = os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
 
+
 class Machine(BaseModel):
     machine: str = _default_machine
 
@@ -72,6 +73,7 @@ class ProcessStatus(Process):
 
 
 #  _get and _post are separated to be easily mocked by tests
+
 
 async def _get(url):
     async with ContextualClientSession() as session:
