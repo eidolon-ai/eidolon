@@ -72,20 +72,20 @@ class Thread:
     ):
         return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
-    async def schedule_request_with_model(
-        self,
-        prompts: List[CPUMessageTypes],
-        output_format: type,
-    ) -> Any:
+    async def schedule_request(
+            self,
+            prompts: List[CPUMessageTypes],
+            output_format: T,
+    ) -> T:
         model = TypeAdapter(output_format)
         schema = model.json_schema()
         rtn = await self._cpu.schedule_request(self._call_context, prompts, schema)
         return model.validate_python(rtn)
 
-    async def schedule_request(
-        self,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+    async def schedule_request_raw(
+            self,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> Any:
         return await self._cpu.schedule_request(self._call_context, prompts, output_format)
 

@@ -109,7 +109,7 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
             if file:
                 image_messages.append(ImageCPUMessage(image=file.file, prompt=file.filename))
 
-        response = await t.schedule_request(
+        response = await t.schedule_request_raw(
             prompts=[
                 UserTextCPUMessage(prompt=(env.from_string(self.spec.user_prompt).render(**body))),
                 *image_messages,
@@ -121,5 +121,5 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
     @register_action("idle")
     async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[Any]:
         t = await self.cpu.main_thread(process_id)
-        response = await t.schedule_request([UserTextCPUMessage(prompt=statement)], self.spec.output_schema)
+        response = await t.schedule_request_raw([UserTextCPUMessage(prompt=statement)], self.spec.output_schema)
         return AgentState(name="idle", data=response)

@@ -127,12 +127,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
             return AgentState(name="idle", data=(ThoughtResult(desire_to_speak=1)))
         else:
             prompt = f"moderator: You are not speaking right now. Respond with ONLY your desire to speak.\n\n{statement.format(self.spec.agent_name)}"
-            return AgentState(
-                name="idle",
-                data=await t.schedule_request_with_model(
-                    prompts=[UserTextCPUMessage(prompt=prompt)], output_format=ThoughtResult
-                ),
-            )
+            return AgentState(name="idle", data=await t.schedule_request(prompts=[UserTextCPUMessage(prompt=prompt)], output_format=ThoughtResult))
 
     @register_action("idle")
     async def speak(self, process_id) -> AgentState[SpeakResult]:
@@ -141,7 +136,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         message = UserTextCPUMessage(prompt="moderator: It is your turn to speak\n")
         t = await self.cpu.main_thread(process_id)
-        resp = await t.schedule_request_with_model(prompts=[message], output_format=SpeakResult)
+        resp = await t.schedule_request(prompts=[message], output_format=SpeakResult)
         resp.desire_to_speak = 0
         return AgentState(name="idle", data=resp)
 
@@ -165,5 +160,5 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
 
         message = UserTextCPUMessage(prompt=f"{self.spec.agent_name}: {instructions}\n")
         t = await self.cpu.main_thread(process_id)
-        resp = await t.schedule_request_with_model(prompts=[message], output_format=List[CharacterThought])
+        resp = await t.schedule_request(prompts=[message], output_format=List[CharacterThought])
         return AgentState(name="idle", data=resp)
