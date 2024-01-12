@@ -31,7 +31,9 @@ class InnerMonologue(BaseModel):
 
 class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
     @register_program()
-    async def start_conversation(self, process_id, topic: Annotated[str, Body(description="The topic of the new conversation", embed=True)]) -> AgentState[str]:
+    async def start_conversation(
+        self, process_id, topic: Annotated[str, Body(description="The topic of the new conversation", embed=True)]
+    ) -> AgentState[str]:
         """
         Called to start the conversation. Every user will get a turn in each turn of the conversation.
         """
@@ -41,27 +43,42 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             response = await Machine().agent(agent).program("start_conversation", {"topic": topic})
             agent_pid = response.process_id
             agent_pids.append((agent, agent_pid))
-            await AgentOS.symbolic_memory.insert_one("conversation_coordinator_messages",
-                                                     {"process_id": process_id, "agent_name": agent, "desire_to_speak": 0.5})
+            await AgentOS.symbolic_memory.insert_one(
+                "conversation_coordinator_messages",
+                {"process_id": process_id, "agent_name": agent, "desire_to_speak": 0.5},
+            )
 
         # record the pids of the agents with our process_id in memory
-        await AgentOS.symbolic_memory.insert_one("conversation_coordinator", ConversationState(process_id=process_id, agent_pids=agent_pids, topic=topic).model_dump())
+        await AgentOS.symbolic_memory.insert_one(
+            "conversation_coordinator",
+            ConversationState(process_id=process_id, agent_pids=agent_pids, topic=topic).model_dump(),
+        )
 
         return AgentState(name="idle", data="Agents started. Waiting for first turn...")
 
     @register_action("idle")
-    async def add_inner_monologue(self, process_id, monologue: Annotated[InnerMonologue, Body(description="The thought to add", embed=True)]) -> AgentState[str]:
+    async def add_inner_monologue(
+        self, process_id, monologue: Annotated[InnerMonologue, Body(description="The thought to add", embed=True)]
+    ) -> AgentState[str]:
         result = await AgentOS.symbolic_memory.find_one("conversation_coordinator", {"process_id": process_id})
         conversation_state = ConversationState.model_validate(result)
         for agent_name, state_agent_pid in conversation_state.agent_pids:
             if agent_name == monologue.agent_name:
-                thought_response = await Machine().agent(agent_name).process(state_agent_pid).action(
-                    "record_statement", {"statement": {"speaker": agent_name, "text": monologue.statement, "voice_level": 0.5}}
+                thought_response = (
+                    await Machine()
+                    .agent(agent_name)
+                    .process(state_agent_pid)
+                    .action(
+                        "record_statement",
+                        {"statement": {"speaker": agent_name, "text": monologue.statement, "voice_level": 0.5}},
+                    )
                 )
                 thought = ThoughtResult.model_validate(thought_response.data)
-                await AgentOS.symbolic_memory.upsert_one("conversation_coordinator_messages",
-                                                         {"desire_to_speak": thought.desire_to_speak},
-                                                         {"process_id": process_id, "agent_name": agent_name})
+                await AgentOS.symbolic_memory.upsert_one(
+                    "conversation_coordinator_messages",
+                    {"desire_to_speak": thought.desire_to_speak},
+                    {"process_id": process_id, "agent_name": agent_name},
+                )
 
         return AgentState(name="idle", data="Thought recorded")
 
@@ -73,7 +90,12 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         thoughts = {}
         acc = []
         for agent_name, state_agent_pid in conversation_state.agent_pids:
-            acc.append(Machine().agent(agent_name).process(state_agent_pid).action("describe_thoughts", {"people": all_characters}))
+            acc.append(
+                Machine()
+                .agent(agent_name)
+                .process(state_agent_pid)
+                .action("describe_thoughts", {"people": all_characters})
+            )
 
         results = await asyncio.gather(*acc)
         for agent_name, result in zip(all_characters, results):
@@ -83,7 +105,9 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         return AgentState(name="idle", data=thoughts)
 
     @register_action("idle")
-    async def next_turn(self, process_id, num_turns: Annotated[int, Body(description="The number of turns to take", embed=True)]) -> AgentState[str]:
+    async def next_turn(
+        self, process_id, num_turns: Annotated[int, Body(description="The number of turns to take", embed=True)]
+    ) -> AgentState[str]:
         """
         Called to start the next turn of the conversation.
         """
@@ -107,8 +131,14 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
                 }
 
         async def record_single(state_agent_name, state_agent_pid, speaker, statement, volume_level):
-            thought_response = await Machine().agent(state_agent_name).process(state_agent_pid).action(
-                "record_statement", {"statement": {"speaker": speaker, "text": statement, "voice_level": volume_level}}
+            thought_response = (
+                await Machine()
+                .agent(state_agent_name)
+                .process(state_agent_pid)
+                .action(
+                    "record_statement",
+                    {"statement": {"speaker": speaker, "text": statement, "voice_level": volume_level}},
+                )
             )
             thought = ThoughtResult.model_validate(thought_response.data)
             agent_responses[state_agent_name]["desire_to_speak"] = thought.desire_to_speak
@@ -122,7 +152,10 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
 
         output = ""
         for _ in range(num_turns):
-            weighted_agents = [((agent_name, agent_pid), agent_responses[agent_name]["desire_to_speak"]) for agent_name, agent_pid in conversation_state.agent_pids]
+            weighted_agents = [
+                ((agent_name, agent_pid), agent_responses[agent_name]["desire_to_speak"])
+                for agent_name, agent_pid in conversation_state.agent_pids
+            ]
             agent_name, agent_pid = self.weighted_random_choice(weighted_agents)
             response = await Machine().agent(agent_name).process(agent_pid).action("speak", {})
             agent_response = SpeakResult.model_validate(response.data)
@@ -138,12 +171,16 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
                 color = "red"
 
             output += f"**{agent_name}**💭💭💭: <span color='gray'>{agent_response.inner_dialog}</span>\n\n"
-            output += f"**{agent_name}**{agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
+            output += (
+                f"**{agent_name}**{agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
+            )
 
             for agent_name, _ in conversation_state.agent_pids:
-                await AgentOS.symbolic_memory.upsert_one("conversation_coordinator_messages",
-                                                         {"desire_to_speak": agent_responses[agent_name]["desire_to_speak"]},
-                                                         {"process_id": process_id, "agent_name": agent_name})
+                await AgentOS.symbolic_memory.upsert_one(
+                    "conversation_coordinator_messages",
+                    {"desire_to_speak": agent_responses[agent_name]["desire_to_speak"]},
+                    {"process_id": process_id, "agent_name": agent_name},
+                )
 
         return AgentState(name="idle", data=output)
 

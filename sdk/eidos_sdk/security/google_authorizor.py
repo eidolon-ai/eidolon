@@ -9,9 +9,17 @@ from eidos_sdk.system.reference_model import Specable
 
 
 class GoogleJWTMiddlewareSpec(BaseModel):
-    jwks_url: str = Field("https://www.googleapis.com/oauth2/v3/certs", description="The URL to fetch the JWKS from. Defaults to https://www.googleapis.com/oauth2/v3/certs")
-    audience: str = Field(os.environ.get("GOOGLE_CLIENT_ID"), description="Your google client ID. Defaults to the environment variable GOOGLE_CLIENT_ID")
-    issuer: str = Field(default="accounts.google.com", description="The issuer of the JWT. Defaults to accounts.google.com")
+    jwks_url: str = Field(
+        "https://www.googleapis.com/oauth2/v3/certs",
+        description="The URL to fetch the JWKS from. Defaults to https://www.googleapis.com/oauth2/v3/certs",
+    )
+    audience: str = Field(
+        os.environ.get("GOOGLE_CLIENT_ID"),
+        description="Your google client ID. Defaults to the environment variable GOOGLE_CLIENT_ID",
+    )
+    issuer: str = Field(
+        default="accounts.google.com", description="The issuer of the JWT. Defaults to accounts.google.com"
+    )
 
 
 class GoogleJWTMiddleware(BaseJWTMiddleware, Specable[GoogleJWTMiddlewareSpec]):

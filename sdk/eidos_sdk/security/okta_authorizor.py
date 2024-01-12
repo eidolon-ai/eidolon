@@ -13,4 +13,3 @@ class OKTAAuth(BaseJWTMiddleware):
         async with httpx.AsyncClient() as client:
             resp = await client.get(self.JWKS_URL)
             return resp.json()["keys"]
-

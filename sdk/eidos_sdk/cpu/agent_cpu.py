@@ -25,10 +25,10 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
 
     @abstractmethod
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> Any:
         pass
 
@@ -67,15 +67,15 @@ class Thread:
         self._cpu = cpu
 
     async def set_boot_messages(
-            self,
-            prompts: List[CPUMessageTypes],
+        self,
+        prompts: List[CPUMessageTypes],
     ):
         return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
     async def schedule_request_with_model(
-            self,
-            prompts: List[CPUMessageTypes],
-            output_format: type,
+        self,
+        prompts: List[CPUMessageTypes],
+        output_format: type,
     ) -> Any:
         model = TypeAdapter(output_format)
         schema = model.json_schema()
@@ -83,9 +83,9 @@ class Thread:
         return model.validate_python(rtn)
 
     async def schedule_request(
-            self,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+        self,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> Any:
         return await self._cpu.schedule_request(self._call_context, prompts, output_format)
 

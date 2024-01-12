@@ -96,7 +96,6 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 
 class SecurityMiddleware(BaseHTTPMiddleware):
-
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         resp = await AgentOS.security_manager.authorization_processor.dispatch(request)
         if not resp:

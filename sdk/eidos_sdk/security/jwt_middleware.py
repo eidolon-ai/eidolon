@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from fastapi import Request, Response, FastAPI
 from authlib.jose import jwt, JoseError
+
 # noinspection PyPackageRequirements
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
@@ -36,7 +37,7 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
 
     async def process_token(self, token: str) -> Optional[Any]:
         jwks = await self.get_signing_keys()
-        return  jwt.decode(token, jwks)
+        return jwt.decode(token, jwks)
 
     async def dispatch(self, request: Request) -> Optional[Response]:
         auth_header = request.headers.get("Authorization")
@@ -47,8 +48,8 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
 
         try:
             userInfo = await self.process_token(token)
-            RequestContext.set('Authorization', auth_header, propagate=True)
-            RequestContext.set('jwt', userInfo)
+            RequestContext.set("Authorization", auth_header, propagate=True)
+            RequestContext.set("jwt", userInfo)
 
         except JoseError as e:
             print(e)
