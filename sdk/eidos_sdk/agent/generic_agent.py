@@ -96,10 +96,10 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         files = kwargs.get("file", [])
         if not isinstance(files, list):
             files = [files]
+
         env = Environment(undefined=StrictUndefined)
         t = await self.cpu.main_thread(process_id)
         await t.set_boot_messages(
-            output_format=self.spec.output_schema,
             prompts=[SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**body)))],
         )
 

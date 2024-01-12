@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union
+from typing import Any, List, Dict, Literal, Union, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, TypeAdapter
 
 from eidos_sdk.cpu.agent_io import CPUMessageTypes
 from eidos_sdk.cpu.call_context import CallContext
@@ -20,20 +20,15 @@ class AgentCPUSpec(BaseModel):
 
 class AgentCPU(Specable[AgentCPUSpec], ABC):
     @abstractmethod
-    async def set_boot_messages(
-        self,
-        call_context: CallContext,
-        boot_messages: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
-    ):
+    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         pass
 
     @abstractmethod
     async def schedule_request(
-        self,
-        call_context: CallContext,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            call_context: CallContext,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> Any:
         pass
 
@@ -60,6 +55,9 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
         pass
 
 
+T = TypeVar("T", bound=type)
+
+
 class Thread:
     _call_context: CallContext
     _cpu: AgentCPU
@@ -69,25 +67,30 @@ class Thread:
         self._cpu = cpu
 
     async def set_boot_messages(
-        self,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+            self,
+            prompts: List[CPUMessageTypes],
     ):
-        return await self._cpu.set_boot_messages(self._call_context, list(prompts), output_format)
+        return await self._cpu.set_boot_messages(self._call_context, list(prompts))
+
+    async def schedule_request_with_model(
+            self,
+            prompts: List[CPUMessageTypes],
+            output_format: type,
+    ) -> Any:
+        model = TypeAdapter(output_format)
+        schema = model.json_schema()
+        rtn = await self._cpu.schedule_request(self._call_context, prompts, schema)
+        return model.validate_python(rtn)
 
     async def schedule_request(
-        self,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any], type] = "str",
+            self,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> Any:
-        if isinstance(output_format, type):
-            if issubclass(output_format, BaseModel):
-                rtn = await self._cpu.schedule_request(self._call_context, prompts, output_format.model_json_schema())
-                return output_format.model_validate(rtn)
-            else:
-                raise ValueError("type output_format must be a pydantic BaseModel")
-        else:
-            return await self._cpu.schedule_request(self._call_context, prompts, output_format)
+        return await self._cpu.schedule_request(self._call_context, prompts, output_format)
+
+    def call_context(self) -> CallContext:
+        return self._call_context
 
     async def clone(self) -> Thread:
         return await self._cpu.clone_thread(self._call_context)

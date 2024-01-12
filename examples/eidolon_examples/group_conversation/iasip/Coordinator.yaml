@@ -1,0 +1,13 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: Coordinator
+
+spec:
+  implementation: eidolon_examples.group_conversation.conversation_coordinator.ConversationCoordinator
+  agents:
+    - Charlie
+    - Dee
+    - Dennis
+    - Frank
+    - Mac

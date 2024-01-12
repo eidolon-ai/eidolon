@@ -5,9 +5,10 @@ from typing import Optional, List, Dict
 from urllib.parse import urljoin
 
 import httpx
-from prompt_toolkit import PromptSession
+import markdown
+from prompt_toolkit import PromptSession, print_formatted_text, HTML
+from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
-from rich.markdown import Markdown
 
 from eidos_cli.schema import Schema, AgentEndpoint
 
@@ -114,7 +115,7 @@ class EidolonClient:
     def have_conversation(
             self,
             agent_name,
-            actions: List[str],
+            actions: str | List[str],
             process_id,
             console: Console,
             start_of_conversation: bool,
@@ -122,21 +123,31 @@ class EidolonClient:
     ):
         session = PromptSession()
         while True:
-            if len(actions) > 1:
+            skip_prompt = False
+            if isinstance(actions, str):
+                agent = self.get_client(agent_name, actions, start_of_conversation)
+                skip_prompt = True
+            elif len(actions) == 1:
+                agent = self.get_client(agent_name, actions[0], start_of_conversation)
+                if len(agent.schema.schema["properties"]) != 0:
+                    skip_prompt = True
+
+            if not skip_prompt:
                 action = ""
                 valid_input = False
+                if len(actions) == 1:
+                    default = actions[0]
+                else:
+                    default = ""
                 while not valid_input:
-                    action = session.prompt(f"action [{','.join(actions)}]: ")
+                    session.completer = WordCompleter(actions)
+                    action = session.prompt(f"action [{','.join(actions)}]: ", default=default)
+                    session.completer = None
                     if action in actions:
                         valid_input = True
                     else:
                         console.print("Invalid action")
                 agent = self.get_client(agent_name, action, start_of_conversation)
-            elif len(actions) == 1:
-                action = actions[0]
-                agent = self.get_client(agent_name, action, start_of_conversation)
-            else:
-                raise Exception("No actions available")
 
             agentSession = PromptSession()
             user_input = agent.schema.await_input(agentSession)
@@ -155,8 +166,8 @@ class EidolonClient:
                     console.print_json(json.dumps(response["data"]))
                 else:
                     if show_markdown:
-                        md = Markdown(response["data"])
-                        console.print(md)
+                        html = markdown.markdown(response["data"].strip())
+                        print_formatted_text(HTML(html))
                     else:
                         console.print(response["data"])
 

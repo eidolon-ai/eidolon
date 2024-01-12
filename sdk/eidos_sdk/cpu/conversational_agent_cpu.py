@@ -48,12 +48,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
 
         raise ValueError(f"Could not locate {unit_type}")
 
-    async def set_boot_messages(
-        self,
-        call_context: CallContext,
-        boot_messages: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
-    ):
+    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         conversation_messages = await self.io_unit.process_request(boot_messages)
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
@@ -61,9 +56,8 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         self,
         call_context: CallContext,
         prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> Any:
-        output_format = output_format or dict(type="str")
         try:
             conversation_messages = await self.io_unit.process_request(prompts)
             conversation = await self.memory_unit.storeAndFetch(call_context, conversation_messages)

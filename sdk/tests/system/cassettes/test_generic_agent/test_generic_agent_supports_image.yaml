@@ -148,4 +148,155 @@ interactions:
       - 30794c7269fc9b26047c663e27562693
     http_version: HTTP/1.1
     status_code: 200
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        eyJtZXNzYWdlcyI6IFt7InJvbGUiOiAic3lzdGVtIiwgImNvbnRlbnQiOiAiWW91IGFyZSBhIG1h
+        Y2hpbmUgd2hpY2ggZm9sbG93cyBpbnN0cnVjdGlvbnMgYW5kIHJldHVybnMgYSBzdW1tYXJ5IG9m
+        IHlvdXIgYWN0aW9ucy5cblxuWW91ciByZXNwb25zZSBNVVNUIGJlIHZhbGlkIEpTT04gc2F0aXNm
+        eWluZyB0aGUgZm9sbG93aW5nIEpTT04gc2NoZW1hOlxue1widHlwZVwiOiBcInN0cmluZ1wifVxu
+        VGhlIHJlc3BvbnNlIHdpbGwgYmUgd3JhcHBlZCBpbiBhIGpzb24gc2VjdGlvbiBqc29uYGBgey4u
+        Ln1gYGBcblJlbWVtYmVyIHRvIHVzZSBkb3VibGUgcXVvdGVzIGZvciBzdHJpbmdzIGFuZCBwcm9w
+        ZXJ0aWVzLiJ9LCB7InJvbGUiOiAidXNlciIsICJjb250ZW50IjogW3sidHlwZSI6ICJ0ZXh0Iiwg
+        InRleHQiOiAiV2hhdCBpcyBpbiB0aGlzIGltYWdlPyJ9LCB7InR5cGUiOiAiaW1hZ2VfdXJsIiwg
+        ImltYWdlX3VybCI6IHsidXJsIjogImRhdGE6aW1hZ2UvanBlZztiYXNlNjQsaVZCT1J3MEtHZ29B
+        QUFBTlNVaEVVZ0FBQUVBQUFBQkFDQVlBQUFDcWFYSGVBQUFIQVVsRVFWUjRuTzJhYjJnYjV4M0hQ
+        L0p5dVVseXJGVUlLN0kwdlZBcnVYWVlObXVOb2FtM0R0eUZrRGQ5RWJhMmd6S2F2Tm1iTXJMMXpR
+        WjlNOWliUVJoanNEZHQzbTJGTEM5Q29KU3lrTGh4azVHNURIa2pkbU9sUnpINk13VWhxR1piMDQ3
+        NjlrSjZIdDJkei9hZHBDUTJ1dzhJNjNTWDU1N3Y3OS96ZSs0Q1BqNCtQajQrUGo0K1BqNCtQajQr
+        UGo0K1BqNCtQdjgzQko3MEJIckVBRkFWQllDV3JrT1BXb1lHTnFYSFN3RGF3cFd1QXFPWGdRNkxB
+        UXo3UjNoZjM0WmhWV0ZZVlRnU0dESUFvL1BYRlljbEJZeFRzOU03ZnZ5c29IRTBHR2I5WVkzMGFJ
+        eEtyVVkwSEdTOTNoQ1g3S3Z2c0VSQTRLTzdlWDc3NWpsZWVXWVM2SXJQcE9La1IyTUFSTU5CNXFm
+        R3lTWVRIQWtNeVlodytIUUhmcXd5K3NmSUpoTmNlK2NYL1BUU2UzeFcwSGcybXdFZ0dWS1lHY3R5
+        Y2VFbTMxUzJ1UEhGbHd5cjdUU0pob1BVTjV2ODU3OWY4ZldqWDJPajFTMmFoeVVDTEN6Yytpc0FS
+        NE5oQUxSaWxldkw5L25KSC85RW9WVGg5WC8rRFdnTFQ4Uml6RStOQS9ER1M4K2hiOE9SUUZmMm9Z
+        dUFONzgzUTJsTGR6eVpEQ25ValFhbmtzOXg5Y0VLV3JFcXo1M0lqaEFOakhENVR0NFNBVWNleDZ6
+        N3dOUFMxalpNa0tWeUFZQzVYQXFBdXRHZzJReHlPVzhWRHdmWEFBYTBsN2VUMHlkNDVabEpsc29G
+        RnRlS3Uzb2ZrQVZ5cVZ4Z3RhQ3hDdFEzbS9LOFhmeU9nd09DOFljZnZRN0F4WVdiUU5lVGdEUkFN
+        cVRzT3NEaVdsRitielUzNWZmTzhuaWdEV0FJcjR1cWZ2WEJpa1dzVXdTSTg2VXRIYTFZSlpPS2N6
+        dC9UM2pjem9FMWdKRk5KdVNCOEhwcFM5OWhBTFBnWkVoaGNhMUlKaFdYMTlqRTc2bnhJQ3lEQmgz
+        UEM5Rm1NWHVoRmF0U3ZLajRXckc2bStjZGVkSVJZR1NUQ1V1T3cwNnY3M1pPcElNUVg2blZBRng3
+        SDU1Y0JPend1cG5kY2w1OEwyM3BPNHBoSmhVbkVZdVpoM0hsM0VleERPNjdkb3NXOWVUMENWY0Q3
+        dFg0bUtuVWFwN0NId1puQUNsYVZSU1VvWFliS3FqK3V5bDNhNGxZekRISFo4YXlBTEtKRVNSRHln
+        NERpRXAvZmZrK0U5a01yZVlteVpCQ0loYWpVS3A0bW5pL05VQTJMTkZ3RUxXek8zT0w4T0J1NHMz
+        c0ZnV3JCWTJKem9aSUsxYUZBVnpyNmprQ1ZFVXhsQ0hrbWcxZElkQVc0elowemNJWDE0cU9kVUVy
+        VnBuTHBTeHIvV3BCWTM1cVhLNEVvZ2g2b1ZjREdQRmpRU2F5R1l1WXZUeTRHMEtRNk5qVXpnN1BD
+        WE9IWjZaU3F6R1hTem0ydXZ2UlN3b1lxcUtRSG8wNWVrcmcxdnZtNjFjTG1qd1dXMWc3d3R0Mjcz
+        ZWFIODk2dkM2RGhxb294SThGOTgzMVpFaXhpTFVmT3lGeTJieUJBV3RxQVpadGJxVldJeGxTUEZk
+        L2dSY0RkQ3Y5SG1GcXg0MXdNL2F4aFhqeE41T0t5M1JaWEN1aWI4UGxPM25YNDl2eEZBSHA2QWpL
+        a1B0VzFTMTdiWEh0YU1XcWpKRDFoNWJPNzVHK0Z6RFMwUkhQZ3pzSnMvOW1Qelp2WDUzK2JhdTVp
+        YjdkN2kyZ3Y1Y2k0Q0VDMXVzTkpySVpvdUdnSlFmZFltNWZ6YjhKdEdKVmV0ZmNSSmxYRnJQM29Y
+        L3g0R0VaRk8wcmRMMGtOaVo3TlRMMkRjdGNMc1gxNWZzeTE4MmRtL2tlZHBiS0JkWWYxbWpwdW53
+        bE5namNHTUJJUjBkUWcyRzBZcFgxZWdOVlVWQTd6WWdac3lHRThOdjVlL0w4eWVrVGxMYjB6cE9a
+        QmpZQ0d5M2RVQlZGaHJmZzZvTVZidWZ2MGRKMWFhUis4dDZNcXhTWXlHYVl5NldrdHpxaEozSHl2
+        RmFzV3NUcjI3RHc5M3ZpdDREREJ5RFEwdHRyK2FXYlM3THhXUzFvOGhVWTBQT1M1NFFyQTlnMkpB
+        Rm9WMkNuV2lBZVhvcU5UeUlXcytTMG04a0xJd2ptcDhhbDBVMWpEZVJaeG40R01JVFZiV0lETFYx
+        bi9XSE4wcDZhSTBIc3pTdTFXczhWMjc0aW1BMDVLSVFCbk42YkdRQS9lR0Vhd0tudGxVSktXenBY
+        SDZ4WVRwbzNKeTFkRjE3MTVMWFJwN2I1Um1hVU44Ni96UE5QRDZOL0ZlRDdzOGU5RExFdndnQUJr
+        UC9oUUQ2dEdWYTdvWC9wNXBLOFRsd1RQMmIxeU14WVZsNy8wZDA4MFhDd0g2OEZQdjE4ZzBhNXdM
+        VWJ5MHpueGdBWUdjdVNpRVRFSFBwbXh5cVFUU2JJcE9JeTc1TWhSWWdYR09ub0NQTlQ0MXhmdmk4
+        alkyWXN5OXRYL3N4R3ExMnAwOUVSNnB2TnZxdDFmcTNNTkczaGxTL1hBSGp0N0l0Y2ZPK0RYb2Uw
+        WUorWUFlMldWdzJHbWN1bHpPS2w5eXQvK1QwQXQvNVJKbjRjVHYzNE43SklEYXNLK2paeXZiWVhO
+        SThZQUJmT25RR1FvbTNIZlJWRGV4RnNWL2g2ZzBLcFlnNTd5MDIrZmZhWDh2dlAzL2tkTFYwbkVZ
+        bVFpRVI0TnFYeXJiUUt5S0xuK0Y3ZUpaYjdDdUdEcEMvdkpDSVJ6cnpRYm9iZS9iQWRub2xJaE5m
+        T3ZraWpYT0NETzFWNTNuU04xM3NhNTAvbkdPazBXYmNXUHViVHp6ZTRjTzRNalhLaDF6RWxBM2tt
+        K1B6VHczem5wZS9LSDhYRXpCTVg5QkMyeHZuVE9WNmVQMHU4c3dCVS93VS8vTm12QjVJSy9iNFhr
+        RGVkblp6aTdWZFA4LzZWVC9qVmhiZUF0c2R2TFh6TTdPUVU3MS81aE5uSnFaN3U4ZTZIYThTUHc3
+        VWJ5d0RjWFZudWM5cW13UWMwanRmODlwd0dqMkJNQVA0SExDUkZCMTR5dENvQUFBQUFTVVZPUks1
+        Q1lJST0ifX1dfV0sICJtb2RlbCI6ICJncHQtNC12aXNpb24tcHJldmlldyIsICJtYXhfdG9rZW5z
+        IjogNDA5NiwgInRlbXBlcmF0dXJlIjogMC4zfQ==
+      - 0
+      - null
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      content-length:
+      - '3049'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - AsyncOpenAI/Python 1.7.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 1.7.0
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.6
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    content: '{"id": "chatcmpl-8fxejmJxJ34wkhj0Z0yvQ8tuBHHpk", "object": "chat.completion",
+      "created": 1705011457, "model": "gpt-4-1106-vision-preview", "usage": {"prompt_tokens":
+      330, "completion_tokens": 36, "total_tokens": 366}, "choices": [{"message":
+      {"role": "assistant", "content": "```json\n\"The image contains a small, pixelated
+      depiction of a brown animal that appears to be a dog. It is standing in a profile
+      view facing to the right.\"\n```"}, "finish_reason": "stop", "index": 0}]}'
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 844087e7f9026173-ORD
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 11 Jan 2024 22:17:38 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=xllTxewbOzUZZH3AoIE4MviVw7bpZvph.2dGrKyn3Q0-1705011458-1-AaqQ3dZB9Ejwd6dyLPeAqgCkWKXN1ZLsX2p1Pg7jRmws9atrhnBjDJYC2WoKcOHPzRed4BT2g3B2xnBOIVtgT7s=;
+        path=/; expires=Thu, 11-Jan-24 22:47:38 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=_jxTCBK.2xEuL7ucgdBDzRviWkFewAEd07fJxIO6jDo-1705011458917-0-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      alt-svc:
+      - h3=":443"; ma=86400
+      openai-model:
+      - gpt-4-1106-vision-preview
+      openai-organization:
+      - august-data
+      openai-processing-ms:
+      - '1570'
+      openai-version:
+      - '2020-10-01'
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-ratelimit-limit-requests:
+      - '1500'
+      x-ratelimit-limit-tokens:
+      - '40000'
+      x-ratelimit-remaining-requests:
+      - '1497'
+      x-ratelimit-remaining-tokens:
+      - '35822'
+      x-ratelimit-reset-requests:
+      - 2m31.865s
+      x-ratelimit-reset-tokens:
+      - 6.267s
+      x-request-id:
+      - 0a869d6e451d12eb71e4b9d112bb3ae3
+    http_version: HTTP/1.1
+    status_code: 200
 version: 1

@@ -179,11 +179,18 @@ class EidolonCLI:
             self.console.print(agent.schema)
 
     def do_start(self, endpoint: str):
-        user_agent, user_program = endpoint.strip().split()
         """Start a process with an agent"""
+        user_agent, user_program = endpoint.strip().split()
         agent = self.client.get_client(user_agent, user_program, is_program=True)
         process_id = None
-        self.client.have_conversation(agent.agent_name, [agent.program], process_id, self.console, True, self.markdown)
+        self.client.have_conversation(agent.agent_name, agent.program, process_id, self.console, True, self.markdown)
+
+    def do_resume(self, command: str):
+        """Resume a process with an agent"""
+        agent, process_id = command.strip().split()
+        process_info = self.client.get_processes(agent)
+        actions = [process["available_actions"] for process in process_info if process["process_id"] == process_id][0]
+        self.client.have_conversation(agent, actions, process_id, self.console, False, self.markdown)
 
     def main(self):
         session = PromptSession(completer=self.completer, complete_while_typing=True, validator=CommandValidator(self.validators),
@@ -205,6 +212,8 @@ class EidolonCLI:
                     self.do_info(text[5:].strip())
                 elif text.startswith('start'):
                     self.do_start(text[6:].strip())
+                elif text.startswith('resume'):
+                    self.do_resume(text[7:].strip())
                 else:
                     print('You entered:', text)
         print('GoodBye!')
