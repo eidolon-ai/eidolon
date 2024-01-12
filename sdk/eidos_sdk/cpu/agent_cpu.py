@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union, TypeVar
+from typing import Any, List, Dict, Literal, Union, TypeVar, get_origin
 
 from pydantic import BaseModel, Field, TypeAdapter
 
@@ -77,6 +77,13 @@ class Thread:
             prompts: List[CPUMessageTypes],
             output_format: T,
     ) -> T:
+        if get_origin(output_format) == list:
+            class Wrapper(BaseModel):
+                items: output_format
+
+            rtn = await self.schedule_request(prompts, Wrapper)
+            return rtn.items
+
         model = TypeAdapter(output_format)
         schema = model.json_schema()
         rtn = await self._cpu.schedule_request(self._call_context, prompts, schema)

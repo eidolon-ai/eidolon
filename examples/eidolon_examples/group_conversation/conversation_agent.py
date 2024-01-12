@@ -5,7 +5,6 @@ from typing import Annotated, List
 from eidos_sdk.agent.agent import AgentState, register_program, register_action
 from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
-from eidos_sdk.cpu.llm_message import AssistantMessage
 from eidos_sdk.system.reference_model import Reference, Specable
 
 
@@ -31,6 +30,13 @@ class Statement(BaseModel):
         if self.speaker == agent_name:
             speaker = "<your inner voice>"
         return f"{speaker} (mood:{self.mood()}): {self.text}\n\n"
+
+
+class StatementsForAgent(BaseModel):
+    statements: List[Statement]
+
+    def format(self, agent_name: str):
+        return "\n".join([statement.format(agent_name) for statement in self.statements if statement.speaker != agent_name])
 
 
 class ThoughtResult(BaseModel):
@@ -110,24 +116,15 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
 
     @register_action("idle")
     async def record_statement(
-        self, process_id, statement: Annotated[Statement, Body(embed=True)]
+        self, process_id, statements: Annotated[StatementsForAgent, Body(embed=True)]
     ) -> AgentState[ThoughtResult]:
         """
         Called to record a statement from another agent. Will return a new state dictating what the agent wants to do next.
         Also called to add to your inner monologue.
         """
         t = await self.cpu.main_thread(process_id)
-        if statement.speaker == self.spec.agent_name:
-            # record the statement as your inner monologue
-            prompt = (
-                f"moderator: You are recording a new thought for yourself. "
-                f"Keep this though internal but use it to change the conversation or your perception of someone else. Thought:\n{statement.text}"
-            )
-            await self.cpu.memory_unit.storeMessages(t.call_context(), [AssistantMessage(content=prompt, tool_calls=[])])
-            return AgentState(name="idle", data=(ThoughtResult(desire_to_speak=1)))
-        else:
-            prompt = f"moderator: You are not speaking right now. Respond with ONLY your desire to speak.\n\n{statement.format(self.spec.agent_name)}"
-            return AgentState(name="idle", data=await t.schedule_request(prompts=[UserTextCPUMessage(prompt=prompt)], output_format=ThoughtResult))
+        prompt = f"moderator: Following are statements for other characters. You are not speaking right now. Respond with ONLY your desire to speak.\n\n{statements.format(self.spec.agent_name)}"
+        return AgentState(name="idle", data=await t.schedule_request(prompts=[UserTextCPUMessage(prompt=prompt)], output_format=ThoughtResult))
 
     @register_action("idle")
     async def speak(self, process_id) -> AgentState[SpeakResult]:
