@@ -64,7 +64,7 @@ class ObjInput:
                     validator = RequiredValidator(is_required, validator)
 
                     return session.prompt(message, validator=validator, multiline=multiline, key_bindings=key_bindings,
-                                          bottom_toolbar=bottom_toolbar, default=default, completer=completer)
+                                          bottom_toolbar=bottom_toolbar, default=str(default), completer=completer)
 
                 if v.get("type") == "object":
                     if not required:
