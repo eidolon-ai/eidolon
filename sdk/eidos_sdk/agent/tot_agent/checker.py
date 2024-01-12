@@ -53,7 +53,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
         )
 
         thread = await self.cpu.new_thread(process_id)
-        resp = await thread.schedule_request(
+        resp = await thread.schedule_request_raw(
             prompts=[UserTextCPUMessage(prompt=checker_prompt)],
             output_format=ThoughtValidity.model_json_schema(),
         )
