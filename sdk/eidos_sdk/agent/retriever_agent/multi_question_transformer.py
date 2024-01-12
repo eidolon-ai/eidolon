@@ -38,7 +38,7 @@ class MultiQuestionTransformer(QuestionTransformer, Specable[MultiQuestionTransf
         userPrompt = env.from_string(self.spec.prompt).render(
             question=question, number_to_generate=self.spec.number_to_generate
         )
-        response = await thread.schedule_request(
+        response = await thread.schedule_request_raw(
             prompts=[UserTextCPUMessage(prompt=userPrompt)], output_format=QuestionList.model_json_schema()
         )
 
