@@ -77,6 +77,7 @@ class NoMemoryCPU(AgentCPU, Specable[NoMemoryCPUSpec], ProcessingUnitLocator):
                     tool_def = tool_defs[tool_call.name]
                     tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
                     message = ToolResponseMessage(
+                        logic_unit_name=tool_def.logic_unit.__class__.__name__,
                         tool_call_id=tool_call.tool_call_id,
                         result=self._to_json(tool_result),
                         name=tool_call.name,

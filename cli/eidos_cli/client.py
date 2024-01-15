@@ -162,14 +162,14 @@ class EidolonClient:
                 # console.print(f"{str(response)}")
                 start_of_conversation = False
 
-                if isinstance(response["data"], dict):
-                    console.print_json(json.dumps(response["data"]))
-                else:
+                if isinstance(response["data"], str):
                     if show_markdown:
                         html = markdown.markdown(response["data"].strip())
                         print_formatted_text(HTML(html))
                     else:
                         console.print(response["data"])
+                else:
+                    console.print_json(json.dumps(response["data"]))
 
                 if response["state"] == "terminated":
                     break

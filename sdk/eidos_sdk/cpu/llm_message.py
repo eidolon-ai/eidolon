@@ -61,9 +61,10 @@ class AssistantMessage(LLMMessage):
 
 class ToolResponseMessage(LLMMessage):
     type: str = "tool"
+    logic_unit_name: str
     name: str
     tool_call_id: str
-    result: str
+    result: Any
 
 
 LLMMessageTypes = SystemMessage | UserMessage | AssistantMessage | ToolResponseMessage

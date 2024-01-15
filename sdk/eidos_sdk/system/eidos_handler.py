@@ -14,7 +14,7 @@ class EidosHandler:
     fn: callable
     description: typing.Callable[[object, EidosHandler], str]
     input_model_fn: typing.Callable[[object, EidosHandler], typing.Type[BaseModel]]
-    output_model_fn: typing.Callable[[object, EidosHandler], typing.Any]
+    output_model_fn: typing.Callable[[object, EidosHandler], type]
     extra: dict
 
 
@@ -66,6 +66,8 @@ def get_input_model(_obj, handler: EidosHandler) -> typing.Type[BaseModel]:
             if getattr(sig[param].default, "__name__", None) != "_empty":
                 field.default = sig[param].default
             fields[param] = (hint.__origin__, field)
+        elif isinstance(sig[param].default, FieldInfo):
+            fields[param] = (hint, sig[param].default)
         else:
             # _empty default isn't being handled by create_model properly (still optional when it should be required)
             field = (

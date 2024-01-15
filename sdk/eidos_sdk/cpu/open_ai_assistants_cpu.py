@@ -228,6 +228,7 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                     result_as_json_str = self._to_json(tool_result)
                     message = ToolOutput(tool_call_id=tool_call_id, output=result_as_json_str)
                     message_to_store = ToolResponseMessage(
+                        logic_unit_name=tool_def.logic_unit.__class__.__name__,
                         tool_call_id=tool_call_id,
                         result=result_as_json_str,
                         name=function_call.name,

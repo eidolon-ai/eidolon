@@ -15,6 +15,7 @@ from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
+from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.util.logger import logger
 
 
@@ -104,6 +105,7 @@ class AgentController:
                 if not process:
                     raise HTTPException(status_code=404, detail="Process not found")
                 if process.state not in handler.extra["allowed_states"]:
+                    logger.warn(f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}")
                     raise HTTPException(
                         status_code=409,
                         detail=f'Action "{handler.name}" cannot process state "{process.state}"',
@@ -111,6 +113,7 @@ class AgentController:
                 process = await process.update(
                     agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
                 )
+            RequestContext.set("process_id", process_id)
 
             async def run_and_store_response():
                 try:
