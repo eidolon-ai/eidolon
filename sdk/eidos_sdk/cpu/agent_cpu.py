@@ -77,13 +77,6 @@ class Thread:
             prompts: List[CPUMessageTypes],
             output_format: Type[T],
     ) -> T:
-        if get_origin(output_format) == list:
-            class Wrapper(BaseModel):
-                items: output_format
-
-            rtn = await self.schedule_request(prompts, Wrapper)
-            return rtn.items
-
         model = TypeAdapter(output_format)
         schema = model.json_schema()
         rtn = await self._cpu.schedule_request(self._call_context, prompts, schema)
