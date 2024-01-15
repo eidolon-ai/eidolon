@@ -1,33 +1,26 @@
-import json
+from abc import ABC
+from pydantic import BaseModel, ValidationError
 from typing import List, Any, Dict
 
-from pydantic import BaseModel, ValidationError
-
 from eidos_sdk.agent.client import Machine, ProcessStatus, Agent, Process
-from eidos_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
+from eidos_sdk.cpu.llm_message import ToolResponseMessage
 from eidos_sdk.cpu.logic_unit import LogicUnit
-from eidos_sdk.system.agent_contract import SyncStateResponse
 from eidos_sdk.system.eidos_handler import EidosHandler
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
 from eidos_sdk.util.schema_to_model import schema_to_model
 
 
-class ConversationalResponse(SyncStateResponse):
-    program: str
-
-
-class ConversationalSpec(BaseModel):
+class AgentsLogicUnitSpec(BaseModel):
     tool_prefix: str = "convo"
     agents: List[str]
 
 
-class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
+class BaseAgentsLogicUnit(Specable[AgentsLogicUnitSpec], ABC):
     _machine_schemas: Dict[str, dict]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Specable.__init__(self, **kwargs)
         self._machine_schemas = {}
 
     async def _get_schema(self, machine: str) -> dict:
@@ -35,9 +28,23 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
             self._machine_schemas[machine] = await Machine(machine=machine).get_schema()
         return self._machine_schemas[machine]
 
-    async def build_tools(self, conversation: List[LLMMessage]) -> List[EidosHandler]:
+    async def build_action_tools(self, processes):
         tools = []
+        # newer process state should override older process state if there are multiple calls
+        for action, process in ((a, r) for r in processes for a in r.available_actions):
+            path = f"/agents/{process.agent}/processes/{{process_id}}/actions/{action}"
+            machine_schema = await self._get_schema(process.machine)
+            endpoint_schema = machine_schema["paths"][path]["post"]
+            try:
+                name = self._name(process.agent, action=action)
+                tool = self._build_tool_def(name, endpoint_schema, self._process_tool(process, action))
+                tools.append(tool)
+            except ValueError:
+                logger.warning(f"unable to build tool {path}", exc_info=True)
+        return tools
 
+    async def build_program_tools(self):
+        tools = []
         for agent in self.spec.agents:
             agent_client = Agent.get(agent)
             agent = agent_client.agent
@@ -54,31 +61,6 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
                     tools.append(tool)
                 except ValueError:
                     logger.warning(f"unable to build tool {path}", exc_info=True)
-
-        # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
-        allowed_agents = {(ac.machine, ac.agent) for ac in (Agent.get(a) for a in self.spec.agents)}
-        processes: List[ProcessStatus] = []
-        for message in conversation:
-            if isinstance(message, ToolResponseMessage):
-                try:
-                    process = ProcessStatus.model_validate(json.loads(message.result))
-                    if (process.machine, process.agent) in allowed_agents:
-                        processes.append(process)
-                except ValidationError:
-                    logger.warning("unable to parse conversation response, skipping", exc_info=True)
-
-        # newer process state should override older process state if there are multiple calls
-        for action, process in ((a, r) for r in processes for a in r.available_actions):
-            path = f"/agents/{process.agent}/processes/{{process_id}}/actions/{action}"
-            machine_schema = await self._get_schema(process.machine)
-            endpoint_schema = machine_schema["paths"][path]["post"]
-            try:
-                name = self._name(process.agent, action=action)
-                tool = self._build_tool_def(name, endpoint_schema, self._process_tool(process, action))
-                tools.append(tool)
-            except ValueError:
-                logger.warning(f"unable to build tool {path}", exc_info=True)
-
         return tools
 
     def _build_tool_def(self, name, endpoint_schema, tool_call):
@@ -130,3 +112,34 @@ class ConversationalLogicUnit(LogicUnit, Specable[ConversationalSpec]):
             return resp.model_dump()
 
         return _fn
+
+
+class AgentsLogicUnit(BaseAgentsLogicUnit, LogicUnit):
+    async def build_tools(self, conversation: List[ToolResponseMessage]) -> List[EidosHandler]:
+        tools = await self.build_program_tools()
+
+        # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
+        allowed_agents = {(ac.machine, ac.agent) for ac in (Agent.get(a) for a in self.spec.agents)}
+        processes: List[ProcessStatus] = []
+        for message in conversation:
+            try:
+                process = ProcessStatus.model_validate(message.result)
+                if (process.machine, process.agent) in allowed_agents:
+                    processes.append(process)
+            except ValidationError:
+                logger.warning("unable to parse conversation response, skipping", exc_info=True)
+
+        tools.extend(await self.build_action_tools(processes))
+
+        return tools
+
+
+class ContConvLU(BaseAgentsLogicUnit, LogicUnit):
+    def __init__(self, processes: List[ProcessStatus], tool_prefix: str = "convo", **kwargs):
+        super().__init__(spec=AgentsLogicUnitSpec(tool_prefix=tool_prefix, agents=[process.agent for process in processes]))
+        LogicUnit.__init__(self, **kwargs)
+
+        self.processes = processes
+
+    async def build_tools(self, _conversation: List[ToolResponseMessage]) -> List[EidosHandler]:
+        return await self.build_action_tools(self.processes)
