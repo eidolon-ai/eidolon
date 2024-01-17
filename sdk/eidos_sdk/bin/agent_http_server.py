@@ -74,7 +74,7 @@ async def start_os(app, resource_generator, machine_name, log_level=logging.INFO
         machine = machine_spec.instantiate()
         AgentOS.load_machine(machine)
         await machine.start(app)
-        logger.info("Server Started")
+        logger.info("Server Started", extra=dict(port='foo'))
         yield
     except Exception:
         logger.exception("Failed to start AgentOS")
