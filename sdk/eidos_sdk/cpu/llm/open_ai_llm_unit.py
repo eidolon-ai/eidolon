@@ -25,7 +25,7 @@ from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger as eidos_logger
 
-logger = eidos_logger.getChild("open_ai_llm_unit")
+logger = eidos_logger.getChild("llm_unit")
 
 
 def scale_dimensions(width, height, max_size=2048, min_size=768):

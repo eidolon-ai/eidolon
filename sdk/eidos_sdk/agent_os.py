@@ -44,7 +44,7 @@ class AgentOS:
         bucket = resources[resource.kind]
         if resource.metadata.name in bucket:
             if bucket[resource.metadata.name][1] == "builtin":
-                logger.info(f"Overriding builtin resource '{resource.kind}.{resource.metadata.name}'", extra={"color": "yellow"})
+                logger.info(f"Overriding builtin resource '{resource.kind}.{resource.metadata.name}'")
             else:
                 raise ValueError(
                     f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"
