@@ -9,7 +9,8 @@ from eidos_sdk.agent.client import Program
 from eidos_sdk.cpu.agent_cpu import AgentCPU, Thread
 from eidos_sdk.cpu.agent_io import CPUMessageTypes, SystemCPUMessage
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.system.reference_model import AnnotatedReference, Specable
+from eidos_sdk.cpu.logic_unit import LogicUnit
+from eidos_sdk.system.reference_model import AnnotatedReference, Specable, Reference
 from eidos_sdk.util.logger import logger
 
 
@@ -36,6 +37,7 @@ class OutputValidationResponse(BaseModel):
 
 class ValidatingCPUSpec(BaseModel):
     cpu: AnnotatedReference[AgentCPU]
+    logic_units: List[Reference[LogicUnit]] = []
     input_validators: List[str]
     output_validators: List[str]
     regeneration_prompt: str = "Your previous response violates your response standards. Please regenerate your message with the following changes: \n{changes}"
@@ -46,6 +48,10 @@ class ValidatingCPUSpec(BaseModel):
 class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
     def __init__(self, **kwargs):
         super(ValidatingCPU, self).__init__(**kwargs)
+        if not hasattr(self.spec.cpu, 'logic_units'):
+            self.spec.cpu.logic_units = []
+        self.spec.cpu.logic_units.extend(self.spec.logic_units)
+
         self.cpu = self.spec.cpu.instantiate()
         if self.spec.remove_intermediate_outputs:
             raise RuntimeError("Unsupported Feature")

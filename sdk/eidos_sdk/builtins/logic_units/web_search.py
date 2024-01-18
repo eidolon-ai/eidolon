@@ -1,8 +1,12 @@
+import os
+import ssl
+from contextlib import asynccontextmanager
 from typing import List
 
+import aiohttp
+import certifi
 from aiohttp import ClientSession
-from bs4 import BeautifulSoup
-from pydantic import Field, BaseModel
+from pydantic import BaseModel
 
 from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidos_sdk.system.reference_model import Specable
@@ -16,17 +20,33 @@ class SearchResult(BaseModel):
 
 
 class WebSearchConfig(BaseModel):
-    include_images: bool = False
-    max_chunk_size: int = 20
+    cse_id: str = None
+    cse_token: str = None
 
 
 class WebSearch(LogicUnit, Specable[WebSearchConfig]):
+    def __init__(self, **kwargs):
+        LogicUnit.__init__(self, **kwargs)
+        Specable.__init__(self, **kwargs)
+        self.spec.cse_id = self.spec.cse_id or os.environ["CSE_ID"]
+        self.spec.cse_token = self.spec.cse_token or os.environ["CSE_TOKEN"]
+        self.sslcontext = ssl.create_default_context(cafile=certifi.where())
+
+    @asynccontextmanager
+    async def _get(self, *args, **kwargs):
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+        async with ClientSession(headers=headers, connector=aiohttp.TCPConnector(ssl_context=self.sslcontext)) as session:
+            async with session.get(*args, **kwargs) as resp:
+                yield resp
+
     @llm_function()
-    async def go_to_url(self, url: Field(description="The webpage to retrieve")):
+    async def go_to_url(self, url: str) -> str:
         """
         Retrieve the html document from a given webpage.
+        :param url: the url to retrieve
+        :return: the html document
         """
-        async with ClientSession() as session, session.get(url) as resp:
+        async with self._get(url) as resp:
             if not resp.ok:
                 logger.warning(f"Request to url '{url}' return {resp.status}, {resp.reason}")
             # todo, we should see if text or parsed text performs better. Raw html might be more useful for llm
@@ -36,46 +56,36 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
     @llm_function()
     async def search(
             self,
-            term: str = Field(description="The search query"),
-            num_results: int = Field(10, description="The number of results to return"),
-            lang: str = Field("en", description="Language of search"),
+            term: str,
+            num_results: int = 10,
+            lang: str = "en",
     ) -> List[SearchResult]:
         """
-        Search google and get the results.
-        :return: A list of SearchResults, each including url, title, and description
+        Search google and get the results. Cannot return more than 100 results.
+        :param term: the search query
+        :param num_results: the number of results to return (default 10, max 100)
+        :param lang: the language to search in (default en)
+        :return: A list of SearchResults including url, title, and description
         """
         return [r async for r in self._search_results(term, num_results, lang)]
 
     async def _search_results(self, term, num_results, lang):
+        if num_results > 100:
+            raise ValueError("Cannot return more than 100 results")
         escaped_term = term.replace(" ", "+")
-        # Fetch
-        start = 0
-        while start < num_results:
-            # Send request
-            resp = await self._req(escaped_term, num_results - start, lang, start)
+        resp = await self._req(escaped_term, num_results, lang)
+        if not resp["items"]:
+            raise RuntimeError("Error retrieving results")
+        for item in resp["items"]:
+            yield SearchResult(url=item["link"], title=item["title"], description=item["snippet"])
 
-            # Parse
-            soup = BeautifulSoup(resp, "html.parser")
-            result_block = soup.find_all("div", attrs={"class": "g"})
-            for result in result_block:
-                # Find link, title, description
-                link = result.find("a", href=True)
-                title = result.find("h3")
-                description_box = result.find(
-                    "div", {"style": "-webkit-line-clamp:2"})
-                if description_box:
-                    description = description_box.text
-                    if link and title and description:
-                        start += 1
-                        yield SearchResult(url=link["href"], title=title.text, description=description)
-
-    async def _req(self, term, results, lang, start):
-        async with ClientSession() as session:
-            async with session.get("https://www.google.com/search", params={
-                "q": term,
-                "num": min(results + 2, self.spec.max_chunk_size),  # Prevents multiple requests
-                "hl": lang,
-                "start": start,
-            }) as resp:
-                resp.raise_for_status()
-                return await resp.text()
+    async def _req(self, term, results, lang):
+        async with self._get("https://customsearch.googleapis.com/customsearch/v1", params={
+            "q": term,
+            "num": results,  # Prevents multiple requests
+            "hl": lang,
+            "cx": self.spec.cse_id,
+            "key": self.spec.cse_token,
+        }) as resp:
+            resp.raise_for_status()
+            return await resp.json()
