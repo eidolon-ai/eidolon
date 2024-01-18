@@ -1,3 +1,5 @@
+import asyncio
+
 from typing import List, Type, Dict, Any, Union, Literal
 
 from fastapi import HTTPException
@@ -5,7 +7,7 @@ from fastapi import HTTPException
 from eidos_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread
 from eidos_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolResponseMessage
+from eidos_sdk.cpu.llm_message import LLMMessage, AssistantMessage, ToolResponseMessage, ToolCall
 from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos_sdk.cpu.memory_unit import MemoryUnit
@@ -53,10 +55,10 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-        self,
-        call_context: CallContext,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+            self,
+            call_context: CallContext,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> Any:
         try:
             conversation_messages = await self.io_unit.process_request(prompts)
@@ -69,10 +71,10 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             raise RuntimeError("Error in cpu while processing request") from e
 
     async def _llm_execution_cycle(
-        self,
-        call_context: CallContext,
-        conversation: List[LLMMessage],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            call_context: CallContext,
+            conversation: List[LLMMessage],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AssistantMessage:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
@@ -82,18 +84,24 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             )
             await self.memory_unit.storeMessages(call_context, [assistant_message])
             if assistant_message.tool_calls:
-                results = []
+                calls = []
                 for tool_call in assistant_message.tool_calls:
                     tool_def = tool_defs[tool_call.name]
-                    tool_result = await tool_def.execute(call_context=call_context, args=tool_call.arguments)
-                    # todo, store tool response result as Any (must be json serializable) so that it can be retrieved symmetrically
-                    message = ToolResponseMessage(
-                        tool_call_id=tool_call.tool_call_id,
-                        result=self._to_json(tool_result),
-                        name=tool_call.name,
-                    )
-                    await self.memory_unit.storeMessages(call_context, [message])
-                    results.append(message)
+
+                    async def do_call(tc: ToolCall):
+                        tool_result = await tool_def.execute(call_context=call_context, args=tc.arguments)
+                        # todo, store tool response result as Any (must be json serializable) so that it can be retrieved symmetrically
+                        message = ToolResponseMessage(
+                            logic_unit_name=tool_def.logic_unit.__class__.__name__,
+                            tool_call_id=tc.tool_call_id,
+                            result=tool_result,
+                            name=tc.name,
+                        )
+                        await self.memory_unit.storeMessages(call_context, [message])
+                        return message
+
+                    calls.append(do_call(tool_call))
+                results: List[ToolResponseMessage] = await asyncio.gather(*calls)
 
                 conversation = conversation + [assistant_message] + results
                 num_iterations += 1

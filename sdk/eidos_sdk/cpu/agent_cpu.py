@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union, TypeVar, get_origin
+from typing import Any, List, Dict, Literal, Union, TypeVar, Type
 
 from pydantic import BaseModel, Field, TypeAdapter
 
@@ -53,7 +53,7 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
         pass
 
 
-T = TypeVar("T", bound=type)
+T = TypeVar("T")
 
 
 class Thread:
@@ -73,15 +73,8 @@ class Thread:
     async def schedule_request(
             self,
             prompts: List[CPUMessageTypes],
-            output_format: T,
+            output_format: Type[T],
     ) -> T:
-        if get_origin(output_format) == list:
-            class Wrapper(BaseModel):
-                items: output_format
-
-            rtn = await self.schedule_request(prompts, Wrapper)
-            return rtn.items
-
         model = TypeAdapter(output_format)
         schema = model.json_schema()
         rtn = await self._cpu.schedule_request(self._call_context, prompts, schema)

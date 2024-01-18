@@ -5,7 +5,13 @@ from typing import Annotated, List
 from eidos_sdk.agent.agent import AgentState, register_program, register_action
 from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidos_sdk.cpu.llm_message import UserMessage, UserMessageText
 from eidos_sdk.system.reference_model import Reference, Specable
+
+
+class SpeakToGroup(BaseModel):
+    message: str = Field(description="The message you want to say to the group")
+    group: List[str] = Field(description="The group of agents you are talking to")
 
 
 class Statement(BaseModel):
@@ -112,7 +118,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
             ],
         )
 
-        return AgentState(name="idle", data="...waiting...")
+        return AgentState(name="idle", data="...conversation started...")
 
     @register_action("idle")
     async def record_statement(
@@ -120,21 +126,31 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
     ) -> AgentState[ThoughtResult]:
         """
         Called to record a statement from another agent. Will return a new state dictating what the agent wants to do next.
-        Also called to add to your inner monologue.
+        Also called to add to this agent's inner monologue.
         """
         t = await self.cpu.main_thread(process_id)
-        prompt = f"moderator: Following are statements for other characters. You are not speaking right now. Respond with ONLY your desire to speak.\n\n{statements.format(self.spec.agent_name)}"
-        return AgentState(name="idle", data=await t.schedule_request(prompts=[UserTextCPUMessage(prompt=prompt)], output_format=ThoughtResult))
+        await self.cpu.memory_unit.storeMessages(call_context=t.call_context(),
+                                                 messages=[UserMessage(content=[UserMessageText(text=statements.format(self.spec.agent_name))])])
+        return AgentState(name="idle", data=ThoughtResult(desire_to_speak=.25))
 
     @register_action("idle")
-    async def speak(self, process_id) -> AgentState[SpeakResult]:
+    async def speak(self, process_id, message: Annotated[str, Body(embed=True)]) -> AgentState[SpeakResult]:
         """
         Called to allow the agent to speak
         """
-        message = UserTextCPUMessage(prompt="moderator: It is your turn to speak\n")
         t = await self.cpu.main_thread(process_id)
-        resp = await t.schedule_request(prompts=[message], output_format=SpeakResult)
+        resp = await t.schedule_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=SpeakResult)
         resp.desire_to_speak = 0
+        return AgentState(name="idle", data=resp)
+
+    @register_action("idle")
+    async def speak_amongst_group(self, process_id, message: Annotated[SpeakToGroup, Body(embed=True)]) -> AgentState[SpeakResult]:
+        """
+        Called to have an agent say a message ONLY to the group of agents specified.
+        """
+        t = await self.cpu.main_thread(process_id)
+        text_message = f"The following message will only be heard by the coordinator and {message.group}:\n\n{message.message}\n\n"
+        resp = await t.schedule_request(prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult)
         return AgentState(name="idle", data=resp)
 
     @register_action("idle")

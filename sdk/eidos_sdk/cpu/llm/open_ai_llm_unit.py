@@ -111,7 +111,7 @@ def convert_to_openai(message: LLMMessage):
         return {
             "role": "tool",
             "tool_call_id": message.tool_call_id,
-            "content": message.result,
+            "content": json.dumps(message.result),
         }
     else:
         raise ValueError(f"Unknown message type {message.type}")
@@ -147,12 +147,22 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             self.llm = AsyncOpenAI()
         messages = [convert_to_openai(message) for message in inMessages]
 
-        if not (isinstance(output_format, str) or output_format == "str"):
+        request = {
+            "messages": messages,
+            "model": self.model,
+            "temperature": self.temperature,
+        }
+        if output_format == "str" or output_format["type"] == "string":
+            is_string = True
+        else:
+            is_string = False
             force_json_msg = (
                 f"Your response MUST be valid JSON satisfying the following JSON schema:\n{json.dumps(output_format)}"
             )
             if not self.spec.force_json:
                 force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
+            else:
+                request["response_format"] = ResponseFormat(type="json_object")
 
             # add response rules to original system message for this call only
             if messages[0]["role"] == "system":
@@ -175,15 +185,6 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                     }
                 )
             )
-        # This event is a request to query the LLM
-        request = {
-            "messages": messages,
-            "model": self.model,
-            "temperature": self.temperature,
-        }
-        if self.spec.force_json and isinstance(output_format, dict):
-            request["response_format"] = ResponseFormat(type="json_object")
-
         if len(tools) > 0:
             request["tools"] = tools
 
@@ -204,14 +205,14 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         )
 
         tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
-        if not self.spec.force_json and output_format != "str":
+        if self.spec.force_json or is_string:
+            message_text = message.content
+        else:
             # message format looks like json```{...}```, parse content and pull out the json
             message_text = message.content[message.content.find("{") : message.content.rfind("}") + 1]
-        else:
-            message_text = message.content
 
         try:
-            if output_format == "str":
+            if is_string:
                 content = message_text
             else:
                 content = json.loads(message_text) if message_text else {}
