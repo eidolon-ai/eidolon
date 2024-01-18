@@ -49,7 +49,7 @@ class Program(BaseModel):
     agent: str
     program: str
 
-    def execute(self, body) -> ProcessStatus:
+    async def execute(self, body) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
         json_ = await _post(url, to_jsonable_python(body))
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)

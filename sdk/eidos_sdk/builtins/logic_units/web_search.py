@@ -16,11 +16,11 @@ class SearchResult(BaseModel):
 
 
 class WebSearchConfig(BaseModel):
-    include_images: False
-    max_chunk_size: 20
+    include_images: bool = False
+    max_chunk_size: int = 20
 
 
-class WebSearchUnit(LogicUnit, Specable[WebSearchConfig]):
+class WebSearch(LogicUnit, Specable[WebSearchConfig]):
     @llm_function()
     async def go_to_url(self, url: Field(description="The webpage to retrieve")):
         """

@@ -15,6 +15,6 @@ spec:
       type: string
       description: The statement or question for your Travis Kelce expert to respond to.
   cpu:
-    implementation: eidolon_examples.swifties.validating_cpu.ValidatingCPUSpec
+    implementation: eidolon_examples.swifties.validating_cpu.ValidatingCPU
     input_validators: []
     output_validators: []

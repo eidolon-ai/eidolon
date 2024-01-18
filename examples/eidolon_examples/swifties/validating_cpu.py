@@ -40,7 +40,7 @@ class ValidatingCPUSpec(BaseModel):
     output_validators: List[str]
     regeneration_prompt: str = "Your previous response violates your response standards. Please regenerate your message with the following changes: \n{changes}"
     remove_intermediate_outputs: bool = False
-    max_response_regenerations = 10
+    max_response_regenerations: int = 10
 
 
 class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
@@ -94,3 +94,6 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
 
     async def main_thread(self, *args, **kwargs) -> Thread:
         return await self.cpu.main_thread(*args, **kwargs)
+
+    async def clone_thread(self, call_context: CallContext) -> Thread:
+        return await self.cpu.clone_thread(call_context)
