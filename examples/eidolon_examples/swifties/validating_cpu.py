@@ -94,9 +94,3 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
 
     async def main_thread(self, *args, **kwargs) -> Thread:
         return await self.cpu.main_thread(*args, **kwargs)
-
-    async def new_thread(self, *args, **kwargs) -> Thread:
-        return await self.cpu.new_thread(*args, **kwargs)
-
-    async def clone_thread(self, *args, **kwargs) -> Thread:
-        return await self.cpu.clone_thread(*args, **kwargs)
