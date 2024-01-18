@@ -297,11 +297,5 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
                 "LLM run failed because " + run.last_error.message + (" (rate limit)" if is_rate_limit else "")
             )
 
-    async def main_thread(self, process_id: str) -> Thread:
-        return Thread(CallContext(process_id=process_id), self)
-
-    async def new_thread(self, process_id) -> Thread:
-        return Thread(CallContext(process_id=process_id).derive_call_context(), self)
-
     async def clone_thread(self, call_context: CallContext) -> Thread:
         pass

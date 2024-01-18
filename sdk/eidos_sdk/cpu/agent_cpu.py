@@ -42,13 +42,11 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
         else:
             return json.dumps(obj)
 
-    @abstractmethod
     async def main_thread(self, process_id: str) -> Thread:
-        pass
+        return Thread(CallContext(process_id=process_id), self)
 
-    @abstractmethod
     async def new_thread(self, process_id) -> Thread:
-        pass
+        return Thread(CallContext(process_id=process_id).derive_call_context(), self)
 
     @abstractmethod
     async def clone_thread(self, call_context: CallContext) -> Thread:

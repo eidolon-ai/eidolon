@@ -6,15 +6,10 @@ from pydantic import BaseModel, ValidationError
 from eidos_sdk.agent.client import Machine, ProcessStatus, Agent, Process
 from eidos_sdk.cpu.llm_message import LLMMessage, ToolResponseMessage
 from eidos_sdk.cpu.logic_unit import LogicUnit
-from eidos_sdk.system.agent_contract import SyncStateResponse
 from eidos_sdk.system.eidos_handler import EidosHandler
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
 from eidos_sdk.util.schema_to_model import schema_to_model
-
-
-class ConversationalResponse(SyncStateResponse):
-    program: str
 
 
 class ConversationalSpec(BaseModel):
