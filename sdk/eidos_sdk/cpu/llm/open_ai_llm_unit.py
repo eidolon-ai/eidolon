@@ -1,13 +1,12 @@
 import base64
 import json
-from io import BytesIO
-from typing import List, Optional, Union, Literal, Dict, Any
-
 from PIL import Image
+from io import BytesIO
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
+from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field, BaseModel
+from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.cpu.call_context import CallContext
@@ -20,6 +19,7 @@ from eidos_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
+from eidos_sdk.io.events import StartStreamEvent, ErrorEvent, StopReason, ToolCallEvent, StringOutputEvent, ObjectOutputEvent, EndStreamEvent
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
 
@@ -136,17 +136,117 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.model = self.spec.model
         self.temperature = self.spec.temperature
 
+    async def execute_llm2(
+            self,
+            call_context: CallContext,
+            messages: List[LLMMessage],
+            tools: List[LLMCallFunction],
+            output_format: Union[Literal["str"], Dict[str, Any]]
+    ) -> AsyncIterator[AssistantMessage]:
+        if not self.llm:
+            self.llm = AsyncOpenAI()
+        yield StartStreamEvent()
+
+        try:
+            can_stream_message, request = await self._build_request(messages, tools, output_format)
+            request["stream"] = True
+
+            logger.info("executing open ai llm request", extra=request)
+            llm_response = await self.llm.chat.completions.create(**request)
+            complete_message = ""
+            tools_to_call = []
+            async for m_chunk in llm_response:
+                chunk = cast(ChatCompletionChunk, m_chunk)
+                message = chunk.choices[0].delta
+
+                logger.info(
+                    f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
+                    extra=dict(content=message.content, tool_calls=message.tool_calls),
+                )
+
+                for tool_call in message.tool_calls or []:
+                    index = tool_call.index
+                    if index == len(tools_to_call):
+                        tools_to_call.append({
+                            'id': "",
+                            'name': "",
+                            'arguments': ""
+                        })
+                    if tool_call.id:
+                        tools_to_call[index]['id'] = tool_call.id
+                    if tool_call.function:
+                        if tool_call.function.name:
+                            tools_to_call[index]['name'] = tool_call.function.name
+                        if tool_call.function.arguments:
+                            tools_to_call[index]['arguments'] += (
+                                tool_call.function.arguments)
+
+                if message.content:
+                    if can_stream_message:
+                        yield StringOutputEvent(content=message.content)
+                    else:
+                        complete_message += message.content
+
+            if len(tools_to_call) > 0:
+                for tool in tools_to_call:
+                    tool_call = _convert_tool_call(tool)
+                    yield ToolCallEvent(tool_call_id=tool_call.tool_call_id, tool_name=tool_call.name, tool_args=tool_call.arguments)
+            if not can_stream_message:
+                if not self.spec.force_json:
+                    # message format looks like json```{...}```, parse content and pull out the json
+                    complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+
+                content = json.loads(complete_message) if complete_message else {}
+                yield ObjectOutputEvent(content=content)
+        except Exception as e:
+            logger.exception("error calling open ai llm")
+            yield ErrorEvent(reason=e, stop_reason=StopReason.ERROR)
+        finally:
+            yield EndStreamEvent(stop_reason=StopReason.COMPLETED)
+
     async def execute_llm(
-        self,
-        call_context: CallContext,
-        inMessages: List[LLMMessage],
-        inTools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            call_context: CallContext,
+            inMessages: List[LLMMessage],
+            inTools: List[LLMCallFunction],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AssistantMessage:
         if not self.llm:
             self.llm = AsyncOpenAI()
-        messages = [convert_to_openai(message) for message in inMessages]
+        is_string, request = await self._build_request(inMessages, inTools, output_format)
 
+        logger.debug("executing open ai llm request", extra=request)
+        try:
+            llm_response = await self.llm.chat.completions.create(**request)
+        except Exception:
+            logger.exception("error calling open ai llm")
+            raise
+        message = llm_response.choices[0].message
+
+        logger.debug(
+            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
+            extra=dict(content=message.content, tool_calls=message.tool_calls),
+        )
+
+        tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
+        if self.spec.force_json or is_string:
+            message_text = message.content
+        else:
+            # message format looks like json```{...}```, parse content and pull out the json
+            message_text = message.content[message.content.find("{"): message.content.rfind("}") + 1]
+
+        try:
+            if is_string:
+                content = message_text
+            else:
+                content = json.loads(message_text) if message_text else {}
+        except json.JSONDecodeError as e:
+            raise RuntimeError("Error decoding response content") from e
+        return AssistantMessage(content=content, tool_calls=tool_response)
+
+    async def _build_request(self, inMessages, inTools, output_format):
+        tools = await self._build_tools(inTools)
+        messages = [convert_to_openai(message) for message in inMessages]
         request = {
             "messages": messages,
             "model": self.model,
@@ -169,8 +269,14 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 messages[0]["content"] += f"\n\n{force_json_msg}"
             else:
                 messages.insert(0, {"role": "system", "content": force_json_msg})
-
         logger.debug(messages)
+        if len(tools) > 0:
+            request["tools"] = tools
+        if self.spec.max_tokens:
+            request["max_tokens"] = self.spec.max_tokens
+        return is_string, request
+
+    async def _build_tools(self, inTools):
         tools = []
         for tool in inTools:
             tools.append(
@@ -185,45 +291,13 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                     }
                 )
             )
-        if len(tools) > 0:
-            request["tools"] = tools
-
-        if self.spec.max_tokens:
-            request["max_tokens"] = self.spec.max_tokens
-
-        logger.info("executing open ai llm request", extra=request)
-        try:
-            llm_response = await self.llm.chat.completions.create(**request)
-        except Exception:
-            logger.exception("error calling open ai llm")
-            raise
-        message = llm_response.choices[0].message
-
-        logger.info(
-            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
-            extra=dict(content=message.content, tool_calls=message.tool_calls),
-        )
-
-        tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
-        if self.spec.force_json or is_string:
-            message_text = message.content
-        else:
-            # message format looks like json```{...}```, parse content and pull out the json
-            message_text = message.content[message.content.find("{") : message.content.rfind("}") + 1]
-
-        try:
-            if is_string:
-                content = message_text
-            else:
-                content = json.loads(message_text) if message_text else {}
-        except json.JSONDecodeError as e:
-            raise RuntimeError("Error decoding response content") from e
-        return AssistantMessage(content=content, tool_calls=tool_response)
+        return tools
 
 
-def _convert_tool_call(tool: ChatCompletionMessageToolCall) -> ToolCall:
+def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
+    name = tool["name"]
     try:
-        loads = json.loads(tool.function.arguments)
+        loads = json.loads(tool["arguments"])
     except json.JSONDecodeError as e:
-        raise RuntimeError(f"Error decoding response function arguments for tool {tool.function.name}") from e
-    return ToolCall(tool_call_id=tool.id, name=tool.function.name, arguments=loads)
+        raise RuntimeError(f"Error decoding response function arguments for tool {name}") from e
+    return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)

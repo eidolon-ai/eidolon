@@ -50,13 +50,13 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=system_prompt)])
         response = ""
         message = f"Find the rules of {game} and summarize them. Make sure to include all the rules in detail.\n"
-        response += await t.schedule_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
+        response += await t.run_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
 
         message = "Tell every agent the rules of the game\n"
-        response += await t.schedule_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
+        response += await t.run_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
 
         message = "Have the agents introduce themselves and let's start the game!"
-        response += await t.schedule_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
+        response += await t.run_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
 
         return AgentState(name="take_turn", data=response)
 
@@ -67,7 +67,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         """
         message = "Play the next turn of the game.\n"
         t = await self.cpu.main_thread(process_id)
-        response = await t.schedule_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
+        response = await t.run_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
         return AgentState(name="take_turn", data=response)
 
     @register_action("take_turn")
@@ -76,7 +76,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         Called to allow the agent to speak
         """
         t = await self.cpu.main_thread(process_id)
-        response = await t.schedule_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
+        response = await t.run_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str)
         return AgentState(name="take_turn", data=response)
 
 

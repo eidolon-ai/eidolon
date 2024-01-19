@@ -27,6 +27,6 @@ class HydeQuestionTransformer(QuestionTransformer, Specable[HydeQuestionTransfor
         thread = await self.cpu.main_thread(str(uuid.uuid4()))
         env = Environment(undefined=StrictUndefined)
         userPrompt = env.from_string(self.spec.prompt).render(question=question)
-        response = await thread.schedule_request_raw(prompts=[UserTextCPUMessage(prompt=userPrompt)], output_format="str")
+        response = await thread.run_request(prompts=[UserTextCPUMessage(prompt=userPrompt)], output_format="str")
 
         return [response]

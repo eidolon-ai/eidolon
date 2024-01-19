@@ -45,7 +45,7 @@ def register_handler(
 
 
 def _add_handler(fn, handler):
-    if not inspect.iscoroutinefunction(fn):
+    if not (inspect.iscoroutinefunction(fn) or inspect.isasyncgenfunction(fn)):
         raise ValueError("Handler must be an async function")
     try:
         handlers = getattr(fn, "eidolon_handlers")

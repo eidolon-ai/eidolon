@@ -139,7 +139,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         Called to allow the agent to speak
         """
         t = await self.cpu.main_thread(process_id)
-        resp = await t.schedule_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=SpeakResult)
+        resp = await t.run_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=SpeakResult)
         resp.desire_to_speak = 0
         return AgentState(name="idle", data=resp)
 
@@ -150,7 +150,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         t = await self.cpu.main_thread(process_id)
         text_message = f"The following message will only be heard by the coordinator and {message.group}:\n\n{message.message}\n\n"
-        resp = await t.schedule_request(prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult)
+        resp = await t.run_request(prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult)
         return AgentState(name="idle", data=resp)
 
     @register_action("idle")
@@ -173,5 +173,5 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
 
         message = UserTextCPUMessage(prompt=f"{self.spec.agent_name}: {instructions}\n")
         t = await self.cpu.main_thread(process_id)
-        resp = await t.schedule_request(prompts=[message], output_format=List[CharacterThought])
+        resp = await t.run_request(prompts=[message], output_format=List[CharacterThought])
         return AgentState(name="idle", data=resp)

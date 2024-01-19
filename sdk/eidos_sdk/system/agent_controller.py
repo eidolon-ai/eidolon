@@ -7,8 +7,9 @@ from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.params import Body, Param
 from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
-from pydantic_core import PydanticUndefined, to_jsonable_python
+from pydantic_core import PydanticUndefined, to_jsonable_python, to_json
 from starlette.responses import JSONResponse
+from sse_starlette.sse import EventSourceResponse
 
 from eidos_sdk.agent.agent import AgentState
 from eidos_sdk.agent_os import AgentOS
@@ -150,12 +151,26 @@ class AgentController:
                     raise Exception("Not implemented")
                 return doc
 
-            if execution_mode == "sync":
-                state = await run_and_store_response()
-                return self.doc_to_response(state)
+            if inspect.isasyncgenfunction(handler.fn):
+                async def stream_response():
+                    sig = inspect.signature(handler.fn)
+                    if "process_id" in dict(sig.parameters):
+                        kwargs["process_id"] = process_id
+                    async for event in handler.fn(self.agent, **kwargs):
+                        print(event)
+                        data = to_json(event)
+                        print(data)
+                        yield data
+                    print("done with loop")
+
+                return EventSourceResponse(stream_response())
             else:
-                background_tasks.add_task(run_and_store_response)
-                return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
+                if execution_mode == "sync":
+                    state = await run_and_store_response()
+                    return self.doc_to_response(state)
+                else:
+                    background_tasks.add_task(run_and_store_response)
+                    return JSONResponse(AsyncStateResponse(process_id=process_id).model_dump(), 202)
 
         logger.debug(f"Registering action {handler.name} for program {self.name}")
         sig = inspect.signature(run_program)
