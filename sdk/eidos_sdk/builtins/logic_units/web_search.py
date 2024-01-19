@@ -6,7 +6,7 @@ from typing import List
 import aiohttp
 import certifi
 from aiohttp import ClientSession
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidos_sdk.system.reference_model import Specable
@@ -19,9 +19,10 @@ class SearchResult(BaseModel):
     description: str
 
 
+# Requires custom search engine + token setup in google project. See more at https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list
 class WebSearchConfig(BaseModel):
-    cse_id: str = None
-    cse_token: str = None
+    cse_id: str = Field(None, desctiption="Google Custom Search Engine Id.")
+    cse_token: str = Field(None, desctiption="Google Project dev token, must have search permissions.")
 
 
 class WebSearch(LogicUnit, Specable[WebSearchConfig]):
@@ -31,6 +32,8 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         self.spec.cse_id = self.spec.cse_id or os.environ["CSE_ID"]
         self.spec.cse_token = self.spec.cse_token or os.environ["CSE_TOKEN"]
         self.sslcontext = ssl.create_default_context(cafile=certifi.where())
+        if not self.spec.cse_id or not self.spec.cse_token:
+            raise ValueError("missing required cse_id or cse_token")
 
     @asynccontextmanager
     async def _get(self, *args, **kwargs):
@@ -42,15 +45,16 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
     @llm_function()
     async def go_to_url(self, url: str) -> str:
         """
-        Retrieve the html document from a given webpage.
-        :param url: the url to retrieve
-        :return: the html document
+        Retrieve the html document from a given webpage
+        :param url: the url to retrieve.
+        :return: the html document.
         """
         async with self._get(url) as resp:
             if not resp.ok:
                 logger.warning(f"Request to url '{url}' return {resp.status}, {resp.reason}")
-            # todo, we should see if text or parsed text performs better. Raw html might be more useful for llm
-            #  We should also add a summarization option to save context. Settable from config and/or llm tool call
+            # todo, this is blowing up the context, we need to parse it to only include content/data
+            # separately, we likely need a concept of "relevant retrieval" which only shows information directly
+            # related to a query and is always "top of mind" but removed when unneeded.
             return await resp.text()
 
     @llm_function()
@@ -61,7 +65,7 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
             lang: str = "en",
     ) -> List[SearchResult]:
         """
-        Search google and get the results. Cannot return more than 100 results.
+        Search google and get the results. Cannot return more than 100 results
         :param term: the search query
         :param num_results: the number of results to return (default 10, max 100)
         :param lang: the language to search in (default en)
