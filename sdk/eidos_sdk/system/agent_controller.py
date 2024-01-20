@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 import inspect
 import logging
 import typing
@@ -9,10 +11,11 @@ from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined, to_jsonable_python, to_json
 from starlette.responses import JSONResponse
-from sse_starlette.sse import EventSourceResponse
+from sse_starlette.sse import EventSourceResponse, ServerSentEvent
 
 from eidos_sdk.agent.agent import AgentState
 from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.io.events import StartStreamEvent, StartAgentCallEvent, EndAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent
 from eidos_sdk.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
@@ -153,15 +156,30 @@ class AgentController:
 
             if inspect.isasyncgenfunction(handler.fn):
                 async def stream_response():
+                    def to_sse(data: BaseStreamEvent):
+                        return ServerSentEvent(id=str(uuid.uuid4()), data=data.model_dump_json())
+
                     sig = inspect.signature(handler.fn)
                     if "process_id" in dict(sig.parameters):
                         kwargs["process_id"] = process_id
-                    async for event in handler.fn(self.agent, **kwargs):
-                        print(event)
-                        data = to_json(event)
-                        print(data)
-                        yield data
-                    print("done with loop")
+                    yield to_sse(StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process_id))
+                    call_context = f"{self.name}.{handler.name}"
+                    next_state = None
+                    async for event in with_context(call_context, handler.fn(self.agent, **kwargs)):
+                        if isinstance(event, AgentStateEvent):
+                            next_state = event.state
+                            event.available_actions = self.get_available_actions(next_state)
+                        # todo -- handle stop reason and error state
+                        event = to_sse(event)
+                        yield event
+                    if not next_state:
+                        next_state = "terminated"
+                        yield to_sse(AgentStateEvent(stream_context=[call_context], state="terminated"))
+                    yield to_sse(EndAgentCallEvent())
+                    await process.update(
+                        state=next_state,
+                        data=dict(data="<stream>"),
+                    )
 
                 return EventSourceResponse(stream_response())
             else:

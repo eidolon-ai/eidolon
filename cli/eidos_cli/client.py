@@ -133,12 +133,35 @@ class EidolonClient:
                         return actions, process_id
                 else:
                     response = EventSource(response).iter_sse()
+                    process_id = None
+                    available_actions = []
+                    buffer = ""
                     for event in response:
-                        print_formatted_text("here" + str(event))
-                        if event.event == "data":
-                            response = json.loads(event.data)
-                            print(response)
-                    return [], None
+                        if event.data:
+                            server_event = json.loads(event.data)
+                            if server_event["event_type"] == "string_output":
+                                # Append the new content to the buffer
+                                buffer += server_event["content"]
+                                # Split the buffer by newline character
+                                lines = buffer.split('\n')
+                                # If there's more than one line, we've encountered a new line
+                                if len(lines) > 1:
+                                    for line in lines[:-1]:
+                                        # Print each line separately
+                                        html = markdown.markdown(line.strip())
+                                        print_formatted_text(HTML(html))
+                                    # Keep the rest in the buffer for the next iteration
+                                    buffer = lines[-1]
+                            elif server_event["event_type"] == "object_output":
+                                print_formatted_text(json.dumps(server_event["content"]))
+                            elif server_event["event_type"] == "agent_state":
+                                available_actions = server_event["available_actions"]
+                            elif server_event["event_type"] == "agent_call":
+                                process_id = server_event["process_id"]
+                    if len(buffer) > 0:
+                        html = markdown.markdown(buffer.strip())
+                        print_formatted_text(HTML(html))
+                    return available_actions, process_id
 
     def get_processes(self, agent_name):
         with httpx.Client(timeout=self.timeout) as client:
