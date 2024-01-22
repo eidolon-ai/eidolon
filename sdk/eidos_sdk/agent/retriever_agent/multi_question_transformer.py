@@ -6,12 +6,11 @@ from typing import List
 from eidos_sdk.agent.retriever_agent.question_transformer import QuestionTransformerSpec, QuestionTransformer
 from eidos_sdk.cpu.agent_cpu import AgentCPU
 from eidos_sdk.cpu.agent_io import UserTextCPUMessage
-from eidos_sdk.cpu.no_memory_cpu import NoMemoryCPU
 from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class MultiQuestionTransformerSpec(QuestionTransformerSpec):
-    cpu: AnnotatedReference[AgentCPU, "NoMemoryCPU"]
+    cpu: AnnotatedReference[AgentCPU]
     keep_original: bool = Field(default=True, description="Whether to keep the original question in the output")
     number_to_generate: int = Field(default=3, description="The number of questions to generate")
     prompt: str = Field(
@@ -31,6 +30,7 @@ class MultiQuestionTransformer(QuestionTransformer, Specable[MultiQuestionTransf
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.cpu = self.spec.cpu.instantiate()
+        self.cpu.record_memory = False
 
     async def transform(self, question: str) -> List[str]:
         thread = await self.cpu.main_thread(str(uuid.uuid4()))

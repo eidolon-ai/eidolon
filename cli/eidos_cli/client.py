@@ -11,6 +11,9 @@ from prompt_toolkit import PromptSession, print_formatted_text, HTML
 from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 
+from eidos_cli.StreamProcessor import StreamProcessor
+from eidos_cli.live_console import LiveConsole
+from eidos_cli.markdown import Markdown
 from eidos_cli.schema import Schema, AgentEndpoint
 
 
@@ -132,36 +135,11 @@ class EidolonClient:
                         process_id = response["process_id"]
                         return actions, process_id
                 else:
-                    response = EventSource(response).iter_sse()
-                    process_id = None
-                    available_actions = []
-                    buffer = ""
-                    for event in response:
-                        if event.data:
-                            server_event = json.loads(event.data)
-                            if server_event["event_type"] == "string_output":
-                                # Append the new content to the buffer
-                                buffer += server_event["content"]
-                                # Split the buffer by newline character
-                                lines = buffer.split('\n')
-                                # If there's more than one line, we've encountered a new line
-                                if len(lines) > 1:
-                                    for line in lines[:-1]:
-                                        # Print each line separately
-                                        html = markdown.markdown(line.strip())
-                                        print_formatted_text(HTML(html))
-                                    # Keep the rest in the buffer for the next iteration
-                                    buffer = lines[-1]
-                            elif server_event["event_type"] == "object_output":
-                                print_formatted_text(json.dumps(server_event["content"]))
-                            elif server_event["event_type"] == "agent_state":
-                                available_actions = server_event["available_actions"]
-                            elif server_event["event_type"] == "agent_call":
-                                process_id = server_event["process_id"]
-                    if len(buffer) > 0:
-                        html = markdown.markdown(buffer.strip())
-                        print_formatted_text(HTML(html))
-                    return available_actions, process_id
+                    sp = StreamProcessor()
+                    md = Markdown(sp.generate_tokens(EventSource(response).iter_sse()))
+                    console = LiveConsole()
+                    console.print_live(md)
+                    return sp.available_actions, sp.process_id
 
     def get_processes(self, agent_name):
         with httpx.Client(timeout=self.timeout) as client:

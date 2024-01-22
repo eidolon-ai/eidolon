@@ -10,8 +10,8 @@ class StreamingTest:
     @register_program()
     async def streaming(self, name: Annotated[str, Body(embed=True)]):
         yield StartStreamEvent(stream_context=["foo"])
-        yield StringOutputEvent(stream_context=["foo"], content=f"Hello,")
+        yield StringOutputEvent(stream_context=["foo"], content="Hello,")
         yield StringOutputEvent(stream_context=["foo"], content=f"{name}")
-        yield StringOutputEvent(stream_context=["foo"], content=f"!")
+        yield StringOutputEvent(stream_context=["foo"], content="!")
         yield AgentStateEvent(stream_context=["foo"], state="terminated")
         yield EndStreamEvent(stream_context=["foo"], stop_reason=StopReason.COMPLETED)

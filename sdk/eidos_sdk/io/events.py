@@ -3,7 +3,9 @@ from __future__ import annotations
 from abc import ABC
 from enum import Enum
 from pydantic import BaseModel, TypeAdapter
-from typing import List, TypeVar, Generic, Any, Dict, AsyncIterator, Type, Literal
+from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal
+
+from eidos_sdk.cpu.llm_message import ToolCall
 
 
 class StopReason(Enum):
@@ -41,9 +43,7 @@ class ObjectOutputEvent(BaseStreamEvent, Generic[T]):
 
 class ToolCallEvent(StartStreamEvent):
     event_type: str = "tool_call"
-    tool_call_id: str
-    tool_name: str
-    tool_args: Dict[str, Any]
+    tool_call: ToolCall
 
 
 class ToolEndEvent(EndStreamEvent):

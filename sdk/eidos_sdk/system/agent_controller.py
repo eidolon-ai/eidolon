@@ -9,13 +9,13 @@ from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.params import Body, Param
 from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
-from pydantic_core import PydanticUndefined, to_jsonable_python, to_json
+from pydantic_core import PydanticUndefined, to_jsonable_python
 from starlette.responses import JSONResponse
 from sse_starlette.sse import EventSourceResponse, ServerSentEvent
 
 from eidos_sdk.agent.agent import AgentState
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import StartStreamEvent, StartAgentCallEvent, EndAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent
+from eidos_sdk.io.events import StartAgentCallEvent, EndAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent
 from eidos_sdk.system.agent_contract import SyncStateResponse, AsyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc

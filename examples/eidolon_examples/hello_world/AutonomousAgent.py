@@ -26,21 +26,11 @@ class AutonomousAgent(Agent):
     @register_program()
     @register_action("idle")
     async def stream_response(self, process_id, question: Annotated[str, Body(description="A question", embed=True)]):
-        try:
-            thread = await self.cpu.main_thread(process_id)
-            print("here")
-            stream = thread.stream_request(
-                prompts=[UserTextCPUMessage(prompt=question)], output_format=IdleStateRepresentation.model_json_schema()
-            )
-            print("here2")
-            async for event in stream:
-                print("here3")
-                yield event
-            print("here4")
+        thread = await self.cpu.main_thread(process_id)
+        stream = thread.stream_request(
+            prompts=[UserTextCPUMessage(prompt=question)], output_format=str
+        )
+        async for event in stream:
+            yield event
 
-            yield AgentStateEvent(state="idle")
-            print("here5")
-        except Exception as e:
-            print("here6")
-            print(e)
-            raise e
+        yield AgentStateEvent(state="idle")

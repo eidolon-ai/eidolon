@@ -136,7 +136,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.model = self.spec.model
         self.temperature = self.spec.temperature
 
-    async def execute_llm2(
+    async def execute_llm(
             self,
             call_context: CallContext,
             messages: List[LLMMessage],
@@ -159,7 +159,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 chunk = cast(ChatCompletionChunk, m_chunk)
                 message = chunk.choices[0].delta
 
-                logger.info(
+                logger.debug(
                     f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
                     extra=dict(content=message.content, tool_calls=message.tool_calls),
                 )
@@ -190,7 +190,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             if len(tools_to_call) > 0:
                 for tool in tools_to_call:
                     tool_call = _convert_tool_call(tool)
-                    yield ToolCallEvent(tool_call_id=tool_call.tool_call_id, tool_name=tool_call.name, tool_args=tool_call.arguments)
+                    yield ToolCallEvent(tool_call=tool_call)
             if not can_stream_message:
                 if not self.spec.force_json:
                     # message format looks like json```{...}```, parse content and pull out the json
@@ -203,46 +203,6 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             yield ErrorEvent(reason=e, stop_reason=StopReason.ERROR)
         finally:
             yield EndStreamEvent(stop_reason=StopReason.COMPLETED)
-
-    async def execute_llm(
-            self,
-            call_context: CallContext,
-            inMessages: List[LLMMessage],
-            inTools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AssistantMessage:
-        if not self.llm:
-            self.llm = AsyncOpenAI()
-        is_string, request = await self._build_request(inMessages, inTools, output_format)
-
-        logger.debug("executing open ai llm request", extra=request)
-        try:
-            llm_response = await self.llm.chat.completions.create(**request)
-        except Exception:
-            logger.exception("error calling open ai llm")
-            raise
-        message = llm_response.choices[0].message
-
-        logger.debug(
-            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
-            extra=dict(content=message.content, tool_calls=message.tool_calls),
-        )
-
-        tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
-        if self.spec.force_json or is_string:
-            message_text = message.content
-        else:
-            # message format looks like json```{...}```, parse content and pull out the json
-            message_text = message.content[message.content.find("{"): message.content.rfind("}") + 1]
-
-        try:
-            if is_string:
-                content = message_text
-            else:
-                content = json.loads(message_text) if message_text else {}
-        except json.JSONDecodeError as e:
-            raise RuntimeError("Error decoding response content") from e
-        return AssistantMessage(content=content, tool_calls=tool_response)
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
