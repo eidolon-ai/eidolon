@@ -1,8 +1,10 @@
 import base64
 import json
+import logging
 from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any
 
+import yaml
 from PIL import Image
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionMessageToolCall
@@ -21,7 +23,9 @@ from eidos_sdk.cpu.llm_message import (
 )
 from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.util.logger import logger
+from eidos_sdk.util.logger import logger as eidos_logger
+
+logger = eidos_logger.getChild("llm_unit")
 
 
 def scale_dimensions(width, height, max_size=2048, min_size=768):
@@ -170,7 +174,6 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             else:
                 messages.insert(0, {"role": "system", "content": force_json_msg})
 
-        logger.debug(messages)
         tools = []
         for tool in inTools:
             tools.append(
@@ -191,7 +194,10 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         if self.spec.max_tokens:
             request["max_tokens"] = self.spec.max_tokens
 
-        logger.info("executing open ai llm request", extra=request)
+        logger.info("executing open ai llm request", extra=dict(llm_request=request))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug("request content:\n"+yaml.dump(request))
+
         try:
             llm_response = await self.llm.chat.completions.create(**request)
         except Exception:
