@@ -20,8 +20,9 @@ class StreamProcessor:
                     yield json.dumps(server_event["content"])
                 elif server_event["event_type"] == "agent_state":
                     self.available_actions = server_event["available_actions"]
-                elif server_event["event_type"] == "agent_call":
+                elif server_event["event_type"] == "start" and server_event["start_type"] == "agent_call":
                     self.process_id = server_event["process_id"]
+
     def generate_tokens(self, response):
         input = self._process_events(response)
         parser = MarkdownIt().enable("strikethrough").enable("table")

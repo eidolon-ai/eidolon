@@ -107,7 +107,11 @@ class EidolonClient:
                     request["files"] = files
             else:
                 request = {"url": urljoin(self.server_location, agent_url), "json": user_input}
-            with client.stream(method="POST", **request, headers=self.security_headers) as response:
+            headers = {
+                **self.security_headers,
+                "Accept": "text/event-stream, application/json",
+            }
+            with client.stream(method="POST", **request, headers=headers) as response:
                 content_type = response.headers.get("content-type", "").partition(";")[0]
                 status_code = response.status_code
                 if status_code != 200:
