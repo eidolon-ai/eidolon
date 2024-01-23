@@ -23,71 +23,80 @@ class BaseStreamEvent(BaseModel, ABC):
 
 
 class StartStreamEvent(BaseStreamEvent, ABC):
-    event_type: str = "start"
+    event_type: Literal['start'] = "start"
     start_type: str
 
 
 class EndStreamEvent(BaseStreamEvent, ABC):
-    event_type: str = "end"
+    event_type: Literal['end'] = "end"
     end_type: str
     stop_reason: StopReason
 
 
 class StartLLMEvent(StartStreamEvent):
-    start_type: str = "llm"
+    start_type: Literal["llm"] = "llm"
 
 
 class EndLLMEvent(EndStreamEvent):
-    end_type: str = "llm"
-    stop_reason: StopReason = StopReason.COMPLETED
+    end_type: Literal["llm"] = "llm"
+    stop_reason: Literal[StopReason.COMPLETED] = StopReason.COMPLETED
 
 
 class StringOutputEvent(BaseStreamEvent):
-    event_type: str = "string_output"
+    event_type: Literal["string_output"] = "string_output"
     content: str
 
 
 class ObjectOutputEvent(BaseStreamEvent, Generic[T]):
-    event_type: str = "object_output"
+    event_type: Literal["object_output"] = "object_output"
     content: T
 
 
 class ToolCallEvent(StartStreamEvent):
-    start_type: str = "tool_call"
+    start_type: Literal["tool_call"] = "tool_call"
     tool_call: ToolCall
 
 
 class ToolEndEvent(EndStreamEvent):
-    event_type: str = "tool_end"
+    event_type: Literal["tool_end"] = "tool_end"
     tool_name: str
-    stop_reason: StopReason = StopReason.COMPLETED
+    stop_reason: Literal[StopReason.COMPLETED] = StopReason.COMPLETED
 
 
 class ErrorEvent(EndStreamEvent):
-    end_type: str = "error"
+    end_type: Literal["error"] = "error"
     reason: Any
-    stop_reason: StopReason = StopReason.ERROR
+    stop_reason: Literal[StopReason.ERROR] = StopReason.ERROR
 
 
 class StartAgentCallEvent(StartStreamEvent):
-    start_type: str = "agent_call"
+    start_type: Literal["agent_call"] = "agent_call"
     agent_name: str
     call_name: str
     process_id: str
 
 
 class EndAgentCallEvent(EndStreamEvent):
-    end_type: str = "agent_end"
-    stop_reason: StopReason = StopReason.COMPLETED
+    end_type: Literal["agent_end"] = "agent_end"
+    stop_reason: Literal[StopReason.COMPLETED] = StopReason.COMPLETED
 
 
 class AgentStateEvent(BaseStreamEvent):
-    event_type: str = "agent_state"
+    event_type: Literal["agent_state"] = "agent_state"
     state: str
     available_actions: List[str] = None  # this is filled in by the server, agents should leave the default
 
 
-StreamEvent = StartStreamEvent | EndStreamEvent | StringOutputEvent | ObjectOutputEvent | ToolCallEvent | ToolEndEvent | ErrorEvent
+StreamEvent = StartAgentCallEvent | \
+              StartLLMEvent | \
+              ToolCallEvent | \
+              StringOutputEvent | \
+              ObjectOutputEvent | \
+              AgentStateEvent | \
+              EndAgentCallEvent | \
+              ToolEndEvent | \
+              EndLLMEvent | \
+              ErrorEvent
 
 
 async def with_context(context: str, it: AsyncIterator[StreamEvent]) -> AsyncIterator[StreamEvent]:

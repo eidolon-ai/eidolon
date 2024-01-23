@@ -1,6 +1,7 @@
 import argparse
 import logging.config
 import pathlib
+from collections import deque
 from contextlib import asynccontextmanager
 
 import dotenv
@@ -69,13 +70,14 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         )
 
         # EventTypes
-        event_types = TypeAdapter(StreamEvent).json_schema(ref_template='#/components/schemas/{model}')
-        del event_types["$defs"]
-        openapi_schema["components"]["schemas"].update(dict(
-            EventTypes=event_types,
-            **{t.__name__: t.model_json_schema() for t in StreamEvent.__args__}
-        ))
-
+        queue = deque([("EventTypes", TypeAdapter(StreamEvent).json_schema(ref_template='#/components/schemas/{model}'))])
+        while queue:
+            name, schema = queue.popleft()
+            if "$defs" in schema:
+                for d_name, d in schema["$defs"].items():
+                    queue.append((d_name, d))
+                del schema["$defs"]
+            openapi_schema["components"]["schemas"][name] = schema
 
         app.openapi_schema = openapi_schema
         return app.openapi_schema
