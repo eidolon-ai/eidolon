@@ -3,11 +3,11 @@ from __future__ import annotations
 import json
 from abc import abstractmethod, ABC
 from pydantic import BaseModel, Field, TypeAdapter
-from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncGenerator
+from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator
 
 from eidos_sdk.cpu.agent_io import CPUMessageTypes
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.io.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
+from eidos_sdk.io.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent, with_context
 from eidos_sdk.system.reference_model import Specable
 
 
@@ -29,7 +29,7 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
             call_context: CallContext,
             prompts: List[CPUMessageTypes],
             output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AsyncGenerator[StreamEvent, None]:
+    ) -> AsyncIterator[StreamEvent]:
         yield None
 
     def _to_json(self, obj):
@@ -95,7 +95,10 @@ class Thread:
             result = string_output
 
         if error is not None:
-            raise error
+            if isinstance(error, Exception):
+                raise error
+            else:
+                raise Exception(error)
 
         return result
 
@@ -103,7 +106,7 @@ class Thread:
             self,
             prompts: List[CPUMessageTypes],
             output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
-    ) -> AsyncGenerator[StreamEvent, None]:
+    ) -> AsyncIterator[StreamEvent]:
         if isinstance(output_format, type):
             model = TypeAdapter(output_format)
             schema = model.json_schema()
@@ -111,7 +114,10 @@ class Thread:
         else:
             s = self._cpu.schedule_request(self._call_context, prompts, output_format)
 
-        return s
+        context = f"{self._call_context.process_id}"
+        if self._call_context.thread_id:
+            context += f":{self._call_context.thread_id}"
+        return with_context(context, s)
 
     def call_context(self) -> CallContext:
         return self._call_context

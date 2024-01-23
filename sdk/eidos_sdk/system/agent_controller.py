@@ -158,7 +158,7 @@ class AgentController:
                 yield EndAgentCallEvent(stream_context=[])
             except Exception as e:
                 next_state = "unhandled_error"
-                yield ErrorEvent(reason=str(e), stream_context=[])
+                yield ErrorEvent(reason=e, stream_context=[])
 
             await process.update(
                 state=next_state,
@@ -220,6 +220,8 @@ class AgentController:
             else:
                 replace: Parameter = params["process_id"].replace(annotation=str)
                 params["process_id"] = replace
+        elif handler.extra["type"] == "action":
+            params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
 
         del params["self"]
 

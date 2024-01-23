@@ -21,6 +21,12 @@ class BaseStreamEvent(BaseModel, ABC):
     stream_context: List[str] = None
     event_type: Literal["start", "end", "string_output", "object_output"]
 
+    def extend_context(self, context: str):
+        if self.stream_context is None:
+            return [context]
+        else:
+            return [*self.stream_context, context]
+
 
 class StartStreamEvent(BaseStreamEvent, ABC):
     event_type: Literal['start'] = "start"

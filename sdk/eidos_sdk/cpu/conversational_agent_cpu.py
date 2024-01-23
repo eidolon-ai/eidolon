@@ -68,16 +68,13 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, conversation_messages)
             conversation.extend(conversation_messages)
-            context = f"{call_context.process_id}"
-            if call_context.thread_id:
-                context += f":{call_context.thread_id}"
-            llm_it = with_context(context, self._llm_execution_cycle(call_context, output_format, conversation))
+            llm_it = self._llm_execution_cycle(call_context, output_format, conversation)
             async for event in llm_it:
                 yield event
         except HTTPException:
             raise
         except Exception as e:
-            yield ErrorEvent(reason=str(e))
+            yield ErrorEvent(reason=e)
 
     async def _llm_execution_cycle(
             self,
@@ -152,8 +149,8 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
 
     async def _call_tool(self, call_context: CallContext, tool_call_event: ToolCallEvent, tool_defs, conversation: List[LLMMessage]):
         parent_stream_context = tool_call_event.stream_context
-        tool_def = tool_defs[tool_call_event.tool_name]
-        tool_context = [*tool_call_event.stream_context, tool_call_event.tool_call_id]
+        tool_def = tool_defs[tool_call_event.tool_call.name]
+        tool_context = tool_call_event.extend_context(tool_call_event.tool_call.tool_call_id)
         try:
             tc = tool_call_event.tool_call
             yield ToolCallEvent(stream_context=tool_context, tool_call=tc)
@@ -173,7 +170,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             yield ObjectOutputEvent(stream_context=tool_context, content=tool_result)
             yield ToolEndEvent(stream_context=tool_context, tool_name=tool_def.logic_unit.__class__.__name__)
         except Exception as e:
-            yield ErrorEvent(stream_context=tool_context, reason=str(e))
+            yield ErrorEvent(stream_context=tool_context, reason=e)
 
     async def main_thread(self, process_id: str) -> Thread:
         return Thread(CallContext(process_id=process_id), self)
