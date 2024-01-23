@@ -10,8 +10,7 @@ from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos_sdk.cpu.memory_unit import MemoryUnit
 from eidos_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidos_sdk.io.events import ToolCallEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, with_context, \
-    ToolEndEvent, StartLLMEvent, EndLLMEvent
+from eidos_sdk.io.events import ToolCallEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, ToolEndEvent, StartLLMEvent, EndLLMEvent
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 
 

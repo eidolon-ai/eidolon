@@ -64,7 +64,7 @@ class ToolCallEvent(StartStreamEvent):
 
 
 class ToolEndEvent(EndStreamEvent):
-    event_type: Literal["tool_end"] = "tool_end"
+    end_type: Literal["tool_end"] = "tool_end"
     tool_name: str
     stop_reason: Literal[StopReason.COMPLETED] = StopReason.COMPLETED
 

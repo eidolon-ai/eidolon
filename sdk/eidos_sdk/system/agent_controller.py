@@ -15,7 +15,7 @@ from starlette.responses import JSONResponse
 
 from eidos_sdk.agent.agent import AgentState
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import StartAgentCallEvent, EndAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent, ErrorEvent
+from eidos_sdk.io.events import StartAgentCallEvent, EndAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent, ErrorEvent, ObjectOutputEvent, StringOutputEvent
 from eidos_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
@@ -100,6 +100,7 @@ class AgentController:
             process_id: typing.Optional[str] = None,
             **kwargs,
     ):
+        request = typing.cast(Request, kwargs.pop("__request"))
         if not process_id:
             if not handler.extra["type"] == "program":
                 raise HTTPException(
@@ -126,20 +127,80 @@ class AgentController:
         if "process_id" in dict(inspect.signature(handler.fn).parameters):
             kwargs["process_id"] = process_id
 
+        # get the accepted content types
+        accept_header = request.headers.get("Accept")
+        media_types = accept_header.split(",") if accept_header else []
+        try:
+            event_stream_idx = media_types.index("text/event-stream")
+        except ValueError:
+            event_stream_idx = -1
+
+        try:
+            app_json_idx = media_types.index("application/json")
+        except ValueError:
+            app_json_idx = -1
+
+        if event_stream_idx != -1 and (app_json_idx == -1 or event_stream_idx < app_json_idx):
+            # stream the results
+            return await self.stream_response(handler, process, **kwargs)
+        else:
+            # run the program synchronously
+            return await self.send_response(handler, process, **kwargs)
+
+    async def stream_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> EventSourceResponse:
         if inspect.isasyncgenfunction(handler.fn):
             # todo -- handle the case if the user doesn't want to stream
-            return self.stream_response(handler, process, **kwargs)
+            response_it = self.stream_stream_response(handler, process, **kwargs)
         else:
-            state = await self.run_sync_call(handler, process, **kwargs)
-            return self.doc_to_response(state)
+            async def sync_it():
+                try:
+                    yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id, stream_context=[])
+                    response_doc = await self.run_sync_call(handler, process, **kwargs)
+                    next_state = response_doc.state
+                    call_context = f"{self.name}.{handler.name}"
+                    yield ObjectOutputEvent(content=response_doc.data, stream_context=[call_context])
+                    yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state), stream_context=[])
+                    yield EndAgentCallEvent(stream_context=[])
+                except Exception as e:
+                    await process.update(state="unhandled_error", data=dict(error=str(e)))
+                    yield ErrorEvent(reason=e, stream_context=[])
 
-    def stream_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs):
-        process_id = kwargs.get("process_id")
+            response_it = sync_it()
 
+        async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
+            async for event in stream:
+                yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
+
+        return EventSourceResponse(with_sse(response_it), status_code=200)
+
+    async def send_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
+        if inspect.isasyncgenfunction(handler.fn):
+            stream = self.stream_stream_response(handler, process, **kwargs)
+            # pull out the ObjectOutputEvent and the AgentStateEvent
+            object_output_event = None
+            gathered_string = ""
+            async for event in stream:
+                if isinstance(event, ObjectOutputEvent):
+                    if not object_output_event or len(event.stream_context) < len(object_output_event.stream_context):
+                        object_output_event = event
+                elif isinstance(event, StringOutputEvent):
+                    gathered_string += event.content
+            if object_output_event:
+                data = object_output_event.content
+            else:
+                data = gathered_string
+            process.data = data
+            doc = process
+        else:
+            doc = await self.run_sync_call(handler, process, **kwargs)
+
+        return self.doc_to_response(doc)
+
+    def stream_stream_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs):
         async def stream_response_data(**additional_kwargs):
             next_state = None
             last_event = None
-            yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process_id, stream_context=[])
+            yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id, stream_context=[])
             try:
                 call_context = f"{self.name}.{handler.name}"
                 async for event in with_context(call_context, handler.fn(self.agent, **additional_kwargs)):
@@ -165,13 +226,9 @@ class AgentController:
                 data=dict(data="<stream>"),
             )
 
-        async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
-            async for event in stream:
-                yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
+        return stream_response_data(**kwargs)
 
-        return EventSourceResponse(with_sse(stream_response_data(**kwargs)), status_code=200)
-
-    async def run_sync_call(self, handler: EidosHandler = None, process: ProcessDoc = None, **kwargs):
+    async def run_sync_call(self, handler: EidosHandler = None, process: ProcessDoc = None, **kwargs) -> ProcessDoc:
         try:
             response = await handler.fn(self.agent, **kwargs)
             if isinstance(response, AgentState):
@@ -225,6 +282,7 @@ class AgentController:
 
         del params["self"]
 
+        params["__request"] = Parameter("__request", Parameter.KEYWORD_ONLY, annotation=Request)
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]
 
         async def _run_program(**_kwargs):
