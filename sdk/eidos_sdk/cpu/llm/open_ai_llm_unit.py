@@ -19,7 +19,7 @@ from eidos_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidos_sdk.io.events import StartStreamEvent, ErrorEvent, StopReason, ToolCallEvent, StringOutputEvent, ObjectOutputEvent, EndStreamEvent
+from eidos_sdk.io.events import ErrorEvent, StopReason, ToolCallEvent, StringOutputEvent, ObjectOutputEvent, StartLLMEvent, EndLLMEvent
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
 
@@ -145,7 +145,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
     ) -> AsyncIterator[AssistantMessage]:
         if not self.llm:
             self.llm = AsyncOpenAI()
-        yield StartStreamEvent()
+        yield StartLLMEvent()
 
         try:
             can_stream_message, request = await self._build_request(messages, tools, output_format)
@@ -178,8 +178,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                         if tool_call.function.name:
                             tools_to_call[index]['name'] = tool_call.function.name
                         if tool_call.function.arguments:
-                            tools_to_call[index]['arguments'] += (
-                                tool_call.function.arguments)
+                            tools_to_call[index]['arguments'] += tool_call.function.arguments
 
                 if message.content:
                     if can_stream_message:
@@ -198,11 +197,10 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
+            yield EndLLMEvent(stop_reason=StopReason.COMPLETED)
         except Exception as e:
             logger.exception("error calling open ai llm")
             yield ErrorEvent(reason=e, stop_reason=StopReason.ERROR)
-        finally:
-            yield EndStreamEvent(stop_reason=StopReason.COMPLETED)
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)

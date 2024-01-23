@@ -17,18 +17,29 @@ class StopReason(Enum):
 T = TypeVar("T")
 
 
-class BaseStreamEvent(ABC, BaseModel):
+class BaseStreamEvent(BaseModel, ABC):
     stream_context: List[str] = None
-    event_type: Literal["start", "end", "string_output", "object_output", "tool_call", "tool_end", "error", "agent_call", "agent_end"]
+    event_type: Literal["start", "end", "string_output", "object_output"]
 
 
-class StartStreamEvent(BaseStreamEvent):
+class StartStreamEvent(BaseStreamEvent, ABC):
     event_type: str = "start"
+    start_type: str
 
 
-class EndStreamEvent(BaseStreamEvent):
+class EndStreamEvent(BaseStreamEvent, ABC):
     event_type: str = "end"
+    end_type: str
     stop_reason: StopReason
+
+
+class StartLLMEvent(StartStreamEvent):
+    start_type: str = "llm"
+
+
+class EndLLMEvent(EndStreamEvent):
+    end_type: str = "llm"
+    stop_reason: StopReason = StopReason.COMPLETED
 
 
 class StringOutputEvent(BaseStreamEvent):
@@ -42,37 +53,38 @@ class ObjectOutputEvent(BaseStreamEvent, Generic[T]):
 
 
 class ToolCallEvent(StartStreamEvent):
-    event_type: str = "tool_call"
+    start_type: str = "tool_call"
     tool_call: ToolCall
 
 
 class ToolEndEvent(EndStreamEvent):
     event_type: str = "tool_end"
     tool_name: str
+    stop_reason: StopReason = StopReason.COMPLETED
 
 
 class ErrorEvent(EndStreamEvent):
-    event_type: str = "error"
+    end_type: str = "error"
     reason: Any
     stop_reason: StopReason = StopReason.ERROR
 
 
 class StartAgentCallEvent(StartStreamEvent):
-    event_type: str = "agent_call"
+    start_type: str = "agent_call"
     agent_name: str
     call_name: str
     process_id: str
 
 
 class EndAgentCallEvent(EndStreamEvent):
-    event_type: str = "agent_end"
+    end_type: str = "agent_end"
     stop_reason: StopReason = StopReason.COMPLETED
 
 
 class AgentStateEvent(BaseStreamEvent):
     event_type: str = "agent_state"
     state: str
-    available_actions: List[str] = []
+    available_actions: List[str] = None  # this is filled in by the server, agents should leave the default
 
 
 StreamEvent = StartStreamEvent | EndStreamEvent | StringOutputEvent | ObjectOutputEvent | ToolCallEvent | ToolEndEvent | ErrorEvent

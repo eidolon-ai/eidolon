@@ -10,7 +10,8 @@ from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos_sdk.cpu.memory_unit import MemoryUnit
 from eidos_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidos_sdk.io.events import ToolCallEvent, EndStreamEvent, StartStreamEvent, StringOutputEvent, ObjectOutputEvent, StopReason, ErrorEvent, StreamEvent, with_context
+from eidos_sdk.io.events import ToolCallEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, with_context, \
+    ToolEndEvent, StartLLMEvent, EndLLMEvent
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 
 
@@ -19,6 +20,7 @@ class ConversationalAgentCPUSpec(AgentCPUSpec):
     memory_unit: AnnotatedReference[MemoryUnit]
     llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
+    record_conversation: bool = True
 
 
 class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], ProcessingUnitLocator):
@@ -33,7 +35,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
-        self.record_memory = True
+        self.record_memory = self.spec.record_conversation
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
         for unit in self.logic_units:
@@ -88,13 +90,14 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             tool_defs = await LLMToolWrapper.from_logic_units(self.logic_units, conversation=conversation)
             tool_call_events = []
             end_stream_event = None
+            got_error = False
             execute_llm_ = self.llm_unit.execute_llm(call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format)
             # yield the events but capture the output, so it can be rolled into one event for memory.
             output = None
             async for event in execute_llm_:
                 if isinstance(event, ToolCallEvent):
                     tool_call_events.append(event)
-                elif isinstance(event, StartStreamEvent):
+                elif isinstance(event, StartLLMEvent):
                     yield event
                 elif isinstance(event, StringOutputEvent):
                     if output is None:
@@ -110,8 +113,12 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                     else:
                         output = str(output) + str(event.content)
                     yield event
-                elif isinstance(event, EndStreamEvent):
+                elif isinstance(event, EndLLMEvent):
                     end_stream_event = event
+                elif isinstance(event, ErrorEvent):
+                    got_error = True
+                    yield event
+                    break
                 else:
                     yield event
 
@@ -123,6 +130,9 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             conversation.append(assistant_message)
+
+            if got_error:
+                return
 
             # process tool calls
             if len(tool_call_events) > 0:
@@ -148,7 +158,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             tc = tool_call_event.tool_call
             yield ToolCallEvent(stream_context=tool_context, tool_call=tc)
 
-            # todo -- change this into a stream on output
+            # todo -- change this into a stream on output -- this is so we can flow the output to the user
             tool_result = await tool_def.execute(call_context=parent_stream_context, args=tc.arguments)
             message = ToolResponseMessage(
                 logic_unit_name=tool_def.logic_unit.__class__.__name__,
@@ -159,8 +169,9 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [message])
             conversation.append(message)
+            # If the call returns a string just stream, else collect and return an object
             yield ObjectOutputEvent(stream_context=tool_context, content=tool_result)
-            yield EndStreamEvent(stream_context=tool_context, stop_reason=StopReason.COMPLETED)
+            yield ToolEndEvent(stream_context=tool_context, tool_name=tool_def.logic_unit.__class__.__name__)
         except Exception as e:
             yield ErrorEvent(stream_context=tool_context, reason=str(e))
 

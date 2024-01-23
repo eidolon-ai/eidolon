@@ -6,6 +6,9 @@ from contextlib import asynccontextmanager
 import dotenv
 import uvicorn
 import yaml
+from eidos_sdk.io.events import StreamEvent
+from pydantic import TypeAdapter
+from fastapi.openapi.utils import get_openapi
 from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
@@ -55,7 +58,30 @@ def parse_args():
 
 
 @asynccontextmanager
-async def start_os(app, resource_generator, machine_name, log_level=logging.INFO):
+async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO):
+    def custom_openapi():
+        if app.openapi_schema:
+            return app.openapi_schema
+        openapi_schema = get_openapi(
+            title="Custom API",
+            version="0.1.14",  # todo, grab version from poetry
+            routes=app.routes,
+        )
+
+        # EventTypes
+        event_types = TypeAdapter(StreamEvent).json_schema(ref_template='#/components/schemas/{model}')
+        del event_types["$defs"]
+        openapi_schema["components"]["schemas"].update(dict(
+            EventTypes=event_types,
+            **{t.__name__: t.model_json_schema() for t in StreamEvent.__args__}
+        ))
+
+
+        app.openapi_schema = openapi_schema
+        return app.openapi_schema
+
+    app.openapi = custom_openapi
+
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
