@@ -2,7 +2,7 @@ import os
 import pathlib
 from contextlib import asynccontextmanager, contextmanager
 from typing import Iterable
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 
 import pytest
 from bson import ObjectId
@@ -12,6 +12,7 @@ from httpx import AsyncClient
 from motor.motor_asyncio import AsyncIOMotorClient
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
+from vcr.stubs.httpx_stubs import _shared_vcr_send, _record_responses
 
 import eidos_sdk.system.processes as processes
 from eidos_sdk.bin.agent_http_server import start_os, start_app
@@ -30,9 +31,37 @@ from eidos_sdk.util.class_utils import fqn
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "client_builder" in i.fixturenames, items):
-        # item.add_marker(pytest.mark.vcr)
-        # item.fixturenames.append("patched_vcr_object_handling")
+        item.add_marker(pytest.mark.vcr)
+        item.fixturenames.append("patched_vcr_object_handling")
         item.fixturenames.append("deterministic_process_ids")
+        item.fixturenames.append("patch_async_vcr_send")
+
+
+@pytest.fixture
+def patch_async_vcr_send(monkeypatch):
+    async def mock_async_vcr_send(cassette, real_send, *args, **kwargs):
+        vcr_request, response = _shared_vcr_send(cassette, real_send, *args, **kwargs)
+        if response:
+            # add cookies from response to session cookie store
+            args[0].cookies.extract_cookies(response)
+            return response
+
+        real_response = await real_send(*args, **kwargs)
+        if "text/event-stream" in real_response.headers['Content-Type']:
+            aiter_bytes = real_response.aiter_bytes
+            async def _sub(*args, **kwargs):
+                acc = []
+                async for x in aiter_bytes(*args, **kwargs):
+                    acc.append(x)
+                    yield x
+                real_response._content = b''.join(acc)
+                _record_responses(cassette, vcr_request, real_response)
+            real_response.aiter_bytes = _sub
+            return real_response
+        else:
+            return _record_responses(cassette, vcr_request, real_response)
+
+    monkeypatch.setattr(httpx_stubs, "_async_vcr_send", AsyncMock(side_effect=mock_async_vcr_send))
 
 
 @pytest.fixture(autouse=True)
