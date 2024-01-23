@@ -110,12 +110,12 @@ StreamEvent = StartAgentCallEvent | StartLLMEvent | ToolCallEvent | \
               AgentStateEvent
 
 
-async def with_context(context: str, it: AsyncIterator[StreamEvent]) -> AsyncIterator[StreamEvent]:
+async def with_context(context: List[str], it: AsyncIterator[StreamEvent]) -> AsyncIterator[StreamEvent]:
     async for event in it:
         if event.stream_context is None:
-            event.stream_context = [context]
+            event.stream_context = [*context]
         else:
-            event.stream_context = [context, *event.stream_context]
+            event.stream_context = [*context, *event.stream_context]
         yield event
 
 

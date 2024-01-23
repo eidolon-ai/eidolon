@@ -117,7 +117,7 @@ class Thread:
         context = f"{self._call_context.process_id}"
         if self._call_context.thread_id:
             context += f":{self._call_context.thread_id}"
-        return with_context(context, s)
+        return with_context([context], s)
 
     def call_context(self) -> CallContext:
         return self._call_context

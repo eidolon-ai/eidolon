@@ -184,9 +184,10 @@ class AgentController:
 
     def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
         if inspect.isasyncgenfunction(handler.fn):
-            return self.stream_agent_iterator(handler, process, **kwargs)
+            stream = self.stream_agent_iterator(handler, process, **kwargs)
         else:
-            return self.stream_agent_fn(handler, process, **kwargs)
+            stream = self.stream_agent_fn(handler, process, **kwargs)
+        return with_context([], stream)
 
     async def stream_agent_iterator(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> AsyncIterator[StreamEvent]:
         next_state = None
