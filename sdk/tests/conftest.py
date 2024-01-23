@@ -30,8 +30,8 @@ from eidos_sdk.util.class_utils import fqn
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "client_builder" in i.fixturenames, items):
-        item.add_marker(pytest.mark.vcr)
-        item.fixturenames.append("patched_vcr_object_handling")
+        # item.add_marker(pytest.mark.vcr)
+        # item.fixturenames.append("patched_vcr_object_handling")
         item.fixturenames.append("deterministic_process_ids")
 
 
