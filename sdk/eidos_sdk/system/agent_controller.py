@@ -16,7 +16,7 @@ from starlette.responses import JSONResponse
 from eidos_sdk.agent.agent import AgentState
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.io.events import StartAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent, \
-    ErrorEvent, ObjectOutputEvent, StringOutputEvent, OutputEvent, SuccessEvent, StreamEvent, EndStreamEvent
+    ErrorEvent, StringOutputEvent, OutputEvent, SuccessEvent, StreamEvent, EndStreamEvent
 from eidos_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
@@ -156,8 +156,6 @@ class AgentController:
         return with_context(call_context, stream)
 
     async def send_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
-        # todo, this needs to handle stream errors
-        # pull out the ObjectOutputEvent and the AgentStateEvent
         start_event = None
         output_event: typing.Optional[OutputEvent] = None
         state_change_event = None
@@ -240,13 +238,13 @@ class AgentController:
         except HTTPException as e:
             logger.warning(f"HTTP error {e.status_code} from {handler.name}", exc_info=True)
             state = "http_error"
-            yield ErrorEvent(
-                reason=dict(detail=e.detail, status_code=e.status_code),
-            )
+            data = dict(detail=e.detail, status_code=e.status_code)
+            yield ErrorEvent(reason=data)
         except Exception as e:
             logger.error(f"Unhandled error from {handler.name}", exc_info=True)
             state = "unhandled_error"
-            yield ErrorEvent(reason=str(e))
+            data = str(e)
+            yield ErrorEvent(reason=data)
         finally:
             await process.update(state=state, data=data)
             yield AgentStateEvent(state=state, available_actions=self.get_available_actions(state))
