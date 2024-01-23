@@ -147,14 +147,6 @@ class AgentController:
             # run the program synchronously
             return await self.send_response(handler, process, **kwargs)
 
-    def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
-        if inspect.isasyncgenfunction(handler.fn):
-            stream = self.stream_agent_fn(handler, process, **kwargs)
-        else:
-            stream = self.stream_async_agent_fn(handler, process, **kwargs)
-        call_context = f"{self.name}.{handler.name}"
-        return with_context(call_context, stream)
-
     async def send_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
         start_event = None
         output_event: typing.Optional[OutputEvent] = None
@@ -190,7 +182,13 @@ class AgentController:
         process.data = output_event.content
         return self.doc_to_response(process)
 
-    async def stream_agent_fn(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> AsyncIterator[StreamEvent]:
+    def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
+        if inspect.isasyncgenfunction(handler.fn):
+            return self.stream_agent_iterator(handler, process, **kwargs)
+        else:
+            return self.stream_agent_fn(handler, process, **kwargs)
+
+    async def stream_agent_iterator(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> AsyncIterator[StreamEvent]:
         next_state = None
         last_event = None
         yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id)
@@ -219,7 +217,7 @@ class AgentController:
         )
         yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state))
 
-    async def stream_async_agent_fn(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
+    async def stream_agent_fn(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
         state = "unhandled_error"
         data = "<stream>"
         try:
