@@ -8,9 +8,16 @@ from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal
 from eidos_sdk.cpu.llm_message import ToolCall
 
 
+class Category(Enum):
+    START = "start"
+    END = "end"
+    OUTPUT = "output"
+    TRANSFORM = "transform"
+
+
 class StopReason(Enum):
     ERROR = "error"
-    COMPLETED = "completed"
+    SUCCESS = "success"
     CANCELED = "canceled"
 
 
@@ -19,7 +26,8 @@ T = TypeVar("T")
 
 class BaseStreamEvent(BaseModel, ABC):
     stream_context: List[str] = None
-    event_type: Literal["start", "end", "string_output", "object_output"]
+    category: Category
+    event_type: str
 
     def extend_context(self, context: str):
         if self.stream_context is None:
@@ -29,80 +37,77 @@ class BaseStreamEvent(BaseModel, ABC):
 
 
 class StartStreamEvent(BaseStreamEvent, ABC):
-    event_type: Literal['start'] = "start"
-    start_type: str
-
-
-class EndStreamEvent(BaseStreamEvent, ABC):
-    event_type: Literal['end'] = "end"
-    end_type: str
-    stop_reason: StopReason
+    category: Literal[Category.START] = Category.START
 
 
 class StartLLMEvent(StartStreamEvent):
-    start_type: Literal["llm"] = "llm"
-
-
-class EndLLMEvent(EndStreamEvent):
-    end_type: Literal["llm"] = "llm"
-    stop_reason: Literal[StopReason.COMPLETED] = StopReason.COMPLETED
-
-
-class StringOutputEvent(BaseStreamEvent):
-    event_type: Literal["string_output"] = "string_output"
-    content: str
-
-
-class ObjectOutputEvent(BaseStreamEvent, Generic[T]):
-    event_type: Literal["object_output"] = "object_output"
-    content: T
+    event_type: Literal["llm"] = "llm"
 
 
 class ToolCallEvent(StartStreamEvent):
-    start_type: Literal["tool_call"] = "tool_call"
+    event_type: Literal["tool_call"] = "tool_call"
     tool_call: ToolCall
 
 
-class ToolEndEvent(EndStreamEvent):
-    end_type: Literal["tool_end"] = "tool_end"
-    tool_name: str
-    stop_reason: Literal[StopReason.COMPLETED] = StopReason.COMPLETED
-
-
-class ErrorEvent(EndStreamEvent):
-    end_type: Literal["error"] = "error"
-    reason: Any
-    stop_reason: Literal[StopReason.ERROR] = StopReason.ERROR
-
-
 class StartAgentCallEvent(StartStreamEvent):
-    start_type: Literal["agent_call"] = "agent_call"
+    event_type: Literal["agent_call"] = "agent_call"
     agent_name: str
     call_name: str
     process_id: str
 
 
-class EndAgentCallEvent(EndStreamEvent):
-    end_type: Literal["agent_end"] = "agent_end"
-    stop_reason: Literal[StopReason.COMPLETED] = StopReason.COMPLETED
+class OutputEvent(BaseStreamEvent, ABC):
+    category: Literal[Category.OUTPUT] = Category.OUTPUT
+    content: Any
+
+    @staticmethod
+    def get(content: T, **kwargs):
+        if isinstance(content, str):
+            return StringOutputEvent(content=content, **kwargs)
+        else:
+            return ObjectOutputEvent[T](content=content, **kwargs)
+
+
+class StringOutputEvent(OutputEvent):
+    event_type: Literal["string_output"] = "string"
+    content: str
+
+
+class ObjectOutputEvent(OutputEvent, Generic[T]):
+    event_type: Literal["object_output"] = "object"
+    content: T
+
+
+# note EndStreamEvent does not need to reference the type of event it ends since this is captured by context
+class EndStreamEvent(BaseStreamEvent, ABC):
+    category: Literal[Category.END] = Category.END
+    event_type: StopReason
+
+
+class SuccessEvent(EndStreamEvent):
+    event_type: Literal[StopReason.SUCCESS] = StopReason.SUCCESS
+
+
+class CanceledEvent(EndStreamEvent):
+    event_type: Literal[StopReason.CANCELED] = StopReason.CANCELED
+
+
+class ErrorEvent(EndStreamEvent):
+    event_type: Literal[StopReason.ERROR] = StopReason.ERROR
+    reason: Any
 
 
 class AgentStateEvent(BaseStreamEvent):
+    category: Literal[Category.TRANSFORM] = Category.TRANSFORM
     event_type: Literal["agent_state"] = "agent_state"
     state: str
     available_actions: List[str] = None  # this is filled in by the server, agents should leave the default
 
 
-StreamEvent = StartAgentCallEvent | \
-              StartLLMEvent | \
-              ToolCallEvent | \
-              StringOutputEvent | \
-              ObjectOutputEvent | \
-              AgentStateEvent | \
-              EndAgentCallEvent | \
-              ToolEndEvent | \
-              EndLLMEvent | \
-              ErrorEvent
+StreamEvent = StartAgentCallEvent | StartLLMEvent | ToolCallEvent | \
+              StringOutputEvent | ObjectOutputEvent | \
+              SuccessEvent | CanceledEvent | ErrorEvent | \
+              AgentStateEvent
 
 
 async def with_context(context: str, it: AsyncIterator[StreamEvent]) -> AsyncIterator[StreamEvent]:

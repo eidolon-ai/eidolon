@@ -1,12 +1,13 @@
 import base64
 import json
-from PIL import Image
 from io import BytesIO
+from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
+
+from PIL import Image
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field, BaseModel
-from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.cpu.call_context import CallContext
@@ -19,7 +20,8 @@ from eidos_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidos_sdk.io.events import ErrorEvent, StopReason, ToolCallEvent, StringOutputEvent, ObjectOutputEvent, StartLLMEvent, EndLLMEvent
+from eidos_sdk.io.events import ErrorEvent, ToolCallEvent, StringOutputEvent, ObjectOutputEvent, \
+    StartLLMEvent, SuccessEvent
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
 
@@ -197,10 +199,10 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
-            yield EndLLMEvent(stop_reason=StopReason.COMPLETED)
+            yield SuccessEvent()
         except Exception as e:
             logger.exception("error calling open ai llm")
-            yield ErrorEvent(reason=e, stop_reason=StopReason.ERROR)
+            yield ErrorEvent(reason=e)
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)

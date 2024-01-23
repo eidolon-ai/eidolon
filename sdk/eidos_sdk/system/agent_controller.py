@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import inspect
-import logging
 import typing
 import uuid
 from collections.abc import AsyncIterator
+from inspect import Parameter
+
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.params import Body, Param
-from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined, to_jsonable_python
 from sse_starlette.sse import EventSourceResponse, ServerSentEvent
@@ -15,7 +15,8 @@ from starlette.responses import JSONResponse
 
 from eidos_sdk.agent.agent import AgentState
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import StartAgentCallEvent, EndAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent, ErrorEvent, ObjectOutputEvent, StringOutputEvent
+from eidos_sdk.io.events import StartAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent, \
+    ErrorEvent, ObjectOutputEvent, StringOutputEvent, OutputEvent, SuccessEvent, StreamEvent, EndStreamEvent
 from eidos_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
@@ -50,11 +51,6 @@ class AgentController:
             else:
                 path += f"/processes/{{process_id}}/actions/{handler_name}"
             endpoint = self.process_action(handler)
-            # from bson import ObjectId
-            # response_name = f"Response_200_{ObjectId()}"
-            # response_field = create_response_field(name=response_name, type_=self.create_response_model(handler))
-            # _example = response_field.get_default()
-
             app.add_api_route(
                 path,
                 endpoint=endpoint,
@@ -142,94 +138,95 @@ class AgentController:
 
         if event_stream_idx != -1 and (app_json_idx == -1 or event_stream_idx < app_json_idx):
             # stream the results
-            return await self.stream_response(handler, process, **kwargs)
+            async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
+                async for event in stream:
+                    yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
+
+            return EventSourceResponse(with_sse(self.agent_event_stream(handler, process, **kwargs)), status_code=200)
         else:
             # run the program synchronously
             return await self.send_response(handler, process, **kwargs)
 
-    async def stream_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> EventSourceResponse:
+    def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
         if inspect.isasyncgenfunction(handler.fn):
-            # todo -- handle the case if the user doesn't want to stream
-            response_it = self.stream_stream_response(handler, process, **kwargs)
+            stream = self.stream_agent_fn(handler, process, **kwargs)
         else:
-            async def sync_it():
-                try:
-                    yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id, stream_context=[])
-                    response_doc = await self.run_sync_call(handler, process, **kwargs)
-                    next_state = response_doc.state
-                    call_context = f"{self.name}.{handler.name}"
-                    yield ObjectOutputEvent(content=response_doc.data, stream_context=[call_context])
-                    yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state), stream_context=[])
-                    yield EndAgentCallEvent(stream_context=[])
-                except Exception as e:
-                    await process.update(state="unhandled_error", data=dict(error=str(e)))
-                    yield ErrorEvent(reason=e, stream_context=[])
-
-            response_it = sync_it()
-
-        async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
-            async for event in stream:
-                yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
-
-        return EventSourceResponse(with_sse(response_it), status_code=200)
+            stream = self.stream_async_agent_fn(handler, process, **kwargs)
+        call_context = f"{self.name}.{handler.name}"
+        return with_context(call_context, stream)
 
     async def send_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
-        if inspect.isasyncgenfunction(handler.fn):
-            stream = self.stream_stream_response(handler, process, **kwargs)
-            # pull out the ObjectOutputEvent and the AgentStateEvent
-            object_output_event = None
-            gathered_string = ""
-            async for event in stream:
-                if isinstance(event, ObjectOutputEvent):
-                    if not object_output_event or len(event.stream_context) < len(object_output_event.stream_context):
-                        object_output_event = event
-                elif isinstance(event, StringOutputEvent):
-                    gathered_string += event.content
-            if object_output_event:
-                data = object_output_event.content
+        # todo, this needs to handle stream errors
+        # pull out the ObjectOutputEvent and the AgentStateEvent
+        start_event = None
+        output_event: typing.Optional[OutputEvent] = None
+        state_change_event = None
+        final_event = None
+        async for event in self.agent_event_stream(handler, process, **kwargs):
+            if isinstance(event, StartAgentCallEvent):
+                if start_event:
+                    raise RuntimeError(f"Received multiple start agent events: {event}")
+                start_event = event
+
             else:
-                data = gathered_string
-            process.data = data
-            doc = process
-        else:
-            doc = await self.run_sync_call(handler, process, **kwargs)
-
-        return self.doc_to_response(doc)
-
-    def stream_stream_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs):
-        async def stream_response_data(**additional_kwargs):
-            next_state = None
-            last_event = None
-            yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id, stream_context=[])
-            try:
-                call_context = f"{self.name}.{handler.name}"
-                async for event in with_context(call_context, handler.fn(self.agent, **additional_kwargs)):
-                    last_event = event
+                if not start_event:
+                    raise RuntimeError(f"Received event {event} before start agent event")
+                if event.stream_context == start_event.stream_context:
                     if isinstance(event, AgentStateEvent):
-                        next_state = event.state
-                    else:
-                        yield event
+                        state_change_event = event
+                    elif isinstance(event, EndStreamEvent):
+                        final_event = event
+                    elif isinstance(event, OutputEvent) and not output_event:
+                        output_event = event
+                    elif isinstance(event, StringOutputEvent):
+                        output_event.content += event.content
 
-                if last_event and isinstance(last_event, ErrorEvent):
-                    next_state = "unhandled_error"
-                elif not next_state:
-                    next_state = "terminated"
+        if not output_event:
+            raise RuntimeError(f"Did not receive output event for {handler.name}")
+        if not state_change_event:
+            raise RuntimeError(f"Did not receive state change event for {handler.name}")
+        if not final_event:
+            raise RuntimeError(f"Did not receive final event for {handler.name}")
 
-                yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state), stream_context=[])
-                yield EndAgentCallEvent(stream_context=[])
-            except Exception as e:
-                next_state = "unhandled_error"
-                yield ErrorEvent(reason=e, stream_context=[])
+        process.state = state_change_event.state
+        process.data = output_event.content
+        return self.doc_to_response(process)
 
-            await process.update(
-                state=next_state,
-                data=dict(data="<stream>"),
-            )
-
-        return stream_response_data(**kwargs)
-
-    async def run_sync_call(self, handler: EidosHandler = None, process: ProcessDoc = None, **kwargs) -> ProcessDoc:
+    async def stream_agent_fn(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> AsyncIterator[StreamEvent]:
+        next_state = None
+        last_event = None
+        yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id)
         try:
+            async for event in handler.fn(self.agent, **kwargs):
+                last_event = event
+                # todo, we can update record in mongo here
+                if isinstance(event, AgentStateEvent):
+                    next_state = event.state
+                else:
+                    yield event
+
+            if last_event and isinstance(last_event, ErrorEvent):
+                next_state = "unhandled_error"
+            elif not next_state:
+                next_state = "terminated"
+
+            yield SuccessEvent()
+        except Exception as e:
+            next_state = "unhandled_error"
+            yield ErrorEvent(reason=e)
+
+        await process.update(
+            state=next_state,
+            data=dict(data="<stream>"),
+        )
+        yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state))
+
+    async def stream_async_agent_fn(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
+        state = "unhandled_error"
+        data = "<stream>"
+        try:
+            yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id)
+
             response = await handler.fn(self.agent, **kwargs)
             if isinstance(response, AgentState):
                 state = response.name
@@ -237,26 +234,22 @@ class AgentController:
             else:
                 state = "terminated"
                 data = to_jsonable_python(response)
-            doc = await process.update(
-                state=state,
-                data=data,
-            )
+
+            yield OutputEvent.get(content=data)
+            yield SuccessEvent()
         except HTTPException as e:
-            doc = await process.update(
-                state="http_error",
-                data=dict(detail=e.detail, status_code=e.status_code),
+            logger.warning(f"HTTP error {e.status_code} from {handler.name}", exc_info=True)
+            state = "http_error"
+            yield ErrorEvent(
+                reason=dict(detail=e.detail, status_code=e.status_code),
             )
-            if e.status_code >= 500:
-                logging.exception("Unhandled error raised by handler")
-            else:
-                logging.debug(f"Handler {handler.name} raised a http error", exc_info=True)
         except Exception as e:
-            doc = await process.update(
-                state="unhandled_error",
-                data=dict(error=str(e)),
-            )
-            logging.exception("Unhandled error raised by handler")
-        return doc
+            logger.error(f"Unhandled error from {handler.name}", exc_info=True)
+            state = "unhandled_error"
+            yield ErrorEvent(reason=str(e))
+        finally:
+            await process.update(state=state, data=data)
+            yield AgentStateEvent(state=state, available_actions=self.get_available_actions(state))
 
     def process_action(self, handler: EidosHandler):
         logger.debug(f"Registering action {handler.name} for program {self.name}")

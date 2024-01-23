@@ -1,6 +1,7 @@
+from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
+
 from aiostream import stream
 from fastapi import HTTPException
-from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
 
 from eidos_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread
 from eidos_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
@@ -10,7 +11,8 @@ from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos_sdk.cpu.memory_unit import MemoryUnit
 from eidos_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidos_sdk.io.events import ToolCallEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, ToolEndEvent, StartLLMEvent, EndLLMEvent
+from eidos_sdk.io.events import ToolCallEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, \
+    StartLLMEvent, EndStreamEvent, StopReason, SuccessEvent
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 
 
@@ -109,12 +111,13 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                     else:
                         output = str(output) + str(event.content)
                     yield event
-                elif isinstance(event, EndLLMEvent):
+                elif isinstance(event, EndStreamEvent):
                     end_stream_event = event
-                elif isinstance(event, ErrorEvent):
-                    got_error = True
-                    yield event
-                    break
+                    if end_stream_event.event_type != StopReason.SUCCESS:
+                        if end_stream_event.event_type == StopReason.ERROR:
+                            got_error = True
+                        yield event
+                        break
                 else:
                     yield event
 
@@ -167,7 +170,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             conversation.append(message)
             # If the call returns a string just stream, else collect and return an object
             yield ObjectOutputEvent(stream_context=tool_context, content=tool_result)
-            yield ToolEndEvent(stream_context=tool_context, tool_name=tool_def.logic_unit.__class__.__name__)
+            yield SuccessEvent(stream_context=tool_context)
         except Exception as e:
             yield ErrorEvent(stream_context=tool_context, reason=e)
 

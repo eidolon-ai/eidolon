@@ -71,13 +71,17 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
 
         # EventTypes
         queue = deque([("EventTypes", TypeAdapter(StreamEvent).json_schema(ref_template='#/components/schemas/{model}'))])
+        depth = 0
         while queue:
+            if depth > 100:
+                raise ValueError("Too many $defs")
             name, schema = queue.popleft()
             if "$defs" in schema:
                 for d_name, d in schema["$defs"].items():
                     queue.append((d_name, d))
                 del schema["$defs"]
             openapi_schema["components"]["schemas"][name] = schema
+            depth += 1
 
         app.openapi_schema = openapi_schema
         return app.openapi_schema
