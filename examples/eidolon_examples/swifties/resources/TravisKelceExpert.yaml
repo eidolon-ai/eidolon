@@ -25,8 +25,3 @@ spec:
     statement:
       type: string
       description: The statement or question for your Travis Kelce expert to respond to.
-  cpu:
-    implementation: eidolon_examples.swifties.validating_cpu.ValidatingCPU
-    logic_units: ["WebSearch"]
-    input_validators: ["Topicality.question"]
-    output_validators: ["TaylorPR.question"]

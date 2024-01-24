@@ -40,8 +40,8 @@ class OutputValidationResponse(BaseModel):
 class ValidatingCPUSpec(BaseModel):
     cpu: AnnotatedReference[AgentCPU]
     logic_units: List[Reference[LogicUnit]] = []
-    input_validators: List[str]
-    output_validators: List[str]
+    input_validators: List[str] = []
+    output_validators: List[str] = []
     regeneration_prompt: str = """
     Your response violates our response standards. 
     Please re-answer the last user message while incorporating the changes below
