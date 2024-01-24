@@ -41,7 +41,7 @@ class QualityAssurance(Agent, Specable[QASpec]):
         await thread.set_boot_messages([SystemCPUMessage(prompt=system_message)])
         await thread.schedule_request_raw(prompts=[UserTextCPUMessage(prompt=f"Please test all tools related to {agent}")])
         logger.info(f"Tests Complete for {agent}")
-        response: QAResponse = await thread.schedule_request_raw(
+        response: QAResponse = await thread.schedule_request(
             prompts=[UserTextCPUMessage(prompt="Please summarize your test results")],
             output_format=QAResponse,
         )

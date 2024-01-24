@@ -47,7 +47,10 @@ class _RequestContextMeta(type):
         _get_context()[key] = _Record(key=key, value=value, propagate=propagate)
 
     def get(self, key, default=None):
-        return self[key] if key in _get_context() else default
+        context = _get_context()
+        if default is ... and key not in context:
+            raise KeyError(key)
+        return self[key] if key in context else default
 
     @property
     def headers(self):

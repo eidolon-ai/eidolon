@@ -1,9 +1,11 @@
 import asyncio
+import json
 from typing import Any, List, Literal, Union, Dict, Optional, Iterable
 
 from fastapi import HTTPException
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
+from pydantic_core import to_jsonable_python
 
 from eidos_sdk.agent.client import Program
 from eidos_sdk.cpu.agent_cpu import AgentCPU, Thread
@@ -15,11 +17,11 @@ from eidos_sdk.util.logger import logger
 
 
 class InputValidatorBody(BaseModel):
-    prompts: List[CPUMessageTypes]
+    prompts: str
 
 
 class OutputValidatorBody(BaseModel):
-    prompts: List[CPUMessageTypes]
+    prompts: str
     output_schema: str | dict
     response: Any
 
@@ -27,12 +29,12 @@ class OutputValidatorBody(BaseModel):
 # todo, validation rejections should probably be non 2xx
 class InputValidatorResponse(BaseModel):
     status: Literal['allow', "block"]
-    reason: Optional[str]
+    reason: Optional[str] = None
 
 
 class OutputValidationResponse(BaseModel):
     status: Literal['allow', "regenerate"]
-    reason: Optional[str]
+    reason: Optional[str] = None
 
 
 class ValidatingCPUSpec(BaseModel):
@@ -40,14 +42,24 @@ class ValidatingCPUSpec(BaseModel):
     logic_units: List[Reference[LogicUnit]] = []
     input_validators: List[str]
     output_validators: List[str]
-    regeneration_prompt: str = "Your previous response violates your response standards. Please regenerate your message with the following changes: \n{changes}"
+    regeneration_prompt: str = """
+    Your response violates our response standards. 
+    Please re-answer the last user message while incorporating the changes below
+    When regenerating your response, respond as if you are just answering the last user question again.
+    The user will not see your previous response, so do not apologize for your mistake or reference the fact that you 
+    are regenerating your response.
+    
+    #### CHANGES ####
+    {changes}
+    """
     remove_intermediate_outputs: bool = False
     max_response_regenerations: int = 10
 
 
 class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
     def __init__(self, **kwargs):
-        super(ValidatingCPU, self).__init__(**kwargs)
+        AgentCPU.__init__(self, **kwargs)
+        Specable.__init__(self, **kwargs)
         if not hasattr(self.spec.cpu, 'logic_units'):
             self.spec.cpu.logic_units = []
         self.spec.cpu.logic_units.extend(self.spec.logic_units)
@@ -58,18 +70,21 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
         self.env = Environment(undefined=StrictUndefined)
 
     async def set_boot_messages(self, *args, **kwargs):
-        self.cpu.set_boot_messages(*args, **kwargs)
+        await self.cpu.set_boot_messages(*args, **kwargs)
 
     async def schedule_request(self,
                                call_context: CallContext,
                                prompts: List[CPUMessageTypes],
                                output_format: Union[Literal["str"], Dict[str, Any]],
                                ) -> Any:
-        await asyncio.gather(self._check_input(v, prompts=prompts) for v in self.spec.input_validators)
+        prompts_str = json.dumps(to_jsonable_python(prompts))
+
+        validators = [self._check_input(v, prompts=prompts_str) for v in self.spec.input_validators]
+        await asyncio.gather(*validators)
 
         resp = await self.cpu.schedule_request(call_context, prompts, output_format)
         depth = 1
-        while changes := self._get_required_changes(output_format, prompts, resp):
+        while changes := await self._get_required_changes(output_format, prompts_str, resp):
             if depth > self.spec.max_response_regenerations:
                 # todo, think this through
                 raise HTTPException(500)
@@ -98,8 +113,5 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
         output_responses: Iterable[OutputValidationResponse] = await asyncio.gather(*output_validators)
         return [o.reason for o in output_responses if o.status != "allow"]
 
-    async def main_thread(self, *args, **kwargs) -> Thread:
-        return await self.cpu.main_thread(*args, **kwargs)
-
     async def clone_thread(self, call_context: CallContext) -> Thread:
-        return await self.cpu.clone_thread(call_context)
+        return await self.cpu.__class__.clone_thread(self, call_context)

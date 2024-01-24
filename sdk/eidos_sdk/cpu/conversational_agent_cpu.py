@@ -1,6 +1,6 @@
 import asyncio
 
-from typing import List, Type, Dict, Any, Union, Literal
+from typing import List, Type, Dict, Any, Union, Literal, Iterable, Optional
 
 from fastapi import HTTPException
 
@@ -36,6 +36,10 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
+        found = super().locate_unit(unit_type)
+        return found if found else self._locate_unit(unit_type)
+
+    def _locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
         for unit in self.logic_units:
             if isinstance(unit, unit_type):
                 return unit
@@ -101,9 +105,9 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                         return message
 
                     calls.append(do_call(tool_call))
-                results: List[ToolResponseMessage] = await asyncio.gather(*calls)
+                results: Iterable[ToolResponseMessage] = await asyncio.gather(*calls)
 
-                conversation = conversation + [assistant_message] + results
+                conversation = conversation + [assistant_message, *results]
                 num_iterations += 1
             else:
                 return assistant_message
@@ -113,7 +117,5 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
     async def clone_thread(self, call_context: CallContext) -> Thread:
         new_context = call_context.derive_call_context()
         messages = await self.memory_unit.getConversationHistory(call_context)
-        for m in messages:
-            m["thread_id"] = new_context.thread_id
         await self.memory_unit.storeMessages(new_context, messages)
         return Thread(call_context=new_context, cpu=self)

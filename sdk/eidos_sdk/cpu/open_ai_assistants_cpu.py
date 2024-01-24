@@ -42,7 +42,11 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         kwargs = dict(processing_unit_locator=self)
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
 
-    def locate_unit(self, unit_type: Type[PU_T]) -> Optional[PU_T]:
+    def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
+        found = super().locate_unit(unit_type)
+        return found if found else self._locate_unit(unit_type)
+
+    def _locate_unit(self, unit_type: Type[PU_T]) -> Optional[PU_T]:
         for unit in self.logic_units:
             if isinstance(unit, unit_type):
                 return unit

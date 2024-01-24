@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union, TypeVar, Type
+from typing import Any, List, Dict, Literal, Union, TypeVar, Type, Optional
 
 from pydantic import BaseModel, Field, TypeAdapter
 
 from eidos_sdk.cpu.agent_io import CPUMessageTypes
 from eidos_sdk.cpu.call_context import CallContext
+from eidos_sdk.cpu.processing_unit import PU_T, ProcessingUnit
 from eidos_sdk.system.reference_model import Specable
 
 
@@ -18,7 +19,7 @@ class AgentCPUSpec(BaseModel):
     )
 
 
-class AgentCPU(Specable[AgentCPUSpec], ABC):
+class AgentCPU(Specable[AgentCPUSpec], ProcessingUnit, ABC):
     @abstractmethod
     async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         pass
@@ -31,6 +32,12 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> Any:
         pass
+
+    def locate_unit(self, unit_type: Type[PU_T]) -> Optional[PU_T]:
+        if isinstance(self, unit_type):
+            return self
+        else:
+            return None
 
     def _to_json(self, obj):
         if obj is None:
@@ -73,7 +80,7 @@ class Thread:
     async def schedule_request(
             self,
             prompts: List[CPUMessageTypes],
-            output_format: Type[T],
+            output_format: Type[T] = str,
     ) -> T:
         model = TypeAdapter(output_format)
         schema = model.json_schema()

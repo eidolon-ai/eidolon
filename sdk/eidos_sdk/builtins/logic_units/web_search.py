@@ -1,15 +1,21 @@
 import os
 import ssl
 from contextlib import asynccontextmanager
-from typing import List
+from typing import List, Optional
 
 import aiohttp
 import certifi
 from aiohttp import ClientSession
+from bs4 import BeautifulSoup
+from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, Field
 
+from eidos_sdk.agent.client import Program
+from eidos_sdk.cpu.call_context import CallContext
 from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidos_sdk.cpu.memory_unit import MemoryUnit
 from eidos_sdk.system.reference_model import Specable
+from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.util.logger import logger
 
 
@@ -23,6 +29,7 @@ class SearchResult(BaseModel):
 class WebSearchConfig(BaseModel):
     cse_id: str = Field(None, desctiption="Google Custom Search Engine Id.")
     cse_token: str = Field(None, desctiption="Google Project dev token, must have search permissions.")
+    summarizer: Optional[str] = "BeautifulSoup"
 
 
 class WebSearch(LogicUnit, Specable[WebSearchConfig]):
@@ -32,12 +39,14 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         self.spec.cse_id = self.spec.cse_id or os.environ["CSE_ID"]
         self.spec.cse_token = self.spec.cse_token or os.environ["CSE_TOKEN"]
         self.sslcontext = ssl.create_default_context(cafile=certifi.where())
+        self.jinja_env = Environment(undefined=StrictUndefined)
         if not self.spec.cse_id or not self.spec.cse_token:
             raise ValueError("missing required cse_id or cse_token")
 
     @asynccontextmanager
     async def _get(self, *args, **kwargs):
-        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+        # headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+        headers = {}
         async with ClientSession(headers=headers, connector=aiohttp.TCPConnector(ssl_context=self.sslcontext)) as session:
             async with session.get(*args, **kwargs) as resp:
                 yield resp
@@ -52,10 +61,21 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         async with self._get(url) as resp:
             if not resp.ok:
                 logger.warning(f"Request to url '{url}' return {resp.status}, {resp.reason}")
-            # todo, this is blowing up the context, we need to parse it to only include content/data
-            # separately, we likely need a concept of "relevant retrieval" which only shows information directly
-            # related to a query and is always "top of mind" but removed when unneeded.
-            return await resp.text()
+            text = await resp.text()
+            if self.spec.summarizer == "BeautifulSoup":
+                soup = BeautifulSoup(text, 'lxml')
+                return soup.get_text(separator='\n', strip=True)
+            elif self.spec.summarizer:
+                # todo, it would be interesting to summarize in the background and replace messages in the background
+                memory_unit = self.locate_unit(MemoryUnit)
+                context = CallContext(process_id=RequestContext.get("process_id", ...))
+                messages = await memory_unit.getConversationHistory(context)
+                summary = await Program.get(self.spec.summarizer).execute(dict(
+                    messages=messages,
+                    text=text,
+                ))
+                return summary.data()
+            return text
 
     @llm_function()
     async def search(

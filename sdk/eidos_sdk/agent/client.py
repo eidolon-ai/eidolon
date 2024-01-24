@@ -108,7 +108,7 @@ async def _post(url, json):
             return await resp.json()
 
 
-async def _parse_agent(location: str):
+def _parse_agent(location: str):
     if "." in location:
         parts = location.split(".")
         return ".".join(parts[:-1]), parts[-1]
