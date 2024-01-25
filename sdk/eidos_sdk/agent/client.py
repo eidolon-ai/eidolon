@@ -28,17 +28,15 @@ class Agent(BaseModel):
     machine: str = _default_machine
     agent: str
 
-    async def exec_program(self, program_name, body: Any) -> AsyncIterator[StreamEvent]:
+    def stream_program(self, program_name, body: Any) -> AsyncIterator[StreamEvent]:
         body = body.model_dump() if isinstance(body, BaseModel) else body
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
-        async for event in AgentResponseIterator(stream_content(url, body)):
-            yield event
+        return AgentResponseIterator(stream_content(url, body))
 
-    async def exec_process(self, action_name: str, process_id: str, body: Any) -> AsyncIterator[StreamEvent]:
+    def stream_action(self, action_name: str, process_id: str, body: Any) -> AsyncIterator[StreamEvent]:
         body = body.model_dump() if isinstance(body, BaseModel) else body
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{process_id}/actions/{action_name}")
-        async for event in AgentResponseIterator(stream_content(url, body)):
-            yield event
+        return AgentResponseIterator(stream_content(url, body))
 
     async def program(self, program_name: str, body: dict | BaseModel) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")

@@ -109,13 +109,13 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
 
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
         def fn(_self, body):
-            return RecordAgentResponseIterator(agent.exec_program(program, body), call_context.process_id, call_context.thread_id)
+            return RecordAgentResponseIterator(agent.stream_program(program, body), call_context.process_id, call_context.thread_id)
 
         return fn
 
     def _process_tool(self, agent: Agent, action: str, process_id: str, call_context: CallContext):
         def fn(_self, body):
-            return RecordAgentResponseIterator(agent.exec_process(action, process_id, body), call_context.process_id, call_context.thread_id)
+            return RecordAgentResponseIterator(agent.stream_action(action, process_id, body), call_context.process_id, call_context.thread_id)
 
         return fn
 

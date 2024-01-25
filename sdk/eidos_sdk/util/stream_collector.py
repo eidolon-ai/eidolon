@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from eidos_sdk.io.events import BaseStreamEvent, StringOutputEvent, ObjectOutputEvent
+from typing import Optional
+
+from eidos_sdk.io.events import BaseStreamEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent
 
 
 class StringStreamCollector:
-    contents: str
+    contents: Optional[str]
 
     def __init__(self):
         self.contents = None
@@ -21,4 +23,9 @@ class StringStreamCollector:
             if self.contents is None:
                 self.contents = event.content
             else:
-                self.contents = str(self.contents) + str(event.content)
+                self.contents = str(self.contents) + "\n" + str(event.content)
+        elif event.is_root_and_type(ErrorEvent):
+            if self.contents is None:
+                self.contents = str(event.reason)
+            else:
+                self.contents = str(self.contents) + "\n" + str(event.reason)
