@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import jsonref
-import os
 from pydantic import BaseModel
 from typing import List, Any, AsyncIterator
 from urllib.parse import urljoin
 
+from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.io.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
-from eidos_sdk.util.aiohttp import ContextualClientSession, stream_content
+from eidos_sdk.util.aiohttp import stream_content, get_content, post_content
 
-_default_machine = os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
+_default_machine = AgentOS.current_machine_url
 
 
 class Machine(BaseModel):
@@ -17,7 +17,7 @@ class Machine(BaseModel):
 
     async def get_schema(self) -> dict:
         url = urljoin(self.machine, "openapi.json")
-        json_ = await _get(url)
+        json_ = await get_content(url)
         return jsonref.replace_refs(json_)
 
     def agent(self, agent_name: str) -> Agent:
@@ -28,20 +28,17 @@ class Agent(BaseModel):
     machine: str = _default_machine
     agent: str
 
-    def stream_program(self, program_name, body: Any) -> AsyncIterator[StreamEvent]:
-        body = body.model_dump() if isinstance(body, BaseModel) else body
+    def stream_program(self, program_name: str, body: Any) -> AsyncIterator[StreamEvent]:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
         return AgentResponseIterator(stream_content(url, body))
 
     def stream_action(self, action_name: str, process_id: str, body: Any) -> AsyncIterator[StreamEvent]:
-        body = body.model_dump() if isinstance(body, BaseModel) else body
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{process_id}/actions/{action_name}")
         return AgentResponseIterator(stream_content(url, body))
 
     async def program(self, program_name: str, body: dict | BaseModel) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
-        body = body.model_dump() if isinstance(body, BaseModel) else body
-        json_ = await _post(url, body)
+        json_ = await posat_content(url, body)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def process(self, process_id: str) -> Process:
@@ -66,13 +63,12 @@ class Process(BaseModel):
 
     async def action(self, action_name: str, body: dict | BaseModel) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/actions/{action_name}")
-        body = body.model_dump() if isinstance(body, BaseModel) else body
-        json_ = await _post(url, body)
+        json_ = await post_content(url, body)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     async def status(self) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/status")
-        json_ = await _get(url)
+        json_ = await get_content(url)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
 
@@ -82,24 +78,18 @@ class ProcessStatus(Process):
     data: Any
 
 
-#  _get and _post are separated to be easily mocked by tests
-
-
-async def _get(url):
-    async with ContextualClientSession() as session:
-        async with session.get(url) as resp:
-            resp.raise_for_status()
-            return await resp.json()
-
-
-async def _post(url, json):
-    async with ContextualClientSession() as session:
-        async with session.post(url, json=json) as resp:
-            resp.raise_for_status()
-            return await resp.json()
-
-
 class AgentResponseIterator:
+    """
+    This class is used to iterate over the responses from an agent call and store the state of the conversation after the stream is complete.
+
+    For example::
+
+        agent_it = agent.stream_program("program_name", "some data")
+        async for event in agent_it:
+            # ... do something with the event ...
+        process_id = agent_it.process_id
+
+    """
     data: AsyncIterator[StreamEvent]
     machine: str
     agent: str

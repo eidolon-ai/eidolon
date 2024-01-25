@@ -110,18 +110,12 @@ def client_builder(app_builder):
         ]
         app = app_builder(resources)
 
-        def make_request(method):
-            async def _fn(url, json=None):
-                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as _client:
-                    return (await _client.request(method, url, json=json)).json()
+        def make_client(*args, **kwargs):
+            return AsyncClient(*args, **kwargs, app=app, base_url="http://0.0.0.0:8080")
 
-            return _fn
-
-        client_get = "eidos_sdk.agent.client._get"
-        client_post = "eidos_sdk.agent.client._post"
-        with TestClient(app) as client, patch(client_get) as _get, patch(client_post) as _post:
-            _post.side_effect = make_request("POST")
-            _get.side_effect = make_request("GET")
+        async_client = "eidos_sdk.util.aiohttp.httpx.AsyncClient"
+        with TestClient(app) as client, patch(async_client) as _async_client:
+            _async_client.side_effect = make_client
             yield client
 
     return fn

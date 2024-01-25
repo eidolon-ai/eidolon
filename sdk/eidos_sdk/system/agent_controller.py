@@ -183,7 +183,7 @@ class AgentController:
     async def stream_agent_iterator(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> AsyncIterator[StreamEvent]:
         next_state = None
         last_event = None
-        yield StartAgentCallEvent(machine=AgentOS.default_machine, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
+        yield StartAgentCallEvent(machine=AgentOS.current_machine_url, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
         try:
             async for event in handler.fn(self.agent, **kwargs):
                 last_event = event
@@ -213,7 +213,7 @@ class AgentController:
         state = "unhandled_error"
         data = "<stream>"
         try:
-            yield StartAgentCallEvent(machine=AgentOS.default_machine, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
+            yield StartAgentCallEvent(machine=AgentOS.current_machine_url, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
 
             response = await handler.fn(self.agent, **kwargs)
             if isinstance(response, AgentState):

@@ -1,21 +1,32 @@
 import httpx
 import json
-from aiohttp import ClientSession
 from httpx_sse import EventSource
+from pydantic_core import to_jsonable_python
 
 from eidos_sdk.io.events import BaseStreamEvent
 from eidos_sdk.system.request_context import RequestContext
 
 
-class ContextualClientSession(ClientSession):
-    def __init__(self, *args, **kwargs):
-        if "headers" not in kwargs:
-            kwargs["headers"] = {}
-        kwargs["headers"].update(RequestContext.headers)
-        super().__init__(*args, **kwargs)
+async def get_content(url):
+    async with httpx.AsyncClient(timeout=httpx.Timeout(5.0, read=600.0)) as client:
+        response = await client.get(url=url, headers=RequestContext.headers)
+        response.raise_for_status()
+        return response.json()
+
+
+async def post_content(url, body):
+    headers = {
+        **RequestContext.headers,
+        "Accept": "text/event-stream, application/json",
+    }
+    async with httpx.AsyncClient(timeout=httpx.Timeout(5.0, read=600.0)) as client:
+        response = await client.post(url=url, json=to_jsonable_python(body), headers=headers)
+        response.raise_for_status()
+        return response.json()
 
 
 async def stream_content(url: str, body):
+    body = to_jsonable_python(body)
     headers = {
         **RequestContext.headers,
         "Accept": "text/event-stream, application/json",

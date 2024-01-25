@@ -5,7 +5,7 @@ import typing
 from abc import ABC
 from dataclasses import dataclass
 from pydantic import BaseModel, TypeAdapter
-from typing import Dict, List, AsyncIterator
+from typing import Dict, List, AsyncIterator, Coroutine
 
 from eidos_sdk.cpu.call_context import CallContext
 from eidos_sdk.cpu.llm_message import ToolCall
@@ -30,6 +30,9 @@ class LLMToolWrapper:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
             input_model = self.eidos_handler.input_model_fn(self.logic_unit, self.eidos_handler)
             result = self.eidos_handler.fn(self.logic_unit, **dict(input_model.model_validate(tool_call.arguments)))
+            if isinstance(result, Coroutine):
+                result = await result
+
             if isinstance(result, typing.AsyncIterable):
                 async for event in result:
                     yield event
@@ -42,7 +45,6 @@ class LLMToolWrapper:
                 else:
                     yield ObjectOutputEvent(content=result)
                 yield SuccessEvent()
-
         except Exception as e:
             logging.exception("error calling tool " + self.eidos_handler.name)
             yield ErrorEvent(reason=e)

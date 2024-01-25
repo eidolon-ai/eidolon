@@ -133,12 +133,15 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         tool_call_context = tc.tool_call_id
         yield ToolCallStartEvent(tool_call=tc, context_id=tool_call_context)
         try:
-            tool_result = tool_def.execute(call_context=parent_stream_context, tool_call=tc)
             stream_collect = StringStreamCollector()
-            async for event in tool_result:
-                stream_collect.process_event(event)
-                event.stream_context = tool_call_context
-                yield event
+            try:
+                tool_result = tool_def.execute(call_context=parent_stream_context, tool_call=tc)
+                async for event in tool_result:
+                    stream_collect.process_event(event)
+                    event.stream_context = tool_call_context
+                    yield event
+            except Exception as e:
+                yield ErrorEvent(stream_context=tool_call_context, reason=e)
 
             message = ToolResponseMessage(
                 logic_unit_name=tool_def.logic_unit.__class__.__name__,
@@ -149,8 +152,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [message])
             conversation.append(message)
-        except Exception as e:
-            yield ErrorEvent(stream_context=tool_call_context, reason=e)
         finally:
             yield ToolCallEndEvent(context_id=tool_call_context)
 
@@ -161,6 +162,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         return Thread(CallContext(process_id=process_id).derive_call_context(), self)
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
+        # todo -- we should add, optional, call on processing unit to clone the context
         new_context = call_context.derive_call_context()
         messages = await self.memory_unit.getConversationHistory(call_context)
         for m in messages:

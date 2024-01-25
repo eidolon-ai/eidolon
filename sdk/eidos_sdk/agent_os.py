@@ -18,7 +18,7 @@ class AgentOS:
     similarity_memory: "SimilarityMemory" = ...  # noqa: F821
     security_manager: "SecurityManager" = ...  # noqa: F821
 
-    default_machine = os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
+    current_machine_url = os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
 
     @classmethod
     def _get_or_load_resources(cls) -> Dict[str, Dict[str, Tuple[Resource, str]]]:

@@ -130,7 +130,7 @@ class TestAgentsWithReferences:
         post.raise_for_status()
         assert HelloWorld.calls["greeter2"] == [{"name": "Luke"}]
 
-    def test_list_body(self, client):
+    def test_list_body(self, client, patch_async_vcr_send):
         post = client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke. Can ask greeter3 to greet me?"),
@@ -138,6 +138,7 @@ class TestAgentsWithReferences:
         post.raise_for_status()
         assert HelloWorld.calls["greeter3"] == [{"name": "Luke", "called_with": ["Luke"]}]
 
+    # todo, this is a nd test, let's catch a cassette failure and debug
     def test_passes_context(self, client):
         RequestContext.set("foo", "bar")
         post = client.post(
