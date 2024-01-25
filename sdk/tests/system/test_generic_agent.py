@@ -6,8 +6,11 @@ import pytest
 from fastapi import Body
 
 from eidos_sdk.agent.agent import register_program
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.io.events import StartAgentCallEvent, ObjectOutputEvent, SuccessEvent, AgentStateEvent, StartLLMEvent, StringOutputEvent
 from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.system.resources.resources_base import Metadata, Resource
+from eidos_sdk.util.aiohttp import stream_content
 
 
 @pytest.fixture(scope="module")
@@ -161,6 +164,60 @@ def test_generic_agent_supports_object_output(client_builder, generic_agent, dog
         )
         post.raise_for_status()
         assert "paris" in post.json()["data"]["capital"].lower()
+
+
+@pytest.mark.asyncio
+async def test_generic_agent_supports_object_output_with_stream(client_builder, generic_agent, dog):
+    generic_agent.spec["output_schema"] = {
+        "type": "object",
+        "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
+    }
+    with client_builder(generic_agent) as _client:
+        stream = stream_content(
+            "/agents/GenericAgent/programs/question", body=dict(instruction="Tell me about france please")
+        )
+        expected_events = [
+            StartAgentCallEvent(
+                agent_name="GenericAgent",
+                machine= AgentOS.current_machine_url,
+                call_name="question",
+                process_id="test_generic_agent_supports_object_output_with_stream_0"
+            ),
+            ObjectOutputEvent(content={'capital': 'Paris', 'population': 67399000}),
+            SuccessEvent(),
+            AgentStateEvent(state="idle", available_actions=["respond"]),
+        ]
+        events = [event async for event in stream]
+        assert events == expected_events
+
+
+@pytest.mark.asyncio
+async def test_generic_agent_supports_string_stream(client_builder, generic_agent, dog):
+    generic_agent.spec["output_schema"] = "str"
+    with client_builder(generic_agent) as _client:
+        stream = stream_content(
+            "/agents/GenericAgent/programs/question", body=dict(
+                instruction="What is the capital of france and its population. Put the relevant parts in XML like blocks. "
+                            "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>")
+        )
+        assert await stream.__anext__() == StartAgentCallEvent(
+                agent_name="GenericAgent",
+                machine= AgentOS.current_machine_url,
+                call_name="question",
+                process_id="test_generic_agent_supports_string_stream_0"
+            )
+        assert await stream.__anext__() == StartLLMEvent()
+        next_event = await stream.__anext__()
+        str = ""
+        while isinstance(next_event, StringOutputEvent):
+            str += next_event.content
+            next_event = await stream.__anext__()
+
+        assert "<capital>Paris</capital>" in str
+        assert "<population>2,175,601</population>" in str
+        assert next_event == SuccessEvent()
+        assert await stream.__anext__() == AgentStateEvent(state="idle", available_actions=["respond"])
+        assert await stream.__anext__() == SuccessEvent()
 
 
 def test_generic_agent_supports_image(client_builder, generic_agent, dog):

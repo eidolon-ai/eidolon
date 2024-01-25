@@ -40,6 +40,10 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture
 def patch_async_vcr_send(monkeypatch):
     async def mock_async_vcr_send(cassette, real_send, *args, **kwargs):
+        if len(args) == 1 and "stream" in kwargs and kwargs["stream"] is True:
+            args = (args[0], kwargs["request"])
+            del kwargs["request"]
+            del kwargs["stream"]
         vcr_request, response = _shared_vcr_send(cassette, real_send, *args, **kwargs)
         if response:
             # add cookies from response to session cookie store

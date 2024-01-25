@@ -11,6 +11,7 @@ from eidos_sdk.agent.agent import (
     AgentSpec,
     register_program,
 )
+from eidos_sdk.io.events import AgentStateEvent
 from eidos_sdk.system.eidos_handler import EidosHandler
 from eidos_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage
 from eidos_sdk.system.reference_model import Specable
@@ -109,14 +110,16 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
             if file:
                 image_messages.append(ImageCPUMessage(image=file.file, prompt=file.filename))
 
-        response = await t.run_request(
+        response = t.stream_request(
             prompts=[
                 UserTextCPUMessage(prompt=(env.from_string(self.spec.user_prompt).render(**body))),
                 *image_messages,
             ],
             output_format=self.spec.output_schema,
         )
-        return AgentState(name="idle", data=response)
+        async for event in response:
+            yield event
+        yield AgentStateEvent(state="idle")
 
     @register_action("idle")
     async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[Any]:
