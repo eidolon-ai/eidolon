@@ -113,7 +113,7 @@ def client_builder(app_builder):
         def make_client(*args, **kwargs):
             return AsyncClient(*args, **kwargs, app=app, base_url="http://0.0.0.0:8080")
 
-        async_client = "eidos_sdk.util.aiohttp.httpx.AsyncClient"
+        async_client = "eidos_sdk.util.aiohttp.AsyncClient"
         with TestClient(app) as client, patch(async_client) as _async_client:
             _async_client.side_effect = make_client
             yield client
