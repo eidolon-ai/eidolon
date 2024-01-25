@@ -7,7 +7,7 @@ from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIt
 
 from eidos_sdk.cpu.agent_io import CPUMessageTypes
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.io.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent, with_context
+from eidos_sdk.io.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
 from eidos_sdk.system.reference_model import Specable
 
 
@@ -81,17 +81,17 @@ class Thread:
         result = None
         error = None
 
+        is_string_call = output_format == "str" or output_format["type"] == "string"
         string_output = ""
         async for event in stream:
-            if len(event.stream_context) == 1 and event.stream_context[0] == self._call_context.process_id:
-                if isinstance(event, ObjectOutputEvent):
-                    result = event.content
-                elif isinstance(event, StringOutputEvent):
-                    string_output += event.content
-                elif isinstance(event, ErrorEvent):
-                    error = event.reason
+            if event.is_root_and_type(ObjectOutputEvent):
+                result = event.content
+            elif event.is_root_and_type(StringOutputEvent):
+                string_output += event.content
+            elif event.is_root_and_type(ErrorEvent):
+                error = event.reason
 
-        if len(string_output) > 0:
+        if is_string_call:
             result = string_output
 
         if error is not None:
@@ -114,10 +114,7 @@ class Thread:
         else:
             s = self._cpu.schedule_request(self._call_context, prompts, output_format)
 
-        context = f"{self._call_context.process_id}"
-        if self._call_context.thread_id:
-            context += f":{self._call_context.thread_id}"
-        return with_context([context], s)
+        return s
 
     def call_context(self) -> CallContext:
         return self._call_context

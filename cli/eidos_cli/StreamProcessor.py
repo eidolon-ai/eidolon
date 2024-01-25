@@ -26,7 +26,6 @@ class StreamProcessor:
     def generate_tokens(self, response):
         input = self._process_events(response)
         parser = MarkdownIt().enable("strikethrough").enable("table")
-        # change this to enable the text to be a generator looking that the state of the last token in the stream and either adding to it or yielding a new token
         env = {}
         num_tokens_processed = 0
         new_line_encountered = True

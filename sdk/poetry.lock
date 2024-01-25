@@ -1305,6 +1305,17 @@ http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (==1.*)"]
 
 [[package]]
+name = "httpx-sse"
+version = "0.4.0"
+description = "Consume Server-Sent Event (SSE) messages with HTTPX."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "httpx-sse-0.4.0.tar.gz", hash = "sha256:1e81a3a3070ce322add1d3529ed42eb5f70817f45ed6ec915ab753f961139721"},
+    {file = "httpx_sse-0.4.0-py3-none-any.whl", hash = "sha256:f329af6eae57eaa2bdfd962b42524764af68075ea87370a2de920af5341e318f"},
+]
+
+[[package]]
 name = "huggingface-hub"
 version = "0.20.2"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
@@ -4947,4 +4958,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "3f0ae8c570825994dc3249f980ee07384b3cb579c00480e8154373a26a688b31"
+content-hash = "c0eff10fdc19fa1db35fb17247f53cb24623710fbb6f22ac6069743e26266f55"

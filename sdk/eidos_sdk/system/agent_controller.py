@@ -4,10 +4,9 @@ import inspect
 import typing
 import uuid
 from collections.abc import AsyncIterator
-from inspect import Parameter
-
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.params import Body, Param
+from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined, to_jsonable_python
 from sse_starlette.sse import EventSourceResponse, ServerSentEvent
@@ -15,8 +14,8 @@ from starlette.responses import JSONResponse
 
 from eidos_sdk.agent.agent import AgentState
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import StartAgentCallEvent, with_context, AgentStateEvent, BaseStreamEvent, \
-    ErrorEvent, StringOutputEvent, OutputEvent, SuccessEvent, StreamEvent, EndStreamEvent
+from eidos_sdk.io.events import StartAgentCallEvent, AgentStateEvent, BaseStreamEvent, \
+    ErrorEvent, StringOutputEvent, OutputEvent, SuccessEvent, StreamEvent, EndStreamEvent, ObjectOutputEvent
 from eidos_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
@@ -148,38 +147,30 @@ class AgentController:
             return await self.send_response(handler, process, **kwargs)
 
     async def send_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
-        start_event = None
-        output_event: typing.Optional[OutputEvent] = None
         state_change_event = None
         final_event = None
+        result_object = None
+        string_result = ""
         async for event in self.agent_event_stream(handler, process, **kwargs):
-            if isinstance(event, StartAgentCallEvent):
-                if start_event:
-                    raise RuntimeError(f"Received multiple start agent events: {event}")
-                start_event = event
+            if event.is_root_and_type(StringOutputEvent):
+                string_result += event.content
+            elif event.is_root_and_type(ObjectOutputEvent):
+                result_object = event.content
+            elif event.is_root_and_type(AgentStateEvent):
+                state_change_event = event
+            elif event.is_root_and_type(EndStreamEvent):
+                final_event = event
 
-            else:
-                if not start_event:
-                    raise RuntimeError(f"Received event {event} before start agent event")
-                if event.stream_context == start_event.stream_context:
-                    if isinstance(event, AgentStateEvent):
-                        state_change_event = event
-                    elif isinstance(event, EndStreamEvent):
-                        final_event = event
-                    elif isinstance(event, OutputEvent) and not output_event:
-                        output_event = event
-                    elif isinstance(event, StringOutputEvent):
-                        output_event.content += event.content
-
-        if not output_event:
-            raise RuntimeError(f"Did not receive output event for {handler.name}")
         if not state_change_event:
             raise RuntimeError(f"Did not receive state change event for {handler.name}")
         if not final_event:
             raise RuntimeError(f"Did not receive final event for {handler.name}")
 
         process.state = state_change_event.state
-        process.data = output_event.content
+        if result_object:
+            process.data = result_object
+        else:
+            process.data = string_result
         return self.doc_to_response(process)
 
     def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
@@ -187,26 +178,27 @@ class AgentController:
             stream = self.stream_agent_iterator(handler, process, **kwargs)
         else:
             stream = self.stream_agent_fn(handler, process, **kwargs)
-        return with_context([], stream)
+        return stream
 
     async def stream_agent_iterator(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> AsyncIterator[StreamEvent]:
         next_state = None
         last_event = None
-        yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id)
+        yield StartAgentCallEvent(machine=AgentOS.default_machine, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
         try:
             async for event in handler.fn(self.agent, **kwargs):
                 last_event = event
                 # todo, we can update record in mongo here
-                if isinstance(event, AgentStateEvent):
+                if event.is_root_and_type(AgentStateEvent):
                     next_state = event.state
                 else:
                     yield event
 
-            if last_event and isinstance(last_event, ErrorEvent):
+            if last_event.is_root_and_type(ErrorEvent):
                 next_state = "unhandled_error"
             elif not next_state:
                 next_state = "terminated"
 
+            yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state))
             yield SuccessEvent()
         except Exception as e:
             next_state = "unhandled_error"
@@ -216,13 +208,12 @@ class AgentController:
             state=next_state,
             data=dict(data="<stream>"),
         )
-        yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state))
 
     async def stream_agent_fn(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
         state = "unhandled_error"
         data = "<stream>"
         try:
-            yield StartAgentCallEvent(agent_name=self.name, call_name=handler.name, process_id=process.record_id)
+            yield StartAgentCallEvent(machine=AgentOS.default_machine, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
 
             response = await handler.fn(self.agent, **kwargs)
             if isinstance(response, AgentState):

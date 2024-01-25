@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from enum import Enum
 from pydantic import BaseModel, TypeAdapter
-from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal
+from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict
 
 from eidos_sdk.cpu.llm_message import ToolCall
 
@@ -25,32 +25,78 @@ T = TypeVar("T")
 
 
 class BaseStreamEvent(BaseModel, ABC):
-    stream_context: List[str] = None
+    stream_context: str = None
     category: Category
     event_type: str
 
-    def extend_context(self, context: str):
-        if self.stream_context is None:
-            return [context]
+    def is_root_event(self):
+        return self.stream_context is None
+
+    def is_root_and_type(self, event_type: type):
+        return self.stream_context is None and isinstance(self, event_type)
+
+    @classmethod
+    def from_dict(cls, event_dict: Dict[str, Any]):
+        event_type = event_dict["event_type"]
+        # remove fields that are set automatically
+        del event_dict["event_type"]
+        del event_dict["category"]
+        if event_dict["stream_context"] is None:
+            del event_dict["stream_context"]
+        if event_type == "string":
+            return StringOutputEvent(**event_dict)
+        elif event_type == "object":
+            return ObjectOutputEvent(**event_dict)
+        elif event_type == "tool_call_start":
+            return ToolCallStartEvent(**event_dict)
+        elif event_type == "tool_call_end":
+            return ToolCallEndEvent(**event_dict)
+        elif event_type == "llm_tool_call_request":
+            return LLMToolCallRequestEvent(**event_dict)
+        elif event_type == "agent_call":
+            return StartAgentCallEvent(**event_dict)
+        elif event_type == "llm":
+            return StartLLMEvent(**event_dict)
+        elif event_type == "success":
+            return SuccessEvent(**event_dict)
+        elif event_type == "canceled":
+            return CanceledEvent(**event_dict)
+        elif event_type == "error":
+            return ErrorEvent(**event_dict)
+        elif event_type == "agent_state":
+            return AgentStateEvent(**event_dict)
         else:
-            return [*self.stream_context, context]
+            raise ValueError(f"Unknown event type {event_type}")
 
 
-class StartStreamEvent(BaseStreamEvent, ABC):
+class StartStreamContextEvent(BaseStreamEvent, ABC):
+    category: Literal[Category.START] = Category.START
+    context_id: str
+
+
+class EndStreamContextEvent(BaseStreamEvent, ABC):
+    category: Literal[Category.START] = Category.END
+    context_id: str
+
+
+class StartLLMEvent(BaseStreamEvent):
+    event_type: Literal["llm"] = "llm"
     category: Literal[Category.START] = Category.START
 
 
-class StartLLMEvent(StartStreamEvent):
-    event_type: Literal["llm"] = "llm"
-
-
-class ToolCallEvent(StartStreamEvent):
-    event_type: Literal["tool_call"] = "tool_call"
+class ToolCallStartEvent(StartStreamContextEvent):
+    event_type: Literal["tool_call"] = "tool_call_start"
     tool_call: ToolCall
 
 
-class StartAgentCallEvent(StartStreamEvent):
+class ToolCallEndEvent(EndStreamContextEvent):
+    event_type: Literal["tool_call"] = "tool_call_end"
+
+
+class StartAgentCallEvent(BaseStreamEvent):
+    category: Literal[Category.START] = Category.START
     event_type: Literal["agent_call"] = "agent_call"
+    machine: str
     agent_name: str
     call_name: str
     process_id: str
@@ -66,6 +112,12 @@ class OutputEvent(BaseStreamEvent, ABC):
             return StringOutputEvent(content=content, **kwargs)
         else:
             return ObjectOutputEvent[T](content=content, **kwargs)
+
+
+class LLMToolCallRequestEvent(BaseStreamEvent):
+    category: Literal[Category.OUTPUT] = Category.OUTPUT
+    event_type: Literal["tool_call"] = "llm_tool_call_request"
+    tool_call: ToolCall
 
 
 class StringOutputEvent(OutputEvent):
@@ -104,24 +156,15 @@ class AgentStateEvent(BaseStreamEvent):
     available_actions: List[str] = None  # this is filled in by the server, agents should leave the default
 
 
-StreamEvent = StartAgentCallEvent | StartLLMEvent | ToolCallEvent | \
+StreamEvent = StartAgentCallEvent | StartLLMEvent | ToolCallStartEvent | ToolCallEndEvent | LLMToolCallRequestEvent | \
               StringOutputEvent | ObjectOutputEvent | \
               SuccessEvent | CanceledEvent | ErrorEvent | \
               AgentStateEvent
 
 
-async def with_context(context: List[str], it: AsyncIterator[StreamEvent]) -> AsyncIterator[StreamEvent]:
-    async for event in it:
-        if event.stream_context is None:
-            event.stream_context = [*context]
-        else:
-            event.stream_context = [*context, *event.stream_context]
-        yield event
-
-
 async def convert_output_object(it: AsyncIterator[StreamEvent], output_format: Type[T]) -> AsyncIterator[StreamEvent]:
     model = TypeAdapter(output_format)
     async for event in it:
-        if isinstance(event, ObjectOutputEvent):
+        if event.is_root_and_type(ObjectOutputEvent):
             event.content = model.validate_python(event.content)
         yield event

@@ -1,7 +1,6 @@
-from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
-
 from aiostream import stream
 from fastapi import HTTPException
+from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
 
 from eidos_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread
 from eidos_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
@@ -11,9 +10,9 @@ from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos_sdk.cpu.memory_unit import MemoryUnit
 from eidos_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidos_sdk.io.events import ToolCallEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, \
-    StartLLMEvent, EndStreamEvent, StopReason, SuccessEvent
+from eidos_sdk.io.events import ErrorEvent, StreamEvent, EndStreamEvent, StopReason, LLMToolCallRequestEvent, ToolCallStartEvent, ToolCallEndEvent
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
+from eidos_sdk.util.stream_collector import StringStreamCollector
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
@@ -85,57 +84,36 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
     ) -> AsyncIterator[StreamEvent]:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            tool_defs = await LLMToolWrapper.from_logic_units(self.logic_units, conversation=conversation)
+            tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
             tool_call_events = []
-            end_stream_event = None
             got_error = False
             execute_llm_ = self.llm_unit.execute_llm(call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format)
             # yield the events but capture the output, so it can be rolled into one event for memory.
-            output = None
+            stream_collector = StringStreamCollector()
             async for event in execute_llm_:
-                if isinstance(event, ToolCallEvent):
+                stream_collector.process_event(event)
+                if event.is_root_and_type(LLMToolCallRequestEvent):
                     tool_call_events.append(event)
-                elif isinstance(event, StartLLMEvent):
-                    yield event
-                elif isinstance(event, StringOutputEvent):
-                    if output is None:
-                        output = event.content
-                    elif isinstance(output, str):
-                        output += event.content
-                    else:
-                        output = str(output) + event.content
-                    yield event
-                elif isinstance(event, ObjectOutputEvent):
-                    if output is None:
-                        output = event.content
-                    else:
-                        output = str(output) + str(event.content)
-                    yield event
-                elif isinstance(event, EndStreamEvent):
-                    end_stream_event = event
-                    if end_stream_event.event_type != StopReason.SUCCESS:
-                        if end_stream_event.event_type == StopReason.ERROR:
-                            got_error = True
-                        yield event
-                        break
-                else:
-                    yield event
+                elif event.is_root_and_type(EndStreamEvent) and event.event_type == StopReason.ERROR:
+                    got_error = True
+                yield event
 
             assistant_message = AssistantMessage(
                 type="assistant",
-                content=output,
+                content=stream_collector.contents or "",
                 tool_calls=[tce.tool_call for tce in tool_call_events]
             )
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             conversation.append(assistant_message)
 
+            # todo (later) we probably want to try again based on config
             if got_error:
                 return
 
             # process tool calls
             if len(tool_call_events) > 0:
-                calls = []
+                calls: List[AsyncIterator[StreamEvent]] = []
                 for tce in tool_call_events:
                     calls.append(self._call_tool(call_context, tce, tool_defs, conversation))
 
@@ -144,35 +122,37 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                     async for event in streamer:
                         yield event
             else:
-                yield end_stream_event
                 return
 
         yield ErrorEvent(reason="Exceeded maximum number of function calls")
 
-    async def _call_tool(self, call_context: CallContext, tool_call_event: ToolCallEvent, tool_defs, conversation: List[LLMMessage]):
+    async def _call_tool(self, call_context: CallContext, tool_call_event: LLMToolCallRequestEvent, tool_defs, conversation: List[LLMMessage]):
         parent_stream_context = tool_call_event.stream_context
         tool_def = tool_defs[tool_call_event.tool_call.name]
-        tool_context = tool_call_event.extend_context(tool_call_event.tool_call.tool_call_id)
+        tc = tool_call_event.tool_call
+        tool_call_context = tc.tool_call_id
+        yield ToolCallStartEvent(tool_call=tc, context_id=tool_call_context)
         try:
-            tc = tool_call_event.tool_call
-            yield ToolCallEvent(stream_context=tool_context, tool_call=tc)
+            tool_result = tool_def.execute(call_context=parent_stream_context, tool_call=tc)
+            stream_collect = StringStreamCollector()
+            async for event in tool_result:
+                stream_collect.process_event(event)
+                event.stream_context = tool_call_context
+                yield event
 
-            # todo -- change this into a stream on output -- this is so we can flow the output to the user
-            tool_result = await tool_def.execute(call_context=parent_stream_context, args=tc.arguments)
             message = ToolResponseMessage(
                 logic_unit_name=tool_def.logic_unit.__class__.__name__,
                 tool_call_id=tc.tool_call_id,
-                result=tool_result,
+                result=stream_collect.contents or "",
                 name=tc.name,
             )
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [message])
             conversation.append(message)
-            # If the call returns a string just stream, else collect and return an object
-            yield ObjectOutputEvent(stream_context=tool_context, content=tool_result)
-            yield SuccessEvent(stream_context=tool_context)
         except Exception as e:
-            yield ErrorEvent(stream_context=tool_context, reason=e)
+            yield ErrorEvent(stream_context=tool_call_context, reason=e)
+        finally:
+            yield ToolCallEndEvent(context_id=tool_call_context)
 
     async def main_thread(self, process_id: str) -> Thread:
         return Thread(CallContext(process_id=process_id), self)

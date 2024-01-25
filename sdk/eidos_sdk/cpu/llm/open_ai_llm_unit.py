@@ -20,8 +20,8 @@ from eidos_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidos_sdk.io.events import ErrorEvent, ToolCallEvent, StringOutputEvent, ObjectOutputEvent, \
-    StartLLMEvent, SuccessEvent
+from eidos_sdk.io.events import ErrorEvent, StringOutputEvent, ObjectOutputEvent, \
+    StartLLMEvent, SuccessEvent, LLMToolCallRequestEvent
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
 
@@ -191,7 +191,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             if len(tools_to_call) > 0:
                 for tool in tools_to_call:
                     tool_call = _convert_tool_call(tool)
-                    yield ToolCallEvent(tool_call=tool_call)
+                    yield LLMToolCallRequestEvent(tool_call=tool_call)
             if not can_stream_message:
                 if not self.spec.force_json:
                     # message format looks like json```{...}```, parse content and pull out the json
