@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import jsonref
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Any, AsyncIterator
 from urllib.parse import urljoin
 
@@ -9,11 +9,9 @@ from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.io.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
 from eidos_sdk.util.aiohttp import stream_content, get_content, post_content
 
-_default_machine = AgentOS.current_machine_url
-
 
 class Machine(BaseModel):
-    machine: str = _default_machine
+    machine: str = Field(default_factory=AgentOS.current_machine_url)
 
     async def get_schema(self) -> dict:
         url = urljoin(self.machine, "openapi.json")
@@ -25,7 +23,7 @@ class Machine(BaseModel):
 
 
 class Agent(BaseModel):
-    machine: str = _default_machine
+    machine: str = Field(default_factory=AgentOS.current_machine_url)
     agent: str
 
     def stream_program(self, program_name: str, body: Any) -> AsyncIterator[StreamEvent]:
@@ -38,7 +36,7 @@ class Agent(BaseModel):
 
     async def program(self, program_name: str, body: dict | BaseModel) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
-        json_ = await posat_content(url, body)
+        json_ = await post_content(url, body)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def process(self, process_id: str) -> Process:
@@ -57,7 +55,7 @@ class Agent(BaseModel):
 
 
 class Process(BaseModel):
-    machine: str = _default_machine
+    machine: str = Field(default_factory=AgentOS.current_machine_url)
     agent: str
     process_id: str
 

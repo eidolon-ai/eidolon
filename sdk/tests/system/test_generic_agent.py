@@ -182,7 +182,7 @@ async def test_generic_agent_supports_object_output_with_stream(run_app, generic
         expected_events = [
             StartAgentCallEvent(
                 agent_name="GenericAgent",
-                machine=AgentOS.current_machine_url,
+                machine=AgentOS.current_machine_url(),
                 call_name="question",
                 process_id="test_generic_agent_supports_object_output_with_stream_0"
             ),
@@ -208,7 +208,7 @@ async def test_generic_agent_supports_string_stream(run_app, generic_agent, dog)
         events = (e for e in [event async for event in stream])
         assert next(events) == StartAgentCallEvent(
             agent_name="GenericAgent",
-            machine=AgentOS.current_machine_url,
+            machine=AgentOS.current_machine_url(),
             call_name="question",
             process_id="test_generic_agent_supports_string_stream_0"
         )

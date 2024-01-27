@@ -16,8 +16,8 @@ class HelloWorld:
 
 class TestHelloWorld:
     @pytest.fixture(scope="class")
-    def client(self, client_builder):
-        with client_builder(HelloWorld) as client:
+    async def client(self, client_builder):
+        async with client_builder(HelloWorld) as client:
             yield client
 
     def test_can_start(self, client):

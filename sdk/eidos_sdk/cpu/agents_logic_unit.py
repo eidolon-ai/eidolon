@@ -28,9 +28,10 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         tools = await self.build_program_tools(call_context)
         call_history = await AgentCallHistory.get_agent_state(call_context.process_id, call_context.thread_id)
         for call in call_history:
-            context_ = await self.build_action_tool(call.machine, call.agent, call.state, call.remote_process_id, call_context)
-            if context_:
-                tools.append(context_)
+            for action in call.available_actions:
+                context_ = await self.build_action_tool(call.machine, call.agent, action, call.remote_process_id, call_context)
+                if context_:
+                    tools.append(context_)
 
         return tools
 

@@ -138,8 +138,12 @@ class AgentController:
         if event_stream_idx != -1 and (app_json_idx == -1 or event_stream_idx < app_json_idx):
             # stream the results
             async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
-                async for event in stream:
-                    yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
+                try:
+                    async for event in stream:
+                        yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
+                except Exception as e:
+                    logger.exception(f"Unhandled error {e}")
+                    yield ServerSentEvent(id=str(uuid.uuid4()), data=ErrorEvent(reason=f"Unhandled Error: {str(e)}").model_dump_json())
 
             return EventSourceResponse(with_sse(self.agent_event_stream(handler, process, **kwargs)), status_code=200)
         else:
@@ -183,7 +187,7 @@ class AgentController:
     async def stream_agent_iterator(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> AsyncIterator[StreamEvent]:
         next_state = None
         last_event = None
-        yield StartAgentCallEvent(machine=AgentOS.current_machine_url, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
+        yield StartAgentCallEvent(machine=AgentOS.current_machine_url(), agent_name=self.name, call_name=handler.name, process_id=process.record_id)
         try:
             async for event in handler.fn(self.agent, **kwargs):
                 last_event = event
@@ -213,7 +217,7 @@ class AgentController:
         state = "unhandled_error"
         data = "<stream>"
         try:
-            yield StartAgentCallEvent(machine=AgentOS.current_machine_url, agent_name=self.name, call_name=handler.name, process_id=process.record_id)
+            yield StartAgentCallEvent(machine=AgentOS.current_machine_url(), agent_name=self.name, call_name=handler.name, process_id=process.record_id)
 
             response = await handler.fn(self.agent, **kwargs)
             if isinstance(response, AgentState):

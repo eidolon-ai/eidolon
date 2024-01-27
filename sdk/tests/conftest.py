@@ -146,11 +146,11 @@ def run_app(app_builder, port):
 
         try:
             # Wait for the server to start
-            # Wait for the server_wrapper to be set and the value of the server wrapper isn't "aborted" or the server isn't started
             while not (len(server_wrapper) > 0 and server_wrapper[0] != "aborted" and server_wrapper[0].started):
                 pass
 
             print(f"Server started on port {port}")
+            os.environ["EIDOS_LOCAL_MACHINE"] = f"http://localhost:{port}"
             yield f"http://localhost:{port}"
         finally:
             # server_wrapper[0].force_exit = True
