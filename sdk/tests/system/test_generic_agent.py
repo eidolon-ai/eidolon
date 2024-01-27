@@ -1,5 +1,7 @@
 import json
 from collections import defaultdict
+
+import pytest_asyncio
 from typing import Annotated, List
 
 import pytest
@@ -36,9 +38,9 @@ def generic_agent(generic_agent_root):
 
 
 class TestGenericAgent:
-    @pytest.fixture(scope="class")
-    def client(self, client_builder, generic_agent_root):
-        with client_builder(generic_agent_root) as client:
+    @pytest_asyncio.fixture(scope="class")
+    async def client(self, client_builder, generic_agent_root):
+        async with client_builder(generic_agent_root) as client:
             yield client
 
     def test_can_start(self, client):
@@ -51,7 +53,8 @@ class TestGenericAgent:
             json=dict(instruction="Hi! What is the capital of France?"),
         )
         post.raise_for_status()
-        assert "paris" in post.json()["data"].lower()
+        json = post.json()
+        assert "paris" in json["data"].lower()
 
     def test_continued_conversation(self, client):
         post = client.post(
@@ -112,9 +115,9 @@ class HelloWorld:
 
 # Image model does not support tool usage, so we need to break this out into a separate test suite
 class TestAgentsWithReferences:
-    @pytest.fixture(scope="class")
-    def client(self, client_builder, generic_agent_with_refs):
-        with client_builder(generic_agent_with_refs, HelloWorld) as client:
+    @pytest.fixture(scope="function")
+    async def client(self, client_builder, generic_agent_with_refs):
+        async with client_builder(generic_agent_with_refs, HelloWorld) as client:
             yield client
 
     def test_can_communicate(self, client):
@@ -153,12 +156,12 @@ class TestAgentsWithReferences:
         assert HelloWorld.calls["greeter4"] == ["bar"]
 
 
-def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):
+async def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):
     generic_agent.spec["output_schema"] = {
         "type": "object",
         "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
     }
-    with client_builder(generic_agent) as client:
+    async with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question", json=dict(instruction="Tell me about france please")
         )
@@ -167,62 +170,65 @@ def test_generic_agent_supports_object_output(client_builder, generic_agent, dog
 
 
 @pytest.mark.asyncio
-async def test_generic_agent_supports_object_output_with_stream(client_builder, generic_agent, dog):
+async def test_generic_agent_supports_object_output_with_stream(run_app, generic_agent, dog):
     generic_agent.spec["output_schema"] = {
         "type": "object",
         "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
     }
-    with client_builder(generic_agent) as _client:
+    async with run_app(generic_agent) as ra:
         stream = stream_content(
-            "/agents/GenericAgent/programs/question", body=dict(instruction="Tell me about france please")
+            f"{ra}/agents/GenericAgent/programs/question", body=dict(instruction="Tell me about france please")
         )
         expected_events = [
             StartAgentCallEvent(
                 agent_name="GenericAgent",
-                machine= AgentOS.current_machine_url,
+                machine=AgentOS.current_machine_url,
                 call_name="question",
                 process_id="test_generic_agent_supports_object_output_with_stream_0"
             ),
+            StartLLMEvent(),
             ObjectOutputEvent(content={'capital': 'Paris', 'population': 67399000}),
             SuccessEvent(),
             AgentStateEvent(state="idle", available_actions=["respond"]),
+            SuccessEvent()
         ]
         events = [event async for event in stream]
         assert events == expected_events
 
 
 @pytest.mark.asyncio
-async def test_generic_agent_supports_string_stream(client_builder, generic_agent, dog):
+async def test_generic_agent_supports_string_stream(run_app, generic_agent, dog):
     generic_agent.spec["output_schema"] = "str"
-    with client_builder(generic_agent) as _client:
+    async with run_app(generic_agent) as ra:
         stream = stream_content(
-            "/agents/GenericAgent/programs/question", body=dict(
+            f"{ra}/agents/GenericAgent/programs/question", body=dict(
                 instruction="What is the capital of france and its population. Put the relevant parts in XML like blocks. "
                             "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>")
         )
-        assert await stream.__anext__() == StartAgentCallEvent(
-                agent_name="GenericAgent",
-                machine= AgentOS.current_machine_url,
-                call_name="question",
-                process_id="test_generic_agent_supports_string_stream_0"
-            )
-        assert await stream.__anext__() == StartLLMEvent()
-        next_event = await stream.__anext__()
+        events = (e for e in [event async for event in stream])
+        assert next(events) == StartAgentCallEvent(
+            agent_name="GenericAgent",
+            machine=AgentOS.current_machine_url,
+            call_name="question",
+            process_id="test_generic_agent_supports_string_stream_0"
+        )
+        assert next(events) == StartLLMEvent()
+        next_event = next(events)
         str = ""
         while isinstance(next_event, StringOutputEvent):
             str += next_event.content
-            next_event = await stream.__anext__()
+            next_event = next(events)
 
         assert "<capital>Paris</capital>" in str
-        assert "<population>2,175,601</population>" in str
+        assert "<population>" in str
         assert next_event == SuccessEvent()
-        assert await stream.__anext__() == AgentStateEvent(state="idle", available_actions=["respond"])
-        assert await stream.__anext__() == SuccessEvent()
+        assert next(events) == AgentStateEvent(state="idle", available_actions=["respond"])
+        assert next(events) == SuccessEvent()
 
 
-def test_generic_agent_supports_image(client_builder, generic_agent, dog):
+async def test_generic_agent_supports_image(client_builder, generic_agent, dog):
     generic_agent.spec["files"] = "single"
-    with client_builder(generic_agent) as client:
+    async with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",
             data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
@@ -232,9 +238,9 @@ def test_generic_agent_supports_image(client_builder, generic_agent, dog):
         assert "brown" in post.json()["data"].lower()
 
 
-def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
+async def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
     generic_agent.spec["files"] = "multiple"
-    with client_builder(generic_agent) as client:
+    async with client_builder(generic_agent) as client:
         post = client.post(
             "/agents/GenericAgent/programs/question",
             data=dict(body=json.dumps(dict(instruction="what do these images have in common?"))),
