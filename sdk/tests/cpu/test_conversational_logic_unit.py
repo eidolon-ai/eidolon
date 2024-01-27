@@ -1,8 +1,9 @@
-import pytest
 from contextlib import contextmanager
+from typing import Annotated
+
+import pytest
 from fastapi import Body
 from pydantic import BaseModel
-from typing import Annotated
 
 from eidos_sdk.agent.agent import register_program, register_action
 from eidos_sdk.agent_os import AgentOS
@@ -48,7 +49,7 @@ async def server(run_app):
 
 
 @pytest.fixture(scope="function")
-async def conversational_logic_unit(server):
+def conversational_logic_unit(server):
     @contextmanager
     def fn(*agents):
         unit = AgentsLogicUnit(
@@ -88,7 +89,7 @@ async def test_builds_tools_from_other_messages(conversational_logic_unit):
 
 async def test_no_body(conversational_logic_unit):
     with conversational_logic_unit(Bar) as clu:
-        tools = await clu.build_tools(CallContext(process_id="parent_pid"))
+        tools = await clu.build_tools(CallContext(process_id="not_pid"))
         assert len(tools) == 1
 
 
