@@ -1,8 +1,10 @@
 import base64
 import json
+import logging
 from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
+import yaml
 from PIL import Image
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
@@ -23,7 +25,9 @@ from eidos_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidos_sdk.io.events import ErrorEvent, StringOutputEvent, ObjectOutputEvent, \
     StartLLMEvent, SuccessEvent, LLMToolCallRequestEvent
 from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.util.logger import logger
+from eidos_sdk.util.logger import logger as eidos_logger
+
+logger = eidos_logger.getChild("llm_unit")
 
 
 def scale_dimensions(width, height, max_size=2048, min_size=768):
@@ -252,6 +256,43 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 )
             )
         return tools
+        if len(tools) > 0:
+            request["tools"] = tools
+
+        if self.spec.max_tokens:
+            request["max_tokens"] = self.spec.max_tokens
+
+        logger.info("executing open ai llm request", extra=dict(llm_request=request))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug("request content:\n"+yaml.dump(request))
+
+        try:
+            llm_response = await self.llm.chat.completions.create(**request)
+        except Exception:
+            logger.exception("error calling open ai llm")
+            raise
+        message = llm_response.choices[0].message
+
+        logger.info(
+            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
+            extra=dict(content=message.content, tool_calls=message.tool_calls),
+        )
+
+        tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
+        if self.spec.force_json or is_string:
+            message_text = message.content
+        else:
+            # message format looks like json```{...}```, parse content and pull out the json
+            message_text = message.content[message.content.find("{") : message.content.rfind("}") + 1]
+
+        try:
+            if is_string:
+                content = message_text
+            else:
+                content = json.loads(message_text) if message_text else {}
+        except json.JSONDecodeError as e:
+            raise RuntimeError("Error decoding response content") from e
+        return AssistantMessage(content=content, tool_calls=tool_response)
 
 
 def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
