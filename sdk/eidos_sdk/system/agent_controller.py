@@ -139,9 +139,16 @@ class AgentController:
             # stream the results
             async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
                 try:
+                    print("before stream")
                     async for event in stream:
-                        yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
+                        print("in stream", event)
+                        try:
+                            yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
+                        except Exception as e:
+                            print("weeoe", e)
+                    print("after stream")
                 except Exception as e:
+                    print("error in stream", e)
                     logger.exception(f"Unhandled error {e}")
                     yield ServerSentEvent(id=str(uuid.uuid4()), data=ErrorEvent(reason=f"Unhandled Error: {str(e)}").model_dump_json())
 
@@ -189,8 +196,10 @@ class AgentController:
         last_event = None
         yield StartAgentCallEvent(machine=AgentOS.current_machine_url(), agent_name=self.name, call_name=handler.name, process_id=process.record_id)
         try:
+            print("Calling agent method")
             async for event in handler.fn(self.agent, **kwargs):
                 last_event = event
+                print("got event", event)
                 # todo, we can update record in mongo here
                 if event.is_root_and_type(AgentStateEvent):
                     next_state = event.state
@@ -205,6 +214,7 @@ class AgentController:
             yield AgentStateEvent(state=next_state, available_actions=self.get_available_actions(next_state))
             yield SuccessEvent()
         except Exception as e:
+            print("got exception", e)
             next_state = "unhandled_error"
             yield ErrorEvent(reason=e)
 

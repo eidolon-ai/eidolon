@@ -1,20 +1,16 @@
-import asyncio
-from contextlib import contextmanager
-from typing import Annotated
-
 import pytest
+from contextlib import contextmanager
 from fastapi import Body
 from pydantic import BaseModel
+from typing import Annotated
 
 from eidos_sdk.agent.agent import register_program, register_action
-from eidos_sdk.agent.client import ProcessStatus
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec, AgentCallHistory,
 )
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.cpu.llm_message import ToolResponseMessage
 
 
 class FooModel(BaseModel):
@@ -46,7 +42,13 @@ class Bar:
 
 
 @pytest.fixture(scope="module")
-async def conversational_logic_unit(run_app):
+async def server(run_app):
+    async with run_app(Foo, Bar) as ra:
+        yield ra
+
+
+@pytest.fixture(scope="function")
+async def conversational_logic_unit(server):
     @contextmanager
     def fn(*agents):
         unit = AgentsLogicUnit(
@@ -58,8 +60,7 @@ async def conversational_logic_unit(run_app):
         )
         yield unit
 
-    async with run_app(Foo, Bar):
-        yield fn
+    return fn
 
 
 @pytest.mark.asyncio
@@ -69,6 +70,7 @@ async def test_can_build_tools(conversational_logic_unit):
         assert len(tools) == 1
 
 
+@pytest.mark.asyncio
 async def test_builds_tools_from_other_messages(conversational_logic_unit):
     with conversational_logic_unit(Foo) as clu:
         await AgentCallHistory(

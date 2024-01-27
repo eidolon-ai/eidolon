@@ -1,3 +1,5 @@
+from types import MethodType
+
 import asyncio
 import httpx
 import os
@@ -45,7 +47,6 @@ def patch_async_vcr_send(monkeypatch):
         if len(args) == 1 and "stream" in kwargs and kwargs["stream"] is True:
             args = (args[0], kwargs["request"])
             del kwargs["request"]
-            del kwargs["stream"]
         vcr_request, response = _shared_vcr_send(cassette, real_send, *args, **kwargs)
         if response:
             # add cookies from response to session cookie store
@@ -55,16 +56,32 @@ def patch_async_vcr_send(monkeypatch):
         real_response = await real_send(*args, **kwargs)
         if "text/event-stream" in real_response.headers['Content-Type']:
             aiter_bytes = real_response.aiter_bytes
+            print("XXX in stream")
+            print(id(real_response.stream))
+            def _fn(real_response2):
+                async def _sub(*args2, **kwargs2):
+                    print("xxxargs", args2)
+                    print("xxxkwargs", kwargs2)
+                    print(id(real_response2.stream))
+                    aiter_bytes_fn2 = MethodType(aiter_bytes, real_response2)
+                    acc = []
+                    async for x in aiter_bytes(*args2, **kwargs2):
+                        acc.append(x)
+                        yield x
 
-            async def _sub(*args, **kwargs):
-                acc = []
-                async for x in aiter_bytes(*args, **kwargs):
-                    acc.append(x)
-                    yield x
-                real_response._content = b''.join(acc)
-                _record_responses(cassette, vcr_request, real_response)
+                    if hasattr(real_response2, "_content"):
+                        orig_content = real_response2._content
+                    else:
+                        orig_content = "____NOT_SET____"
+                    real_response2._content = b''.join(acc)
+                    _record_responses(cassette, vcr_request, real_response2)
+                    if orig_content == "____NOT_SET____":
+                        del real_response2._content
+                    else:
+                        real_response2._content = orig_content
+                return _sub
 
-            real_response.aiter_bytes = _sub
+            real_response.aiter_bytes = _fn(real_response)
             return real_response
         else:
             return _record_responses(cassette, vcr_request, real_response)
@@ -130,7 +147,7 @@ def run_app(app_builder, port):
                 ]
                 app = app_builder(resources)
                 # todo, the next line launches uvicorn app as a subprocess so it does not block
-                config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info")
+                config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info", loop="asyncio")
                 server = uvicorn.Server(config)
                 server_wrapper.append(server)
                 server.run()
@@ -146,7 +163,7 @@ def run_app(app_builder, port):
 
         try:
             # Wait for the server to start
-            while not (len(server_wrapper) > 0 and server_wrapper[0] != "aborted" and server_wrapper[0].started):
+            while len(server_wrapper) == 0 or not (server_wrapper[0] == "aborted" or server_wrapper[0].started):
                 pass
 
             print(f"Server started on port {port}")

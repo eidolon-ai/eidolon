@@ -1,3 +1,5 @@
+import httpx
+import pytest_asyncio
 from typing import Annotated
 
 import pytest
@@ -15,9 +17,14 @@ class HelloWorld:
 
 
 class TestHelloWorld:
-    @pytest.fixture(scope="class")
-    async def client(self, client_builder):
-        async with client_builder(HelloWorld) as client:
+    @pytest_asyncio.fixture(scope="class")
+    async def server(self, run_app):
+        async with run_app(HelloWorld) as ra:
+            yield ra
+
+    @pytest_asyncio.fixture(scope="function")
+    async def client(self, server):
+        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     def test_can_start(self, client):
@@ -63,9 +70,14 @@ class StateMachine:
 
 
 class TestStateMachine:
-    @pytest.fixture(scope="class")
-    def client(self, client_builder):
-        with client_builder(StateMachine) as client:
+    @pytest_asyncio.fixture(scope="class")
+    async def server(self, run_app):
+        async with run_app(StateMachine) as ra:
+            yield ra
+
+    @pytest_asyncio.fixture(scope="function")
+    async def client(self, server):
+        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     def test_can_list_processes(self, client):
@@ -75,7 +87,7 @@ class TestStateMachine:
         second = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
         third = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
 
-        processes = client.get("/agents/StateMachine/processes/")
+        processes = client.get("/agents/StateMachine/processes")
         assert processes.status_code == 200
         assert processes.json()["total"] == 3
         assert {p["process_id"] for p in processes.json()["processes"]} == {first, second, third}
@@ -83,7 +95,7 @@ class TestStateMachine:
         # update the first process: it should be at end of list now
         assert first == client.post(f"/agents/StateMachine/processes/{first}/actions/terminate").json()["process_id"]
 
-        processes = client.get("/agents/StateMachine/processes/")
+        processes = client.get("/agents/StateMachine/processes")
         assert processes.json()["total"] == 3
         assert [p["process_id"] for p in processes.json()["processes"]] == [second, third, first]
 

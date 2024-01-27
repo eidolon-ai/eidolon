@@ -1986,13 +1986,13 @@ sympy = "*"
 
 [[package]]
 name = "openai"
-version = "1.9.0"
+version = "1.10.0"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.9.0-py3-none-any.whl", hash = "sha256:5774a0582ed82f6de92200ed5024e03e272b93e04e9d31caeda5fb80f63df50d"},
-    {file = "openai-1.9.0.tar.gz", hash = "sha256:3e9947a544556c051fa138a4def5bd8b468364ec52803c6628532ab949ddce55"},
+    {file = "openai-1.10.0-py3-none-any.whl", hash = "sha256:aa69e97d0223ace9835fbf9c997abe9ee95318f684fd2de6d02c870700c71ebc"},
+    {file = "openai-1.10.0.tar.gz", hash = "sha256:208886cb501b930dc63f48d51db9c15e5380380f80516d07332adad67c9f1053"},
 ]
 
 [package.dependencies]
@@ -2312,13 +2312,13 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "posthog"
-version = "3.3.2"
+version = "3.3.3"
 description = "Integrate PostHog into any python application."
 optional = false
 python-versions = "*"
 files = [
-    {file = "posthog-3.3.2-py2.py3-none-any.whl", hash = "sha256:14fb43ea95c40b353db59c49af2c09ff15188aa2963f48091fc7912fa9375263"},
-    {file = "posthog-3.3.2.tar.gz", hash = "sha256:734bf89f3c372605a8bbf2b07f600885287209145d747b09ccd004c59834750e"},
+    {file = "posthog-3.3.3-py2.py3-none-any.whl", hash = "sha256:22b450be8cfdbcf403cbbcc50e9ca6e681d04c6a057336483cc4b8beb5794a15"},
+    {file = "posthog-3.3.3.tar.gz", hash = "sha256:2f16372675a81fb093dd19d7fb8ea8166068f5a7a17358d71ccb2f7080a4c8c1"},
 ]
 
 [package.dependencies]

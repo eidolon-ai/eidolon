@@ -158,6 +158,8 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             request["stream"] = True
 
             logger.info("executing open ai llm request", extra=request)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug("request content:\n" + yaml.dump(request))
             llm_response = await self.llm.chat.completions.create(**request)
             complete_message = ""
             tools_to_call = []
