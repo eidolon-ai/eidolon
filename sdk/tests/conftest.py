@@ -1,19 +1,19 @@
-from types import MethodType
-
-import asyncio
-import httpx
 import os
 import pathlib
-import pytest
 import socket
 import threading
-import uvicorn
-from bson import ObjectId
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from motor.motor_asyncio import AsyncIOMotorClient
+from types import MethodType
 from typing import Iterable
 from unittest.mock import patch, AsyncMock
+
+import httpx
+import pytest
+import uvicorn
+from bson import ObjectId
+from fastapi import FastAPI
+from motor.motor_asyncio import AsyncIOMotorClient
+from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 from vcr.stubs.httpx_stubs import _shared_vcr_send, _record_responses
@@ -134,6 +134,9 @@ def run_app(app_builder, port):
         server_wrapper = []
 
         def run_server():
+            AppStatus.should_exit = False
+            AppStatus.should_exit_event = None
+
             try:
                 resources = [
                     a
@@ -152,9 +155,9 @@ def run_app(app_builder, port):
                 server_wrapper.append(server)
                 server.run()
             except BaseException as e:
-                print(e)
                 server_wrapper.clear()
                 server_wrapper.append("aborted")
+                raise e
             finally:
                 print("here")
 

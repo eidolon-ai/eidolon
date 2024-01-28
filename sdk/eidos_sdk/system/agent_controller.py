@@ -9,6 +9,7 @@ from fastapi.params import Body, Param
 from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined, to_jsonable_python
+from sse_starlette import EventSourceResponse, ServerSentEvent
 from starlette.responses import JSONResponse
 
 from eidos_sdk.agent.agent import AgentState
@@ -20,7 +21,6 @@ from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc
 from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.util.logger import logger
-from eidos_sdk.util.sse import ServerSentEvent, EventSourceResponse
 
 
 class AgentController:
