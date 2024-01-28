@@ -50,7 +50,6 @@ async def stream_content(url: str, body):
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         async with client.stream(**request) as response:
             async for sse_event in EventSource(response).aiter_sse():
-                print("eventxxx", sse_event.data)
                 data = json.loads(sse_event.data)
                 event = BaseStreamEvent.from_dict(data)
                 yield event
