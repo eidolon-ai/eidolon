@@ -10,6 +10,7 @@ from eidos_sdk.io.events import BaseStreamEvent
 from eidos_sdk.system.request_context import RequestContext
 
 
+# noinspection PyShadowingNames
 async def get_content(url: str, json: Optional[Dict[str, Any]] = None, **kwargs):
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         params = {
@@ -23,11 +24,8 @@ async def get_content(url: str, json: Optional[Dict[str, Any]] = None, **kwargs)
         return response.json()
 
 
+# noinspection PyShadowingNames
 async def post_content(url, json: Optional[Any] = None, **kwargs):
-    headers = {
-        **RequestContext.headers,
-        "Accept": "application/json",
-    }
     params = {
         "url": url,
         "headers": RequestContext.headers

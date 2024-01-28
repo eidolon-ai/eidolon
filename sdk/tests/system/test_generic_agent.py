@@ -12,7 +12,7 @@ from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.io.events import StartAgentCallEvent, ObjectOutputEvent, SuccessEvent, AgentStateEvent, StartLLMEvent, StringOutputEvent
 from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.system.resources.resources_base import Metadata, Resource
-from eidos_sdk.util.aiohttp import stream_content, post_content, get_content
+from eidos_sdk.util.aiohttp import stream_content, post_content
 
 
 @pytest.fixture(scope="module")

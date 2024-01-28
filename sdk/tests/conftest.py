@@ -3,7 +3,6 @@ import pathlib
 import socket
 import threading
 from contextlib import asynccontextmanager
-from types import MethodType
 from typing import Iterable
 from unittest.mock import patch, AsyncMock
 
@@ -56,32 +55,24 @@ def patch_async_vcr_send(monkeypatch):
         real_response = await real_send(*args, **kwargs)
         if "text/event-stream" in real_response.headers['Content-Type']:
             aiter_bytes = real_response.aiter_bytes
-            print("XXX in stream")
-            print(id(real_response.stream))
-            def _fn(real_response2):
-                async def _sub(*args2, **kwargs2):
-                    print("xxxargs", args2)
-                    print("xxxkwargs", kwargs2)
-                    print(id(real_response2.stream))
-                    aiter_bytes_fn2 = MethodType(aiter_bytes, real_response2)
-                    acc = []
-                    async for x in aiter_bytes(*args2, **kwargs2):
-                        acc.append(x)
-                        yield x
+            async def _sub(*args2, **kwargs2):
+                acc = []
+                async for x in aiter_bytes(*args2, **kwargs2):
+                    acc.append(x)
+                    yield x
 
-                    if hasattr(real_response2, "_content"):
-                        orig_content = real_response2._content
-                    else:
-                        orig_content = "____NOT_SET____"
-                    real_response2._content = b''.join(acc)
-                    _record_responses(cassette, vcr_request, real_response2)
-                    if orig_content == "____NOT_SET____":
-                        del real_response2._content
-                    else:
-                        real_response2._content = orig_content
-                return _sub
+                if hasattr(real_response, "_content"):
+                    orig_content = real_response._content
+                else:
+                    orig_content = "____NOT_SET____"
+                real_response._content = b''.join(acc)
+                _record_responses(cassette, vcr_request, real_response)
+                if orig_content == "____NOT_SET____":
+                    del real_response._content
+                else:
+                    real_response._content = orig_content
 
-            real_response.aiter_bytes = _fn(real_response)
+            real_response.aiter_bytes = _sub
             return real_response
         else:
             return _record_responses(cassette, vcr_request, real_response)
@@ -158,8 +149,6 @@ def run_app(app_builder, port):
                 server_wrapper.clear()
                 server_wrapper.append("aborted")
                 raise e
-            finally:
-                print("here")
 
         server_thread = threading.Thread(target=run_server)
         server_thread.start()

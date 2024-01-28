@@ -1,15 +1,14 @@
 import base64
 import json
 import logging
-from io import BytesIO
-from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
-
 import yaml
 from PIL import Image
+from io import BytesIO
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field, BaseModel
+from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.cpu.call_context import CallContext
@@ -190,15 +189,18 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
                 if message.content:
                     if can_stream_message:
+                        logger.info(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
                         yield StringOutputEvent(content=message.content)
                     else:
                         complete_message += message.content
 
+            logger.info(f"open ai llm tool calls: {json.dumps(tools_to_call)}", extra=dict(tool_calls=tools_to_call))
             if len(tools_to_call) > 0:
                 for tool in tools_to_call:
                     tool_call = _convert_tool_call(tool)
                     yield LLMToolCallRequestEvent(tool_call=tool_call)
             if not can_stream_message:
+                logger.info(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json:
                     # message format looks like json```{...}```, parse content and pull out the json
                     complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
@@ -258,43 +260,6 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 )
             )
         return tools
-        if len(tools) > 0:
-            request["tools"] = tools
-
-        if self.spec.max_tokens:
-            request["max_tokens"] = self.spec.max_tokens
-
-        logger.info("executing open ai llm request", extra=dict(llm_request=request))
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug("request content:\n"+yaml.dump(request))
-
-        try:
-            llm_response = await self.llm.chat.completions.create(**request)
-        except Exception:
-            logger.exception("error calling open ai llm")
-            raise
-        message = llm_response.choices[0].message
-
-        logger.info(
-            f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
-            extra=dict(content=message.content, tool_calls=message.tool_calls),
-        )
-
-        tool_response = [_convert_tool_call(tool) for tool in message.tool_calls or []]
-        if self.spec.force_json or is_string:
-            message_text = message.content
-        else:
-            # message format looks like json```{...}```, parse content and pull out the json
-            message_text = message.content[message.content.find("{") : message.content.rfind("}") + 1]
-
-        try:
-            if is_string:
-                content = message_text
-            else:
-                content = json.loads(message_text) if message_text else {}
-        except json.JSONDecodeError as e:
-            raise RuntimeError("Error decoding response content") from e
-        return AssistantMessage(content=content, tool_calls=tool_response)
 
 
 def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
