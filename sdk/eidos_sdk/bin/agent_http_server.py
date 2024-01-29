@@ -1,3 +1,5 @@
+from importlib.metadata import version, PackageNotFoundError
+
 import argparse
 import logging.config
 import pathlib
@@ -22,6 +24,11 @@ from eidos_sdk.system.resources.resources_base import load_resources, Resource
 from eidos_sdk.util.logger import logger
 
 dotenv.load_dotenv()
+
+try:
+    EIDOLON_SDK_VERSION = version("eidos-sdk")
+except PackageNotFoundError:
+    EIDOLON_SDK_VERSION = "unknown"
 
 
 def parse_args():
@@ -65,7 +72,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             return app.openapi_schema
         openapi_schema = get_openapi(
             title="Custom API",
-            version="0.1.14",  # todo, grab version from poetry
+            version=EIDOLON_SDK_VERSION,
             routes=app.routes,
         )
 

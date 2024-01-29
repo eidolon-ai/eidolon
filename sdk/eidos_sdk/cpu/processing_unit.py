@@ -2,6 +2,8 @@ import logging
 from abc import ABC, abstractmethod
 from typing import TypeVar, Type, Optional
 
+from eidos_sdk.cpu.call_context import CallContext
+
 PU_T = TypeVar("PU_T", bound="ProcessingUnit")
 
 
@@ -20,3 +22,6 @@ class ProcessingUnit(ABC):
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
         return self.processing_unit_locator.locate_unit(unit_type)
+
+    async def clone_thread(self, old_context: CallContext, new_context: CallContext):
+        pass

@@ -162,10 +162,10 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         return Thread(CallContext(process_id=process_id).derive_call_context(), self)
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
-        # todo -- we should add, optional, call on processing unit to clone the context
         new_context = call_context.derive_call_context()
-        messages = await self.memory_unit.getConversationHistory(call_context)
-        for m in messages:
-            m["thread_id"] = new_context.thread_id
-        await self.memory_unit.storeMessages(new_context, messages)
+        await self.io_unit.clone_thread(call_context, new_context)
+        await self.memory_unit.clone_thread(call_context, new_context)
+        for processor in self.logic_units:
+            await processor.clone_thread(call_context, new_context)
+
         return Thread(call_context=new_context, cpu=self)

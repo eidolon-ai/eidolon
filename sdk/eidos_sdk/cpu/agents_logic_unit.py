@@ -35,6 +35,20 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
 
         return tools
 
+    async def clone_thread(self, old_context: CallContext, new_context: CallContext):
+        call_history = await AgentCallHistory.get_agent_state(old_context.process_id, old_context.thread_id)
+        for call in call_history:
+            await AgentCallHistory(
+                parent_process_id=new_context.process_id,
+                parent_thread_id=new_context.thread_id,
+                machine=call.machine,
+                agent=call.agent,
+                remote_process_id=call.remote_process_id,
+                state=call.state,
+                available_actions=call.available_actions
+            ).upsert()
+        return await super().clone_thread(old_context, new_context)
+
     async def _get_schema(self, machine: str) -> dict:
         if machine not in self._machine_schemas:
             self._machine_schemas[machine] = await Machine(machine=machine).get_schema()

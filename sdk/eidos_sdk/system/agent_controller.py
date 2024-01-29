@@ -109,7 +109,7 @@ class AgentController:
             if not process:
                 raise HTTPException(status_code=404, detail="Process not found")
             if process.state not in handler.extra["allowed_states"]:
-                logger.warn(f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}")
+                logger.warning(f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}")
                 raise HTTPException(
                     status_code=409,
                     detail=f'Action "{handler.name}" cannot process state "{process.state}"',
@@ -191,7 +191,6 @@ class AgentController:
         try:
             async for event in handler.fn(self.agent, **kwargs):
                 last_event = event
-                # todo, we can update record in mongo here
                 if event.is_root_and_type(AgentStateEvent):
                     next_state = event.state
                 else:
