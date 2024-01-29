@@ -211,6 +211,8 @@ class AgentController:
                     event.available_actions = self.get_available_actions(event.state)
                     state_change = event
                     await process.update(state=event.state, data="<stream>")
+                elif event.is_root_and_type(ErrorEvent):
+                    logger.warning("Error event received")
                 yield event
 
             if last_event.is_root_and_type(ErrorEvent):
@@ -225,10 +227,12 @@ class AgentController:
             if not last_event.is_root_and_type(ErrorEvent):
                 yield SuccessEvent()
         except HTTPException as e:
+            logger.warning(f"HTTP Error {e}", exc_info=True)
             yield ErrorEvent(reason=dict(detail=e.detail, status_code=e.status_code))
             await process.update(state="http_error", data=dict(detail=e.detail, status_code=e.status_code))
             yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
         except Exception as e:
+            logger.exception(f"Unhandled Error {e}")
             yield ErrorEvent(reason=dict(detail=str(e), status_code=500))
             await process.update(state="unhandled_error", data=dict(detail=str(e), status_code=500))
             yield AgentStateEvent(
@@ -334,6 +338,7 @@ class AgentController:
             if isinstance(latest_record.data, dict):
                 detail = latest_record.data.get("detail", latest_record.data)
                 status_code = latest_record.data.get("status_code", 500)
+            logger.info(f"Successfully retrieved stored error response, status_code={status_code}")
             return JSONResponse(detail, status_code)
         else:
             return JSONResponse(
