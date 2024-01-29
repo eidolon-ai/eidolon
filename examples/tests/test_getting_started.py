@@ -5,7 +5,7 @@ from jsonref import requests
 
 
 class TestAgentCommunication:
-    @pytest.fixture(scope="module", autouse=True)
+    @pytest.fixture(scope="class", autouse=True)
     def http_server(self, eidolon_server, eidolon_examples):
         with eidolon_server(eidolon_examples / "getting_started/1_agent_communication", "-m", "local_dev", log_file="1_agent_communication.txt") as server:
             yield server
@@ -27,7 +27,7 @@ class TestAgentCommunication:
 
 
 class TestCustomAgents:
-    @pytest.fixture(scope="module", autouse=True)
+    @pytest.fixture(scope="class", autouse=True)
     def http_server(self, eidolon_server, eidolon_examples):
         with eidolon_server(eidolon_examples / "getting_started/2_custom_agents/resources", "-m", "local_dev", log_file="2_custom_agents.txt") as server:
             yield server
