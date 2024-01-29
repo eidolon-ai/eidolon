@@ -42,7 +42,9 @@ class StatementsForAgent(BaseModel):
     statements: List[Statement]
 
     def format(self, agent_name: str):
-        return "\n".join([statement.format(agent_name) for statement in self.statements if statement.speaker != agent_name])
+        return "\n".join(
+            [statement.format(agent_name) for statement in self.statements if statement.speaker != agent_name]
+        )
 
 
 class ThoughtResult(BaseModel):
@@ -129,9 +131,11 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         Also called to add to this agent's inner monologue.
         """
         t = await self.cpu.main_thread(process_id)
-        await self.cpu.memory_unit.storeMessages(call_context=t.call_context(),
-                                                 messages=[UserMessage(content=[UserMessageText(text=statements.format(self.spec.agent_name))])])
-        return AgentState(name="idle", data=ThoughtResult(desire_to_speak=.25))
+        await self.cpu.memory_unit.storeMessages(
+            call_context=t.call_context(),
+            messages=[UserMessage(content=[UserMessageText(text=statements.format(self.spec.agent_name))])],
+        )
+        return AgentState(name="idle", data=ThoughtResult(desire_to_speak=0.25))
 
     @register_action("idle")
     async def speak(self, process_id, message: Annotated[str, Body(embed=True)]) -> AgentState[SpeakResult]:
@@ -144,12 +148,16 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         return AgentState(name="idle", data=resp)
 
     @register_action("idle")
-    async def speak_amongst_group(self, process_id, message: Annotated[SpeakToGroup, Body(embed=True)]) -> AgentState[SpeakResult]:
+    async def speak_amongst_group(
+        self, process_id, message: Annotated[SpeakToGroup, Body(embed=True)]
+    ) -> AgentState[SpeakResult]:
         """
         Called to have an agent say a message ONLY to the group of agents specified.
         """
         t = await self.cpu.main_thread(process_id)
-        text_message = f"The following message will only be heard by the coordinator and {message.group}:\n\n{message.message}\n\n"
+        text_message = (
+            f"The following message will only be heard by the coordinator and {message.group}:\n\n{message.message}\n\n"
+        )
         resp = await t.run_request(prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult)
         return AgentState(name="idle", data=resp)
 

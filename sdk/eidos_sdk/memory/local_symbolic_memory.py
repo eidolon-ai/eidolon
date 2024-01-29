@@ -91,6 +91,8 @@ class LocalSymbolicMemory(SymbolicMemory):
             if self._matches_query(doc, query):
                 doc.update(deepcopy(document))
                 return
+        if not document.get("_id"):
+            document["_id"] = str(ObjectId())
         if any(doc.get("_id") == document.get("_id") for doc in self.db[symbol_collection]):
             raise DuplicateKeyError(f"Duplicate key error: _id {document.get('_id')} already exists.")
         self.db[symbol_collection].append(deepcopy(document))
