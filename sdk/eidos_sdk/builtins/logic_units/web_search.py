@@ -1,12 +1,13 @@
 import os
 import ssl
 from contextlib import asynccontextmanager
-from typing import List, Optional
+from typing import List, Optional, cast
 
-import aiohttp
+# import aiohttp
 import certifi
-from aiohttp import ClientSession
+# from aiohttp import ClientSession
 from bs4 import BeautifulSoup
+from httpx import AsyncClient, Timeout, Response
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, Field
 
@@ -44,12 +45,9 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
             raise ValueError("missing required cse_id or cse_token")
 
     @asynccontextmanager
-    async def _get(self, *args, **kwargs):
-        # headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-        headers = {}
-        async with ClientSession(headers=headers, connector=aiohttp.TCPConnector(ssl_context=self.sslcontext)) as session:
-            async with session.get(*args, **kwargs) as resp:
-                yield resp
+    async def _get(self, **kwargs):
+        async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
+            yield await client.get(**kwargs)
 
     @llm_function()
     async def go_to_url(self, url: str) -> str:
@@ -58,10 +56,11 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         :param url: the url to retrieve.
         :return: the html document.
         """
-        async with self._get(url) as resp:
-            if not resp.ok:
+        async with self._get(url=url) as resp:
+            text = resp.text
+            if not resp.is_success:
                 logger.warning(f"Request to url '{url}' return {resp.status}, {resp.reason}")
-            text = await resp.text()
+                return text
             if self.spec.summarizer == "BeautifulSoup":
                 soup = BeautifulSoup(text, 'lxml')
                 return soup.get_text(separator='\n', strip=True)
@@ -104,7 +103,7 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
             yield SearchResult(url=item["link"], title=item["title"], description=item["snippet"])
 
     async def _req(self, term, results, lang):
-        async with self._get("https://customsearch.googleapis.com/customsearch/v1", params={
+        async with self._get(url="https://customsearch.googleapis.com/customsearch/v1", params={
             "q": term,
             "num": results,  # Prevents multiple requests
             "hl": lang,
@@ -112,4 +111,4 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
             "key": self.spec.cse_token,
         }) as resp:
             resp.raise_for_status()
-            return await resp.json()
+            return resp.json()

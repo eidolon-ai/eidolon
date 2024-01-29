@@ -10,7 +10,7 @@ def websearch():
 
 async def test_go_to_url(websearch):
     found = await websearch.go_to_url("https://httpbin.org/get")
-    assert found
+    assert '"url": "https://httpbin.org/get"' in found
 
 
 async def test_search(websearch):
