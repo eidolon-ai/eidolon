@@ -141,9 +141,6 @@ class AgentController:
                 try:
                     async for event in stream:
                         yield ServerSentEvent(id=str(uuid.uuid4()), data=event.model_dump_json())
-                except HTTPException as e:
-                    #     todo
-                    pass
                 except Exception as e:
                     logger.exception(f"Unhandled error {e}")
                     yield ServerSentEvent(id=str(uuid.uuid4()), data=ErrorEvent(reason=f"Unhandled Error: {str(e)}").model_dump_json())
