@@ -5,10 +5,6 @@ import typing
 from pydantic import Field, BaseModel
 
 
-class AsyncStateResponse(BaseModel):
-    process_id: str = Field(..., description="The ID of the conversation.")
-
-
 class StateSummary(BaseModel):
     process_id: str = Field(..., description="The ID of the conversation.")
     state: str = Field(..., description="The state of the conversation.")

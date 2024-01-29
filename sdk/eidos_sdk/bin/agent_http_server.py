@@ -1,11 +1,17 @@
+from importlib.metadata import version, PackageNotFoundError
+
 import argparse
 import logging.config
 import pathlib
+from collections import deque
 from contextlib import asynccontextmanager
 
 import dotenv
 import uvicorn
 import yaml
+from eidos_sdk.io.events import StreamEvent
+from pydantic import TypeAdapter
+from fastapi.openapi.utils import get_openapi
 from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
@@ -18,6 +24,11 @@ from eidos_sdk.system.resources.resources_base import load_resources, Resource
 from eidos_sdk.util.logger import logger
 
 dotenv.load_dotenv()
+
+try:
+    EIDOLON_SDK_VERSION = version("eidos-sdk")
+except PackageNotFoundError:
+    EIDOLON_SDK_VERSION = "unknown"
 
 
 def parse_args():
@@ -55,7 +66,37 @@ def parse_args():
 
 
 @asynccontextmanager
-async def start_os(app, resource_generator, machine_name, log_level=logging.INFO):
+async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO):
+    def custom_openapi():
+        if app.openapi_schema:
+            return app.openapi_schema
+        openapi_schema = get_openapi(
+            title="Custom API",
+            version=EIDOLON_SDK_VERSION,
+            routes=app.routes,
+        )
+
+        # EventTypes
+        queue = deque(
+            [("EventTypes", TypeAdapter(StreamEvent).json_schema(ref_template="#/components/schemas/{model}"))]
+        )
+        depth = 0
+        while queue:
+            if depth > 100:
+                raise ValueError("Too many $defs")
+            name, schema = queue.popleft()
+            if "$defs" in schema:
+                for d_name, d in schema["$defs"].items():
+                    queue.append((d_name, d))
+                del schema["$defs"]
+            openapi_schema["components"]["schemas"][name] = schema
+            depth += 1
+
+        app.openapi_schema = openapi_schema
+        return app.openapi_schema
+
+    app.openapi = custom_openapi
+
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)

@@ -128,7 +128,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         ) -> Dict[str, Any]:
             t2 = await self.cpu.new_thread(process_id)
             await t2.set_boot_messages(prompts=_boot_messages)
-            return await t2.schedule_request_raw(_messages, _output_format)
+            return await t2.run_request(_messages, _output_format)
 
         for i in range(self.spec.num_iterations):
             thought_text = await self.thought_generator.next_thought(question, exec_request, thoughts_path)
@@ -147,7 +147,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
                     UserTextCPUMessage(prompt=question),
                     UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text]))),
                 ]
-                resp = await mainThread.schedule_request_raw(conversation, self.spec.output_schema)
+                resp = await mainThread.run_request(conversation, self.spec.output_schema)
                 return TotResponse(answer=resp, thoughts=thoughts_path)
             thoughts_path = self.tot_controller.thoughts(self.tot_memory)
 
@@ -169,7 +169,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
                 ),
             ]
             thread = await self.cpu.new_thread(process_id)
-            resp = await thread.schedule_request_raw(conversation, self.spec.output_schema)
+            resp = await thread.run_request(conversation, self.spec.output_schema)
             return TotResponse(answer=resp, thoughts=thoughts_path)
         else:
             raise ValueError(f"Unknown fallback type: {self.spec.fallback}")

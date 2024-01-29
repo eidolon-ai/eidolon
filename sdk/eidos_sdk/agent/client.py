@@ -1,23 +1,21 @@
 from __future__ import annotations
 
-import os
-from typing import List, Any
+import jsonref
+from pydantic import BaseModel, Field
+from typing import List, Any, AsyncIterator, Optional
 from urllib.parse import urljoin
 
-import jsonref
-from pydantic import BaseModel
-
-from eidos_sdk.util.aiohttp import ContextualClientSession
-
-_default_machine = os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.io.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
+from eidos_sdk.util.aiohttp import stream_content, get_content, post_content
 
 
 class Machine(BaseModel):
-    machine: str = _default_machine
+    machine: str = Field(default_factory=AgentOS.current_machine_url)
 
     async def get_schema(self) -> dict:
         url = urljoin(self.machine, "openapi.json")
-        json_ = await _get(url)
+        json_ = await get_content(url)
         return jsonref.replace_refs(json_)
 
     def agent(self, agent_name: str) -> Agent:
@@ -25,13 +23,20 @@ class Machine(BaseModel):
 
 
 class Agent(BaseModel):
-    machine: str = _default_machine
+    machine: str = Field(default_factory=AgentOS.current_machine_url)
     agent: str
 
-    async def program(self, program_name: str, body: dict | BaseModel) -> ProcessStatus:
+    def stream_program(self, program_name: str, body: Any) -> AgentResponseIterator:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
-        body = body.model_dump() if isinstance(body, BaseModel) else body
-        json_ = await _post(url, body)
+        return AgentResponseIterator(stream_content(url, body))
+
+    def stream_action(self, action_name: str, process_id: str, body: Any) -> AgentResponseIterator:
+        url = urljoin(self.machine, f"agents/{self.agent}/processes/{process_id}/actions/{action_name}")
+        return AgentResponseIterator(stream_content(url, body))
+
+    async def program(self, program_name: str, body: Optional[Any] = None) -> ProcessStatus:
+        url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
+        json_ = await post_content(url, body)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def process(self, process_id: str) -> Process:
@@ -50,20 +55,25 @@ class Agent(BaseModel):
 
 
 class Process(BaseModel):
-    machine: str = _default_machine
+    machine: str = Field(default_factory=AgentOS.current_machine_url)
     agent: str
     process_id: str
 
     async def action(self, action_name: str, body: dict | BaseModel) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/actions/{action_name}")
-        body = body.model_dump() if isinstance(body, BaseModel) else body
-        json_ = await _post(url, body)
+        json_ = await post_content(url, body)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     async def status(self) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/status")
-        json_ = await _get(url)
+        json_ = await get_content(url)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
+
+    @classmethod
+    def get(cls, stream_response: AgentResponseIterator):
+        if not stream_response.machine or not stream_response.agent or not stream_response.process_id:
+            raise ValueError("stream_response insufficiently iterated")
+        return cls(machine=stream_response.machine, agent=stream_response.agent, process_id=stream_response.process_id)
 
 
 class ProcessStatus(Process):
@@ -72,18 +82,47 @@ class ProcessStatus(Process):
     data: Any
 
 
-#  _get and _post are separated to be easily mocked by tests
+class AgentResponseIterator:
+    """
+    This class is used to iterate over the responses from an agent call and store the state of the conversation after the stream is complete.
 
+    For example::
 
-async def _get(url):
-    async with ContextualClientSession() as session:
-        async with session.get(url) as resp:
-            resp.raise_for_status()
-            return await resp.json()
+        agent_it = agent.stream_program("program_name", "some data")
+        async for event in agent_it:
+            # ... do something with the event ...
+        process_id = agent_it.process_id
 
+    """
 
-async def _post(url, json):
-    async with ContextualClientSession() as session:
-        async with session.post(url, json=json) as resp:
-            resp.raise_for_status()
-            return await resp.json()
+    data: AsyncIterator[StreamEvent]
+    machine: str
+    agent: str
+    process_id: str
+    state: str
+    available_actions: List[str]
+
+    def __init__(self, data: AsyncIterator[StreamEvent]):
+        self.data = data.__aiter__()
+
+    async def __anext__(self):
+        try:
+            event = await self.data.__anext__()
+        except StopAsyncIteration:
+            await self.iteration_complete()
+            raise
+        if event.is_root_and_type(StartAgentCallEvent):
+            self.machine = event.machine
+            self.agent = event.agent_name
+            self.process_id = event.process_id
+        elif event.is_root_and_type(AgentStateEvent):
+            self.state = event.state
+            self.available_actions = event.available_actions
+
+        return event
+
+    def __aiter__(self):
+        return self
+
+    async def iteration_complete(self):
+        pass

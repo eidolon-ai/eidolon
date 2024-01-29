@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import pathlib
 from typing import Dict, Tuple, TypeVar, Type
 
@@ -15,6 +17,10 @@ class AgentOS:
     symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
     similarity_memory: "SimilarityMemory" = ...  # noqa: F821
     security_manager: "SecurityManager" = ...  # noqa: F821
+
+    @staticmethod
+    def current_machine_url() -> str:
+        return os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
 
     @classmethod
     def _get_or_load_resources(cls) -> Dict[str, Dict[str, Tuple[Resource, str]]]:

@@ -1,4 +1,5 @@
 import os
+from contextvars import ContextVar
 from typing import Any, Optional, AsyncIterable, Union, Dict, List
 
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
@@ -18,13 +19,25 @@ class MongoSymbolicMemoryConfig(BaseModel):
 class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
     mongo_connection_string: Optional[str]
     mongo_database_name: str
-    database: Optional[AsyncIOMotorDatabase]
+    _database: Optional[ContextVar]
 
     def __init__(self, spec: MongoSymbolicMemoryConfig):
         super().__init__(spec)
         self.mongo_connection_string = spec.mongo_connection_string
         self.mongo_database_name = spec.mongo_database_name
-        self.database = None
+        self._database = None
+
+    @property
+    def database(self) -> AsyncIOMotorDatabase:
+        if not self._database:
+            self._database = ContextVar("database")
+        try:
+            return self._database.get()
+        except LookupError:
+            client = AsyncIOMotorClient(self.mongo_connection_string)
+            database = client.get_database(self.mongo_database_name)
+            self._database.set(database)
+            return database
 
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:
         return await self.database[symbol_collection].count_documents(query)
@@ -78,13 +91,10 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
             if self.mongo_database_name is None:
                 self.mongo_database_name = os.getenv("MONGO_DATABASE_NAME")
 
-            client = AsyncIOMotorClient(self.mongo_connection_string)
-            self.database = client.get_database(self.mongo_database_name)
-
     def stop(self):
         """
         Stops the memory implementation. Noop for this implementation.
         """
         if self.database is not None:
             self.database.client.close()
-            self.database = None
+            self._database = None

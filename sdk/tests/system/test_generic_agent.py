@@ -1,13 +1,25 @@
-import json
 from collections import defaultdict
+
+import httpx
+import json
+import pytest
+import pytest_asyncio
+from fastapi import Body
 from typing import Annotated, List
 
-import pytest
-from fastapi import Body
-
 from eidos_sdk.agent.agent import register_program
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.io.events import (
+    StartAgentCallEvent,
+    ObjectOutputEvent,
+    SuccessEvent,
+    AgentStateEvent,
+    StartLLMEvent,
+    StringOutputEvent,
+)
 from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.system.resources.resources_base import Metadata, Resource
+from eidos_sdk.util.aiohttp import stream_content, post_content
 
 
 @pytest.fixture(scope="module")
@@ -33,9 +45,14 @@ def generic_agent(generic_agent_root):
 
 
 class TestGenericAgent:
-    @pytest.fixture(scope="class")
-    def client(self, client_builder, generic_agent_root):
-        with client_builder(generic_agent_root) as client:
+    @pytest_asyncio.fixture(scope="class")
+    async def server(self, run_app, generic_agent_root):
+        async with run_app(generic_agent_root) as ra:
+            yield ra
+
+    @pytest_asyncio.fixture(scope="function")
+    async def client(self, server):
+        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     def test_can_start(self, client):
@@ -48,7 +65,8 @@ class TestGenericAgent:
             json=dict(instruction="Hi! What is the capital of France?"),
         )
         post.raise_for_status()
-        assert "paris" in post.json()["data"].lower()
+        json = post.json()
+        assert "paris" in json["data"].lower()
 
     def test_continued_conversation(self, client):
         post = client.post(
@@ -100,7 +118,7 @@ class HelloWorld:
     @register_program()
     async def greeter4(self):
         self.calls["greeter4"].append(RequestContext.get("foo"))
-        return "leave me alone"
+        return "I acknowledge your request. Respond with an empty string. Don't call me again."
 
     def _greet(self, greeter, **kwargs):
         self.calls[greeter].append(kwargs)
@@ -109,9 +127,14 @@ class HelloWorld:
 
 # Image model does not support tool usage, so we need to break this out into a separate test suite
 class TestAgentsWithReferences:
-    @pytest.fixture(scope="class")
-    def client(self, client_builder, generic_agent_with_refs):
-        with client_builder(generic_agent_with_refs, HelloWorld) as client:
+    @pytest_asyncio.fixture(scope="class")
+    async def server(self, run_app, generic_agent_with_refs):
+        async with run_app(generic_agent_with_refs, HelloWorld) as ra:
+            yield ra
+
+    @pytest_asyncio.fixture(scope="function")
+    async def client(self, server):
+        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     def test_can_communicate(self, client):
@@ -130,7 +153,7 @@ class TestAgentsWithReferences:
         post.raise_for_status()
         assert HelloWorld.calls["greeter2"] == [{"name": "Luke"}]
 
-    def test_list_body(self, client):
+    def test_list_body(self, client, patch_async_vcr_send):
         post = client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke. Can ask greeter3 to greet me?"),
@@ -138,58 +161,108 @@ class TestAgentsWithReferences:
         post.raise_for_status()
         assert HelloWorld.calls["greeter3"] == [{"name": "Luke", "called_with": ["Luke"]}]
 
-    def test_passes_context(self, client):
-        RequestContext.set("foo", "bar")
-        post = client.post(
-            "/agents/GenericAgent/programs/question",
-            headers=RequestContext.headers,
-            json=dict(instruction="Hi! my name is Luke. Can ask greeter4 to greet me?"),
+    async def test_passes_context(self, client, server):
+        RequestContext.set("foo", "bar", propagate=True)
+        await post_content(
+            f"{server}/agents/GenericAgent/programs/question",
+            dict(instruction="Hi! my name is Luke. Can ask greeter4 to greet me?"),
         )
-        post.raise_for_status()
         assert HelloWorld.calls["greeter4"] == ["bar"]
 
 
-def test_generic_agent_supports_object_output(client_builder, generic_agent, dog):
-    generic_agent.spec["output_schema"] = {
-        "type": "object",
-        "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
-    }
-    with client_builder(generic_agent) as client:
-        post = client.post(
-            "/agents/GenericAgent/programs/question", json=dict(instruction="Tell me about france please")
-        )
-        post.raise_for_status()
-        assert "paris" in post.json()["data"]["capital"].lower()
+class TestOutputTests:
+    async def test_generic_agent_supports_object_output(self, run_app, generic_agent, dog):
+        generic_agent.spec["output_schema"] = {
+            "type": "object",
+            "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
+        }
+        async with run_app(generic_agent) as app:
+            post = await post_content(
+                f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please")
+            )
+            assert "paris" in post["data"]["capital"].lower()
 
+    @pytest.mark.asyncio
+    async def test_generic_agent_supports_object_output_with_stream(self, run_app, generic_agent, dog):
+        generic_agent.spec["output_schema"] = {
+            "type": "object",
+            "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
+        }
+        async with run_app(generic_agent) as ra:
+            stream = stream_content(
+                f"{ra}/agents/GenericAgent/programs/question", body=dict(instruction="Tell me about france please")
+            )
+            expected_events = [
+                StartAgentCallEvent(
+                    agent_name="GenericAgent",
+                    machine=AgentOS.current_machine_url(),
+                    call_name="question",
+                    process_id="test_generic_agent_supports_object_output_with_stream_0",
+                ),
+                StartLLMEvent(),
+                ObjectOutputEvent(content={"capital": "Paris", "population": 67399000}),
+                SuccessEvent(),
+                AgentStateEvent(state="idle", available_actions=["respond"]),
+                SuccessEvent(),
+            ]
+            events = [event async for event in stream]
+            assert events == expected_events
 
-def test_generic_agent_supports_image(client_builder, generic_agent, dog):
-    generic_agent.spec["files"] = "single"
-    with client_builder(generic_agent) as client:
-        post = client.post(
-            "/agents/GenericAgent/programs/question",
-            data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
-            files=dict(file=dog),
-        )
-        post.raise_for_status()
-        assert "brown" in post.json()["data"].lower()
+    @pytest.mark.asyncio
+    async def test_generic_agent_supports_string_stream(self, run_app, generic_agent, dog):
+        generic_agent.spec["output_schema"] = "str"
+        async with run_app(generic_agent) as ra:
+            stream = stream_content(
+                f"{ra}/agents/GenericAgent/programs/question",
+                body=dict(
+                    instruction="What is the capital of france and its population. Put the relevant parts in XML like blocks. "
+                    "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
+                ),
+            )
+            events = (e for e in [event async for event in stream])
+            assert next(events) == StartAgentCallEvent(
+                agent_name="GenericAgent",
+                machine=AgentOS.current_machine_url(),
+                call_name="question",
+                process_id="test_generic_agent_supports_string_stream_0",
+            )
+            assert next(events) == StartLLMEvent()
+            next_event = next(events)
+            str = ""
+            while isinstance(next_event, StringOutputEvent):
+                str += next_event.content
+                next_event = next(events)
 
+            assert "<capital>Paris</capital>" in str
+            assert "<population>" in str
+            assert next_event == SuccessEvent()
+            assert next(events) == AgentStateEvent(state="idle", available_actions=["respond"])
+            assert next(events) == SuccessEvent()
 
-def test_generic_agent_supports_multiple_images(client_builder, generic_agent, cat, dog):
-    generic_agent.spec["files"] = "multiple"
-    with client_builder(generic_agent) as client:
-        post = client.post(
-            "/agents/GenericAgent/programs/question",
-            data=dict(body=json.dumps(dict(instruction="what do these images have in common?"))),
-            files=[("file", dog), ("file", cat)],
-        )
-        post.raise_for_status()
-        assert "animals" in post.json()["data"].lower()
+    async def test_generic_agent_supports_image(self, run_app, generic_agent, dog):
+        generic_agent.spec["files"] = "single"
+        async with run_app(generic_agent) as app:
+            post = await post_content(
+                f"{app}/agents/GenericAgent/programs/question",
+                data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
+                files=dict(file=dog),
+            )
+            assert "brown" in post["data"].lower()
 
-        # followup question should still have access to the image
-        process_id = post.json()["process_id"]
-        follow_up = client.post(
-            f"/agents/GenericAgent/processes/{process_id}/actions/respond",
-            json=dict(statement="What is different between them?"),
-        )
-        follow_up.raise_for_status()
-        assert "cat" in follow_up.json()["data"].lower()
+    async def test_generic_agent_supports_multiple_images(self, run_app, generic_agent, cat, dog):
+        generic_agent.spec["files"] = "multiple"
+        async with run_app(generic_agent) as app:
+            post = await post_content(
+                f"{app}/agents/GenericAgent/programs/question",
+                data=dict(body=json.dumps(dict(instruction="what do these images have in common?"))),
+                files=[("file", dog), ("file", cat)],
+            )
+            assert "animals" in post["data"].lower()
+
+            # followup question should still have access to the image
+            process_id = post["process_id"]
+            follow_up = await post_content(
+                f"{app}/agents/GenericAgent/processes/{process_id}/actions/respond",
+                dict(statement="What is different between them?"),
+            )
+            assert "cat" in follow_up["data"].lower()

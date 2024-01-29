@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union, TypeVar, Type
-
 from pydantic import BaseModel, Field, TypeAdapter
+from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator
 
 from eidos_sdk.cpu.agent_io import CPUMessageTypes
 from eidos_sdk.cpu.call_context import CallContext
+from eidos_sdk.io.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
 from eidos_sdk.system.reference_model import Specable
 
 
@@ -29,8 +29,8 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
         call_context: CallContext,
         prompts: List[CPUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> Any:
-        pass
+    ) -> AsyncIterator[StreamEvent]:
+        yield None
 
     def _to_json(self, obj):
         if obj is None:
@@ -72,22 +72,51 @@ class Thread:
     ):
         return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
-    async def schedule_request(
-            self,
-            prompts: List[CPUMessageTypes],
-            output_format: Type[T],
+    async def run_request(
+        self,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
     ) -> T:
-        model = TypeAdapter(output_format)
-        schema = model.json_schema()
-        rtn = await self._cpu.schedule_request(self._call_context, prompts, schema)
-        return model.validate_python(rtn)
+        stream = self.stream_request(prompts, output_format)
+        result = None
+        error = None
 
-    async def schedule_request_raw(
-            self,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
-    ) -> Any:
-        return await self._cpu.schedule_request(self._call_context, prompts, output_format)
+        is_string_call = not isinstance(output_format, type) and (
+            output_format == "str" or output_format["type"] == "string"
+        )
+        string_output = ""
+        async for event in stream:
+            if event.is_root_and_type(ObjectOutputEvent):
+                result = event.content
+            elif event.is_root_and_type(StringOutputEvent):
+                string_output += event.content
+            elif event.is_root_and_type(ErrorEvent):
+                error = event.reason
+
+        if is_string_call:
+            result = string_output
+
+        if error is not None:
+            if isinstance(error, Exception):
+                raise error
+            else:
+                raise Exception(error)
+
+        return result
+
+    def stream_request(
+        self, prompts: List[CPUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
+    ) -> AsyncIterator[StreamEvent]:
+        if isinstance(output_format, type):
+            model = TypeAdapter(output_format)
+            schema = model.json_schema()
+            s = convert_output_object(
+                self._cpu.schedule_request(self._call_context, prompts, schema), cast(Type[T], output_format)
+            )
+        else:
+            s = self._cpu.schedule_request(self._call_context, prompts, output_format)
+
+        return s
 
     def call_context(self) -> CallContext:
         return self._call_context
