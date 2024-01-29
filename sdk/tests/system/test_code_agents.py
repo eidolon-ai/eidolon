@@ -5,11 +5,10 @@ from typing import Annotated
 import pytest
 from fastapi import Body, HTTPException
 from httpx import HTTPStatusError
-from sympy.codegen.fnodes import Program
 
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
 from eidos_sdk.agent.client import Agent, Process
-from eidos_sdk.io.events import ErrorEvent, AgentStateEvent, StartAgentCallEvent
+from eidos_sdk.io.events import ErrorEvent, AgentStateEvent
 
 
 class HelloWorld:
