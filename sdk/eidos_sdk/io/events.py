@@ -156,10 +156,19 @@ class AgentStateEvent(BaseStreamEvent):
     available_actions: List[str] = None  # this is filled in by the server, agents should leave the default
 
 
-StreamEvent = StartAgentCallEvent | StartLLMEvent | ToolCallStartEvent | ToolCallEndEvent | LLMToolCallRequestEvent | \
-              StringOutputEvent | ObjectOutputEvent | \
-              SuccessEvent | CanceledEvent | ErrorEvent | \
-              AgentStateEvent
+StreamEvent = (
+    StartAgentCallEvent
+    | StartLLMEvent
+    | ToolCallStartEvent
+    | ToolCallEndEvent
+    | LLMToolCallRequestEvent
+    | StringOutputEvent
+    | ObjectOutputEvent
+    | SuccessEvent
+    | CanceledEvent
+    | ErrorEvent
+    | AgentStateEvent
+)
 
 
 async def convert_output_object(it: AsyncIterator[StreamEvent], output_format: Type[T]) -> AsyncIterator[StreamEvent]:

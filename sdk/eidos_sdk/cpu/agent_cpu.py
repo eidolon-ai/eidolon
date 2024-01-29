@@ -25,10 +25,10 @@ class AgentCPU(Specable[AgentCPUSpec], ABC):
 
     @abstractmethod
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
         yield None
 
@@ -67,21 +67,23 @@ class Thread:
         self._cpu = cpu
 
     async def set_boot_messages(
-            self,
-            prompts: List[CPUMessageTypes],
+        self,
+        prompts: List[CPUMessageTypes],
     ):
         return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
     async def run_request(
-            self,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
+        self,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
     ) -> T:
         stream = self.stream_request(prompts, output_format)
         result = None
         error = None
 
-        is_string_call = not isinstance(output_format, type) and (output_format == "str" or output_format["type"] == "string")
+        is_string_call = not isinstance(output_format, type) and (
+            output_format == "str" or output_format["type"] == "string"
+        )
         string_output = ""
         async for event in stream:
             if event.is_root_and_type(ObjectOutputEvent):
@@ -103,14 +105,14 @@ class Thread:
         return result
 
     def stream_request(
-            self,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
+        self, prompts: List[CPUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
     ) -> AsyncIterator[StreamEvent]:
         if isinstance(output_format, type):
             model = TypeAdapter(output_format)
             schema = model.json_schema()
-            s = convert_output_object(self._cpu.schedule_request(self._call_context, prompts, schema), cast(Type[T], output_format))
+            s = convert_output_object(
+                self._cpu.schedule_request(self._call_context, prompts, schema), cast(Type[T], output_format)
+            )
         else:
             s = self._cpu.schedule_request(self._call_context, prompts, output_format)
 

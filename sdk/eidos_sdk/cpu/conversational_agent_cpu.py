@@ -10,7 +10,15 @@ from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidos_sdk.cpu.memory_unit import MemoryUnit
 from eidos_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidos_sdk.io.events import ErrorEvent, StreamEvent, EndStreamEvent, StopReason, LLMToolCallRequestEvent, ToolCallStartEvent, ToolCallEndEvent
+from eidos_sdk.io.events import (
+    ErrorEvent,
+    StreamEvent,
+    EndStreamEvent,
+    StopReason,
+    LLMToolCallRequestEvent,
+    ToolCallStartEvent,
+    ToolCallEndEvent,
+)
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidos_sdk.util.stream_collector import StringStreamCollector
 
@@ -57,10 +65,10 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[CPUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+        self,
+        call_context: CallContext,
+        prompts: List[CPUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncGenerator[StreamEvent, None]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
@@ -77,17 +85,19 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             yield ErrorEvent(reason=e)
 
     async def _llm_execution_cycle(
-            self,
-            call_context: CallContext,
-            output_format: Union[Literal["str"], Dict[str, Any]],
-            conversation: List[LLMMessage]
+        self,
+        call_context: CallContext,
+        output_format: Union[Literal["str"], Dict[str, Any]],
+        conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
             tool_call_events = []
             got_error = False
-            execute_llm_ = self.llm_unit.execute_llm(call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format)
+            execute_llm_ = self.llm_unit.execute_llm(
+                call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format
+            )
             # yield the events but capture the output, so it can be rolled into one event for memory.
             stream_collector = StringStreamCollector()
             async for event in execute_llm_:
@@ -101,7 +111,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             assistant_message = AssistantMessage(
                 type="assistant",
                 content=stream_collector.contents or "",
-                tool_calls=[tce.tool_call for tce in tool_call_events]
+                tool_calls=[tce.tool_call for tce in tool_call_events],
             )
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
@@ -126,7 +136,13 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
 
         yield ErrorEvent(reason="Exceeded maximum number of function calls")
 
-    async def _call_tool(self, call_context: CallContext, tool_call_event: LLMToolCallRequestEvent, tool_defs, conversation: List[LLMMessage]):
+    async def _call_tool(
+        self,
+        call_context: CallContext,
+        tool_call_event: LLMToolCallRequestEvent,
+        tool_defs,
+        conversation: List[LLMMessage],
+    ):
         parent_stream_context = tool_call_event.stream_context
         tool_def = tool_defs[tool_call_event.tool_call.name]
         tc = tool_call_event.tool_call

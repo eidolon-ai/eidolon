@@ -50,7 +50,9 @@ class LLMToolWrapper:
             yield ErrorEvent(reason=e)
 
     @classmethod
-    async def from_logic_units(cls, call_context: CallContext, logic_units: List[LogicUnit]) -> Dict[str, LLMToolWrapper]:
+    async def from_logic_units(
+        cls, call_context: CallContext, logic_units: List[LogicUnit]
+    ) -> Dict[str, LLMToolWrapper]:
         acc = {}
         for logic_unit in logic_units:
             for handler in await logic_unit.build_tools(call_context):
@@ -74,10 +76,10 @@ class LLMToolWrapper:
 
 
 def llm_function(
-        name: str = None,
-        description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-        input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
-        output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    name: str = None,
+    description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
 ):
     return register_handler(name=name, description=description, input_model=input_model, output_model=output_model)
 

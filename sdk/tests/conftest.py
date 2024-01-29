@@ -53,8 +53,9 @@ def patch_async_vcr_send(monkeypatch):
             return response
 
         real_response = await real_send(*args, **kwargs)
-        if "text/event-stream" in real_response.headers['Content-Type']:
+        if "text/event-stream" in real_response.headers["Content-Type"]:
             aiter_bytes = real_response.aiter_bytes
+
             async def _sub(*args2, **kwargs2):
                 acc = []
                 async for x in aiter_bytes(*args2, **kwargs2):
@@ -65,7 +66,7 @@ def patch_async_vcr_send(monkeypatch):
                     orig_content = real_response._content
                 else:
                     orig_content = "____NOT_SET____"
-                real_response._content = b''.join(acc)
+                real_response._content = b"".join(acc)
                 _record_responses(cassette, vcr_request, real_response)
                 if orig_content == "____NOT_SET____":
                     del real_response._content
@@ -87,9 +88,9 @@ def app_builder(machine_manager):
         async def manage_lifecycle(_app: FastAPI):
             async with machine_manager() as _machine:
                 async with start_os(
-                        app=_app,
-                        resource_generator=[_machine, *resources] if _machine else resources,
-                        machine_name=_machine.metadata.name,
+                    app=_app,
+                    resource_generator=[_machine, *resources] if _machine else resources,
+                    machine_name=_machine.metadata.name,
                 ):
                     yield
                     print("done")

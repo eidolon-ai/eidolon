@@ -13,10 +13,7 @@ from eidos_sdk.system.request_context import RequestContext
 # noinspection PyShadowingNames
 async def get_content(url: str, json: Optional[Dict[str, Any]] = None, **kwargs):
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
-        params = {
-            "url": url,
-            "headers": RequestContext.headers
-        }
+        params = {"url": url, "headers": RequestContext.headers}
         if json:
             params["json"] = json
         response = await client.get(**params, **kwargs)
@@ -26,10 +23,7 @@ async def get_content(url: str, json: Optional[Dict[str, Any]] = None, **kwargs)
 
 # noinspection PyShadowingNames
 async def post_content(url, json: Optional[Any] = None, **kwargs):
-    params = {
-        "url": url,
-        "headers": RequestContext.headers
-    }
+    params = {"url": url, "headers": RequestContext.headers}
     if json:
         params["json"] = to_jsonable_python(json)
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:

@@ -9,7 +9,8 @@ from eidos_sdk.agent.agent import register_program, register_action
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
-    AgentsLogicUnitSpec, AgentCallHistory,
+    AgentsLogicUnitSpec,
+    AgentCallHistory,
 )
 from eidos_sdk.cpu.call_context import CallContext
 

@@ -77,7 +77,9 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         )
 
         # EventTypes
-        queue = deque([("EventTypes", TypeAdapter(StreamEvent).json_schema(ref_template='#/components/schemas/{model}'))])
+        queue = deque(
+            [("EventTypes", TypeAdapter(StreamEvent).json_schema(ref_template="#/components/schemas/{model}"))]
+        )
         depth = 0
         while queue:
             if depth > 100:

@@ -8,7 +8,7 @@ from httpx import HTTPStatusError
 
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
 from eidos_sdk.agent.client import Agent, Process
-from eidos_sdk.io.events import ErrorEvent, AgentStateEvent
+from eidos_sdk.io.events import ErrorEvent, AgentStateEvent, StringOutputEvent
 
 
 class HelloWorld:
@@ -19,6 +19,14 @@ class HelloWorld:
         if name.lower() == "error":
             raise Exception("big bad server error")
         return f"Hello, {name}!"
+
+    @register_program()
+    async def idle_streaming(self, name: Annotated[str, Body()]):
+        if name.lower() == "hello":
+            raise HTTPException(418, "hello is not a name")
+        if name.lower() == "error":
+            raise Exception("big bad server error")
+        yield StringOutputEvent(content=f"Hello, {name}!")
 
 
 class TestHelloWorld:
@@ -46,14 +54,16 @@ class TestHelloWorld:
         assert post.status_code == 200
         assert post.json()["state"] == "terminated"
 
-    async def test_http_error(self, server):
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_http_error(self, server, program):
         with pytest.raises(HTTPStatusError) as exc:
-            await Agent.get("HelloWorld").program("idle", "hello")
+            await Agent.get("HelloWorld").program(program, "hello")
         assert exc.value.response.status_code == 418
-        assert exc.value.response.json() == dict(detail="hello is not a name")
+        assert exc.value.response.json() == "hello is not a name"
 
-    async def test_streaming_http_error(self, server):
-        stream = Agent.get("HelloWorld").stream_program("idle", "hello")
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_streaming_http_error(self, server, program):
+        stream = Agent.get("HelloWorld").stream_program(program, "hello")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
         assert events[ErrorEvent].reason == dict(detail="hello is not a name", status_code=418)
@@ -62,20 +72,22 @@ class TestHelloWorld:
         with pytest.raises(HTTPStatusError) as exc:
             await Process.get(stream).status()
         assert exc.value.response.status_code == 418
-        assert exc.value.response.json() == {'detail': 'hello is not a name'}
+        assert exc.value.response.json() == "hello is not a name"
 
-    async def test_unhandled_error(self, server):
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_unhandled_error(self, server, program):
         with pytest.raises(HTTPStatusError) as exc:
-            await Agent.get("HelloWorld").program("idle", "error")
+            await Agent.get("HelloWorld").program(program, "error")
         assert exc.value.response.status_code == 500
         assert exc.value.response.json() == "big bad server error"
 
-    async def test_streaming_unhandled_error(self, server):
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_streaming_unhandled_error(self, server, program):
         agent = Agent.get("HelloWorld")
-        stream = agent.stream_program("idle", "error")
+        stream = agent.stream_program(program, "error")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
-        assert events[ErrorEvent].reason == "big bad server error"
+        assert events[ErrorEvent].reason == dict(detail="big bad server error", status_code=500)
         assert events[AgentStateEvent].state == "unhandled_error"
 
         with pytest.raises(HTTPStatusError) as exc:

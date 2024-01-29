@@ -94,6 +94,7 @@ class AgentResponseIterator:
         process_id = agent_it.process_id
 
     """
+
     data: AsyncIterator[StreamEvent]
     machine: str
     agent: str

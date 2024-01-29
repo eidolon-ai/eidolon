@@ -9,7 +9,14 @@ from typing import Annotated, List
 
 from eidos_sdk.agent.agent import register_program
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import StartAgentCallEvent, ObjectOutputEvent, SuccessEvent, AgentStateEvent, StartLLMEvent, StringOutputEvent
+from eidos_sdk.io.events import (
+    StartAgentCallEvent,
+    ObjectOutputEvent,
+    SuccessEvent,
+    AgentStateEvent,
+    StartLLMEvent,
+    StringOutputEvent,
+)
 from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.system.resources.resources_base import Metadata, Resource
 from eidos_sdk.util.aiohttp import stream_content, post_content
@@ -156,8 +163,10 @@ class TestAgentsWithReferences:
 
     async def test_passes_context(self, client, server):
         RequestContext.set("foo", "bar", propagate=True)
-        await post_content(f"{server}/agents/GenericAgent/programs/question",
-                           dict(instruction="Hi! my name is Luke. Can ask greeter4 to greet me?"))
+        await post_content(
+            f"{server}/agents/GenericAgent/programs/question",
+            dict(instruction="Hi! my name is Luke. Can ask greeter4 to greet me?"),
+        )
         assert HelloWorld.calls["greeter4"] == ["bar"]
 
 
@@ -168,7 +177,9 @@ class TestOutputTests:
             "properties": {"capital": {"type": "string"}, "population": {"type": "number"}},
         }
         async with run_app(generic_agent) as app:
-            post = await post_content(f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please"))
+            post = await post_content(
+                f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please")
+            )
             assert "paris" in post["data"]["capital"].lower()
 
     @pytest.mark.asyncio
@@ -186,13 +197,13 @@ class TestOutputTests:
                     agent_name="GenericAgent",
                     machine=AgentOS.current_machine_url(),
                     call_name="question",
-                    process_id="test_generic_agent_supports_object_output_with_stream_0"
+                    process_id="test_generic_agent_supports_object_output_with_stream_0",
                 ),
                 StartLLMEvent(),
-                ObjectOutputEvent(content={'capital': 'Paris', 'population': 67399000}),
+                ObjectOutputEvent(content={"capital": "Paris", "population": 67399000}),
                 SuccessEvent(),
                 AgentStateEvent(state="idle", available_actions=["respond"]),
-                SuccessEvent()
+                SuccessEvent(),
             ]
             events = [event async for event in stream]
             assert events == expected_events
@@ -202,16 +213,18 @@ class TestOutputTests:
         generic_agent.spec["output_schema"] = "str"
         async with run_app(generic_agent) as ra:
             stream = stream_content(
-                f"{ra}/agents/GenericAgent/programs/question", body=dict(
+                f"{ra}/agents/GenericAgent/programs/question",
+                body=dict(
                     instruction="What is the capital of france and its population. Put the relevant parts in XML like blocks. "
-                                "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>")
+                    "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
+                ),
             )
             events = (e for e in [event async for event in stream])
             assert next(events) == StartAgentCallEvent(
                 agent_name="GenericAgent",
                 machine=AgentOS.current_machine_url(),
                 call_name="question",
-                process_id="test_generic_agent_supports_string_stream_0"
+                process_id="test_generic_agent_supports_string_stream_0",
             )
             assert next(events) == StartLLMEvent()
             next_event = next(events)
@@ -232,7 +245,7 @@ class TestOutputTests:
             post = await post_content(
                 f"{app}/agents/GenericAgent/programs/question",
                 data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
-                files=dict(file=dog)
+                files=dict(file=dog),
             )
             assert "brown" in post["data"].lower()
 

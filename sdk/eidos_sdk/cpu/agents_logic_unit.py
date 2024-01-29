@@ -29,7 +29,9 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         call_history = await AgentCallHistory.get_agent_state(call_context.process_id, call_context.thread_id)
         for call in call_history:
             for action in call.available_actions:
-                context_ = await self.build_action_tool(call.machine, call.agent, action, call.remote_process_id, call_context)
+                context_ = await self.build_action_tool(
+                    call.machine, call.agent, action, call.remote_process_id, call_context
+                )
                 if context_:
                     tools.append(context_)
 
@@ -45,7 +47,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 agent=call.agent,
                 remote_process_id=call.remote_process_id,
                 state=call.state,
-                available_actions=call.available_actions
+                available_actions=call.available_actions,
             ).upsert()
         return await super().clone_thread(old_context, new_context)
 
@@ -54,14 +56,18 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             self._machine_schemas[machine] = await Machine(machine=machine).get_schema()
         return self._machine_schemas[machine]
 
-    async def build_action_tool(self, machine: str, agent: str, action: str, remote_process_id: str, call_context: CallContext):
+    async def build_action_tool(
+        self, machine: str, agent: str, action: str, remote_process_id: str, call_context: CallContext
+    ):
         agent_client = Agent.get(agent)
         path = f"/agents/{agent}/processes/{{process_id}}/actions/{action}"
         machine_schema = await self._get_schema(machine)
         endpoint_schema = machine_schema["paths"][path]["post"]
         try:
             name = self._name(agent, action=action)
-            tool = self._build_tool_def(name, endpoint_schema, self._process_tool(agent_client, action, remote_process_id, call_context))
+            tool = self._build_tool_def(
+                name, endpoint_schema, self._process_tool(agent_client, action, remote_process_id, call_context)
+            )
             return tool
         except ValueError:
             logger.warning(f"unable to build tool {path}", exc_info=True)
@@ -79,7 +85,9 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     program = path.removeprefix(prefix)
                     name = self._name(agent, action=program)
                     tool = self._build_tool_def(
-                        name, machine_schema["paths"][path]["post"], self._program_tool(agent_client, program, call_context)
+                        name,
+                        machine_schema["paths"][path]["post"],
+                        self._program_tool(agent_client, program, call_context),
                     )
                     tools.append(tool)
                 except ValueError:
@@ -124,13 +132,17 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
 
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
         def fn(_self, body):
-            return RecordAgentResponseIterator(agent.stream_program(program, body), call_context.process_id, call_context.thread_id)
+            return RecordAgentResponseIterator(
+                agent.stream_program(program, body), call_context.process_id, call_context.thread_id
+            )
 
         return fn
 
     def _process_tool(self, agent: Agent, action: str, process_id: str, call_context: CallContext):
         def fn(_self, body):
-            return RecordAgentResponseIterator(agent.stream_action(action, process_id, body), call_context.process_id, call_context.thread_id)
+            return RecordAgentResponseIterator(
+                agent.stream_action(action, process_id, body), call_context.process_id, call_context.thread_id
+            )
 
         return fn
 
@@ -157,7 +169,7 @@ class AgentCallHistory(BaseModel):
             "parent_process_id": self.parent_process_id,
             "parent_thread_id": self.parent_thread_id,
             "agent": self.agent,
-            "remote_process_id": self.remote_process_id
+            "remote_process_id": self.remote_process_id,
         }
         await AgentOS.symbolic_memory.upsert_one("agent_logic_unit", self.model_dump(), query)
 
@@ -167,7 +179,9 @@ class AgentCallHistory(BaseModel):
             "parent_process_id": parent_process_id,
             "parent_thread_id": parent_thread_id,
         }
-        return [AgentCallHistory.model_validate(o) async for o in AgentOS.symbolic_memory.find("agent_logic_unit", query)]
+        return [
+            AgentCallHistory.model_validate(o) async for o in AgentOS.symbolic_memory.find("agent_logic_unit", query)
+        ]
 
 
 class RecordAgentResponseIterator(AgentResponseIterator):
@@ -189,7 +203,7 @@ class RecordAgentResponseIterator(AgentResponseIterator):
                 agent=self.agent,
                 remote_process_id=self.process_id,
                 state=self.state,
-                available_actions=self.available_actions
+                available_actions=self.available_actions,
             )
             await call_data.upsert()
 
