@@ -57,4 +57,4 @@ class TestCustomAgents:
                 json="hello_world",
             )
             assert response.status_code == 200
-            assert "success" in json.dumps(response.json()["data"]).lower()
+            assert response.json()["data"]["outcome"].lower() == "success"
