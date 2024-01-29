@@ -81,7 +81,7 @@ class Thread:
         result = None
         error = None
 
-        is_string_call = output_format == "str" or output_format["type"] == "string"
+        is_string_call = not isinstance(output_format, type) and (output_format == "str" or output_format["type"] == "string")
         string_output = ""
         async for event in stream:
             if event.is_root_and_type(ObjectOutputEvent):

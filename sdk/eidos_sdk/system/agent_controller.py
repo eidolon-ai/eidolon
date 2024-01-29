@@ -171,10 +171,13 @@ class AgentController:
             raise RuntimeError(f"Did not receive final event for {handler.name}")
 
         process.state = state_change_event.state
-        if result_object:
-            process.data = result_object
+        if final_event.is_root_and_type(ErrorEvent):
+            process.data = final_event.reason
         else:
-            process.data = string_result
+            if result_object:
+                process.data = result_object
+            else:
+                process.data = string_result
         return self.doc_to_response(process)
 
     def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
@@ -322,9 +325,18 @@ class AgentController:
         elif latest_record.state == "unhandled_error":
             return JSONResponse(latest_record.data, 500)
         elif latest_record.state == "http_error":
+            if isinstance(latest_record.data, dict):
+                detail = latest_record.data["detail"]
+                status_code = latest_record.data["status_code"]
+            elif isinstance(latest_record.data, str):
+                detail = latest_record.data
+                status_code = 500
+            else:
+                detail = "Unknown error"
+                status_code = 500
             return JSONResponse(
-                dict(detail=latest_record.data["detail"]),
-                latest_record.data["status_code"],
+                dict(detail=detail),
+                status_code,
             )
         else:
             return JSONResponse(
