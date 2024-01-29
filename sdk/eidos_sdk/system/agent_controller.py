@@ -100,19 +100,19 @@ class AgentController:
             if not handler.extra["type"] == "program":
                 raise HTTPException(
                     status_code=400,
-                    detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
+                    details=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
                 )
             process = await ProcessDoc.create(agent=self.name, state="processing", data=dict(action=handler.name))
             process_id = process.record_id
         else:
             process = await self.get_latest_process_event(process_id)
             if not process:
-                raise HTTPException(status_code=404, detail="Process not found")
+                raise HTTPException(status_code=404, details="Process not found")
             if process.state not in handler.extra["allowed_states"]:
                 logger.warning(f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}")
                 raise HTTPException(
                     status_code=409,
-                    detail=f'Action "{handler.name}" cannot process state "{process.state}"',
+                    details=f'Action "{handler.name}" cannot process state "{process.state}"',
                 )
             process = await process.update(
                 agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
@@ -234,7 +234,7 @@ class AgentController:
         except HTTPException as e:
             logger.warning(f"HTTP error {e.status_code} from {handler.name}", exc_info=True)
             state = "http_error"
-            data = dict(detail=e.detail, status_code=e.status_code)
+            data = dict(details=e.detail, status_code=e.status_code)
             yield ErrorEvent(reason=data)
         except Exception as e:
             logger.error(f"Unhandled error from {handler.name}", exc_info=True)
@@ -321,12 +321,12 @@ class AgentController:
 
     def doc_to_response(self, latest_record: ProcessDoc):
         if not latest_record:
-            return JSONResponse(dict(detail="Process not found"), 404)
+            return JSONResponse(dict(details="Process not found"), 404)
         elif latest_record.state == "unhandled_error":
             return JSONResponse(latest_record.data, 500)
         elif latest_record.state == "http_error":
             if isinstance(latest_record.data, dict):
-                detail = latest_record.data["detail"]
+                detail = latest_record.data["details"]
                 status_code = latest_record.data["status_code"]
             elif isinstance(latest_record.data, str):
                 detail = latest_record.data
@@ -335,7 +335,7 @@ class AgentController:
                 detail = "Unknown error"
                 status_code = 500
             return JSONResponse(
-                dict(detail=detail),
+                dict(details=detail),
                 status_code,
             )
         else:

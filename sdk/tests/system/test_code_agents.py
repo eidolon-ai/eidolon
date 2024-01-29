@@ -3,16 +3,22 @@ import pytest_asyncio
 from typing import Annotated
 
 import pytest
-from fastapi import Body
+from fastapi import Body, HTTPException
+from httpx import HTTPStatusError
+from sympy.codegen.fnodes import Program
 
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
+from eidos_sdk.agent.client import Agent, Process
+from eidos_sdk.io.events import ErrorEvent, AgentStateEvent, StartAgentCallEvent
 
 
 class HelloWorld:
     @register_program()
     async def idle(self, name: Annotated[str, Body()]):
         if name.lower() == "hello":
-            raise Exception("hello is not a name")
+            raise HTTPException(418, "hello is not a name")
+        if name.lower() == "error":
+            raise Exception("big bad server error")
         return f"Hello, {name}!"
 
 
@@ -41,8 +47,42 @@ class TestHelloWorld:
         assert post.status_code == 200
         assert post.json()["state"] == "terminated"
 
+    async def test_http_error(self, server):
+        with pytest.raises(HTTPStatusError) as exc:
+            await Agent.get("HelloWorld").program("idle", "hello")
+        assert exc.value.response.status_code == 418
+        assert exc.value.response.json() == dict(details="hello is not a name")
 
-# todo, we have a bug with defaults in str Body fields like below
+    async def test_streaming_http_error(self, server):
+        stream = Agent.get("HelloWorld").stream_program("idle", "hello")
+        events = {type(e): e async for e in stream}
+        assert ErrorEvent in events
+        assert events[ErrorEvent].reason == dict(details="hello is not a name", status_code=418)
+        assert events[AgentStateEvent].state == "http_error"
+
+        with pytest.raises(HTTPStatusError) as exc:
+            await Process.get(stream).status()
+        assert exc.value.response.status_code == 418
+        assert exc.value.response.json() == {'details': 'hello is not a name'}
+
+    async def test_unhandled_error(self, server):
+        with pytest.raises(HTTPStatusError) as exc:
+            await Agent.get("HelloWorld").program("idle", "error")
+        assert exc.value.response.status_code == 500
+        assert exc.value.response.json() == "big bad server error"
+
+    async def test_streaming_unhandled_error(self, server):
+        agent = Agent.get("HelloWorld")
+        stream = agent.stream_program("idle", "error")
+        events = {type(e): e async for e in stream}
+        assert ErrorEvent in events
+        assert events[ErrorEvent].reason == "big bad server error"
+        assert events[AgentStateEvent].state == "unhandled_error"
+
+        with pytest.raises(HTTPStatusError) as exc:
+            await Process.get(stream).status()
+        assert exc.value.response.status_code == 500
+        assert exc.value.response.json() == "big bad server error"
 
 
 class StateMachine:

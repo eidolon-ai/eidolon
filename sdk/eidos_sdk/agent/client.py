@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import jsonref
 from pydantic import BaseModel, Field
-from typing import List, Any, AsyncIterator
+from typing import List, Any, AsyncIterator, Optional
 from urllib.parse import urljoin
 
 from eidos_sdk.agent_os import AgentOS
@@ -26,15 +26,15 @@ class Agent(BaseModel):
     machine: str = Field(default_factory=AgentOS.current_machine_url)
     agent: str
 
-    def stream_program(self, program_name: str, body: Any) -> AsyncIterator[StreamEvent]:
+    def stream_program(self, program_name: str, body: Any) -> AgentResponseIterator:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
         return AgentResponseIterator(stream_content(url, body))
 
-    def stream_action(self, action_name: str, process_id: str, body: Any) -> AsyncIterator[StreamEvent]:
+    def stream_action(self, action_name: str, process_id: str, body: Any) -> AgentResponseIterator:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{process_id}/actions/{action_name}")
         return AgentResponseIterator(stream_content(url, body))
 
-    async def program(self, program_name: str, body: dict | BaseModel) -> ProcessStatus:
+    async def program(self, program_name: str, body: Optional[Any] = None) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
         json_ = await post_content(url, body)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
@@ -68,6 +68,12 @@ class Process(BaseModel):
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/status")
         json_ = await get_content(url)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
+
+    @classmethod
+    def get(cls, stream_response: AgentResponseIterator):
+        if not stream_response.machine or not stream_response.agent or not stream_response.process_id:
+            raise ValueError("stream_response insufficiently iterated")
+        return cls(machine=stream_response.machine, agent=stream_response.agent, process_id=stream_response.process_id)
 
 
 class ProcessStatus(Process):
