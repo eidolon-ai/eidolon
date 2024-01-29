@@ -76,3 +76,10 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
         :return: The full conversation history for the given call context
         """
         raise NotImplementedError("getConversationHistory not implemented")
+
+    async def clone_thread(self, old_context: CallContext, new_context: CallContext):
+        super().clone_thread(old_context, new_context)
+        messages = await self.getConversationHistory(old_context)
+        for m in messages:
+            m["thread_id"] = new_context.thread_id
+        await self.storeMessages(new_context, messages)

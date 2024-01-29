@@ -1,17 +1,21 @@
 import os
 import pathlib
-from contextlib import asynccontextmanager, contextmanager
+import socket
+import threading
+from contextlib import asynccontextmanager
 from typing import Iterable
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 
+import httpx
 import pytest
+import uvicorn
 from bson import ObjectId
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
-from httpx import AsyncClient
 from motor.motor_asyncio import AsyncIOMotorClient
+from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
+from vcr.stubs.httpx_stubs import _shared_vcr_send, _record_responses
 
 import eidos_sdk.system.processes as processes
 from eidos_sdk.bin.agent_http_server import start_os, start_app
@@ -29,21 +33,52 @@ from eidos_sdk.util.class_utils import fqn
 
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
-    for item in filter(lambda i: "client_builder" in i.fixturenames, items):
+    for item in filter(lambda i: "run_app" in i.fixturenames, items):
         item.add_marker(pytest.mark.vcr)
         item.fixturenames.append("patched_vcr_object_handling")
         item.fixturenames.append("deterministic_process_ids")
+        item.fixturenames.append("patch_async_vcr_send")
 
 
-@pytest.fixture(autouse=True)
-def vcr_config():
-    return dict(
-        filter_headers=[("authorization", "XXXXXX")],
-        ignore_localhost=True,
-        ignore_hosts=["testserver"],
-        record_mode="new_episodes",
-        match_on=["method", "scheme", "host", "port", "path", "query", "body"],
-    )
+@pytest.fixture
+def patch_async_vcr_send(monkeypatch):
+    async def mock_async_vcr_send(cassette, real_send, *args, **kwargs):
+        if len(args) == 1 and "stream" in kwargs and kwargs["stream"] is True:
+            args = (args[0], kwargs["request"])
+            del kwargs["request"]
+        vcr_request, response = _shared_vcr_send(cassette, real_send, *args, **kwargs)
+        if response:
+            # add cookies from response to session cookie store
+            args[0].cookies.extract_cookies(response)
+            return response
+
+        real_response = await real_send(*args, **kwargs)
+        if "text/event-stream" in real_response.headers["Content-Type"]:
+            aiter_bytes = real_response.aiter_bytes
+
+            async def _sub(*args2, **kwargs2):
+                acc = []
+                async for x in aiter_bytes(*args2, **kwargs2):
+                    acc.append(x)
+                    yield x
+
+                if hasattr(real_response, "_content"):
+                    orig_content = real_response._content
+                else:
+                    orig_content = "____NOT_SET____"
+                real_response._content = b"".join(acc)
+                _record_responses(cassette, vcr_request, real_response)
+                if orig_content == "____NOT_SET____":
+                    del real_response._content
+                else:
+                    real_response._content = orig_content
+
+            real_response.aiter_bytes = _sub
+            return real_response
+        else:
+            return _record_responses(cassette, vcr_request, real_response)
+
+    monkeypatch.setattr(httpx_stubs, "_async_vcr_send", AsyncMock(side_effect=mock_async_vcr_send))
 
 
 @pytest.fixture(scope="module")
@@ -66,34 +101,82 @@ def app_builder(machine_manager):
 
 
 @pytest.fixture(scope="module")
-def client_builder(app_builder):
-    @contextmanager
-    def fn(*agents):
-        resources = [
-            a
-            if isinstance(a, Resource)
-            else AgentResource(
-                apiVersion="eidolon/v1",
-                spec=Reference(implementation=fqn(a)),
-                metadata=Metadata(name=a.__name__),
-            )
-            for a in agents
-        ]
-        app = app_builder(resources)
+def port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]
 
-        def make_request(method):
-            async def _fn(url, json=None):
-                async with AsyncClient(app=app, base_url="http://0.0.0.0:8080") as _client:
-                    return (await _client.request(method, url, json=json)).json()
 
-            return _fn
+@pytest.fixture(autouse=True)
+def vcr_config():
+    return dict(
+        filter_headers=[("authorization", "XXXXXX")],
+        ignore_localhost=True,
+        ignore_hosts=["0.0.0.0", "localhost"],
+        record_mode="new_episodes",
+        match_on=["method", "scheme", "host", "port", "path", "query", "body"],
+    )
 
-        client_get = "eidos_sdk.agent.client._get"
-        client_post = "eidos_sdk.agent.client._post"
-        with TestClient(app) as client, patch(client_get) as _get, patch(client_post) as _post:
-            _post.side_effect = make_request("POST")
-            _get.side_effect = make_request("GET")
-            yield client
+
+@pytest.fixture(scope="module")
+def run_app(app_builder, port):
+    @asynccontextmanager
+    async def fn(*agents):
+        server_wrapper = []
+
+        def run_server():
+            AppStatus.should_exit = False
+            AppStatus.should_exit_event = None
+
+            try:
+                resources = [
+                    a
+                    if isinstance(a, Resource)
+                    else AgentResource(
+                        apiVersion="eidolon/v1",
+                        spec=Reference(implementation=fqn(a)),
+                        metadata=Metadata(name=a.__name__),
+                    )
+                    for a in agents
+                ]
+                app = app_builder(resources)
+                # todo, the next line launches uvicorn app as a subprocess so it does not block
+                config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info", loop="asyncio")
+                server = uvicorn.Server(config)
+                server_wrapper.append(server)
+                server.run()
+            except BaseException as e:
+                server_wrapper.clear()
+                server_wrapper.append("aborted")
+                raise e
+
+        server_thread = threading.Thread(target=run_server)
+        server_thread.start()
+
+        try:
+            # Wait for the server to start
+            while len(server_wrapper) == 0 or not (server_wrapper[0] == "aborted" or server_wrapper[0].started):
+                pass
+
+            print(f"Server started on port {port}")
+            os.environ["EIDOS_LOCAL_MACHINE"] = f"http://localhost:{port}"
+            yield f"http://localhost:{port}"
+        finally:
+            # server_wrapper[0].force_exit = True
+            server_wrapper[0].should_exit = True
+            server_thread.join()
+
+    return fn
+
+
+@pytest.fixture(scope="module")
+def client_builder(run_app):
+    @asynccontextmanager
+    async def fn(*agents):
+        async with run_app(*agents) as ra:
+            with httpx.Client(base_url=ra, timeout=httpx.Timeout(60)) as client:
+                yield client
 
     return fn
 

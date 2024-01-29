@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict, Literal, Union
-
 from pydantic import BaseModel, Field
+from typing import List, Any, Dict, Literal, Union, AsyncIterator
 
 from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.cpu.llm_message import AssistantMessage, LLMMessage
+from eidos_sdk.cpu.llm_message import LLMMessage
 from eidos_sdk.cpu.processing_unit import ProcessingUnit
+from eidos_sdk.io.events import StreamEvent
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,
@@ -56,5 +56,5 @@ class LLMUnit(ProcessingUnit, ABC):
         messages: List[LLMMessage],
         tools: List[LLMCallFunction],
         output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AssistantMessage:
+    ) -> AsyncIterator[StreamEvent]:
         pass

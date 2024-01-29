@@ -22,9 +22,6 @@ from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidos_sdk.cpu.llm_unit import LLMUnit
 from eidos_sdk.cpu.memory_unit import MemoryUnit
-from eidos_sdk.cpu.message_summarizer import MessageSummarizer
-from eidos_sdk.cpu.no_memory_cpu import NoMemoryCPU
-from eidos_sdk.cpu.summarization_memory_unit import SummarizationMemoryUnit
 from eidos_sdk.memory.chroma_vector_store import ChromaVectorStore
 from eidos_sdk.memory.embeddings import NoopEmbedding, Embedding, OpenAIEmbedding
 from eidos_sdk.memory.file_memory import FileMemory
@@ -79,14 +76,12 @@ def named_builtins():
         # cpu
         (AgentCPU, ConversationalAgentCPU),
         ConversationalAgentCPU,
-        NoMemoryCPU,
         # cpu components
         IOUnit,
         (LLMUnit, OpenAIGPT),
         OpenAIGPT,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
-        SummarizationMemoryUnit,
         WebSearch,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
@@ -117,6 +112,5 @@ def named_builtins():
         FilesystemLoader,
         ToTChecker,
         OpenAiSpeech,
-        MessageSummarizer,
     ]
     return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list]

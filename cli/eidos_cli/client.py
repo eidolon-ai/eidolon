@@ -6,10 +6,14 @@ from urllib.parse import urljoin
 
 import httpx
 import markdown
+from httpx_sse import EventSource
 from prompt_toolkit import PromptSession, print_formatted_text, HTML
 from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 
+from eidos_cli.StreamProcessor import StreamProcessor
+from eidos_cli.live_console import LiveConsole
+from eidos_cli.markdown import Markdown
 from eidos_cli.schema import Schema, AgentEndpoint
 
 
@@ -69,7 +73,7 @@ class EidolonClient:
                 return agent
         return None
 
-    def send_request(self, agent, user_input, process_id):
+    def send_request(self, agent, user_input, process_id, show_markdown: bool):
         with httpx.Client(timeout=self.timeout) as client:
             if agent.is_program:
                 agent_url = f"/agents/{agent.agent_name}/programs/{agent.program}"
@@ -103,8 +107,43 @@ class EidolonClient:
                     request["files"] = files
             else:
                 request = {"url": urljoin(self.server_location, agent_url), "json": user_input}
-            response = client.post(**request, headers=self.security_headers)
-            return response.status_code, response.json()
+            headers = {
+                **self.security_headers,
+                "Accept": "text/event-stream, application/json",
+            }
+            with client.stream(method="POST", **request, headers=headers) as response:
+                content_type = response.headers.get("content-type", "").partition(";")[0]
+                status_code = response.status_code
+                if status_code != 200:
+                    print_formatted_text(f"Error: {str(response)}")
+                    return [], None
+
+                if "text/event-stream" not in content_type:
+                    response.read()
+                    response = response.json()
+                    # console.print(f"{str(response)}")
+                    if isinstance(response["data"], str):
+                        if show_markdown:
+                            html = markdown.markdown(response["data"].strip())
+                            print_formatted_text(HTML(html))
+                        else:
+                            print_formatted_text(response["data"])
+                    else:
+                        print_formatted_text(json.dumps(response["data"]))
+
+                    if response["state"] == "terminated":
+                        return [], None
+                    else:
+                        actions = response["available_actions"]
+                        # else leave current_conversation as is
+                        process_id = response["process_id"]
+                        return actions, process_id
+                else:
+                    sp = StreamProcessor()
+                    md = Markdown(sp.generate_tokens(EventSource(response).iter_sse()))
+                    console = LiveConsole()
+                    console.print_live(md)
+                    return sp.available_actions, sp.process_id
 
     def get_processes(self, agent_name):
         with httpx.Client(timeout=self.timeout) as client:
@@ -155,25 +194,8 @@ class EidolonClient:
                 console.print()
                 break
             console.print("Sending request...", style="dim")
-            status_code, response = self.send_request(agent, user_input, process_id)
-            if status_code != 200:
-                console.print(f"Error: {str(response)}", style="red")
-            else:
-                # console.print(f"{str(response)}")
-                start_of_conversation = False
 
-                if isinstance(response["data"], str):
-                    if show_markdown:
-                        html = markdown.markdown(response["data"].strip())
-                        print_formatted_text(HTML(html))
-                    else:
-                        console.print(response["data"])
-                else:
-                    console.print_json(json.dumps(response["data"]))
-
-                if response["state"] == "terminated":
-                    break
-                else:
-                    actions = response["available_actions"]
-                    # else leave current_conversation as is
-                    process_id = response["process_id"]
+            actions, process_id = self.send_request(agent, user_input, process_id, show_markdown)
+            start_of_conversation = False
+            if len(actions) == 0:
+                break

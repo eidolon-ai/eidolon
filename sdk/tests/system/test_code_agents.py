@@ -1,23 +1,43 @@
+import httpx
+import pytest_asyncio
 from typing import Annotated
 
 import pytest
-from fastapi import Body
+from fastapi import Body, HTTPException
+from httpx import HTTPStatusError
 
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
+from eidos_sdk.agent.client import Agent, Process
+from eidos_sdk.io.events import ErrorEvent, AgentStateEvent, StringOutputEvent
 
 
 class HelloWorld:
     @register_program()
     async def idle(self, name: Annotated[str, Body()]):
         if name.lower() == "hello":
-            raise Exception("hello is not a name")
+            raise HTTPException(418, "hello is not a name")
+        if name.lower() == "error":
+            raise Exception("big bad server error")
         return f"Hello, {name}!"
+
+    @register_program()
+    async def idle_streaming(self, name: Annotated[str, Body()]):
+        if name.lower() == "hello":
+            raise HTTPException(418, "hello is not a name")
+        if name.lower() == "error":
+            raise Exception("big bad server error")
+        yield StringOutputEvent(content=f"Hello, {name}!")
 
 
 class TestHelloWorld:
-    @pytest.fixture(scope="class")
-    def client(self, client_builder):
-        with client_builder(HelloWorld) as client:
+    @pytest_asyncio.fixture(scope="class")
+    async def server(self, run_app):
+        async with run_app(HelloWorld) as ra:
+            yield ra
+
+    @pytest_asyncio.fixture(scope="function")
+    async def client(self, server):
+        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     def test_can_start(self, client):
@@ -34,8 +54,46 @@ class TestHelloWorld:
         assert post.status_code == 200
         assert post.json()["state"] == "terminated"
 
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_http_error(self, server, program):
+        with pytest.raises(HTTPStatusError) as exc:
+            await Agent.get("HelloWorld").program(program, "hello")
+        assert exc.value.response.status_code == 418
+        assert exc.value.response.json() == "hello is not a name"
 
-# todo, we have a bug with defaults in str Body fields like below
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_streaming_http_error(self, server, program):
+        stream = Agent.get("HelloWorld").stream_program(program, "hello")
+        events = {type(e): e async for e in stream}
+        assert ErrorEvent in events
+        assert events[ErrorEvent].reason == dict(detail="hello is not a name", status_code=418)
+        assert events[AgentStateEvent].state == "http_error"
+
+        with pytest.raises(HTTPStatusError) as exc:
+            await Process.get(stream).status()
+        assert exc.value.response.status_code == 418
+        assert exc.value.response.json() == "hello is not a name"
+
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_unhandled_error(self, server, program):
+        with pytest.raises(HTTPStatusError) as exc:
+            await Agent.get("HelloWorld").program(program, "error")
+        assert exc.value.response.status_code == 500
+        assert exc.value.response.json() == "big bad server error"
+
+    @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
+    async def test_streaming_unhandled_error(self, server, program):
+        agent = Agent.get("HelloWorld")
+        stream = agent.stream_program(program, "error")
+        events = {type(e): e async for e in stream}
+        assert ErrorEvent in events
+        assert events[ErrorEvent].reason == dict(detail="big bad server error", status_code=500)
+        assert events[AgentStateEvent].state == "unhandled_error"
+
+        with pytest.raises(HTTPStatusError) as exc:
+            await Process.get(stream).status()
+        assert exc.value.response.status_code == 500
+        assert exc.value.response.json() == "big bad server error"
 
 
 class StateMachine:
@@ -63,9 +121,14 @@ class StateMachine:
 
 
 class TestStateMachine:
-    @pytest.fixture(scope="class")
-    def client(self, client_builder):
-        with client_builder(StateMachine) as client:
+    @pytest_asyncio.fixture(scope="class")
+    async def server(self, run_app):
+        async with run_app(StateMachine) as ra:
+            yield ra
+
+    @pytest_asyncio.fixture(scope="function")
+    async def client(self, server):
+        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     def test_can_list_processes(self, client):
@@ -75,7 +138,7 @@ class TestStateMachine:
         second = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
         third = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
 
-        processes = client.get("/agents/StateMachine/processes/")
+        processes = client.get("/agents/StateMachine/processes")
         assert processes.status_code == 200
         assert processes.json()["total"] == 3
         assert {p["process_id"] for p in processes.json()["processes"]} == {first, second, third}
@@ -83,7 +146,7 @@ class TestStateMachine:
         # update the first process: it should be at end of list now
         assert first == client.post(f"/agents/StateMachine/processes/{first}/actions/terminate").json()["process_id"]
 
-        processes = client.get("/agents/StateMachine/processes/")
+        processes = client.get("/agents/StateMachine/processes")
         assert processes.json()["total"] == 3
         assert [p["process_id"] for p in processes.json()["processes"]] == [second, third, first]
 

@@ -1,10 +1,11 @@
-from abc import ABC
-from pydantic import BaseModel, ValidationError
-from typing import List, Any, Dict
+from pydantic import BaseModel
+from typing import List, Any, Dict, AsyncIterator, Optional
 
-from eidos_sdk.agent.client import Machine, ProcessStatus, Agent, Process
-from eidos_sdk.cpu.llm_message import ToolResponseMessage
+from eidos_sdk.agent.client import Machine, Agent, AgentResponseIterator
+from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.cpu.call_context import CallContext
 from eidos_sdk.cpu.logic_unit import LogicUnit
+from eidos_sdk.io.events import StreamEvent
 from eidos_sdk.system.eidos_handler import EidosHandler
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger
@@ -16,34 +17,62 @@ class AgentsLogicUnitSpec(BaseModel):
     agents: List[str]
 
 
-class BaseAgentsLogicUnit(Specable[AgentsLogicUnitSpec], ABC):
+class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     _machine_schemas: Dict[str, dict]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._machine_schemas = {}
 
+    async def build_tools(self, call_context: CallContext) -> List[EidosHandler]:
+        tools = await self.build_program_tools(call_context)
+        call_history = await AgentCallHistory.get_agent_state(call_context.process_id, call_context.thread_id)
+        for call in call_history:
+            for action in call.available_actions:
+                context_ = await self.build_action_tool(
+                    call.machine, call.agent, action, call.remote_process_id, call_context
+                )
+                if context_:
+                    tools.append(context_)
+
+        return tools
+
+    async def clone_thread(self, old_context: CallContext, new_context: CallContext):
+        call_history = await AgentCallHistory.get_agent_state(old_context.process_id, old_context.thread_id)
+        for call in call_history:
+            await AgentCallHistory(
+                parent_process_id=new_context.process_id,
+                parent_thread_id=new_context.thread_id,
+                machine=call.machine,
+                agent=call.agent,
+                remote_process_id=call.remote_process_id,
+                state=call.state,
+                available_actions=call.available_actions,
+            ).upsert()
+        return await super().clone_thread(old_context, new_context)
+
     async def _get_schema(self, machine: str) -> dict:
         if machine not in self._machine_schemas:
             self._machine_schemas[machine] = await Machine(machine=machine).get_schema()
         return self._machine_schemas[machine]
 
-    async def build_action_tools(self, processes):
-        tools = []
-        # newer process state should override older process state if there are multiple calls
-        for action, process in ((a, r) for r in processes for a in r.available_actions):
-            path = f"/agents/{process.agent}/processes/{{process_id}}/actions/{action}"
-            machine_schema = await self._get_schema(process.machine)
-            endpoint_schema = machine_schema["paths"][path]["post"]
-            try:
-                name = self._name(process.agent, action=action)
-                tool = self._build_tool_def(name, endpoint_schema, self._process_tool(process, action))
-                tools.append(tool)
-            except ValueError:
-                logger.warning(f"unable to build tool {path}", exc_info=True)
-        return tools
+    async def build_action_tool(
+        self, machine: str, agent: str, action: str, remote_process_id: str, call_context: CallContext
+    ):
+        agent_client = Agent.get(agent)
+        path = f"/agents/{agent}/processes/{{process_id}}/actions/{action}"
+        machine_schema = await self._get_schema(machine)
+        endpoint_schema = machine_schema["paths"][path]["post"]
+        try:
+            name = self._name(agent, action=action)
+            tool = self._build_tool_def(
+                name, endpoint_schema, self._process_tool(agent_client, action, remote_process_id, call_context)
+            )
+            return tool
+        except ValueError:
+            logger.warning(f"unable to build tool {path}", exc_info=True)
 
-    async def build_program_tools(self):
+    async def build_program_tools(self, call_context: CallContext):
         tools = []
         for agent in self.spec.agents:
             agent_client = Agent.get(agent)
@@ -56,7 +85,9 @@ class BaseAgentsLogicUnit(Specable[AgentsLogicUnitSpec], ABC):
                     program = path.removeprefix(prefix)
                     name = self._name(agent, action=program)
                     tool = self._build_tool_def(
-                        name, machine_schema["paths"][path]["post"], self._program_tool(agent_client, program)
+                        name,
+                        machine_schema["paths"][path]["post"],
+                        self._program_tool(agent_client, program, call_context),
                     )
                     tools.append(tool)
                 except ValueError:
@@ -99,11 +130,21 @@ class BaseAgentsLogicUnit(Specable[AgentsLogicUnitSpec], ABC):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent + process_id + action
 
-    def _program_tool(self, agent: Agent, program):
-        return self._tool_call(lambda body: agent.program(program, body))
+    def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
+        def fn(_self, body):
+            return RecordAgentResponseIterator(
+                agent.stream_program(program, body), call_context.process_id, call_context.thread_id
+            )
 
-    def _process_tool(self, process: Process, action):
-        return self._tool_call(lambda body: process.action(action, body))
+        return fn
+
+    def _process_tool(self, agent: Agent, action: str, process_id: str, call_context: CallContext):
+        def fn(_self, body):
+            return RecordAgentResponseIterator(
+                agent.stream_action(action, process_id, body), call_context.process_id, call_context.thread_id
+            )
+
+        return fn
 
     @staticmethod
     def _tool_call(fn):
@@ -114,32 +155,56 @@ class BaseAgentsLogicUnit(Specable[AgentsLogicUnitSpec], ABC):
         return _fn
 
 
-class AgentsLogicUnit(BaseAgentsLogicUnit, LogicUnit):
-    async def build_tools(self, conversation: List[ToolResponseMessage]) -> List[EidosHandler]:
-        tools = await self.build_program_tools()
+class AgentCallHistory(BaseModel):
+    parent_process_id: str
+    parent_thread_id: Optional[str]
+    machine: str
+    agent: str
+    remote_process_id: str
+    state: str
+    available_actions: List[str]
 
-        # in case new spec removes ability to talk to agents, existing agents should not be able to continue talking to them
-        allowed_agents = {(ac.machine, ac.agent) for ac in (Agent.get(a) for a in self.spec.agents)}
-        processes: List[ProcessStatus] = []
-        for message in conversation:
-            try:
-                process = ProcessStatus.model_validate(message.result)
-                if (process.machine, process.agent) in allowed_agents:
-                    processes.append(process)
-            except ValidationError:
-                logger.warning("unable to parse conversation response, skipping", exc_info=True)
+    async def upsert(self):
+        query = {
+            "parent_process_id": self.parent_process_id,
+            "parent_thread_id": self.parent_thread_id,
+            "agent": self.agent,
+            "remote_process_id": self.remote_process_id,
+        }
+        await AgentOS.symbolic_memory.upsert_one("agent_logic_unit", self.model_dump(), query)
 
-        tools.extend(await self.build_action_tools(processes))
+    @classmethod
+    async def get_agent_state(cls, parent_process_id: str, parent_thread_id: str):
+        query = {
+            "parent_process_id": parent_process_id,
+            "parent_thread_id": parent_thread_id,
+        }
+        return [
+            AgentCallHistory.model_validate(o) async for o in AgentOS.symbolic_memory.find("agent_logic_unit", query)
+        ]
 
-        return tools
 
+class RecordAgentResponseIterator(AgentResponseIterator):
+    parent_process_id: str
+    parent_thread_id: str
 
-class ContConvLU(BaseAgentsLogicUnit, LogicUnit):
-    def __init__(self, processes: List[ProcessStatus], tool_prefix: str = "convo", **kwargs):
-        super().__init__(spec=AgentsLogicUnitSpec(tool_prefix=tool_prefix, agents=[process.agent for process in processes]))
-        LogicUnit.__init__(self, **kwargs)
+    def __init__(self, data: AsyncIterator[StreamEvent], parent_process_id: str, parent_thread_id: str):
+        super().__init__(data)
+        self.parent_process_id = parent_process_id
+        self.parent_thread_id = parent_thread_id
 
-        self.processes = processes
+    async def iteration_complete(self):
+        if self.available_actions is not None and len(self.available_actions) > 0:
+            #  insert response into mongo we need to store the parent process_id and thread_id and the agent, remote_process_id, state, and available_actions
+            call_data = AgentCallHistory(
+                parent_process_id=self.parent_process_id,
+                parent_thread_id=self.parent_thread_id,
+                machine=self.machine,
+                agent=self.agent,
+                remote_process_id=self.process_id,
+                state=self.state,
+                available_actions=self.available_actions,
+            )
+            await call_data.upsert()
 
-    async def build_tools(self, _conversation: List[ToolResponseMessage]) -> List[EidosHandler]:
-        return await self.build_action_tools(self.processes)
+        return await super().iteration_complete()
