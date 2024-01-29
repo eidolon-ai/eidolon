@@ -50,19 +50,19 @@ class TestHelloWorld:
         with pytest.raises(HTTPStatusError) as exc:
             await Agent.get("HelloWorld").program("idle", "hello")
         assert exc.value.response.status_code == 418
-        assert exc.value.response.json() == dict(details="hello is not a name")
+        assert exc.value.response.json() == dict(detail="hello is not a name")
 
     async def test_streaming_http_error(self, server):
         stream = Agent.get("HelloWorld").stream_program("idle", "hello")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
-        assert events[ErrorEvent].reason == dict(details="hello is not a name", status_code=418)
+        assert events[ErrorEvent].reason == dict(detail="hello is not a name", status_code=418)
         assert events[AgentStateEvent].state == "http_error"
 
         with pytest.raises(HTTPStatusError) as exc:
             await Process.get(stream).status()
         assert exc.value.response.status_code == 418
-        assert exc.value.response.json() == {'details': 'hello is not a name'}
+        assert exc.value.response.json() == {'detail': 'hello is not a name'}
 
     async def test_unhandled_error(self, server):
         with pytest.raises(HTTPStatusError) as exc:
