@@ -1,13 +1,14 @@
 import os
 import ssl
 from contextlib import asynccontextmanager
-from typing import List, Optional, cast
+from typing import List, Optional
 
 # import aiohttp
 import certifi
+
 # from aiohttp import ClientSession
 from bs4 import BeautifulSoup
-from httpx import AsyncClient, Timeout, Response
+from httpx import AsyncClient, Timeout
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, Field
 
@@ -62,26 +63,28 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
                 logger.warning(f"Request to url '{url}' return {resp.status}, {resp.reason}")
                 return text
             if self.spec.summarizer == "BeautifulSoup":
-                soup = BeautifulSoup(text, 'lxml')
-                return soup.get_text(separator='\n', strip=True)
+                soup = BeautifulSoup(text, "lxml")
+                return soup.get_text(separator="\n", strip=True)
             elif self.spec.summarizer:
                 # todo, it would be interesting to summarize in the background and replace messages in the background
                 memory_unit = self.locate_unit(MemoryUnit)
                 context = CallContext(process_id=RequestContext.get("process_id", ...))
                 messages = await memory_unit.getConversationHistory(context)
-                summary = await Program.get(self.spec.summarizer).execute(dict(
-                    messages=messages,
-                    text=text,
-                ))
+                summary = await Program.get(self.spec.summarizer).execute(
+                    dict(
+                        messages=messages,
+                        text=text,
+                    )
+                )
                 return summary.data()
             return text
 
     @llm_function()
     async def search(
-            self,
-            term: str,
-            num_results: int = 10,
-            lang: str = "en",
+        self,
+        term: str,
+        num_results: int = 10,
+        lang: str = "en",
     ) -> List[SearchResult]:
         """
         Search google and get the results. Cannot return more than 100 results
@@ -103,12 +106,15 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
             yield SearchResult(url=item["link"], title=item["title"], description=item["snippet"])
 
     async def _req(self, term, results, lang):
-        async with self._get(url="https://customsearch.googleapis.com/customsearch/v1", params={
-            "q": term,
-            "num": results,  # Prevents multiple requests
-            "hl": lang,
-            "cx": self.spec.cse_id,
-            "key": self.spec.cse_token,
-        }) as resp:
+        async with self._get(
+            url="https://customsearch.googleapis.com/customsearch/v1",
+            params={
+                "q": term,
+                "num": results,  # Prevents multiple requests
+                "hl": lang,
+                "cx": self.spec.cse_id,
+                "key": self.spec.cse_token,
+            },
+        ) as resp:
             resp.raise_for_status()
             return resp.json()
