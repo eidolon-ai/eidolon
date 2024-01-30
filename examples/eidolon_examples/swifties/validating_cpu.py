@@ -1,7 +1,8 @@
 import asyncio
 import json
-from typing import Any, List, Literal, Union, Dict, Optional, Iterable
+from typing import Any, List, Literal, Union, Dict, Optional, AsyncIterator, Callable, Tuple
 
+from aiostream import stream
 from fastapi import HTTPException
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
@@ -12,9 +13,8 @@ from eidos_sdk.cpu.agent_cpu import AgentCPU, Thread
 from eidos_sdk.cpu.agent_io import CPUMessageTypes, SystemCPUMessage
 from eidos_sdk.cpu.call_context import CallContext
 from eidos_sdk.cpu.logic_unit import LogicUnit
-from eidos_sdk.io.events import StartStreamContextEvent, EndStreamContextEvent, OutputEvent
+from eidos_sdk.io.events import StartStreamContextEvent, OutputEvent
 from eidos_sdk.system.reference_model import AnnotatedReference, Specable, Reference
-from eidos_sdk.util.logger import logger
 from eidos_sdk.util.stream_collector import StreamCollector
 
 
@@ -86,25 +86,16 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
 
         depth = 1
 
-        cpu_request = await self.cpu.schedule_request(call_context, prompts, output_format)
-        context = StartStreamContextEvent(context_id=f"proposal_{depth}", event_type="response_proposal")
-        collector = StreamCollector(stream=cpu_request, wrap_with_context=context)
-        async for e in collector:
+        resp_stream, resp_fn, changes_fn = self._generate_resp(call_context, depth, output_format, prompts, prompts_str)
+        async for e in resp_stream:
             yield e
-        while changes := await self._get_required_changes(output_format, prompts_str, collector.contents):
-            if depth > self.spec.max_response_regenerations:
-                # todo, think this through
-                raise HTTPException(500)
-
-            logger.info("Output require changes, regenerating")
-            prompt = self.env.from_string(self.spec.regeneration_prompt).render(changes=changes)
-            cpu_request = await self.cpu.schedule_request(call_context, [SystemCPUMessage(prompt=prompt)], output_format)
-            context = StartStreamContextEvent(context_id=f"proposal_{depth}", event_type="response_proposal")
-            collector = StreamCollector(stream=cpu_request, wrap_with_context=context)
-            async for event in collector:
-                yield event
-            depth += 1
-        yield OutputEvent.get(collector.contents)
+        while changes_fn():
+            prompt = self.env.from_string(self.spec.regeneration_prompt).render(changes=changes_fn())
+            change_prompt = [SystemCPUMessage(prompt=prompt)]
+            resp_stream, resp_fn, changes_fn = self._generate_resp(call_context, depth, output_format, change_prompt, prompts_str)
+            async for e in resp_stream:
+                yield e
+        yield OutputEvent.get(resp_fn())
 
     async def _check_input(self, v: str, prompts):
         status = await Program.get(v).execute(InputValidatorBody(prompts=prompts))
@@ -115,14 +106,36 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
                 detail=resp.reason or "Reqeust flagged by input validator",
             )
 
-    async def _check_output(self, v, prompts, resp, output_format) -> OutputValidationResponse:
-        status = await Program.get(v).execute(OutputValidatorBody(prompts=prompts, output_schema=output_format, response=resp))
-        return status.parse(OutputValidationResponse)
+    def _check_output(self, v, prompts, resp, output_format) -> StreamCollector:
+        program_stream = Program.get(v).stream_execute(OutputValidatorBody(prompts=prompts, output_schema=output_format, response=resp))
+        context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}", event_type="response_validation")
+        return StreamCollector(stream=program_stream, wrap_with_context=context)
 
-    async def _get_required_changes(self, output_format, prompts, resp) -> List[str]:
-        output_validators = [self._check_output(v, prompts, resp, output_format) for v in self.spec.output_validators]
-        output_responses: Iterable[OutputValidationResponse] = await asyncio.gather(*output_validators)
-        return [o.reason for o in output_responses if o.status != "allow"]
+    async def _generate_resp(self, call_context, depth, output_format, prompts, prompts_str) -> Tuple[AsyncIterator, Callable, Callable]:
+        acc = {}
+        async def _stream():
+            collector = StreamCollector(
+                stream=(await self.cpu.schedule_request(call_context, prompts, output_format)),
+                wrap_with_context=StartStreamContextEvent(context_id=f"proposal_{depth}", event_type="response_proposal")
+            )
+            async for e in collector:
+                yield e
+            change_collectors = [
+                self._check_output(v, prompts_str, collector.contents, output_format)
+                for v in self.spec.output_validators
+            ]
+            async for e in stream.merge(change_collectors[0], *change_collectors[1:]):
+                yield e
+
+            change_responses = [OutputValidationResponse.model_validate(c.contents) for c in change_collectors]
+            acc['changes'] = [c.contents for c in change_responses if c.status != "allow"]
+            acc['contents'] = collector.contents
+
+        def _resp():
+            return acc['contents']
+        def _changes():
+            return acc['changes']
+        return _stream(), _resp(), _changes()
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
         return await self.cpu.__class__.clone_thread(self, call_context)

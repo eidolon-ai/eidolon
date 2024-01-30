@@ -101,7 +101,7 @@ class ProcessStatus(Process):
     available_actions: List[str]
 
 
-class AgentResponseIterator:
+class AgentResponseIterator(AsyncIterator[StreamEvent]):
     """
     This class is used to iterate over the responses from an agent call and store the state of the conversation after the stream is complete.
 
