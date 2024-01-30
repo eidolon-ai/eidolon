@@ -118,7 +118,6 @@ class TestSchemaToModel:
             "1 validation error for DefaultModel\n"
             "age\n"
             "  Field required [type=missing, input_value={}, input_type=dict]\n"
-            "    For further information visit https://errors.pydantic.dev/2.5/v/missing"
         ) in str(exc_info.value)
 
     def test_invalid_schema(self):
