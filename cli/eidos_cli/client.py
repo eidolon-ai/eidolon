@@ -121,7 +121,6 @@ class EidolonClient:
                 if "text/event-stream" not in content_type:
                     response.read()
                     response = response.json()
-                    # console.print(f"{str(response)}")
                     if isinstance(response["data"], str):
                         if show_markdown:
                             html = markdown.markdown(response["data"].strip())
