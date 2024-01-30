@@ -1,10 +1,6 @@
 import os
-import ssl
 from contextlib import asynccontextmanager
 from typing import List, Optional
-
-# import aiohttp
-import certifi
 
 # from aiohttp import ClientSession
 from bs4 import BeautifulSoup
@@ -40,7 +36,6 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         Specable.__init__(self, **kwargs)
         self.spec.cse_id = self.spec.cse_id or os.environ["CSE_ID"]
         self.spec.cse_token = self.spec.cse_token or os.environ["CSE_TOKEN"]
-        self.sslcontext = ssl.create_default_context(cafile=certifi.where())
         self.jinja_env = Environment(undefined=StrictUndefined)
         if not self.spec.cse_id or not self.spec.cse_token:
             raise ValueError("missing required cse_id or cse_token")
