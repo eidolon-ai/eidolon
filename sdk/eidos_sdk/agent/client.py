@@ -79,7 +79,6 @@ class Process(BaseModel):
 class ProcessStatus(Process):
     state: str
     available_actions: List[str]
-    data: Any
 
 
 class AgentResponseIterator:
