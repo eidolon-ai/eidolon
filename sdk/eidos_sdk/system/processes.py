@@ -1,11 +1,12 @@
-from datetime import datetime
-from typing import ClassVar, Any
-
 import bson
+import logging
+from datetime import datetime
 from pydantic import BaseModel
 from pymongo.errors import DuplicateKeyError
+from typing import ClassVar, Any, cast, AsyncIterable, Optional, Dict
 
 from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.io.events import StreamEvent
 
 
 class MongoDoc(BaseModel, extra="allow"):
@@ -55,4 +56,43 @@ class ProcessDoc(MongoDoc):
     metadata: dict = {}
     agent: str
     state: str
-    data: Any
+    error_info: Optional[Any] = None
+
+
+async def store_events(agent: str, process_id: str, events: list[StreamEvent]):
+    try:
+        stored_events = []
+        for event_num, event in enumerate(events):
+            event_obj: Dict[str, Any] = {
+                **event.model_dump(),
+                "__process_id": process_id,
+                "__agent": agent,
+                "__create_time": datetime.now().timestamp(),
+                "__event_id": event_num,
+            }
+            event_obj["category"] = event_obj["category"].value
+            if hasattr(event_obj["event_type"], "value"):
+                event_obj["event_type"] = event_obj["event_type"].value
+            event_obj["category"] = str(event_obj["category"])
+            stored_events.append(event_obj)
+
+        await AgentOS.symbolic_memory.insert("process_events", stored_events)
+    except Exception as e:
+        logging.getLogger("eidolon").exception(f"Error storing events {e}")
+
+
+async def load_events(agent: str, process_id: str):
+    query = {"__agent": agent, "__process_id": process_id}
+    order = {"__create_time": 1, "__event_id": 1}
+    events = cast(AsyncIterable[dict[str, Any]], AgentOS.symbolic_memory.find("process_events", query, sort=order))
+
+    events_arr = [event async for event in events]
+    for event in events_arr:
+        del event["_id"]
+        del event["__process_id"]
+        del event["__create_time"]
+        del event["__event_id"]
+        del event["__agent"]
+        if not event["stream_context"]:
+            del event["stream_context"]
+    return events_arr
