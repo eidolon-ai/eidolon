@@ -91,7 +91,7 @@ class AgentController:
         )
 
         app.add_api_route(
-            f"/agents/{self.name}/processes/{{process_id}}/status/events",
+            f"/agents/{self.name}/processes/{{process_id}}/events",
             endpoint=self.get_process_events,
             methods=["GET"],
             response_model=typing.List[typing.Dict[str, typing.Any]],

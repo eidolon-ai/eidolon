@@ -43,11 +43,6 @@ class TestHelloWorld:
         for event, expected_event in zip(events, expected_events):
             event_copy = event.copy()
             expected_event_copy = expected_event.model_dump()
-            del event_copy["create_time"]
-            del event_copy["event_id"]
-            del event_copy["agent"]
-            if event_copy["event_type"] != "agent_call":
-                del event_copy["process_id"]
 
             if not expected_event_copy["stream_context"]:
                 del expected_event_copy["stream_context"]
@@ -65,7 +60,7 @@ class TestHelloWorld:
         process_id = data["process_id"]
         assert data["data"] == "Hello, world!"
 
-        response = client.get(f"/agents/HelloWorld/processes/{process_id}/status/events")
+        response = client.get(f"/agents/HelloWorld/processes/{process_id}/events")
         events = response.json()
         expected_events = [
             StartAgentCallEvent(machine=server, agent_name="HelloWorld", call_name="idle", process_id=process_id),
@@ -88,5 +83,5 @@ class TestHelloWorld:
 
         assert process_id is not None
 
-        events = client.get(f"/agents/HelloWorld/processes/{process_id}/status/events")
+        events = client.get(f"/agents/HelloWorld/processes/{process_id}/events")
         self.compare_events(events.json(), server_events)

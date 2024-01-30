@@ -65,10 +65,10 @@ async def store_events(agent: str, process_id: str, events: list[StreamEvent]):
         for event_num, event in enumerate(events):
             event_obj: Dict[str, Any] = {
                 **event.model_dump(),
-                "process_id": process_id,
-                "agent": agent,
-                "create_time": datetime.now().timestamp(),
-                "event_id": event_num,
+                "__process_id": process_id,
+                "__agent": agent,
+                "__create_time": datetime.now().timestamp(),
+                "__event_id": event_num,
             }
             event_obj["category"] = event_obj["category"].value
             if hasattr(event_obj["event_type"], "value"):
@@ -82,13 +82,17 @@ async def store_events(agent: str, process_id: str, events: list[StreamEvent]):
 
 
 async def load_events(agent: str, process_id: str):
-    query = {"agent": agent, "process_id": process_id}
-    order = [("create_time", 1), ("event_id", 1)]
+    query = {"__agent": agent, "__process_id": process_id}
+    order = {"__create_time": 1, "__event_id": 1}
     events = cast(AsyncIterable[dict[str, Any]], AgentOS.symbolic_memory.find("process_events", query, sort=order))
 
     events_arr = [event async for event in events]
     for event in events_arr:
         del event["_id"]
+        del event["__process_id"]
+        del event["__create_time"]
+        del event["__event_id"]
+        del event["__agent"]
         if not event["stream_context"]:
             del event["stream_context"]
     return events_arr
