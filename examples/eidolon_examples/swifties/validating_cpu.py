@@ -12,8 +12,10 @@ from eidos_sdk.cpu.agent_cpu import AgentCPU, Thread
 from eidos_sdk.cpu.agent_io import CPUMessageTypes, SystemCPUMessage
 from eidos_sdk.cpu.call_context import CallContext
 from eidos_sdk.cpu.logic_unit import LogicUnit
+from eidos_sdk.io.events import StartStreamContextEvent, EndStreamContextEvent, OutputEvent
 from eidos_sdk.system.reference_model import AnnotatedReference, Specable, Reference
 from eidos_sdk.util.logger import logger
+from eidos_sdk.util.stream_collector import StreamCollector
 
 
 class InputValidatorBody(BaseModel):
@@ -82,18 +84,27 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
         validators = [self._check_input(v, prompts=prompts_str) for v in self.spec.input_validators]
         await asyncio.gather(*validators)
 
-        resp = await self.cpu.schedule_request(call_context, prompts, output_format)
         depth = 1
-        while changes := await self._get_required_changes(output_format, prompts_str, resp):
+
+        cpu_request = await self.cpu.schedule_request(call_context, prompts, output_format)
+        context = StartStreamContextEvent(context_id=f"proposal_{depth}", event_type="response_proposal")
+        collector = StreamCollector(stream=cpu_request, wrap_with_context=context)
+        async for e in collector:
+            yield e
+        while changes := await self._get_required_changes(output_format, prompts_str, collector.contents):
             if depth > self.spec.max_response_regenerations:
                 # todo, think this through
                 raise HTTPException(500)
 
             logger.info("Output require changes, regenerating")
             prompt = self.env.from_string(self.spec.regeneration_prompt).render(changes=changes)
-            resp = await self.cpu.schedule_request(call_context, [SystemCPUMessage(prompt=prompt)], output_format)
+            cpu_request = await self.cpu.schedule_request(call_context, [SystemCPUMessage(prompt=prompt)], output_format)
+            context = StartStreamContextEvent(context_id=f"proposal_{depth}", event_type="response_proposal")
+            collector = StreamCollector(stream=cpu_request, wrap_with_context=context)
+            async for event in collector:
+                yield event
             depth += 1
-        return resp
+        yield OutputEvent.get(collector.contents)
 
     async def _check_input(self, v: str, prompts):
         status = await Program.get(v).execute(InputValidatorBody(prompts=prompts))
