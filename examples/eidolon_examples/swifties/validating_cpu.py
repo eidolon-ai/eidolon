@@ -80,21 +80,20 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
                                output_format: Union[Literal["str"], Dict[str, Any]],
                                ) -> Any:
         prompts_str = json.dumps(to_jsonable_python(prompts))
-
         validators = [self._check_input(v, prompts=prompts_str) for v in self.spec.input_validators]
         await asyncio.gather(*validators)
 
         depth = 1
-
         resp_stream, resp_fn, changes_fn = self._generate_resp(call_context, depth, output_format, prompts, prompts_str)
         async for e in resp_stream:
             yield e
-        while changes_fn():
+        while changes_fn() and depth <= self.spec.max_response_regenerations:
             prompt = self.env.from_string(self.spec.regeneration_prompt).render(changes=changes_fn())
             change_prompt = [SystemCPUMessage(prompt=prompt)]
             resp_stream, resp_fn, changes_fn = self._generate_resp(call_context, depth, output_format, change_prompt, prompts_str)
             async for e in resp_stream:
                 yield e
+            depth += 1
         yield OutputEvent.get(resp_fn())
 
     async def _check_input(self, v: str, prompts):
