@@ -171,12 +171,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         finally:
             yield ToolCallEndEvent(context_id=tool_call_context)
 
-    async def main_thread(self, process_id: str) -> Thread:
-        return Thread(CallContext(process_id=process_id), self)
-
-    async def new_thread(self, process_id) -> Thread:
-        return Thread(CallContext(process_id=process_id).derive_call_context(), self)
-
     async def clone_thread(self, call_context: CallContext) -> Thread:
         new_context = call_context.derive_call_context()
         await self.io_unit.clone_thread(call_context, new_context)

@@ -44,10 +44,15 @@ def eidolon_server(eidolon_examples, log_dir):
             server = subprocess.Popen(args=cmd, cwd=cwd, stdout=file, stderr=subprocess.STDOUT)
 
             # Wait until "Server Started" is printed
+            t0 = time.time()
             for line in tail(log_file):
                 print(line)
                 if "Server Started" in line:
                     break
+                elif "Failed to start AgentOS" in line:
+                    raise RuntimeError("Failed to start AgentOS")
+                if time.time() - t0 > 30:
+                    raise RuntimeError("Server took too long to start, aborting.")
 
             yield server
             # After tests are done, terminate the server process
