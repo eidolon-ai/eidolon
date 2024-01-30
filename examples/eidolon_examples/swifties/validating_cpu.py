@@ -110,21 +110,24 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
         context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}", event_type="response_validation")
         return StreamCollector(stream=program_stream, wrap_with_context=context)
 
-    async def _generate_resp(self, call_context, depth, output_format, prompts, prompts_str) -> Tuple[AsyncIterator, Callable, Callable]:
+    def _generate_resp(self, call_context, depth, output_format, prompts, prompts_str) -> Tuple[AsyncIterator, Callable, Callable]:
         acc = {}
         async def _stream():
             collector = StreamCollector(
-                stream=(await self.cpu.schedule_request(call_context, prompts, output_format)),
+                stream=self.cpu.schedule_request(call_context, prompts, output_format),
                 wrap_with_context=StartStreamContextEvent(context_id=f"proposal_{depth}", event_type="response_proposal")
             )
             async for e in collector:
                 yield e
-            change_collectors = [
-                self._check_output(v, prompts_str, collector.contents, output_format)
-                for v in self.spec.output_validators
-            ]
-            async for e in stream.merge(change_collectors[0], *change_collectors[1:]):
-                yield e
+            if self.spec.output_validators:
+                change_collectors = [
+                    self._check_output(v, prompts_str, collector.contents, output_format)
+                    for v in self.spec.output_validators
+                ]
+                async for e in stream.merge(change_collectors[0], *change_collectors[1:]):
+                    yield e
+            else:
+                change_collectors = []
 
             change_responses = [OutputValidationResponse.model_validate(c.contents) for c in change_collectors]
             acc['changes'] = [c.contents for c in change_responses if c.status != "allow"]
@@ -134,7 +137,7 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
             return acc['contents']
         def _changes():
             return acc['changes']
-        return _stream(), _resp(), _changes()
+        return _stream(), _resp, _changes
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
         return await self.cpu.__class__.clone_thread(self, call_context)

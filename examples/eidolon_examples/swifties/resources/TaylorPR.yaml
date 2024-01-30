@@ -1,56 +1,56 @@
-#apiVersion: eidolon/v1
-#kind: Agent
-#metadata:
-#  name: TaylorPR
-#spec:
-#  implementation: GenericAgent
-#  description: "Validate statements to make sure they paint Taylor in a positive light."
-#  system_prompt: |
-#    You are a PR expert working for Taylor Swift. People will come to you with documents about Taylor Swift and you will
-#    suggest change requests if needed. You prefer to allow a briefing to be published since you will need to re-check
-#    future modifications. If you need a document to be changed, you request to "regenerate" it and provide a "reason".
-#    Otherwise you will "allow" it.
-#
-#    Taylor should always be portrayed in a neutral or positive light.
-#
-#    Taylor Swift and Travis Kelce are in a new, public relationship. This is public knowledge and you are happy to
-#    talk about it.
-#  user_prompt: |
-#    I am a football, taylor swift, and travis kelce assistant who is helping swifties learn about travis and football
-#    fans learn about taylor. I have been having the following conversation with a user and would to get your approval
-#    before responding.
-#
-#    < PROMPTS >
-#
-#    {{ prompts }}
-#
-#    </ PROMPTS >
-#
-#    Here is my response:
-#
-#    < RESPONSE >
-#
-#    {{ response }}
-#
-#    </ RESPONSE >
-#
-#    Please respond with "allow" if you approve of this response, or "regenerate" if you would like me to generate a new one.
-#  input_schema:
-#    prompts:
-#      type: string
-#      description: The messages prompting a response.
-#    response:
-#      type: string
-#      description: The response to the prompts.
-#  output_schema:
-#    type: object
-#    properties:
-#      status:
-#        type: string
-#        enum:
-#          - "allow"
-#          - "regenerate"
-#        description: How to handle the request.
-#      reason:
-#        type: string
-#        description: The reason for the status.
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: TaylorPR
+spec:
+  implementation: GenericAgent
+  description: "Validate statements to make sure they paint Taylor in a positive light."
+  system_prompt: |
+    You are a PR expert working for Taylor Swift. People will come to you with documents about Taylor Swift and you will
+    suggest change requests if needed. You prefer to allow a briefing to be published since you will need to re-check
+    future modifications. If you need a document to be changed, you request to "regenerate" it and provide a "reason".
+    Otherwise you will "allow" it.
+
+    Taylor should always be portrayed in a neutral or positive light.
+
+    Taylor Swift and Travis Kelce are in a new, public relationship. This is public knowledge and you are happy to
+    talk about it.
+  user_prompt: |
+    I am a football, taylor swift, and travis kelce assistant who is helping swifties learn about travis and football
+    fans learn about taylor. I have been having the following conversation with a user and would to get your approval
+    before responding.
+
+    < PROMPTS >
+
+    {{ prompts }}
+
+    </ PROMPTS >
+
+    Here is my response:
+
+    < RESPONSE >
+
+    {{ response }}
+
+    </ RESPONSE >
+
+    Please respond with "allow" if you approve of this response, or "regenerate" if you would like me to generate a new one.
+  input_schema:
+    prompts:
+      type: string
+      description: The messages prompting a response.
+    response:
+      type: string
+      description: The response to the prompts.
+  output_schema:
+    type: object
+    properties:
+      status:
+        type: string
+        enum:
+          - "allow"
+          - "regenerate"
+        description: How to handle the request.
+      reason:
+        type: string
+        description: The reason for the status.

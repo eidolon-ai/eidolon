@@ -46,7 +46,7 @@ class StreamCollector(AsyncIterator[StreamEvent]):
             if self._wrap_with_context and not self._has_wrapped_end:
                 self._has_wrapped_end = True
                 return EndStreamContextEvent(
-                    context_id=self._wrap_with_context.stream_context,
+                    context_id=self._wrap_with_context.context_id,
                     event_type=self._wrap_with_context.event_type
                 )
             else:
