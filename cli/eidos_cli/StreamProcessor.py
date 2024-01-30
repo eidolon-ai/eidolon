@@ -13,14 +13,14 @@ class StreamProcessor:
         for event in response:
             if event.data:
                 server_event = json.loads(event.data)
-                if server_event["event_type"] == "string_output":
+                if server_event["event_type"] == "string":
                     # Append the new content to the buffer
                     yield server_event["content"]
-                elif server_event["event_type"] == "object_output":
+                elif server_event["event_type"] == "object":
                     yield json.dumps(server_event["content"])
                 elif server_event["event_type"] == "agent_state":
                     self.available_actions = server_event["available_actions"]
-                elif server_event["event_type"] == "start" and server_event["start_type"] == "agent_call":
+                elif server_event["event_type"] == "agent_call" and not server_event.get("stream_context"):
                     self.process_id = server_event["process_id"]
 
     def generate_tokens(self, response):
