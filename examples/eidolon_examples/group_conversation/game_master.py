@@ -2,7 +2,11 @@ from fastapi import Body
 from pydantic import BaseModel, Field
 from typing import List, Annotated, Tuple
 
-from eidolon_examples.group_conversation.base_conversation_coordinator import BaseConversationCoordinator, BaseConversationCoordinatorSpec, StartConversation
+from eidolon_examples.group_conversation.base_conversation_coordinator import (
+    BaseConversationCoordinator,
+    BaseConversationCoordinatorSpec,
+    StartConversation,
+)
 from eidolon_examples.group_conversation.conversation_agent import SpeakResult
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
 from eidos_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
@@ -38,12 +42,17 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         self.cpu.logic_units.append(PlayerLogicUnit(game_master=self, processing_unit_locator=self.cpu))
 
     @register_program()
-    async def start_game(self, process_id, game: Annotated[str, Body(description="The topic of the new conversation", embed=True)]) -> AgentState[str]:
+    async def start_game(
+        self, process_id, game: Annotated[str, Body(description="The topic of the new conversation", embed=True)]
+    ) -> AgentState[str]:
         """
         Called to start the game. Initializes the remote agents and starts the first turn.
         """
         # start conversation with every agent
-        await self.start_conversations(process_id, StartConversation(message=f"Let's play {game}!", max_num_concurrent_conversations=len(self.spec.agents)))
+        await self.start_conversations(
+            process_id,
+            StartConversation(message=f"Let's play {game}!", max_num_concurrent_conversations=len(self.spec.agents)),
+        )
 
         t = await self.cpu.main_thread(process_id)
         system_prompt = f"{self.spec.system_prompt}\n\nYou are playing a game with {self.spec.agents}"
@@ -71,7 +80,9 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         return AgentState(name="take_turn", data=response)
 
     @register_action("take_turn")
-    async def speak_to_game_master(self, process_id, message: Annotated[str, Body(description="The message to send to the game master", embed=True)]) -> AgentState[str]:
+    async def speak_to_game_master(
+        self, process_id, message: Annotated[str, Body(description="The message to send to the game master", embed=True)]
+    ) -> AgentState[str]:
         """
         Called to allow the agent to speak
         """
@@ -87,7 +98,9 @@ class PlayerLogicUnit(LogicUnit):
         self.game_master_name = game_master.spec.agent_name
 
     @llm_function()
-    async def say_to_players(self, statement: PlayerStatement = Field(description="The players and statement you want to talk to")) -> List[Tuple[str, SpeakResult]]:
+    async def say_to_players(
+        self, statement: PlayerStatement = Field(description="The players and statement you want to talk to")
+    ) -> List[Tuple[str, SpeakResult]]:
         """
         Say something to players. Other players will hear this message and the responses from all other players.
         """
@@ -95,9 +108,11 @@ class PlayerLogicUnit(LogicUnit):
         return await self.game_master.speak_to_agents(process_id, f"{self.game_master_name}: {statement}")
 
     @llm_function()
-    async def whisper_to_player(self,
-                                player_name: str = Field(description="Player to whisper to"),
-                                message: str = Field(description="The message to whisper")) -> Tuple[str, SpeakResult]:
+    async def whisper_to_player(
+        self,
+        player_name: str = Field(description="Player to whisper to"),
+        message: str = Field(description="The message to whisper"),
+    ) -> Tuple[str, SpeakResult]:
         """
         Whisper something to only one player. This is a private message, other players will not hear this message. You can only whisper one player at a time.
         """
@@ -108,9 +123,11 @@ class PlayerLogicUnit(LogicUnit):
         return result[0]
 
     @llm_function()
-    async def say_to_player(self,
-                            player_name: str = Field(description="Player to talke to"),
-                            message: str = Field(description="The message to say to the player")) -> Tuple[str, SpeakResult]:
+    async def say_to_player(
+        self,
+        player_name: str = Field(description="Player to talke to"),
+        message: str = Field(description="The message to say to the player"),
+    ) -> Tuple[str, SpeakResult]:
         """
         Say something to only one player. Other players will hear this message.
         """
@@ -121,8 +138,11 @@ class PlayerLogicUnit(LogicUnit):
         return result[0]
 
     @llm_function()
-    async def speak_amongst_group(self, players: List[str] = Field(description="The group of players (or agents) that will speak and hear all messages"),
-                                  message: str = Field(description="The message to say to the players")) -> List[Tuple[str, SpeakResult]]:
+    async def speak_amongst_group(
+        self,
+        players: List[str] = Field(description="The group of players (or agents) that will speak and hear all messages"),
+        message: str = Field(description="The message to say to the players"),
+    ) -> List[Tuple[str, SpeakResult]]:
         """
         Called to have a group of agents speak amongst themselves.
         """

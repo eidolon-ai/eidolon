@@ -4,7 +4,13 @@ from fastapi import Body
 from pydantic import BaseModel, TypeAdapter, Field
 from typing import Tuple, List, Annotated, TypeVar, Dict
 
-from eidolon_examples.group_conversation.conversation_agent import SpeakResult, ThoughtResult, CharacterThought, StatementsForAgent, Statement
+from eidolon_examples.group_conversation.conversation_agent import (
+    SpeakResult,
+    ThoughtResult,
+    CharacterThought,
+    StatementsForAgent,
+    Statement,
+)
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
 from eidos_sdk.agent.client import Machine
 from eidos_sdk.agent_os import AgentOS
@@ -42,7 +48,9 @@ class InnerMonologue(BaseModel):
 class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
     @register_program()
     async def start_conversation(
-            self, process_id, topic: Annotated[StartConversation, Body(description="The topic of the new conversation", embed=True)]
+        self,
+        process_id,
+        topic: Annotated[StartConversation, Body(description="The topic of the new conversation", embed=True)],
     ) -> AgentState[str]:
         """
         Called to start the conversation. Every user will get a turn in each turn of the conversation.
@@ -61,7 +69,12 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         # record the pids of the agents with our process_id in memory
         await AgentOS.symbolic_memory.insert_one(
             "conversation_coordinator",
-            ConversationState(process_id=process_id, agent_pids=agent_pids, topic=topic.topic, num_concurrent_conversations=topic.num_concurrent_conversations).model_dump(),
+            ConversationState(
+                process_id=process_id,
+                agent_pids=agent_pids,
+                topic=topic.topic,
+                num_concurrent_conversations=topic.num_concurrent_conversations,
+            ).model_dump(),
         )
 
         return AgentState(name="idle", data="Agents started. Waiting for first turn...")
@@ -71,9 +84,11 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         return ConversationState.model_validate(result)
 
     async def _record_single(self, agent_name, agent_pid, statements: List[Statement]):
-        thought_response = await Machine().agent(agent_name).process(agent_pid).action(
-            "record_statement",
-            {"statements": StatementsForAgent(statements=statements).model_dump()}
+        thought_response = (
+            await Machine()
+            .agent(agent_name)
+            .process(agent_pid)
+            .action("record_statement", {"statements": StatementsForAgent(statements=statements).model_dump()})
         )
         thought = ThoughtResult.model_validate(thought_response.data)
         await AgentOS.symbolic_memory.upsert_one(
@@ -107,14 +122,16 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
 
     @register_action("idle")
     async def add_inner_monologue(
-            self, process_id, monologue: Annotated[InnerMonologue, Body(description="The thought to add", embed=True)]
+        self, process_id, monologue: Annotated[InnerMonologue, Body(description="The thought to add", embed=True)]
     ) -> AgentState[str]:
         conversation_state = await self._restore_state(process_id)
         for agent_name, state_agent_pid in conversation_state.agent_pids:
             if agent_name == monologue.agent_name:
-                await self._record_single(agent_name,
-                                          state_agent_pid,
-                                          [Statement(speaker=monologue.agent_name, text=monologue.statement, voice_level=0.5)])
+                await self._record_single(
+                    agent_name,
+                    state_agent_pid,
+                    [Statement(speaker=monologue.agent_name, text=monologue.statement, voice_level=0.5)],
+                )
 
         return AgentState(name="idle", data="Thought recorded")
 
@@ -140,9 +157,7 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         return AgentState(name="idle", data=thoughts)
 
     @register_action("idle")
-    async def next_turn(
-            self, process_id, obj: NextTurn
-    ) -> AgentState[str]:
+    async def next_turn(self, process_id, obj: NextTurn) -> AgentState[str]:
         """
         Called to start the next turn of the conversation.
         """
@@ -169,7 +184,9 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
                 f"**{agent_name}**{agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
             )
             agent_responses[agent_name]["desire_to_speak"] = agent_response.desire_to_speak
-            return output, Statement(speaker=agent_name, text=agent_response.response, voice_level=agent_response.voice_level)
+            return output, Statement(
+                speaker=agent_name, text=agent_response.response, voice_level=agent_response.voice_level
+            )
 
         method_output = ""
         for _ in range(obj.num_turns):
@@ -177,7 +194,8 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             for _ in range(min(conversation_state.num_concurrent_conversations, len(conversation_state.agent_pids))):
                 weighted_agents = [
                     ((a_name, agent_pid), agent_responses[a_name]["desire_to_speak"])
-                    for a_name, agent_pid in conversation_state.agent_pids if a_name not in speaking
+                    for a_name, agent_pid in conversation_state.agent_pids
+                    if a_name not in speaking
                 ]
                 agent_name, agent_pid = self.weighted_random_choice(weighted_agents)
                 speaking[agent_name] = agent_pid

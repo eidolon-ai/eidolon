@@ -5,7 +5,13 @@ from dataclasses import dataclass
 from pydantic import BaseModel, TypeAdapter
 from typing import Tuple, List, TypeVar, Dict, Callable, Any, AsyncGenerator, Union
 
-from eidolon_examples.group_conversation.conversation_agent import SpeakResult, ThoughtResult, CharacterThought, StatementsForAgent, Statement
+from eidolon_examples.group_conversation.conversation_agent import (
+    SpeakResult,
+    ThoughtResult,
+    CharacterThought,
+    StatementsForAgent,
+    Statement,
+)
 from eidos_sdk.agent.client import Machine
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.reference_model import Specable
@@ -46,9 +52,7 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
         super().__init__(**kwargs)
         self.semantic_memory_prefix = semantic_memory_prefix
 
-    async def start_conversations(
-            self, process_id, topic: StartConversation
-    ) -> str:
+    async def start_conversations(self, process_id, topic: StartConversation) -> str:
         """
         Called to start the conversations. Initializes the remote agents and starts the first turn.
         """
@@ -75,7 +79,9 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
         return await self._run_action_in_all_agents(process_id, fn=fn)
 
-    async def speak_to_agents(self, process_id, statement: str, agents: List[str] = None, parallel=True, should_record=True) -> List[Tuple[str, SpeakResult]]:
+    async def speak_to_agents(
+        self, process_id, statement: str, agents: List[str] = None, parallel=True, should_record=True
+    ) -> List[Tuple[str, SpeakResult]]:
         if not agents:
             agents = self.spec.agents
 
@@ -96,7 +102,9 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
         return statements
 
-    async def group_speak(self, process_id, statement: str, agents: List[str] = None, parallel=True, should_record=True) -> List[Tuple[str, SpeakResult]]:
+    async def group_speak(
+        self, process_id, statement: str, agents: List[str] = None, parallel=True, should_record=True
+    ) -> List[Tuple[str, SpeakResult]]:
         if not agents:
             agents = self.spec.agents
 
@@ -117,7 +125,9 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
         return statements
 
-    async def let_agents_speak(self, process_id, statement: str, num_turns: int, num_concurrent_conversations: int) -> List[List[Tuple[str, SpeakResult]]]:
+    async def let_agents_speak(
+        self, process_id, statement: str, num_turns: int, num_concurrent_conversations: int
+    ) -> List[List[Tuple[str, SpeakResult]]]:
         conversation_state = await self._restore_state(process_id)
 
         agent_responses = await self._restore_message(process_id, self.spec.agents)
@@ -140,16 +150,26 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
         return speeches
 
-    async def record_speak_results(self, process_id, speak_results: List[Tuple[str, SpeakResult]], agents: List[str] = None) -> List[Tuple[str, float]]:
+    async def record_speak_results(
+        self, process_id, speak_results: List[Tuple[str, SpeakResult]], agents: List[str] = None
+    ) -> List[Tuple[str, float]]:
         statements_to_record = []
         for speaker_name, speak_result in speak_results:
-            statements_to_record.append(Statement(speaker=speaker_name, text=self.format_response(speaker_name, speak_result), voice_level=speak_result.voice_level))
+            statements_to_record.append(
+                Statement(
+                    speaker=speaker_name,
+                    text=self.format_response(speaker_name, speak_result),
+                    voice_level=speak_result.voice_level,
+                )
+            )
 
         return await self.record_statements(process_id, statements_to_record, agents=agents)
 
     async def record_statements(self, process_id, statements_to_record: List[Statement], agents: List[str] = None):
         async def fn(agent_name, agent_pid):
-            thought_response = yield Action("record_statement", {"statements": StatementsForAgent(statements=statements_to_record).model_dump()})
+            thought_response = yield Action(
+                "record_statement", {"statements": StatementsForAgent(statements=statements_to_record).model_dump()}
+            )
             thought = ThoughtResult.model_validate(thought_response)
             await AgentOS.symbolic_memory.upsert_one(
                 "conversation_coordinator_messages",
@@ -165,10 +185,18 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
     # Helper functions
 
-    async def _run_program_in_all_agents(self, our_process_id, program_name: str, fn: Callable[[str], AsyncGenerator[Dict[str, Any], Any]]) -> List[T]:
+    async def _run_program_in_all_agents(
+        self, our_process_id, program_name: str, fn: Callable[[str], AsyncGenerator[Dict[str, Any], Any]]
+    ) -> List[T]:
         return await self._run_program_in_agents(our_process_id, program_name, self.spec.agents, fn)
 
-    async def _run_program_in_agents(self, our_process_id, program_name: str, agents: List[str], fn: Callable[[str], AsyncGenerator[Dict[str, Any], Any]]) -> List[T]:
+    async def _run_program_in_agents(
+        self,
+        our_process_id,
+        program_name: str,
+        agents: List[str],
+        fn: Callable[[str], AsyncGenerator[Dict[str, Any], Any]],
+    ) -> List[T]:
         async def run_one(agent_name):
             generator = fn(agent_name)
             retValue = None
@@ -189,16 +217,25 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
         task_results = await asyncio.gather(*tasks)
 
-        conv_state = ConversationState(process_id=our_process_id, agent_pids=task_results, start_conv_message="", max_num_concurrent_conversations=len(self.spec.agents))
+        conv_state = ConversationState(
+            process_id=our_process_id,
+            agent_pids=task_results,
+            start_conv_message="",
+            max_num_concurrent_conversations=len(self.spec.agents),
+        )
         # record the pids of the agents with our process_id in memory
         await AgentOS.symbolic_memory.insert_one("conversation_coordinator", conv_state.model_dump())
 
         return [result for _, result in task_results]
 
-    async def _run_action_in_all_agents(self, process_id, fn: Callable[[str, str], AsyncGenerator[Union[Action, T], Any]]) -> List[T]:
+    async def _run_action_in_all_agents(
+        self, process_id, fn: Callable[[str, str], AsyncGenerator[Union[Action, T], Any]]
+    ) -> List[T]:
         return await self._run_action_in_agents(process_id, self.spec.agents, fn)
 
-    async def _run_action_in_agents(self, process_id, agents: List[str], fn: Callable[[str, str], AsyncGenerator[Union[Action, T], Any]]) -> List[T]:
+    async def _run_action_in_agents(
+        self, process_id, agents: List[str], fn: Callable[[str, str], AsyncGenerator[Union[Action, T], Any]]
+    ) -> List[T]:
         async def run_one(agent_name: str, agent_pid: str) -> T:
             generator = fn(agent_name, agent_pid)
             retValue = None
@@ -243,7 +280,7 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
                     agent_responses[agent_name] = result["desire_to_speak"]
                     break
             if agent_name not in agent_responses:
-                agent_responses[agent_name] = 0.5,
+                agent_responses[agent_name] = (0.5,)
         return agent_responses
 
     def format_response(self, agent_name: str, agent_response: SpeakResult):
@@ -257,15 +294,15 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
             color = "red"
 
         output = f"**{agent_name}**💭💭💭: <span color='gray'>{agent_response.inner_dialog}</span>\n\n"
-        output += (
-            f"**{agent_name}**{agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
-        )
+        output += f"**{agent_name}**{agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
         return output
 
     def choose_agents_to_speak(self, num_concurrent_conversations: int, desire_to_speak: Dict[str, float]) -> List[str]:
         agents_to_speak = []
         for _ in range(min(num_concurrent_conversations, len(self.spec.agents))):
-            weighted_agents = [(a_name, desire_to_speak[a_name]) for a_name in self.spec.agents if a_name not in agents_to_speak]
+            weighted_agents = [
+                (a_name, desire_to_speak[a_name]) for a_name in self.spec.agents if a_name not in agents_to_speak
+            ]
 
             total_weight = sum(weight for item, weight in weighted_agents)
             random_num = random.uniform(0, total_weight)
