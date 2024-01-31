@@ -22,7 +22,7 @@ from eidos_sdk.io.events import (
 )
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidos_sdk.util.logger import logger
-from eidos_sdk.util.stream_collector import StreamCollector
+from eidos_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError, merge_streams
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
@@ -108,12 +108,12 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 elif event.is_root_and_type(EndStreamEvent) and event.event_type == StopReason.ERROR:
                     got_error = True
                 yield event
-            if stream_collector.contents:
-                logger.info(f"LLM Response: {stream_collector.contents}")
+            if stream_collector.get_content():
+                logger.info(f"LLM Response: {stream_collector.get_content()}")
 
             assistant_message = AssistantMessage(
                 type="assistant",
-                content=stream_collector.contents or "",
+                content=stream_collector.get_content() or "",
                 tool_calls=[tce.tool_call for tce in tool_call_events],
             )
             if self.record_memory:
@@ -126,14 +126,11 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
 
             # process tool calls
             if len(tool_call_events) > 0:
-                calls: List[AsyncIterator[StreamEvent]] = []
-                for tce in tool_call_events:
-                    calls.append(self._call_tool(call_context, tce, tool_defs, conversation))
-
-                combined_calls = stream.merge(calls[0], *calls[1:])
-                async with combined_calls.stream() as streamer:
-                    async for event in streamer:
-                        yield event
+                async for e in merge_streams([
+                    self._call_tool(call_context, tce, tool_defs, conversation)
+                    for tce in tool_call_events
+                ]):
+                    yield e
             else:
                 return
 
@@ -150,29 +147,25 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         tool_def = tool_defs[tool_call_event.tool_call.name]
         tc = tool_call_event.tool_call
         tool_call_context = tc.tool_call_id
-        yield ToolCallStartEvent(tool_call=tc, context_id=tool_call_context)
-        try:
-            stream_collect = StreamCollector()
-            try:
-                tool_result = tool_def.execute(call_context=parent_stream_context, tool_call=tc)
-                async for event in tool_result:
-                    stream_collect.process_event(event)
-                    event.stream_context = tool_call_context
-                    yield event
-            except Exception as e:
-                yield ErrorEvent(stream_context=tool_call_context, reason=e)
+        tool_start_call = ToolCallStartEvent(tool_call=tc, context_id=tool_call_context)
 
-            message = ToolResponseMessage(
-                logic_unit_name=tool_def.logic_unit.__class__.__name__,
-                tool_call_id=tc.tool_call_id,
-                result=stream_collect.contents or "",
-                name=tc.name,
-            )
-            if self.record_memory:
-                await self.memory_unit.storeMessages(call_context, [message])
-            conversation.append(message)
-        finally:
-            yield EndStreamContextEvent(context_id=tool_call_context)
+        tool_stream = stream_manager(tool_def.execute(call_context=parent_stream_context, tool_call=tc), tool_start_call)
+        try:
+            async for event in tool_stream:
+                yield event
+        except ManagedContextError:
+            # todo, permissive tool call errors should be configurable
+            logger.exception("Error calling tool " + tool_def.eidos_handler.name)
+
+        message = ToolResponseMessage(
+            logic_unit_name=tool_def.logic_unit.__class__.__name__,
+            tool_call_id=tc.tool_call_id,
+            result=tool_stream.get_content() or "",
+            name=tc.name,
+        )
+        if self.record_memory:
+            await self.memory_unit.storeMessages(call_context, [message])
+        conversation.append(message)
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
         new_context = call_context.derive_call_context()

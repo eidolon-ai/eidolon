@@ -1,8 +1,6 @@
 import json
-from contextlib import AsyncExitStack
 from typing import Any, List, Literal, Union, Dict, Optional, AsyncIterator, Callable, Tuple
 
-from aiostream import stream, streamcontext
 from fastapi import HTTPException
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
@@ -15,7 +13,7 @@ from eidos_sdk.cpu.call_context import CallContext
 from eidos_sdk.cpu.logic_unit import LogicUnit
 from eidos_sdk.io.events import StartStreamContextEvent, OutputEvent
 from eidos_sdk.system.reference_model import AnnotatedReference, Specable, Reference
-from eidos_sdk.util.stream_collector import StreamCollector
+from eidos_sdk.util.stream_collector import StreamCollector, stream_manager, merge_streams
 
 
 class InputValidatorBody(BaseModel):
@@ -102,9 +100,9 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
 
     async def _validate_input(self, prompts_str):
         collectors = [self._check_input(v, prompts=prompts_str) for v in self.spec.input_validators]
-        async for e in _merge(collectors):
+        async for e in merge_streams(collectors):
             yield e
-        responses = [InputValidatorResponse.model_validate(c.contents) for c in collectors]
+        responses = [InputValidatorResponse.model_validate(c.get_content()) for c in collectors]
         invalid_responses = [r for r in responses if r.status != "allow"]
         if invalid_responses:
             reasons = "; ".join([r.reason for r in invalid_responses if r.reason])
@@ -116,30 +114,30 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
     def _check_input(self, v: str, prompts):
         program_stream = Program.get(v).stream_execute(InputValidatorBody(prompts=prompts))
         context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}")
-        return StreamCollector(stream=program_stream, wrap_with_context=context)
+        return stream_manager(program_stream, context)
 
     def _check_output(self, v, prompts, resp, output_format) -> StreamCollector:
         program_stream = Program.get(v).stream_execute(OutputValidatorBody(prompts=prompts, output_schema=output_format, response=resp))
         context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}")
-        return StreamCollector(stream=program_stream, wrap_with_context=context)
+        return stream_manager(program_stream, context)
 
     def _generate_resp(self, call_context, depth, output_format, prompts, prompts_str) -> Tuple[AsyncIterator, Callable, Callable]:
         acc = {}
         async def _stream():
-            response = StreamCollector(
-                stream=self.cpu.schedule_request(call_context, prompts, output_format),
-                wrap_with_context=StartStreamContextEvent(context_id=f"proposal_{depth}")
+            response = stream_manager(
+                self.cpu.schedule_request(call_context, prompts, output_format),
+                StartStreamContextEvent(context_id=f"proposal_{depth}"),
             )
             async for e in response:
                 yield e
 
-            validators = [self._check_output(v, prompts_str, response.contents, output_format) for v in self.spec.output_validators]
-            async for e in _merge(validators):
+            validators = [self._check_output(v, prompts_str, response.get_content(), output_format) for v in self.spec.output_validators]
+            async for e in merge_streams(validators):
                 yield e
 
-            change_responses = [OutputValidationResponse.model_validate(c.contents) for c in validators]
+            change_responses = [OutputValidationResponse.model_validate(c.get_content()) for c in validators]
             acc['changes'] = [c.reason for c in change_responses if c.status != "allow"]
-            acc['contents'] = response.contents
+            acc['contents'] = response.get_content()
 
         def _resp():
             return acc['contents']
@@ -149,15 +147,3 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
         return await self.cpu.__class__.clone_thread(self, call_context)
-
-
-async def _merge(streams: List[AsyncIterator]) -> AsyncIterator:
-    if len(streams) > 1:
-        async with AsyncExitStack() as stack:
-            streamers = [await stack.enter_async_context(streamcontext(s)) for s in streams]
-            merged_stream = stream.merge(streamers[0], *streamers[1:])
-            async for value in merged_stream:
-                yield value
-    elif len(streams) == 1:
-        async for v in streams[0]:
-            yield v

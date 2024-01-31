@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import copy
-from collections import deque
-from typing import Optional, AsyncIterator, Deque, Callable
+from contextlib import AsyncExitStack
+from typing import Optional, AsyncIterator, List
+
+from aiostream import streamcontext, stream
 
 from eidos_sdk.io.events import (
     BaseStreamEvent,
@@ -11,74 +12,79 @@ from eidos_sdk.io.events import (
     ErrorEvent,
     StreamEvent,
     StartStreamContextEvent,
-    EndStreamContextEvent,
-)
+    EndStreamContextEvent, )
 
 
 class StreamCollector(AsyncIterator[StreamEvent]):
-    contents: Optional[str | dict]
+    _content: List[str | dict]
     stream: Optional[AsyncIterator[StreamEvent]]
 
     def __init__(
         self,
         stream: Optional[AsyncIterator[StreamEvent]] = None,
-        wrap_with_context: Optional[StartStreamContextEvent] = None,
+        context_level: Optional[str] = None,
     ):
-        self.contents = None
+        self._content = []
         self.stream = stream
-        self._wrap_with_context = wrap_with_context
-        self._has_wrapped_start = False
-        self._tail_events: Deque[BaseStreamEvent | Callable] = deque()
-        if self._wrap_with_context:
-            self._tail_events.append(EndStreamContextEvent(context_id=self._wrap_with_context.context_id))
+        self._context_level = context_level
+        self._last_seen_event = None
 
     def process_event(self, event: BaseStreamEvent):
-        if event.is_root_and_type(StringOutputEvent):
-            if self.contents is None:
-                self.contents = event.content
-            elif isinstance(self.contents, str):
-                self.contents += event.content
-            else:
-                self.contents = str(self.contents) + event.content
-        elif event.is_root_and_type(ObjectOutputEvent):
-            if self.contents is None:
-                self.contents = event.content
-            else:
-                self.contents = str(self.contents) + "\n" + str(event.content)
-        elif event.is_root_and_type(ErrorEvent):
-            if self.contents is None:
-                self.contents = str(event.reason)
-            else:
-                self.contents = str(self.contents) + "\n" + str(event.reason)
+        if event.stream_context == self._context_level:
+            if isinstance(event, StringOutputEvent):
+                if isinstance(self._last_seen_event, StringOutputEvent):
+                    self._content[-1] += event.content
+                else:
+                    self._content.append(event.content)
+                self._last_seen_event = event
+            elif isinstance(event, ObjectOutputEvent):
+                self._content.append(event.content)
+                self._last_seen_event = event
+            elif isinstance(event, ErrorEvent):
+                self._content.append("Error: " + str(event.reason))
+                self._last_seen_event = event
+
+    def get_content(self):
+        if not self._content:
+            return None
+        elif len(self._content) == 1:
+            return self._content[0]
+        else:
+            return self._content
 
     async def __anext__(self):
-        if self._wrap_with_context and not self._has_wrapped_start:
-            self._has_wrapped_start = True
-            return self._wrap_with_context
+        return await self.stream.__anext__()
+
+
+def stream_manager(stream: AsyncIterator[StreamEvent], context: StartStreamContextEvent):
+    async def _iter():
+        yield context
         try:
-            next_event = await self.stream.__anext__()
-            self.process_event(next_event)
-        except StopAsyncIteration:
-            if not self._tail_events:
-                raise
-            next_ = self._tail_events.popleft()
-            return next_() if callable(next_) else next_
+            async for event in stream:
+                event.stream_context = context.get_nested_context()
+                yield event
         except Exception as e:
-            context = self._wrap_with_context.get_nested_context() if self._wrap_with_context else None
-            self._tail_events.appendleft(ErrorEvent(stream_context=context, reason=str(e)))
-            ee = copy.copy(e)
+            # record error on stream context, but will reraise for outer context to handle
+            yield ErrorEvent(stream_context=context.get_nested_context(), reason=str(e))
+            # no need to log since we are re-raising
+            raise ManagedContextError(f"Error in stream context {context.get_nested_context()}") from e
+        finally:
+            yield EndStreamContextEvent(stream_context=context.stream_context, context_id=context.context_id)
 
-            def _fn():
-                context_str = f" ({context})" if context else ""
-                raise RuntimeError(f"Error in stream{context_str}: " + str(ee)) from ee
+    return StreamCollector(_iter(), context_level=context.get_nested_context())
 
-            self._tail_events.append(_fn)
-            return await self.__anext__()
-        if self._wrap_with_context:
-            next_event.stream_context = self._wrap_with_context.context_id
-        return next_event
 
-    async def fill_and_retrieve_response(self):
-        async for event in self.stream:
-            self.process_event(event)
-        return self.contents
+class ManagedContextError(Exception):
+    pass
+
+
+async def merge_streams(streams: List[AsyncIterator]) -> AsyncIterator:
+    if len(streams) > 1:
+        async with AsyncExitStack() as stack:
+            streamers = [await stack.enter_async_context(streamcontext(s)) for s in streams]
+            merged_stream = stream.merge(streamers[0], *streamers[1:])
+            async for value in merged_stream:
+                yield value
+    elif len(streams) == 1:
+        async for v in streams[0]:
+            yield v

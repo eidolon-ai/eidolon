@@ -63,15 +63,15 @@ def patch_async_vcr_send(monkeypatch):
                     yield x
 
                 if hasattr(real_response, "_content"):
-                    orig_content = real_response._content
+                    orig_content = real_response.get_content()
                 else:
                     orig_content = "____NOT_SET____"
-                real_response._content = b"".join(acc)
+                real_response._content = [b"".join(acc)]
                 _record_responses(cassette, vcr_request, real_response)
                 if orig_content == "____NOT_SET____":
-                    del real_response._content
+                    real_response._content = []
                 else:
-                    real_response._content = orig_content
+                    real_response._content = [orig_content]
 
             real_response.aiter_bytes = _sub
             return real_response
