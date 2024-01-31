@@ -28,5 +28,5 @@ spec:
   cpu:
     implementation: eidolon_examples.swifties.validating_cpu.ValidatingCPU
     logic_units: [WebSearch]
-    input_validators: []
-    output_validators: []
+    input_validators: [Topicality.question]
+    output_validators: [TaylorPR.question]
