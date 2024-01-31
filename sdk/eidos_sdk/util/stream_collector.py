@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import copy
 from collections import deque
-from typing import Optional, AsyncIterator, Deque
+from typing import Optional, AsyncIterator, Deque, Callable
 
 from eidos_sdk.io.events import BaseStreamEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, \
     StartStreamContextEvent, EndStreamContextEvent
@@ -16,7 +17,7 @@ class StreamCollector(AsyncIterator[StreamEvent]):
         self.stream = stream
         self._wrap_with_context = wrap_with_context
         self._has_wrapped_start = False
-        self._tail_events: Deque[BaseStreamEvent | Exception] = deque()
+        self._tail_events: Deque[BaseStreamEvent | Callable] = deque()
         if self._wrap_with_context:
             self._tail_events.append(EndStreamContextEvent(context_id=self._wrap_with_context.context_id))
 
@@ -50,16 +51,15 @@ class StreamCollector(AsyncIterator[StreamEvent]):
             if not self._tail_events:
                 raise
             next_ = self._tail_events.popleft()
-            if isinstance(next_, BaseException):
-                raise next_
-            else:
-                return next_
+            return next_() if callable(next_) else next_
         except Exception as e:
-            err = ErrorEvent(
-                stream_context=self._wrap_with_context.context_id, reason=str(e)
-            ) if self._wrap_with_context else ErrorEvent(reason=str(e))
-            self._tail_events.appendleft(err)
-            self._tail_events.append(e)
+            context = self._wrap_with_context.get_nested_context() if self._wrap_with_context else None
+            self._tail_events.appendleft(ErrorEvent(stream_context=context, reason=str(e)))
+            ee = copy.copy(e)
+            def _fn():
+                context_str = f" ({context})" if context else ""
+                raise RuntimeError(f"Error in stream{context_str}: " + str(ee)) from ee
+            self._tail_events.append(_fn)
             return await self.__anext__()
         if self._wrap_with_context:
             next_event.stream_context = self._wrap_with_context.context_id

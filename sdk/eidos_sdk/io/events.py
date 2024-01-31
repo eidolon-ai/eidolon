@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from enum import Enum
 from pydantic import BaseModel, TypeAdapter
-from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict
+from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional
 
 from eidos_sdk.cpu.llm_message import ToolCall
 
@@ -25,7 +25,7 @@ T = TypeVar("T")
 
 
 class BaseStreamEvent(BaseModel, ABC):
-    stream_context: str = None
+    stream_context: Optional[str] = None
     category: Category
     event_type: str
 
@@ -75,6 +75,10 @@ class StartStreamContextEvent(BaseStreamEvent):
     category: Literal[Category.START] = Category.START
     event_type: Literal["context_start"] = "context_start"
     context_id: str
+
+    def get_nested_context(self):
+        context = self.stream_context + "." if self.stream_context else ""
+        return context + self.context_id
 
 
 class EndStreamContextEvent(BaseStreamEvent):

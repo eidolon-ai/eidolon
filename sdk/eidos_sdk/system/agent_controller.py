@@ -244,15 +244,17 @@ class AgentController:
         except HTTPException as e:
             logger.warning(f"HTTP Error {e}", exc_info=logger.isEnabledFor(logging.DEBUG))
             yield ErrorEvent(reason=dict(detail=e.detail, status_code=e.status_code))
-            await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
-            yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
+            if not isinstance(last_event, AgentStateEvent):
+                await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
+                yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
         except Exception as e:
             logger.exception(f"Unhandled Error {e}")
             yield ErrorEvent(reason=dict(detail=str(e), status_code=500))
-            await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
-            yield AgentStateEvent(
-                state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
-            )
+            if not isinstance(last_event, AgentStateEvent):
+                await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
+                yield AgentStateEvent(
+                    state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
+                )
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
         response = await handler.fn(self.agent, **kwargs)

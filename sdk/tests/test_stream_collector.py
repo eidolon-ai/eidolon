@@ -19,7 +19,7 @@ async def test_process_event_raises():
         StringOutputEvent(content='test'),
         ErrorEvent(reason='test error'),
     ]
-    assert e.value.args[0] == "test error"
+    assert e.value.args[0] == "Error in stream: test error"
 
 
 async def test_terminates_without_raising():
