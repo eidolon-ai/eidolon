@@ -107,10 +107,7 @@ class EidolonClient:
                     request["files"] = files
             else:
                 request = {"url": urljoin(self.server_location, agent_url), "json": user_input}
-            headers = {
-                **self.security_headers,
-                "Accept": "text/event-stream, application/json",
-            }
+            headers = {**self.security_headers, "Accept": "text/event-stream"}
             with client.stream(method="POST", **request, headers=headers) as response:
                 content_type = response.headers.get("content-type", "").partition(";")[0]
                 status_code = response.status_code
@@ -118,7 +115,13 @@ class EidolonClient:
                     print_formatted_text(f"Error: {str(response)}")
                     return [], None
 
-                if "text/event-stream" not in content_type:
+                if "text/event-stream" in content_type:
+                    sp = StreamProcessor()
+                    md = Markdown(sp.generate_tokens(EventSource(response).iter_sse()))
+                    console = LiveConsole()
+                    console.print_live(md)
+                    return sp.available_actions, sp.process_id
+                else:
                     response.read()
                     response = response.json()
                     if isinstance(response["data"], str):
@@ -137,12 +140,6 @@ class EidolonClient:
                         # else leave current_conversation as is
                         process_id = response["process_id"]
                         return actions, process_id
-                else:
-                    sp = StreamProcessor()
-                    md = Markdown(sp.generate_tokens(EventSource(response).iter_sse()))
-                    console = LiveConsole()
-                    console.print_live(md)
-                    return sp.available_actions, sp.process_id
 
     def get_processes(self, agent_name):
         with httpx.Client(timeout=self.timeout) as client:

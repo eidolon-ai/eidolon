@@ -20,7 +20,10 @@ spec:
     You may make multiple searches to answer questions. When responding, add specific citations to your response.
     
     If you get see system messages suggesting feedback, incorporate it as fact.
-  user_prompt: "{{statement}}"
+  user_prompt: |  
+    {{statement}}
+    
+    Be concise.
   input_schema:
     statement:
       type: string

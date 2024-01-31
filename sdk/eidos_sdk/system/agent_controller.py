@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import logging
 import typing
 import uuid
 from collections.abc import AsyncIterator
@@ -241,7 +242,7 @@ class AgentController:
             if not last_event.is_root_and_type(ErrorEvent):
                 yield SuccessEvent()
         except HTTPException as e:
-            logger.warning(f"HTTP Error {e}", exc_info=True)
+            logger.warning(f"HTTP Error {e}", exc_info=logger.isEnabledFor(logging.DEBUG))
             yield ErrorEvent(reason=dict(detail=e.detail, status_code=e.status_code))
             await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
             yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))

@@ -46,12 +46,17 @@ class ValidatingCPUSpec(BaseModel):
     input_validators: List[str] = []
     output_validators: List[str] = []
     regeneration_prompt: str = """
-    Your response violates our response standards. 
-    Please re-answer the last user message while incorporating the changes below
-    When regenerating your response, respond as if you are just answering the last user question again.
-    The user will not see your previous response, so do not apologize for your mistake or reference the fact that you 
-    are regenerating your response.
+    Your response violates our response standards and the user has requested a new response. They will pretend that they
+    never saw your previous response. 
     
+    When regenerating your response, respond as if you are answering the question.
+    Since the user will pretend they never saw your previous message, your new response should stand on its own without 
+    your previous response.
+    
+    Do not apologize for your mistake or reference the fact that you are regenerating your response. The user would 
+    prefer to forget that you made a mistake.
+    
+    Please re-answer the last user message while incorporating the changes below.
     #### CHANGES ####
     {changes}
     """
