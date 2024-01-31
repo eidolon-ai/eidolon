@@ -152,7 +152,7 @@ class ErrorEvent(EndStreamEvent):
     event_type: Literal[StopReason.ERROR] = StopReason.ERROR
     reason: Any
 
-    @field_serializer('reason')
+    @field_serializer("reason")
     def serialize_reason(self, reason: Any):
         if isinstance(reason, Exception):
             return f"{reason.__name__}: {reason}"

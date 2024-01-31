@@ -16,23 +16,24 @@ async def test_terminates_without_raising():
 
 
 async def test_adds_context():
-    events = [
-        event
-        async for event in stream_manager(raising_stream(), StartStreamContextEvent(context_id="foo"))
-    ]
+    events = [event async for event in stream_manager(raising_stream(), StartStreamContextEvent(context_id="foo"))]
     assert events == [
         StartStreamContextEvent(context_id="foo"),
         StringOutputEvent(stream_context="foo", content="test"),
         EndStreamContextEvent(context_id="foo"),
     ]
 
+
 async def test_stream_manager_records_errors_and_reraises():
     events = []
+    error = RuntimeError("test error")
     with pytest.raises(ManagedContextError) as e:
-        async for event in stream_manager(raising_stream(RuntimeError("test error")), StartStreamContextEvent(context_id="foo")):
+        async for event in stream_manager(raising_stream(error), StartStreamContextEvent(context_id="foo")):
             events.append(event)
     assert events == [
-        StringOutputEvent(content="test"),
-        ErrorEvent(reason="test error"),
+        StartStreamContextEvent(context_id="foo"),
+        StringOutputEvent(stream_context="foo", content="test"),
+        ErrorEvent(stream_context="foo", reason=error),
+        EndStreamContextEvent(context_id="foo"),
     ]
-    assert e.value.args[0] == "RuntimeError: test error"
+    assert e.value.args[0] == "Error in stream context foo"

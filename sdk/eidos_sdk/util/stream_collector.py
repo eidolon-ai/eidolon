@@ -12,7 +12,8 @@ from eidos_sdk.io.events import (
     ErrorEvent,
     StreamEvent,
     StartStreamContextEvent,
-    EndStreamContextEvent, )
+    EndStreamContextEvent,
+)
 
 
 class StreamCollector(AsyncIterator[StreamEvent]):

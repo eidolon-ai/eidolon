@@ -1,5 +1,3 @@
-
-from aiostream import stream
 from fastapi import HTTPException
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
 
@@ -18,7 +16,6 @@ from eidos_sdk.io.events import (
     StopReason,
     LLMToolCallRequestEvent,
     ToolCallStartEvent,
-    EndStreamContextEvent,
 )
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidos_sdk.util.logger import logger
@@ -126,10 +123,9 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
 
             # process tool calls
             if len(tool_call_events) > 0:
-                async for e in merge_streams([
-                    self._call_tool(call_context, tce, tool_defs, conversation)
-                    for tce in tool_call_events
-                ]):
+                async for e in merge_streams(
+                    [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
+                ):
                     yield e
             else:
                 return
