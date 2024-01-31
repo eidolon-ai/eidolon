@@ -16,21 +16,26 @@ async def test_process_event_raises():
         async for event in StreamCollector(stream=raising_stream(RuntimeError("test error"))):
             events.append(event)
     assert events == [
-        StringOutputEvent(content='test'),
-        ErrorEvent(reason='test error'),
+        StringOutputEvent(content="test"),
+        ErrorEvent(reason="test error"),
     ]
     assert e.value.args[0] == "Error in stream: test error"
 
 
 async def test_terminates_without_raising():
     events = [event async for event in StreamCollector(stream=raising_stream())]
-    assert events == [StringOutputEvent(content='test')]
+    assert events == [StringOutputEvent(content="test")]
 
 
 async def test_adds_context():
-    events = [event async for event in StreamCollector(stream=raising_stream(), wrap_with_context=StartStreamContextEvent(context_id="foo"))]
+    events = [
+        event
+        async for event in StreamCollector(
+            stream=raising_stream(), wrap_with_context=StartStreamContextEvent(context_id="foo")
+        )
+    ]
     assert events == [
-        StartStreamContextEvent(context_id='foo'),
-        StringOutputEvent(stream_context='foo', content='test'),
-        EndStreamContextEvent(context_id='foo'),
+        StartStreamContextEvent(context_id="foo"),
+        StringOutputEvent(stream_context="foo", content="test"),
+        EndStreamContextEvent(context_id="foo"),
     ]

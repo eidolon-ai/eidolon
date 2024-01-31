@@ -4,15 +4,26 @@ import copy
 from collections import deque
 from typing import Optional, AsyncIterator, Deque, Callable
 
-from eidos_sdk.io.events import BaseStreamEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, \
-    StartStreamContextEvent, EndStreamContextEvent
+from eidos_sdk.io.events import (
+    BaseStreamEvent,
+    StringOutputEvent,
+    ObjectOutputEvent,
+    ErrorEvent,
+    StreamEvent,
+    StartStreamContextEvent,
+    EndStreamContextEvent,
+)
 
 
 class StreamCollector(AsyncIterator[StreamEvent]):
     contents: Optional[str | dict]
     stream: Optional[AsyncIterator[StreamEvent]]
 
-    def __init__(self, stream: Optional[AsyncIterator[StreamEvent]] = None, wrap_with_context: Optional[StartStreamContextEvent] = None):
+    def __init__(
+        self,
+        stream: Optional[AsyncIterator[StreamEvent]] = None,
+        wrap_with_context: Optional[StartStreamContextEvent] = None,
+    ):
         self.contents = None
         self.stream = stream
         self._wrap_with_context = wrap_with_context
@@ -56,9 +67,11 @@ class StreamCollector(AsyncIterator[StreamEvent]):
             context = self._wrap_with_context.get_nested_context() if self._wrap_with_context else None
             self._tail_events.appendleft(ErrorEvent(stream_context=context, reason=str(e)))
             ee = copy.copy(e)
+
             def _fn():
                 context_str = f" ({context})" if context else ""
                 raise RuntimeError(f"Error in stream{context_str}: " + str(ee)) from ee
+
             self._tail_events.append(_fn)
             return await self.__anext__()
         if self._wrap_with_context:

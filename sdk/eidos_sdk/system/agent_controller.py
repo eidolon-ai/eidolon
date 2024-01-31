@@ -306,9 +306,9 @@ class AgentController:
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
         elif (
-                latest_record.state == "unhandled_error"
-                or latest_record.state == "http_error"
-                or latest_record.state == "error"
+            latest_record.state == "unhandled_error"
+            or latest_record.state == "http_error"
+            or latest_record.state == "error"
         ):
             detail = latest_record.error_info
             status_code = 500
