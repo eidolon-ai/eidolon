@@ -57,7 +57,9 @@ class StreamCollector(AsyncIterator[StreamEvent]):
         pass
 
     async def __anext__(self):
-        return await self.stream.__anext__()
+        event = await self.stream.__anext__()
+        self.process_event(event)
+        return event
 
 
 def stream_manager(stream: AsyncIterator[StreamEvent], context: StartStreamContextEvent):
