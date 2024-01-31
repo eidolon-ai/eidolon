@@ -55,7 +55,10 @@ class StreamCollector(AsyncIterator[StreamEvent]):
             else:
                 return next_
         except Exception as e:
-            self._tail_events.appendleft(ErrorEvent(reason=str(e)))
+            err = ErrorEvent(
+                stream_context=self._wrap_with_context.context_id, reason=str(e)
+            ) if self._wrap_with_context else ErrorEvent(reason=str(e))
+            self._tail_events.appendleft(err)
             self._tail_events.append(e)
             return await self.__anext__()
         if self._wrap_with_context:

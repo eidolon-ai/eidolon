@@ -122,20 +122,20 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
     def _generate_resp(self, call_context, depth, output_format, prompts, prompts_str) -> Tuple[AsyncIterator, Callable, Callable]:
         acc = {}
         async def _stream():
-            collector = StreamCollector(
+            response = StreamCollector(
                 stream=self.cpu.schedule_request(call_context, prompts, output_format),
                 wrap_with_context=StartStreamContextEvent(context_id=f"proposal_{depth}")
             )
-            async for e in collector:
+            async for e in response:
                 yield e
 
-            collectors = [self._check_output(v, prompts_str, collector.contents, output_format) for v in self.spec.output_validators]
-            async for e in _merge(collectors):
+            validators = [self._check_output(v, prompts_str, response.contents, output_format) for v in self.spec.output_validators]
+            async for e in _merge(validators):
                 yield e
 
-            change_responses = [OutputValidationResponse.model_validate(c.contents) for c in collectors]
-            acc['changes'] = [c.contents for c in change_responses if c.status != "allow"]
-            acc['contents'] = collector.contents
+            change_responses = [OutputValidationResponse.model_validate(c.contents) for c in validators]
+            acc['changes'] = [c.reason for c in change_responses if c.status != "allow"]
+            acc['contents'] = response.contents
 
         def _resp():
             return acc['contents']

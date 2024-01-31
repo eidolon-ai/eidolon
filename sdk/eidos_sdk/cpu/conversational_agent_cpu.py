@@ -1,3 +1,6 @@
+import textwrap
+
+import yaml
 from aiostream import stream
 from fastapi import HTTPException
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
@@ -20,6 +23,7 @@ from eidos_sdk.io.events import (
     EndStreamContextEvent,
 )
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
+from eidos_sdk.util.logger import logger
 from eidos_sdk.util.stream_collector import StreamCollector
 
 
@@ -99,14 +103,15 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format
             )
             # yield the events but capture the output, so it can be rolled into one event for memory.
-            stream_collector = StreamCollector()
-            async for event in execute_llm_:
-                stream_collector.process_event(event)
+            stream_collector = StreamCollector(execute_llm_)
+            async for event in stream_collector:
                 if event.is_root_and_type(LLMToolCallRequestEvent):
                     tool_call_events.append(event)
                 elif event.is_root_and_type(EndStreamEvent) and event.event_type == StopReason.ERROR:
                     got_error = True
                 yield event
+            if stream_collector.contents:
+                logger.info(f"LLM Response: {stream_collector.contents}")
 
             assistant_message = AssistantMessage(
                 type="assistant",
