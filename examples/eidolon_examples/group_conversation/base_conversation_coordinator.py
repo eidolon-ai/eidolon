@@ -3,7 +3,7 @@ from abc import ABC
 from aiostream import stream
 from dataclasses import dataclass
 from pydantic import BaseModel
-from typing import Tuple, List, TypeVar, Dict, Callable, Any, AsyncGenerator, AsyncIterator
+from typing import Tuple, List, TypeVar, Dict, Any, AsyncIterator
 
 from eidolon_examples.group_conversation.conversation_agent import (
     SpeakResult,
