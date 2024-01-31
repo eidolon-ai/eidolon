@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Optional, AsyncIterator
+from collections import deque
+from typing import Optional, AsyncIterator, Deque
 
 from eidos_sdk.io.events import BaseStreamEvent, StringOutputEvent, ObjectOutputEvent, ErrorEvent, StreamEvent, \
     StartStreamContextEvent, EndStreamContextEvent
@@ -15,7 +16,9 @@ class StreamCollector(AsyncIterator[StreamEvent]):
         self.stream = stream
         self._wrap_with_context = wrap_with_context
         self._has_wrapped_start = False
-        self._has_wrapped_end = False
+        self._tail_events: Deque[BaseStreamEvent | Exception] = deque()
+        if self._wrap_with_context:
+            self._tail_events.append(EndStreamContextEvent(context_id=self._wrap_with_context.context_id))
 
     def process_event(self, event: BaseStreamEvent):
         if event.is_root_and_type(StringOutputEvent):
@@ -42,18 +45,21 @@ class StreamCollector(AsyncIterator[StreamEvent]):
             return self._wrap_with_context
         try:
             next_event = await self.stream.__anext__()
+            self.process_event(next_event)
         except StopAsyncIteration:
-            if self._wrap_with_context and not self._has_wrapped_end:
-                self._has_wrapped_end = True
-                return EndStreamContextEvent(
-                    context_id=self._wrap_with_context.context_id,
-                    event_type=self._wrap_with_context.event_type
-                )
-            else:
+            if not self._tail_events:
                 raise
-        self.process_event(next_event)
+            next_ = self._tail_events.popleft()
+            if isinstance(next_, BaseException):
+                raise next_
+            else:
+                return next_
+        except Exception as e:
+            self._tail_events.appendleft(ErrorEvent(reason=str(e)))
+            self._tail_events.append(e)
+            return await self.__anext__()
         if self._wrap_with_context:
-            next_event.stream_context = self._wrap_with_context.stream_context
+            next_event.stream_context = self._wrap_with_context.context_id
         return next_event
 
     async def fill_and_retrieve_response(self):

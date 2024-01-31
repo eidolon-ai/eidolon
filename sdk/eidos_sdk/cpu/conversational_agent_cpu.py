@@ -17,7 +17,7 @@ from eidos_sdk.io.events import (
     StopReason,
     LLMToolCallRequestEvent,
     ToolCallStartEvent,
-    ToolCallEndEvent,
+    EndStreamContextEvent,
 )
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidos_sdk.util.stream_collector import StreamCollector
@@ -169,7 +169,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 await self.memory_unit.storeMessages(call_context, [message])
             conversation.append(message)
         finally:
-            yield ToolCallEndEvent(context_id=tool_call_context)
+            yield EndStreamContextEvent(context_id=tool_call_context)
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
         new_context = call_context.derive_call_context()

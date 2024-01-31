@@ -107,7 +107,7 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
 
     def _check_output(self, v, prompts, resp, output_format) -> StreamCollector:
         program_stream = Program.get(v).stream_execute(OutputValidatorBody(prompts=prompts, output_schema=output_format, response=resp))
-        context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}", event_type="response_validation")
+        context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}")
         return StreamCollector(stream=program_stream, wrap_with_context=context)
 
     def _generate_resp(self, call_context, depth, output_format, prompts, prompts_str) -> Tuple[AsyncIterator, Callable, Callable]:
@@ -115,7 +115,7 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
         async def _stream():
             collector = StreamCollector(
                 stream=self.cpu.schedule_request(call_context, prompts, output_format),
-                wrap_with_context=StartStreamContextEvent(context_id=f"proposal_{depth}", event_type="response_proposal")
+                wrap_with_context=StartStreamContextEvent(context_id=f"proposal_{depth}")
             )
             async for e in collector:
                 yield e

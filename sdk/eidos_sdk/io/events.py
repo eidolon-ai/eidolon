@@ -49,8 +49,10 @@ class BaseStreamEvent(BaseModel, ABC):
             return ObjectOutputEvent(**event_dict)
         elif event_type == "tool_call_start":
             return ToolCallStartEvent(**event_dict)
-        elif event_type == "tool_call_end":
-            return ToolCallEndEvent(**event_dict)
+        elif event_type == "context_start":
+            return StartStreamContextEvent(**event_dict)
+        elif event_type == "context_end":
+            return EndStreamContextEvent(**event_dict)
         elif event_type == "llm_tool_call_request":
             return LLMToolCallRequestEvent(**event_dict)
         elif event_type == "agent_call":
@@ -69,13 +71,15 @@ class BaseStreamEvent(BaseModel, ABC):
             raise ValueError(f"Unknown event type {event_type}")
 
 
-class StartStreamContextEvent(BaseStreamEvent, ABC):
+class StartStreamContextEvent(BaseStreamEvent):
     category: Literal[Category.START] = Category.START
+    event_type: Literal["context_start"] = "context_start"
     context_id: str
 
 
-class EndStreamContextEvent(BaseStreamEvent, ABC):
+class EndStreamContextEvent(BaseStreamEvent):
     category: Literal[Category.START] = Category.END
+    event_type: Literal["context_end"] = "context_end"
     context_id: str
 
 
@@ -87,10 +91,6 @@ class StartLLMEvent(BaseStreamEvent):
 class ToolCallStartEvent(StartStreamContextEvent):
     event_type: Literal["tool_call"] = "tool_call_start"
     tool_call: ToolCall
-
-
-class ToolCallEndEvent(EndStreamContextEvent):
-    event_type: Literal["tool_call"] = "tool_call_end"
 
 
 class StartAgentCallEvent(BaseStreamEvent):
@@ -160,7 +160,8 @@ StreamEvent = (
     StartAgentCallEvent
     | StartLLMEvent
     | ToolCallStartEvent
-    | ToolCallEndEvent
+    | StartStreamContextEvent
+    | EndStreamContextEvent
     | LLMToolCallRequestEvent
     | StringOutputEvent
     | ObjectOutputEvent
