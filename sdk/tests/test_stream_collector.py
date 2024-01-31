@@ -24,7 +24,7 @@ async def test_adds_context():
         StringOutputEvent(stream_context="foo", content="test"),
         EndStreamContextEvent(context_id="foo"),
     ]
-    assert collector.get_content() == 'test'
+    assert collector.get_content() == "test"
 
 
 async def test_stream_manager_records_errors_and_reraises():
@@ -41,4 +41,4 @@ async def test_stream_manager_records_errors_and_reraises():
         EndStreamContextEvent(context_id="foo"),
     ]
     assert e.value.args[0] == "Error in stream context foo"
-    assert collector.get_content() == ['test', 'RuntimeError: test error']
+    assert collector.get_content() == ["test", "RuntimeError: test error"]
