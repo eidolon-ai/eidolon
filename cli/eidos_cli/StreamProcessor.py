@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import json
 
 from markdown_it import MarkdownIt
@@ -10,18 +12,34 @@ class StreamProcessor:
         self.process_id = None
 
     def _process_events(self, response):
+        context_acc = defaultdict(list)
         for event in response:
             if event.data:
                 server_event = json.loads(event.data)
-                if server_event["event_type"] == "string":
-                    # Append the new content to the buffer
-                    yield server_event["content"]
-                elif server_event["event_type"] == "object":
-                    yield json.dumps(server_event["content"])
+                context = server_event.get("stream_context")
+
+                if server_event["event_type"] == "string" or server_event["event_type"] == "object":
+                    content = server_event["content"] if server_event["event_type"] == "string" else json.dumps(server_event["content"])
+                    if context:
+                        context_acc[context].append(content)
+                    else:
+                        yield content
+                elif server_event["event_type"] == "context_end":
+                    matching_context = f"{context}.{server_event['context_id']}" if context else server_event['context_id']
+                    content = "".join(context_acc[matching_context])
+                    yield f"<details><summary>Context: {matching_context}</summary>{content}</details>"
+                    context_acc[matching_context] = []
                 elif server_event["event_type"] == "agent_state":
                     self.available_actions = server_event["available_actions"]
                 elif server_event["event_type"] == "agent_call" and not server_event.get("stream_context"):
                     self.process_id = server_event["process_id"]
+
+                if server_event['category'] in {"start", "end"}:
+                    content = "\n"
+                    if context:
+                        context_acc[context].append(content)
+                    else:
+                        yield content
 
     def generate_tokens(self, response):
         input = self._process_events(response)

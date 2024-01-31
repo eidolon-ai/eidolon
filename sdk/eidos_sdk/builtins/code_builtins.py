@@ -13,6 +13,7 @@ from eidos_sdk.agent.retriever_agent.question_transformer import QuestionTransfo
 from eidos_sdk.agent.tot_agent.checker import ToTChecker
 from eidos_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidos_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
+from eidos_sdk.builtins.logic_units.web_search import WebSearch
 from eidos_sdk.cpu.agent_cpu import AgentCPU
 from eidos_sdk.cpu.agent_io import IOUnit
 from eidos_sdk.cpu.conversation_memory_unit import RawMemoryUnit
@@ -81,6 +82,7 @@ def named_builtins():
         OpenAIGPT,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
+        WebSearch,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
         MongoSymbolicMemory,

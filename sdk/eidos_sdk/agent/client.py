@@ -27,17 +27,14 @@ class Agent(BaseModel):
     agent: str
 
     def stream_program(self, program_name: str, body: Any) -> AgentResponseIterator:
-        url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
-        return AgentResponseIterator(stream_content(url, body))
+        return Program(machine=self.machine, agent=self.agent, program=program_name).stream_execute(body)
+
+    async def program(self, program_name: str, body: Optional[Any] = None) -> ProcessStatus:
+        return await Program(machine=self.machine, agent=self.agent, program=program_name).execute(body)
 
     def stream_action(self, action_name: str, process_id: str, body: Any) -> AgentResponseIterator:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{process_id}/actions/{action_name}")
         return AgentResponseIterator(stream_content(url, body))
-
-    async def program(self, program_name: str, body: Optional[Any] = None) -> ProcessStatus:
-        url = urljoin(self.machine, f"agents/{self.agent}/programs/{program_name}")
-        json_ = await post_content(url, body)
-        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def process(self, process_id: str) -> Process:
         return Process(machine=self.machine, agent=self.agent, process_id=process_id)
@@ -48,10 +45,33 @@ class Agent(BaseModel):
         Convenience method to create Agents from dot notation. Ie: machine_loc.agent_name
         """
         if "." in location:
-            parts = location.split()
+            parts = location.split(".")
             return cls(machine=".".join(parts[:-1]), agent=parts[-1])
         else:
             return cls(agent=location)
+
+
+class Program(BaseModel):
+    machine: str = Field(default_factory=AgentOS.current_machine_url)
+    agent: str
+    program: str
+
+    @classmethod
+    def get(cls, location: str):
+        parts = location.split(".")
+        kwargs = dict(program=parts[-1], agent=parts[-2])
+        if len(parts) > 2:
+            kwargs["machine"] = ".".join(parts[:-2])
+        return cls(**kwargs)
+
+    def stream_execute(self, body: Any) -> AgentResponseIterator:
+        url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
+        return AgentResponseIterator(stream_content(url, body))
+
+    async def execute(self, body: Optional[Any] = None) -> ProcessStatus:
+        url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
+        json_ = await post_content(url, body)
+        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
 
 class Process(BaseModel):
@@ -81,7 +101,7 @@ class ProcessStatus(Process):
     available_actions: List[str]
 
 
-class AgentResponseIterator:
+class AgentResponseIterator(AsyncIterator[StreamEvent]):
     """
     This class is used to iterate over the responses from an agent call and store the state of the conversation after the stream is complete.
 

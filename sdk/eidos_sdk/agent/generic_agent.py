@@ -3,6 +3,7 @@ from typing import Annotated, Dict, Any, Literal, Type, Union
 from fastapi import Body
 from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, field_validator, Field
+from pydantic_core import to_jsonable_python
 
 from eidos_sdk.agent.agent import (
     Agent,
@@ -93,7 +94,7 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
     )
     async def question(self, process_id, **kwargs) -> AgentState[Any]:
         body = kwargs.get("body")
-        body = dict(body) if body else {}
+        body = to_jsonable_python(body) if body else {}
         files = kwargs.get("file", [])
         if not isinstance(files, list):
             files = [files]
@@ -121,7 +122,7 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
             yield event
         yield AgentStateEvent(state="idle")
 
-    @register_action("idle")
+    @register_action("idle", "http_error")
     async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[Any]:
         t = await self.cpu.main_thread(process_id)
         response = await t.run_request([UserTextCPUMessage(prompt=statement)], self.spec.output_schema)

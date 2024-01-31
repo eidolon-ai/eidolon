@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import logging
 import typing
 import uuid
 from collections.abc import AsyncIterator
@@ -241,17 +242,19 @@ class AgentController:
             if not last_event.is_root_and_type(ErrorEvent):
                 yield SuccessEvent()
         except HTTPException as e:
-            logger.warning(f"HTTP Error {e}", exc_info=True)
+            logger.warning(f"HTTP Error {e}", exc_info=logger.isEnabledFor(logging.DEBUG))
             yield ErrorEvent(reason=dict(detail=e.detail, status_code=e.status_code))
-            await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
-            yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
+            if not isinstance(last_event, AgentStateEvent):
+                await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
+                yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
         except Exception as e:
             logger.exception(f"Unhandled Error {e}")
             yield ErrorEvent(reason=dict(detail=str(e), status_code=500))
-            await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
-            yield AgentStateEvent(
-                state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
-            )
+            if not isinstance(last_event, AgentStateEvent):
+                await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
+                yield AgentStateEvent(
+                    state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
+                )
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
         response = await handler.fn(self.agent, **kwargs)
@@ -303,9 +306,9 @@ class AgentController:
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
         elif (
-                latest_record.state == "unhandled_error"
-                or latest_record.state == "http_error"
-                or latest_record.state == "error"
+            latest_record.state == "unhandled_error"
+            or latest_record.state == "http_error"
+            or latest_record.state == "error"
         ):
             detail = latest_record.error_info
             status_code = 500

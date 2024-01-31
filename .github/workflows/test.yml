@@ -99,6 +99,8 @@ jobs:
       - run: poetry run pytest
         env:
           OPENAI_API_KEY: intentionally_unused
+          CSE_ID: ${{ secrets.CLOUD_SEARCH_ENGINE_ID }}
+          CSE_TOKEN: ${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}
         working-directory: sdk
 
   sdk-test-local-memory:
@@ -116,4 +118,6 @@ jobs:
       - run: poetry run pytest --symbolic_memory local
         env:
           OPENAI_API_KEY: intentionally_unused
+          CSE_ID: ${{ secrets.CLOUD_SEARCH_ENGINE_ID }}
+          CSE_TOKEN: ${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}
         working-directory: sdk

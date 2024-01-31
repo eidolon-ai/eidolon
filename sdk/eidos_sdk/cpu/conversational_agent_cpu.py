@@ -1,3 +1,4 @@
+
 from aiostream import stream
 from fastapi import HTTPException
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
@@ -17,10 +18,11 @@ from eidos_sdk.io.events import (
     StopReason,
     LLMToolCallRequestEvent,
     ToolCallStartEvent,
-    ToolCallEndEvent,
+    EndStreamContextEvent,
 )
 from eidos_sdk.system.reference_model import Reference, AnnotatedReference, Specable
-from eidos_sdk.util.stream_collector import StringStreamCollector
+from eidos_sdk.util.logger import logger
+from eidos_sdk.util.stream_collector import StreamCollector
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
@@ -99,14 +101,15 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format
             )
             # yield the events but capture the output, so it can be rolled into one event for memory.
-            stream_collector = StringStreamCollector()
-            async for event in execute_llm_:
-                stream_collector.process_event(event)
+            stream_collector = StreamCollector(execute_llm_)
+            async for event in stream_collector:
                 if event.is_root_and_type(LLMToolCallRequestEvent):
                     tool_call_events.append(event)
                 elif event.is_root_and_type(EndStreamEvent) and event.event_type == StopReason.ERROR:
                     got_error = True
                 yield event
+            if stream_collector.contents:
+                logger.info(f"LLM Response: {stream_collector.contents}")
 
             assistant_message = AssistantMessage(
                 type="assistant",
@@ -149,7 +152,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         tool_call_context = tc.tool_call_id
         yield ToolCallStartEvent(tool_call=tc, context_id=tool_call_context)
         try:
-            stream_collect = StringStreamCollector()
+            stream_collect = StreamCollector()
             try:
                 tool_result = tool_def.execute(call_context=parent_stream_context, tool_call=tc)
                 async for event in tool_result:
@@ -169,13 +172,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 await self.memory_unit.storeMessages(call_context, [message])
             conversation.append(message)
         finally:
-            yield ToolCallEndEvent(context_id=tool_call_context)
-
-    async def main_thread(self, process_id: str) -> Thread:
-        return Thread(CallContext(process_id=process_id), self)
-
-    async def new_thread(self, process_id) -> Thread:
-        return Thread(CallContext(process_id=process_id).derive_call_context(), self)
+            yield EndStreamContextEvent(context_id=tool_call_context)
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
         new_context = call_context.derive_call_context()
