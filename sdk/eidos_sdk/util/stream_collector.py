@@ -41,7 +41,7 @@ class StreamCollector(AsyncIterator[StreamEvent]):
                 self._content.append(event.content)
                 self._last_seen_event = event
             elif isinstance(event, ErrorEvent):
-                self._content.append("Error: " + str(event.reason))
+                self._content.append(event.serialize_reason(event.reason))
                 self._last_seen_event = event
 
     def get_content(self):
@@ -51,6 +51,9 @@ class StreamCollector(AsyncIterator[StreamEvent]):
             return self._content[0]
         else:
             return self._content
+
+    def get_content_as_string(self):
+        pass
 
     async def __anext__(self):
         return await self.stream.__anext__()
@@ -65,7 +68,7 @@ def stream_manager(stream: AsyncIterator[StreamEvent], context: StartStreamConte
                 yield event
         except Exception as e:
             # record error on stream context, but will reraise for outer context to handle
-            yield ErrorEvent(stream_context=context.get_nested_context(), reason=str(e))
+            yield ErrorEvent(stream_context=context.get_nested_context(), reason=e)
             # no need to log since we are re-raising
             raise ManagedContextError(f"Error in stream context {context.get_nested_context()}") from e
         finally:
