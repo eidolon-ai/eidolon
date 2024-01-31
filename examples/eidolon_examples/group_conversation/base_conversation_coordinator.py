@@ -1,20 +1,19 @@
-import asyncio
 import random
 from abc import ABC
+from aiostream import stream
 from dataclasses import dataclass
-from pydantic import BaseModel, TypeAdapter
-from typing import Tuple, List, TypeVar, Dict, Callable, Any, AsyncGenerator, Union
+from pydantic import BaseModel
+from typing import Tuple, List, TypeVar, Dict, Callable, Any, AsyncGenerator, AsyncIterator
 
 from eidolon_examples.group_conversation.conversation_agent import (
     SpeakResult,
     ThoughtResult,
-    CharacterThought,
-    StatementsForAgent,
-    Statement,
 )
 from eidos_sdk.agent.client import Machine
 from eidos_sdk.agent_os import AgentOS
+from eidos_sdk.io.events import ObjectOutputEvent, AgentContextStartEvent, AgentContextEndEvent, StartAgentCallEvent, StreamEvent
 from eidos_sdk.system.reference_model import Specable
+from eidos_sdk.util.stream_collector import StringStreamCollector
 
 
 class StartConversation(BaseModel):
@@ -52,207 +51,106 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
         super().__init__(**kwargs)
         self.semantic_memory_prefix = semantic_memory_prefix
 
-    async def start_conversations(self, process_id, topic: StartConversation) -> str:
+    async def start_conversations(self, process_id, topic: StartConversation) -> AsyncIterator[StreamEvent]:
         """
         Called to start the conversations. Initializes the remote agents and starts the first turn.
         """
 
         # start conversation with every agent
-        async def fn(_agent_name):
-            yield {"topic": topic.message}
+        async for event in self._run_program_in_all_agents(process_id, "start_conversation", {"topic": topic.message}):
+            yield event
 
-        messages = await self._run_program_in_all_agents(process_id, "start_conversation", fn)
+    def add_inner_monologue(self, process_id, monologue: InnerMonologue) -> AsyncIterator[StreamEvent]:
+        return self._run_action_in_agents(process_id, [monologue.agent_name], Action("add_inner_monologue", {"monologue": monologue}))
 
-        return "\n".join(messages)
+    def get_all_thoughts(self, process_id) -> AsyncIterator[StreamEvent]:
+        return self._run_action_in_all_agents(process_id, Action("describe_thoughts", {"people": self.spec.agents}))
 
-    async def add_inner_monologue(self, process_id, monologue: InnerMonologue):
-        async def fn(_agent_name, _agent_pid):
-            yield Action("add_inner_monologue", {"monologue": monologue})
-
-        await self._run_action_in_agents(process_id, [monologue.agent_name], fn)
-
-    async def get_all_thoughts(self, process_id) -> List[Tuple[str, List[CharacterThought]]]:
-        async def fn(agent_name, _agent_pid):
-            result = yield Action("describe_thoughts", {"people": self.spec.agents})
-            character_thoughts = TypeAdapter(List[CharacterThought]).validate_python(result.data)
-            yield agent_name, character_thoughts
-
-        return await self._run_action_in_all_agents(process_id, fn=fn)
-
-    async def speak_to_agents(
-        self, process_id, statement: str, agents: List[str] = None, parallel=True, should_record=True
-    ) -> List[Tuple[str, SpeakResult]]:
+    async def speak_to_agents(self, process_id, statement: str, agents: List[str] = None, should_record=True) -> AsyncIterator[StreamEvent]:
         if not agents:
             agents = self.spec.agents
 
-        agent_responses = await self._restore_message(process_id, self.spec.agents)
-
-        async def let_agent_speak(a_name: str, _agent_pid: str):
-            response = yield Action("speak", {"message": statement})
-            agent_response = SpeakResult.model_validate(response)
-            yield a_name, agent_response
-
-        agents_to_speak = agents
-        statements = await self._run_action_in_agents(process_id, agents_to_speak, let_agent_speak)
+        collectors = {agent: StringStreamCollector() for agent in agents}
+        async for event in self._run_action_in_agents(process_id, agents, Action("speak", {"message": statement})):
+            if should_record and collectors.get(event.stream_context):
+                collectors[event.stream_context].process_event(event)
+            yield event
 
         if should_record:
-            agents_desire = await self.record_speak_results(process_id, statements, agents=agents)
-            for agent_name, desire_to_speak in agents_desire:
-                agent_responses[agent_name] = desire_to_speak
+            statements = ""
+            for agent_name, collector in collectors.items():
+                statement = collector.contents or "<no response>"
+                statements += "**" + agent_name + "**: " + statement + "\n\n"
+            async for event in self.record_statements(process_id, statements, agents=agents):
+                yield event
 
-        return statements
-
-    async def group_speak(
-        self, process_id, statement: str, agents: List[str] = None, parallel=True, should_record=True
-    ) -> List[Tuple[str, SpeakResult]]:
+    async def record_statements(self, process_id, statements: str, agents: List[str] = None):
         if not agents:
             agents = self.spec.agents
 
-        agent_responses = await self._restore_message(process_id, self.spec.agents)
-
-        async def let_agent_speak(a_name: str, _agent_pid: str):
-            response = yield Action("speak_amongst_group", {"message": {"message": statement, "group": agents}})
-            agent_response = SpeakResult.model_validate(response)
-            yield a_name, agent_response
-
-        agents_to_speak = agents
-        statements = await self._run_action_in_agents(process_id, agents_to_speak, let_agent_speak)
-
-        if should_record:
-            agents_desire = await self.record_speak_results(process_id, statements)
-            for agent_name, desire_to_speak in agents_desire:
-                agent_responses[agent_name] = desire_to_speak
-
-        return statements
-
-    async def let_agents_speak(
-        self, process_id, statement: str, num_turns: int, num_concurrent_conversations: int
-    ) -> List[List[Tuple[str, SpeakResult]]]:
         conversation_state = await self._restore_state(process_id)
-
-        agent_responses = await self._restore_message(process_id, self.spec.agents)
-
-        async def let_agent_speak(a_name: str, _agent_pid: str):
-            response = yield Action("speak", {"message": statement})
-            agent_response = SpeakResult.model_validate(response.data)
-            yield a_name, agent_response
-
-        speeches = []
-        for _ in range(num_turns):
-            agents_to_speak = self.choose_agents_to_speak(num_concurrent_conversations, agent_responses)
-            statements = await self._run_action_in_agents(process_id, agents_to_speak, let_agent_speak)
-
-            agents_desire = await self.record_speak_results(conversation_state, statements)
-            for agent_name, desire_to_speak in agents_desire:
-                agent_responses[agent_name] = desire_to_speak
-
-            speeches.append(statements)
-
-        return speeches
-
-    async def record_speak_results(
-        self, process_id, speak_results: List[Tuple[str, SpeakResult]], agents: List[str] = None
-    ) -> List[Tuple[str, float]]:
-        statements_to_record = []
-        for speaker_name, speak_result in speak_results:
-            statements_to_record.append(
-                Statement(
-                    speaker=speaker_name,
-                    text=self.format_response(speaker_name, speak_result),
-                    voice_level=speak_result.voice_level,
+        agent_pids = {agent_name: agent_pid for agent_name, agent_pid in conversation_state.agent_pids if agent_name in agents}
+        async for event in self._run_action_in_agents(process_id=process_id, agents=agents, action=Action("record_statement", {"statements": statements})):
+            if isinstance(event, ObjectOutputEvent) and event.stream_context in agents:
+                thought = ThoughtResult.model_validate(event.content)
+                agent_pid = agent_pids[event.stream_context]
+                await AgentOS.symbolic_memory.upsert_one(
+                    "conversation_coordinator_messages",
+                    {"desire_to_speak": thought.desire_to_speak},
+                    {"process_id": agent_pid, "agent_name": event.stream_context},
                 )
-            )
-
-        return await self.record_statements(process_id, statements_to_record, agents=agents)
-
-    async def record_statements(self, process_id, statements_to_record: List[Statement], agents: List[str] = None):
-        async def fn(agent_name, agent_pid):
-            thought_response = yield Action(
-                "record_statement", {"statements": StatementsForAgent(statements=statements_to_record).model_dump()}
-            )
-            thought = ThoughtResult.model_validate(thought_response)
-            await AgentOS.symbolic_memory.upsert_one(
-                "conversation_coordinator_messages",
-                {"desire_to_speak": thought.desire_to_speak},
-                {"process_id": agent_pid, "agent_name": agent_name},
-            )
-            yield agent_name, thought.desire_to_speak
-
-        if not agents:
-            agents = self.spec.agents
-
-        return await self._run_action_in_agents(process_id=process_id, agents=agents, fn=fn)
+            yield event
 
     # Helper functions
 
-    async def _run_program_in_all_agents(
-        self, our_process_id, program_name: str, fn: Callable[[str], AsyncGenerator[Dict[str, Any], Any]]
-    ) -> List[T]:
-        return await self._run_program_in_agents(our_process_id, program_name, self.spec.agents, fn)
+    def _run_program_in_all_agents(self, our_process_id, program_name: str, args: Dict[str, Any]):
+        return self._run_program_in_agents(our_process_id, program_name, self.spec.agents, args)
 
     async def _run_program_in_agents(
-        self,
-        our_process_id,
-        program_name: str,
-        agents: List[str],
-        fn: Callable[[str], AsyncGenerator[Dict[str, Any], Any]],
-    ) -> List[T]:
+            self,
+            our_process_id,
+            program_name: str,
+            agents: List[str],
+            args: Dict[str, Any],
+    ):
         async def run_one(agent_name):
-            generator = fn(agent_name)
-            retValue = None
-            already_called = False
-            async for args in generator:
-                if already_called:
-                    raise Exception("Function should only yield once")
-                result = await Machine().agent(agent_name).program(program_name, args)
-                try:
-                    await generator.asend(result.data)
-                except StopAsyncIteration:
-                    pass
-                retValue = agent_name, result.process_id
-
-            return retValue
+            yield AgentContextStartEvent(context_id=agent_name)
+            try:
+                async for a_event in Machine().agent(agent_name).stream_program(program_name, args):
+                    a_event.stream_context = agent_name
+                    yield a_event
+            finally:
+                yield AgentContextEndEvent(context_id=agent_name)
 
         tasks = [run_one(agent) for agent in agents]
-
-        task_results = await asyncio.gather(*tasks)
+        combined_calls = stream.merge(tasks[0], *tasks[1:])
+        agent_pids = []
+        async for event in combined_calls:
+            if isinstance(event, StartAgentCallEvent) and event.stream_context in agents:
+                agent_pids.append((event.agent_name, event.process_id))
+            yield event
 
         conv_state = ConversationState(
             process_id=our_process_id,
-            agent_pids=task_results,
+            agent_pids=agent_pids,
             start_conv_message="",
             max_num_concurrent_conversations=len(self.spec.agents),
         )
         # record the pids of the agents with our process_id in memory
         await AgentOS.symbolic_memory.insert_one("conversation_coordinator", conv_state.model_dump())
 
-        return [result for _, result in task_results]
+    def _run_action_in_all_agents(self, process_id, action: Action):
+        return self._run_action_in_agents(process_id, self.spec.agents, action)
 
-    async def _run_action_in_all_agents(
-        self, process_id, fn: Callable[[str, str], AsyncGenerator[Union[Action, T], Any]]
-    ) -> List[T]:
-        return await self._run_action_in_agents(process_id, self.spec.agents, fn)
-
-    async def _run_action_in_agents(
-        self, process_id, agents: List[str], fn: Callable[[str, str], AsyncGenerator[Union[Action, T], Any]]
-    ) -> List[T]:
+    async def _run_action_in_agents(self, process_id, agents: List[str], action: Action):
         async def run_one(agent_name: str, agent_pid: str) -> T:
-            generator = fn(agent_name, agent_pid)
-            retValue = None
-            last_result_data = None
-            while True:
-                try:
-                    action = await generator.asend(last_result_data)
-                except StopAsyncIteration:
-                    break
-                if isinstance(action, Action):
-                    result = await Machine().agent(agent_name).process(agent_pid).action(action.action_name, action.args)
-                    last_result_data = result.data
-                else:
-                    retValue = action
-                    break
-
-            return retValue
+            yield AgentContextStartEvent(context_id=agent_name)
+            try:
+                async for a_event in (Machine().agent(agent_name).stream_action(action.action_name, agent_pid, action.args)):
+                    a_event.stream_context = agent_name
+                    yield a_event
+            finally:
+                yield AgentContextEndEvent(context_id=agent_name)
 
         conversation_state = await self._restore_state(process_id)
         tasks = []
@@ -260,12 +158,9 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
             if name in agents:
                 tasks.append(run_one(name, pid))
 
-        # noinspection PyTypeChecker
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        for result in results:
-            if isinstance(result, Exception):
-                raise result
-        return results
+        combined_calls = stream.merge(tasks[0], *tasks[1:])
+        async for event in combined_calls:
+            yield event
 
     async def _restore_state(self, process_id) -> ConversationState:
         result = await AgentOS.symbolic_memory.find_one("conversation_coordinator", {"process_id": process_id})

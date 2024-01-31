@@ -6,6 +6,7 @@ from eidos_sdk.agent.agent import AgentState, register_program, register_action
 from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidos_sdk.cpu.llm_message import UserMessage, UserMessageText
+from eidos_sdk.io.events import AgentStateEvent
 from eidos_sdk.system.reference_model import Reference, Specable
 
 
@@ -138,14 +139,14 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         return AgentState(name="idle", data=ThoughtResult(desire_to_speak=0.25))
 
     @register_action("idle")
-    async def speak(self, process_id, message: Annotated[str, Body(embed=True)]) -> AgentState[SpeakResult]:
+    async def speak(self, process_id, message: Annotated[str, Body(embed=True)]):
         """
         Called to allow the agent to speak
         """
         t = await self.cpu.main_thread(process_id)
-        resp = await t.run_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=SpeakResult)
-        resp.desire_to_speak = 0
-        return AgentState(name="idle", data=resp)
+        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
+            yield event
+        yield AgentStateEvent(state="idle")
 
     @register_action("idle")
     async def speak_amongst_group(
@@ -158,8 +159,9 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         text_message = (
             f"The following message will only be heard by the coordinator and {message.group}:\n\n{message.message}\n\n"
         )
-        resp = await t.run_request(prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult)
-        return AgentState(name="idle", data=resp)
+        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult):
+            yield event
+        yield AgentStateEvent(state="idle")
 
     @register_action("idle")
     async def describe_thoughts(
