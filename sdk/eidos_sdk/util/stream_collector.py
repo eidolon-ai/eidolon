@@ -64,7 +64,7 @@ class StreamCollector(AsyncIterator[StreamEvent]):
 
 def stream_manager(stream: AsyncIterator[StreamEvent], context: StartStreamContextEvent):
     async def _iter():
-        yield context
+        yield context.model_copy()
         try:
             async for event in stream:
                 event.stream_context = context.get_nested_context()
