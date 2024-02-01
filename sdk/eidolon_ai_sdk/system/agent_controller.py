@@ -398,7 +398,7 @@ class AgentController:
 
     @staticmethod
     async def get_latest_process_event(process_id) -> ProcessDoc:
-        return await ProcessDoc.find(query=dict(_id=process_id), sort=dict(updated=-1))
+        return await ProcessDoc.find_one(query=dict(_id=process_id), sort=dict(updated=-1))
 
     def create_response_model(self, handler: FnHandler):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
