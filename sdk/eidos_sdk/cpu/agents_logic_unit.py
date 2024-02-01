@@ -146,14 +146,6 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
 
         return fn
 
-    @staticmethod
-    def _tool_call(fn):
-        async def _fn(_self, body):
-            resp = await fn(body)
-            return resp.model_dump()
-
-        return _fn
-
 
 class AgentCallHistory(BaseModel):
     parent_process_id: str

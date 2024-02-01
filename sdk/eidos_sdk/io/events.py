@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from enum import Enum
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel, TypeAdapter, field_serializer
 from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional
 
 from eidos_sdk.cpu.llm_message import ToolCall
@@ -151,6 +151,13 @@ class CanceledEvent(EndStreamEvent):
 class ErrorEvent(EndStreamEvent):
     event_type: Literal[StopReason.ERROR] = StopReason.ERROR
     reason: Any
+
+    @field_serializer("reason")
+    def serialize_reason(self, reason: Any):
+        if isinstance(reason, Exception):
+            return f"{type(reason).__name__}: {reason}"
+        else:
+            return reason
 
 
 class AgentStateEvent(BaseStreamEvent):
