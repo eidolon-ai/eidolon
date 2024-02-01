@@ -1,15 +1,20 @@
-import httpx
-import pytest_asyncio
 from typing import Annotated
 
+import httpx
 import pytest
+import pytest_asyncio
 from fastapi import Body, HTTPException
 from httpx import HTTPStatusError
 
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
 from eidos_sdk.agent.client import Agent, Process
-from eidos_sdk.io.events import ErrorEvent, AgentStateEvent, StringOutputEvent, StartStreamContextEvent, \
-    EndStreamContextEvent, SuccessEvent
+from eidos_sdk.io.events import (
+    ErrorEvent,
+    AgentStateEvent,
+    StringOutputEvent,
+    StartStreamContextEvent,
+    EndStreamContextEvent,
+)
 from eidos_sdk.util.stream_collector import stream_manager
 
 
@@ -129,21 +134,20 @@ class TestHelloWorld:
         assert events[1:-1] == [
             StringOutputEvent(content="1"),
             StringOutputEvent(content="2"),
-            StartStreamContextEvent(context_id='c1'),
+            StartStreamContextEvent(context_id="c1"),
             StringOutputEvent(content="3", stream_context="c1"),
             StringOutputEvent(content="4", stream_context="c1"),
-            EndStreamContextEvent(context_id='c1'),
-            StartStreamContextEvent(context_id='c2'),
+            EndStreamContextEvent(context_id="c1"),
+            StartStreamContextEvent(context_id="c2"),
             StringOutputEvent(content="5", stream_context="c2"),
             StringOutputEvent(content="6", stream_context="c2"),
-            StartStreamContextEvent(context_id='c3', stream_context="c2"),
+            StartStreamContextEvent(context_id="c3", stream_context="c2"),
             StringOutputEvent(content="7", stream_context="c2.c3"),
             StringOutputEvent(content="8", stream_context="c2.c3"),
-            EndStreamContextEvent(stream_context='c2', context_id='c3'),
-            EndStreamContextEvent(context_id='c2'),
-            AgentStateEvent(state='terminated', available_actions=[]),
+            EndStreamContextEvent(stream_context="c2", context_id="c3"),
+            EndStreamContextEvent(context_id="c2"),
+            AgentStateEvent(state="terminated", available_actions=[]),
         ]
-
 
 
 class StateMachine:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import inspect
 import logging
 import typing
 from abc import ABC

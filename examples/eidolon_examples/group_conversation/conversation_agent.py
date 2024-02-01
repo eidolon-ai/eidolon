@@ -159,7 +159,9 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         text_message = (
             f"The following message will only be heard by the coordinator and {message.group}:\n\n{message.message}\n\n"
         )
-        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult):
+        async for event in t.stream_request(
+            prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult
+        ):
             yield event
         yield AgentStateEvent(state="idle")
 
