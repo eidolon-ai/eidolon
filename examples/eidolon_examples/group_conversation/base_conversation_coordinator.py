@@ -11,7 +11,13 @@ from eidolon_examples.group_conversation.conversation_agent import (
 )
 from eidos_sdk.agent.client import Machine
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import ObjectOutputEvent, AgentContextStartEvent, AgentContextEndEvent, StartAgentCallEvent, StreamEvent
+from eidos_sdk.io.events import (
+    ObjectOutputEvent,
+    AgentContextStartEvent,
+    AgentContextEndEvent,
+    StartAgentCallEvent,
+    StreamEvent,
+)
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.stream_collector import StringStreamCollector
 
@@ -61,12 +67,16 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
             yield event
 
     def add_inner_monologue(self, process_id, monologue: InnerMonologue) -> AsyncIterator[StreamEvent]:
-        return self._run_action_in_agents(process_id, [monologue.agent_name], Action("add_inner_monologue", {"monologue": monologue}))
+        return self._run_action_in_agents(
+            process_id, [monologue.agent_name], Action("add_inner_monologue", {"monologue": monologue})
+        )
 
     def get_all_thoughts(self, process_id) -> AsyncIterator[StreamEvent]:
         return self._run_action_in_all_agents(process_id, Action("describe_thoughts", {"people": self.spec.agents}))
 
-    async def speak_to_agents(self, process_id, statement: str, agents: List[str] = None, should_record=True) -> AsyncIterator[StreamEvent]:
+    async def speak_to_agents(
+        self, process_id, statement: str, agents: List[str] = None, should_record=True
+    ) -> AsyncIterator[StreamEvent]:
         if not agents:
             agents = self.spec.agents
 
@@ -89,8 +99,12 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
             agents = self.spec.agents
 
         conversation_state = await self._restore_state(process_id)
-        agent_pids = {agent_name: agent_pid for agent_name, agent_pid in conversation_state.agent_pids if agent_name in agents}
-        async for event in self._run_action_in_agents(process_id=process_id, agents=agents, action=Action("record_statement", {"statements": statements})):
+        agent_pids = {
+            agent_name: agent_pid for agent_name, agent_pid in conversation_state.agent_pids if agent_name in agents
+        }
+        async for event in self._run_action_in_agents(
+            process_id=process_id, agents=agents, action=Action("record_statement", {"statements": statements})
+        ):
             if isinstance(event, ObjectOutputEvent) and event.stream_context in agents:
                 thought = ThoughtResult.model_validate(event.content)
                 agent_pid = agent_pids[event.stream_context]
@@ -107,11 +121,11 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
         return self._run_program_in_agents(our_process_id, program_name, self.spec.agents, args)
 
     async def _run_program_in_agents(
-            self,
-            our_process_id,
-            program_name: str,
-            agents: List[str],
-            args: Dict[str, Any],
+        self,
+        our_process_id,
+        program_name: str,
+        agents: List[str],
+        args: Dict[str, Any],
     ):
         async def run_one(agent_name):
             yield AgentContextStartEvent(context_id=agent_name)
@@ -146,7 +160,9 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
         async def run_one(agent_name: str, agent_pid: str) -> T:
             yield AgentContextStartEvent(context_id=agent_name)
             try:
-                async for a_event in (Machine().agent(agent_name).stream_action(action.action_name, agent_pid, action.args)):
+                async for a_event in (
+                    Machine().agent(agent_name).stream_action(action.action_name, agent_pid, action.args)
+                ):
                     a_event.stream_context = agent_name
                     yield a_event
             finally:

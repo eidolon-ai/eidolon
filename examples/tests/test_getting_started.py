@@ -1,4 +1,3 @@
-
 import httpx
 import pytest
 from httpx import Client

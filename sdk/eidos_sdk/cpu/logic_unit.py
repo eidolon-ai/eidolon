@@ -23,7 +23,7 @@ class LLMToolWrapper:
     eidos_handler: EidosHandler
     input_model: typing.Type[BaseModel]
 
-    async def execute(self, call_context: CallContext, tool_call: ToolCall) -> AsyncIterator[BaseStreamEvent]:
+    async def execute(self, tool_call: ToolCall) -> AsyncIterator[BaseStreamEvent]:
         logger.info("calling tool " + self.eidos_handler.name)
         logger.debug("args: " + str(tool_call.arguments) + " | fn: " + str(self.eidos_handler.fn))
         try:

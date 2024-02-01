@@ -44,7 +44,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
 
     @register_program()
     async def start_game(
-            self, process_id, game: Annotated[str, Body(description="The topic of the new conversation", embed=True)]
+        self, process_id, game: Annotated[str, Body(description="The topic of the new conversation", embed=True)]
     ):
         """
         Called to start the game. Initializes the remote agents and starts the first turn.
@@ -59,11 +59,16 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
             yield event
 
         # start conversation with every agent
-        async for event in self.start_conversations(process_id, StartConversation(message=f"Let's play {game}!", max_num_concurrent_conversations=len(self.spec.agents))):
+        async for event in self.start_conversations(
+            process_id,
+            StartConversation(message=f"Let's play {game}!", max_num_concurrent_conversations=len(self.spec.agents)),
+        ):
             yield event
 
-        system_prompt = (f"{self.spec.system_prompt}\n\nYou are playing the game {game}\n You must always remember the rules of the game and follow them\n"
-                         f"You are playing a game with {self.spec.agents}")
+        system_prompt = (
+            f"{self.spec.system_prompt}\n\nYou are playing the game {game}\n You must always remember the rules of the game and follow them\n"
+            f"You are playing a game with {self.spec.agents}"
+        )
         await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=system_prompt)])
         message = "Tell all agents the rules of the game\n"
         async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
@@ -88,7 +93,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
 
     @register_action("take_turn")
     async def speak_to_game_master(
-            self, process_id, message: Annotated[str, Body(description="The message to send to the game master", embed=True)]
+        self, process_id, message: Annotated[str, Body(description="The message to send to the game master", embed=True)]
     ) -> AgentState[str]:
         """
         Called to allow the agent to speak
@@ -107,7 +112,7 @@ class PlayerLogicUnit(LogicUnit):
 
     @llm_function()
     async def say_to_players(
-            self, statement: PlayerStatement = Field(description="The players and statement you want to talk to")
+        self, statement: PlayerStatement = Field(description="The players and statement you want to talk to")
     ):
         """
         Say something to players. Other players will hear this message and the responses from all other players.
@@ -117,9 +122,9 @@ class PlayerLogicUnit(LogicUnit):
 
     @llm_function()
     async def whisper_to_player(
-            self,
-            player_name: str = Field(description="Player to whisper to"),
-            message: str = Field(description="The message to whisper"),
+        self,
+        player_name: str = Field(description="Player to whisper to"),
+        message: str = Field(description="The message to whisper"),
     ):
         """
         Whisper something to only one player. This is a private message, other players will not hear this message. You can only whisper one player at a time.
@@ -130,9 +135,9 @@ class PlayerLogicUnit(LogicUnit):
 
     @llm_function()
     async def say_to_player(
-            self,
-            player_name: str = Field(description="Player to talke to"),
-            message: str = Field(description="The message to say to the player"),
+        self,
+        player_name: str = Field(description="Player to talke to"),
+        message: str = Field(description="The message to say to the player"),
     ):
         """
         Say something to only one player. Other players will hear this message.
@@ -143,9 +148,9 @@ class PlayerLogicUnit(LogicUnit):
 
     @llm_function()
     async def speak_amongst_group(
-            self,
-            players: List[str] = Field(description="The group of players (or agents) that will speak and hear all messages"),
-            message: str = Field(description="The message to say to the players"),
+        self,
+        players: List[str] = Field(description="The group of players (or agents) that will speak and hear all messages"),
+        message: str = Field(description="The message to say to the players"),
     ):
         """
         Called to have a group of agents speak amongst themselves.

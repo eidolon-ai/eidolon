@@ -28,6 +28,7 @@ class ConversationalAgentCPUSpec(AgentCPUSpec):
     llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
     record_conversation: bool = True
+    allow_tool_errors: bool = True
 
 
 class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], ProcessingUnitLocator):
@@ -139,19 +140,20 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         tool_defs,
         conversation: List[LLMMessage],
     ):
-        parent_stream_context = tool_call_event.stream_context
         tool_def = tool_defs[tool_call_event.tool_call.name]
         tc = tool_call_event.tool_call
-        tool_call_context = tc.tool_call_id
-        tool_start_call = ToolCallStartEvent(tool_call=tc, context_id=tool_call_context)
-
-        tool_stream = stream_manager(tool_def.execute(call_context=parent_stream_context, tool_call=tc), tool_start_call)
+        tool_stream = stream_manager(
+            tool_def.execute(tool_call=tc),
+            ToolCallStartEvent(tool_call=tc, context_id=tc.tool_call_id),
+        )
         try:
             async for event in tool_stream:
                 yield event
         except ManagedContextError:
-            # todo, permissive tool call errors should be configurable
-            logger.exception("Error calling tool " + tool_def.eidos_handler.name)
+            if self.spec.allow_tool_errors:
+                logger.warning("Error calling tool " + tool_def.eidos_handler.name)
+            else:
+                raise
 
         message = ToolResponseMessage(
             logic_unit_name=tool_def.logic_unit.__class__.__name__,
