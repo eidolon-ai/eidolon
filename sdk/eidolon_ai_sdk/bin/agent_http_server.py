@@ -1,23 +1,27 @@
+from collections import deque
 from importlib.metadata import version, PackageNotFoundError
 
 import argparse
+import dotenv
+import json
 import logging.config
 import pathlib
-from collections import deque
-from contextlib import asynccontextmanager
-
-import dotenv
 import uvicorn
 import yaml
-from eidolon_ai_sdk.io.events import StreamEvent
-from pydantic import TypeAdapter
-from fastapi.openapi.utils import get_openapi
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.openapi.utils import get_openapi
+from pydantic import TypeAdapter
+from sse_starlette import EventSourceResponse, ServerSentEvent
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
+from typing import AsyncIterable
 
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.io.events import StreamEvent
+from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.request_context import ContextMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
@@ -101,6 +105,27 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
 
+    # add system level endpoints
+    @app.get(path="/system/health", tags=["system"], description="Health check")
+    async def health():
+        return {"status": "ok"}
+
+    # noinspection PyShadowingNames
+    @app.get("/system/version", tags=["system"], description="Get the version of the EIDOS SDK")
+    async def version():
+        return {"version": EIDOLON_SDK_VERSION}
+
+    @app.get("/system/processes", tags=["system"], description="Get all processes")
+    async def processes():
+        async def process_to_dict() -> AsyncIterable[ServerSentEvent]:
+            async for process in ProcessDoc.find(query={}, projection={"data": 0}):
+                process = process.model_dump()
+                process["process_id"] = process["_id"]
+                del process["_id"]
+                yield ServerSentEvent(id=process["process_id"], data=json.dumps(process))
+
+        return EventSourceResponse(process_to_dict())
+
     try:
         for resource_or_tuple in resource_generator:
             if isinstance(resource_or_tuple, Resource):
@@ -162,11 +187,19 @@ def main():
     )
 
 
+# noinspection PyTypeChecker
 def start_app(lifespan):
     _app = FastAPI(lifespan=lifespan)
     _app.add_middleware(LoggingMiddleware)
     _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(ContextMiddleware)
+    _app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     return _app
 
 
