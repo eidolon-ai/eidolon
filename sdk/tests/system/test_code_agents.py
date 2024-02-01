@@ -8,7 +8,9 @@ from httpx import HTTPStatusError
 
 from eidos_sdk.agent.agent import register_program, AgentState, register_action
 from eidos_sdk.agent.client import Agent, Process
-from eidos_sdk.io.events import ErrorEvent, AgentStateEvent, StringOutputEvent
+from eidos_sdk.io.events import ErrorEvent, AgentStateEvent, StringOutputEvent, StartStreamContextEvent, \
+    EndStreamContextEvent, SuccessEvent
+from eidos_sdk.util.stream_collector import stream_manager
 
 
 class HelloWorld:
@@ -27,6 +29,27 @@ class HelloWorld:
         if name.lower() == "error":
             raise Exception("big bad server error")
         yield StringOutputEvent(content=f"Hello, {name}!")
+
+    @register_program()
+    async def lots_o_context(self):
+        yield StringOutputEvent(content="1")
+        yield StringOutputEvent(content="2")
+        async for e in _m(_s(3, 4), context="c1"):
+            yield e
+        async for e in _m(_s(5, 6, after=_m(_s(7, 8), context="c3")), context="c2"):
+            yield e
+
+
+async def _s(*_args, after=None):
+    for a in _args:
+        yield StringOutputEvent(content=str(a))
+    if after:
+        async for a in after:
+            yield a
+
+
+def _m(stream, context: str):
+    return stream_manager(stream, StartStreamContextEvent(context_id=context))
 
 
 class TestHelloWorld:
@@ -94,6 +117,33 @@ class TestHelloWorld:
             await Process.get(stream).status()
         assert exc.value.response.status_code == 500
         assert exc.value.response.json() == "big bad server error"
+
+    async def test_lots_o_context(self, server):
+        agent = Agent.get("HelloWorld")
+        resp = await agent.program("lots_o_context")
+        assert resp.data == "12"
+
+    async def test_lots_o_context_streaming(self, server):
+        agent = Agent.get("HelloWorld")
+        events = [e async for e in agent.stream_program("lots_o_context")]
+        assert events[1:-1] == [
+            StringOutputEvent(content="1"),
+            StringOutputEvent(content="2"),
+            StartStreamContextEvent(context_id='c1'),
+            StringOutputEvent(content="3", stream_context="c1"),
+            StringOutputEvent(content="4", stream_context="c1"),
+            EndStreamContextEvent(context_id='c1'),
+            StartStreamContextEvent(context_id='c2'),
+            StringOutputEvent(content="5", stream_context="c2"),
+            StringOutputEvent(content="6", stream_context="c2"),
+            StartStreamContextEvent(context_id='c3', stream_context="c2"),
+            StringOutputEvent(content="7", stream_context="c2.c3"),
+            StringOutputEvent(content="8", stream_context="c2.c3"),
+            EndStreamContextEvent(stream_context='c2', context_id='c3'),
+            EndStreamContextEvent(context_id='c2'),
+            AgentStateEvent(state='terminated', available_actions=[]),
+        ]
+
 
 
 class StateMachine:

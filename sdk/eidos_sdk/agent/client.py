@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import jsonref
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, Extra
 from typing import List, Any, AsyncIterator, Optional
 from urllib.parse import urljoin
 
@@ -26,7 +26,7 @@ class Agent(BaseModel):
     machine: str = Field(default_factory=AgentOS.current_machine_url)
     agent: str
 
-    def stream_program(self, program_name: str, body: Any) -> AgentResponseIterator:
+    def stream_program(self, program_name: str, body: Optional[Any] = None) -> AgentResponseIterator:
         return Program(machine=self.machine, agent=self.agent, program=program_name).stream_execute(body)
 
     async def program(self, program_name: str, body: Optional[Any] = None) -> ProcessStatus:
@@ -64,7 +64,7 @@ class Program(BaseModel):
             kwargs["machine"] = ".".join(parts[:-2])
         return cls(**kwargs)
 
-    def stream_execute(self, body: Any) -> AgentResponseIterator:
+    def stream_execute(self, body: Optional[Any] = None) -> AgentResponseIterator:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
         return AgentResponseIterator(stream_content(url, body))
 
@@ -96,7 +96,7 @@ class Process(BaseModel):
         return cls(machine=stream_response.machine, agent=stream_response.agent, process_id=stream_response.process_id)
 
 
-class ProcessStatus(Process):
+class ProcessStatus(Process, extra=Extra.allow):
     state: str
     available_actions: List[str]
 

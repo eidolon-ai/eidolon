@@ -67,7 +67,10 @@ def stream_manager(stream: AsyncIterator[StreamEvent], context: StartStreamConte
         yield context.model_copy()
         try:
             async for event in stream:
-                event.stream_context = context.get_nested_context()
+                acc = [context.get_nested_context()]
+                if event.stream_context:
+                    acc.append(event.stream_context)
+                event.stream_context = ".".join(acc)
                 yield event
         except Exception as e:
             # record error on stream context, but will reraise for outer context to handle

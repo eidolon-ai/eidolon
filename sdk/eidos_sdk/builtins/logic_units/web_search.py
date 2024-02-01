@@ -60,19 +60,8 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
             if self.spec.summarizer == "BeautifulSoup":
                 soup = BeautifulSoup(text, "lxml")
                 return soup.get_text(separator="\n", strip=True)
-            elif self.spec.summarizer:
-                # todo, it would be interesting to summarize in the background and replace messages in the background
-                memory_unit = self.locate_unit(MemoryUnit)
-                context = CallContext(process_id=RequestContext.get("process_id", ...))
-                messages = await memory_unit.getConversationHistory(context)
-                summary = await Program.get(self.spec.summarizer).execute(
-                    dict(
-                        messages=messages,
-                        text=text,
-                    )
-                )
-                return summary.data()
-            return text
+            else:
+                raise ValueError(f"Summarizer {self.spec.summarizer} not supported")
 
     @llm_function()
     async def search(
