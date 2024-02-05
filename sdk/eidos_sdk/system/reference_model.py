@@ -38,8 +38,8 @@ class Reference(BaseModel):
 
     Examples:
         Reference(implementation=fqn(Foo)                           # Returns an instance of Foo
-        Reference[FooBase](implementation=fqn(Foo).instantiate()    # Returns an instance of Foo
-        Reference[FooBase](implementation=fqn(Bar)                  # Raises ValueError
+        Reference[FooBase](implementation=fqn(Foo)).instantiate()   # Returns an instance of Foo
+        Reference[FooBase](implementation=fqn(Bar))                 # Raises ValueError
         Reference[FooBase, Foo]().instantiate()                     # Returns an instance of Foo
         Reference[FooBase]().instantiate()                          # Returns an instance of FooBase
 
@@ -111,7 +111,12 @@ class Reference(BaseModel):
 
     @model_validator(mode="after")
     def _validate(self):
-        self._build_reference_spec()
+        reference_class = self._get_reference_class()
+        spec_type = self.get_spec_type(reference_class)
+        if spec_type:
+            spec_type.model_validate(self.model_extra or {})
+        elif issubclass(reference_class, BaseModel):
+            reference_class.model_validate(self.model_extra or {})
         return self
 
     @staticmethod
@@ -129,20 +134,20 @@ class Reference(BaseModel):
                 return None
         return None
 
-    def _build_reference_spec(self):
-        spec_type = self.get_spec_type(self._get_reference_class())
-        if spec_type:
-            return spec_type.model_validate(self.model_extra or {})
-        else:
-            return self.model_extra or None
-
     def _get_reference_class(self):
         return for_name(self.implementation, self._bound or object)
 
     def instantiate(self, *args, **kwargs):
-        spec = self._build_reference_spec()
-        if spec is not None:
-            kwargs["spec"] = spec
+        reference_class = self._get_reference_class()
+        spec_type = self.get_spec_type(reference_class)
+        if spec_type:
+            kwargs["spec"] = spec_type.model_validate(self.model_extra or {})
+        elif issubclass(reference_class, BaseModel):
+            for k, v in (self.model_extra or {}).items():
+                kwargs[k] = v
+        elif self.model_extra:
+            kwargs["spec"] = self.model_extra
+
         return self._get_reference_class()(*args, **kwargs)
 
 

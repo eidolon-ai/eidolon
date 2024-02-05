@@ -9,6 +9,7 @@ from eidos_sdk.system.resources.resources_base import load_resources, Resource
 from eidos_sdk.util.logger import logger
 
 T = TypeVar("T", bound="Resource")  # noqa: F821
+S = TypeVar("S", bound="BaseModel")  # noqa: F821
 
 
 class AgentOS:
@@ -51,6 +52,13 @@ class AgentOS:
         if resource.metadata.name in bucket:
             if bucket[resource.metadata.name][1] == "builtin":
                 logger.info(f"Overriding builtin resource '{resource.kind}.{resource.metadata.name}'")
+
+                old_impl = getattr(bucket[resource.metadata.name][0], "spec")["implementation"]
+                if not old_impl:
+                    raise ValueError("Resource unable to merge override with builtin")
+                new_spec = getattr(resource, "spec")
+                if "implementation" not in new_spec:
+                    new_spec["implementation"] = old_impl
             else:
                 raise ValueError(
                     f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"
@@ -71,6 +79,12 @@ class AgentOS:
             if default is not ...:
                 return default
             raise ValueError(f"Resource {name} not found in bucket {bucket}")
+
+    @classmethod
+    def get_instance(cls, kind: Type[S], **kwargs) -> S:
+        from eidos_sdk.system.reference_model import Reference
+
+        return Reference[kind, kind.__name__]().instantiate(**kwargs)
 
     @classmethod
     def get_resource_source(cls, bucket, name: str) -> str:

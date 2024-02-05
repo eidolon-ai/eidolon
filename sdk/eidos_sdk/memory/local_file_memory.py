@@ -1,3 +1,4 @@
+import glob
 from pathlib import Path
 
 from pydantic import Field, field_validator, BaseModel
@@ -136,6 +137,10 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
 
         # Check if the file exists
         return safe_file_path.exists()
+
+    def glob(self, pattern):
+        safe_file_path = self.resolve(pattern)
+        return glob.glob(str(safe_file_path))
 
     def start(self):
         """

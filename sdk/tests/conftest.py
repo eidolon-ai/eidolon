@@ -18,6 +18,7 @@ from vcr.stubs import httpx_stubs
 from vcr.stubs.httpx_stubs import _shared_vcr_send, _record_responses
 
 import eidos_sdk.system.processes as processes
+from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.bin.agent_http_server import start_os, start_app
 from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidos_sdk.memory.local_file_memory import LocalFileMemory
@@ -198,6 +199,15 @@ def machine_manager(file_memory, symbolic_memory, similarity_memory):
             )
 
     return fn
+
+
+@pytest.fixture
+async def machine(machine_manager):
+    async with machine_manager() as m:
+        instantiated = m.spec.instantiate()
+        AgentOS.load_machine(instantiated)
+        yield instantiated
+        AgentOS.reset()
 
 
 @pytest.fixture(scope="module")

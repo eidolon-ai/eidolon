@@ -38,6 +38,7 @@ from eidos_sdk.system.agent_machine import AgentMachine
 from eidos_sdk.system.resources.reference_resource import ReferenceResource
 from eidos_sdk.system.resources.resources_base import Metadata
 from eidos_sdk.util.class_utils import fqn
+from eidos_sdk.util.resumable import ResumePointConfig
 
 
 def _to_resource(maybe_tuple: type | Tuple[type, type]) -> ReferenceResource:
@@ -112,5 +113,7 @@ def named_builtins():
         FilesystemLoader,
         ToTChecker,
         OpenAiSpeech,
+        # config objects
+        ResumePointConfig,
     ]
     return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list]
