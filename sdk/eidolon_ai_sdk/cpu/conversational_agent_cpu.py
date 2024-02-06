@@ -151,7 +151,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 yield event
         except ManagedContextError:
             if self.spec.allow_tool_errors:
-                logger.warning("Error calling tool " + tool_def.eidos_handler.name)
+                logger.warning("Error calling tool " + tool_def.eidolon_handler.name)
             else:
                 raise
 
