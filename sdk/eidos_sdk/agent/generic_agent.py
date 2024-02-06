@@ -13,7 +13,7 @@ from eidos_sdk.agent.agent import (
     register_program,
 )
 from eidos_sdk.io.events import AgentStateEvent
-from eidos_sdk.system.eidos_handler import EidosHandler
+from eidos_sdk.system.fn_handler import FnHandler
 from eidos_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.schema_to_model import schema_to_model
@@ -46,13 +46,13 @@ class LlmResponse(BaseModel):
     response: str
 
 
-def make_description(agent: object, _handler: EidosHandler) -> str:
+def make_description(agent: object, _handler: FnHandler) -> str:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     return spec.description
 
 
-def make_input_schema(agent: object, handler: EidosHandler) -> Type[BaseModel]:
+def make_input_schema(agent: object, handler: FnHandler) -> Type[BaseModel]:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     properties: Dict[str, Any] = {}
@@ -75,7 +75,7 @@ def make_input_schema(agent: object, handler: EidosHandler) -> Type[BaseModel]:
     return schema_to_model(schema, f"{handler.name.capitalize()}InputModel")
 
 
-def make_output_schema(agent: object, handler: EidosHandler) -> Type[Any]:
+def make_output_schema(agent: object, handler: FnHandler) -> Type[Any]:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     if spec.output_schema == "str":

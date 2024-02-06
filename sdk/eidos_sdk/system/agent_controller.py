@@ -28,7 +28,7 @@ from eidos_sdk.io.events import (
     ObjectOutputEvent,
 )
 from eidos_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
-from eidos_sdk.system.eidos_handler import EidosHandler, get_handlers
+from eidos_sdk.system.fn_handler import FnHandler, get_handlers
 from eidos_sdk.system.processes import ProcessDoc, store_events, load_events
 from eidos_sdk.system.request_context import RequestContext
 from eidos_sdk.util.logger import logger
@@ -37,8 +37,8 @@ from eidos_sdk.util.logger import logger
 class AgentController:
     name: str
     agent: object
-    programs: typing.Dict[str, EidosHandler]
-    actions: typing.Dict[str, EidosHandler]
+    programs: typing.Dict[str, FnHandler]
+    actions: typing.Dict[str, FnHandler]
 
     def __init__(self, name, agent):
         self.name = name
@@ -104,7 +104,7 @@ class AgentController:
 
     async def run_program(
         self,
-        handler: EidosHandler,
+        handler: FnHandler,
         process_id: typing.Optional[str] = None,
         **kwargs,
     ):
@@ -165,7 +165,7 @@ class AgentController:
             # run the program synchronously
             return await self.send_response(handler, process, **kwargs)
 
-    async def send_response(self, handler: EidosHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
+    async def send_response(self, handler: FnHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
         state_change_event = None
         final_event = None
         result_object = None
@@ -268,7 +268,7 @@ class AgentController:
         yield OutputEvent.get(content=data)
         yield AgentStateEvent(state=state, available_actions=self.get_available_actions(state))
 
-    def process_action(self, handler: EidosHandler):
+    def process_action(self, handler: FnHandler):
         logger.debug(f"Registering action {handler.name} for program {self.name}")
         sig = inspect.signature(handler.fn)
         params = dict(sig.parameters)
@@ -400,7 +400,7 @@ class AgentController:
     async def get_latest_process_event(process_id) -> ProcessDoc:
         return await ProcessDoc.find(query=dict(_id=process_id), sort=dict(updated=-1))
 
-    def create_response_model(self, handler: EidosHandler):
+    def create_response_model(self, handler: FnHandler):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
         fields = {key: (fieldinfo.annotation, fieldinfo) for key, fieldinfo in SyncStateResponse.model_fields.items()}
         return_type = handler.output_model_fn(self.agent, handler)

@@ -9,7 +9,7 @@ from eidos_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec,
 )
-from eidos_sdk.system.eidos_handler import EidosHandler, register_handler
+from eidos_sdk.system.fn_handler import FnHandler, register_handler
 from eidos_sdk.system.reference_model import Specable, AnnotatedReference
 
 
@@ -34,10 +34,10 @@ class Agent(Specable[AgentSpec]):
 
 
 def register_program(
-    name: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-    description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-    input_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Type[BaseModel]]] = None,
-    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    name: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
+    description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Type[BaseModel]]] = None,
+    output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
 ):
     return register_handler(
         name=name,
@@ -51,9 +51,9 @@ def register_program(
 def register_action(
     *allowed_states: str,
     name: str = None,
-    description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
-    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, FnHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
 ):
     if not allowed_states:
         raise ValueError("Must specify at least one valid state")

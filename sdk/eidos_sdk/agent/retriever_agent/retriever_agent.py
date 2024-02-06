@@ -9,12 +9,12 @@ from eidos_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoad
 from eidos_sdk.agent.retriever_agent.document_reranker import DocumentReranker
 from eidos_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
 from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.system.eidos_handler import EidosHandler
+from eidos_sdk.system.fn_handler import FnHandler
 from eidos_sdk.system.reference_model import Specable, AnnotatedReference, Reference
 from eidos_sdk.util.class_utils import fqn
 
 
-def make_description(agent: object, _handler: EidosHandler) -> str:
+def make_description(agent: object, _handler: FnHandler) -> str:
     # noinspection PyUnresolvedReferences
     return agent.spec.description
 

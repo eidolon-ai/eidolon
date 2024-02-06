@@ -12,7 +12,7 @@ from eidos_sdk.cpu.llm_message import ToolCall
 from eidos_sdk.cpu.llm_unit import LLMCallFunction
 from eidos_sdk.cpu.processing_unit import ProcessingUnit
 from eidos_sdk.io.events import SuccessEvent, ObjectOutputEvent, ErrorEvent, BaseStreamEvent, StringOutputEvent
-from eidos_sdk.system.eidos_handler import register_handler, EidosHandler, get_handlers
+from eidos_sdk.system.fn_handler import register_handler, FnHandler, get_handlers
 from eidos_sdk.util.logger import logger
 
 
@@ -20,7 +20,7 @@ from eidos_sdk.util.logger import logger
 class LLMToolWrapper:
     logic_unit: LogicUnit
     llm_message: LLMCallFunction
-    eidos_handler: EidosHandler
+    eidos_handler: FnHandler
     input_model: typing.Type[BaseModel]
 
     async def execute(self, tool_call: ToolCall) -> AsyncIterator[BaseStreamEvent]:
@@ -77,13 +77,13 @@ class LLMToolWrapper:
 
 def llm_function(
     name: str = None,
-    description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
-    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, FnHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
 ):
     return register_handler(name=name, description=description, input_model=input_model, output_model=output_model)
 
 
 class LogicUnit(ProcessingUnit, ABC):
-    async def build_tools(self, call_context: CallContext) -> List[EidosHandler]:
+    async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
         return get_handlers(self)

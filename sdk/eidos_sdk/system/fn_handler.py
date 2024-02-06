@@ -9,20 +9,20 @@ from pydantic.fields import FieldInfo
 
 
 @dataclass
-class EidosHandler:
+class FnHandler:
     name: str
     fn: callable
-    description: typing.Callable[[object, EidosHandler], str]
-    input_model_fn: typing.Callable[[object, EidosHandler], typing.Type[BaseModel]]
-    output_model_fn: typing.Callable[[object, EidosHandler], type]
+    description: typing.Callable[[object, FnHandler], str]
+    input_model_fn: typing.Callable[[object, FnHandler], typing.Type[BaseModel]]
+    output_model_fn: typing.Callable[[object, FnHandler], type]
     extra: dict
 
 
 def register_handler(
     name: str = None,
-    description: str | typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
-    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    description: str | typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, FnHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
     **extra,
 ):
     if isinstance(description, str):
@@ -33,7 +33,7 @@ def register_handler(
         docs_fn = lambda fn: description  # noqa: E731
     return lambda fn: _add_handler(
         fn,
-        EidosHandler(
+        FnHandler(
             name=name or fn.__name__,
             description=docs_fn(fn),
             fn=fn,
@@ -56,7 +56,7 @@ def _add_handler(fn, handler):
     return fn
 
 
-def get_input_model(_obj, handler: EidosHandler) -> typing.Type[BaseModel]:
+def get_input_model(_obj, handler: FnHandler) -> typing.Type[BaseModel]:
     sig = inspect.signature(handler.fn).parameters
     hints = typing.get_type_hints(handler.fn, include_extras=True)
     fields = {}
@@ -80,11 +80,11 @@ def get_input_model(_obj, handler: EidosHandler) -> typing.Type[BaseModel]:
     return input_model
 
 
-def get_output_model(_obj, handler: EidosHandler):
+def get_output_model(_obj, handler: FnHandler):
     return typing.get_type_hints(handler.fn, include_extras=True).get("return", typing.Any)
 
 
-def get_handlers(obj) -> typing.List[EidosHandler]:
+def get_handlers(obj) -> typing.List[FnHandler]:
     acc = []
     for name in dir(obj):
         if hasattr(getattr(obj, name), "eidolon_handlers"):
