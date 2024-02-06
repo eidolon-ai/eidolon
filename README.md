@@ -8,6 +8,9 @@ The eidolon framework represents a sophisticated architecture for designing and 
 ## Demo
 [Deploy a Chatbot: Help Swifties learn about Kelce](https://www.youtube.com/watch?v=jU_HYhWm6qE)
 
+
+# Getting Started
+
 ## Step 0: Prerequisites
 
 * [Python 3.11](https://formulae.brew.sh/formula/python@3.11)
