@@ -8,7 +8,7 @@ include = ["logging.conf"]
 
 [tool.poetry.scripts]
 eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"
-#eidos-create-agent = "eidos_sdk.bin.agent_creator:main"
+#eidolon-create-agent = "eidolon_ai_sdk.bin.agent_creator:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"

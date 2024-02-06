@@ -1,3 +1,3 @@
 #!/bin/zsh
 
-$(poetry env info -p)/bin/python3 eidos_sdk.bin.agent_http_server $@
+$(poetry env info -p)/bin/python3 eidolon_ai_sdk.bin.agent_http_server $@
