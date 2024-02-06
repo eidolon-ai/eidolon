@@ -25,15 +25,21 @@ class AutoParser(DocumentParser):
 
             yield from BS4HTMLParser(BS4HTMLParserSpec()).parse(blob)
         elif blob.mimetype == "text/x-python":
-            from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import LanguageParser
+            from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import (
+                LanguageParser,
+            )
 
             yield from LanguageParser(LanguageParserSpec(language="python")).parse(blob)
         elif blob.mimetype == "application/javascript":
-            from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import LanguageParser
+            from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import (
+                LanguageParser,
+            )
 
             yield from LanguageParser(LanguageParserSpec(language="javascript")).parse(blob)
         elif blob.mimetype == "text/x-cobol":
-            from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import LanguageParser
+            from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.programing_language_parser import (
+                LanguageParser,
+            )
 
             yield from LanguageParser(LanguageParserSpec(language="cobol")).parse(blob)
         elif (

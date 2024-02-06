@@ -3,7 +3,12 @@ import os
 from pathlib import Path
 from typing import Dict, Any, Iterable
 
-from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader, FileChangeset, FileInfo, DocumentLoaderSpec
+from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
+    DocumentLoader,
+    FileChangeset,
+    FileInfo,
+    DocumentLoaderSpec,
+)
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.reference_model import Specable, T
 
