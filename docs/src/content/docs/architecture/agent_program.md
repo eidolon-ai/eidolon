@@ -1,6 +1,6 @@
 ---
 title: Structure of an Agent
-description: An overview of the AgentProgram within EidOS.
+description: An overview of the AgentProgram within Eidolon.
 ---
 
 ## What is an agent?

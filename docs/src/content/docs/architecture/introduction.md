@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: An overview of EidOS.
+description: An overview of Eidolon.
 ---
 
 The eidolon framework represents a sophisticated architecture for designing and operating agent-based systems. It is purpose-built to support the agile development of software agents—modular components designed to perform specific tasks autonomously

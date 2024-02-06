@@ -1,6 +1,6 @@
 ---
 title: Conclusion
-description: An overview of EidOS.
+description: An overview of Eidolon.
 ---
 
 ## Overview of the Eidolon Framework
