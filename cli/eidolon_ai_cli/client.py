@@ -11,10 +11,10 @@ from prompt_toolkit import PromptSession, print_formatted_text, HTML
 from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 
-from eidos_cli.StreamProcessor import StreamProcessor
-from eidos_cli.live_console import LiveConsole
-from eidos_cli.markdown import Markdown
-from eidos_cli.schema import Schema, AgentEndpoint
+from eidolon_ai_cli.StreamProcessor import StreamProcessor
+from eidolon_ai_cli.live_console import LiveConsole
+from eidolon_ai_cli.markdown import Markdown
+from eidolon_ai_cli.schema import Schema, AgentEndpoint
 
 
 class EidolonClient:

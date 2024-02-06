@@ -6,8 +6,8 @@ import dotenv
 from click import Option, Context
 from click.core import ParameterSource
 
-from eidos_cli.security import security_providers
-from eidos_cli.terminal2 import EidolonCLI
+from eidolon_ai_cli.security import security_providers
+from eidolon_ai_cli.terminal2 import EidolonCLI
 
 dotenv.load_dotenv()
 
