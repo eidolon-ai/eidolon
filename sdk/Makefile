@@ -1,6 +1,6 @@
 .PHONY: docker push_image
 
-PROJECT ?= docker.io/eidosai
+PROJECT ?= docker.io/eidolonai
 VERSION := $(shell grep '^version = ' pyproject.toml | awk -F '"' '{print $$2}')
 
 .make_poetry_install: pyproject.toml poetry.lock

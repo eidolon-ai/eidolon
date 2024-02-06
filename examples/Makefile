@@ -1,6 +1,6 @@
 .PHONY: docker_code_search
 
-PROJECT ?= docker.io/eidosai
+PROJECT ?= docker.io/eidolonai
 VERSION := $(shell grep '^version = ' ../sdk/pyproject.toml | awk -F '"' '{print $$2}')
 
 # Define the directories
