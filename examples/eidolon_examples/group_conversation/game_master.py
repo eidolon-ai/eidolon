@@ -7,14 +7,14 @@ from eidolon_examples.group_conversation.base_conversation_coordinator import (
     BaseConversationCoordinatorSpec,
     StartConversation,
 )
-from eidos_sdk.agent.agent import register_program, AgentState, register_action
-from eidos_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
-from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
-from eidos_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidos_sdk.io.events import AgentStateEvent
-from eidos_sdk.system.reference_model import Specable, AnnotatedReference
-from eidos_sdk.system.request_context import RequestContext
-from eidos_sdk.util.stream_collector import StringStreamCollector
+from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
+from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
+from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.io.events import AgentStateEvent
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.util.stream_collector import StringStreamCollector
 
 
 class PlayerStatement(BaseModel):

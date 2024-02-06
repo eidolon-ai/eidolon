@@ -1,22 +1,22 @@
 ---
 title: Quickstart
-description: A Hello World example to get you up and running with EidOS.
+description: A Hello World example to get you up and running with Eidolon.
 ---
 
 ## Goals
-This document covers installing **EidOS**, creating your first **AgentProgram**, and running an **AgentMachine**.
+This document covers installing **Eidolon**, creating your first **AgentProgram**, and running an **AgentMachine**.
 
 ## Prerequisites
 
 * [Python 3.11](https://formulae.brew.sh/formula/python@3.11)
 * [OpenAI api key](https://platform.openai.com/account/api-keys): You should have an envar OPENAI_API_KEY set to your OpenAI api key.
 
-## Step 1: Install Eidos SDK
+## Step 1: Install Eidolon SDK
 
-First, you need to install the Eidos SDK. Open your terminal and run the following command:
+First, you need to install the Eidolon SDK. Open your terminal and run the following command:
 
 ```bash
-pip install eidos-sdk
+pip install eidolon-ai-sdk
 ```
 
 ## Step 2: Create an Agent
@@ -44,14 +44,14 @@ spec:
       description: The caller's name
 ```
 
-## Step 3: Run Eidos Server
+## Step 3: Run Eidolon Server
 
-Finally, open a new terminal window and run your machine using eidos-server.
+Finally, open a new terminal window and run your machine using eidolon-server.
 
 ```bash
-eidos-server -m local_dev hello_world
+eidolon-server -m local_dev hello_world
 ```
-🚨 Getting `command not found: eidos-server`? Open a new terminal window and try the command again.
+🚨 Getting `command not found: eidolon-server`? Open a new terminal window and try the command again.
 
 ⚠️ The `-m local_dev` option specifies using the `local_dev` builtin Machine resource. This machine uses in-memory symbolic memory rather than mongo, so state will disappear between server restarts.
 
@@ -66,4 +66,4 @@ curl -X POST http://0.0.0.0:8080/agents/hello_world/programs/question -H 'Conten
 You should now see something like `Hello, World! 🌍👋`
 
 
-And that's it! You have successfully set up and used a basic project using the Eidos SDK. To see more endpoints on your agent machine, visit the [swagger ui](http://0.0.0.0:8080/docs).
+And that's it! You have successfully set up and used a basic project using the Eidolon SDK. To see more endpoints on your agent machine, visit the [swagger ui](http://0.0.0.0:8080/docs).

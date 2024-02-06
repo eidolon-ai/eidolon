@@ -6,14 +6,14 @@ from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
-from eidos_sdk.agent.client import Program
-from eidos_sdk.cpu.agent_cpu import AgentCPU, Thread
-from eidos_sdk.cpu.agent_io import CPUMessageTypes, SystemCPUMessage
-from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.cpu.logic_unit import LogicUnit
-from eidos_sdk.io.events import StartStreamContextEvent, OutputEvent
-from eidos_sdk.system.reference_model import AnnotatedReference, Specable, Reference
-from eidos_sdk.util.stream_collector import StreamCollector, stream_manager, merge_streams
+from eidolon_ai_sdk.agent.client import Program
+from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, Thread
+from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes, SystemCPUMessage
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
+from eidolon_ai_sdk.io.events import StartStreamContextEvent, OutputEvent
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable, Reference
+from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, merge_streams
 
 
 class InputValidatorBody(BaseModel):

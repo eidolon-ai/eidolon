@@ -17,18 +17,18 @@ from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 from vcr.stubs.httpx_stubs import _shared_vcr_send, _record_responses
 
-import eidos_sdk.system.processes as processes
-from eidos_sdk.bin.agent_http_server import start_os, start_app
-from eidos_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
-from eidos_sdk.memory.local_file_memory import LocalFileMemory
-from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
-from eidos_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
-from eidos_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
-from eidos_sdk.system.reference_model import Reference
-from eidos_sdk.system.resources.agent_resource import AgentResource
-from eidos_sdk.system.resources.machine_resource import MachineResource
-from eidos_sdk.system.resources.resources_base import Resource, Metadata
-from eidos_sdk.util.class_utils import fqn
+import eidolon_ai_sdk.system.processes as processes
+from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
+from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
+from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
+from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
+from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
+from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
+from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
+from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
+from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
+from eidolon_ai_sdk.util.class_utils import fqn
 
 
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai
@@ -160,7 +160,7 @@ def run_app(app_builder, port):
                 pass
 
             print(f"Server started on port {port}")
-            os.environ["EIDOS_LOCAL_MACHINE"] = f"http://localhost:{port}"
+            os.environ["EIDOLON_LOCAL_MACHINE"] = f"http://localhost:{port}"
             yield f"http://localhost:{port}"
         finally:
             # server_wrapper[0].force_exit = True

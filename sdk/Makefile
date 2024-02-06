@@ -1,15 +1,15 @@
 .PHONY: docker push_image
 
-PROJECT ?= docker.io/eidosai
+PROJECT ?= docker.io/eidolonai
 VERSION := $(shell grep '^version = ' pyproject.toml | awk -F '"' '{print $$2}')
 
 .make_poetry_install: pyproject.toml poetry.lock
 	poetry install
 	@touch $@
 
-dist: .make_poetry_install $(wildcard eidos_sdk/*)
-	rm -f dist/eidos_sdk*.tar.gz.
-	rm -f dist/eidos_sdk*.whl.
+dist: .make_poetry_install $(wildcard eidolon_ai_sdk/*)
+	rm -f dist/eidolon_ai_sdk*.tar.gz.
+	rm -f dist/eidolon_ai_sdk*.whl.
 	poetry build
 
 dist/requirements.txt: poetry.lock pyproject.toml

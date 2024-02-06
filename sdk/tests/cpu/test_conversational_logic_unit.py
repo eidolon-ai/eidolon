@@ -5,15 +5,15 @@ import pytest
 from fastapi import Body
 from pydantic import BaseModel
 
-from eidos_sdk.agent.agent import register_program, register_action, AgentState
-from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.cpu.agents_logic_unit import (
+from eidolon_ai_sdk.agent.agent import register_program, register_action, AgentState
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec,
     AgentCallHistory,
 )
-from eidos_sdk.cpu.call_context import CallContext
-from eidos_sdk.io.events import SuccessEvent
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.io.events import SuccessEvent
 
 
 class FooModel(BaseModel):

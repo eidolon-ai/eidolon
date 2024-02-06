@@ -1,11 +1,11 @@
 ---
 title: Next Steps
-description: Dive deeper into developing with EidOS.
+description: Dive deeper into developing with Eidolon.
 ---
 
 ## Setup
 
-You will need a python environment with EidOS (eidos-sdk) installed. Although the exact directory structure is not required, we will
+You will need a python environment with Eidolon (eidolon-ai-sdk) installed. Although the exact directory structure is not required, we will
 reference the files in the following structure.
 
 ```
@@ -33,19 +33,19 @@ touch resources/hello_world_agent.yaml
 touch resources/frugal_cpu.yaml
 touch resources/machine.yaml
 poetry env use python3.11
-poetry add eidos-sdk
+poetry add eidolon-ai-sdk
 ```
 
 Currently you will neet to stop and rerun the server when you make changes to your agents.
 ```bash
-poetry run eidos-server -m local_dev resources
+poetry run eidolon-server -m local_dev resources
 ```
 
 The [swagger ui](http://0.0.0.0:8080/docs) will be an easy place to try out your agents.
 
 ## 1. Agent Communication
 
-EidOS simplifies agent-to-agent communication with a built-in mechanism enabling seamless interaction between agents. In the example below we will reuse the `hello_world` agent from our quickstart guide, and create a second `qa` agent who will interface with the hello world agent.
+Eidolon simplifies agent-to-agent communication with a built-in mechanism enabling seamless interaction between agents. In the example below we will reuse the `hello_world` agent from our quickstart guide, and create a second `qa` agent who will interface with the hello world agent.
 
 _hello_world_agent.yaml_
 ```yaml
@@ -90,13 +90,13 @@ Now run your machine and hit the "question" endpoint on your qa agent. In the ma
 ## 2. Custom Agents
 
 ### 2.1 Code Programs
-With EidOS, you can customize your agents by defining their implementation and referencing it in a YAML file.
+With Eidolon, you can customize your agents by defining their implementation and referencing it in a YAML file.
 
 _hello_world.py_
 ```python
 from typing import Annotated
 from fastapi import Body
-from eidos_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.agent import register_program
 
 
 class HelloWorld:
@@ -127,7 +127,7 @@ _hello_world.py_
 ```python
 from typing import Annotated
 from fastapi import Body
-from eidos_sdk.agent.agent import register_program, register_action, AgentState
+from eidolon_ai_sdk.agent.agent import register_program, register_action, AgentState
 
 
 class HelloWorld:
@@ -162,9 +162,9 @@ from textwrap import dedent
 from typing import Annotated, Literal, List
 from fastapi import Body
 from pydantic import BaseModel
-from eidos_sdk.agent.agent import register_program, Agent
-from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
-from eidos_sdk.util.logger import logger
+from eidolon_ai_sdk.agent.agent import register_program, Agent
+from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.util.logger import logger
 
 
 class TestCase(BaseModel):
@@ -289,7 +289,7 @@ metadata:
   name: frugal_cpu
 
 spec:
-  implementation: "eidos_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
+  implementation: "eidolon_ai_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
   cpu:
     spec:
       llm_unit:
@@ -322,7 +322,7 @@ for any type of `Reference` within a spec. For example, we could have created a 
 
 Customize the server's machine by defining a "Machine" resource.
 
-Like any other resource within EidOS, you can define your own machine as well. The primary purpose of the machine is to 
+Like any other resource within Eidolon, you can define your own machine as well. The primary purpose of the machine is to 
 define shared singleton concepts like memory. Below we will use mongo for symbolic_memory rather than the in-memory 
 implementation. This machine expects mongo to be running locally at 27017.
 
@@ -335,13 +335,13 @@ metadata:
 
 spec:
   symbolic_memory:
-    implementation: "eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    implementation: "eidolon_ai_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
     mongo_database_name: "eidolon"
 ```
 
 Now you can specify the machine when we start the server.
 ```bash
-poetry run eidos-server -m mongo_machine local_dev resources
+poetry run eidolon-server -m mongo_machine local_dev resources
 ```
 
 **Note**: If we leave the name off of our machine resource it will be named "DEFAULT", override the builtin default, and

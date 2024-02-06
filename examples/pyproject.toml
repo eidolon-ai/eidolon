@@ -9,7 +9,7 @@ readme = "README.md"
 python = ">=3.11,<3.12"
 setuptools = "^69.0.2"
 transformers = "^4.35.2"
-eidos-sdk = {path = "../sdk", develop = true}
+eidolon-ai-sdk = {path = "../sdk", develop = true}
 pydub = "^0.25.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -20,7 +20,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-eidos-server = "eidos_sdk.bin.agent_http_server:main"
+eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"
 
 [tool.ruff]
 line-length = 121
