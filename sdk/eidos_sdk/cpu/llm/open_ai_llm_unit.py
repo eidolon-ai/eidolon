@@ -1,4 +1,5 @@
 import base64
+import inspect
 import json
 import logging
 import yaml
@@ -31,6 +32,7 @@ from eidos_sdk.io.events import (
 )
 from eidos_sdk.system.reference_model import Specable
 from eidos_sdk.util.logger import logger as eidos_logger
+from eidos_sdk.util.replay import replayable
 
 logger = eidos_logger.getChild("llm_unit")
 
@@ -135,6 +137,10 @@ class OpenAiGPTSpec(BaseModel):
     max_tokens: Optional[int] = None
 
 
+async def execute(*args, **kwargs):
+    return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
+
+
 class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
     model: str
     temperature: float
@@ -165,7 +171,8 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             logger.info("executing open ai llm request", extra=request)
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug("request content:\n" + yaml.dump(request))
-            llm_response = await self.llm.chat.completions.create(**request)
+            # llm_response = await self.llm.chat.completions.create(**request)
+            llm_response = await replayable(execute, name_override="OpenAI_chat_completions")(**request)
             complete_message = ""
             tools_to_call = []
             async for m_chunk in llm_response:
@@ -273,3 +280,11 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
     except json.JSONDecodeError as e:
         raise RuntimeError(f"Error decoding response function arguments for tool {name}") from e
     return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
+
+
+async def _raw_parser(resp):
+    awaited_resp = await resp
+    if inspect.isasyncgenfunction
+    async for m_chunk in awaited_resp:
+        chunk = cast(ChatCompletionChunk, m_chunk)
+        chunk.choices

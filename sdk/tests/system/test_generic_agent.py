@@ -18,8 +18,10 @@ from eidos_sdk.io.events import (
     StringOutputEvent,
 )
 from eidos_sdk.system.request_context import RequestContext
+from eidos_sdk.system.resources.reference_resource import ReferenceResource
 from eidos_sdk.system.resources.resources_base import Metadata, Resource
 from eidos_sdk.util.aiohttp import stream_content, post_content
+from eidos_sdk.util.replay import ReplayConfig, replay
 
 
 @pytest.fixture(scope="module")
@@ -182,6 +184,22 @@ class TestOutputTests:
             )
             assert "paris" in post["data"]["capital"].lower()
 
+    async def test_can_replay_llm_requests(self, run_app, generic_agent, request, file_memory):
+        async with run_app(generic_agent) as app:
+            AgentOS.register_resource(
+                ReferenceResource(
+                    apiVersion="eidolon/v1",
+                    metadata=Metadata(name=ReplayConfig.__name__),
+                    spec=dict(save_loc=f"resume_points/{request.node.name}"),
+                )
+            )
+
+            post = await post_content(f"{app}/agents/GenericAgent/programs/question",
+                                      dict(instruction="Tell me about france please"))
+
+            acc1 = [e async for e in await replay(f"resume_points/{request.node.name}/000_OpenAI_chat_completions")]
+            assert "paris" in post["data"]["capital"].lower()
+
     @pytest.mark.asyncio
     async def test_generic_agent_supports_object_output_with_stream(self, run_app, generic_agent, dog):
         generic_agent.spec["output_schema"] = {
@@ -216,7 +234,7 @@ class TestOutputTests:
                 f"{ra}/agents/GenericAgent/programs/question",
                 body=dict(
                     instruction="What is the capital of france and its population. Put the relevant parts in XML like blocks. "
-                    "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
+                                "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
                 ),
             )
             events = (e for e in [event async for event in stream])
