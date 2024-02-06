@@ -9,17 +9,17 @@ from eidolon_examples.group_conversation.conversation_agent import (
     SpeakResult,
     ThoughtResult,
 )
-from eidos_sdk.agent.client import Machine
-from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import (
+from eidolon_ai_sdk.agent.client import Machine
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.io.events import (
     ObjectOutputEvent,
     AgentContextStartEvent,
     AgentContextEndEvent,
     StartAgentCallEvent,
     StreamEvent,
 )
-from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.util.stream_collector import StringStreamCollector
+from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.util.stream_collector import StringStreamCollector
 
 
 class StartConversation(BaseModel):

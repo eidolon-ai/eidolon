@@ -1,8 +1,8 @@
 import pytest
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import DocumentParserSpec, DataBlob
-from eidos_sdk.agent.doc_manager.parsers.text_parsers import TextParser
-from eidos_sdk.agent.doc_manager.transformer.text_splitters import (
+from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParserSpec, DataBlob
+from eidolon_ai_sdk.agent.doc_manager.parsers.text_parsers import TextParser
+from eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters import (
     RecursiveCharacterTextSplitter,
     RecursiveCharacterTextSplitterSpec,
 )

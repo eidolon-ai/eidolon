@@ -1,7 +1,7 @@
 import pytest
 from pymongo.errors import DuplicateKeyError
 
-from eidos_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
+from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 
 
 @pytest.fixture

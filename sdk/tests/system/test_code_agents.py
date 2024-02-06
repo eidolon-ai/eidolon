@@ -6,16 +6,16 @@ import pytest_asyncio
 from fastapi import Body, HTTPException
 from httpx import HTTPStatusError
 
-from eidos_sdk.agent.agent import register_program, AgentState, register_action
-from eidos_sdk.agent.client import Agent, Process
-from eidos_sdk.io.events import (
+from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
+from eidolon_ai_sdk.agent.client import Agent, Process
+from eidolon_ai_sdk.io.events import (
     ErrorEvent,
     AgentStateEvent,
     StringOutputEvent,
     StartStreamContextEvent,
     EndStreamContextEvent,
 )
-from eidos_sdk.util.stream_collector import stream_manager
+from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
 class HelloWorld:

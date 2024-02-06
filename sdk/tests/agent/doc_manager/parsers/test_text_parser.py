@@ -1,7 +1,7 @@
 import pytest
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import DataBlob, DocumentParserSpec
-from eidos_sdk.agent.doc_manager.parsers.text_parsers import TextParser
+from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob, DocumentParserSpec
+from eidolon_ai_sdk.agent.doc_manager.parsers.text_parsers import TextParser
 
 
 class TestTextParser:

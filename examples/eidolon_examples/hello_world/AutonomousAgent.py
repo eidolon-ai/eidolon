@@ -2,9 +2,9 @@ from fastapi import Body
 from pydantic import BaseModel
 from typing import Annotated
 
-from eidos_sdk.agent.agent import register_program, AgentState, register_action, Agent
-from eidos_sdk.cpu.agent_io import UserTextCPUMessage
-from eidos_sdk.io.events import AgentStateEvent
+from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action, Agent
+from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
+from eidolon_ai_sdk.io.events import AgentStateEvent
 
 
 class IdleStateRepresentation(BaseModel):

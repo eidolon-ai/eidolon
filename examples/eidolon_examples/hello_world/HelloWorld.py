@@ -2,7 +2,7 @@ from fastapi import UploadFile, Body, File
 from pydantic import BaseModel, Field
 from typing import Annotated, List
 
-from eidos_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.agent import register_program
 
 
 class IdleStateRepresentation(BaseModel):

@@ -1,7 +1,7 @@
 import pytest
 
-from eidos_sdk.io.events import StringOutputEvent, ErrorEvent, StartStreamContextEvent, EndStreamContextEvent
-from eidos_sdk.util.stream_collector import StreamCollector, ManagedContextError, stream_manager
+from eidolon_ai_sdk.io.events import StringOutputEvent, ErrorEvent, StartStreamContextEvent, EndStreamContextEvent
+from eidolon_ai_sdk.util.stream_collector import StreamCollector, ManagedContextError, stream_manager
 
 
 async def raising_stream(error=None):

@@ -2,12 +2,12 @@ from fastapi import Body
 from pydantic import BaseModel, Field
 from typing import Annotated, List
 
-from eidos_sdk.agent.agent import AgentState, register_program, register_action
-from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
-from eidos_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
-from eidos_sdk.cpu.llm_message import UserMessage, UserMessageText
-from eidos_sdk.io.events import AgentStateEvent
-from eidos_sdk.system.reference_model import Reference, Specable
+from eidolon_ai_sdk.agent.agent import AgentState, register_program, register_action
+from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText
+from eidolon_ai_sdk.io.events import AgentStateEvent
+from eidolon_ai_sdk.system.reference_model import Reference, Specable
 
 
 class SpeakToGroup(BaseModel):

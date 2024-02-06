@@ -1,7 +1,7 @@
 import os
 
-from eidos_sdk.agent.doc_manager.parsers.base_parser import DataBlob
-from eidos_sdk.agent.doc_manager.parsers.pdf_parsers import PyPDFParser, PyPDFParserSpec
+from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
+from eidolon_ai_sdk.agent.doc_manager.parsers.pdf_parsers import PyPDFParser, PyPDFParserSpec
 
 
 class TestPDFParser:

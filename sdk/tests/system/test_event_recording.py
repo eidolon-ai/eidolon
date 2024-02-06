@@ -3,9 +3,9 @@ import pytest_asyncio
 from fastapi import Body, HTTPException
 from typing import Annotated
 
-from eidos_sdk.agent.agent import register_program
-from eidos_sdk.agent.client import Agent
-from eidos_sdk.io.events import AgentStateEvent, StringOutputEvent, StartAgentCallEvent, SuccessEvent
+from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.client import Agent
+from eidolon_ai_sdk.io.events import AgentStateEvent, StringOutputEvent, StartAgentCallEvent, SuccessEvent
 
 
 class HelloWorld:
