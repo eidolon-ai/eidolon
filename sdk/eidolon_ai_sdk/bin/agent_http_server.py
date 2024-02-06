@@ -26,7 +26,7 @@ from eidolon_ai_sdk.util.logger import logger
 dotenv.load_dotenv()
 
 try:
-    EIDOLON_SDK_VERSION = version("eidos-sdk")
+    EIDOLON_SDK_VERSION = version("eidolon-ai-sdk")
 except PackageNotFoundError:
     EIDOLON_SDK_VERSION = "unknown"
 

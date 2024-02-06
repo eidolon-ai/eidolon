@@ -160,7 +160,7 @@ def run_app(app_builder, port):
                 pass
 
             print(f"Server started on port {port}")
-            os.environ["EIDOS_LOCAL_MACHINE"] = f"http://localhost:{port}"
+            os.environ["EIDOLON_LOCAL_MACHINE"] = f"http://localhost:{port}"
             yield f"http://localhost:{port}"
         finally:
             # server_wrapper[0].force_exit = True

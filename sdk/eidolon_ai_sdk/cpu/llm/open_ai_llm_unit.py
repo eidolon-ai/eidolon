@@ -30,9 +30,9 @@ from eidolon_ai_sdk.io.events import (
     LLMToolCallRequestEvent,
 )
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger as eidos_logger
+from eidolon_ai_sdk.util.logger import logger as eidolon_logger
 
-logger = eidos_logger.getChild("llm_unit")
+logger = eidolon_logger.getChild("llm_unit")
 
 
 def scale_dimensions(width, height, max_size=2048, min_size=768):

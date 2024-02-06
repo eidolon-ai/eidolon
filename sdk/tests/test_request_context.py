@@ -14,4 +14,4 @@ def test_set_and_get_propagate():
 def test_headers_only_show_propagated():
     RequestContext.set("foo", "FOO")
     RequestContext.set("bar", "BAR", propagate=True)
-    assert RequestContext.headers == {"bar": "BAR", "X-Eidos-Context": "bar"}
+    assert RequestContext.headers == {"bar": "BAR", "X-Eidolon-Context": "bar"}

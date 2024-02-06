@@ -56,7 +56,7 @@ class _RequestContextMeta(type):
     def headers(self):
         to_propagate = {v.key: v.value for v in _get_context().values() if v.propagate}
         if to_propagate:
-            to_propagate["X-Eidos-Context"] = ",".join(f"{k}" for k in to_propagate.keys())
+            to_propagate["X-Eidolon-Context"] = ",".join(f"{k}" for k in to_propagate.keys())
         return to_propagate
 
 
@@ -66,7 +66,7 @@ class RequestContext(metaclass=_RequestContextMeta):
 
 class ContextMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        context_headers = request.headers.get("X-Eidos-Context", "") or []
+        context_headers = request.headers.get("X-Eidolon-Context", "") or []
         if context_headers:
             context_headers = context_headers.split(",")
         for header in context_headers:
