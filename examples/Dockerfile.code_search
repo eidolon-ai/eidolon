@@ -1,5 +1,5 @@
-ARG EIDOS_VERSION=latest
-FROM docker.io/eidolonai/sdk:$EIDOS_VERSION
+ARG EIDOLON_VERSION=latest
+FROM docker.io/eidolonai/sdk:$EIDOLON_VERSION
 
 ENV PYTHONUNBUFFERED 1
 
