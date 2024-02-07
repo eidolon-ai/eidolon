@@ -1,4 +1,7 @@
 import asyncio
+import os
+import time
+from glob import glob
 from pathlib import Path
 from typing import Annotated
 
@@ -13,6 +16,7 @@ app = typer.Typer()
 def main(
     replay_location: Path,
     color: Annotated[str, typer.Option(help="The color for the displayed text")] = typer.colors.BRIGHT_GREEN,
+    watch: Annotated[bool, typer.Option(help="Watch the replay location for new files")] = False,
 ):
     async def fn():
         typer.echo(typer.style(f"Replaying from {replay_location}", dim=True))
@@ -21,9 +25,25 @@ def main(
         typer.echo("\n" + typer.style("Done", dim=True), nl=True)
 
     try:
-        asyncio.run(fn())
+        if watch:
+            care_time = time.time()
+            while True:
+                care_time = _wait_for_modification(care_time, replay_location)
+                asyncio.run(fn())
+        else:
+            asyncio.run(fn())
     except asyncio.exceptions.CancelledError:
         typer.echo("\n" + typer.style("Canceled", dim=True), nl=True)
+
+
+def _wait_for_modification(care_time, path, delay=1):
+    typer.echo(typer.style(f"Watching for changes...", dim=True))
+    while True:
+        list_of_files = glob(str(path / "**"))
+        latest_file = max((os.path.getmtime(f) for f in list_of_files))
+        if care_time < latest_file:
+            return latest_file
+        time.sleep(delay)
 
 
 def run():
