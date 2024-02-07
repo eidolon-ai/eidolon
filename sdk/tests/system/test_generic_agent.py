@@ -201,7 +201,12 @@ class TestOutputTests:
             vcr.rewind()  # since we are hitting endpoing 2x in same test
 
             acc_str = "".join(
-                [e async for e in replay(file_memory_loc / "resume_points" / request.node.name / "000_OpenAI_chat_completions")]
+                [
+                    e
+                    async for e in replay(
+                        file_memory_loc / "resume_points" / request.node.name / "000_OpenAI_chat_completions"
+                    )
+                ]
             )
             assert "france" in acc_str.lower()
             assert acc_str == post["data"]

@@ -71,10 +71,14 @@ class AgentOS:
         return {k: tu[0].promote(kind) for k, tu in cls._get_or_load_resources().get(kind.kind_literal(), {}).items()}
 
     @classmethod
+    def get_resource_raw(cls, kind: Type[T], name: str) -> Resource:
+        return cls._get_or_load_resources()[kind.kind_literal()][name][0]
+
+    @classmethod
     def get_resource(cls, kind: Type[T], name: str, default=...) -> T:
         bucket = kind.kind_literal()
         try:
-            return cls._get_or_load_resources()[bucket][name][0].promote(kind)
+            return cls.get_resource_raw(kind, name).promote(kind)
         except KeyError:
             if default is not ...:
                 return default

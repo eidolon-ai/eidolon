@@ -19,6 +19,7 @@ class ReplayConfig(BaseModel):
 
 
 def default_serializer(*args, **kwargs):
+    # this is not serializing multi-line strings well, we should consider swapping yaml parsers or customizing this
     args = list(args)
     return yaml.safe_dump(dict(args=args, kwargs=kwargs), sort_keys=False), "yaml"
 
