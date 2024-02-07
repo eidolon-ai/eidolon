@@ -8,6 +8,7 @@ include = ["logging.conf"]
 
 [tool.poetry.scripts]
 eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"
+replay = "eidolon_ai_sdk.bin.replay:run"
 #eidolon-create-agent = "eidolon_ai_sdk.bin.agent_creator:main"
 
 [tool.poetry.dependencies]
@@ -42,6 +43,7 @@ aiostream = "^0.5.2"
 httpx-sse = "^0.4.0"
 sse-starlette = "^2.0.0"
 dill = "^0.3.8"
+typer = {extras = ["all"], version = "^0.9.0"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"

@@ -734,6 +734,21 @@ wrapt = ">=1.10,<2"
 dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "sphinx (<2)", "tox"]
 
 [[package]]
+name = "dill"
+version = "0.3.8"
+description = "serialize all of Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "dill-0.3.8-py3-none-any.whl", hash = "sha256:c36ca9ffb54365bdd2f8eb3eff7d2a21237f8452b57ace88b1ac615b7e815bd7"},
+    {file = "dill-0.3.8.tar.gz", hash = "sha256:3ebe3c479ad625c4553aca177444d89b486b1d84982eeacded644afc0cf797ca"},
+]
+
+[package.extras]
+graph = ["objgraph (>=1.7.2)"]
+profile = ["gprof2dot (>=2022.7.29)"]
+
+[[package]]
 name = "distro"
 version = "1.9.0"
 description = "Distro - an OS platform information API"
@@ -795,6 +810,7 @@ develop = true
 aiostream = "^0.5.2"
 authlib = "^1.3.0"
 chromadb = "^0.4.18"
+dill = "^0.3.8"
 esprima = "^4.0.1"
 fastapi = "^0.109.0"
 filetype = "^1.2.0"
@@ -818,6 +834,7 @@ pyyaml = "^6.0.1"
 spacy = "^3.7.2"
 sse-starlette = "^2.0.0"
 tiktoken = "^0.5.1"
+typer = {version = "^0.9.0", extras = ["all"]}
 unstructured = "^0.12.3"
 uvicorn = "^0.27.0"
 watchdog = "^3.0.0"
@@ -1498,6 +1515,30 @@ htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (>=3.0.7)"]
 
 [[package]]
+name = "markdown-it-py"
+version = "3.0.0"
+description = "Python port of markdown-it. Markdown parsing, done right!"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "markdown-it-py-3.0.0.tar.gz", hash = "sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb"},
+    {file = "markdown_it_py-3.0.0-py3-none-any.whl", hash = "sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1"},
+]
+
+[package.dependencies]
+mdurl = ">=0.1,<1.0"
+
+[package.extras]
+benchmarking = ["psutil", "pytest", "pytest-benchmark"]
+code-style = ["pre-commit (>=3.0,<4.0)"]
+compare = ["commonmark (>=0.9,<1.0)", "markdown (>=3.4,<4.0)", "mistletoe (>=1.0,<2.0)", "mistune (>=2.0,<3.0)", "panflute (>=2.3,<3.0)"]
+linkify = ["linkify-it-py (>=1,<3)"]
+plugins = ["mdit-py-plugins"]
+profiling = ["gprof2dot"]
+rtd = ["jupyter_sphinx", "mdit-py-plugins", "myst-parser", "pyyaml", "sphinx", "sphinx-copybutton", "sphinx-design", "sphinx_book_theme"]
+testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.5"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -1585,6 +1626,17 @@ dev = ["pre-commit (>=2.4,<4.0)", "pytest", "pytz", "simplejson", "tox"]
 docs = ["alabaster (==0.7.15)", "autodocsumm (==0.2.12)", "sphinx (==7.2.6)", "sphinx-issues (==3.0.1)", "sphinx-version-warning (==1.1.2)"]
 lint = ["pre-commit (>=2.4,<4.0)"]
 tests = ["pytest", "pytz", "simplejson"]
+
+[[package]]
+name = "mdurl"
+version = "0.1.2"
+description = "Markdown URL utilities"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
+    {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
+]
 
 [[package]]
 name = "mmh3"
@@ -2516,6 +2568,21 @@ files = [
 ]
 
 [[package]]
+name = "pygments"
+version = "2.17.2"
+description = "Pygments is a syntax highlighting package written in Python."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pygments-2.17.2-py3-none-any.whl", hash = "sha256:b27c2826c47d0f3219f29554824c30c5e8945175d888647acd804ddd04af846c"},
+    {file = "pygments-2.17.2.tar.gz", hash = "sha256:da46cec9fd2de5be3a8a784f434e4c4ab670b4ff54d605c4c2717e9d49c4c367"},
+]
+
+[package.extras]
+plugins = ["importlib-metadata"]
+windows-terminal = ["colorama (>=0.4.6)"]
+
+[[package]]
 name = "pymongo"
 version = "4.6.1"
 description = "Python driver for MongoDB <http://www.mongodb.org>"
@@ -3141,6 +3208,24 @@ requests = ">=2.0.0"
 rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
+name = "rich"
+version = "13.7.0"
+description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "rich-13.7.0-py3-none-any.whl", hash = "sha256:6da14c108c4866ee9520bbffa71f6fe3962e193b7da68720583850cd4548e235"},
+    {file = "rich-13.7.0.tar.gz", hash = "sha256:5cb5123b5cf9ee70584244246816e9114227e0b98ad9176eede6ad54bf5403fa"},
+]
+
+[package.dependencies]
+markdown-it-py = ">=2.2.0"
+pygments = ">=2.13.0,<3.0.0"
+
+[package.extras]
+jupyter = ["ipywidgets (>=7.5.1,<9)"]
+
+[[package]]
 name = "rpds-py"
 version = "0.17.1"
 description = "Python bindings to Rust's persistent data structures (rpds)"
@@ -3437,6 +3522,17 @@ testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8-2020", "ini2toml[l
 testing-integration = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "packaging (>=23.1)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
+name = "shellingham"
+version = "1.5.4"
+description = "Tool to Detect Surrounding Shell"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "shellingham-1.5.4-py2.py3-none-any.whl", hash = "sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686"},
+    {file = "shellingham-1.5.4.tar.gz", hash = "sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de"},
+]
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -3492,41 +3588,41 @@ files = [
 
 [[package]]
 name = "spacy"
-version = "3.7.2"
+version = "3.7.3"
 description = "Industrial-strength Natural Language Processing (NLP) in Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "spacy-3.7.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:b4e285366d36c85f784d606a2d966912a18f4d24d47330c1c6acbdd9f19ee373"},
-    {file = "spacy-3.7.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:f132c05368781be5d3be3d706afce7e7a9a0c9edc0dbb7c616162c37bc386561"},
-    {file = "spacy-3.7.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2e3767b2cabbe337d62779ae4fdc4d57a39755c17dfc499de3ad2bae622caa43"},
-    {file = "spacy-3.7.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7a748ade269bdbea9baaa49ec00882404e7e921163cdc14f5612320d0a957dfd"},
-    {file = "spacy-3.7.2-cp310-cp310-win_amd64.whl", hash = "sha256:66467128e494bfa4dc9c3996e4cbb26bac4741bca4cdd8dd83a6e71182148945"},
-    {file = "spacy-3.7.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:5af30aea578e7414fb0eb4dbad0ff0fa0a7d8e833c3e733eceb2617534714c7d"},
-    {file = "spacy-3.7.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:7293de33b1e9ede151555070ad0fee3bac98aefcaac9e615eeeb4296846bd479"},
-    {file = "spacy-3.7.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:26940681cf20c8831c558e2c3d345ff20b5bc3c5e6d41c66172d0c5136042f0b"},
-    {file = "spacy-3.7.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9a334667625153f7aaf188c20af7e82c886e41a88483a056accba5a7d51095c6"},
-    {file = "spacy-3.7.2-cp311-cp311-win_amd64.whl", hash = "sha256:43e6147d3583b62a2d3af0cd913ac025068196d587345751e198391ff0b8c1e9"},
-    {file = "spacy-3.7.2-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:2558df8c11905a0f77a2a3639a12ef8a522d171bcd88eaec039bedf6c60d7e01"},
-    {file = "spacy-3.7.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:df1b9c4bbadc89bad10dba226d52c113e231ea6ad35c8a916ab138b31f69fa24"},
-    {file = "spacy-3.7.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bbbe055d2170ac7505a9f580bbdcd2146d0701bdbd6cea2333e18b0db655b97a"},
-    {file = "spacy-3.7.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d35129b16ae2ca4212bf22a5c88b67b1e019e434fc48b69d3b95f80bc9e14e42"},
-    {file = "spacy-3.7.2-cp312-cp312-win_amd64.whl", hash = "sha256:a7419682aba99624cc4df7df66764b6ec62ff415f32c3682c1af2a37bd11a913"},
-    {file = "spacy-3.7.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:b12ab9c4923ffd38da84baf09464982da44e8275d680fb3c5da2051d7dd7bd2d"},
-    {file = "spacy-3.7.2-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:09c5c9db529dc1caa908813c58ba1643e929d2c811768596a2b64e2e01a882b1"},
-    {file = "spacy-3.7.2-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bcaad95e3e7d0ea8f381f3e2d9e80b7f346ecb6566de9bd55361736fa563fc22"},
-    {file = "spacy-3.7.2-cp37-cp37m-win_amd64.whl", hash = "sha256:5d9b12284871ca5daa7774604a964486957567a86f1af898da0260e94b815e0d"},
-    {file = "spacy-3.7.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:2bd89770f61d5980e788ef382297322cceb7dcc4b848d68cb1da8af7d80d6eb6"},
-    {file = "spacy-3.7.2-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:d42f9151a2f01b34227ed31c8db8b7c67889ebcc637eae390faec8093ea1fb12"},
-    {file = "spacy-3.7.2-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c3d25d2f22ba1d2dd46d103e4a54826582de2b853b6f95dfb97b005563b38838"},
-    {file = "spacy-3.7.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:730f23340dd157817d2da6df21f69966791b0bdbd6ea108845a65f3e1c0e981c"},
-    {file = "spacy-3.7.2-cp38-cp38-win_amd64.whl", hash = "sha256:9c2f3f04b4b894a6c42ee93cec2f2b158f246f344927e65d9d19b72c5a6493ea"},
-    {file = "spacy-3.7.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:b22e0e8dac76740d55556fa13ebb9e1c829779ea0b7ec7a9e04f32efc66f74b9"},
-    {file = "spacy-3.7.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:ad7f378350104ca1f9e81180485d8b094aad7acb9b4bce84f1387b905cf230a2"},
-    {file = "spacy-3.7.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9ccbffb7825c08c0586ef7384d0aa23196f9ac106b5c7b3c551907316930f94f"},
-    {file = "spacy-3.7.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:111955d7f4786b952672e9c5cfd9f8b74d81e64b62d479f71efe9cfc2a027a1d"},
-    {file = "spacy-3.7.2-cp39-cp39-win_amd64.whl", hash = "sha256:e8a7291e7e1cfcb6041b26f96d0a66b603725c1beff4e0391c3d9226fae16e04"},
-    {file = "spacy-3.7.2.tar.gz", hash = "sha256:cedf4927bf0d3fec773a6ce48d5d2c91bdb02fed3c7d5ec07bdb873f1126f1a0"},
+    {file = "spacy-3.7.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0e92f335f4fa495ad4b33fe360acb5655783557bf6cb14d1a0689b9c486fce40"},
+    {file = "spacy-3.7.3-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:c9e6633aba073c67838c0e025064dcadd96d291914b726ed98042510e15bf280"},
+    {file = "spacy-3.7.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:080e83eb3a7e00946912a259063f809959209e88fcfab5e7728ca39926764c90"},
+    {file = "spacy-3.7.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:461831f4e54916d55b9b329e3aa9c9081707a141322307c396ad12b2daa4aca7"},
+    {file = "spacy-3.7.3-cp310-cp310-win_amd64.whl", hash = "sha256:8bc20ee80e03ad683aacbb265e14b8d5513b66ca9b05dc826e944a0785d3edce"},
+    {file = "spacy-3.7.3-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:71b9cbcb0e184ea21fd2512aa0a842bb9a9ee5cb83d0402ba8c96df6b5f4a6db"},
+    {file = "spacy-3.7.3-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:b15c684f2ea03eebf100a9cbc2d5f3ab4e13b3089fe699c9c612ce8a09b99ec3"},
+    {file = "spacy-3.7.3-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:def20e4b1aa2d41a2f5a1493ef74438b09c74e46b8d0925c28a6b3d33101db4f"},
+    {file = "spacy-3.7.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3e6cce0cd30ca050d6b593fc3451a5bc68b6bfa0d58b31fe87f067d15fce3d92"},
+    {file = "spacy-3.7.3-cp311-cp311-win_amd64.whl", hash = "sha256:a40e74db7b068a141c0a10a3f701fe525f81fabe13e7eb4a6477d70efce5c101"},
+    {file = "spacy-3.7.3-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:17355e0753f20b27aa4b66d6cd7e1a73114d57705605af1664be27e8a7cae8f0"},
+    {file = "spacy-3.7.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fae842c07bbb2b9c6c217b3d322fec2708d56935de3a1fbf68986429b0f3be89"},
+    {file = "spacy-3.7.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b53dcbf82e96203114419835f9865dee6da65ceefdaa1893f9bf9714653b7ca9"},
+    {file = "spacy-3.7.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8e164a17d97f41f01aa769bbe5de01eb1f9510ba268bde940a177bdbfbb86582"},
+    {file = "spacy-3.7.3-cp312-cp312-win_amd64.whl", hash = "sha256:260e8ddaa74a6209f3d647a5fd0ea2f828a3ba51f311d4b8cb052bdd63222293"},
+    {file = "spacy-3.7.3-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:7d883efb1853ff4334929badd81a503721d034fbcc28e81ba7ff0bcf037fb120"},
+    {file = "spacy-3.7.3-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:913b6e01d728d93be586f610db4b6be617b718f418a4788c56a8749c896827e1"},
+    {file = "spacy-3.7.3-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9190e9be0311595162076ebc9813dfebd1bb029c2305589f675432f9a205e3ea"},
+    {file = "spacy-3.7.3-cp37-cp37m-win_amd64.whl", hash = "sha256:c25b6594da2b2c4c789c29b7c3eb5f731630eafd205a071c1e21d9399ea3aa8b"},
+    {file = "spacy-3.7.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:d1d46a1ba2a9718300af5ba2848af566458fadf38e97371b84f6a9f57b350ce6"},
+    {file = "spacy-3.7.3-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:41745c02cf36fec9f9fbe4c7f65b470e01c044f2769b863e68449c2b71c830b3"},
+    {file = "spacy-3.7.3-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8537890bb77022f0e4cc8a125bc578851ffc21da912bd0f56507d71b7622c8bf"},
+    {file = "spacy-3.7.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b1610d2dd57fc0d56d53db6982e359224aa3bb1436a566e82fcec974b9d9bec5"},
+    {file = "spacy-3.7.3-cp38-cp38-win_amd64.whl", hash = "sha256:a61d7388572ac938523097d3f239d3f277259df8a85283ec0924e4a6e385d6f0"},
+    {file = "spacy-3.7.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:27102fb32984f329dbbcbe2ef961127a2c85181678315199b300d2ac0f06447b"},
+    {file = "spacy-3.7.3-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:d9f128d35ca5df60b95cab3b3f7dabdfae5d69fe919ad35ad6bf0bff5a5b7b3d"},
+    {file = "spacy-3.7.3-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f61ed64bc055cea4ae37d0c11db2d11292e0d23e6c6a9219105b3fc2b2400a28"},
+    {file = "spacy-3.7.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ffcf7691718d86997c11ce51275921354ac3752a3fc7393b2042b47dfb13cf5b"},
+    {file = "spacy-3.7.3-cp39-cp39-win_amd64.whl", hash = "sha256:709a5558fe9b3e2db1c133554941b25e8970e0a4dcdf7619de511a21b24c7ffd"},
+    {file = "spacy-3.7.3.tar.gz", hash = "sha256:99265028fbdc6e12249c53305e461f79a103637b0e6866c28af0e46365f751e1"},
 ]
 
 [package.dependencies]
@@ -3545,7 +3641,7 @@ smart-open = ">=5.2.1,<7.0.0"
 spacy-legacy = ">=3.0.11,<3.1.0"
 spacy-loggers = ">=1.0.0,<2.0.0"
 srsly = ">=2.4.3,<3.0.0"
-thinc = ">=8.1.8,<8.3.0"
+thinc = ">=8.2.2,<8.3.0"
 tqdm = ">=4.38.0,<5.0.0"
 typer = ">=0.3.0,<0.10.0"
 wasabi = ">=0.9.1,<1.2.0"
@@ -4086,6 +4182,9 @@ files = [
 
 [package.dependencies]
 click = ">=7.1.1,<9.0.0"
+colorama = {version = ">=0.4.3,<0.5.0", optional = true, markers = "extra == \"all\""}
+rich = {version = ">=10.11.0,<14.0.0", optional = true, markers = "extra == \"all\""}
+shellingham = {version = ">=1.3.0,<2.0.0", optional = true, markers = "extra == \"all\""}
 typing-extensions = ">=3.7.4.3"
 
 [package.extras]
