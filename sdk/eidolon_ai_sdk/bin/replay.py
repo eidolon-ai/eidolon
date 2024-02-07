@@ -1,7 +1,6 @@
 import asyncio
-import sys
-from functools import wraps
 from pathlib import Path
+from typing import Annotated
 
 import typer
 
@@ -10,21 +9,26 @@ from eidolon_ai_sdk.util.replay import replay
 app = typer.Typer()
 
 
-def coro(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs))
-
-    return wrapper
-
-
 @app.command()
-@coro
-async def main(replay_location: Path):
-    async for chunk in replay(replay_location):
-        sys.stdout.write(chunk)
-    sys.stdout.write("\n")
+def main(
+        replay_location: Path,
+        color: Annotated[str, typer.Option(help="The color for the displayed text")] = typer.colors.BRIGHT_GREEN
+):
+    async def fn():
+        typer.echo(typer.style(f"Replaying from {replay_location}", dim=True))
+        async for chunk in replay(replay_location):
+            typer.echo(typer.style(chunk, fg=color), nl=False)
+        typer.echo("\n"+typer.style(f"Done", dim=True), nl=True)
+
+    try:
+        asyncio.run(fn())
+    except asyncio.exceptions.CancelledError:
+        typer.echo("\n"+typer.style(f"Canceled", dim=True), nl=True)
 
 
 def run():
     app()
+
+
+if __name__ == "__main__":
+    run()
