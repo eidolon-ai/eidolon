@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "eidos-sdk"
+name = "eidolon-ai-sdk"
 version = "0.1.12"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
@@ -7,8 +7,8 @@ readme = "README.md"
 include = ["logging.conf"]
 
 [tool.poetry.scripts]
-eidos-server = "eidos_sdk.bin.agent_http_server:main"
-#eidos-create-agent = "eidos_sdk.bin.agent_creator:main"
+eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"
+#eidolon-create-agent = "eidolon_ai_sdk.bin.agent_creator:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"

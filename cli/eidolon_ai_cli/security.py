@@ -6,7 +6,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from prompt_toolkit import HTML, print_formatted_text
 from requests_oauthlib import OAuth2Session
 
-from eidos_cli.auth_web_server import AuthWebserver
+from eidolon_ai_cli.auth_web_server import AuthWebserver
 
 
 class OAuth2CLI:

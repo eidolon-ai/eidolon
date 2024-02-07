@@ -15,7 +15,7 @@ class MongoSymbolicMemoryConfig(BaseModel):
     mongo_connection_string: Optional[str] = Field(
         default=None, description="The connection string to the MongoDB instance."
     )
-    mongo_database_name: str = Field(default="eidos", description="The name of the MongoDB database to use.")
+    mongo_database_name: str = Field(default="eidolon", description="The name of the MongoDB database to use.")
 
 
 class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):

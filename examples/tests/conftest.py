@@ -32,7 +32,7 @@ def eidolon_server(eidolon_examples, log_dir):
     @contextmanager
     def fn(resources_loc, *args, log_file=None):
         # Command to start the HTTP server
-        cmd = ["eidos-server", str(resources_loc), *args]
+        cmd = ["eidolon-server", str(resources_loc), *args]
         cwd = eidolon_examples.parent
         log_file = os.path.join(log_dir, log_file or "logs.txt")
 

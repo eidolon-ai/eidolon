@@ -12,7 +12,7 @@ from prompt_toolkit.keys import Keys
 from prompt_toolkit.validation import Validator
 from rich.console import Console
 
-from eidos_cli.util import rt, NumberValidator, BooleanValidator, RequiredValidator, FilePathValidator
+from eidolon_ai_cli.util import rt, NumberValidator, BooleanValidator, RequiredValidator, FilePathValidator
 
 LIGHT_GREY = "'#666666'"
 

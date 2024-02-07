@@ -1,6 +1,6 @@
 ---
 title: Fundamentals of Agent Architecture
-description: An overview of the core concepts within EidOS.
+description: An overview of the core concepts within Eidolon.
 ---
 
 Understanding the eidolon framework requires familiarity with the foundational elements of agent architecture. This section explores the key concepts, structures, and modularity mechanisms that underpin the framework, providing an architectural

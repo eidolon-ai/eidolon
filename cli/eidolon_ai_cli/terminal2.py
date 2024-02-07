@@ -10,9 +10,9 @@ from pygments.lexer import RegexLexer
 from pygments.token import Generic, Name, Text, String, Keyword
 from rich.console import Console
 
-from eidos_cli.client import EidolonClient
-from eidos_cli.security import OAuth2CLI
-from eidos_cli.util import VarExpandingFileHistory
+from eidolon_ai_cli.client import EidolonClient
+from eidolon_ai_cli.security import OAuth2CLI
+from eidolon_ai_cli.util import VarExpandingFileHistory
 
 
 class CommandLexer(RegexLexer):
@@ -194,7 +194,7 @@ class EidolonCLI:
 
     def main(self):
         session = PromptSession(completer=self.completer, complete_while_typing=True, validator=CommandValidator(self.validators),
-                                lexer=PygmentsLexer(CommandLexer), history=VarExpandingFileHistory('~/.eidos_cli_history'))
+                                lexer=PygmentsLexer(CommandLexer), history=VarExpandingFileHistory('~/.eidolon_cli_history'))
 
         while True:
             try:

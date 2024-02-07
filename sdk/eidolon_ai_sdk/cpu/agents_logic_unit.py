@@ -6,7 +6,7 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_sdk.io.events import StreamEvent
-from eidolon_ai_sdk.system.eidos_handler import EidosHandler
+from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.logger import logger
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -24,7 +24,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         super().__init__(**kwargs)
         self._machine_schemas = {}
 
-    async def build_tools(self, call_context: CallContext) -> List[EidosHandler]:
+    async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
         tools = await self.build_program_tools(call_context)
         call_history = await AgentCallHistory.get_agent_state(call_context.process_id, call_context.thread_id)
         for call in call_history:
@@ -97,7 +97,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     def _build_tool_def(self, name, endpoint_schema, tool_call):
         description = self._description(endpoint_schema, name)
         model = self._body_model(endpoint_schema, name)
-        return EidosHandler(
+        return FnHandler(
             name=name,
             description=lambda a, b: description,
             input_model_fn=lambda a, b: model,

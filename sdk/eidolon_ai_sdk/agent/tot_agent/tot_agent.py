@@ -8,7 +8,7 @@ from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentSpec
-from eidolon_ai_sdk.system.eidos_handler import EidosHandler
+from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.controller import ToTController
 from eidolon_ai_sdk.agent.tot_agent.memory import ToTDFSMemory
@@ -42,13 +42,13 @@ class ToTAgentConfig(AgentSpec):
     init_description: Optional[str] = Field(default=None, description="Overrides the description of the INIT endpoint.")
 
 
-def make_description(agent: object, _handler: EidosHandler) -> str:
+def make_description(agent: object, _handler: FnHandler) -> str:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     return spec.description
 
 
-def make_input_schema(agent: object, handler: EidosHandler) -> Type[BaseModel]:
+def make_input_schema(agent: object, handler: FnHandler) -> Type[BaseModel]:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     properties: Dict[str, Any] = {}
@@ -62,7 +62,7 @@ def make_input_schema(agent: object, handler: EidosHandler) -> Type[BaseModel]:
     return schema_to_model(schema, f"{handler.name.capitalize()}InputModel")
 
 
-def make_output_schema(agent: object, handler: EidosHandler) -> Type[Any]:
+def make_output_schema(agent: object, handler: FnHandler) -> Type[Any]:
     # noinspection PyUnresolvedReferences
     spec = agent.spec
     if spec.output_schema == "str":

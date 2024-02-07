@@ -9,12 +9,12 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import Filesyste
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.system.eidos_handler import EidosHandler
+from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
-def make_description(agent: object, _handler: EidosHandler) -> str:
+def make_description(agent: object, _handler: FnHandler) -> str:
     # noinspection PyUnresolvedReferences
     return agent.spec.description
 

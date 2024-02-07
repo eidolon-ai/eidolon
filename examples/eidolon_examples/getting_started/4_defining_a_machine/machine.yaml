@@ -2,5 +2,5 @@ apiVersion: eidolon/v1
 kind: Machine
 spec:
   symbolic_memory:
-    implementation: "eidos_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    implementation: "eidolon_ai_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
     mongo_database_name: "eidolon"

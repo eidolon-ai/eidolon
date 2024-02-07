@@ -21,7 +21,7 @@ class AgentOS:
 
     @staticmethod
     def current_machine_url() -> str:
-        return os.environ.get("EIDOS_LOCAL_MACHINE", "http://localhost:8080")
+        return os.environ.get("EIDOLON_LOCAL_MACHINE", "http://localhost:8080")
 
     @classmethod
     def _get_or_load_resources(cls) -> Dict[str, Dict[str, Tuple[Resource, str]]]:

@@ -18,9 +18,9 @@ from eidolon_ai_sdk.io.events import (
     StringOutputEvent,
 )
 from eidolon_ai_sdk.system.request_context import RequestContext
-from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.aiohttp import stream_content, post_content
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
 

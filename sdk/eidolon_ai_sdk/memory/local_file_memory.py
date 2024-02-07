@@ -9,7 +9,7 @@ from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
 
 
 class LocalFileMemoryConfig(BaseModel):
-    root_dir: str = Field("/tmp/eidos/file_memory", description="The root directory to store files in.")
+    root_dir: str = Field("/tmp/eidolon/file_memory", description="The root directory to store files in.")
 
     @field_validator("root_dir", mode="before")
     def validate_root_dir(cls, inValue: str):

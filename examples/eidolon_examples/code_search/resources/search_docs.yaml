@@ -4,7 +4,7 @@ metadata:
   name: SearchDocs
 
 spec:
-  implementation: "eidos_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent"
+  implementation: "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent"
   name: "search_docs"
   description: "Searches for snippets in the documentation"
   loader_root_location: "file://../docs/src/content/docs"

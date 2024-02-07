@@ -12,7 +12,7 @@ from eidolon_ai_sdk.cpu.llm_message import ToolCall
 from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_ai_sdk.io.events import SuccessEvent, ObjectOutputEvent, ErrorEvent, BaseStreamEvent, StringOutputEvent
-from eidolon_ai_sdk.system.eidos_handler import register_handler, EidosHandler, get_handlers
+from eidolon_ai_sdk.system.fn_handler import register_handler, FnHandler, get_handlers
 from eidolon_ai_sdk.util.logger import logger
 
 
@@ -20,16 +20,16 @@ from eidolon_ai_sdk.util.logger import logger
 class LLMToolWrapper:
     logic_unit: LogicUnit
     llm_message: LLMCallFunction
-    eidos_handler: EidosHandler
+    eidolon_handler: FnHandler
     input_model: typing.Type[BaseModel]
 
     async def execute(self, tool_call: ToolCall) -> AsyncIterator[BaseStreamEvent]:
-        logger.info("calling tool " + self.eidos_handler.name)
-        logger.debug("args: " + str(tool_call.arguments) + " | fn: " + str(self.eidos_handler.fn))
+        logger.info("calling tool " + self.eidolon_handler.name)
+        logger.debug("args: " + str(tool_call.arguments) + " | fn: " + str(self.eidolon_handler.fn))
         try:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
-            input_model = self.eidos_handler.input_model_fn(self.logic_unit, self.eidos_handler)
-            result = self.eidos_handler.fn(self.logic_unit, **dict(input_model.model_validate(tool_call.arguments)))
+            input_model = self.eidolon_handler.input_model_fn(self.logic_unit, self.eidolon_handler)
+            result = self.eidolon_handler.fn(self.logic_unit, **dict(input_model.model_validate(tool_call.arguments)))
             if isinstance(result, Coroutine):
                 result = await result
 
@@ -37,7 +37,7 @@ class LLMToolWrapper:
                 async for event in result:
                     yield event
             else:
-                ret_type = self.eidos_handler.output_model_fn(self.logic_unit, self.eidos_handler)
+                ret_type = self.eidolon_handler.output_model_fn(self.logic_unit, self.eidolon_handler)
                 model = TypeAdapter(ret_type)
                 result = model.dump_python(result)
                 if isinstance(result, str):
@@ -46,7 +46,7 @@ class LLMToolWrapper:
                     yield ObjectOutputEvent(content=result)
                 yield SuccessEvent()
         except Exception as e:
-            logging.exception("error calling tool " + self.eidos_handler.name)
+            logging.exception("error calling tool " + self.eidolon_handler.name)
             yield ErrorEvent(reason=e)
 
     @classmethod
@@ -69,7 +69,7 @@ class LLMToolWrapper:
                         description=handler.description(logic_unit, handler),
                         parameters=input_model.model_json_schema(),
                     ),
-                    eidos_handler=handler,
+                    eidolon_handler=handler,
                     input_model=input_model,
                 )
         return acc
@@ -77,13 +77,13 @@ class LLMToolWrapper:
 
 def llm_function(
     name: str = None,
-    description: typing.Optional[typing.Callable[[object, EidosHandler], str]] = None,
-    input_model: typing.Optional[typing.Callable[[object, EidosHandler], BaseModel]] = None,
-    output_model: typing.Optional[typing.Callable[[object, EidosHandler], typing.Any]] = None,
+    description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
+    input_model: typing.Optional[typing.Callable[[object, FnHandler], BaseModel]] = None,
+    output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
 ):
     return register_handler(name=name, description=description, input_model=input_model, output_model=output_model)
 
 
 class LogicUnit(ProcessingUnit, ABC):
-    async def build_tools(self, call_context: CallContext) -> List[EidosHandler]:
+    async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
         return get_handlers(self)

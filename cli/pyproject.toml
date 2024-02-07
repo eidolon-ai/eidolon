@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "eidos-cli"
+name = "eidolon-ai-cli"
 version = "0.1.2"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-eidos-client = "eidos_cli.main:main"
+eidolon-client = "eidolon_ai_cli.main:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"

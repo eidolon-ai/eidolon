@@ -4,9 +4,9 @@ metadata:
   name: SearchCode
 
 spec:
-  implementation: "eidos_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent"
+  implementation: "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent"
   name: "search_code"
   description: "Searches for code snippets in the source code"
-  loader_root_location: "file://../sdk/eidos_sdk"
+  loader_root_location: "file://../sdk/eidolon_ai_sdk"
   loader_pattern: "**/*.py"
   max_num_results: 50
