@@ -12,7 +12,7 @@ Website = "https://www.eidolonai.com/"
 
 [tool.poetry.scripts]
 eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"
-replay = "eidolon_ai_sdk.bin.replay:run"
+replay = "eidolon_ai_sdk.bin.replay:app"
 #eidolon-create-agent = "eidolon_ai_sdk.bin.agent_creator:main"
 
 [tool.poetry.dependencies]

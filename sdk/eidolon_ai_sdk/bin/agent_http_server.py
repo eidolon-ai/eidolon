@@ -62,7 +62,7 @@ def parse_args():
         default="DEFAULT",
     )
     parser.add_argument(
-        "--replay",
+        "--record",
         help="Enable replay points and save them to the provide directory",
         action="store_true",
         default=False,
@@ -169,7 +169,7 @@ def main():
             load_resources(args.yaml_path),
             args.machine,
             log_level,
-            replay_override="replay" if args.replay else ...,
+            replay_override="recordings" if args.record else ...,
         )
     )
 
