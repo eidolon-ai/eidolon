@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import Body
-from eidos_sdk.agent.agent import register_program, register_action, AgentState
+from eidolon_ai_sdk.agent.agent import register_program, register_action, AgentState
 
 
 class HelloWorld:

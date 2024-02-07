@@ -3,10 +3,10 @@ from typing import Annotated, Literal, List
 from fastapi import Body, HTTPException
 from pydantic import BaseModel
 
-from eidos_sdk.agent.agent import register_program, Agent, AgentSpec
-from eidos_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
-from eidos_sdk.system.reference_model import Specable
-from eidos_sdk.util.logger import logger
+from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentSpec
+from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.util.logger import logger
 
 
 class TestCase(BaseModel):

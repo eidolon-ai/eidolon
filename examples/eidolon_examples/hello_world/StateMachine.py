@@ -2,7 +2,7 @@ from typing import Union, Annotated
 
 from fastapi.params import Body
 
-from eidos_sdk.agent.agent import register_program, AgentState, register_action
+from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
 from fastapi import HTTPException
 from pydantic import BaseModel
 

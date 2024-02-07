@@ -1,9 +1,9 @@
 import pytest
 
-from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.system.resources.reference_resource import ReferenceResource
-from eidos_sdk.system.resources.resources_base import Metadata
-from eidos_sdk.util.replay import replayable, ReplayConfig, replay
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.system.resources.resources_base import Metadata
+from eidolon_ai_sdk.util.replay import replayable, ReplayConfig, replay
 
 
 class SideEffect:

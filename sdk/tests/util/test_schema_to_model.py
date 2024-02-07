@@ -3,7 +3,7 @@ import pytest
 from fastapi import UploadFile
 from pydantic import BaseModel, ValidationError, Field
 
-from eidos_sdk.util.schema_to_model import schema_to_model
+from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
 class NestedObject(BaseModel):

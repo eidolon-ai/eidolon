@@ -7,9 +7,9 @@ import pytest_asyncio
 from fastapi import Body
 from typing import Annotated, List
 
-from eidos_sdk.agent.agent import register_program
-from eidos_sdk.agent_os import AgentOS
-from eidos_sdk.io.events import (
+from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.io.events import (
     StartAgentCallEvent,
     ObjectOutputEvent,
     SuccessEvent,
@@ -17,11 +17,11 @@ from eidos_sdk.io.events import (
     StartLLMEvent,
     StringOutputEvent,
 )
-from eidos_sdk.system.request_context import RequestContext
-from eidos_sdk.system.resources.reference_resource import ReferenceResource
-from eidos_sdk.system.resources.resources_base import Metadata, Resource
-from eidos_sdk.util.aiohttp import stream_content, post_content
-from eidos_sdk.util.replay import ReplayConfig, replay
+from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
+from eidolon_ai_sdk.util.aiohttp import stream_content, post_content
+from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
 
 @pytest.fixture(scope="module")

@@ -1,6 +1,6 @@
 import pytest
 
-from eidos_sdk.builtins.logic_units.web_search import WebSearch, WebSearchConfig
+from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, WebSearchConfig
 
 
 @pytest.fixture

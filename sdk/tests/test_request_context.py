@@ -1,4 +1,4 @@
-from eidos_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.system.request_context import RequestContext
 
 
 def test_set_and_get():
