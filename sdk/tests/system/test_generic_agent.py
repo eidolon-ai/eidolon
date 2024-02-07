@@ -184,7 +184,7 @@ class TestOutputTests:
             )
             assert "paris" in post["data"]["capital"].lower()
 
-    async def test_can_replay_llm_requests(self, run_app, generic_agent, request, file_memory, test_dir, vcr):
+    async def test_can_replay_llm_requests(self, run_app, generic_agent, request, vcr, file_memory_loc):
         async with run_app(generic_agent) as app:
             AgentOS.register_resource(
                 ReferenceResource(
@@ -201,7 +201,7 @@ class TestOutputTests:
             vcr.rewind()  # since we are hitting endpoing 2x in same test
 
             acc_str = "".join(
-                [e async for e in replay(f"resume_points/{request.node.name}/000_OpenAI_chat_completions")]
+                [e async for e in replay(file_memory_loc / "resume_points" / request.node.name / "000_OpenAI_chat_completions")]
             )
             assert "france" in acc_str.lower()
             assert acc_str == post["data"]

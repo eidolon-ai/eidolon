@@ -281,18 +281,14 @@ async def _openai_completions_create(*args, **kwargs):
 
 
 async def _raw_parser(resp):
-    awaited_resp = await resp
-    if inspect.isasyncgenfunction:
-        prefix = ""
-        async for m_chunk in awaited_resp:
-            chunk = cast(ChatCompletionChunk, m_chunk)
-            delta = chunk.choices[0].delta
-            if delta.tool_calls:
-                for tool_call in delta.tool_calls:
-                    yield prefix + "Tool Call:\n" + yaml.dump(tool_call.model_dump)
-                    prefix = "\n"
-            if delta.content:
-                yield prefix + delta.content
-                prefix = ""
-    else:
-        raise RuntimeError("Response is not an async generator")
+    prefix = ""
+    async for m_chunk in await resp:
+        chunk = cast(ChatCompletionChunk, m_chunk)
+        delta = chunk.choices[0].delta
+        if delta.tool_calls:
+            for tool_call in delta.tool_calls:
+                yield prefix + "Tool Call:\n" + yaml.dump(tool_call.model_dump)
+                prefix = "\n"
+        if delta.content:
+            yield prefix + delta.content
+            prefix = ""

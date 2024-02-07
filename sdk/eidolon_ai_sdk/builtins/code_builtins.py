@@ -69,7 +69,6 @@ def named_builtins():
     builtin_list = [
         AgentMachine,
         # security manager
-        (SecurityManager, SecurityManager),
         SecurityManager,
         # agents
         GenericAgent,

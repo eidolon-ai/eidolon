@@ -263,9 +263,13 @@ def symbolic_memory(mongo_symbolic_memory, local_symbolic_memory, pytestconfig):
 
 
 @pytest.fixture(scope="module")
-def file_memory(tmp_path_factory, module_identifier):
-    storage_loc = tmp_path_factory.mktemp(f"file_memory_{module_identifier}")
-    return Reference[LocalFileMemory](root_dir=str(storage_loc))
+def file_memory_loc(tmp_path_factory, module_identifier):
+    return tmp_path_factory.mktemp(f"file_memory_{module_identifier}")
+
+
+@pytest.fixture(scope="module")
+def file_memory(file_memory_loc):
+    return Reference[LocalFileMemory](root_dir=str(file_memory_loc))
 
 
 @pytest.fixture(scope="module")
