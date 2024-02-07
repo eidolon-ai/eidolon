@@ -1,4 +1,5 @@
 import pytest
+import yaml
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.resources.reference_resource import ReferenceResource
@@ -42,8 +43,10 @@ def test_resume_point_enabled(enabled_resume_point_config):
     assert enabled_resume_point_config.save_loc is not None
 
 
-def test_resume_point_actually_works(enabled_resume_point_config):
+async def test_resume_point_actually_works(enabled_resume_point_config):
     assert replayable(foo)(1, 2, 3, a=4, b=5) == dict(args=(1, 2, 3), kwargs=dict(a=4, b=5))
     assert len(SideEffect.calls) == 1
-    assert replay(enabled_resume_point_config.save_loc + "/000_foo") == dict(args=(1, 2, 3), kwargs=dict(a=4, b=5))
+    stream = replay(enabled_resume_point_config.save_loc + "/000_foo")
+    acc = [s async for s in stream]
+    assert acc[0] == dict(args=(1, 2, 3), kwargs=dict(a=4, b=5))
     assert len(SideEffect.calls) == 2

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from functools import wraps
-from inspect import iscoroutine, isasyncgen
 from typing import Optional
 
 import dill
@@ -18,6 +17,7 @@ class ReplayConfig(BaseModel):
 
 
 def default_serializer(*args, **kwargs):
+    args = list(args)
     return yaml.safe_dump(dict(args=args, kwargs=kwargs), sort_keys=False), "yaml"
 
 
@@ -27,7 +27,7 @@ def default_deserializer(str_):
 
 
 async def default_parser(resp):
-    yield yaml.dump(resp)
+    yield resp
 
 
 def replayable(fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None):
@@ -55,7 +55,7 @@ def replayable(fn, serializer=default_serializer, deserializer=default_deseriali
     return wrapper
 
 
-async def replay(loc):
+def replay(loc):
     data_file = AgentOS.file_memory.glob(loc + "/data.*")
     if not data_file:
         if hasattr(AgentOS.file_memory, "resolve"):
@@ -66,6 +66,4 @@ async def replay(loc):
     args, kwargs = deserializer(AgentOS.file_memory.read_file(data_loc))
     fn = dill.loads(AgentOS.file_memory.read_file(loc + "/fn.dill"))
     parser = dill.loads(AgentOS.file_memory.read_file(loc + "/parser.dill"))
-
-    async for part in parser(fn(*args, **kwargs)):
-        yield part
+    return parser(fn(*args, **kwargs))
