@@ -1,10 +1,14 @@
 [tool.poetry]
 name = "eidolon-ai-sdk"
 version = "0.1.12"
-description = ""
+description = "An Open Source Agent Services Framework"
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 include = ["logging.conf"]
+
+[tool.poetry.urls]
+Github = "https://github.com/eidolon-ai/eidolon"
+Website = "https://www.eidolonai.com/"
 
 [tool.poetry.scripts]
 eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"
