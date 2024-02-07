@@ -53,12 +53,11 @@ class AgentOS:
             if bucket[resource.metadata.name][1] == "builtin":
                 logger.info(f"Overriding builtin resource '{resource.kind}.{resource.metadata.name}'")
 
-                old_impl = getattr(bucket[resource.metadata.name][0], "spec")["implementation"]
-                if not old_impl:
-                    raise ValueError("Resource unable to merge override with builtin")
-                new_spec = getattr(resource, "spec")
-                if "implementation" not in new_spec:
-                    new_spec["implementation"] = old_impl
+                old_impl = getattr(bucket[resource.metadata.name][0], "spec", {}).get("implementation")
+                if old_impl:
+                    new_spec = getattr(resource, "spec")
+                    if "implementation" not in new_spec:
+                        new_spec["implementation"] = old_impl
             else:
                 raise ValueError(
                     f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"
