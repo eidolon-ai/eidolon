@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import io
 import os
 from functools import wraps
@@ -8,10 +7,9 @@ from glob import glob
 from typing import Optional
 
 import dill
-import yaml
 from pydantic import BaseModel
 from srsly.ruamel_yaml import YAML
-from srsly.ruamel_yaml.scalarstring import LiteralScalarString, walk_tree
+from srsly.ruamel_yaml.scalarstring import walk_tree
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.util.logger import logger
@@ -24,18 +22,18 @@ class ReplayConfig(BaseModel):
 
 def default_serializer(*args, **kwargs):
     # this is not serializing multi-line strings well, we should consider swapping yaml parsers or customizing this
-    f = io.StringIO()
+    f = io.BytesIO()
     with YAML(output=f) as yaml:
-        yaml.default_flow_style = False
         to_dump = dict(args=list(args), kwargs=kwargs)
-        walk_tree(to_dump)
+        walk_tree(to_dump)  # replaces multi line strings with LiteralScalarString
         yaml.dump(to_dump, stream=f)
     f.flush()
-    return f.getvalue(), "yaml"
+    return f.getvalue().decode(), "yaml"
 
 
 def default_deserializer(str_):
-    obj = yaml.safe_load(str_)
+    with YAML() as yaml:
+        obj = yaml.load(str_)
     return obj["args"], obj["kwargs"]
 
 
@@ -66,6 +64,7 @@ def replayable(
                 logger.info(f"Saving replay point to {printable_save_loc}")
 
                 data, file_type = serializer(*args, **kwargs)
+                # todo, these should be async tasks to avoid blocking the event loop.
                 AgentOS.file_memory.write_file(loc + "/fn.dill", dill.dumps(fn))
                 AgentOS.file_memory.write_file(loc + f"/data.{file_type}", data.encode())
                 AgentOS.file_memory.write_file(loc + "/deserializer.dill", dill.dumps(deserializer))

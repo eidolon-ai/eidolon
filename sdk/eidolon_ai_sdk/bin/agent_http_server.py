@@ -63,9 +63,9 @@ def parse_args():
     )
     parser.add_argument(
         "--replay",
-        type=str,
         help="Enable replay points and save them to the provide directory",
-        default=...,
+        action="store_true",
+        default=False,
     )
 
     # Parse command line arguments
@@ -169,7 +169,7 @@ def main():
             load_resources(args.yaml_path),
             args.machine,
             log_level,
-            replay_override=args.replay,
+            replay_override="replay" if args.replay else ...,
         )
     )
 

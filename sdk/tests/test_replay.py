@@ -1,13 +1,9 @@
-import textwrap
-
 import pytest
-import yaml
-from srsly.ruamel_yaml.scalarstring import LiteralScalarString
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
-from eidolon_ai_sdk.util.replay import replayable, ReplayConfig, replay, default_deserializer, default_serializer
+from eidolon_ai_sdk.util.replay import replayable, ReplayConfig, replay, default_serializer
 
 
 class SideEffect:
@@ -61,4 +57,5 @@ bad_obj = {'args': [], 'kwargs': {'messages': [{'role': 'system', 'content': "Yo
 
 async def test_default_yaml_parser():
     str_repr, _ = default_serializer(bad_obj)
-    assert str_repr.count("\\n") < 23
+    assert str_repr.count("\\n") < 20
+    assert str_repr.count("|") == 4
