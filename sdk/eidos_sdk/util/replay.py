@@ -30,7 +30,9 @@ async def default_parser(resp):
     yield resp
 
 
-def replayable(fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None):
+def replayable(
+    fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
+):
     config = AgentOS.get_instance(ReplayConfig)
 
     @wraps(fn)

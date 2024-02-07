@@ -1,5 +1,4 @@
 import pytest
-import yaml
 
 from eidos_sdk.agent_os import AgentOS
 from eidos_sdk.system.resources.reference_resource import ReferenceResource

@@ -1,14 +1,11 @@
 from collections import defaultdict
-from inspect import isasyncgenfunction, isasyncgen
-from pathlib import Path
 
 import httpx
 import json
 import pytest
 import pytest_asyncio
-import vcr
 from fastapi import Body
-from typing import Annotated, List, cast
+from typing import Annotated, List
 
 from eidos_sdk.agent.agent import register_program
 from eidos_sdk.agent_os import AgentOS
@@ -197,12 +194,15 @@ class TestOutputTests:
                 )
             )
 
-            post = await post_content(f"{app}/agents/GenericAgent/programs/question",
-                                      dict(instruction="Tell me about france please"))
+            post = await post_content(
+                f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please")
+            )
 
             vcr.rewind()  # since we are hitting endpoing 2x in same test
 
-            acc_str = "".join([e async for e in replay(f"resume_points/{request.node.name}/000_OpenAI_chat_completions")])
+            acc_str = "".join(
+                [e async for e in replay(f"resume_points/{request.node.name}/000_OpenAI_chat_completions")]
+            )
             assert "france" in acc_str.lower()
             assert acc_str == post["data"]
 
@@ -240,7 +240,7 @@ class TestOutputTests:
                 f"{ra}/agents/GenericAgent/programs/question",
                 body=dict(
                     instruction="What is the capital of france and its population. Put the relevant parts in XML like blocks. "
-                                "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
+                    "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
                 ),
             )
             events = (e for e in [event async for event in stream])

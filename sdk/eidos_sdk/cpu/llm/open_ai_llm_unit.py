@@ -165,9 +165,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 logger.debug("request content:\n" + yaml.dump(request))
             # llm_response = await self.llm.chat.completions.create(**request)
             llm_response = await replayable(
-                fn=_openai_completions_create,
-                name_override="OpenAI_chat_completions",
-                parser=_raw_parser
+                fn=_openai_completions_create, name_override="OpenAI_chat_completions", parser=_raw_parser
             )(**request)
             complete_message = ""
             tools_to_call = []
