@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import copy
+import io
 import os
 from functools import wraps
 from glob import glob
@@ -8,6 +10,8 @@ from typing import Optional
 import dill
 import yaml
 from pydantic import BaseModel
+from srsly.ruamel_yaml import YAML
+from srsly.ruamel_yaml.scalarstring import LiteralScalarString, walk_tree
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.util.logger import logger
@@ -20,8 +24,14 @@ class ReplayConfig(BaseModel):
 
 def default_serializer(*args, **kwargs):
     # this is not serializing multi-line strings well, we should consider swapping yaml parsers or customizing this
-    args = list(args)
-    return yaml.safe_dump(dict(args=args, kwargs=kwargs), sort_keys=False), "yaml"
+    f = io.StringIO()
+    with YAML(output=f) as yaml:
+        yaml.default_flow_style = False
+        to_dump = dict(args=list(args), kwargs=kwargs)
+        walk_tree(to_dump)
+        yaml.dump(to_dump, stream=f)
+    f.flush()
+    return f.getvalue(), "yaml"
 
 
 def default_deserializer(str_):
