@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import wraps
+from inspect import iscoroutine, isasyncgen
 from typing import Optional
 
 import dill
@@ -17,7 +18,7 @@ class ReplayConfig(BaseModel):
 
 
 def default_serializer(*args, **kwargs):
-    return yaml.safe_dump(dict(args=args, kwargs=kwargs)), "yaml"
+    return yaml.safe_dump(dict(args=args, kwargs=kwargs), sort_keys=False), "yaml"
 
 
 def default_deserializer(str_):
@@ -25,7 +26,11 @@ def default_deserializer(str_):
     return obj["args"], obj["kwargs"]
 
 
-def replayable(fn, serializer=default_serializer, deserializer=default_deserializer, name_override=None):
+async def default_parser(resp):
+    yield yaml.dump(resp)
+
+
+def replayable(fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None):
     config = AgentOS.get_instance(ReplayConfig)
 
     @wraps(fn)
@@ -42,6 +47,7 @@ def replayable(fn, serializer=default_serializer, deserializer=default_deseriali
                 AgentOS.file_memory.write_file(loc + "/fn.dill", dill.dumps(fn))
                 AgentOS.file_memory.write_file(loc + f"/data.{file_type}", data.encode())
                 AgentOS.file_memory.write_file(loc + "/deserializer.dill", dill.dumps(deserializer))
+                AgentOS.file_memory.write_file(loc + "/parser.dill", dill.dumps(parser))
             except Exception as e:
                 logger.exception(f"Error saving resume point: {e}")
         return fn(*args, **kwargs)
@@ -49,7 +55,7 @@ def replayable(fn, serializer=default_serializer, deserializer=default_deseriali
     return wrapper
 
 
-def replay(loc):
+async def replay(loc):
     data_file = AgentOS.file_memory.glob(loc + "/data.*")
     if not data_file:
         if hasattr(AgentOS.file_memory, "resolve"):
@@ -59,4 +65,7 @@ def replay(loc):
     deserializer = dill.loads(AgentOS.file_memory.read_file(loc + "/deserializer.dill"))
     args, kwargs = deserializer(AgentOS.file_memory.read_file(data_loc))
     fn = dill.loads(AgentOS.file_memory.read_file(loc + "/fn.dill"))
-    return fn(*args, **kwargs)
+    parser = dill.loads(AgentOS.file_memory.read_file(loc + "/parser.dill"))
+
+    async for part in parser(fn(*args, **kwargs)):
+        yield part

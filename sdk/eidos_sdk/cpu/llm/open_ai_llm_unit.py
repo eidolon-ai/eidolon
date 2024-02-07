@@ -137,14 +137,9 @@ class OpenAiGPTSpec(BaseModel):
     max_tokens: Optional[int] = None
 
 
-async def execute(*args, **kwargs):
-    return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
-
-
 class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
     model: str
     temperature: float
-    llm: AsyncOpenAI = None
 
     def __init__(self, **kwargs):
         LLMUnit.__init__(self, **kwargs)
@@ -160,10 +155,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         tools: List[LLMCallFunction],
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
-        if not self.llm:
-            self.llm = AsyncOpenAI()
         yield StartLLMEvent()
-
         try:
             can_stream_message, request = await self._build_request(messages, tools, output_format)
             request["stream"] = True
@@ -172,7 +164,11 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug("request content:\n" + yaml.dump(request))
             # llm_response = await self.llm.chat.completions.create(**request)
-            llm_response = await replayable(execute, name_override="OpenAI_chat_completions")(**request)
+            llm_response = await replayable(
+                fn=_openai_completions_create,
+                name_override="OpenAI_chat_completions",
+                parser=_raw_parser
+            )(**request)
             complete_message = ""
             tools_to_call = []
             async for m_chunk in llm_response:
@@ -282,9 +278,23 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
     return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
 
 
+async def _openai_completions_create(*args, **kwargs):
+    return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
+
+
 async def _raw_parser(resp):
     awaited_resp = await resp
-    if inspect.isasyncgenfunction
-    async for m_chunk in awaited_resp:
-        chunk = cast(ChatCompletionChunk, m_chunk)
-        chunk.choices
+    if inspect.isasyncgenfunction:
+        prefix = ""
+        async for m_chunk in awaited_resp:
+            chunk = cast(ChatCompletionChunk, m_chunk)
+            delta = chunk.choices[0].delta
+            if delta.tool_calls:
+                for tool_call in delta.tool_calls:
+                    yield prefix + "Tool Call:\n" + yaml.dump(tool_call.model_dump)
+                    prefix = "\n"
+            if delta.content:
+                yield prefix + delta.content
+                prefix = ""
+    else:
+        raise RuntimeError("Response is not an async generator")
