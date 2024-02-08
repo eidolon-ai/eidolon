@@ -1,14 +1,17 @@
 import base64
 import json
 import logging
+from io import BytesIO
+from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
+
 import yaml
 from PIL import Image
-from io import BytesIO
-from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
+from openai import AsyncOpenAI, AsyncStream
+from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk, ChatCompletionMessage
+from openai.types.chat.chat_completion import ChatCompletion
+from openai.types.chat.chat_completion_chunk import ChoiceDelta
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field, BaseModel
-from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.call_context import CallContext
@@ -162,10 +165,8 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             logger.info("executing open ai llm request", extra=request)
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug("request content:\n" + yaml.dump(request))
-            # llm_response = await self.llm.chat.completions.create(**request)
-            llm_response = await replayable(
-                fn=_openai_completions_create, name_override="OpenAI_chat_completions", parser=_raw_parser
-            )(**request)
+            llm_request = replayable(fn=_openai_completion, name_override="openai_completion", parser=_raw_parser)
+            llm_response = await llm_request(**request)
             complete_message = ""
             tools_to_call = []
             async for m_chunk in llm_response:
@@ -275,19 +276,46 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
     return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
 
 
-async def _openai_completions_create(*args, **kwargs):
+async def _openai_completion(*args, **kwargs):
     return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
 
 
 async def _raw_parser(resp):
+    """
+    Parses responses from openai and yield strings to accumulate to a human-readable message.
+
+    Makes assumptions around tool calls. These are currently true, but may change as openai mutates their API
+    1. Tool call functions names are always in a complete message
+    2. Tool calls are ordered (No chunk for tool #2 until #1 is complete)
+    """
+    calling_tools = False
     prefix = ""
-    async for m_chunk in await resp:
-        chunk = cast(ChatCompletionChunk, m_chunk)
-        delta = chunk.choices[0].delta
-        if delta.tool_calls:
-            for tool_call in delta.tool_calls:
-                yield prefix + "Tool Call:\n" + yaml.dump(tool_call.model_dump)
-                prefix = "\n"
-        if delta.content:
-            yield prefix + delta.content
-            prefix = ""
+    async for message in _normalize_openai(resp):
+        if message.tool_calls:
+            calling_tools = True
+            for i, tool_call in enumerate(message.tool_calls):
+                if tool_call.function.name:
+                    yield prefix + f"Tool Call: {tool_call.function.name}\nArguments: "
+                    prefix = "\n"
+                if tool_call.function.arguments:
+                    yield tool_call.function.arguments
+        elif calling_tools:
+            yield "\n"
+        if message.content:
+            yield message.content
+            prefix = "\n"
+
+
+async def _normalize_openai(resp) -> AsyncIterator[ChoiceDelta | ChatCompletionMessage]:
+    """
+    Normalizes different types of responses from openai depending on how the request was made.
+    This is important since arguments like streaming can be mutated when replaying requests.
+    """
+    resp = await resp
+    if isinstance(resp, AsyncStream):
+        async for m_chunk in resp:
+            yield cast(ChatCompletionChunk, m_chunk).choices[0].delta
+    elif isinstance(resp, ChatCompletion):
+        yield resp.choices[0].message
+    else:
+        raise ValueError(f"Unknown response type {type(resp)}")

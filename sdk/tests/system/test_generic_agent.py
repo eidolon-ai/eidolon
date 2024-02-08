@@ -24,6 +24,19 @@ from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
 
+@pytest.fixture
+def enable_replay(file_memory_loc, request):
+    AgentOS.register_resource(
+        ReferenceResource(
+            apiVersion="eidolon/v1",
+            metadata=Metadata(name=ReplayConfig.__name__),
+            spec=dict(save_loc=f"resume_points/{request.node.name}"),
+        )
+    )
+
+    return file_memory_loc / "resume_points" / request.node.name
+
+
 @pytest.fixture(scope="module")
 def generic_agent_root(llm):
     return Resource(
@@ -171,6 +184,18 @@ class TestAgentsWithReferences:
         )
         assert HelloWorld.calls["greeter4"] == ["bar"]
 
+    async def test_can_replay_tool_calls(self, client, enable_replay, vcr):
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
+        )
+        post.raise_for_status()
+        assert HelloWorld.calls["greeter1"][-1] == {"name": "Luke"}
+
+        vcr.rewind()  # since we are hitting endpoing 2x in same test
+        acc_str = "".join([e async for e in replay(enable_replay / "000_openai_completion")])
+        assert acc_str == 'Tool Call: AgentsLogicUnit_convo_HelloWorld_greeter1\nArguments: {"body":{"name":"Luke"}}\n'
+
 
 class TestOutputTests:
     async def test_generic_agent_supports_object_output(self, run_app, generic_agent, dog):
@@ -184,30 +209,14 @@ class TestOutputTests:
             )
             assert "paris" in post["data"]["capital"].lower()
 
-    async def test_can_replay_llm_requests(self, run_app, generic_agent, request, vcr, file_memory_loc):
+    async def test_can_replay_llm_requests(self, run_app, generic_agent, enable_replay, vcr):
         async with run_app(generic_agent) as app:
-            AgentOS.register_resource(
-                ReferenceResource(
-                    apiVersion="eidolon/v1",
-                    metadata=Metadata(name=ReplayConfig.__name__),
-                    spec=dict(save_loc=f"resume_points/{request.node.name}"),
-                )
-            )
-
             post = await post_content(
                 f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please")
             )
 
             vcr.rewind()  # since we are hitting endpoing 2x in same test
-
-            acc_str = "".join(
-                [
-                    e
-                    async for e in replay(
-                        file_memory_loc / "resume_points" / request.node.name / "000_OpenAI_chat_completions"
-                    )
-                ]
-            )
+            acc_str = "".join([e async for e in replay(enable_replay / "000_openai_completion")])
             assert "france" in acc_str.lower()
             assert acc_str == post["data"]
 

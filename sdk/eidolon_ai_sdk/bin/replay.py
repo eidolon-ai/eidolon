@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
-
+from typer.main import except_hook, _typer_developer_exception_attr_name
+from typer.models import DeveloperExceptionConfig
 from eidolon_ai_sdk.util.replay import replay
 
 app = typer.Typer()
@@ -51,16 +52,31 @@ async def main(
                 typer.echo(typer.style("Waiting for updates...", dim=True))
             except asyncio.exceptions.CancelledError:
                 typer.echo("\n" + typer.style("Aborted: file modified", fg=typer.colors.RED))
-
+            except Exception as exc:
+                # Don't let exceptions break us out of the loop. Instead, let typer format and print them nicely
+                setattr(
+                    exc,
+                    _typer_developer_exception_attr_name,
+                    DeveloperExceptionConfig(
+                        pretty_exceptions_enable=app.pretty_exceptions_enable,
+                        pretty_exceptions_show_locals=app.pretty_exceptions_show_locals,
+                        pretty_exceptions_short=app.pretty_exceptions_short,
+                    ),
+                )
+                except_hook(type(exc), exc, exc.__traceback__)
+                typer.echo(typer.style("Waiting for updates...", dim=True))
             care_time = await wait_for_update
 
 
 async def _do_replay(replay_location, color):
     typer.echo(typer.style(f"Replaying from {replay_location}", dim=True))
     try:
+        ended_with_newline = True
         async for chunk in replay(replay_location):
+            ended_with_newline = chunk.endswith("\n")
             typer.echo(typer.style(chunk, fg=color), nl=False)
-        typer.echo("\n", nl=False)
+        if not ended_with_newline:
+            typer.echo("\n", nl=False)
     except FileNotFoundError as fnf:
         typer.echo(typer.style(f"{fnf}", fg=typer.colors.RED))
         raise typer.Exit(1)
