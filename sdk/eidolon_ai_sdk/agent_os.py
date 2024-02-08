@@ -9,6 +9,7 @@ from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resou
 from eidolon_ai_sdk.util.logger import logger
 
 T = TypeVar("T", bound="Resource")  # noqa: F821
+S = TypeVar("S", bound="BaseModel")  # noqa: F821
 
 
 class AgentOS:
@@ -30,7 +31,7 @@ class AgentOS:
             cls._resources = {}
             for resource in named_builtins():
                 cls.register_resource(resource, source="builtin")
-            for resource in load_resources(pathlib.Path(__file__).parent / "builtins" / "resources"):
+            for resource, loc in load_resources(pathlib.Path(__file__).parent / "builtins" / "resources"):
                 cls.register_resource(resource, source="builtin")
 
         return cls._resources
@@ -51,6 +52,12 @@ class AgentOS:
         if resource.metadata.name in bucket:
             if bucket[resource.metadata.name][1] == "builtin":
                 logger.info(f"Overriding builtin resource '{resource.kind}.{resource.metadata.name}'")
+
+                old_impl = getattr(bucket[resource.metadata.name][0], "spec", {}).get("implementation")
+                if old_impl:
+                    new_spec = getattr(resource, "spec")
+                    if "implementation" not in new_spec:
+                        new_spec["implementation"] = old_impl
             else:
                 raise ValueError(
                     f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"
@@ -63,14 +70,24 @@ class AgentOS:
         return {k: tu[0].promote(kind) for k, tu in cls._get_or_load_resources().get(kind.kind_literal(), {}).items()}
 
     @classmethod
+    def get_resource_raw(cls, kind: Type[T], name: str) -> Resource:
+        return cls._get_or_load_resources()[kind.kind_literal()][name][0]
+
+    @classmethod
     def get_resource(cls, kind: Type[T], name: str, default=...) -> T:
         bucket = kind.kind_literal()
         try:
-            return cls._get_or_load_resources()[bucket][name][0].promote(kind)
+            return cls.get_resource_raw(kind, name).promote(kind)
         except KeyError:
             if default is not ...:
                 return default
             raise ValueError(f"Resource {name} not found in bucket {bucket}")
+
+    @classmethod
+    def get_instance(cls, kind: Type[S], **kwargs) -> S:
+        from eidolon_ai_sdk.system.reference_model import Reference
+
+        return Reference[kind, kind.__name__]().instantiate(**kwargs)
 
     @classmethod
     def get_resource_source(cls, bucket, name: str) -> str:

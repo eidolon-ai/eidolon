@@ -70,3 +70,7 @@ class FileMemory(ABC):
     @abstractmethod
     def exists(self, file_name: str):
         pass
+
+    @abstractmethod
+    def glob(self, pattern: str):
+        pass
