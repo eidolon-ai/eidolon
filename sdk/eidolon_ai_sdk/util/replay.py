@@ -47,7 +47,7 @@ def replayable(
     config = AgentOS.get_instance(ReplayConfig)
 
     @wraps(fn)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         if config.save_loc:
             try:
                 existing_dirs = [os.path.split(d)[-1] for d in await AgentOS.file_memory.glob(config.save_loc + "/*")]
@@ -70,12 +70,12 @@ def replayable(
                 await AgentOS.file_memory.write_file(loc + "/parser.dill", dill.dumps(parser))
             except Exception as e:
                 logger.exception(f"Error saving resume point: {e}")
-        return fn(*args, **kwargs)
+        return await fn(*args, **kwargs)
 
     return wrapper
 
 
-def replay(loc):
+async def replay(loc):
     loc = str(loc)
     data_file = glob(loc + "/data.*")
     if not data_file:
@@ -90,4 +90,5 @@ def replay(loc):
 
     with open(data_file[0]) as file:
         args, kwargs = deserializer(file.read())
-    return parser(fn(*args, **kwargs))
+    async for e in parser(await fn(*args, **kwargs)):
+        yield e

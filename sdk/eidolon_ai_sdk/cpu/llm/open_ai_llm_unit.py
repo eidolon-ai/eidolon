@@ -311,7 +311,6 @@ async def _normalize_openai(resp) -> AsyncIterator[ChoiceDelta | ChatCompletionM
     Normalizes different types of responses from openai depending on how the request was made.
     This is important since arguments like streaming can be mutated when replaying requests.
     """
-    resp = await resp
     if isinstance(resp, AsyncStream):
         async for m_chunk in resp:
             yield cast(ChatCompletionChunk, m_chunk).choices[0].delta
