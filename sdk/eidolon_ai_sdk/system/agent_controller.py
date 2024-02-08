@@ -25,7 +25,7 @@ from eidolon_ai_sdk.io.events import (
     SuccessEvent,
     StreamEvent,
     EndStreamEvent,
-    ObjectOutputEvent,
+    ObjectOutputEvent, UserInputEvent,
 )
 from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
@@ -201,7 +201,9 @@ class AgentController:
     async def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
-        events_to_store = []
+        events_to_store = [
+            UserInputEvent(input=kwargs)
+        ]
         async for event in self.stream_agent_iterator(stream, process, handler.name):
             events_to_store.append(event)
             yield event

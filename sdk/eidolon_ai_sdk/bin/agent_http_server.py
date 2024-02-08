@@ -3,7 +3,6 @@ from importlib.metadata import version, PackageNotFoundError
 
 import argparse
 import dotenv
-import json
 import logging.config
 import pathlib
 import uvicorn
@@ -12,14 +11,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from pydantic import TypeAdapter
-from sse_starlette import EventSourceResponse, ServerSentEvent
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import Response
-from typing import AsyncIterable
+from starlette.responses import Response, JSONResponse
 
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.io.events import StreamEvent
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.request_context import ContextMiddleware
@@ -117,14 +115,30 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
 
     @app.get("/system/processes", tags=["system"], description="Get all processes")
     async def processes():
-        async def process_to_dict() -> AsyncIterable[ServerSentEvent]:
-            async for process in ProcessDoc.find(query={}, projection={"data": 0}):
-                process = process.model_dump()
-                process["process_id"] = process["_id"]
-                del process["_id"]
-                yield ServerSentEvent(id=process["process_id"], data=json.dumps(process))
+        child_pids = await AgentCallHistory.get_child_pids()
+        processes = []
+        async for process in ProcessDoc.find(query={}, projection={"data": 0}):
+            process = process.model_dump()
+            process["process_id"] = process["_id"]
+            del process["_id"]
+            if process["process_id"] in child_pids:
+                process["parent_process_id"] = child_pids[process["process_id"]]
+            processes.append(process)
 
-        return EventSourceResponse(process_to_dict())
+        return JSONResponse(content=processes, status_code=200)
+
+    @app.get("/system/processes/{process_id}", tags=["system"], description="Get all processes")
+    async def process(process_id: str):
+        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+        if not process_obj:
+            return JSONResponse(content={"error": f"Process {process_id} not found"}, status_code=404)
+        process_obj = process_obj.model_dump()
+        process_obj["process_id"] = process_obj["_id"]
+        if process_obj.get("data"):
+            del process_obj["data"]
+        del process_obj["_id"]
+
+        return JSONResponse(content=process_obj, status_code=200)
 
     try:
         for resource_or_tuple in resource_generator:

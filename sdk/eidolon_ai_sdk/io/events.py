@@ -10,6 +10,7 @@ from eidolon_ai_sdk.cpu.llm_message import ToolCall
 
 class Category(Enum):
     START = "start"
+    INPUT = "input"
     END = "end"
     OUTPUT = "output"
     TRANSFORM = "transform"
@@ -67,8 +68,16 @@ class BaseStreamEvent(BaseModel, ABC):
             return ErrorEvent(**event_dict)
         elif event_type == "agent_state":
             return AgentStateEvent(**event_dict)
+        elif event_type == "user_input":
+            return UserInputEvent(**event_dict)
         else:
             raise ValueError(f"Unknown event type {event_type}")
+
+
+class UserInputEvent(BaseStreamEvent):
+    category: Literal[Category.INPUT] = Category.INPUT
+    event_type: Literal["user_input"] = "user_input"
+    input: Dict[str, Any]
 
 
 class StartStreamContextEvent(BaseStreamEvent):
@@ -180,6 +189,7 @@ StreamEvent = (
     | CanceledEvent
     | ErrorEvent
     | AgentStateEvent
+    | UserInputEvent
 )
 
 
