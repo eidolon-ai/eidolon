@@ -69,3 +69,7 @@ class FileMemory(ABC):
     @abstractmethod
     async def exists(self, file_name: str):
         pass
+
+    @abstractmethod
+    async def glob(self, pattern: str):
+        pass

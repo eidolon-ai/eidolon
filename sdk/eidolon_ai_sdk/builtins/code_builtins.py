@@ -38,6 +38,7 @@ from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
+from eidolon_ai_sdk.util.replay import ReplayConfig
 
 
 def _to_resource(maybe_tuple: type | Tuple[type, type]) -> ReferenceResource:
@@ -68,7 +69,6 @@ def named_builtins():
     builtin_list = [
         AgentMachine,
         # security manager
-        (SecurityManager, SecurityManager),
         SecurityManager,
         # agents
         GenericAgent,
@@ -112,5 +112,7 @@ def named_builtins():
         FilesystemLoader,
         ToTChecker,
         OpenAiSpeech,
+        # config objects
+        ReplayConfig,
     ]
     return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list]
