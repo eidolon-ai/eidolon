@@ -12,6 +12,9 @@ from eidolon_ai_sdk.util.class_utils import fqn
 class BaseSpec(BaseModel):
     foo: str = "simple foo"
 
+    def __init__(self, **data):
+        super().__init__(**data)
+
 
 class OSSpec(BaseSpec):
     foo: str = "os foo"
@@ -133,7 +136,7 @@ class ExtendedModel(Reference[object, Random]):
 
 
 class Wrapper(BaseModel):
-    extended: ExtendedModel = ExtendedModel()
+    extended: ExtendedModel = Field(default_factory=ExtendedModel)
 
 
 def test_extending_reference_wrapped():
@@ -198,3 +201,8 @@ def test_loosely_validated_type_bounds():
     reference = Reference(implementation=fqn(System))
     fielded = Fielded(simple=reference)
     assert fielded.simple.instantiate().spec.foo == "system foo"
+
+
+def test_referencing_base_models_directly():
+    with resource(name="BaseSpec", implementation=fqn(BaseSpec), spec=dict(foo="bar")):
+        assert AnnotatedReference[BaseSpec]().instantiate().foo == "bar"

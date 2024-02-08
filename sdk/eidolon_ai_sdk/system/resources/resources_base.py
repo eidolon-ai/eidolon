@@ -41,7 +41,7 @@ def load_resources(path):
                 if file_loc.endswith(".yaml"):
                     for loaded in yaml.safe_load_all(resource_yaml):
                         if loaded:
-                            yield Resource.model_validate(loaded)
+                            yield Resource.model_validate(loaded), file_loc
                 else:
                     logger.info(f"Skipping {file_loc}")
         except Exception as e:

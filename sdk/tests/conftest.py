@@ -18,6 +18,7 @@ from vcr.stubs import httpx_stubs
 from vcr.stubs.httpx_stubs import _shared_vcr_send, _record_responses
 
 import eidolon_ai_sdk.system.processes as processes
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
@@ -200,6 +201,15 @@ def machine_manager(file_memory, symbolic_memory, similarity_memory):
     return fn
 
 
+@pytest.fixture
+async def machine(machine_manager):
+    async with machine_manager() as m:
+        instantiated = m.spec.instantiate()
+        AgentOS.load_machine(instantiated)
+        yield instantiated
+        AgentOS.reset()
+
+
 @pytest.fixture(scope="module")
 def local_symbolic_memory(module_identifier):
     @asynccontextmanager
@@ -253,9 +263,13 @@ def symbolic_memory(mongo_symbolic_memory, local_symbolic_memory, pytestconfig):
 
 
 @pytest.fixture(scope="module")
-def file_memory(tmp_path_factory, module_identifier):
-    storage_loc = tmp_path_factory.mktemp(f"file_memory_{module_identifier}")
-    return Reference[LocalFileMemory](root_dir=str(storage_loc))
+def file_memory_loc(tmp_path_factory, module_identifier):
+    return tmp_path_factory.mktemp(f"file_memory_{module_identifier}")
+
+
+@pytest.fixture(scope="module")
+def file_memory(file_memory_loc):
+    return Reference[LocalFileMemory](root_dir=str(file_memory_loc))
 
 
 @pytest.fixture(scope="module")
