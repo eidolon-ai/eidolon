@@ -55,14 +55,14 @@ class AgentMachine(Specable[MachineSpec]):
             raise Exception("Machine already started")
         for program in self.agent_controllers:
             await program.start(app)
-        self.memory.start()
+        await self.memory.start()
         self.app = app
 
-    def stop(self):
+    async def stop(self):
         if self.app:
             for program in self.agent_controllers:
-                program.stop(self.app)
-            self.memory.stop()
+                await program.stop(self.app)
+            await self.memory.stop()
             self.app = None
 
 

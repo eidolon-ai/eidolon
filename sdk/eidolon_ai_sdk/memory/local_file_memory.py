@@ -4,6 +4,7 @@ from pydantic import Field, field_validator, BaseModel
 
 from eidolon_ai_sdk.memory.file_memory import FileMemory
 from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.util.async_wrapper import make_async
 from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
 
 
@@ -62,6 +63,7 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
 
         return resolved_path
 
+    @make_async
     def read_file(self, file_path: str) -> bytes:
         """
         Reads and returns the contents of the file specified by the file_path within the root directory.
@@ -79,6 +81,7 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         with open(safe_file_path, "rb") as file:
             return file.read()
 
+    @make_async
     def write_file(self, file_path: str, file_contents: bytes) -> None:
         """
         Writes the given file_contents to the file specified by the file_path within the root directory.
@@ -97,14 +100,14 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         with open(safe_file_path, "wb") as file:
             file.write(file_contents)
 
-    def delete_file(self, file_path: str) -> None:
+    async def delete_file(self, file_path: str) -> None:
         # Resolve the safe path
         safe_file_path = self.resolve(file_path)
 
         # Delete the file
         safe_file_path.unlink()
 
-    def mkdir(self, directory: str, exist_ok: bool = False):
+    async def mkdir(self, directory: str, exist_ok: bool = False):
         """
         Creates a directory at the specified path relative to the root directory.
 
@@ -121,7 +124,7 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         # Create the directory
         safe_directory.mkdir(parents=True, exist_ok=exist_ok)
 
-    def exists(self, file_name: str):
+    async def exists(self, file_name: str):
         """
         Checks if a file exists at the specified path relative to the root directory.
 
@@ -137,14 +140,14 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         # Check if the file exists
         return safe_file_path.exists()
 
-    def start(self):
+    async def start(self):
         """
         Starts the memory implementation. Noop for this implementation.
         """
         if not self.root_dir.exists():
             self.root_dir.mkdir(parents=True)
 
-    def stop(self):
+    async def stop(self):
         """
         Stops the memory implementation. Noop for this implementation.
         """

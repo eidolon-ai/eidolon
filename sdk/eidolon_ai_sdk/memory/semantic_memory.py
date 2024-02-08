@@ -14,7 +14,7 @@ class SymbolicMemory(ABC):
     """
 
     @abstractmethod
-    def start(self):
+    async def start(self):
         """
         Prepares the symbolic memory for operation, which may include tasks like
         allocating resources or initializing connections to databases.
@@ -22,7 +22,7 @@ class SymbolicMemory(ABC):
         pass
 
     @abstractmethod
-    def stop(self):
+    async def stop(self):
         """
         Properly shuts down the symbolic memory, ensuring that any resources are released
         or any established connections are terminated.

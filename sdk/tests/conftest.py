@@ -206,9 +206,9 @@ def local_symbolic_memory(module_identifier):
     async def fn():
         ref = Reference(implementation=fqn(LocalSymbolicMemory))
         memory = ref.instantiate()
-        memory.start()
+        await memory.start()
         yield ref
-        memory.stop()
+        await memory.stop()
         # Teardown: drop the test database
 
     return fn
@@ -226,9 +226,9 @@ def mongo_symbolic_memory(module_identifier):
             mongo_database_name=database_name,
         )
         memory = ref.instantiate()
-        memory.start()
+        await memory.start()
         yield ref
-        memory.stop()
+        await memory.stop()
         # Teardown: drop the test database
         connection_string = os.getenv("MONGO_CONNECTION_STRING")
         client = AsyncIOMotorClient(connection_string)
