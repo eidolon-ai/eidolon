@@ -44,7 +44,7 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
         except OpenApiException as e:
             if not isinstance(e, ApiException):
                 # give agent some more information on the endpoint if they are calling it improperly
-                yield StringOutputEvent(content=getattr(self.client(), core_v1_api_function_name).__doc__)
+                yield StringOutputEvent(content=getattr(self.client(), fn).__doc__)
             raise e
         yield OutputEvent.get(content=(to_jsonable_python(resp, fallback=str)))
 
