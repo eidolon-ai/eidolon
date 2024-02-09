@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from contextlib import AsyncExitStack
 from typing import Optional, AsyncIterator, List, Callable
 
-from aiostream import streamcontext, stream
+from aiostream import stream
 
 from eidolon_ai_sdk.io.events import (
     BaseStreamEvent,
@@ -62,7 +61,9 @@ class StreamCollector(AsyncIterator[StreamEvent]):
         return event
 
 
-def stream_manager(stream: AsyncIterator[StreamEvent] | Callable[[], AsyncIterator[StreamEvent]], context: StartStreamContextEvent):
+def stream_manager(
+    stream: AsyncIterator[StreamEvent] | Callable[[], AsyncIterator[StreamEvent]], context: StartStreamContextEvent
+):
     async def _iter():
         yield context.model_copy()
         try:
