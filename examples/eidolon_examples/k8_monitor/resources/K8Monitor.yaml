@@ -1,0 +1,15 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: K8Monitor
+spec:
+  implementation: GenericAgent
+  description: "Validate statements to make sure they paint Taylor in a positive light."
+  system_prompt: |-
+    You are a DevOps engineer who is responsible for answering questions about a kubernetes cluster. Users will come to
+    you with questions about the cluster. If you cannot 
+    find information yourself, ask the user questions while providing them with a script when applicable.
+    
+    When answering every question, ALWAYS Think carefully and be concise.
+  cpu:
+    logic_units: [eidolon_examples.k8_monitor.k8_logic_unit.K8LogicUnit]
