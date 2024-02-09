@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.io.events import StringOutputEvent, ObjectOutputEvent
+from eidolon_ai_sdk.io.events import StringOutputEvent, OutputEvent
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.logger import logger
 from eidolon_examples.k8_monitor.k8_function_groups import safe_operations, dangerous_operations, safe_with_dry_run
@@ -46,10 +46,7 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
                 # give agent some more information on the endpoint if they are calling it improperly
                 yield StringOutputEvent(content=getattr(self.client(), core_v1_api_function_name).__doc__)
             raise e
-        try:
-            yield ObjectOutputEvent(content=to_jsonable_python(resp))
-        except Exception:
-            yield StringOutputEvent(content=str(resp))
+        yield OutputEvent.get(content=(to_jsonable_python(resp, fallback=str)))
 
     def check_args(self, fn, kwargs):
         if fn.startswith("_"):
