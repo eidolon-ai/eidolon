@@ -1,7 +1,7 @@
 from typing import Literal
 
 import kubernetes
-from kubernetes.client import CoreV1Api
+from kubernetes.client import CoreV1Api, ApiException, OpenApiException
 from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
@@ -26,64 +26,54 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
         return self._client
 
     @llm_function()
-    async def core_v1_api(self, function_name: str, kwargs: dict = None):
+    async def core_v1_api(self, core_v1_api_function_name: str, kwargs: dict = None):
         """
         This function is a wrapper around kubernetes.client.CoreV1Api. It will call functions on the CoreV1Api object
-        and return the results. For example, to list pods function_name would be "list_namespaced_pod" and kwargs may be
-        {"namespace": "default", "limit": 20}
+        and return the results. For example, to list pods core_v1_api_function_name would be "list_namespaced_pod" and
+        kwargs may be {"namespace": "default", "limit": 20}
 
-        impl: getattr(self.client(), function_name)(**kwargs)
+        impl: getattr(self.client(), core_v1_api_function_name)(**kwargs)
         """
+        fn = core_v1_api_function_name
         kwargs = kwargs or {}
-        if function_name.startswith("_"):
-            raise ValueError("Private functions are not allowed")
-        bad_keys = ["async_req", "watch"]
-        for key in bad_keys:
-            if key in kwargs:
-                del kwargs[key]
 
-        if (
-            function_name not in safe_operations
-            and function_name not in dangerous_operations
-            and function_name not in safe_with_dry_run
-        ):
-            if self.spec.safety_level == "unrestricted":
-                logger.warning(f"Function {function_name} is not recognized")
-            else:
-                raise ValueError(f"Function {function_name} is not recognized")
+        self.check_args(fn, kwargs)
 
-        if self.spec.safety_level == "read_only":
-            if function_name not in safe_operations:
-                raise ValueError(f"Cannot perform {function_name} with current safety level {self.spec.safety_level}")
-        elif self.spec.safety_level == "no_mutations":
-            if function_name in dangerous_operations:
-                raise ValueError(f"Cannot perform {function_name} with current safety level {self.spec.safety_level}")
-            elif function_name in safe_with_dry_run and kwargs.get("dry_run") != "All":
-                raise ValueError(
-                    f"Must set dry_run='All' to perform {function_name} with current safety level {self.spec.safety_level}"
-                )
-
-        resp = getattr(self.client(), function_name)(**kwargs)
+        try:
+            resp = getattr(self.client(), fn)(**kwargs)
+        except OpenApiException as e:
+            if not isinstance(e, ApiException):
+                # give agent some more information on the endpoint if they are calling it improperly
+                yield StringOutputEvent(content=getattr(self.client(), core_v1_api_function_name).__doc__)
+            raise e
         try:
             yield ObjectOutputEvent(content=to_jsonable_python(resp))
         except Exception:
             yield StringOutputEvent(content=str(resp))
 
-    # @llm_function()
-    async def help(self, function_name: str):
-        """
-        This function is a wrapper around kubernetes.client.CoreV1Api. It will call functions on the CoreV1Api object
-        and return the results.
+    def check_args(self, fn, kwargs):
+        if fn.startswith("_"):
+            raise ValueError("Private functions are not allowed")
+        if fn.startswith("_"):
+            raise ValueError("Private functions are not allowed")
+        if not hasattr(self.client(), fn) or not callable(getattr(self.client(), fn)):
+            raise ValueError(f"Function {fn} is not recognized")
+        is_safe = fn in safe_operations
+        is_dangerous = fn in dangerous_operations
+        is_safe_with_dry_run = fn in safe_with_dry_run
+        if not (is_safe or is_dangerous or is_safe_with_dry_run):
+            if self.spec.safety_level == "unrestricted":
+                logger.warning(f"Function {fn} is not recognized")
+            else:
+                raise ValueError(f"Function {fn} is not recognized")
 
-        impl: getattr(self.client(), function_name).__doc__
-        """
-        return getattr(self.client(), function_name).__doc__
-
-    # @llm_function()
-    async def list_functions(self):
-        """
-        This function will list the functions that are available to be called on the CoreV1Api object.
-
-        impl: dir(CoreV1Api)
-        """
-        return [f for f in dir(CoreV1Api) if not f.startswith("_")]
+        if self.spec.safety_level == "read_only":
+            if fn not in safe_operations:
+                raise ValueError(f"Cannot perform {fn} with current safety level {self.spec.safety_level}")
+        elif self.spec.safety_level == "no_mutations":
+            if is_dangerous:
+                raise ValueError(f"Cannot perform {fn} with current safety level {self.spec.safety_level}")
+            elif is_safe_with_dry_run and kwargs.get("dry_run") != "All":
+                raise ValueError(
+                    f"Must set dry_run='All' to perform {fn} with current safety level {self.spec.safety_level}"
+                )
