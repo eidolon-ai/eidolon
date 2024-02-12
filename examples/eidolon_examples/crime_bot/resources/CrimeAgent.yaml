@@ -7,3 +7,4 @@ spec:
   system_prompt: |-
     You are a helpful crime assistant who tells people about crime in your area.
   user_prompt: "{{ question }}"
+  agent_refs: ["SqlAgent"]
