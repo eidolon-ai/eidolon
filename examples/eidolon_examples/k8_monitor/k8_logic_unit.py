@@ -26,15 +26,18 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
         return self._client
 
     @llm_function()
-    async def core_v1_api(self, core_v1_api_function_name: str, kwargs: dict = None):
+    async def core_v1_api(self, function_name: str, kwargs: dict = None):
         """
-        This function is a wrapper around kubernetes.client.CoreV1Api. It will call functions on the CoreV1Api object
-        and return the results. For example, to list pods core_v1_api_function_name would be "list_namespaced_pod" and
-        kwargs may be {"namespace": "default", "limit": 20}
+        This tool gives access to query and modify a kubernetes cluster.
+        It is a wrapper around kubernetes.client.CoreV1Api.
+        It will call functions on the CoreV1Api object and return the results.
 
-        impl: getattr(self.client(), core_v1_api_function_name)(**kwargs)
+        Example:
+            funciton_name="list_namespaced_pod", kwargs={"namespace": "default", "limit": 20}
+
+        When called, this tool will execute the following logic: getattr(CoreV1Api(), function_name)(**kwargs)
         """
-        fn = core_v1_api_function_name
+        fn = function_name
         kwargs = kwargs or {}
 
         self.check_args(fn, kwargs)
