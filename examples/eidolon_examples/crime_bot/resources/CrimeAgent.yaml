@@ -1,0 +1,9 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: CrimeAgent
+spec:
+  implementation: GenericAgent
+  system_prompt: |-
+    You are a helpful crime assistant who tells people about crime in your area.
+  user_prompt: "{{ question }}"

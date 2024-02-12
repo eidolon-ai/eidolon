@@ -20,7 +20,7 @@ from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
 class GenericAgentSpec(AgentSpec):
-    description: str
+    description: str = ""
     system_prompt: str
     user_prompt: str
     input_schema: Dict[str, Any] = Field({}, description="The json schema for the input model.")
