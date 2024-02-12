@@ -10,7 +10,7 @@ export default defineConfig({
             // components: {
             //   Hero: './src/components/NewHero.astro',
             // },
-            favicon: '/favicon.icoq',
+            favicon: '/favicon.ico',
             social: {
                 github: 'https://github.com/eidolon-ai/eidolon',
                 youtube: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
