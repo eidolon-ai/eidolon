@@ -1,13 +1,13 @@
-from collections import deque
-from importlib.metadata import version, PackageNotFoundError
-
 import argparse
-import dotenv
 import logging.config
 import pathlib
+from collections import deque
+from contextlib import asynccontextmanager
+from importlib.metadata import version, PackageNotFoundError
+
+import dotenv
 import uvicorn
 import yaml
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from pydantic import TypeAdapter
@@ -17,13 +17,13 @@ from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.io.events import StreamEvent
-from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.request_context import ContextMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()
 
@@ -62,13 +62,19 @@ def parse_args():
         help="The name of the machine to start.",
         default="DEFAULT",
     )
+    parser.add_argument(
+        "--record",
+        help="Enable replay points and save them to the provide directory",
+        action="store_true",
+        default=False,
+    )
 
     # Parse command line arguments
     return parser.parse_args()
 
 
 @asynccontextmanager
-async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO):
+async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO, replay_override=...):
     def custom_openapi():
         if app.openapi_schema:
             return app.openapi_schema
@@ -154,6 +160,12 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         machine = machine_spec.instantiate()
         AgentOS.load_machine(machine)
         await machine.start(app)
+
+        if replay_override is not ...:
+            spec = AgentOS.get_resource_raw(ReferenceResource, "ReplayConfig").spec
+            spec["save_loc"] = replay_override
+        if AgentOS.get_instance(ReplayConfig).save_loc:
+            logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
         yield
     except Exception:
@@ -189,7 +201,15 @@ def main():
     log_level_str = "debug" if args.debug else "info"
     log_level = logging.DEBUG if args.debug else logging.INFO
 
-    _app = start_app(lambda app: start_os(app, load_resources(args.yaml_path), args.machine, log_level))
+    _app = start_app(
+        lambda app: start_os(
+            app,
+            load_resources(args.yaml_path),
+            args.machine,
+            log_level,
+            replay_override="recordings" if args.record else ...,
+        )
+    )
 
     # Run the server
     uvicorn.run(

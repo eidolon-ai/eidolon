@@ -11,6 +11,7 @@ setuptools = "^69.0.2"
 transformers = "^4.35.2"
 eidolon-ai-sdk = {path = "../sdk", develop = true}
 pydub = "^0.25.1"
+ruamel-yaml = "^0.18.6"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
@@ -21,6 +22,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"
+replay = "eidolon_ai_sdk.bin.replay:app"
 
 [tool.ruff]
 line-length = 121

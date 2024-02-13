@@ -41,6 +41,7 @@ async def stream_content(url: str, body):
     request = {"url": url, "json": body, "method": "POST", "headers": headers}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         async with client.stream(**request) as response:
+            response.raise_for_status()
             async for sse_event in EventSource(response).aiter_sse():
                 data = json.loads(sse_event.data)
                 event = BaseStreamEvent.from_dict(data)
