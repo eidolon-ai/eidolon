@@ -5,7 +5,13 @@ from typing import Annotated
 
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent.client import Agent
-from eidolon_ai_sdk.io.events import AgentStateEvent, StringOutputEvent, StartAgentCallEvent, SuccessEvent
+from eidolon_ai_sdk.io.events import (
+    AgentStateEvent,
+    StringOutputEvent,
+    StartAgentCallEvent,
+    SuccessEvent,
+    UserInputEvent,
+)
 
 
 class HelloWorld:
@@ -63,6 +69,7 @@ class TestHelloWorld:
         response = client.get(f"/agents/HelloWorld/processes/{process_id}/events")
         events = response.json()
         expected_events = [
+            UserInputEvent(input=dict(name="world")),
             StartAgentCallEvent(machine=server, agent_name="HelloWorld", call_name="idle", process_id=process_id),
             StringOutputEvent(content="Hello, world!"),
             AgentStateEvent(state="terminated", available_actions=[]),

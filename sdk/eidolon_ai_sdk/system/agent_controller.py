@@ -45,7 +45,10 @@ class AgentController:
         self.actions = {}
         self.agent = agent
         for handler in get_handlers(self.agent):
-            self.actions[handler.name] = handler
+            if handler.name in self.actions:
+                self.actions[handler.name].extra["allowed_states"].extend(handler.extra["allowed_states"])
+            else:
+                self.actions[handler.name] = handler
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent '{self.name}'")
@@ -69,7 +72,7 @@ class AgentController:
         for handler in [*self.actions.values().__reversed__()]:
             handler_name = handler.name
             path = f"/agents/{self.name}/processes/{{process_id}}/actions/{handler_name}"
-            if handler.extra["type"] == "program":
+            if "initialized" in handler.extra["allowed_states"]:
                 await self.add_route(app, handler, f"/agents/{self.name}/programs/{handler_name}", True)
             if handler_name not in added_actions:
                 await self.add_route(app, handler, path, False)
@@ -123,7 +126,7 @@ class AgentController:
     ):
         request = typing.cast(Request, kwargs.pop("__request"))
         if not process_id:
-            if not handler.extra["type"] == "program":
+            if "initialized" not in handler.extra["allowed_states"]:
                 raise HTTPException(
                     status_code=400,
                     detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',

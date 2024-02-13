@@ -16,6 +16,7 @@ from eidolon_ai_sdk.io.events import (
     AgentStateEvent,
     StartLLMEvent,
     StringOutputEvent,
+    UserInputEvent,
 )
 from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
@@ -231,6 +232,12 @@ class TestOutputTests:
                 f"{ra}/agents/GenericAgent/programs/question", body=dict(instruction="Tell me about france please")
             )
             expected_events = [
+                UserInputEvent(
+                    input={
+                        "body": {"instruction": "Tell me about france please"},
+                        "process_id": "test_generic_agent_supports_object_output_with_stream_0",
+                    }
+                ),
                 StartAgentCallEvent(
                     agent_name="GenericAgent",
                     machine=AgentOS.current_machine_url(),
@@ -257,7 +264,7 @@ class TestOutputTests:
                     "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
                 ),
             )
-            events = (e for e in [event async for event in stream])
+            events = (e for e in [event async for event in stream][1:])
             assert next(events) == StartAgentCallEvent(
                 agent_name="GenericAgent",
                 machine=AgentOS.current_machine_url(),

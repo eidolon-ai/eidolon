@@ -131,7 +131,7 @@ class TestHelloWorld:
     async def test_lots_o_context_streaming(self, server):
         agent = Agent.get("HelloWorld")
         events = [e async for e in agent.stream_program("lots_o_context")]
-        assert events[1:-1] == [
+        assert events[2:-1] == [
             StringOutputEvent(content="1"),
             StringOutputEvent(content="2"),
             StartStreamContextEvent(context_id="c1"),

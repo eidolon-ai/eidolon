@@ -45,7 +45,6 @@ def register_program(
         input_model=input_model,
         output_model=output_model,
         allowed_states=["initialized"],
-        type="program",
     )
 
 
@@ -67,7 +66,6 @@ def register_action(
         input_model=input_model,
         output_model=output_model,
         allowed_states=allowed_states,
-        type="action",
     )
 
 

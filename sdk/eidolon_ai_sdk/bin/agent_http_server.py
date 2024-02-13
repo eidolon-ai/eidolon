@@ -170,11 +170,12 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
         yield
+        machine.stop()
     except Exception:
         logger.exception("Failed to start AgentOS")
         raise
-    machine.stop()
-    AgentOS.reset()
+    finally:
+        AgentOS.reset()
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
