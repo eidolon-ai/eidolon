@@ -26,6 +26,7 @@ from eidolon_ai_sdk.io.events import (
     StreamEvent,
     EndStreamEvent,
     ObjectOutputEvent,
+    UserInputEvent,
 )
 from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
@@ -37,44 +38,20 @@ from eidolon_ai_sdk.util.logger import logger
 class AgentController:
     name: str
     agent: object
-    programs: typing.Dict[str, FnHandler]
     actions: typing.Dict[str, FnHandler]
 
     def __init__(self, name, agent):
         self.name = name
-        self.programs = {}
         self.actions = {}
         self.agent = agent
         for handler in get_handlers(self.agent):
-            if handler.extra["type"] == "program":
-                self.programs[handler.name] = handler
+            if handler.name in self.actions:
+                self.actions[handler.name].extra["allowed_states"] = (*self.actions[handler.name].extra["allowed_states"], *handler.extra["allowed_states"])
             else:
                 self.actions[handler.name] = handler
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent '{self.name}'")
-        for handler in [*self.programs.values(), *self.actions.values().__reversed__()]:
-            path = f"/agents/{self.name}"
-            handler_name = handler.name
-            if handler.extra["type"] == "program":
-                path += f"/programs/{handler_name}"
-            else:
-                path += f"/processes/{{process_id}}/actions/{handler_name}"
-            endpoint = self.process_action(handler)
-            app.add_api_route(
-                path,
-                endpoint=endpoint,
-                methods=["POST"],
-                tags=[self.name],
-                responses={
-                    200: {
-                        "model": self.create_response_model(handler),
-                        "content": {"text/event-stream": {"schema": {"$ref": "#/components/schemas/EventTypes"}}},
-                    },
-                },
-                description=handler.description(self.agent, handler),
-            )
-
         app.add_api_route(
             f"/agents/{self.name}/processes",
             endpoint=self.list_processes,
@@ -82,6 +59,29 @@ class AgentController:
             response_model=ListProcessesResponse,
             tags=[self.name],
         )
+
+        app.add_api_route(
+            f"/agents/{self.name}/processes",
+            endpoint=self.create_process,
+            methods=["POST"],
+            response_model=StateSummary,
+            tags=[self.name],
+        )
+
+        added_actions = {}
+        for handler in [*self.actions.values().__reversed__()]:
+            handler_name = handler.name
+            path = f"/agents/{self.name}/processes/{{process_id}}/actions/{handler_name}"
+            if "initialized" in handler.extra["allowed_states"]:
+                await self.add_route(app, handler, f"/agents/{self.name}/programs/{handler_name}", True)
+            if handler_name not in added_actions:
+                await self.add_route(app, handler, path, False)
+                added_actions[handler_name] = path
+            else:
+                logger.warning(
+                    f"Action {handler_name} is already registered for path {added_actions[handler_name]}. "
+                    f"Skipping registration for path {path}"
+                )
 
         app.add_api_route(
             f"/agents/{self.name}/processes/{{process_id}}/status",
@@ -99,6 +99,22 @@ class AgentController:
             tags=[self.name],
         )
 
+    async def add_route(self, app, handler, path, isEndpointAProgram: bool):
+        endpoint = self.process_action(handler, isEndpointAProgram)
+        app.add_api_route(
+            path,
+            endpoint=endpoint,
+            methods=["POST"],
+            tags=[self.name],
+            responses={
+                200: {
+                    "model": self.create_response_model(handler),
+                    "content": {"text/event-stream": {"schema": {"$ref": "#/components/schemas/EventTypes"}}},
+                },
+            },
+            description=handler.description(self.agent, handler),
+        )
+
     async def stop(self, app: FastAPI):
         pass
 
@@ -110,7 +126,7 @@ class AgentController:
     ):
         request = typing.cast(Request, kwargs.pop("__request"))
         if not process_id:
-            if not handler.extra["type"] == "program":
+            if "initialized" not in handler.extra["allowed_states"]:
                 raise HTTPException(
                     status_code=400,
                     detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
@@ -202,18 +218,23 @@ class AgentController:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
         events_to_store = []
-        async for event in self.stream_agent_iterator(stream, process, handler.name):
+        async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
             events_to_store.append(event)
             yield event
 
         await store_events(self.name, process.record_id, events_to_store)
 
     async def stream_agent_iterator(
-        self, stream: AsyncIterator[StreamEvent], process: ProcessDoc, call_name
+        self,
+        stream: AsyncIterator[StreamEvent],
+        process: ProcessDoc,
+        call_name,
+        user_input: typing.Dict[str, typing.Any],
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         last_event = None
         try:
+            yield UserInputEvent(input=user_input)
             yield StartAgentCallEvent(
                 machine=AgentOS.current_machine_url(),
                 agent_name=self.name,
@@ -268,7 +289,7 @@ class AgentController:
         yield OutputEvent.get(content=data)
         yield AgentStateEvent(state=state, available_actions=self.get_available_actions(state))
 
-    def process_action(self, handler: FnHandler):
+    def process_action(self, handler: FnHandler, isEndpointAProgram: bool):
         logger.debug(f"Registering action {handler.name} for program {self.name}")
         sig = inspect.signature(handler.fn)
         params = dict(sig.parameters)
@@ -282,12 +303,12 @@ class AgentController:
 
             params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
         if "process_id" in params:
-            if handler.extra["type"] == "program":
+            if isEndpointAProgram:
                 del params["process_id"]
             else:
                 replace: Parameter = params["process_id"].replace(annotation=str)
                 params["process_id"] = replace
-        elif handler.extra["type"] == "action":
+        elif not isEndpointAProgram:
             params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
 
         del params["self"]
@@ -329,6 +350,17 @@ class AgentController:
 
     async def get_process_events(self, process_id: str):
         return await load_events(self.name, process_id)
+
+    async def create_process(self):
+        process = await ProcessDoc.create(agent=self.name, state="initialized")
+        return JSONResponse(
+            StateSummary(
+                process_id=process.record_id,
+                state=process.state,
+                available_actions=self.get_available_actions(process.state),
+            ).model_dump(),
+            200,
+        )
 
     async def list_processes(
         self,
@@ -395,9 +427,8 @@ class AgentController:
     def get_available_actions(self, state):
         return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]
 
-    @staticmethod
-    async def get_latest_process_event(process_id) -> ProcessDoc:
-        return await ProcessDoc.find(query=dict(_id=process_id), sort=dict(updated=-1))
+    async def get_latest_process_event(self, process_id) -> ProcessDoc:
+        return await ProcessDoc.find_one(query=dict(_id=process_id, agent=self.name), sort=dict(updated=-1))
 
     def create_response_model(self, handler: FnHandler):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
