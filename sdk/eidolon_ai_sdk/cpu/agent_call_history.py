@@ -36,5 +36,8 @@ class AgentCallHistory(BaseModel):
     @classmethod
     async def get_child_pids(cls):
         return {
-            o["remote_process_id"]: o["parent_process_id"] async for o in AgentOS.symbolic_memory.find("agent_logic_unit", {}, projection={"remote_process_id": 1, "parent_process_id": 1})
+            o["remote_process_id"]: o["parent_process_id"]
+            async for o in AgentOS.symbolic_memory.find(
+                "agent_logic_unit", {}, projection={"remote_process_id": 1, "parent_process_id": 1}
+            )
         }

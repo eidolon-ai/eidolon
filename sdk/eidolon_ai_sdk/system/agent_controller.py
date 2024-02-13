@@ -25,7 +25,8 @@ from eidolon_ai_sdk.io.events import (
     SuccessEvent,
     StreamEvent,
     EndStreamEvent,
-    ObjectOutputEvent, UserInputEvent,
+    ObjectOutputEvent,
+    UserInputEvent,
 )
 from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
@@ -221,7 +222,11 @@ class AgentController:
         await store_events(self.name, process.record_id, events_to_store)
 
     async def stream_agent_iterator(
-        self, stream: AsyncIterator[StreamEvent], process: ProcessDoc, call_name, user_input: typing.Dict[str, typing.Any]
+        self,
+        stream: AsyncIterator[StreamEvent],
+        process: ProcessDoc,
+        call_name,
+        user_input: typing.Dict[str, typing.Any],
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         last_event = None

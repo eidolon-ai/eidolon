@@ -17,7 +17,9 @@ from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.io.events import StreamEvent
+from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.request_context import ContextMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
