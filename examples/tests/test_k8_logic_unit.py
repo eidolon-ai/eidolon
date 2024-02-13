@@ -15,7 +15,7 @@ def test_all_dry_run_are_properly_placed():
 def test_foo():
     api = CoreV1Api()
     functions = [f for f in dir(api) if not f.startswith("_") and callable(getattr(api, f))]
-    _safe_operations = {f for f in functions if f.startswith("list") or f.startswith("read")}
+    _safe_operations = {f for f in functions if f.startswith("list") or f.startswith("read") or f.startswith("get")}
     _safe_with_dry_run = {
         f
         for f in functions
