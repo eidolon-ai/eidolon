@@ -2936,17 +2936,17 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "python-iso639"
-version = "2024.1.2"
+version = "2024.2.7"
 description = "Look-up utilities for ISO 639 language codes and names"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "python-iso639-2024.1.2.tar.gz", hash = "sha256:80d30382d3089bc8430144b2b19dd4afe165914c2f03942eb8d2f49e4adfe18b"},
-    {file = "python_iso639-2024.1.2-py3-none-any.whl", hash = "sha256:a4c3fb99081138227bdc34c1abeac96b083bf287f29c01dc26ed57c8b04ac416"},
+    {file = "python-iso639-2024.2.7.tar.gz", hash = "sha256:c323233348c34d57c601e3e6d824088e492896bcb97a61a87f7d93401a305377"},
+    {file = "python_iso639-2024.2.7-py3-none-any.whl", hash = "sha256:7b149623ff74230f4ee3061fb01d18e57a8d07c5fee2aa72907f39b7f6d16cbc"},
 ]
 
 [package.extras]
-dev = ["black (==23.12.1)", "build (==1.0.3)", "flake8 (==6.1.0)", "pytest (==7.4.4)", "twine (==4.0.2)"]
+dev = ["black (==24.1.1)", "build (==1.0.3)", "flake8 (==7.0.0)", "pytest (==8.0.0)", "twine (==4.0.2)"]
 
 [[package]]
 name = "python-jose"
@@ -4194,13 +4194,13 @@ xlsx = ["networkx", "openpyxl", "pandas", "xlrd"]
 
 [[package]]
 name = "unstructured-client"
-version = "0.17.0"
+version = "0.18.0"
 description = "Python Client SDK for Unstructured API"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "unstructured-client-0.17.0.tar.gz", hash = "sha256:3b98affa4a47e370b7b0a1b8f0d889f20aa6d8925b2b108b60aa07cf54a04fb5"},
-    {file = "unstructured_client-0.17.0-py3-none-any.whl", hash = "sha256:2b311f0f7304ac64986b0312431fe99945f95a6fa0c88ab91094570c932a9e19"},
+    {file = "unstructured-client-0.18.0.tar.gz", hash = "sha256:b5f1866b6a48d2e28645e37e86c9d58b1ee7df2d88e79adf873572338c027aa8"},
+    {file = "unstructured_client-0.18.0-py3-none-any.whl", hash = "sha256:36d8c5cb01b97a87e271e11d4d5a063d1c5b85fc5fd7f07819c35a9bef74821f"},
 ]
 
 [package.dependencies]

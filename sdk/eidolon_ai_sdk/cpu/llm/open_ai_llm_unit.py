@@ -129,7 +129,7 @@ def convert_to_openai(message: LLMMessage):
 
 
 class OpenAiGPTSpec(BaseModel):
-    model: str = Field(default="gpt-4-1106-preview", description="The model to use for the LLM.")
+    model: str = Field(default="gpt-4-turbo-preview", description="The model to use for the LLM.")
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
