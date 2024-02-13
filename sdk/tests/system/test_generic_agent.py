@@ -216,7 +216,7 @@ class TestOutputTests:
                 f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please")
             )
 
-            vcr.rewind()  # since we are hitting endpoing 2x in same test
+            vcr.rewind()  # since we are hitting endpoint 2x in same test
             acc_str = "".join([e async for e in replay(enable_replay / "000_openai_completion")])
             assert "france" in acc_str.lower()
             assert acc_str == post["data"]
