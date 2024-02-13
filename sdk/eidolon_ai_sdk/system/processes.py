@@ -19,12 +19,18 @@ class MongoDoc(BaseModel, extra="allow"):
         return self._id
 
     @classmethod
-    async def find(cls, **kwargs):
+    async def find_one(cls, **kwargs):
         doc = await AgentOS.symbolic_memory.find_one(cls.collection, **kwargs)
         if doc:
             return cls.model_validate(doc)
         else:
             return None
+
+    @classmethod
+    async def find(cls, **kwargs):
+        docs = AgentOS.symbolic_memory.find(cls.collection, **kwargs)
+        async for doc in docs:
+            yield cls.model_validate(doc)
 
     @classmethod
     async def create(cls, **data):

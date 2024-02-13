@@ -10,8 +10,8 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec,
-    AgentCallHistory,
 )
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.io.events import SuccessEvent
 
