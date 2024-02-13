@@ -420,9 +420,8 @@ class AgentController:
     def get_available_actions(self, state):
         return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]
 
-    @staticmethod
-    async def get_latest_process_event(process_id) -> ProcessDoc:
-        return await ProcessDoc.find_one(query=dict(_id=process_id), sort=dict(updated=-1))
+    async def get_latest_process_event(self, process_id) -> ProcessDoc:
+        return await ProcessDoc.find_one(query=dict(_id=process_id, agent=self.name), sort=dict(updated=-1))
 
     def create_response_model(self, handler: FnHandler):
         # if we want, we can calculate the literal state and allowed actions statically for most actions. Not for now though.
