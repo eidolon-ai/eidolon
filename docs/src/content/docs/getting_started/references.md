@@ -1,12 +1,14 @@
 ---
-title: Next Steps
+title: References
 description: Dive deeper into developing with Eidolon.
 ---
 
 ## Setup
 
-You will need a python environment with Eidolon (eidolon-ai-sdk) installed. Although the exact directory structure is not required, we will
-reference the files in the following structure.
+The following guide will walk through different concepts and features of Eidolon.
+
+It will assume you will have a python environment with Eidolon (eidolon-ai-sdk) installed. Although the exact directory 
+structure is not required, we will reference the files in the following structure.
 
 ```
 ├── getting_started
