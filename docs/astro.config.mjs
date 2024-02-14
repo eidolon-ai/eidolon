@@ -7,10 +7,11 @@ export default defineConfig({
     integrations: [
         starlight({
             title: 'Eidolon',
-            components: {
-                ThemeSelect: './src/components/ThemeSelect.astro',
-//               Hero: './src/components/NewHero.astro',
-            },
+//             components: {
+//                 todo ThemeSelect has issues finding StarlightThemeProvider
+//                 ThemeSelect: './src/components/ThemeSelect.astro',
+//                 Hero: './src/components/NewHero.astro',
+//             },
             favicon: '/favicon.ico',
             social: {
                 github: 'https://github.com/eidolon-ai/eidolon',
