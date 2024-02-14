@@ -185,6 +185,16 @@ class TestAgentsWithReferences:
         )
         assert HelloWorld.calls["greeter4"] == ["bar"]
 
+    async def test_respond_after_tool_call(self, client, server):
+        t0 = len(HelloWorld.calls["greeter1"])
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
+        )
+        post.raise_for_status()
+        assert len(HelloWorld.calls["greeter1"]) - t0 == 1
+        assert "Luke" in post.json()['data']
+
     async def test_can_replay_tool_calls(self, client, enable_replay, vcr):
         post = client.post(
             "/agents/GenericAgent/programs/question",
