@@ -63,7 +63,7 @@ metadata:
 spec: ChromaVectorStore
 ```
 
-## Setting Up the Server
+## <a name="abcd">Setting Up the Server</a>
 
 Initiate your Eidolon server with the following commands, setting the stage for our document-producing agent to work its magic:
 
@@ -75,7 +75,6 @@ poetry run eidolon-server eidolon_examples/code_search/resources
 ```
 
 ## Sample Request
-<a name="abcd"></a>
 With the server operational, it's time to put our setup to the test with a sample request. Our doc_producer agent stands ready to generate the needed documentation.
 
 ```bash
