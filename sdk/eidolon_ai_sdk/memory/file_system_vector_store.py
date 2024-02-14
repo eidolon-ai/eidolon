@@ -102,10 +102,11 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
     async def get_docs(self, collection: str, doc_ids: List[str]) -> Iterable[Document]:
         metadatas = await self.get_metadata(collection, doc_ids)
         for i, doc_id in enumerate(doc_ids):
+            content = await AgentOS.file_memory.read_file(
+                self.spec.root_document_directory + "/" + collection + "/" + doc_id
+            )
             yield Document(
                 id=doc_id,
                 metadata=metadatas[i],
-                page_content=await AgentOS.file_memory.read_file(
-                    self.spec.root_document_directory + "/" + collection + "/" + doc_id
-                ).decode(),
+                page_content=content.decode(),
             )

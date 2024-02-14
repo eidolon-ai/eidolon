@@ -8,6 +8,7 @@ from pydantic_core import to_jsonable_python
 
 from eidolon_ai_sdk.io.events import BaseStreamEvent
 from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.util.logger import logger
 
 
 # noinspection PyShadowingNames
@@ -36,13 +37,16 @@ async def stream_content(url: str, body):
     body = to_jsonable_python(body)
     headers = {
         **RequestContext.headers,
-        "Accept": "text/event-stream, application/json",
+        "Accept": "text/event-stream",
     }
     request = {"url": url, "json": body, "method": "POST", "headers": headers}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         async with client.stream(**request) as response:
             response.raise_for_status()
             async for sse_event in EventSource(response).aiter_sse():
-                data = json.loads(sse_event.data)
-                event = BaseStreamEvent.from_dict(data)
-                yield event
+                if sse_event.data:
+                    data = json.loads(sse_event.data)
+                    event = BaseStreamEvent.from_dict(data)
+                    yield event
+                else:
+                    logger.warning("Empty event from server")

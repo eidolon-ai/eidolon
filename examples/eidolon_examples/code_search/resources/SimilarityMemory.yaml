@@ -2,8 +2,11 @@
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: SimilarityMemory
-spec:
-  implementation: SimilarityMemory
-  vector_store: ChromaVectorStore
-  embedder: OpenAIEmbedding
+  name: Embedding
+spec: OpenAIEmbedding
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: VectorStore
+spec: ChromaVectorStore

@@ -6,8 +6,7 @@ spec:
   implementation: GenericAgent
   description: "Agent that can interact with a local k8 cluster. Currently in UNRESTRICTED mode, so be careful."
   system_prompt: |-
-    You are a DevOps engineer with direct control of a kubernetes cluster through
-    the K8_core_v1_api tool.
+    You are a DevOps engineer with direct control of a kubernetes cluster through the K8_core_v1_api tool.
     
     
     Users will come to you with questions about the cluster or requests to perform. 

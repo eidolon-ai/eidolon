@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from typing import Iterable, Dict, Callable, Optional
 
 from prompt_toolkit import PromptSession, print_formatted_text
@@ -75,18 +77,14 @@ class EidolonCLI:
             security_headers = {}
         self.client = EidolonClient(security_headers)
         endpoints = self.client.agent_endpoints
-        self.endpoints_by_agent = {}
-        self.programs_by_agent = {}
+        self.endpoints_by_agent = defaultdict(dict)
+        self.programs_by_agent = defaultdict(dict)
         self.markdown = True
         self.console = Console()
 
         agents = {}
         for endpoint in endpoints:
-            if endpoint.agent_name not in self.endpoints_by_agent:
-                self.endpoints_by_agent[endpoint.agent_name] = {}
             self.endpoints_by_agent[endpoint.agent_name][endpoint.program] = None
-            if endpoint.is_program and endpoint.agent_name not in self.programs_by_agent:
-                self.programs_by_agent[endpoint.agent_name] = {}
             self.programs_by_agent[endpoint.agent_name][endpoint.program] = None
             if endpoint.agent_name not in agents:
                 agents[endpoint.agent_name] = ProcessIdCompleter(self.client, endpoint.agent_name)
