@@ -1,0 +1,12 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: Embedding
+spec: OpenAIEmbedding
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: VectorStore
+spec: ChromaVectorStore

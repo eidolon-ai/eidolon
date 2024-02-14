@@ -22,7 +22,3 @@ spec:
   user_prompt:
     Follow the instructions below. Remember to search for code and documentation to help you write the documentation.
     {{instruction}}
-  input_schema:
-    instruction:
-      type: string
-  output_schema: 'str'

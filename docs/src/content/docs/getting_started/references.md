@@ -1,12 +1,14 @@
 ---
-title: Next Steps
+title: References
 description: Dive deeper into developing with Eidolon.
 ---
 
 ## Setup
 
-You will need a python environment with Eidolon (eidolon-ai-sdk) installed. Although the exact directory structure is not required, we will
-reference the files in the following structure.
+The following guide will walk through different concepts and features of Eidolon.
+
+It will assume you will have a python environment with Eidolon (eidolon-ai-sdk) installed. Although the exact directory 
+structure is not required, we will reference the files in the following structure.
 
 ```
 ├── getting_started
@@ -36,7 +38,7 @@ poetry env use python3.11
 poetry add eidolon-ai-sdk
 ```
 
-Currently you will neet to stop and rerun the server when you make changes to your agents.
+Currently, you need to stop and rerun the server when you make changes to your agents.
 ```bash
 poetry run eidolon-server -m local_dev resources
 ```
@@ -341,7 +343,7 @@ spec:
 
 Now you can specify the machine when we start the server.
 ```bash
-poetry run eidolon-server -m mongo_machine local_dev resources
+poetry run eidolon-server -m mongo_machine resources
 ```
 
 **Note**: If we leave the name off of our machine resource it will be named "DEFAULT", override the builtin default, and
