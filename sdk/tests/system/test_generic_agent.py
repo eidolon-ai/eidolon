@@ -14,7 +14,6 @@ from eidolon_ai_sdk.io.events import (
     ObjectOutputEvent,
     SuccessEvent,
     AgentStateEvent,
-    StartLLMEvent,
     StringOutputEvent,
     UserInputEvent,
 )
@@ -254,9 +253,7 @@ class TestOutputTests:
                     call_name="question",
                     process_id="test_generic_agent_supports_object_output_with_stream_0",
                 ),
-                StartLLMEvent(),
                 ObjectOutputEvent(content={"capital": "Paris", "population": 67399000}),
-                SuccessEvent(),
                 AgentStateEvent(state="idle", available_actions=["respond"]),
                 SuccessEvent(),
             ]
@@ -281,7 +278,6 @@ class TestOutputTests:
                 call_name="question",
                 process_id="test_generic_agent_supports_string_stream_0",
             )
-            assert next(events) == StartLLMEvent()
             next_event = next(events)
             str = ""
             while isinstance(next_event, StringOutputEvent):
@@ -290,8 +286,7 @@ class TestOutputTests:
 
             assert "<capital>Paris</capital>" in str
             assert "<population>" in str
-            assert next_event == SuccessEvent()
-            assert next(events) == AgentStateEvent(state="idle", available_actions=["respond"])
+            assert next_event == AgentStateEvent(state="idle", available_actions=["respond"])
             assert next(events) == SuccessEvent()
 
     async def test_generic_agent_supports_image(self, run_app, generic_agent, dog):

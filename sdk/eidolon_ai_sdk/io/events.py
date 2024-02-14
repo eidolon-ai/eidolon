@@ -16,12 +16,6 @@ class Category(Enum):
     TRANSFORM = "transform"
 
 
-class StopReason(Enum):
-    ERROR = "error"
-    SUCCESS = "success"
-    CANCELED = "canceled"
-
-
 T = TypeVar("T")
 
 
@@ -38,40 +32,14 @@ class BaseStreamEvent(BaseModel, ABC):
 
     @classmethod
     def from_dict(cls, event_dict: Dict[str, Any]):
-        event_type = event_dict["event_type"]
         # remove fields that are set automatically
-        del event_dict["event_type"]
-        del event_dict["category"]
-        if event_dict["stream_context"] is None:
+        event_type = event_dict.pop("event_type")
+        if 'category' in event_dict:
+            del event_dict["category"]
+        if event_dict.get("stream_context", ...) is None:
             del event_dict["stream_context"]
-        if event_type == "string":
-            return StringOutputEvent(**event_dict)
-        elif event_type == "object":
-            return ObjectOutputEvent(**event_dict)
-        elif event_type == "tool_call_start":
-            return ToolCallStartEvent(**event_dict)
-        elif event_type == "context_start":
-            return StartStreamContextEvent(**event_dict)
-        elif event_type == "context_end":
-            return EndStreamContextEvent(**event_dict)
-        elif event_type == "llm_tool_call_request":
-            return LLMToolCallRequestEvent(**event_dict)
-        elif event_type == "agent_call":
-            return StartAgentCallEvent(**event_dict)
-        elif event_type == "llm":
-            return StartLLMEvent(**event_dict)
-        elif event_type == "success":
-            return SuccessEvent(**event_dict)
-        elif event_type == "canceled":
-            return CanceledEvent(**event_dict)
-        elif event_type == "error":
-            return ErrorEvent(**event_dict)
-        elif event_type == "agent_state":
-            return AgentStateEvent(**event_dict)
-        elif event_type == "user_input":
-            return UserInputEvent(**event_dict)
-        else:
-            raise ValueError(f"Unknown event type {event_type}")
+
+        return _type_mapping[event_type](**event_dict)
 
 
 class UserInputEvent(BaseStreamEvent):
@@ -94,11 +62,6 @@ class EndStreamContextEvent(BaseStreamEvent):
     category: Literal[Category.START] = Category.END
     event_type: Literal["context_end"] = "context_end"
     context_id: str
-
-
-class StartLLMEvent(BaseStreamEvent):
-    event_type: Literal["llm"] = "llm"
-    category: Literal[Category.START] = Category.START
 
 
 class ToolCallStartEvent(StartStreamContextEvent):
@@ -134,31 +97,31 @@ class LLMToolCallRequestEvent(BaseStreamEvent):
 
 
 class StringOutputEvent(OutputEvent):
-    event_type: Literal["string_output"] = "string"
+    event_type: Literal["string"] = "string"
     content: str
 
 
 class ObjectOutputEvent(OutputEvent, Generic[T]):
-    event_type: Literal["object_output"] = "object"
+    event_type: Literal["object"] = "object"
     content: T
 
 
 # note EndStreamEvent does not need to reference the type of event it ends since this is captured by context
 class EndStreamEvent(BaseStreamEvent, ABC):
     category: Literal[Category.END] = Category.END
-    event_type: StopReason
+    event_type: Literal["error", "success", "canceled"]
 
 
 class SuccessEvent(EndStreamEvent):
-    event_type: Literal[StopReason.SUCCESS] = StopReason.SUCCESS
+    event_type: Literal['success'] = "success"
 
 
 class CanceledEvent(EndStreamEvent):
-    event_type: Literal[StopReason.CANCELED] = StopReason.CANCELED
+    event_type: Literal["canceled"] = "canceled"
 
 
 class ErrorEvent(EndStreamEvent):
-    event_type: Literal[StopReason.ERROR] = StopReason.ERROR
+    event_type: Literal["error"] = "error"
     reason: Any
 
     @field_serializer("reason")
@@ -178,7 +141,6 @@ class AgentStateEvent(BaseStreamEvent):
 
 StreamEvent = (
     StartAgentCallEvent
-    | StartLLMEvent
     | ToolCallStartEvent
     | StartStreamContextEvent
     | EndStreamContextEvent
@@ -191,6 +153,8 @@ StreamEvent = (
     | AgentStateEvent
     | UserInputEvent
 )
+
+_type_mapping = {c.model_fields['event_type'].annotation.__args__[0]: c for c in StreamEvent.__args__}
 
 
 async def convert_output_object(it: AsyncIterator[StreamEvent], output_format: Type[T]) -> AsyncIterator[StreamEvent]:
