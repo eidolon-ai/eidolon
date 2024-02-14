@@ -170,7 +170,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
         yield
-        machine.stop()
+        await machine.stop()
     except Exception:
         logger.exception("Failed to start AgentOS")
         raise
