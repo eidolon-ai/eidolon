@@ -124,4 +124,5 @@ class Thread:
 
 
 class CPUException(Exception):
-    pass
+    def __init__(self, description):
+        super().__init__("CPU Error: " + description)

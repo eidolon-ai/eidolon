@@ -10,8 +10,6 @@ from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.io.events import (
     StreamEvent,
-    EndStreamEvent,
-    StopReason,
     LLMToolCallRequestEvent,
     ToolCallStartEvent,
 )
@@ -79,7 +77,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         except CPUException as e:
             raise e
         except Exception as e:
-            raise CPUException("Error processing request") from e
+            raise CPUException(f"error while processing request ({e.__class__.__name__})") from e
 
     async def _llm_execution_cycle(
         self,
@@ -91,7 +89,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         while num_iterations < self.spec.max_num_function_calls:
             tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
             tool_call_events = []
-            got_error = False
             execute_llm_ = self.llm_unit.execute_llm(
                 call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format
             )
@@ -100,8 +97,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             async for event in stream_collector:
                 if event.is_root_and_type(LLMToolCallRequestEvent):
                     tool_call_events.append(event)
-                elif event.is_root_and_type(EndStreamEvent) and event.event_type == StopReason.ERROR:
-                    got_error = True
                 yield event
             if stream_collector.get_content():
                 logger.info(f"LLM Response: {stream_collector.get_content()}")
@@ -115,10 +110,6 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             conversation.append(assistant_message)
 
-            # todo (later) we probably want to try again based on config
-            if got_error:
-                return
-
             # process tool calls
             async for e in merge_streams([
                 self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events
@@ -127,7 +118,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             if not tool_call_events:
                 return
 
-        raise CPUException("Exceeded maximum number of function calls")
+        raise CPUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
         self,
