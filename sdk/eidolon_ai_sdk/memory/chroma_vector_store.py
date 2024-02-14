@@ -21,9 +21,11 @@ from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
 
 class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
     url: str = Field(
+        "file://${EIDOLON_DATA_DIR}/doc_producer",
         description="The url of the chroma database. "
         + "Use http(s)://$HOST:$PORT?header1=value1&header2=value2 to pass headers to the database."
-        + "Use file://$PATH to use a local file database."
+        + "Use file://$PATH to use a local file database.",
+        validate_default=True,
     )
 
     # noinspection PyMethodParameters,HttpUrlsUsage
@@ -38,7 +40,7 @@ class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
                 raise ValueError("file:// must be followed by a path")
 
             # validate path is a file on disk
-            value = replace_env_var_in_string(path)
+            value = replace_env_var_in_string(path, EIDOLON_DATA_DIR="/tmp/eidolon_data_dir")
             # Convert the string to a Path object
             path = Path(value).resolve()
 
