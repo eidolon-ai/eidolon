@@ -19,10 +19,10 @@ class SimilarityMemory(Specable[SimilarityMemorySpec]):
         self.embedder = self.spec.embedder.instantiate()
         self.vector_store = self.spec.vector_store.instantiate()
 
-    def start(self):
-        self.embedder.start()
-        self.vector_store.start()
+    async def start(self):
+        await self.embedder.start()
+        await self.vector_store.start()
 
-    def stop(self):
-        self.embedder.stop()
-        self.vector_store.stop()
+    async def stop(self):
+        await self.embedder.stop()
+        await self.vector_store.stop()

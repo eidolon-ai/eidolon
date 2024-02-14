@@ -5,22 +5,22 @@ from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 
 
 @pytest.fixture
-def memory():
+async def memory():
     # Setup memory instance
     mem = LocalSymbolicMemory()
-    mem.start()
+    await mem.start()
     yield mem
     # Teardown memory instance
-    mem.stop()
+    await mem.stop()
 
 
 class TestLocalSymbolicMemory:
     def test_start(self, memory):
         assert LocalSymbolicMemory.db == {}, "Database should be initialized as an empty dictionary."
 
-    def test_stop(self, memory):
+    async def test_stop(self, memory):
         LocalSymbolicMemory.db["test"] = "value"
-        memory.stop()
+        await memory.stop()
         assert LocalSymbolicMemory.db == {}, "Database should be cleared after stop."
 
     @pytest.mark.asyncio
