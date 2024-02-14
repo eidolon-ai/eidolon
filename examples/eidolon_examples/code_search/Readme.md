@@ -1,14 +1,15 @@
-# Tired of Writing Documentation? Let an Agent Handle That
+# Tired of Writing Documentation?
 
 Welcome to an exciting journey into the world of documentation. Sometimes you just want to focus on coding, leaving the documentation to someone—or something—else.
 
 In this guide, we embark on creating a code search example. By the end, you'll have crafted an agent capable of writing documents and leveraging the power of RAG to sift through your project's documents and files. Let's dive in!
 
 ## Understanding the Components
+[Not interested? Jump to deployment](#abcd)
 
 Our adventure begins in the `resources` directory, where the magic happens. Here's a quick overview of the key components:
 
-### Document Producer
+### Document Producer Agent
 This agent stands at the core of our operation, tasked with crafting the documentation. Picture it as the master chef in a gourmet kitchen, ensuring every piece of documentation is meticulously prepared.
 
 Here's a glimpse into the agent's definition:
@@ -26,7 +27,7 @@ spec:
 ```
 The "GenericAgent" acts as a conversational agent. The `agent_refs` field specifies the RAG components it employs to search for code and documentation, highlighting its resourcefulness.
 
-### Search Code/Docs
+### Search Code/Doc Agents
 These components, our RAG equivalents for code and document files, serve as the specialized sous-chefs of our operation. One knows code, while the other adeptly navigates documentation.
 
 Their configuration reflects their specialized functions:
@@ -43,7 +44,7 @@ spec:
 ```
 A RetrieverAgent retrieves documents from a designated location, driven by a query for similarity search. Here, it's set to comb through the documentation directory, with the `SearchCode` agent performing a similar role for the code files within the Eidolon `sdk` directory.
 
-### Similarity Memory
+### Enable Machine Similarity Memory
 Vector search, a necessity for RetrieverAgents, is our kitchen's high-tech oven—useful only if you're making pizza, or in our case, documentation.
 
 The system's default references are easily adjustable to better suit our needs, enhancing the entire platform's capabilities:
@@ -74,7 +75,7 @@ poetry run eidolon-server eidolon_examples/code_search/resources
 ```
 
 ## Sample Request
-
+<a name="abcd"></a>
 With the server operational, it's time to put our setup to the test with a sample request. Our doc_producer agent stands ready to generate the needed documentation.
 
 ```bash
