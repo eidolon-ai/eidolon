@@ -4,8 +4,9 @@ Welcome to an exciting journey into the world of documentation. Sometimes you ju
 
 In this guide, we embark on creating a code search example. By the end, you'll have crafted an agent capable of writing documents and leveraging the power of RAG to sift through your project's documents and files. Let's dive in!
 
+tldr: [deployment script](#run_server)
+
 ## Understanding the Components
-[Not interested? Jump to deployment](#abcd)
 
 Our adventure begins in the `resources` directory, where the magic happens. Here's a quick overview of the key components:
 
@@ -63,7 +64,7 @@ metadata:
 spec: ChromaVectorStore
 ```
 
-## <a name="abcd">Setting Up the Server</a>
+## <a name="run_server">Setting Up the Server</a>
 
 Initiate your Eidolon server with the following commands, setting the stage for our document-producing agent to work its magic:
 
