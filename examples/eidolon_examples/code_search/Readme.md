@@ -77,6 +77,15 @@ poetry run eidolon-server eidolon_examples/code_search/resources
 
 With the server operational, it's time to put our setup to the test with a sample request. Our doc_producer agent stands ready to generate the needed documentation.
 
+```bash
+curl -X 'POST' \
+  'http://localhost:8080/agents/doc_producer/programs/question' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{ "instruction": "How do I create an Agent? Be concise" }'
+```
+The first request to the server may take a few minutes since the serer needs to load the documents and code into memory. Subsequent requests will be faster.
+
 ## Self-Exploration Challenge
 
 Having covered the basics, challenge yourself to delve deeper into the Eidolon ecosystem. Here's how you can expand your knowledge:
