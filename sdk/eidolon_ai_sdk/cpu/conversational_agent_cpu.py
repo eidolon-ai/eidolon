@@ -115,7 +115,8 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events
             ]):
                 yield e
-            return
+            if not tool_call_events:
+                return
 
         raise CPUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
