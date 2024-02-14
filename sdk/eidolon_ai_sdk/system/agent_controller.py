@@ -115,7 +115,7 @@ class AgentController:
             description=handler.description(self.agent, handler),
         )
 
-    def stop(self, app: FastAPI):
+    async def stop(self, app: FastAPI):
         pass
 
     async def run_program(
@@ -412,7 +412,6 @@ class AgentController:
             if isinstance(latest_record.error_info, dict):
                 detail = latest_record.error_info.get("detail", latest_record.error_info)
                 status_code = latest_record.error_info.get("status_code", 500)
-            logger.info(f"Successfully retrieved stored error response, status_code={status_code}")
             return JSONResponse(detail, status_code)
         else:
             return JSONResponse(

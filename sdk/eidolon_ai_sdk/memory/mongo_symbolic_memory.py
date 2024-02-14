@@ -83,7 +83,7 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
     async def delete(self, symbol_collection, query):
         return await self.database[symbol_collection].delete_many(query)
 
-    def start(self):
+    async def start(self):
         """
         Starts the memory implementation. Noop for this implementation.
         """
@@ -93,7 +93,7 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
             if self.mongo_database_name is None:
                 self.mongo_database_name = os.getenv("MONGO_DATABASE_NAME")
 
-    def stop(self):
+    async def stop(self):
         """
         Stops the memory implementation. Noop for this implementation.
         """

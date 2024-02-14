@@ -81,7 +81,7 @@ def scale_image(image_bytes):
     return output.getvalue()
 
 
-def convert_to_openai(message: LLMMessage):
+async def convert_to_openai(message: LLMMessage):
     if isinstance(message, SystemMessage):
         return {"role": "system", "content": message.content}
     elif isinstance(message, UserMessage):
@@ -93,7 +93,7 @@ def convert_to_openai(message: LLMMessage):
                     content.append({"type": "text", "text": part.text})
                 else:
                     # retrieve the image from the file system
-                    data = AgentOS.file_memory.read_file(part.image_url)
+                    data = await AgentOS.file_memory.read_file(part.image_url)
                     # scale the image such that the max size of the shortest size is at most 768px
                     data = scale_image(data)
                     # base64 encode the data
@@ -219,7 +219,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
-        messages = [convert_to_openai(message) for message in inMessages]
+        messages = [await convert_to_openai(message) for message in inMessages]
         request = {
             "messages": messages,
             "model": self.model,
@@ -311,7 +311,6 @@ async def _normalize_openai(resp) -> AsyncIterator[ChoiceDelta | ChatCompletionM
     Normalizes different types of responses from openai depending on how the request was made.
     This is important since arguments like streaming can be mutated when replaying requests.
     """
-    resp = await resp
     if isinstance(resp, AsyncStream):
         async for m_chunk in resp:
             yield cast(ChatCompletionChunk, m_chunk).choices[0].delta

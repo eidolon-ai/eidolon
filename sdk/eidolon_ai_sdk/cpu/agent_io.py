@@ -67,8 +67,8 @@ class IOUnit(ProcessingUnit):
                 # read the prompt.image file into memory
                 image_data = image_file.read()
                 tmp_path = "uploaded_images/" + str(uuid.uuid4())
-                file_memory.mkdir("uploaded_images", True)
-                file_memory.write_file(tmp_path, image_data)
+                await file_memory.mkdir("uploaded_images", True)
+                await file_memory.write_file(tmp_path, image_data)
                 user_message_parts.append(UserMessageImageURL(image_url=tmp_path))
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")

@@ -14,11 +14,11 @@ class QueryItem(BaseModel):
 
 class VectorStore(ABC):
     @abstractmethod
-    def start(self):
+    async def start(self):
         pass
 
     @abstractmethod
-    def stop(self):
+    async def stop(self):
         pass
 
     @abstractmethod

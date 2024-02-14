@@ -60,7 +60,7 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         self.spec = spec
         self.client = None
 
-    def start(self):
+    async def start(self):
         self.connect()
 
     def connect(self):
@@ -78,7 +78,7 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
                 headers = None
             self.client = chromadb.HttpClient(host=host, port=port, ssl=ssl, headers=headers)
 
-    def stop(self):
+    async def stop(self):
         pass
 
     def _get_collection(self, name: str) -> Collection:
