@@ -131,7 +131,7 @@ class TestHelloWorld:
     async def test_lots_o_context_streaming(self, server):
         agent = Agent.get("HelloWorld")
         events = [e async for e in agent.stream_program("lots_o_context")]
-        assert events[1:-1] == [
+        assert events[2:-1] == [
             StringOutputEvent(content="1"),
             StringOutputEvent(content="2"),
             StartStreamContextEvent(context_id="c1"),
@@ -174,10 +174,14 @@ class StateMachine:
         return "Only God can terminate me"
 
 
+class StateMachine2(StateMachine):
+    pass
+
+
 class TestStateMachine:
     @pytest_asyncio.fixture(scope="class")
     async def server(self, run_app):
-        async with run_app(StateMachine) as ra:
+        async with run_app(StateMachine, StateMachine2) as ra:
             yield ra
 
     @pytest_asyncio.fixture(scope="function")
@@ -268,3 +272,14 @@ class TestStateMachine:
             f"/agents/StateMachine/processes/{program.json()['process_id']}/actions/action_program",
         )
         assert action.status_code == 200
+
+    def test_agents_are_separate(self, client):
+        init = client.post(
+            "/agents/StateMachine/programs/idle",
+            json=dict(desired_state="church", response="blurb"),
+        )
+        assert init.status_code == 200
+        assert init.json()["state"] == "church"
+
+        not_found = client.post(f"/agents/StateMachine2/processes/{init.json()['process_id']}/actions/terminate")
+        assert not_found.status_code == 404

@@ -1,7 +1,6 @@
-from fastapi import HTTPException
-from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, AsyncGenerator
+from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
 
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread
+from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread, CPUException
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import AssistantMessage, ToolResponseMessage, LLMMessage
@@ -10,7 +9,6 @@ from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.io.events import (
-    ErrorEvent,
     StreamEvent,
     EndStreamEvent,
     StopReason,
@@ -69,20 +67,19 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         call_context: CallContext,
         prompts: List[CPUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any]] = "str",
-    ) -> AsyncGenerator[StreamEvent, None]:
+    ) -> AsyncIterator[StreamEvent]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
             conversation_messages = await self.io_unit.process_request(prompts)
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, conversation_messages)
             conversation.extend(conversation_messages)
-            llm_it = self._llm_execution_cycle(call_context, output_format, conversation)
-            async for event in llm_it:
+            async for event in self._llm_execution_cycle(call_context, output_format, conversation):
                 yield event
-        except HTTPException:
-            raise
+        except CPUException as e:
+            raise e
         except Exception as e:
-            yield ErrorEvent(reason=e)
+            raise CPUException("Error processing request") from e
 
     async def _llm_execution_cycle(
         self,
@@ -123,15 +120,14 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 return
 
             # process tool calls
-            if len(tool_call_events) > 0:
-                async for e in merge_streams(
-                    [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
-                ):
-                    yield e
-            else:
+            async for e in merge_streams([
+                self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events
+            ]):
+                yield e
+            if not tool_call_events:
                 return
 
-        yield ErrorEvent(reason="Exceeded maximum number of function calls")
+        raise CPUException("Exceeded maximum number of function calls")
 
     async def _call_tool(
         self,
@@ -140,23 +136,29 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         tool_defs,
         conversation: List[LLMMessage],
     ):
-        tool_def = tool_defs[tool_call_event.tool_call.name]
         tc = tool_call_event.tool_call
-        tool_stream = stream_manager(
-            tool_def.execute(tool_call=tc),
-            ToolCallStartEvent(tool_call=tc, context_id=tc.tool_call_id),
-        )
+        logic_unit_wrapper = ["NaN"]
+
+        def tool_event_stream():
+            try:
+                tool_def = tool_defs[tc.name]
+                logic_unit_wrapper[0] = tool_def.logic_unit.__class__.__name__
+                return tool_def.execute(tool_call=tc)
+            except KeyError:
+                raise ValueError(f"Tool {tool_call_event.tool_call.name} not found. Available tools: {tool_defs.keys()}")
+
+        tool_stream = stream_manager(tool_event_stream, ToolCallStartEvent(tool_call=tc, context_id=tc.tool_call_id))
         try:
             async for event in tool_stream:
                 yield event
         except ManagedContextError:
             if self.spec.allow_tool_errors:
-                logger.warning("Error calling tool " + tool_def.eidolon_handler.name)
+                logger.warning("Error calling tool " + tool_call_event.tool_call.name, exc_info=True)
             else:
                 raise
 
         message = ToolResponseMessage(
-            logic_unit_name=tool_def.logic_unit.__class__.__name__,
+            logic_unit_name=logic_unit_wrapper[0],
             tool_call_id=tc.tool_call_id,
             result=tool_stream.get_content() or "",
             name=tc.name,
