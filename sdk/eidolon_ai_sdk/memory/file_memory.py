@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 
-# todo, memory contracts all need to be async
 class FileMemory(ABC):
     """
     Abstract base class representing the file memory interface for an agent.
@@ -16,21 +15,21 @@ class FileMemory(ABC):
     """
 
     @abstractmethod
-    def start(self):
+    async def start(self):
         """
         Starts the memory implementation.
         """
         pass
 
     @abstractmethod
-    def stop(self):
+    async def stop(self):
         """
         Stops the memory implementation.
         """
         pass
 
     @abstractmethod
-    def read_file(self, file_path: str) -> bytes:
+    async def read_file(self, file_path: str) -> bytes:
         """
             Reads the contents of a file specified by `file_path` within the context
             of an agent call. The context of the call provides additional information
@@ -41,7 +40,7 @@ class FileMemory(ABC):
         pass
 
     @abstractmethod
-    def write_file(self, file_path: str, file_contents: bytes) -> None:
+    async def write_file(self, file_path: str, file_contents: bytes) -> None:
         """
             Writes the given `file_contents` to the file specified by `file_path`
             within the context of an agent call. This method ensures that the file is
@@ -53,7 +52,7 @@ class FileMemory(ABC):
         pass
 
     @abstractmethod
-    def delete_file(self, file_path: str) -> None:
+    async def delete_file(self, file_path: str) -> None:
         """
             Deletes the file specified by `file_path` within the context of an agent call.
             This method ensures that the file is deleted in the appropriate location and
@@ -64,13 +63,13 @@ class FileMemory(ABC):
         pass
 
     @abstractmethod
-    def mkdir(self, directory: str, exist_ok: bool = False):
+    async def mkdir(self, directory: str, exist_ok: bool = False):
         pass
 
     @abstractmethod
-    def exists(self, file_name: str):
+    async def exists(self, file_name: str):
         pass
 
     @abstractmethod
-    def glob(self, pattern: str):
+    async def glob(self, pattern: str):
         pass

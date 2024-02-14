@@ -121,3 +121,7 @@ class Thread:
 
     async def clone(self) -> Thread:
         return await self._cpu.clone_thread(self._call_context)
+
+
+class CPUException(Exception):
+    pass

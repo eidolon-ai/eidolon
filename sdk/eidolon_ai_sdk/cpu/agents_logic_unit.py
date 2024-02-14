@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from typing import List, Any, Dict, AsyncIterator, Optional
+from typing import List, Any, Dict, AsyncIterator
 
 from eidolon_ai_sdk.agent.client import Machine, Agent, AgentResponseIterator
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_sdk.io.events import StreamEvent
@@ -147,35 +147,6 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return fn
 
 
-class AgentCallHistory(BaseModel):
-    parent_process_id: str
-    parent_thread_id: Optional[str]
-    machine: str
-    agent: str
-    remote_process_id: str
-    state: str
-    available_actions: List[str]
-
-    async def upsert(self):
-        query = {
-            "parent_process_id": self.parent_process_id,
-            "parent_thread_id": self.parent_thread_id,
-            "agent": self.agent,
-            "remote_process_id": self.remote_process_id,
-        }
-        await AgentOS.symbolic_memory.upsert_one("agent_logic_unit", self.model_dump(), query)
-
-    @classmethod
-    async def get_agent_state(cls, parent_process_id: str, parent_thread_id: str):
-        query = {
-            "parent_process_id": parent_process_id,
-            "parent_thread_id": parent_thread_id,
-        }
-        return [
-            AgentCallHistory.model_validate(o) async for o in AgentOS.symbolic_memory.find("agent_logic_unit", query)
-        ]
-
-
 class RecordAgentResponseIterator(AgentResponseIterator):
     parent_process_id: str
     parent_thread_id: str
@@ -186,17 +157,15 @@ class RecordAgentResponseIterator(AgentResponseIterator):
         self.parent_thread_id = parent_thread_id
 
     async def iteration_complete(self):
-        if self.available_actions is not None and len(self.available_actions) > 0:
-            #  insert response into mongo we need to store the parent process_id and thread_id and the agent, remote_process_id, state, and available_actions
-            call_data = AgentCallHistory(
-                parent_process_id=self.parent_process_id,
-                parent_thread_id=self.parent_thread_id,
-                machine=self.machine,
-                agent=self.agent,
-                remote_process_id=self.process_id,
-                state=self.state,
-                available_actions=self.available_actions,
-            )
-            await call_data.upsert()
+        call_data = AgentCallHistory(
+            parent_process_id=self.parent_process_id,
+            parent_thread_id=self.parent_thread_id,
+            machine=self.machine,
+            agent=self.agent,
+            remote_process_id=self.process_id,
+            state=self.state,
+            available_actions=self.available_actions,
+        )
+        await call_data.upsert()
 
         return await super().iteration_complete()

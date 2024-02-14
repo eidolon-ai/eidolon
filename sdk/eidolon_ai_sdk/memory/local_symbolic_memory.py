@@ -10,10 +10,10 @@ from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
 class LocalSymbolicMemory(SymbolicMemory):
     db = {}
 
-    def start(self):
+    async def start(self):
         LocalSymbolicMemory.db = {}
 
-    def stop(self):
+    async def stop(self):
         LocalSymbolicMemory.db = {}
 
     async def count(self, symbol_collection: str, query: dict[str, Any]) -> int:

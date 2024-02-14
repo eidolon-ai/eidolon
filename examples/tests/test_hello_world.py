@@ -32,7 +32,7 @@ def test_tool_calls(server_loc):
     process_id = response.json()["process_id"]
     response2 = requests.post(
         f"{server_loc}/agents/ExampleGeneric/processes/{process_id}/actions/respond",
-        json=dict(statement="Please use the HelloWorld tool."),
+        json=dict(statement="Please use the HelloWorld tool with my name."),
     )
     response2.raise_for_status()
     assert "Luke" in response2.json()["data"]

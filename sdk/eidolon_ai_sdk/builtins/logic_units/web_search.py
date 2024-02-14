@@ -51,7 +51,7 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         async with self._get(url=url) as resp:
             text = resp.text
             if not resp.is_success:
-                logger.warning(f"Request to url '{url}' return {resp.status}, {resp.reason}")
+                logger.warning(f"Request to url '{url}' return {resp.status_code}")
                 return text
             if self.spec.summarizer == "BeautifulSoup":
                 soup = BeautifulSoup(text, "lxml")

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from contextlib import AsyncExitStack
-from typing import Optional, AsyncIterator, List
+from typing import Optional, AsyncIterator, List, Callable
 
-from aiostream import streamcontext, stream
+from aiostream import stream
 
 from eidolon_ai_sdk.io.events import (
     BaseStreamEvent,
@@ -62,11 +61,13 @@ class StreamCollector(AsyncIterator[StreamEvent]):
         return event
 
 
-def stream_manager(stream: AsyncIterator[StreamEvent], context: StartStreamContextEvent):
+def stream_manager(
+    stream: AsyncIterator[StreamEvent] | Callable[[], AsyncIterator[StreamEvent]], context: StartStreamContextEvent
+):
     async def _iter():
         yield context.model_copy()
         try:
-            async for event in stream:
+            async for event in stream() if callable(stream) else stream:
                 acc = [context.get_nested_context()]
                 if event.stream_context:
                     acc.append(event.stream_context)
@@ -89,10 +90,9 @@ class ManagedContextError(Exception):
 
 async def merge_streams(streams: List[AsyncIterator]) -> AsyncIterator:
     if len(streams) > 1:
-        async with AsyncExitStack() as stack:
-            streamers = [await stack.enter_async_context(streamcontext(s)) for s in streams]
-            merged_stream = stream.merge(streamers[0], *streamers[1:])
-            async for value in merged_stream:
+        merged_stream = stream.merge(streams[0], *streams[1:])
+        async with merged_stream.stream() as s:
+            async for value in s:
                 yield value
     elif len(streams) == 1:
         async for v in streams[0]:

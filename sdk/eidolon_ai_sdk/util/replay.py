@@ -47,16 +47,16 @@ def replayable(
     config = AgentOS.get_instance(ReplayConfig)
 
     @wraps(fn)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         if config.save_loc:
             try:
-                existing_dirs = [os.path.split(d)[-1] for d in AgentOS.file_memory.glob(config.save_loc + "/*")]
+                existing_dirs = [os.path.split(d)[-1] for d in await AgentOS.file_memory.glob(config.save_loc + "/*")]
                 dir_number = [int(d.split("_")[0]) for d in existing_dirs]
                 top = max(0, *dir_number) if dir_number else -1
                 next_ = str(top + 1)
                 next_ = "0" * (config.digit_length - len(next_)) + next_
                 loc = f"{config.save_loc}/{next_}_{name_override or fn.__name__}"
-                AgentOS.file_memory.mkdir(loc)
+                await AgentOS.file_memory.mkdir(loc)
 
                 printable_save_loc = loc
                 if hasattr(AgentOS.file_memory, "resolve"):
@@ -64,19 +64,18 @@ def replayable(
                 logger.info(f"Saving replay point to {printable_save_loc}")
 
                 data, file_type = serializer(*args, **kwargs)
-                # todo, these should be async tasks to avoid blocking the event loop.
-                AgentOS.file_memory.write_file(loc + "/fn.dill", dill.dumps(fn))
-                AgentOS.file_memory.write_file(loc + f"/data.{file_type}", data.encode())
-                AgentOS.file_memory.write_file(loc + "/deserializer.dill", dill.dumps(deserializer))
-                AgentOS.file_memory.write_file(loc + "/parser.dill", dill.dumps(parser))
+                await AgentOS.file_memory.write_file(loc + "/fn.dill", dill.dumps(fn))
+                await AgentOS.file_memory.write_file(loc + f"/data.{file_type}", data.encode())
+                await AgentOS.file_memory.write_file(loc + "/deserializer.dill", dill.dumps(deserializer))
+                await AgentOS.file_memory.write_file(loc + "/parser.dill", dill.dumps(parser))
             except Exception as e:
                 logger.exception(f"Error saving resume point: {e}")
-        return fn(*args, **kwargs)
+        return await fn(*args, **kwargs)
 
     return wrapper
 
 
-def replay(loc):
+async def replay(loc):
     loc = str(loc)
     data_file = glob(loc + "/data.*")
     if not data_file:
@@ -91,4 +90,5 @@ def replay(loc):
 
     with open(data_file[0]) as file:
         args, kwargs = deserializer(file.read())
-    return parser(fn(*args, **kwargs))
+    async for e in parser(await fn(*args, **kwargs)):
+        yield e

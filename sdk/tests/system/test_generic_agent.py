@@ -16,6 +16,7 @@ from eidolon_ai_sdk.io.events import (
     AgentStateEvent,
     StartLLMEvent,
     StringOutputEvent,
+    UserInputEvent,
 )
 from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
@@ -184,6 +185,16 @@ class TestAgentsWithReferences:
         )
         assert HelloWorld.calls["greeter4"] == ["bar"]
 
+    async def test_respond_after_tool_call(self, client, server):
+        t0 = len(HelloWorld.calls["greeter1"])
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
+        )
+        post.raise_for_status()
+        assert len(HelloWorld.calls["greeter1"]) - t0 == 1
+        assert "Luke" in post.json()['data']
+
     async def test_can_replay_tool_calls(self, client, enable_replay, vcr):
         post = client.post(
             "/agents/GenericAgent/programs/question",
@@ -215,7 +226,7 @@ class TestOutputTests:
                 f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please")
             )
 
-            vcr.rewind()  # since we are hitting endpoing 2x in same test
+            vcr.rewind()  # since we are hitting endpoint 2x in same test
             acc_str = "".join([e async for e in replay(enable_replay / "000_openai_completion")])
             assert "france" in acc_str.lower()
             assert acc_str == post["data"]
@@ -231,6 +242,12 @@ class TestOutputTests:
                 f"{ra}/agents/GenericAgent/programs/question", body=dict(instruction="Tell me about france please")
             )
             expected_events = [
+                UserInputEvent(
+                    input={
+                        "body": {"instruction": "Tell me about france please"},
+                        "process_id": "test_generic_agent_supports_object_output_with_stream_0",
+                    }
+                ),
                 StartAgentCallEvent(
                     agent_name="GenericAgent",
                     machine=AgentOS.current_machine_url(),
@@ -257,7 +274,7 @@ class TestOutputTests:
                     "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
                 ),
             )
-            events = (e for e in [event async for event in stream])
+            events = (e for e in [event async for event in stream][1:])
             assert next(events) == StartAgentCallEvent(
                 agent_name="GenericAgent",
                 machine=AgentOS.current_machine_url(),

@@ -45,10 +45,10 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
                 metadata=document.metadata,
             )
 
-    def start(self):
+    async def start(self):
         pass
 
-    def stop(self):
+    async def stop(self):
         pass
 
 
@@ -73,13 +73,13 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
         super().__init__(spec)
         self.spec = spec
 
-    def start(self):
-        super().start()
+    async def start(self):
+        await super().start()
         self.llm = AsyncOpenAI()
 
-    def stop(self):
-        super().stop()
-        self.llm.close()
+    async def stop(self):
+        await super().stop()
+        await self.llm.close()
         self.llm = None
 
     async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
