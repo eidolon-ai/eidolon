@@ -67,6 +67,15 @@ class OpenAIAssistantsCPU(AgentCPU, Specable[OpenAIAssistantsCPUSpec], Processin
         file = await llm.files.create(file=image_data, purpose="assistants")
         return file.id
 
+    @classmethod
+    async def delete_process(cls, process_id: str):
+        existing_conversations = AgentOS.symbolic_memory.find("open_ai_conversations", {"process_id": process_id})
+        async for conversation in existing_conversations:
+            await AsyncOpenAI().beta.assistants.delete(conversation["assistant_id"])
+            logger.info("deleted assistant " + conversation["assistant_id"])
+        await AgentOS.symbolic_memory.delete_many("open_ai_conversations", {"process_id": process_id})
+        await AgentOS.symbolic_memory.delete_many("open_ai_conversation_data", {"process_id": process_id})
+
     async def get_or_create_assistant(
         self, call_context: CallContext, system_message: str = "", file_ids=None
     ) -> (Assistant, str):
