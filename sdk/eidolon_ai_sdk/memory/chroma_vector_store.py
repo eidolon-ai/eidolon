@@ -87,7 +87,10 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         if not self.client:
             self.connect()
 
-        return self.client.get_or_create_collection(name=name)
+        try:
+            return self.client.get_or_create_collection(name=name)
+        except BaseException as e:
+            raise RuntimeError(f"Failed to get collection {name}") from e
 
     async def add_embedding(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
         collection = self._get_collection(name=collection)

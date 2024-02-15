@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import Body
 from pydantic import BaseModel, Field, model_validator
 from typing import Annotated, List
@@ -12,6 +14,7 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
 from eidolon_ai_sdk.util.class_utils import fqn
+from eidolon_ai_sdk.util.logger import logger
 
 
 def make_description(agent: object, _handler: FnHandler) -> str:
@@ -102,13 +105,8 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
             questions = await self.question_transformer.transform(question)
         else:
             questions = [question]
-        question_to_docs = {}
-        for question in questions:
-            embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
-            results_ = await AgentOS.similarity_memory.vector_store.raw_query(
-                f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results
-            )
-            question_to_docs[question] = results_
+        _docs = await asyncio.gather(*(self._embed_question(question) for question in questions))
+        question_to_docs = {tu[0]: tu[1] for tu in zip(questions, _docs)}
         rerank_questions = {}
         for question, docs in question_to_docs.items():
             rerank_questions[question] = {doc.id: doc.score for doc in docs}
@@ -129,3 +127,10 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
             )
 
         return summaries
+
+    async def _embed_question(self, question):
+        embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
+        results_ = await AgentOS.similarity_memory.vector_store.raw_query(
+            f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results
+        )
+        return results_

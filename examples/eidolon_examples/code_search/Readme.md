@@ -85,7 +85,6 @@ curl -X 'POST' \
   -H 'Content-Type: application/json' \
   -d '{ "instruction": "How do I create an Agent? Be concise" }'
 ```
-The first request to the server may take a few minutes since the serer needs to load the documents and code into memory. Subsequent requests will be faster.
 
 ## Self-Exploration Challenge
 
