@@ -14,7 +14,6 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
 from eidolon_ai_sdk.util.class_utils import fqn
-from eidolon_ai_sdk.util.logger import logger
 
 
 def make_description(agent: object, _handler: FnHandler) -> str:
@@ -25,7 +24,9 @@ def make_description(agent: object, _handler: FnHandler) -> str:
 class RetrieverAgentSpec(BaseModel):
     # these three fields are required and override the defaults of the subcomponents
     name: str = Field(description="The name of the document store to use.")
-    description: str = Field(description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...")
+    description: str = Field(
+        description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
+    )
     loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
 
     loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
@@ -92,7 +93,7 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
 
     @register_program(description=make_description)
     async def search(
-            self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
     ) -> List[DocSummary]:
         """
         Process the question by searching the document store.

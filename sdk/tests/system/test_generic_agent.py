@@ -192,7 +192,7 @@ class TestAgentsWithReferences:
         )
         post.raise_for_status()
         assert len(HelloWorld.calls["greeter1"]) - t0 == 1
-        assert "Luke" in post.json()['data']
+        assert "Luke" in post.json()["data"]
 
     async def test_can_replay_tool_calls(self, client, enable_replay, vcr):
         post = client.post(

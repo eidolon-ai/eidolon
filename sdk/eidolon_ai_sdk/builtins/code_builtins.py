@@ -24,6 +24,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.util.logger import logger
+
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
 except ImportError:
@@ -32,7 +33,6 @@ except ImportError:
 
 from eidolon_ai_sdk.memory.embeddings import NoopEmbedding, Embedding, OpenAIEmbedding
 from eidolon_ai_sdk.memory.file_memory import FileMemory
-from eidolon_ai_sdk.memory.file_system_vector_store import FileSystemVectorStore
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory

@@ -1,7 +1,7 @@
 import pytest
 
 from eidolon_ai_sdk.agent.client import Agent
-from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent, RetrieverAgentSpec
+from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
@@ -31,7 +31,7 @@ async def agent(retriever, run_app):
 
 async def test_list_files(agent):
     found = await agent.program("list_files")
-    assert found.data == ["foo", "bar", "baz"]
+    assert found.data == ["caz", "car", "doo", "dar", "daz", "coo", "ear", "eaz", "foo", "boo", "baz", "bar", "eoo"]
 
 
 async def test_search(agent):

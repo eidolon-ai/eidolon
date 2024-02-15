@@ -24,7 +24,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
-from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
+from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -89,9 +89,9 @@ def app_builder(machine_manager):
         async def manage_lifecycle(_app: FastAPI):
             async with machine_manager() as _machine:
                 async with start_os(
-                        app=_app,
-                        resource_generator=[_machine, *resources] if _machine else resources,
-                        machine_name=_machine.metadata.name,
+                    app=_app,
+                    resource_generator=[_machine, *resources] if _machine else resources,
+                    machine_name=_machine.metadata.name,
                 ):
                     yield
                     print("done")
@@ -187,15 +187,15 @@ def client_builder(run_app):
 def machine_manager(file_memory, symbolic_memory, similarity_memory):
     @asynccontextmanager
     async def fn():
-        async with symbolic_memory() as sm:
+        async with symbolic_memory() as sym, similarity_memory() as sim:
             yield MachineResource(
                 apiVersion="eidolon/v1",
                 metadata=Metadata(name="test_machine"),
                 kind="Machine",
                 spec=dict(
-                    symbolic_memory=sm,
+                    symbolic_memory=sym,
                     file_memory=file_memory,
-                    similarity_memory=similarity_memory,
+                    similarity_memory=sim,
                 ),
             )
 
@@ -274,17 +274,20 @@ def file_memory(file_memory_loc):
 
 
 @pytest.fixture(scope="module")
-async def similarity_memory(tmp_path_factory):
-    tmp_dir = tmp_path_factory.mktemp(f"vector_store_{module_identifier}")
-    ref = Reference(
-        implementation=fqn(SimilarityMemory),
-        vector_store=dict(url=f"file://{tmp_dir}"),
-    )
-    memory: SimilarityMemory = ref.instantiate()
-    await memory.start()
-    yield ref
-    await memory.stop()
-    # Teardown: drop the test database
+def similarity_memory(tmp_path_factory):
+    @asynccontextmanager
+    async def cm():
+        tmp_dir = tmp_path_factory.mktemp(f"vector_store_{module_identifier}_{ObjectId()}")
+        ref = Reference(
+            implementation=fqn(SimilarityMemory),
+            vector_store=dict(url=f"file://{tmp_dir}"),
+        )
+        memory: SimilarityMemory = ref.instantiate()
+        await memory.start()
+        yield ref
+        await memory.stop()
+
+    return cm
 
 
 @pytest.fixture(scope="module", autouse=True)
