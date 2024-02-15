@@ -7,7 +7,7 @@ from fastapi import Body, HTTPException
 from httpx import HTTPStatusError
 
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_sdk.agent.client import Agent, Process
+from eidolon_ai_sdk.agent.client import Agent, Process, ProcessStatus
 from eidolon_ai_sdk.io.events import (
     ErrorEvent,
     AgentStateEvent,
@@ -68,6 +68,10 @@ class TestHelloWorld:
         with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
+    @pytest.fixture(scope="function")
+    def agent(self, server):
+        return Agent.get("HelloWorld")
+
     def test_can_start(self, client):
         docs = client.get("/docs")
         assert docs.status_code == 200
@@ -110,8 +114,7 @@ class TestHelloWorld:
         assert exc.value.response.json() == "big bad server error"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
-    async def test_streaming_unhandled_error(self, server, program):
-        agent = Agent.get("HelloWorld")
+    async def test_streaming_unhandled_error(self, agent, program):
         stream = agent.stream_program(program, "error")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
@@ -123,13 +126,11 @@ class TestHelloWorld:
         assert exc.value.response.status_code == 500
         assert exc.value.response.json() == "big bad server error"
 
-    async def test_lots_o_context(self, server):
-        agent = Agent.get("HelloWorld")
+    async def test_lots_o_context(self, agent):
         resp = await agent.program("lots_o_context")
         assert resp.data == "12"
 
-    async def test_lots_o_context_streaming(self, server):
-        agent = Agent.get("HelloWorld")
+    async def test_lots_o_context_streaming(self, agent):
         events = [e async for e in agent.stream_program("lots_o_context")]
         assert events[2:-1] == [
             StringOutputEvent(content="1"),
@@ -148,6 +149,22 @@ class TestHelloWorld:
             EndStreamContextEvent(context_id="c2"),
             AgentStateEvent(state="terminated", available_actions=[]),
         ]
+
+    async def test_creating_processes_without_program(self, agent):
+        process: ProcessStatus = await agent.create_process()
+        assert process.state == "initialized"
+        assert "idle" in process.available_actions
+        action = await process.action('idle', "Luke")
+        assert action.data == "Hello, Luke!"
+
+    async def test_delete_process(self, agent):
+        process: ProcessStatus = await agent.create_process()
+        deleted = await process.delete()
+        assert deleted.process_id == process.process_id
+        assert deleted.deleted == 1
+        with pytest.raises(HTTPStatusError) as exc:
+            await process.status()
+        assert exc.value.response.status_code == 404
 
 
 class StateMachine:

@@ -136,6 +136,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent + process_id + action
 
+    # todo, this needs to create history record before iterating
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
         def fn(_self, body):
             return RecordAgentResponseIterator(
@@ -144,6 +145,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
 
         return fn
 
+    # todo, this needs to create history record before iterating
     def _process_tool(self, agent: Agent, action: str, process_id: str, call_context: CallContext):
         def fn(_self, body):
             return RecordAgentResponseIterator(
@@ -153,6 +155,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return fn
 
 
+# todo, it would be nice to work this into the client automatically
 class RecordAgentResponseIterator(AgentResponseIterator):
     parent_process_id: str
     parent_thread_id: str

@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, AsyncIterator
 
 from pydantic import BaseModel
 
@@ -41,3 +41,14 @@ class AgentCallHistory(BaseModel):
                 "agent_logic_unit", {}, projection={"remote_process_id": 1, "parent_process_id": 1}
             )
         }
+
+    @classmethod
+    async def get_children(cls, parent_process_id: str) -> AsyncIterator[str]:
+        async for record in AgentOS.symbolic_memory.find(
+            "agent_logic_unit", {"parent_process_id": parent_process_id}, projection={"remote_process_id": 1}
+        ):
+            yield record["remote_process_id"]
+
+    @classmethod
+    async def delete(cls, query):
+        return await AgentOS.symbolic_memory.delete("agent_logic_unit", query)

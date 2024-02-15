@@ -121,6 +121,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
     async def version():
         return {"version": EIDOLON_SDK_VERSION}
 
+    # todo, this needs pagination
     @app.get("/system/processes", tags=["system"], description="Get all processes")
     async def processes():
         child_pids = await AgentCallHistory.get_child_pids()

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import asyncio
-
 import inspect
 import logging
 import typing
 import uuid
 from collections.abc import AsyncIterator
+from inspect import Parameter
+
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.params import Body, Param
-from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined, to_jsonable_python
 from sse_starlette import EventSourceResponse, ServerSentEvent
@@ -31,22 +31,18 @@ from eidolon_ai_sdk.io.events import (
     ObjectOutputEvent,
     UserInputEvent, CanceledEvent,
 )
-from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
+from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary, \
+    DeleteProcessResponse, CreateProcessArgs
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
+from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.util.class_utils import for_name
 from eidolon_ai_sdk.util.logger import logger
 
 
-class CreateProcessArgs(BaseModel):
-    title: typing.Optional[str] = Field(None, description="The title of the process")
-
-
-class DeleteProcessResponse(BaseModel):
-    process_id: str
-    deleted: int
-
-
+# todo, agent controller has become a mega impl, we should break up responsibilities
 class AgentController:
     name: str
     agent: object
@@ -386,7 +382,7 @@ class AgentController:
     async def get_process_events(self, process_id: str):
         return await load_events(self.name, process_id)
 
-    async def create_process(self, args: CreateProcessArgs):
+    async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
         process = await ProcessDoc.create(agent=self.name, state="initialized", title=args.title)
         return JSONResponse(
             StateSummary(
@@ -399,21 +395,33 @@ class AgentController:
 
     async def delete_process(self, process_id: str):
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
-        if not process_obj:
-            return JSONResponse(content={"error": f"Process {process_id} not found"}, status_code=404)
-        child_pids = await AgentCallHistory.get_child_pids()
-        if process_id in child_pids:
-            return JSONResponse(
-                content={"error": f"Process {process_id} is a child processes and cannot be deleted"}, status_code=409
-            )
-
-        # todo: luke we need to delete in hierarchical order...
-        # num_delete = await AgentOS.delete_process(process_id)
-        num_delete = 1
+        num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
-            DeleteProcessResponse(process_id = process_id, deleted = num_delete).model_dump(),
+            DeleteProcessResponse(process_id=process_id, deleted=num_delete).model_dump(),
             200,
         )
+
+    async def _delete_process(self, process_id: str):
+        num_deleted = 0
+        async for child in AgentCallHistory.get_children(process_id):
+            num_deleted += await self._delete_process(child)
+        await AgentCallHistory.delete(query={"parent_process_id": process_id})
+        logger.info(f"Successfully deleted child processes for process {process_id}")
+
+        for r in AgentOS.get_resources(ReferenceResource).values():
+            is_root = not AgentOS.get_resource(ReferenceResource, r.spec["implementation"], default=None)
+            if is_root:
+                resource_class = for_name(r.spec["implementation"])
+                if hasattr(resource_class, "delete_process"):
+                    rtn = await resource_class.delete_process(process_id)
+                    logger.info(f"Successfully {resource_class} records associated with process {process_id}: {rtn}")
+                else:
+                    logger.info(f"No deletion hook for {resource_class}")
+            else:
+                logger.info(f"Skipping non root reference {r.metadata.name}")
+
+        await ProcessDoc.delete(_id=process_id)
+        return num_deleted + 1
 
     async def list_processes(
         self,

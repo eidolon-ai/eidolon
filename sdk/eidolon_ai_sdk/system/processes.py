@@ -56,6 +56,10 @@ class MongoDoc(BaseModel, extra="allow"):
         dump.update(**data)
         return self.__class__.model_validate(dump)
 
+    @classmethod
+    async def delete(cls, _id: str):
+        await AgentOS.symbolic_memory.delete(cls.collection, {"_id": _id})
+
 
 class ProcessDoc(MongoDoc):
     collection = "processes"
