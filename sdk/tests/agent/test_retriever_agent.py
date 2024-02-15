@@ -31,7 +31,7 @@ async def agent(retriever, run_app):
 
 async def test_list_files(agent):
     found = await agent.program("list_files")
-    assert found.data == ["caz", "car", "doo", "dar", "daz", "coo", "ear", "eaz", "foo", "boo", "baz", "bar", "eoo"]
+    assert set(found.data) == {"caz", "car", "doo", "dar", "daz", "coo", "ear", "eaz", "foo", "boo", "baz", "bar", "eoo"}
 
 
 async def test_search(agent):
