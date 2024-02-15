@@ -45,25 +45,6 @@ spec:
 ```
 A RetrieverAgent retrieves documents from a designated location, driven by a query for similarity search. Here, it's set to comb through the documentation directory, with the `SearchCode` agent performing a similar role for the code files within the Eidolon `sdk` directory.
 
-### Enable Machine Similarity Memory
-Vector search, a necessity for RetrieverAgents, is our kitchen's high-tech oven—useful only if you're making pizza, or in our case, documentation.
-
-The system's default references are easily adjustable to better suit our needs, enhancing the entire platform's capabilities:
-```yaml
-apiVersion: eidolon/v1
-kind: Reference
-metadata:
-  name: Embedding
-spec: OpenAIEmbedding
-```
-```yaml
-apiVersion: eidolon/v1
-kind: Reference
-metadata:
-  name: VectorStore
-spec: ChromaVectorStore
-```
-
 ## <a name="run_server">Setting Up the Server</a>
 
 Initiate your Eidolon server with the following commands, setting the stage for our document-producing agent to work its magic:
