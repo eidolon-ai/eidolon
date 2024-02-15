@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+
 import inspect
 import logging
 import typing
@@ -27,7 +29,7 @@ from eidolon_ai_sdk.io.events import (
     StreamEvent,
     EndStreamEvent,
     ObjectOutputEvent,
-    UserInputEvent,
+    UserInputEvent, CanceledEvent,
 )
 from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
@@ -152,6 +154,7 @@ class AgentController:
                     status_code=400,
                     detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
                 )
+            last_state = "initialized"
             process = await ProcessDoc.create(agent=self.name, state="processing")
             process_id = process.record_id
         else:
@@ -166,6 +169,7 @@ class AgentController:
                     status_code=409,
                     detail=f'Action "{handler.name}" cannot process state "{process.state}"',
                 )
+            last_state = process.state
             process = await process.update(
                 agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
             )
@@ -197,17 +201,17 @@ class AgentController:
                     logger.exception(f"Server Error {e}")
                     raise e
 
-            return EventSourceResponse(with_sse(self.agent_event_stream(handler, process, **kwargs)), status_code=200)
+            return EventSourceResponse(with_sse(self.agent_event_stream(handler, process, last_state, **kwargs)), status_code=200)
         else:
             # run the program synchronously
-            return await self.send_response(handler, process, **kwargs)
+            return await self.send_response(handler, process, last_state, **kwargs)
 
-    async def send_response(self, handler: FnHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
+    async def send_response(self, handler: FnHandler, process: ProcessDoc, last_state: str, **kwargs) -> JSONResponse:
         state_change_event = None
         final_event = None
         result_object = None
         string_result = ""
-        async for event in self.agent_event_stream(handler, process, **kwargs):
+        async for event in self.agent_event_stream(handler, process, last_state, **kwargs):
             if event.is_root_and_type(StringOutputEvent):
                 string_result += event.content
             elif event.is_root_and_type(ObjectOutputEvent):
@@ -235,15 +239,25 @@ class AgentController:
                 data = string_result
             return self.doc_to_response(process, data)
 
-    async def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
+    async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
         events_to_store = []
-        async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
-            events_to_store.append(event)
-            yield event
-
-        await store_events(self.name, process.record_id, events_to_store)
+        try:
+            async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
+                events_to_store.append(event)
+                yield event
+        except asyncio.CancelledError:
+            print("In cancel")
+            logger.debug(f"Process {process.record_id} was cancelled")
+            events_to_store.append(CanceledEvent())
+            events_to_store.append(AgentStateEvent(
+                state=last_state, available_actions=self.get_available_actions(last_state)
+            ))
+            await process.update(state=last_state)
+            raise
+        finally:
+            await store_events(self.name, process.record_id, events_to_store)
 
     async def stream_agent_iterator(
         self,
