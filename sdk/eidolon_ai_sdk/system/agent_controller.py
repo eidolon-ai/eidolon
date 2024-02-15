@@ -35,8 +35,8 @@ from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcesse
     DeleteProcessResponse, CreateProcessArgs
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
-from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
 from eidolon_ai_sdk.util.logger import logger
@@ -151,8 +151,7 @@ class AgentController:
                     detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
                 )
             last_state = "initialized"
-            process = await ProcessDoc.create(agent=self.name, state="processing")
-            process_id = process.record_id
+            process = await self._create_process(state="processing")
         else:
             process = await self.get_latest_process_event(process_id)
             if not process:
@@ -201,6 +200,12 @@ class AgentController:
         else:
             # run the program synchronously
             return await self.send_response(handler, process, last_state, **kwargs)
+
+    async def _create_process(self, **kwargs):
+        process = await ProcessDoc.create(agent=self.name, **kwargs)
+        if hasattr(self.agent, "create_process"):
+            await self.agent.create_process(process.record_id)
+        return process
 
     async def send_response(self, handler: FnHandler, process: ProcessDoc, last_state: str, **kwargs) -> JSONResponse:
         state_change_event = None
@@ -383,7 +388,7 @@ class AgentController:
         return await load_events(self.name, process_id)
 
     async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
-        process = await ProcessDoc.create(agent=self.name, state="initialized", title=args.title)
+        process = await self._create_process(state="initialized", title=args.title)
         return JSONResponse(
             StateSummary(
                 process_id=process.record_id,
@@ -408,10 +413,13 @@ class AgentController:
         await AgentCallHistory.delete(query={"parent_process_id": process_id})
         logger.info(f"Successfully deleted child processes for process {process_id}")
 
-        for r in AgentOS.get_resources(ReferenceResource).values():
-            is_root = not AgentOS.get_resource(ReferenceResource, r.spec["implementation"], default=None)
+        references = AgentOS.get_resources(ReferenceResource).values()
+        agents = AgentOS.get_resources(AgentResource).values()
+        for r in (*agents, *references):
+            implementation = to_jsonable_python(r.spec)["implementation"]
+            is_root = not AgentOS.get_resource(ReferenceResource, implementation, default=None)
             if is_root:
-                resource_class = for_name(r.spec["implementation"])
+                resource_class = for_name(implementation)
                 if hasattr(resource_class, "delete_process"):
                     rtn = await resource_class.delete_process(process_id)
                     logger.info(f"Successfully {resource_class} records associated with process {process_id}: {rtn}")

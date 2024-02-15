@@ -19,6 +19,16 @@ from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
 class HelloWorld:
+    created_processes = set()
+
+    @classmethod
+    async def create_process(cls, process_id):
+        HelloWorld.created_processes.add(process_id)
+
+    @classmethod
+    async def delete_process(cls, process_id):
+        HelloWorld.created_processes.remove(process_id)
+
     @register_program()
     async def idle(self, name: Annotated[str, Body()]):
         if name.lower() == "hello":
@@ -55,6 +65,13 @@ async def _s(*_args, after=None):
 
 def _m(stream, context: str):
     return stream_manager(stream, StartStreamContextEvent(context_id=context))
+
+
+@pytest.fixture(autouse=True)
+def manage_hello_world_state():
+    HelloWorld.created_processes = set()
+    yield
+    HelloWorld.created_processes = set()
 
 
 class TestHelloWorld:
@@ -165,6 +182,17 @@ class TestHelloWorld:
         with pytest.raises(HTTPStatusError) as exc:
             await process.status()
         assert exc.value.response.status_code == 404
+
+    async def test_agent_create_delete_hooks(self, agent):
+        assert not HelloWorld.created_processes
+
+        # we expect to observe the process being created as a side effect of calling create_process
+        process: ProcessStatus = await agent.create_process()
+        assert HelloWorld.created_processes
+
+        # and we should see it cleaned up as part of process deletion
+        await process.delete()
+        assert not HelloWorld.created_processes
 
 
 class StateMachine:
