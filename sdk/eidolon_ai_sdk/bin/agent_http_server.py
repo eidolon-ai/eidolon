@@ -171,7 +171,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         logger.info("Server Started")
         yield
         await machine.stop()
-    except Exception:
+    except BaseException:
         logger.exception("Failed to start AgentOS")
         raise
     finally:

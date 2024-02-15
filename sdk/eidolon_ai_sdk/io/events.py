@@ -34,7 +34,7 @@ class BaseStreamEvent(BaseModel, ABC):
     def from_dict(cls, event_dict: Dict[str, Any]):
         # remove fields that are set automatically
         event_type = event_dict.pop("event_type")
-        if 'category' in event_dict:
+        if "category" in event_dict:
             del event_dict["category"]
         if event_dict.get("stream_context", ...) is None:
             del event_dict["stream_context"]
@@ -113,7 +113,7 @@ class EndStreamEvent(BaseStreamEvent, ABC):
 
 
 class SuccessEvent(EndStreamEvent):
-    event_type: Literal['success'] = "success"
+    event_type: Literal["success"] = "success"
 
 
 class CanceledEvent(EndStreamEvent):
@@ -154,7 +154,7 @@ StreamEvent = (
     | UserInputEvent
 )
 
-_type_mapping = {c.model_fields['event_type'].annotation.__args__[0]: c for c in StreamEvent.__args__}
+_type_mapping = {c.model_fields["event_type"].annotation.__args__[0]: c for c in StreamEvent.__args__}
 
 
 async def convert_output_object(it: AsyncIterator[StreamEvent], output_format: Type[T]) -> AsyncIterator[StreamEvent]:

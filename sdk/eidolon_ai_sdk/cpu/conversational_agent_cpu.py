@@ -111,9 +111,9 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             conversation.append(assistant_message)
 
             # process tool calls
-            async for e in merge_streams([
-                self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events
-            ]):
+            async for e in merge_streams(
+                [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
+            ):
                 yield e
             if not tool_call_events:
                 return

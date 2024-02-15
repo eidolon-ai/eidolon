@@ -6,6 +6,7 @@ from pydantic import Field, field_validator, BaseModel
 from eidolon_ai_sdk.memory.file_memory import FileMemory
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.async_wrapper import make_async
+from eidolon_ai_sdk.util.logger import logger
 from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
 
 
@@ -106,7 +107,11 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
         safe_file_path = self.resolve(file_path)
 
         # Delete the file
-        safe_file_path.unlink()
+        try:
+            safe_file_path.unlink()
+        except FileNotFoundError:
+            logger.debug("Attempted to delete non-existent file")
+            pass
 
     async def mkdir(self, directory: str, exist_ok: bool = False):
         """

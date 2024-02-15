@@ -23,9 +23,7 @@ class GenericAgentSpec(AgentSpec):
     description: str
     system_prompt: str
     user_prompt: str = "{{ question }}"
-    input_schema: Dict[str, Any] = Field(
-        None, description="The json schema for the input model."
-    )
+    input_schema: Dict[str, Any] = Field(None, description="The json schema for the input model.")
     output_schema: Union[Literal["str"], Dict[str, Any]] = Field(
         default="str", description="The json schema for the output model or the literal 'str' for text output."
     )

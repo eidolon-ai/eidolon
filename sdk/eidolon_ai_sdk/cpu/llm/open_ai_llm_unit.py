@@ -187,9 +187,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
             if message.content:
                 if can_stream_message:
-                    logger.debug(
-                        f"open ai llm stream response: {message.content}", extra=dict(content=message.content)
-                    )
+                    logger.debug(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
                     yield StringOutputEvent(content=message.content)
                 else:
                     complete_message += message.content

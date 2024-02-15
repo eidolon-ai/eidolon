@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from pydantic import BaseModel, Field
@@ -77,6 +78,10 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             await AgentOS.similarity_memory.vector_store.delete(f"doc_contents_{self.spec.name}", doc_ids)
             await AgentOS.symbolic_memory.delete(self.collection_name, {"file_path": path})
 
+    async def _replaceFile(self, file_info: FileInfo):
+        await self._removeFile(file_info.path)
+        await self._addFile(file_info)
+
     async def list_files(self):
         return self.loader.list_files()
 
@@ -90,15 +95,9 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             self.logger.info(f"Found {len(data)} files in symbolic memory")
 
             ret = await self.loader.get_changes(data)
-
-            async for file_info in ret.added_files:
-                await self._addFile(file_info)
-
-            async for file_info in ret.modified_files:
-                await self._removeFile(file_info.path)
-                await self._addFile(file_info)
-
-            async for file_path in ret.removed_files:
-                await self._removeFile(file_path)
-
+            await asyncio.gather(
+                *[self._addFile(file_info) async for file_info in ret.added_files],
+                *[self._replaceFile(file_info) async for file_info in ret.modified_files],
+                *[self._removeFile(file_path) async for file_path in ret.removed_files],
+            )
             self.last_reload = time.time()

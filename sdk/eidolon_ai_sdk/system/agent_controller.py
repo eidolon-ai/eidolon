@@ -46,7 +46,10 @@ class AgentController:
         self.agent = agent
         for handler in get_handlers(self.agent):
             if handler.name in self.actions:
-                self.actions[handler.name].extra["allowed_states"] = (*self.actions[handler.name].extra["allowed_states"], *handler.extra["allowed_states"])
+                self.actions[handler.name].extra["allowed_states"] = (
+                    *self.actions[handler.name].extra["allowed_states"],
+                    *handler.extra["allowed_states"],
+                )
             else:
                 self.actions[handler.name] = handler
 
