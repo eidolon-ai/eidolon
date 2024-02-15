@@ -61,10 +61,10 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-        self,
-        call_context: CallContext,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+            self,
+            call_context: CallContext,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
@@ -80,10 +80,10 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             raise CPUException(f"error while processing request ({e.__class__.__name__})") from e
 
     async def _llm_execution_cycle(
-        self,
-        call_context: CallContext,
-        output_format: Union[Literal["str"], Dict[str, Any]],
-        conversation: List[LLMMessage],
+            self,
+            call_context: CallContext,
+            output_format: Union[Literal["str"], Dict[str, Any]],
+            conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
@@ -121,24 +121,34 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         raise CPUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
-        self,
-        call_context: CallContext,
-        tool_call_event: LLMToolCallRequestEvent,
-        tool_defs,
-        conversation: List[LLMMessage],
+            self,
+            call_context: CallContext,
+            tool_call_event: LLMToolCallRequestEvent,
+            tool_defs,
+            conversation: List[LLMMessage],
     ):
         tc = tool_call_event.tool_call
         logic_unit_wrapper = ["NaN"]
 
+        tool_def = tool_defs[tc.name]
+
         def tool_event_stream():
             try:
-                tool_def = tool_defs[tc.name]
                 logic_unit_wrapper[0] = tool_def.logic_unit.__class__.__name__
                 return tool_def.execute(tool_call=tc)
             except KeyError:
                 raise ValueError(f"Tool {tool_call_event.tool_call.name} not found. Available tools: {tool_defs.keys()}")
 
-        tool_stream = stream_manager(tool_event_stream, ToolCallStartEvent(tool_call=tc, context_id=tc.tool_call_id))
+        tool_stream = stream_manager(
+            tool_event_stream,
+            ToolCallStartEvent(
+                tool_call=tc,
+                context_id=tc.tool_call_id,
+                title=tool_def.eidolon_handler.extra["title"],
+                sub_title=tool_def.eidolon_handler.extra.get("sub_title", ""),
+                is_agent_call=tool_def.eidolon_handler.extra.get("agent_call", False),
+            )
+        )
         try:
             async for event in tool_stream:
                 yield event

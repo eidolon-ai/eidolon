@@ -66,7 +66,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         try:
             name = self._name(agent, action=action)
             tool = self._build_tool_def(
-                name, endpoint_schema, self._process_tool(agent_client, action, remote_process_id, call_context)
+                agent, action, name, endpoint_schema, self._process_tool(agent_client, action, remote_process_id, call_context)
             )
             return tool
         except ValueError:
@@ -85,6 +85,8 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     program = path.removeprefix(prefix)
                     name = self._name(agent, action=program)
                     tool = self._build_tool_def(
+                        agent,
+                        program,
                         name,
                         machine_schema["paths"][path]["post"],
                         self._program_tool(agent_client, program, call_context),
@@ -94,7 +96,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     logger.warning(f"unable to build tool {path}", exc_info=True)
         return tools
 
-    def _build_tool_def(self, name, endpoint_schema, tool_call):
+    def _build_tool_def(self, agent, operation, name, endpoint_schema, tool_call):
         description = self._description(endpoint_schema, name)
         model = self._body_model(endpoint_schema, name)
         return FnHandler(
@@ -103,7 +105,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             input_model_fn=lambda a, b: model,
             output_model_fn=lambda a, b: Any,
             fn=tool_call,
-            extra={},
+            extra={
+                "title": agent,
+                "sub_title": operation,
+                "agent_call": True,
+            },
         )
 
     @staticmethod

@@ -63,6 +63,7 @@ class ProcessDoc(MongoDoc):
     agent: str
     state: str
     error_info: Optional[Any] = None
+    title: Optional[str] = None
 
 
 async def store_events(agent: str, process_id: str, events: list[StreamEvent]):

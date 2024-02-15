@@ -15,6 +15,7 @@ from starlette.responses import JSONResponse
 
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.io.events import (
     StartAgentCallEvent,
     AgentStateEvent,
@@ -33,6 +34,15 @@ from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
 from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.util.logger import logger
+
+
+class CreateProcessArgs(BaseModel):
+    title: typing.Optional[str] = Field(None, description="The title of the process")
+
+
+class DeleteProcessResponse(BaseModel):
+    process_id: str
+    deleted: int
 
 
 class AgentController:
@@ -68,6 +78,14 @@ class AgentController:
             endpoint=self.create_process,
             methods=["POST"],
             response_model=StateSummary,
+            tags=[self.name],
+        )
+
+        app.add_api_route(
+            f"/agents/{self.name}/processes/{{process_id}}",
+            endpoint=self.delete_process,
+            methods=["DELETE"],
+            response_model=DeleteProcessResponse,
             tags=[self.name],
         )
 
@@ -354,14 +372,32 @@ class AgentController:
     async def get_process_events(self, process_id: str):
         return await load_events(self.name, process_id)
 
-    async def create_process(self):
-        process = await ProcessDoc.create(agent=self.name, state="initialized")
+    async def create_process(self, args: CreateProcessArgs):
+        process = await ProcessDoc.create(agent=self.name, state="initialized", title=args.title)
         return JSONResponse(
             StateSummary(
                 process_id=process.record_id,
                 state=process.state,
                 available_actions=self.get_available_actions(process.state),
             ).model_dump(),
+            200,
+        )
+
+    async def delete_process(self, process_id: str):
+        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+        if not process_obj:
+            return JSONResponse(content={"error": f"Process {process_id} not found"}, status_code=404)
+        child_pids = await AgentCallHistory.get_child_pids()
+        if process_id in child_pids:
+            return JSONResponse(
+                content={"error": f"Process {process_id} is a child processes and cannot be deleted"}, status_code=409
+            )
+
+        # todo: luke we need to delete in hierarchical order...
+        # num_delete = await AgentOS.delete_process(process_id)
+        num_delete = 1
+        return JSONResponse(
+            DeleteProcessResponse(process_id = process_id, deleted = num_delete).model_dump(),
             200,
         )
 
