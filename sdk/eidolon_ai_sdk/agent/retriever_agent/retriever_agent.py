@@ -20,6 +20,18 @@ def make_description(agent: object, _handler: FnHandler) -> str:
 
 
 class RetrieverAgentSpec(BaseModel):
+    # these three fields are required and override the defaults of the subcomponents
+    name: str = Field(description="The name of the document store to use.")
+    description: str = Field(description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...")
+    loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
+
+    loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
+    max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
+
+    document_manager: Reference[DocumentManager]
+    question_transformer: AnnotatedReference[QuestionTransformer]
+    document_reranker: AnnotatedReference[DocumentReranker]
+
     # noinspection PyMethodParameters
     @model_validator(mode="before")
     def set_fields(cls, value):
@@ -46,20 +58,6 @@ class RetrieverAgentSpec(BaseModel):
             doc_manager_spec["loader"]["pattern"] = spec["loader_pattern"]
 
         return value
-
-    # these three fields are required and override the defaults of the subcomponents
-    name: str = Field(description="The name of the document store to use.")
-    description: str = Field(
-        description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
-    )
-    loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
-
-    loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
-    max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
-
-    document_manager: Reference[DocumentManager]
-    question_transformer: AnnotatedReference[QuestionTransformer]
-    document_reranker: AnnotatedReference[DocumentReranker]
 
 
 class DocSummary(BaseModel):
@@ -91,7 +89,7 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
 
     @register_program(description=make_description)
     async def search(
-        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+            self, question: Annotated[str, Body(description="The question to search for", embed=True)]
     ) -> List[DocSummary]:
         """
         Process the question by searching the document store.

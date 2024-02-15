@@ -89,9 +89,9 @@ def app_builder(machine_manager):
         async def manage_lifecycle(_app: FastAPI):
             async with machine_manager() as _machine:
                 async with start_os(
-                    app=_app,
-                    resource_generator=[_machine, *resources] if _machine else resources,
-                    machine_name=_machine.metadata.name,
+                        app=_app,
+                        resource_generator=[_machine, *resources] if _machine else resources,
+                        machine_name=_machine.metadata.name,
                 ):
                     yield
                     print("done")
@@ -146,6 +146,7 @@ def run_app(app_builder, port):
                 config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info", loop="asyncio")
                 server = uvicorn.Server(config)
                 server_wrapper.append(server)
+                #     todo, issue here where raising on bootstrap does not kill the server
                 server.run()
             except BaseException as e:
                 server_wrapper.clear()
@@ -273,9 +274,17 @@ def file_memory(file_memory_loc):
 
 
 @pytest.fixture(scope="module")
-def similarity_memory():
-    spec = SimilarityMemorySpec()
-    return Reference[SimilarityMemory](spec=spec)
+async def similarity_memory(tmp_path_factory):
+    tmp_dir = tmp_path_factory.mktemp(f"vector_store_{module_identifier}")
+    ref = Reference(
+        implementation=fqn(SimilarityMemory),
+        vector_store=dict(url=f"file://{tmp_dir}"),
+    )
+    memory: SimilarityMemory = ref.instantiate()
+    await memory.start()
+    yield ref
+    await memory.stop()
+    # Teardown: drop the test database
 
 
 @pytest.fixture(scope="module", autouse=True)
