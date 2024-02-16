@@ -86,4 +86,10 @@ def llm_function(
 
 class LogicUnit(ProcessingUnit, ABC):
     async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
-        return get_handlers(self)
+        handlers = get_handlers(self)
+        for handler in handlers:
+            handler.extra["title"] = self.__class__.__name__
+            handler.extra["sub_title"] = handler.fn.__name__
+            handler.extra["agent_call"] = False,
+
+            return handlers

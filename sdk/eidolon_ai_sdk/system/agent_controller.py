@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import asyncio
 import inspect
 import logging
 import typing
 import uuid
 from collections.abc import AsyncIterator
+from inspect import Parameter
+
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.params import Body, Param
-from inspect import Parameter
 from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined, to_jsonable_python
 from sse_starlette import EventSourceResponse, ServerSentEvent
@@ -15,6 +17,7 @@ from starlette.responses import JSONResponse
 
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.io.events import (
     StartAgentCallEvent,
     AgentStateEvent,
@@ -26,15 +29,20 @@ from eidolon_ai_sdk.io.events import (
     StreamEvent,
     EndStreamEvent,
     ObjectOutputEvent,
-    UserInputEvent,
+    UserInputEvent, CanceledEvent,
 )
-from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary
+from eidolon_ai_sdk.system.agent_contract import SyncStateResponse, ListProcessesResponse, StateSummary, \
+    DeleteProcessResponse, CreateProcessArgs
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
 from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.util.class_utils import for_name
 from eidolon_ai_sdk.util.logger import logger
 
 
+# todo, agent controller has become a mega impl, we should break up responsibilities
 class AgentController:
     name: str
     agent: object
@@ -68,6 +76,14 @@ class AgentController:
             endpoint=self.create_process,
             methods=["POST"],
             response_model=StateSummary,
+            tags=[self.name],
+        )
+
+        app.add_api_route(
+            f"/agents/{self.name}/processes/{{process_id}}",
+            endpoint=self.delete_process,
+            methods=["DELETE"],
+            response_model=DeleteProcessResponse,
             tags=[self.name],
         )
 
@@ -134,7 +150,8 @@ class AgentController:
                     status_code=400,
                     detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
                 )
-            process = await ProcessDoc.create(agent=self.name, state="processing")
+            last_state = "initialized"
+            process = await self._create_process(state="processing")
             process_id = process.record_id
         else:
             process = await self.get_latest_process_event(process_id)
@@ -148,6 +165,7 @@ class AgentController:
                     status_code=409,
                     detail=f'Action "{handler.name}" cannot process state "{process.state}"',
                 )
+            last_state = process.state
             process = await process.update(
                 agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
             )
@@ -179,17 +197,23 @@ class AgentController:
                     logger.exception(f"Server Error {e}")
                     raise e
 
-            return EventSourceResponse(with_sse(self.agent_event_stream(handler, process, **kwargs)), status_code=200)
+            return EventSourceResponse(with_sse(self.agent_event_stream(handler, process, last_state, **kwargs)), status_code=200)
         else:
             # run the program synchronously
-            return await self.send_response(handler, process, **kwargs)
+            return await self.send_response(handler, process, last_state, **kwargs)
 
-    async def send_response(self, handler: FnHandler, process: ProcessDoc, **kwargs) -> JSONResponse:
+    async def _create_process(self, **kwargs):
+        process = await ProcessDoc.create(agent=self.name, **kwargs)
+        if hasattr(self.agent, "create_process"):
+            await self.agent.create_process(process.record_id)
+        return process
+
+    async def send_response(self, handler: FnHandler, process: ProcessDoc, last_state: str, **kwargs) -> JSONResponse:
         state_change_event = None
         final_event = None
         result_object = None
         string_result = ""
-        async for event in self.agent_event_stream(handler, process, **kwargs):
+        async for event in self.agent_event_stream(handler, process, last_state, **kwargs):
             if event.is_root_and_type(StringOutputEvent):
                 string_result += event.content
             elif event.is_root_and_type(ObjectOutputEvent):
@@ -217,15 +241,24 @@ class AgentController:
                 data = string_result
             return self.doc_to_response(process, data)
 
-    async def agent_event_stream(self, handler, process, **kwargs) -> AsyncIterator[StreamEvent]:
+    async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
         events_to_store = []
-        async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
-            events_to_store.append(event)
-            yield event
-
-        await store_events(self.name, process.record_id, events_to_store)
+        try:
+            async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
+                events_to_store.append(event)
+                yield event
+        except asyncio.CancelledError:
+            logger.info(f"Process {process.record_id} was cancelled")
+            events_to_store.append(CanceledEvent())
+            events_to_store.append(AgentStateEvent(
+                state=last_state, available_actions=self.get_available_actions(last_state)
+            ))
+            await process.update(state=last_state)
+            raise
+        finally:
+            await store_events(self.name, process.record_id, events_to_store)
 
     async def stream_agent_iterator(
         self,
@@ -237,7 +270,7 @@ class AgentController:
         state_change = None
         last_event = None
         try:
-            yield UserInputEvent(input=user_input)
+            yield UserInputEvent(input=to_jsonable_python(user_input, fallback=str))
             yield StartAgentCallEvent(
                 machine=AgentOS.current_machine_url(),
                 agent_name=self.name,
@@ -354,8 +387,8 @@ class AgentController:
     async def get_process_events(self, process_id: str):
         return await load_events(self.name, process_id)
 
-    async def create_process(self):
-        process = await ProcessDoc.create(agent=self.name, state="initialized")
+    async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
+        process = await self._create_process(state="initialized", title=args.title)
         return JSONResponse(
             StateSummary(
                 process_id=process.record_id,
@@ -364,6 +397,39 @@ class AgentController:
             ).model_dump(),
             200,
         )
+
+    async def delete_process(self, process_id: str):
+        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+        num_delete = await self._delete_process(process_id) if process_obj else 0
+        return JSONResponse(
+            DeleteProcessResponse(process_id=process_id, deleted=num_delete).model_dump(),
+            200,
+        )
+
+    async def _delete_process(self, process_id: str):
+        num_deleted = 0
+        async for child in AgentCallHistory.get_children(process_id):
+            num_deleted += await self._delete_process(child)
+        await AgentCallHistory.delete(query={"parent_process_id": process_id})
+        logger.info(f"Successfully deleted child processes for process {process_id}")
+
+        references = AgentOS.get_resources(ReferenceResource).values()
+        agents = AgentOS.get_resources(AgentResource).values()
+        for r in (*agents, *references):
+            implementation = to_jsonable_python(r.spec)["implementation"]
+            is_root = not AgentOS.get_resource(ReferenceResource, implementation, default=None)
+            if is_root:
+                resource_class = for_name(implementation)
+                if hasattr(resource_class, "delete_process"):
+                    rtn = await resource_class.delete_process(process_id)
+                    logger.info(f"Successfully {resource_class} records associated with process {process_id}: {rtn}")
+                else:
+                    logger.debug(f"No deletion hook for {resource_class}")
+            else:
+                logger.debug(f"Skipping non root reference {r.metadata.name}")
+
+        await ProcessDoc.delete(_id=process_id)
+        return num_deleted + 1
 
     async def list_processes(
         self,

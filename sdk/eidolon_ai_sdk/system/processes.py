@@ -56,6 +56,10 @@ class MongoDoc(BaseModel, extra="allow"):
         dump.update(**data)
         return self.__class__.model_validate(dump)
 
+    @classmethod
+    async def delete(cls, _id: str):
+        await AgentOS.symbolic_memory.delete(cls.collection, {"_id": _id})
+
 
 class ProcessDoc(MongoDoc):
     collection = "processes"
@@ -63,6 +67,7 @@ class ProcessDoc(MongoDoc):
     agent: str
     state: str
     error_info: Optional[Any] = None
+    title: Optional[str] = None
 
 
 async def store_events(agent: str, process_id: str, events: list[StreamEvent]):
@@ -84,6 +89,7 @@ async def store_events(agent: str, process_id: str, events: list[StreamEvent]):
 
         await AgentOS.symbolic_memory.insert("process_events", stored_events)
     except Exception as e:
+        # todo, depending on why this fails, we should try to store an error event. Connection vs parsing error
         logging.getLogger("eidolon").exception(f"Error storing events {e}")
 
 

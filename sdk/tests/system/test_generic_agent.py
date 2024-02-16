@@ -8,6 +8,7 @@ from fastapi import Body
 from typing import Annotated, List
 
 from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.client import Agent
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.io.events import (
     StartAgentCallEvent,
@@ -17,9 +18,10 @@ from eidolon_ai_sdk.io.events import (
     StringOutputEvent,
     UserInputEvent,
 )
+from eidolon_ai_sdk.memory.file_memory import FileMemory
 from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
-from eidolon_ai_sdk.util.aiohttp import stream_content, post_content
+from eidolon_ai_sdk.util.aiohttp import stream_content, post_content, delete
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
@@ -70,6 +72,10 @@ class TestGenericAgent:
         with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
+    @pytest.fixture
+    async def agent(self, server) -> Agent:
+        return Agent.get("GenericAgent")
+
     def test_can_start(self, client):
         docs = client.get("/docs")
         assert docs.status_code == 200
@@ -96,6 +102,15 @@ class TestGenericAgent:
         )
         follow_up.raise_for_status()
         assert "Luke" in post.json()["data"]
+
+    async def test_deletes_conversational_memory(self, agent: Agent, symbolic_memory):
+        process = await agent.create_process()
+        await process.action("question", dict(instruction="Hi! my name is Luke"))
+        mem = [r async for r in AgentOS.symbolic_memory.find("conversation_memory", {"process_id": process.process_id})]
+        assert mem
+        await process.delete()
+        mem = [r async for r in AgentOS.symbolic_memory.find("conversation_memory", {"process_id": process.process_id})]
+        assert not mem
 
 
 @pytest.fixture(scope="module")
@@ -298,6 +313,19 @@ class TestOutputTests:
                 files=dict(file=dog),
             )
             assert "brown" in post["data"].lower()
+
+    async def test_generic_agent_cleans_up_images(self, run_app, generic_agent, dog):
+        generic_agent.spec["files"] = "single"
+        async with run_app(generic_agent) as app:
+            fm: FileMemory = AgentOS.file_memory
+            created = await post_content(
+                f"{app}/agents/GenericAgent/programs/question",
+                data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
+                files=dict(file=dog),
+            )
+            assert await fm.glob(f"uploaded_images/{created['process_id']}/**/*")
+            await delete(f"{app}/agents/GenericAgent/processes/{created['process_id']}")
+            assert not await fm.glob(f"uploaded_images/{created['process_id']}/**/*")
 
     async def test_generic_agent_supports_multiple_images(self, run_app, generic_agent, cat, dog):
         generic_agent.spec["files"] = "multiple"

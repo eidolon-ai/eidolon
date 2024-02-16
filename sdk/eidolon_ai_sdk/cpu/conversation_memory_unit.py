@@ -6,6 +6,7 @@ from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
 from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.util.logger import logger
 
 
 class RawMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
@@ -66,3 +67,8 @@ class RawMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
 
         logging.debug("existingMessages = " + str(existingMessages))
         return existingMessages
+
+    @classmethod
+    async def delete_process(cls, process_id: str):
+        await AgentOS.symbolic_memory.delete("conversation_memory", {"process_id": process_id})
+        logger.info(f"deleted conversational_memory relating to process {process_id}")
