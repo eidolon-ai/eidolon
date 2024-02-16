@@ -33,6 +33,15 @@ async def post_content(url, json: Optional[Any] = None, **kwargs):
         return response.json()
 
 
+# noinspection PyShadowingNames
+async def delete(url, **kwargs):
+    params = {"url": url, "headers": RequestContext.headers}
+    async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
+        response = await client.delete(**params, **kwargs)
+        response.raise_for_status()
+        return response.json()
+
+
 async def stream_content(url: str, body):
     body = to_jsonable_python(body)
     headers = {

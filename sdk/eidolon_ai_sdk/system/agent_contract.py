@@ -5,6 +5,15 @@ import typing
 from pydantic import Field, BaseModel
 
 
+class CreateProcessArgs(BaseModel):
+    title: typing.Optional[str] = Field(None, description="The title of the process")
+
+
+class DeleteProcessResponse(BaseModel):
+    process_id: str
+    deleted: int
+
+
 class StateSummary(BaseModel):
     process_id: str = Field(..., description="The ID of the conversation.")
     state: str = Field(..., description="The state of the conversation.")

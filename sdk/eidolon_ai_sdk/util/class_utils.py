@@ -2,7 +2,7 @@ import importlib
 from typing import Type
 
 
-def for_name(implementation_fqn: str, sub_class: Type) -> Type:
+def for_name(implementation_fqn: str, sub_class: Type = object) -> Type:
     """
     Dynamically imports a class and validates that it is a subclass of a specified type.
 

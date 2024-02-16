@@ -67,6 +67,9 @@ class EndStreamContextEvent(BaseStreamEvent):
 class ToolCallStartEvent(StartStreamContextEvent):
     event_type: Literal["tool_call"] = "tool_call_start"
     tool_call: ToolCall
+    title: str
+    sub_title: str = ""
+    is_agent_call: bool = False
 
 
 class StartAgentCallEvent(BaseStreamEvent):
