@@ -20,6 +20,10 @@ spec:
     
     
     ALWAYS Think carefully and be concise.
+  user_prompt: |-
+    Current Time ISO: {{ datetime_iso }}
+    
+    {{ prompt }}
   cpu:
     logic_units:
      - implementation: eidolon_examples.k8_monitor.k8_logic_unit.K8LogicUnit

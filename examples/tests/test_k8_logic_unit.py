@@ -1,15 +1,17 @@
+import json
+
 from kubernetes.client import CoreV1Api
 
-from eidolon_examples.k8_monitor.k8_function_groups import dangerous_operations, safe_operations, safe_with_dry_run
+from eidolon_examples.k8_monitor.k8_logic_unit import K8LogicUnit, _limit_obj
 
 
 def test_all_dry_run_are_properly_placed():
     api = CoreV1Api()
     functions = [(f, getattr(api, f)) for f in dir(api) if not f.startswith("_") and callable(getattr(api, f))]
     almost_safe = {name for name, f in functions if "dry_run" in f.__doc__}
-    assert almost_safe.intersection(dangerous_operations) == set()
-    assert almost_safe.intersection(safe_operations) == set()
-    assert almost_safe == safe_with_dry_run
+    assert almost_safe.intersection(K8LogicUnit.dangerous_operations()) == set()
+    assert almost_safe.intersection(K8LogicUnit.safe_operations()) == set()
+    assert almost_safe == K8LogicUnit.safe_with_dry_run()
 
 
 def test_foo():
@@ -25,7 +27,19 @@ def test_foo():
         or f.startswith("replace")
         or f.startswith("delete")
     }
-    _dangerous_operations = set(functions) - safe_operations - _safe_with_dry_run
-    assert _safe_operations == safe_operations
-    assert _safe_with_dry_run == safe_with_dry_run
-    assert _dangerous_operations == dangerous_operations
+    _dangerous_operations = set(functions) - K8LogicUnit.safe_operations() - _safe_with_dry_run
+    assert _safe_operations == K8LogicUnit.safe_operations()
+    assert _safe_with_dry_run == K8LogicUnit.safe_with_dry_run()
+    assert _dangerous_operations == K8LogicUnit.dangerous_operations()
+
+
+def test_limit_object_ending_on_dict():
+    o = dict(a=[dict(c="asdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdā")])
+    _limit_obj(o, 20)
+    assert o == {"a": [{"c": "..."}]}
+
+
+def test_limit_object_ending_on_list():
+    o = dict(a=["asdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdāasdā"])
+    _limit_obj(o, 20)
+    assert o == {"a": ["..."]}

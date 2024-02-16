@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated, Dict, Any, Literal, Type, Union
 
 from fastapi import Body
@@ -35,7 +36,7 @@ class GenericAgentSpec(AgentSpec):
             env = Environment()
             system_vars = meta.find_undeclared_variables(env.parse(self.system_prompt))
             user_vars = meta.find_undeclared_variables(env.parse(self.user_prompt))
-            self.input_schema = {v: dict(type="string") for v in system_vars.union(user_vars)}
+            self.input_schema = {v: dict(type="string") for v in system_vars.union(user_vars) if v != "datetime_iso"}
         return self
 
     @field_validator("input_schema")
@@ -102,8 +103,9 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         description=make_description,
     )
     async def question(self, process_id, **kwargs) -> AgentState[Any]:
-        body = kwargs.get("body")
-        body = to_jsonable_python(body) if body else {}
+        body = dict(datetime_iso=datetime.now().isoformat())
+        body.update(kwargs.get("body") or {})
+        body = to_jsonable_python(body)
         files = kwargs.get("file", [])
         if not isinstance(files, list):
             files = [files]
