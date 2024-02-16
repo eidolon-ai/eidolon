@@ -250,8 +250,7 @@ class AgentController:
                 events_to_store.append(event)
                 yield event
         except asyncio.CancelledError:
-            print("In cancel")
-            logger.debug(f"Process {process.record_id} was cancelled")
+            logger.info(f"Process {process.record_id} was cancelled")
             events_to_store.append(CanceledEvent())
             events_to_store.append(AgentStateEvent(
                 state=last_state, available_actions=self.get_available_actions(last_state)
@@ -425,9 +424,9 @@ class AgentController:
                     rtn = await resource_class.delete_process(process_id)
                     logger.info(f"Successfully {resource_class} records associated with process {process_id}: {rtn}")
                 else:
-                    logger.info(f"No deletion hook for {resource_class}")
+                    logger.debug(f"No deletion hook for {resource_class}")
             else:
-                logger.info(f"Skipping non root reference {r.metadata.name}")
+                logger.debug(f"Skipping non root reference {r.metadata.name}")
 
         await ProcessDoc.delete(_id=process_id)
         return num_deleted + 1
