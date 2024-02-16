@@ -10,6 +10,7 @@ from typing import Annotated, List
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent.client import Agent
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.io.events import (
     StartAgentCallEvent,
     ObjectOutputEvent,
@@ -23,6 +24,7 @@ from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.aiohttp import stream_content, post_content, delete
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
 
@@ -344,3 +346,26 @@ class TestOutputTests:
                 dict(statement="What is different between them?"),
             )
             assert "cat" in follow_up["data"].lower()
+
+
+class MeaningOfLife(LogicUnit):
+    @llm_function()
+    async def meaning_of_life_tool(self) -> str:
+        """
+        call this tool to get the meaning of life
+        """
+        return "42"
+
+
+class TestGenericAgentWithToolCalls:
+    @pytest.fixture(scope="class")
+    async def agent(self, run_app, generic_agent_root):
+        generic_agent = generic_agent_root.model_copy(deep=True)
+        generic_agent.spec["cpu"]["logic_units"] = [fqn(MeaningOfLife)]
+        generic_agent.spec["cpu"]["llm_unit"].model = "gpt-4-turbo-preview"
+        async with run_app(generic_agent):
+            yield Agent.get("GenericAgent")
+
+    async def test_normal_tool_call(self, agent):
+        resp = await agent.program("question", dict(instruction="what is the meaning of life?"))
+        assert "42" in resp.data
