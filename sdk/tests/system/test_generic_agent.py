@@ -8,6 +8,7 @@ from fastapi import Body
 from typing import Annotated, List
 
 from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.client import Agent
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.io.events import (
     StartAgentCallEvent,
@@ -70,6 +71,10 @@ class TestGenericAgent:
         with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
+    @pytest.fixture
+    async def agent(self, server) -> Agent:
+        return Agent.get("GenericAgent")
+
     def test_can_start(self, client):
         docs = client.get("/docs")
         assert docs.status_code == 200
@@ -96,6 +101,15 @@ class TestGenericAgent:
         )
         follow_up.raise_for_status()
         assert "Luke" in post.json()["data"]
+
+    async def test_deletes_conversational_memory(self, agent: Agent, symbolic_memory):
+        process = await agent.create_process()
+        await process.action("question", dict(instruction="Hi! my name is Luke"))
+        mem = [r async for r in AgentOS.symbolic_memory.find("conversation_memory", {"process_id": process.process_id})]
+        assert mem
+        await process.delete()
+        mem = [r async for r in AgentOS.symbolic_memory.find("conversation_memory", {"process_id": process.process_id})]
+        assert not mem
 
 
 @pytest.fixture(scope="module")

@@ -49,7 +49,6 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 state=call.state,
                 available_actions=call.available_actions,
             ).upsert()
-        return await super().clone_thread(old_context, new_context)
 
     async def _get_schema(self, machine: str) -> dict:
         if machine not in self._machine_schemas:
