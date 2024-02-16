@@ -90,6 +90,6 @@ class LogicUnit(ProcessingUnit, ABC):
         for handler in handlers:
             handler.extra["title"] = self.__class__.__name__
             handler.extra["sub_title"] = handler.fn.__name__
-            handler.extra["agent_call"] = False,
+            handler.extra["agent_call"] = False
 
             return handlers
