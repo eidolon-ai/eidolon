@@ -57,7 +57,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         raise ValueError(f"Could not locate {unit_type}")
 
     async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
-        conversation_messages = await self.io_unit.process_request(boot_messages)
+        conversation_messages = await self.io_unit.process_request(call_context, boot_messages)
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
@@ -68,7 +68,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
     ) -> AsyncIterator[StreamEvent]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
-            conversation_messages = await self.io_unit.process_request(prompts)
+            conversation_messages = await self.io_unit.process_request(call_context, prompts)
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, conversation_messages)
             conversation.extend(conversation_messages)

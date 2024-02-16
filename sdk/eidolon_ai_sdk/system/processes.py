@@ -89,6 +89,7 @@ async def store_events(agent: str, process_id: str, events: list[StreamEvent]):
 
         await AgentOS.symbolic_memory.insert("process_events", stored_events)
     except Exception as e:
+        # todo, depending on why this fails, we should try to store an error event. Connection vs parsing error
         logging.getLogger("eidolon").exception(f"Error storing events {e}")
 
 

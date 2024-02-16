@@ -18,9 +18,10 @@ from eidolon_ai_sdk.io.events import (
     StringOutputEvent,
     UserInputEvent,
 )
+from eidolon_ai_sdk.memory.file_memory import FileMemory
 from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
-from eidolon_ai_sdk.util.aiohttp import stream_content, post_content
+from eidolon_ai_sdk.util.aiohttp import stream_content, post_content, delete
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
@@ -312,6 +313,19 @@ class TestOutputTests:
                 files=dict(file=dog),
             )
             assert "brown" in post["data"].lower()
+
+    async def test_generic_agent_cleans_up_images(self, run_app, generic_agent, dog):
+        generic_agent.spec["files"] = "single"
+        async with run_app(generic_agent) as app:
+            fm: FileMemory = AgentOS.file_memory
+            created = await post_content(
+                f"{app}/agents/GenericAgent/programs/question",
+                data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
+                files=dict(file=dog),
+            )
+            assert await fm.glob(f"uploaded_images/{created['process_id']}/**/*")
+            await delete(f"{app}/agents/GenericAgent/processes/{created['process_id']}")
+            assert not await fm.glob(f"uploaded_images/{created['process_id']}/**/*")
 
     async def test_generic_agent_supports_multiple_images(self, run_app, generic_agent, cat, dog):
         generic_agent.spec["files"] = "multiple"

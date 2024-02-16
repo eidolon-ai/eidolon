@@ -152,6 +152,7 @@ class AgentController:
                 )
             last_state = "initialized"
             process = await self._create_process(state="processing")
+            process_id = process.record_id
         else:
             process = await self.get_latest_process_event(process_id)
             if not process:
@@ -270,7 +271,7 @@ class AgentController:
         state_change = None
         last_event = None
         try:
-            yield UserInputEvent(input=user_input)
+            yield UserInputEvent(input=to_jsonable_python(user_input, fallback=str))
             yield StartAgentCallEvent(
                 machine=AgentOS.current_machine_url(),
                 agent_name=self.name,
