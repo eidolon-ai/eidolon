@@ -17,7 +17,7 @@ from eidolon_ai_sdk.util.logger import logger
 class K8LogicUnitSpec(BaseModel):
     safety_level: Literal["read_only", "no_mutations", "unrestricted"] = "no_mutations"
     condense_output: bool = True
-    soft_character_limit: int = 4000
+    soft_character_limit: int = 16000
 
 
 class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
@@ -56,10 +56,14 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
         resp = to_jsonable_python(resp.to_dict())
         if self.spec.condense_output:
             resp = _condense(resp)
+        limited = False
         if self.spec.soft_character_limit and 0 < self.spec.soft_character_limit < len(str(resp)):
-            _limit_obj(resp, self.spec.soft_character_limit)
+            limited = _limit_obj(resp, self.spec.soft_character_limit)
 
-        yield OutputEvent.get(content=dict(request_time_iso=datetime.now().isoformat(), response=resp))
+        content = dict(request_time_iso=datetime.now().isoformat(), response=resp)
+        if limited:
+            content["extra"] = "Portions of the response were too large and were replaced with '...'. Request specific resources for more details"
+        yield OutputEvent.get(content=content)
 
     def check_args(self, fn, kwargs):
         if fn.startswith("_"):
@@ -168,3 +172,4 @@ def _limit_obj(obj, limit):
             elif isinstance(v, list):
                 v.clear()
                 v.append("...")
+    return counter > limit
