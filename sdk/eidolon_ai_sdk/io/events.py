@@ -30,6 +30,9 @@ class BaseStreamEvent(BaseModel, ABC):
     def is_root_and_type(self, event_type: type):
         return self.stream_context is None and isinstance(self, event_type)
 
+    def is_root_end_event(self):
+        return self.is_root_and_type(EndStreamEvent)
+
     @classmethod
     def from_dict(cls, event_dict: Dict[str, Any]):
         # remove fields that are set automatically
@@ -143,7 +146,7 @@ class AgentStateEvent(BaseStreamEvent):
 
 
 StreamEvent = (
-    StartAgentCallEvent
+    StartAgentCallEvent  # todo, this smells like UserInputEvent and StartAgentCallEvent
     | ToolCallStartEvent
     | StartStreamContextEvent
     | EndStreamContextEvent

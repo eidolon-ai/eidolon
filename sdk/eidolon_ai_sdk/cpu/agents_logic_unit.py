@@ -65,7 +65,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         try:
             name = self._name(agent, action=action)
             tool = self._build_tool_def(
-                agent, action, name, endpoint_schema, self._process_tool(agent_client, action, remote_process_id, call_context)
+                agent,
+                action,
+                name,
+                endpoint_schema,
+                self._process_tool(agent_client, action, remote_process_id, call_context),
             )
             return tool
         except ValueError:
