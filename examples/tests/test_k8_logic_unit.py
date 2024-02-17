@@ -1,5 +1,3 @@
-import json
-
 from kubernetes.client import CoreV1Api
 
 from eidolon_examples.k8_monitor.k8_logic_unit import K8LogicUnit, _limit_obj

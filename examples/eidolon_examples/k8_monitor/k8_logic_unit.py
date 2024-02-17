@@ -62,7 +62,9 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
 
         content = dict(request_time_iso=datetime.now().isoformat(), response=resp)
         if limited:
-            content["extra"] = "Portions of the response were too large and were replaced with '...'. Request specific resources for more details"
+            content[
+                "extra"
+            ] = "Portions of the response were too large and were replaced with '...'. Request specific resources for more details"
         yield OutputEvent.get(content=content)
         yield SuccessEvent()
 
@@ -100,7 +102,9 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
     @staticmethod
     @cache
     def safe_operations():
-        return {o for o, f in K8LogicUnit._operations if o.startswith("list") or o.startswith("read") or o.startswith("get")}
+        return {
+            o for o, f in K8LogicUnit._operations if o.startswith("list") or o.startswith("read") or o.startswith("get")
+        }
 
     @staticmethod
     @cache
