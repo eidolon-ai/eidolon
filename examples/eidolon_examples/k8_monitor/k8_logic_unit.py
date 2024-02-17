@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.io.events import StringOutputEvent, OutputEvent
+from eidolon_ai_sdk.io.events import StringOutputEvent, OutputEvent, SuccessEvent
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.logger import logger
 
@@ -51,7 +51,7 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
         except OpenApiException as e:
             if not isinstance(e, ApiException):
                 # give agent some more information on the endpoint if they are calling it improperly
-                yield StringOutputEvent(content=getattr(self.client(), fn).__doc__)
+                yield StringOutputEvent(content=f"{fn} docs:\n" + getattr(self.client(), fn).__doc__)
             raise e
         resp = to_jsonable_python(resp.to_dict())
         if self.spec.condense_output:
@@ -64,6 +64,7 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
         if limited:
             content["extra"] = "Portions of the response were too large and were replaced with '...'. Request specific resources for more details"
         yield OutputEvent.get(content=content)
+        yield SuccessEvent()
 
     def check_args(self, fn, kwargs):
         if fn.startswith("_"):

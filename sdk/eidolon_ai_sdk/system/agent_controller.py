@@ -403,7 +403,7 @@ class AgentController:
         num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
             DeleteProcessResponse(process_id=process_id, deleted=num_delete).model_dump(),
-            200,
+            200 if num_delete > 0 else 204
         )
 
     async def _delete_process(self, process_id: str):
@@ -421,8 +421,8 @@ class AgentController:
             if is_root:
                 resource_class = for_name(implementation)
                 if hasattr(resource_class, "delete_process"):
-                    rtn = await resource_class.delete_process(process_id)
-                    logger.info(f"Successfully {resource_class} records associated with process {process_id}: {rtn}")
+                    await resource_class.delete_process(process_id)
+                    logger.info(f"Successfully {resource_class.__name__} records associated with process {process_id}")
                 else:
                     logger.debug(f"No deletion hook for {resource_class}")
             else:

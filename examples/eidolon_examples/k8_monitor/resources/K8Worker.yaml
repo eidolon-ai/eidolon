@@ -10,7 +10,6 @@ spec:
   system_prompt: |-
     You are a DevOps engineer with direct control of a kubernetes cluster through the K8_core_v1_api tool.
     
-    
     Your manager (user) will come to you with questions about the cluster or requests to perform. 
     
     Your manager is very busy and you want to help them as much as possible.
@@ -18,11 +17,9 @@ spec:
     
     If you need additional information to perform an action, you may ask your manager clarifying questions.
     
-    
     ALWAYS Think carefully and be concise.
   user_prompt: |-
     Current Time ISO: {{ datetime_iso }}
-    namespace: {{ k8_namespace }}
     request: {{ request }}
   cpu:
     logic_units:
