@@ -247,7 +247,10 @@ class AgentController:
         events_to_store = []
         try:
             async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
-                events_to_store.append(event)
+                if isinstance(event, StringOutputEvent) and events_to_store and isinstance(events_to_store[-1], StringOutputEvent) and event.stream_context == events_to_store[-1].stream_context:
+                    events_to_store[-1].content += event.content
+                else:
+                    events_to_store.append(event)
                 yield event
         except asyncio.CancelledError:
             logger.info(f"Process {process.record_id} was cancelled")
@@ -403,7 +406,7 @@ class AgentController:
         num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
             DeleteProcessResponse(process_id=process_id, deleted=num_delete).model_dump(),
-            200,
+            200 if num_delete > 0 else 204
         )
 
     async def _delete_process(self, process_id: str):
@@ -421,8 +424,8 @@ class AgentController:
             if is_root:
                 resource_class = for_name(implementation)
                 if hasattr(resource_class, "delete_process"):
-                    rtn = await resource_class.delete_process(process_id)
-                    logger.info(f"Successfully {resource_class} records associated with process {process_id}: {rtn}")
+                    await resource_class.delete_process(process_id)
+                    logger.info(f"Successfully {resource_class.__name__} records associated with process {process_id}")
                 else:
                     logger.debug(f"No deletion hook for {resource_class}")
             else:

@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional
 
 import json
 
-from httpx import Timeout, AsyncClient
+from httpx import Timeout, AsyncClient, HTTPStatusError, codes
 from httpx_sse import EventSource
 from pydantic_core import to_jsonable_python
 
@@ -51,7 +51,10 @@ async def stream_content(url: str, body):
     request = {"url": url, "json": body, "method": "POST", "headers": headers}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         async with client.stream(**request) as response:
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except HTTPStatusError as e:
+                raise AgentError(e.response.status_code, "".join([b async for b in e.response.aiter_text()]))
             async for sse_event in EventSource(response).aiter_sse():
                 if sse_event.data:
                     data = json.loads(sse_event.data)
@@ -59,3 +62,10 @@ async def stream_content(url: str, body):
                     yield event
                 else:
                     logger.warning("Empty event from server")
+
+
+class AgentError(Exception):
+    def __init__(self, status_code: int, message: str):
+        super().__init__(f"{status_code} ({codes.get_reason_phrase(status_code)}): {message}")
+        self.message = message
+        self.status_code = status_code

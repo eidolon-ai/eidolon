@@ -65,7 +65,7 @@ class EndStreamContextEvent(BaseStreamEvent):
 
 
 class ToolCallStartEvent(StartStreamContextEvent):
-    event_type: Literal["tool_call"] = "tool_call_start"
+    event_type: Literal["tool_call_start"] = "tool_call_start"
     tool_call: ToolCall
     title: str
     sub_title: str = ""
@@ -95,7 +95,7 @@ class OutputEvent(BaseStreamEvent, ABC):
 
 class LLMToolCallRequestEvent(BaseStreamEvent):
     category: Literal[Category.OUTPUT] = Category.OUTPUT
-    event_type: Literal["tool_call"] = "llm_tool_call_request"
+    event_type: Literal["llm_tool_call_request"] = "llm_tool_call_request"
     tool_call: ToolCall
 
 
