@@ -5,10 +5,9 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {Roboto} from 'next/font/google';
 import * as React from "react";
 import {PropsWithChildren} from "react";
-import {Box, Button, CssBaseline, Drawer, Toolbar} from "@mui/material";
+import {Box, CssBaseline, Drawer, Toolbar} from "@mui/material";
 import {SidebarList} from "@/components/sidebar-list";
 import {Header} from "@/components/header";
-import {StartProgramDialog} from "@/components/agent-input/start-program-dialog";
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],

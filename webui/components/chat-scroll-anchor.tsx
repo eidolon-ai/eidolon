@@ -25,5 +25,5 @@ export function ChatScrollAnchor({trackVisibility}: ChatScrollAnchorProps) {
     }
   }, [inView, entry, isAtBottom, trackVisibility])
 
-  return <div ref={ref} style={{width:"100%", height:"1px"}}/>
+  return <div ref={ref} style={{width: "100%", height: "1px"}}/>
 }

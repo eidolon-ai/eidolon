@@ -37,14 +37,6 @@ export function ChatEvents({agentName, processId}: ChatEventProps) {
   const [processState, setProcessState] = useState<ProcessState | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
 
-  const scrollBottom = () => {
-    const div = document.getElementById('chat-elements-scroll-region')
-    if (div) {
-      div.scrollTop = div.scrollHeight
-    }
-
-  }
-
   const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
     const element = makeElement(event)
     if (element) {

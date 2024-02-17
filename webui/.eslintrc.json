@@ -6,19 +6,27 @@
     "prettier",
     "plugin:tailwindcss/recommended"
   ],
-  "plugins": ["tailwindcss"],
+  "plugins": [
+    "tailwindcss"
+  ],
   "rules": {
     "tailwindcss/no-custom-classname": "off"
   },
   "settings": {
     "tailwindcss": {
-      "callees": ["cn", "cva"],
+      "callees": [
+        "cn",
+        "cva"
+      ],
       "config": "tailwind.config.js"
     }
   },
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
       "parser": "@typescript-eslint/parser"
     }
   ]
