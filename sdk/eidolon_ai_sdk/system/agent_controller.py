@@ -247,7 +247,10 @@ class AgentController:
         events_to_store = []
         try:
             async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
-                events_to_store.append(event)
+                if isinstance(event, StringOutputEvent) and events_to_store and isinstance(events_to_store[-1], StringOutputEvent) and event.stream_context == events_to_store[-1].stream_context:
+                    events_to_store[-1].content += event.content
+                else:
+                    events_to_store.append(event)
                 yield event
         except asyncio.CancelledError:
             logger.info(f"Process {process.record_id} was cancelled")
