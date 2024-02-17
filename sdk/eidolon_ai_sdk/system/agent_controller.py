@@ -253,11 +253,13 @@ class AgentController:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
         events_to_store = []
+        ended = False
+        transitioned = False
         try:
-            ended = False
             async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
                 if not ended:
                     ended = event.is_root_end_event()
+                    transitioned = event.is_root_and_type(AgentStateEvent)
                     if (
                         isinstance(event, StringOutputEvent)
                         and events_to_store
@@ -272,11 +274,13 @@ class AgentController:
                     logger.warning(f"Received event after end event ({event.event_type}), ignoring")
         except asyncio.CancelledError:
             logger.info(f"Process {process.record_id} was cancelled")
-            events_to_store.append(CanceledEvent())
-            events_to_store.append(
-                AgentStateEvent(state=last_state, available_actions=self.get_available_actions(last_state))
-            )
-            await process.update(state=last_state)
+            if not ended:
+                if not transitioned:
+                    await process.update(state=last_state)
+                    actions = self.get_available_actions(last_state)
+                    events_to_store.append(AgentStateEvent(state=last_state, available_actions=actions))
+                events_to_store.append(CanceledEvent())
+
             raise
         finally:
             await store_events(self.name, process.record_id, events_to_store)
