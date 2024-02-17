@@ -12,7 +12,9 @@ from eidolon_ai_sdk.io.events import (
     StreamEvent,
     StartStreamContextEvent,
     EndStreamContextEvent,
+    SuccessEvent,
 )
+from eidolon_ai_sdk.util.logger import logger
 
 
 class StreamCollector(AsyncIterator[StreamEvent]):
@@ -67,12 +69,19 @@ def stream_manager(
     async def _iter():
         yield context.model_copy()
         try:
+            received_end_event = False
             async for event in stream() if callable(stream) else stream:
-                acc = [context.get_nested_context()]
-                if event.stream_context:
-                    acc.append(event.stream_context)
-                event.stream_context = ".".join(acc)
-                yield event
+                if not received_end_event:
+                    received_end_event = event.is_root_end_event()
+                    acc = [context.get_nested_context()]
+                    if event.stream_context:
+                        acc.append(event.stream_context)
+                    event.stream_context = ".".join(acc)
+                    yield event
+                else:
+                    logger.warning(f"Received event ({event.event_type}) after end event, ignoring")
+            if not received_end_event:
+                yield SuccessEvent(stream_context=context.get_nested_context())
         except Exception as e:
             # record error on stream context, but will reraise for outer context to handle
             yield ErrorEvent(stream_context=context.get_nested_context(), reason=e)

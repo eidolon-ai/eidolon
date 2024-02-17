@@ -14,6 +14,7 @@ from eidolon_ai_sdk.io.events import (
     StringOutputEvent,
     StartStreamContextEvent,
     EndStreamContextEvent,
+    SuccessEvent,
 )
 from eidolon_ai_sdk.util.stream_collector import stream_manager
 
@@ -155,6 +156,7 @@ class TestHelloWorld:
             StartStreamContextEvent(context_id="c1"),
             StringOutputEvent(content="3", stream_context="c1"),
             StringOutputEvent(content="4", stream_context="c1"),
+            SuccessEvent(stream_context="c1"),
             EndStreamContextEvent(context_id="c1"),
             StartStreamContextEvent(context_id="c2"),
             StringOutputEvent(content="5", stream_context="c2"),
@@ -162,7 +164,9 @@ class TestHelloWorld:
             StartStreamContextEvent(context_id="c3", stream_context="c2"),
             StringOutputEvent(content="7", stream_context="c2.c3"),
             StringOutputEvent(content="8", stream_context="c2.c3"),
+            SuccessEvent(stream_context="c2.c3"),
             EndStreamContextEvent(stream_context="c2", context_id="c3"),
+            SuccessEvent(stream_context="c2"),
             EndStreamContextEvent(context_id="c2"),
             AgentStateEvent(state="terminated", available_actions=[]),
         ]
@@ -171,7 +175,7 @@ class TestHelloWorld:
         process: ProcessStatus = await agent.create_process()
         assert process.state == "initialized"
         assert "idle" in process.available_actions
-        action = await process.action('idle', "Luke")
+        action = await process.action("idle", "Luke")
         assert action.data == "Hello, Luke!"
 
     async def test_delete_process(self, agent):

@@ -1,6 +1,12 @@
 import pytest
 
-from eidolon_ai_sdk.io.events import StringOutputEvent, ErrorEvent, StartStreamContextEvent, EndStreamContextEvent
+from eidolon_ai_sdk.io.events import (
+    StringOutputEvent,
+    ErrorEvent,
+    StartStreamContextEvent,
+    EndStreamContextEvent,
+    SuccessEvent,
+)
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, ManagedContextError, stream_manager
 
 
@@ -22,6 +28,7 @@ async def test_adds_context():
     assert events == [
         StartStreamContextEvent(context_id="foo"),
         StringOutputEvent(stream_context="foo", content="test"),
+        SuccessEvent(stream_context="foo"),
         EndStreamContextEvent(context_id="foo"),
     ]
     assert collector.get_content() == "test"
