@@ -3,16 +3,7 @@
 import {Chat} from "@/lib/types";
 import {usePathname, useRouter} from "next/navigation";
 import * as React from "react";
-import {
-  Collapse,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText
-} from "@mui/material";
+import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText} from "@mui/material";
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
 

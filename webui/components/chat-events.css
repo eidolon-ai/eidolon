@@ -1,26 +1,26 @@
 .chat-indent {
-  padding-left: 20px;
+    padding-left: 20px;
 }
 
 .chat-title {
-  font-size: 1.25em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-  margin-top: 0.5em;
-  display: flex;
-  align-items: center;
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    display: flex;
+    align-items: center;
 }
 
 .sub-chat {
-  padding: 8px 8px 2px 8px;
+    padding: 8px 8px 2px 8px;
 }
 
 .chat-canceled {
-  font-size: 1.25em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-  margin-top: 0.5em;
-  display: flex;
-  align-items: center;
-  color: #aaaaaa;
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    display: flex;
+    align-items: center;
+    color: #aaaaaa;
 }

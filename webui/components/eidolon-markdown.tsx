@@ -15,7 +15,7 @@ export const EidolonMarkdown = ({children}: EidolonMarkdownProps) => {
   // noinspection JSUnusedGlobalSymbols
   return <Markdown
     className={"markdown"}
-    rehypePlugins={[[rehypeWrap, {selector:'table', wrapper: 'div.responsive-table'}]]}
+    rehypePlugins={[[rehypeWrap, {selector: 'table', wrapper: 'div.responsive-table'}]]}
     remarkPlugins={[remarkGfm]}
     components={{
       code(props) {

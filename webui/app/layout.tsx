@@ -1,7 +1,5 @@
 import {Metadata, Viewport} from 'next'
 
-import {Toaster} from 'react-hot-toast'
-
 import '@/app/globals.css'
 import * as React from "react";
 import "@/app/layout-style.css"
@@ -41,10 +39,9 @@ export default function RootLayout({children}: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
     <head><title>Eidolon</title></head>
-    <body style={{overflow:"hidden", minHeight:"100vh"}}>
+    <body style={{overflow: "hidden", minHeight: "100vh"}}>
     <AppRouterCacheProvider options={{key: 'css', prepend: true}}>
       <SessionWrapper>
-        <Toaster/>
         <MyProvider>
           {children}
         </MyProvider>

@@ -1,6 +1,7 @@
 # Eidolon Web UI
 
-Eidolon Web UI is a powerful interface for interacting with the Eidolon project, designed to streamline your experience and enhance usability. Below you'll find concise instructions to get your development environment set up and the server running smoothly.
+Eidolon Web UI is a powerful interface for interacting with the Eidolon project, designed to streamline your experience and enhance usability. Below you'll find concise
+instructions to get your development environment set up and the server running smoothly.
 
 ## Prerequisites
 
@@ -16,32 +17,23 @@ npm install -g pnpm
 
 Alternatively, you can check the [official PNPM installation guide](https://pnpm.io/installation) for more methods and detailed instructions.
 
-
 ### Running Eidolon Macnien
 
 You will also need a running Eidolon Machine. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/getting_started/quickstart/)
 
-
 ## Setting Up Your Environment
 
 **Environment Configuration**:
-You need to create a `.env` file in the weibui directory of the project.
-```yaml
-touch .env
+You need to create a `.env` file in the weibui directory of the project. Copy
+the contents of the 'template.env' file and paste it into the `.env` file. 
+Then, replace the placeholder values with your actual data.
+
+```zsh
+cp template.env .env
 open .env
 ```
 
-The content should look like this:
-```plaintext
-EIDOLON_SERVER=http://127.0.0.1:8080
-NEXTAUTH_SECRET=your_nextauth_secret_here
-GOOGLE_CLIENT_ID=your_google_client_id_here
-GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-GOOGLE_CX=your_google_cx_here
-GOOGLE_APIKEY=your_google_apikey_here
-```
-Ensure you replace the placeholder values with your actual data.
-
+The content are described in the template file.
 
 ## Running the Server
 

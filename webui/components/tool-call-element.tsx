@@ -1,16 +1,6 @@
 import {ToolCallElement} from "@/lib/display-elements";
 import {OperationInfo} from "@/lib/types";
-import {
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader, CircularProgress,
-  Collapse, Divider,
-  IconButton,
-  IconButtonProps,
-  styled
-} from "@mui/material";
+import {Avatar, Card, CardActions, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
 import * as React from "react";
 import CodeOffRoundedIcon from "@mui/icons-material/CodeOffRounded";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -45,7 +35,7 @@ export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProp
   };
 
   return (
-    <Card variant={"outlined"} sx={{marginTop:"12px"}}>
+    <Card variant={"outlined"} sx={{marginTop: "12px"}}>
       <CardHeader
         sx={{padding: "12px 8px 0px 8px"}}
         avatar={
@@ -55,7 +45,7 @@ export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProp
         }
         onClick={handleExpandClick}
         action={
-          <div style={{display:"flex", alignItems:"center"}}>
+          <div style={{display: "flex", alignItems: "center"}}>
             {element.is_active && <CircularProgress variant={"indeterminate"} size={"16px"}/>}
             <ExpandMore
               expand={expanded}

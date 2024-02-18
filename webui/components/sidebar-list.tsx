@@ -8,8 +8,11 @@ import {useEffect, useState} from "react";
 import {SidebarItem} from "@/components/sidebar-item";
 import {usePathname, useRouter} from "next/navigation";
 import {StartProgramDialog} from "@/components/agent-input/start-program-dialog";
+import {useSession} from "next-auth/react";
 
 export function SidebarList() {
+  const {data: session} = useSession()
+
   const pathname = usePathname()
   const router = useRouter()
   const [dataByDate, setDataByDate] = useState<Record<string, Chat[]>>({})
@@ -80,6 +83,10 @@ export function SidebarList() {
         })}
       </List>
     )
+  }
+
+  if (!session?.user) {
+    return
   }
 
   return (

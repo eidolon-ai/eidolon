@@ -1,11 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import {useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import {AppBar, Avatar, Box, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 
-export function Header({className, ...props}: React.ComponentProps<'p'>) {
+export function Header() {
   const {data: session} = useSession()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -17,21 +17,26 @@ export function Header({className, ...props}: React.ComponentProps<'p'>) {
     setAnchorEl(null);
   };
 
+  const handleSignout = async () => {
+    await signOut()
+    setAnchorEl(null);
+  };
+
   const getIcon = () => {
     if (!session?.user?.image) {
       return <AccountCircle/>
     } else {
-      return <Avatar sx={{height:"24px", width:"24px"}} src={session?.user?.image!}/>
+      return <Avatar sx={{height: "24px", width: "24px"}} src={session?.user?.image!}/>
     }
   }
   return (
     <AppBar position="fixed" sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
       <Toolbar variant={"dense"}>
         <Avatar src={"/eidolon_with_gradient.png"} sx={{height: "32px", width: "32px"}}/>
-        <Typography variant="h5" component="div" sx={{marginLeft: '18px', display: { xs: 'none', sm: 'block' }, color:"darkgoldenrod" }} noWrap>
-        Eidolon
+        <Typography variant="h5" component="div" sx={{marginLeft: '18px', display: {xs: 'none', sm: 'block'}, color: "darkgoldenrod"}} noWrap>
+          Eidolon
         </Typography>
-          <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{flexGrow: 1}}/>
         {session?.user && (
           <div>
             <IconButton
@@ -59,7 +64,7 @@ export function Header({className, ...props}: React.ComponentProps<'p'>) {
               onClose={handleClose}
             >
               <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
+              <MenuItem onClick={handleSignout}>Sign out</MenuItem>
             </Menu>
           </div>
         )}
