@@ -146,8 +146,9 @@ def run_app(app_builder, port):
                 config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info", loop="asyncio")
                 server = uvicorn.Server(config)
                 server_wrapper.append(server)
-                #     todo, issue here where raising on bootstrap does not kill the server
                 server.run()
+                server_wrapper.clear()
+                server_wrapper.append("stopped")
             except BaseException as e:
                 server_wrapper.clear()
                 server_wrapper.append("aborted")
@@ -158,8 +159,10 @@ def run_app(app_builder, port):
 
         try:
             # Wait for the server to start
-            while len(server_wrapper) == 0 or not (server_wrapper[0] == "aborted" or server_wrapper[0].started):
+            while len(server_wrapper) == 0 or not (server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started):
                 pass
+            if server_wrapper[0] in {"aborted", "stopped"}:
+                raise Exception("Server failed to start")
 
             print(f"Server started on port {port}")
             os.environ["EIDOLON_LOCAL_MACHINE"] = f"http://localhost:{port}"

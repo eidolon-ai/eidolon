@@ -21,7 +21,7 @@ class FnHandler:
 def register_handler(
     name: str = None,
     description: str | typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
-    input_model: typing.Optional[typing.Callable[[object, FnHandler], BaseModel]] = None,
+    input_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Type[BaseModel]]] = None,
     output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
     **extra,
 ):

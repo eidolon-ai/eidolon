@@ -3,7 +3,7 @@ kind: Agent
 metadata:
   name: K8Manager
 spec:
-  implementation: GenericAgent
+  implementation: TemplateAgent
   description: "k8 manager"
   system_prompt: |-
     You are a DevOps manager who cares deeply about user success.
@@ -21,7 +21,9 @@ spec:
     If you need additional information to perform an action, you may ask the user clarifying questions.
     
     ALWAYS Think carefully and be concise.
-  user_prompt: |-
-    Current Time ISO: {{ datetime_iso }}
-    {{ prompt }}
+  actions:
+    - name: converse
+      user_prompt: |-
+        Current Time ISO: {{ datetime_iso }}
+        {{ prompt }}
   agent_refs: [ K8Worker ]

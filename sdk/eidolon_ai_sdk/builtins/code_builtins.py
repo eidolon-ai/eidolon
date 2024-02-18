@@ -11,6 +11,7 @@ from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionRera
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
+from eidolon_ai_sdk.agent.template_agent import TemplateAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
@@ -79,6 +80,7 @@ def named_builtins():
         SecurityManager,
         # agents
         GenericAgent,
+        TemplateAgent,
         TreeOfThoughtsAgent,
         RetrieverAgent,
         # cpu

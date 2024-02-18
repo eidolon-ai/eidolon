@@ -3,7 +3,7 @@ kind: Agent
 metadata:
   name: K8Worker
 spec:
-  implementation: GenericAgent
+  implementation: TemplateAgent
   description: |-
     A low level DevOps engineer who specializes in making queries against and mutating a kubernetes cluster.
     Be specific about what information you need. This worker only has access to it's own conversation history.
@@ -18,9 +18,11 @@ spec:
     If you need additional information to perform an action, you may ask your manager clarifying questions.
     
     ALWAYS Think carefully and be concise.
-  user_prompt: |-
-    Current Time ISO: {{ datetime_iso }}
-    request: {{ request }}
+  actions:
+    - name: converse
+      user_prompt: |-
+        Current Time ISO: {{ datetime_iso }}
+        request: {{ request }}
   cpu:
     logic_units:
      - implementation: eidolon_examples.k8_monitor.k8_logic_unit.K8LogicUnit
