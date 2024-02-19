@@ -1,7 +1,7 @@
 import pytest
 
 from eidolon_ai_sdk.agent.client import Agent
-from eidolon_ai_sdk.agent.template_agent import TemplateAgent
+from eidolon_ai_sdk.agent.template_agent import SimpleAgent
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 
@@ -10,7 +10,7 @@ def r(name, **kwargs):
         apiVersion="eidolon/v1",
         kind="Agent",
         metadata=Metadata(name=name),
-        spec=dict(implementation=TemplateAgent.__name__, **kwargs),
+        spec=dict(implementation=SimpleAgent.__name__, **kwargs),
     )
 
 

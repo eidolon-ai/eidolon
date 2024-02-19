@@ -47,23 +47,27 @@ class ActionDefinition(BaseModel):
         return input_dict
 
 
-class TemplateAgentSpec(AgentSpec):
+class SimpleAgentSpec(AgentSpec):
     description: Optional[str] = None
     system_prompt: str = "You are a helpful assistant"
     actions: List[ActionDefinition] = [ActionDefinition()]
 
 
-class TemplateAgent(Agent, Specable[TemplateAgentSpec]):
+class SimpleAgent(Agent, Specable[SimpleAgentSpec]):
     def __init__(self, spec):
         super().__init__(spec=spec)
         for action in self.spec.actions:
-            setattr(self, action.name, register_action(
-                *action.allowed_states,
-                name=action.name,
-                input_model=_make_input_schema(action),
-                output_model=_make_output_schema(action),
-                description=action.description,
-            )(self._act_wrapper(action)))
+            setattr(
+                self,
+                action.name,
+                register_action(
+                    *action.allowed_states,
+                    name=action.name,
+                    input_model=_make_input_schema(action),
+                    output_model=_make_output_schema(action),
+                    description=action.description,
+                )(self._act_wrapper(action)),
+            )
 
     async def create_process(self, process_id):
         t = await self.cpu.main_thread(process_id)
@@ -72,8 +76,9 @@ class TemplateAgent(Agent, Specable[TemplateAgentSpec]):
     @staticmethod
     def _act_wrapper(action):
         async def fn(self, process_id, **kwargs):
-            async for e in TemplateAgent._act(self, action, process_id, **kwargs):
+            async for e in SimpleAgent._act(self, action, process_id, **kwargs):
                 yield e
+
         return fn
 
     async def _act(self, action: ActionDefinition, process_id, **kwargs) -> AgentState[Any]:
@@ -114,6 +119,7 @@ def _make_input_schema(action: ActionDefinition):
             del properties["file"]
         schema = {"type": "object", "properties": properties, "required": required}
         return schema_to_model(schema, f"{handler.name.capitalize()}{action.name.capitalize()}InputModel")
+
     return fn
 
 
@@ -126,5 +132,8 @@ def _make_output_schema(action: ActionDefinition):
         if action.output_schema == "str":
             return str
         else:
-            return schema_to_model(action.output_schema, f"{handler.name.capitalize()}{action.name.capitalize()}OutputModel")
+            return schema_to_model(
+                action.output_schema, f"{handler.name.capitalize()}{action.name.capitalize()}OutputModel"
+            )
+
     return fn

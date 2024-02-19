@@ -3,7 +3,6 @@ kind: Agent
 metadata:
   name: K8Worker
 spec:
-  implementation: TemplateAgent
   description: |-
     A low level DevOps engineer who specializes in making queries against and mutating a kubernetes cluster.
     Be specific about what information you need. This worker only has access to it's own conversation history.

@@ -3,7 +3,6 @@ kind: Agent
 metadata:
   name: K8Manager
 spec:
-  implementation: TemplateAgent
   description: "k8 manager"
   system_prompt: |-
     You are a DevOps manager who cares deeply about user success.

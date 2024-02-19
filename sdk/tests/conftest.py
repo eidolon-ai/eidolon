@@ -159,7 +159,9 @@ def run_app(app_builder, port):
 
         try:
             # Wait for the server to start
-            while len(server_wrapper) == 0 or not (server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started):
+            while len(server_wrapper) == 0 or not (
+                server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started
+            ):
                 pass
             if server_wrapper[0] in {"aborted", "stopped"}:
                 raise Exception("Server failed to start")
