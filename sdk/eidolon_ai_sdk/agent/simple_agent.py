@@ -24,7 +24,7 @@ class ActionDefinition(BaseModel):
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
     files: Literal["disable", "single-optional", "single", "multiple"] = "disable"
     allowed_states: List[str] = ["initialized", "idle", "http_error"]
-    response_state: str = "idle"
+    output_state: str = "idle"
 
     @model_validator(mode="after")
     def _set_input_schema_default(self):
@@ -98,7 +98,7 @@ class SimpleAgent(Agent, Specable[SimpleAgentSpec]):
 
         async for event in response:
             yield event
-        yield AgentStateEvent(state=action.response_state)
+        yield AgentStateEvent(state=action.output_state)
 
 
 def _make_input_schema(action: ActionDefinition):
