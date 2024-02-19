@@ -20,7 +20,7 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def start(self, app: FastAPI):
+    async def start(self, app: FastAPI):
         pass
 
     @abstractmethod

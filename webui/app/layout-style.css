@@ -1,0 +1,32 @@
+.grid-area-header {
+    grid-area: header;
+}
+
+.grid-area-sidebar {
+    grid-area: sidebar;
+    min-width: 210px;
+}
+
+.grid-area-resizable-1 {
+    grid-area: resizable-1;
+}
+
+.grid-area-resizable-2 {
+    grid-area: resizable-2;
+}
+
+.grid-area-content {
+    grid-area: content;
+}
+
+.grid-area-right {
+    grid-area: right;
+}
+
+.grid-template {
+    display: grid;
+    grid-template-rows: 48px calc(100% - 48px);
+    grid-template-columns: auto 4px 1fr 4px auto;
+    grid-template-areas: 'header header header header header'
+                       'sidebar resizable-1 content resizable-2 right';
+}

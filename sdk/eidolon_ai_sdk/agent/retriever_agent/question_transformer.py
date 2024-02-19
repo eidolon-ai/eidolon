@@ -22,5 +22,3 @@ class QuestionTransformer(ABC, Specable[QuestionTransformerSpec]):
         Returns:
             The transformed questions.
         """
-
-    pass

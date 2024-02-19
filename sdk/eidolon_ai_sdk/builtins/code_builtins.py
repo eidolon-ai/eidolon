@@ -10,6 +10,7 @@ from eidolon_ai_sdk.agent.generic_agent import GenericAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
+from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
@@ -22,10 +23,16 @@ from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
+from eidolon_ai_sdk.util.logger import logger
+
+try:
+    from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
+except ImportError:
+    logger.warning("Error, ChromaVectorStore is not available")
+    ChromaVectorStore = None
+
 from eidolon_ai_sdk.memory.embeddings import NoopEmbedding, Embedding, OpenAIEmbedding
 from eidolon_ai_sdk.memory.file_memory import FileMemory
-from eidolon_ai_sdk.memory.file_system_vector_store import FileSystemVectorStore
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
@@ -73,6 +80,7 @@ def named_builtins():
         # agents
         GenericAgent,
         TreeOfThoughtsAgent,
+        RetrieverAgent,
         # cpu
         (AgentCPU, ConversationalAgentCPU),
         ConversationalAgentCPU,
@@ -90,12 +98,11 @@ def named_builtins():
         (FileMemory, LocalFileMemory),
         LocalFileMemory,
         SimilarityMemory,
-        (Embedding, NoopEmbedding),
+        (Embedding, OpenAIEmbedding),
         NoopEmbedding,
         OpenAIEmbedding,
-        (VectorStore, NoopVectorStore),
+        (VectorStore, ChromaVectorStore),
         NoopVectorStore,
-        FileSystemVectorStore,
         ChromaVectorStore,
         # sub components
         (DocumentParser, AutoParser),
@@ -115,4 +122,4 @@ def named_builtins():
         # config objects
         ReplayConfig,
     ]
-    return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list]
+    return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list if maybe_tuple]

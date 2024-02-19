@@ -5,14 +5,14 @@ template: splash
 hero:
   tagline: An Open Source Agent Services Framework
   image:
-    file: ../../assets/main_images/img_2.png
+    file: ../../assets/main_images/eidolon_with_gradient.png
   actions:
-    - text: Getting Started Guide
+    - text: Get Started
       link: /getting_started/quickstart/
       icon: right-arrow
       variant: primary
-    - text: Read the docs
-      link: /architecture/introduction/
+    - text: View on GitHub
+      link: https://github.com/eidolon-ai/eidolon
       icon: external
 ---
 
@@ -20,14 +20,17 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Explore
 
-<CardGrid stagger>
-	<Card title="Eidolon" icon="pencil">
+<CardGrid>
+	<Card title="Examples" icon="pencil">
+		 Hate writing docs? [Build an Agent for that](https://github.com/eidolon-ai/eidolon/tree/main/examples/eidolon_examples/code_search)
+	</Card>
+	<Card title="Demos" icon="youtube">
+		 [Deploy a chatbot](https://www.youtube.com/watch?v=jU_HYhWm6qE) to help Swifties learn about Travis Kelce.
+	</Card>
+	<Card title="Architecture" icon="open-book">
 		The operating system for LLM agents. [Learn More](/architecture/introduction/)
 	</Card>
-	<Card title="Eidolon CLI" icon="add-document">
-		The command line tool for Eidolon.
-	</Card>
-	<Card title="Examples" icon="setting">
-		 [Explore](https://github.com/eidolon-ai/eidolon/tree/main/examples/eidolon_examples) example LLM agents.
+	<Card title="References" icon="document">
+		Feature [Documentation](/getting_started/references/).
 	</Card>
 </CardGrid>

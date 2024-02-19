@@ -2,12 +2,13 @@ from typing import Any, Dict, Optional
 
 import json
 
-from httpx import Timeout, AsyncClient
+from httpx import Timeout, AsyncClient, HTTPStatusError, codes
 from httpx_sse import EventSource
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_sdk.io.events import BaseStreamEvent
 from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_sdk.util.logger import logger
 
 
 # noinspection PyShadowingNames
@@ -32,17 +33,39 @@ async def post_content(url, json: Optional[Any] = None, **kwargs):
         return response.json()
 
 
+# noinspection PyShadowingNames
+async def delete(url, **kwargs):
+    params = {"url": url, "headers": RequestContext.headers}
+    async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
+        response = await client.delete(**params, **kwargs)
+        response.raise_for_status()
+        return response.json()
+
+
 async def stream_content(url: str, body):
     body = to_jsonable_python(body)
     headers = {
         **RequestContext.headers,
-        "Accept": "text/event-stream, application/json",
+        "Accept": "text/event-stream",
     }
     request = {"url": url, "json": body, "method": "POST", "headers": headers}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         async with client.stream(**request) as response:
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except HTTPStatusError as e:
+                raise AgentError(e.response.status_code, "".join([b async for b in e.response.aiter_text()]))
             async for sse_event in EventSource(response).aiter_sse():
-                data = json.loads(sse_event.data)
-                event = BaseStreamEvent.from_dict(data)
-                yield event
+                if sse_event.data:
+                    data = json.loads(sse_event.data)
+                    event = BaseStreamEvent.from_dict(data)
+                    yield event
+                else:
+                    logger.warning("Empty event from server")
+
+
+class AgentError(Exception):
+    def __init__(self, status_code: int, message: str):
+        super().__init__(f"{status_code} ({codes.get_reason_phrase(status_code)}): {message}")
+        self.message = message
+        self.status_code = status_code

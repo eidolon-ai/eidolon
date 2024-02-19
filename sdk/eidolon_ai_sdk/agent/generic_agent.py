@@ -1,8 +1,9 @@
+from datetime import datetime
 from typing import Annotated, Dict, Any, Literal, Type, Union
 
 from fastapi import Body
-from jinja2 import Environment, StrictUndefined
-from pydantic import BaseModel, field_validator, Field
+from jinja2 import Environment, StrictUndefined, meta
+from pydantic import BaseModel, field_validator, Field, model_validator
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_sdk.agent.agent import (
@@ -12,9 +13,9 @@ from eidolon_ai_sdk.agent.agent import (
     AgentSpec,
     register_program,
 )
+from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage
 from eidolon_ai_sdk.io.events import AgentStateEvent
 from eidolon_ai_sdk.system.fn_handler import FnHandler
-from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
@@ -22,12 +23,21 @@ from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 class GenericAgentSpec(AgentSpec):
     description: str = ""
     system_prompt: str
-    user_prompt: str
-    input_schema: Dict[str, Any] = Field({}, description="The json schema for the input model.")
+    user_prompt: str = "{{ question }}"
+    input_schema: Dict[str, Any] = Field(None, description="The json schema for the input model.")
     output_schema: Union[Literal["str"], Dict[str, Any]] = Field(
         default="str", description="The json schema for the output model or the literal 'str' for text output."
     )
     files: Literal["disable", "single", "single-optional", "multiple"] = "disable"
+
+    @model_validator(mode="after")
+    def _set_input_schema_default(self):
+        if self.input_schema is None:
+            env = Environment()
+            system_vars = meta.find_undeclared_variables(env.parse(self.system_prompt))
+            user_vars = meta.find_undeclared_variables(env.parse(self.user_prompt))
+            self.input_schema = {v: dict(type="string") for v in system_vars.union(user_vars) if v != "datetime_iso"}
+        return self
 
     @field_validator("input_schema")
     def validate_prompt_properties(cls, input_dict):
@@ -93,8 +103,9 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         description=make_description,
     )
     async def question(self, process_id, **kwargs) -> AgentState[Any]:
-        body = kwargs.get("body")
-        body = to_jsonable_python(body) if body else {}
+        body = dict(datetime_iso=datetime.now().isoformat())
+        body.update(kwargs.get("body") or {})
+        body = to_jsonable_python(body)
         files = kwargs.get("file", [])
         if not isinstance(files, list):
             files = [files]

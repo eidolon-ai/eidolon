@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import Body
 from pydantic import BaseModel, Field, model_validator
 from typing import Annotated, List
@@ -20,6 +22,20 @@ def make_description(agent: object, _handler: FnHandler) -> str:
 
 
 class RetrieverAgentSpec(BaseModel):
+    # these three fields are required and override the defaults of the subcomponents
+    name: str = Field(description="The name of the document store to use.")
+    description: str = Field(
+        description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
+    )
+    loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
+
+    loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
+    max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
+
+    document_manager: Reference[DocumentManager]
+    question_transformer: AnnotatedReference[QuestionTransformer]
+    document_reranker: AnnotatedReference[DocumentReranker]
+
     # noinspection PyMethodParameters
     @model_validator(mode="before")
     def set_fields(cls, value):
@@ -46,20 +62,6 @@ class RetrieverAgentSpec(BaseModel):
             doc_manager_spec["loader"]["pattern"] = spec["loader_pattern"]
 
         return value
-
-    # these three fields are required and override the defaults of the subcomponents
-    name: str = Field(description="The name of the document store to use.")
-    description: str = Field(
-        description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
-    )
-    loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
-
-    loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
-    max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
-
-    document_manager: Reference[DocumentManager]
-    question_transformer: AnnotatedReference[QuestionTransformer]
-    document_reranker: AnnotatedReference[DocumentReranker]
 
 
 class DocSummary(BaseModel):
@@ -104,13 +106,8 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
             questions = await self.question_transformer.transform(question)
         else:
             questions = [question]
-        question_to_docs = {}
-        for question in questions:
-            embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
-            results_ = await AgentOS.similarity_memory.vector_store.raw_query(
-                f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results
-            )
-            question_to_docs[question] = results_
+        _docs = await asyncio.gather(*(self._embed_question(question) for question in questions))
+        question_to_docs = {tu[0]: tu[1] for tu in zip(questions, _docs)}
         rerank_questions = {}
         for question, docs in question_to_docs.items():
             rerank_questions[question] = {doc.id: doc.score for doc in docs}
@@ -131,3 +128,10 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
             )
 
         return summaries
+
+    async def _embed_question(self, question):
+        embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
+        results_ = await AgentOS.similarity_memory.vector_store.raw_query(
+            f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results
+        )
+        return results_

@@ -8,19 +8,23 @@ from fastapi import Body
 from typing import Annotated, List
 
 from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.client import Agent
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.io.events import (
     StartAgentCallEvent,
     ObjectOutputEvent,
     SuccessEvent,
     AgentStateEvent,
-    StartLLMEvent,
     StringOutputEvent,
+    UserInputEvent,
 )
+from eidolon_ai_sdk.memory.file_memory import FileMemory
 from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
-from eidolon_ai_sdk.util.aiohttp import stream_content, post_content
+from eidolon_ai_sdk.util.aiohttp import stream_content, post_content, delete
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
 
@@ -70,6 +74,10 @@ class TestGenericAgent:
         with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
+    @pytest.fixture
+    async def agent(self, server) -> Agent:
+        return Agent.get("GenericAgent")
+
     def test_can_start(self, client):
         docs = client.get("/docs")
         assert docs.status_code == 200
@@ -96,6 +104,15 @@ class TestGenericAgent:
         )
         follow_up.raise_for_status()
         assert "Luke" in post.json()["data"]
+
+    async def test_deletes_conversational_memory(self, agent: Agent, symbolic_memory):
+        process = await agent.create_process()
+        await process.action("question", dict(instruction="Hi! my name is Luke"))
+        mem = [r async for r in AgentOS.symbolic_memory.find("conversation_memory", {"process_id": process.process_id})]
+        assert mem
+        await process.delete()
+        mem = [r async for r in AgentOS.symbolic_memory.find("conversation_memory", {"process_id": process.process_id})]
+        assert not mem
 
 
 @pytest.fixture(scope="module")
@@ -184,6 +201,16 @@ class TestAgentsWithReferences:
         )
         assert HelloWorld.calls["greeter4"] == ["bar"]
 
+    async def test_respond_after_tool_call(self, client, server):
+        t0 = len(HelloWorld.calls["greeter1"])
+        post = client.post(
+            "/agents/GenericAgent/programs/question",
+            json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
+        )
+        post.raise_for_status()
+        assert len(HelloWorld.calls["greeter1"]) - t0 == 1
+        assert "Luke" in post.json()["data"]
+
     async def test_can_replay_tool_calls(self, client, enable_replay, vcr):
         post = client.post(
             "/agents/GenericAgent/programs/question",
@@ -215,7 +242,7 @@ class TestOutputTests:
                 f"{app}/agents/GenericAgent/programs/question", dict(instruction="Tell me about france please")
             )
 
-            vcr.rewind()  # since we are hitting endpoing 2x in same test
+            vcr.rewind()  # since we are hitting endpoint 2x in same test
             acc_str = "".join([e async for e in replay(enable_replay / "000_openai_completion")])
             assert "france" in acc_str.lower()
             assert acc_str == post["data"]
@@ -230,20 +257,25 @@ class TestOutputTests:
             stream = stream_content(
                 f"{ra}/agents/GenericAgent/programs/question", body=dict(instruction="Tell me about france please")
             )
+            events = [event async for event in stream]
+            population = events[2].model_dump().get("content", {}).get("population")
             expected_events = [
+                UserInputEvent(
+                    input={
+                        "body": {"instruction": "Tell me about france please"},
+                        "process_id": "test_generic_agent_supports_object_output_with_stream_0",
+                    }
+                ),
                 StartAgentCallEvent(
                     agent_name="GenericAgent",
                     machine=AgentOS.current_machine_url(),
                     call_name="question",
                     process_id="test_generic_agent_supports_object_output_with_stream_0",
                 ),
-                StartLLMEvent(),
-                ObjectOutputEvent(content={"capital": "Paris", "population": 67399000}),
-                SuccessEvent(),
+                ObjectOutputEvent(content={"capital": "Paris", "population": population}),
                 AgentStateEvent(state="idle", available_actions=["respond"]),
                 SuccessEvent(),
             ]
-            events = [event async for event in stream]
             assert events == expected_events
 
     @pytest.mark.asyncio
@@ -257,14 +289,13 @@ class TestOutputTests:
                     "For instance <capital>...insert capital here...</capital> and <population>...insert population here...</population>"
                 ),
             )
-            events = (e for e in [event async for event in stream])
+            events = (e for e in [event async for event in stream][1:])
             assert next(events) == StartAgentCallEvent(
                 agent_name="GenericAgent",
                 machine=AgentOS.current_machine_url(),
                 call_name="question",
                 process_id="test_generic_agent_supports_string_stream_0",
             )
-            assert next(events) == StartLLMEvent()
             next_event = next(events)
             str = ""
             while isinstance(next_event, StringOutputEvent):
@@ -273,8 +304,7 @@ class TestOutputTests:
 
             assert "<capital>Paris</capital>" in str
             assert "<population>" in str
-            assert next_event == SuccessEvent()
-            assert next(events) == AgentStateEvent(state="idle", available_actions=["respond"])
+            assert next_event == AgentStateEvent(state="idle", available_actions=["respond"])
             assert next(events) == SuccessEvent()
 
     async def test_generic_agent_supports_image(self, run_app, generic_agent, dog):
@@ -286,6 +316,19 @@ class TestOutputTests:
                 files=dict(file=dog),
             )
             assert "brown" in post["data"].lower()
+
+    async def test_generic_agent_cleans_up_images(self, run_app, generic_agent, dog):
+        generic_agent.spec["files"] = "single"
+        async with run_app(generic_agent) as app:
+            fm: FileMemory = AgentOS.file_memory
+            created = await post_content(
+                f"{app}/agents/GenericAgent/programs/question",
+                data=dict(body=json.dumps(dict(instruction="What is in this image?"))),
+                files=dict(file=dog),
+            )
+            assert await fm.glob(f"uploaded_images/{created['process_id']}/**/*")
+            await delete(f"{app}/agents/GenericAgent/processes/{created['process_id']}")
+            assert not await fm.glob(f"uploaded_images/{created['process_id']}/**/*")
 
     async def test_generic_agent_supports_multiple_images(self, run_app, generic_agent, cat, dog):
         generic_agent.spec["files"] = "multiple"
@@ -304,3 +347,26 @@ class TestOutputTests:
                 dict(statement="What is different between them?"),
             )
             assert "cat" in follow_up["data"].lower()
+
+
+class MeaningOfLife(LogicUnit):
+    @llm_function()
+    async def meaning_of_life_tool(self) -> str:
+        """
+        call this tool to get the meaning of life
+        """
+        return "42"
+
+
+class TestGenericAgentWithToolCalls:
+    @pytest.fixture(scope="class")
+    async def agent(self, run_app, generic_agent_root):
+        generic_agent = generic_agent_root.model_copy(deep=True)
+        generic_agent.spec["cpu"]["logic_units"] = [fqn(MeaningOfLife)]
+        generic_agent.spec["cpu"]["llm_unit"].model = "gpt-4-turbo-preview"
+        async with run_app(generic_agent):
+            yield Agent.get("GenericAgent")
+
+    async def test_normal_tool_call(self, agent):
+        resp = await agent.program("question", dict(instruction="what is the meaning of life?"))
+        assert "42" in resp.data

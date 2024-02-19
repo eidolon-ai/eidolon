@@ -14,8 +14,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+sdk/lib/
+sdk/lib64/
 parts/
 sdist/
 var/
@@ -164,5 +164,8 @@ cython_debug/
 /.idea/shelf/Changes.xml
 /.idea/dataSources.local.xml
 /.idea/shelf/Changes/shelved.patch
-
+/.idea/shelf/**
 .make_*
+
+node_modules/
+.next/

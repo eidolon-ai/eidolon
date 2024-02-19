@@ -1,0 +1,10 @@
+.grid-area-chat-list {
+}
+
+.grid-area-chat-prompt {
+}
+
+.grid-chat {
+    display: grid;
+    grid-template-rows: calc(100% - 148px - 16px) 164px
+}

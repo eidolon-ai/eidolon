@@ -56,7 +56,8 @@ class AgentOS:
                 old_impl = getattr(bucket[resource.metadata.name][0], "spec", {}).get("implementation")
                 if old_impl:
                     new_spec = getattr(resource, "spec")
-                    if "implementation" not in new_spec:
+                    new_impl = new_spec.get("implementation") if isinstance(new_spec, dict) else new_spec
+                    if not new_impl or resource.metadata.name == new_impl:
                         new_spec["implementation"] = old_impl
             else:
                 raise ValueError(

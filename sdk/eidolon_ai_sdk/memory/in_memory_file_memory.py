@@ -44,7 +44,7 @@ class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
 
         return resolved_path
 
-    def read_file(self, file_path: str) -> bytes:
+    async def read_file(self, file_path: str) -> bytes:
         """
         Reads and returns the contents of the file specified by the file_path within the root directory.
 
@@ -60,7 +60,7 @@ class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
         # Read the file and return its contents
         return self.files[safe_file_path]
 
-    def write_file(self, file_path: str, file_contents: bytes) -> None:
+    async def write_file(self, file_path: str, file_contents: bytes) -> None:
         """
         Writes the given file_contents to the file specified by the file_path within the root directory.
 
@@ -77,19 +77,19 @@ class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
         # Write the contents to the file
         self.files[safe_file_path] = file_contents
 
-    def delete_file(self, file_path: str) -> None:
+    async def delete_file(self, file_path: str) -> None:
         # Resolve the safe path
         safe_file_path = self.resolve(file_path)
 
         # Delete the file
         del self.files[safe_file_path]
 
-    def mkdir(self, directory: str, exist_ok: bool = False):
+    async def mkdir(self, directory: str, exist_ok: bool = False):
         safe_file_path = self.resolve(directory)
         self.files[safe_file_path] = {}
         print(f"Created directory {safe_file_path}")
 
-    def exists(self, file_name: str):
+    async def exists(self, file_name: str):
         """
         Checks if a file exists at the specified path relative to the root directory.
 
@@ -107,13 +107,13 @@ class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
         # Check if the file exists
         return self.files.get(safe_file_path) is not None
 
-    def start(self):
+    async def start(self):
         """
         Starts the memory implementation. Noop for this implementation.
         """
         pass
 
-    def stop(self):
+    async def stop(self):
         """
         Stops the memory implementation. Noop for this implementation.
         """

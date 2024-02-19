@@ -7,7 +7,8 @@ from urllib.parse import urljoin
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.io.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
-from eidolon_ai_sdk.util.aiohttp import stream_content, get_content, post_content
+from eidolon_ai_sdk.system.agent_contract import DeleteProcessResponse
+from eidolon_ai_sdk.util.aiohttp import stream_content, get_content, post_content, delete
 
 
 class Machine(BaseModel):
@@ -35,6 +36,11 @@ class Agent(BaseModel):
     def stream_action(self, action_name: str, process_id: str, body: Any) -> AgentResponseIterator:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{process_id}/actions/{action_name}")
         return AgentResponseIterator(stream_content(url, body))
+
+    async def create_process(self) -> ProcessStatus:
+        url = urljoin(self.machine, f"agents/{self.agent}/processes")
+        json_ = await post_content(url)
+        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def process(self, process_id: str) -> Process:
         return Process(machine=self.machine, agent=self.agent, process_id=process_id)
@@ -88,6 +94,10 @@ class Process(BaseModel):
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/status")
         json_ = await get_content(url)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
+
+    async def delete(self) -> DeleteProcessResponse:
+        deleted = await delete(urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}"))
+        return DeleteProcessResponse.model_validate(deleted)
 
     @classmethod
     def get(cls, stream_response: AgentResponseIterator):

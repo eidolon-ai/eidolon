@@ -20,10 +20,10 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         super().__init__(spec)
         self.spec = spec
 
-    def start(self):
-        AgentOS.file_memory.mkdir(self.spec.root_document_directory, exist_ok=True)
+    async def start(self):
+        await AgentOS.file_memory.mkdir(self.spec.root_document_directory, exist_ok=True)
 
-    def stop(self):
+    async def stop(self):
         pass
 
     @abstractmethod
@@ -50,14 +50,14 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         pass
 
     async def add(self, collection: str, docs: Sequence[Document]):
-        AgentOS.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
+        await AgentOS.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
         # Asynchronously collect embedded documents
         embeddedDocs = []
         async for embeddedDoc in AgentOS.similarity_memory.embedder.embed(docs):
             embeddedDocs.append(embeddedDoc)
         await self.add_embedding(collection, embeddedDocs)
         for doc in docs:
-            AgentOS.file_memory.write_file(
+            await AgentOS.file_memory.write_file(
                 self.spec.root_document_directory + "/" + collection + "/" + doc.id,
                 doc.page_content.encode(),
             )
@@ -65,7 +65,7 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
     async def delete(self, collection: str, doc_ids: List[str]):
         await self.delete_embedding(collection, doc_ids)
         for doc_id in doc_ids:
-            AgentOS.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
+            await AgentOS.file_memory.delete_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
 
     async def query(
         self,
@@ -82,7 +82,7 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
                 Document(
                     id=result.id,
                     metadata=result.metadata,
-                    page_content=AgentOS.file_memory.read_file(
+                    page_content=await AgentOS.file_memory.read_file(
                         self.spec.root_document_directory + "/" + collection + "/" + result.id
                     ).decode(),
                 )
@@ -102,10 +102,11 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
     async def get_docs(self, collection: str, doc_ids: List[str]) -> Iterable[Document]:
         metadatas = await self.get_metadata(collection, doc_ids)
         for i, doc_id in enumerate(doc_ids):
+            content = await AgentOS.file_memory.read_file(
+                self.spec.root_document_directory + "/" + collection + "/" + doc_id
+            )
             yield Document(
                 id=doc_id,
                 metadata=metadatas[i],
-                page_content=AgentOS.file_memory.read_file(
-                    self.spec.root_document_directory + "/" + collection + "/" + doc_id
-                ).decode(),
+                page_content=content.decode(),
             )

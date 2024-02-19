@@ -10,7 +10,7 @@ class SideEffect:
     calls = []
 
 
-def foo(*args, **kwargs):
+async def foo(*args, **kwargs):
     SideEffect.calls.append(dict(args=args, kwargs=kwargs))
     return SideEffect.calls[-1]
 
@@ -43,7 +43,7 @@ def test_resume_point_enabled(enabled_resume_point_config):
 
 
 async def test_resume_point_actually_works(enabled_resume_point_config, file_memory_loc):
-    assert replayable(foo)(1, 2, 3, a=4, b=5) == dict(args=(1, 2, 3), kwargs=dict(a=4, b=5))
+    assert await replayable(foo)(1, 2, 3, a=4, b=5) == dict(args=(1, 2, 3), kwargs=dict(a=4, b=5))
     assert len(SideEffect.calls) == 1
 
     stream = replay(file_memory_loc / enabled_resume_point_config.save_loc / "000_foo")

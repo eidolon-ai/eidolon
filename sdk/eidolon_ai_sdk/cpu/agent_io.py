@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import uuid
 from abc import abstractmethod, ABC
 from io import IOBase
@@ -17,6 +18,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     LLMMessage,
 )
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
+from eidolon_ai_sdk.memory.file_memory import FileMemory
 
 
 class ResponseHandler(ABC):
@@ -52,7 +54,7 @@ CPUMessageTypes = UserTextCPUMessage | SystemCPUMessage | ImageCPUMessage
 
 
 class IOUnit(ProcessingUnit):
-    async def process_request(self, prompts: List[CPUMessageTypes]) -> List[LLMMessage]:
+    async def process_request(self, call_context: CallContext, prompts: List[CPUMessageTypes]) -> List[LLMMessage]:
         # convert the prompts to a list of strings
         conv_messages = []
         user_message_parts = []
@@ -66,9 +68,10 @@ class IOUnit(ProcessingUnit):
                 image_file: IOBase = prompt.image
                 # read the prompt.image file into memory
                 image_data = image_file.read()
-                tmp_path = "uploaded_images/" + str(uuid.uuid4())
-                file_memory.mkdir("uploaded_images", True)
-                file_memory.write_file(tmp_path, image_data)
+                base_loc = f"uploaded_images/{call_context.process_id}/{call_context.thread_id or 'main'}"
+                tmp_path = f"{base_loc}/{uuid.uuid4()}"
+                await file_memory.mkdir(base_loc, exist_ok=True)
+                await file_memory.write_file(tmp_path, image_data)
                 user_message_parts.append(UserMessageImageURL(image_url=tmp_path))
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
@@ -80,3 +83,9 @@ class IOUnit(ProcessingUnit):
 
     async def process_response(self, call_context: CallContext, response: Any):
         return response
+
+    @classmethod
+    async def delete_process(cls, process_id: str):
+        memory: FileMemory = AgentOS.file_memory
+        found = await memory.glob(f"uploaded_images/{process_id}/**/*")
+        await asyncio.gather(*[memory.delete_file(file) for file in found])

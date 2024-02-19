@@ -24,7 +24,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
-from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemorySpec, SimilarityMemory
+from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -146,6 +146,7 @@ def run_app(app_builder, port):
                 config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info", loop="asyncio")
                 server = uvicorn.Server(config)
                 server_wrapper.append(server)
+                #     todo, issue here where raising on bootstrap does not kill the server
                 server.run()
             except BaseException as e:
                 server_wrapper.clear()
@@ -186,15 +187,15 @@ def client_builder(run_app):
 def machine_manager(file_memory, symbolic_memory, similarity_memory):
     @asynccontextmanager
     async def fn():
-        async with symbolic_memory() as sm:
+        async with symbolic_memory() as sym, similarity_memory() as sim:
             yield MachineResource(
                 apiVersion="eidolon/v1",
                 metadata=Metadata(name="test_machine"),
                 kind="Machine",
                 spec=dict(
-                    symbolic_memory=sm,
+                    symbolic_memory=sym,
                     file_memory=file_memory,
-                    similarity_memory=similarity_memory,
+                    similarity_memory=sim,
                 ),
             )
 
@@ -216,9 +217,9 @@ def local_symbolic_memory(module_identifier):
     async def fn():
         ref = Reference(implementation=fqn(LocalSymbolicMemory))
         memory = ref.instantiate()
-        memory.start()
+        await memory.start()
         yield ref
-        memory.stop()
+        await memory.stop()
         # Teardown: drop the test database
 
     return fn
@@ -236,9 +237,9 @@ def mongo_symbolic_memory(module_identifier):
             mongo_database_name=database_name,
         )
         memory = ref.instantiate()
-        memory.start()
+        await memory.start()
         yield ref
-        memory.stop()
+        await memory.stop()
         # Teardown: drop the test database
         connection_string = os.getenv("MONGO_CONNECTION_STRING")
         client = AsyncIOMotorClient(connection_string)
@@ -273,9 +274,20 @@ def file_memory(file_memory_loc):
 
 
 @pytest.fixture(scope="module")
-def similarity_memory():
-    spec = SimilarityMemorySpec()
-    return Reference[SimilarityMemory](spec=spec)
+def similarity_memory(tmp_path_factory):
+    @asynccontextmanager
+    async def cm():
+        tmp_dir = tmp_path_factory.mktemp(f"vector_store_{module_identifier}_{ObjectId()}")
+        ref = Reference(
+            implementation=fqn(SimilarityMemory),
+            vector_store=dict(url=f"file://{tmp_dir}"),
+        )
+        memory: SimilarityMemory = ref.instantiate()
+        await memory.start()
+        yield ref
+        await memory.stop()
+
+    return cm
 
 
 @pytest.fixture(scope="module", autouse=True)

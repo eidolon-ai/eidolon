@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from typing import List, Any, Dict, AsyncIterator, Optional
+from typing import List, Any, Dict, AsyncIterator
 
 from eidolon_ai_sdk.agent.client import Machine, Agent, AgentResponseIterator
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_sdk.io.events import StreamEvent
@@ -49,7 +49,6 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 state=call.state,
                 available_actions=call.available_actions,
             ).upsert()
-        return await super().clone_thread(old_context, new_context)
 
     async def _get_schema(self, machine: str) -> dict:
         if machine not in self._machine_schemas:
@@ -66,7 +65,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         try:
             name = self._name(agent, action=action)
             tool = self._build_tool_def(
-                name, endpoint_schema, self._process_tool(agent_client, action, remote_process_id, call_context)
+                agent,
+                action,
+                name,
+                endpoint_schema,
+                self._process_tool(agent_client, action, remote_process_id, call_context),
             )
             return tool
         except ValueError:
@@ -85,6 +88,8 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     program = path.removeprefix(prefix)
                     name = self._name(agent, action=program)
                     tool = self._build_tool_def(
+                        agent,
+                        program,
                         name,
                         machine_schema["paths"][path]["post"],
                         self._program_tool(agent_client, program, call_context),
@@ -94,7 +99,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     logger.warning(f"unable to build tool {path}", exc_info=True)
         return tools
 
-    def _build_tool_def(self, name, endpoint_schema, tool_call):
+    def _build_tool_def(self, agent, operation, name, endpoint_schema, tool_call):
         description = self._description(endpoint_schema, name)
         model = self._body_model(endpoint_schema, name)
         return FnHandler(
@@ -103,7 +108,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             input_model_fn=lambda a, b: model,
             output_model_fn=lambda a, b: Any,
             fn=tool_call,
-            extra={},
+            extra={
+                "title": agent,
+                "sub_title": operation,
+                "agent_call": True,
+            },
         )
 
     @staticmethod
@@ -130,6 +139,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent + process_id + action
 
+    # todo, this needs to create history record before iterating
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
         def fn(_self, body):
             return RecordAgentResponseIterator(
@@ -138,6 +148,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
 
         return fn
 
+    # todo, this needs to create history record before iterating
     def _process_tool(self, agent: Agent, action: str, process_id: str, call_context: CallContext):
         def fn(_self, body):
             return RecordAgentResponseIterator(
@@ -147,35 +158,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return fn
 
 
-class AgentCallHistory(BaseModel):
-    parent_process_id: str
-    parent_thread_id: Optional[str]
-    machine: str
-    agent: str
-    remote_process_id: str
-    state: str
-    available_actions: List[str]
-
-    async def upsert(self):
-        query = {
-            "parent_process_id": self.parent_process_id,
-            "parent_thread_id": self.parent_thread_id,
-            "agent": self.agent,
-            "remote_process_id": self.remote_process_id,
-        }
-        await AgentOS.symbolic_memory.upsert_one("agent_logic_unit", self.model_dump(), query)
-
-    @classmethod
-    async def get_agent_state(cls, parent_process_id: str, parent_thread_id: str):
-        query = {
-            "parent_process_id": parent_process_id,
-            "parent_thread_id": parent_thread_id,
-        }
-        return [
-            AgentCallHistory.model_validate(o) async for o in AgentOS.symbolic_memory.find("agent_logic_unit", query)
-        ]
-
-
+# todo, it would be nice to work this into the client automatically
 class RecordAgentResponseIterator(AgentResponseIterator):
     parent_process_id: str
     parent_thread_id: str
@@ -186,17 +169,15 @@ class RecordAgentResponseIterator(AgentResponseIterator):
         self.parent_thread_id = parent_thread_id
 
     async def iteration_complete(self):
-        if self.available_actions is not None and len(self.available_actions) > 0:
-            #  insert response into mongo we need to store the parent process_id and thread_id and the agent, remote_process_id, state, and available_actions
-            call_data = AgentCallHistory(
-                parent_process_id=self.parent_process_id,
-                parent_thread_id=self.parent_thread_id,
-                machine=self.machine,
-                agent=self.agent,
-                remote_process_id=self.process_id,
-                state=self.state,
-                available_actions=self.available_actions,
-            )
-            await call_data.upsert()
+        call_data = AgentCallHistory(
+            parent_process_id=self.parent_process_id,
+            parent_thread_id=self.parent_thread_id,
+            machine=self.machine,
+            agent=self.agent,
+            remote_process_id=self.process_id,
+            state=self.state,
+            available_actions=self.available_actions,
+        )
+        await call_data.upsert()
 
         return await super().iteration_complete()

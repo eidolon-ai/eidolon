@@ -18,18 +18,18 @@ class AgentMemory:
         self.symbolic_memory = symbolic_memory
         self.similarity_memory = similarity_memory
 
-    def start(self):
+    async def start(self):
         if self.file_memory:
-            self.file_memory.start()
+            await self.file_memory.start()
         if self.symbolic_memory:
-            self.symbolic_memory.start()
+            await self.symbolic_memory.start()
         if self.similarity_memory:
-            self.similarity_memory.start()
+            await self.similarity_memory.start()
 
-    def stop(self):
+    async def stop(self):
         if self.file_memory:
-            self.file_memory.stop()
+            await self.file_memory.stop()
         if self.symbolic_memory:
-            self.symbolic_memory.stop()
+            await self.symbolic_memory.stop()
         if self.similarity_memory:
-            self.similarity_memory.stop()
+            await self.similarity_memory.stop()
