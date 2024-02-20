@@ -11,6 +11,7 @@ from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionRera
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
+from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
@@ -50,9 +51,10 @@ from eidolon_ai_sdk.util.replay import ReplayConfig
 
 def _to_resource(maybe_tuple: type | Tuple[type, type]) -> ReferenceResource:
     if isinstance(maybe_tuple, tuple):
+        name = maybe_tuple[0] if isinstance(maybe_tuple[0], str) else maybe_tuple[0].__name__
         return ReferenceResource(
             apiVersion="eidolon/v1",
-            metadata=Metadata(name=maybe_tuple[0].__name__),
+            metadata=Metadata(name=name),
             spec=maybe_tuple[1].__name__,
         )
     else:
@@ -78,6 +80,8 @@ def named_builtins():
         # security manager
         SecurityManager,
         # agents
+        ("Agent", SimpleAgent),
+        SimpleAgent,
         GenericAgent,
         TreeOfThoughtsAgent,
         RetrieverAgent,

@@ -18,7 +18,7 @@ async def get_content(url: str, json: Optional[Dict[str, Any]] = None, **kwargs)
         if json:
             params["json"] = json
         response = await client.get(**params, **kwargs)
-        response.raise_for_status()
+        await AgentError.check(response)
         return response.json()
 
 
@@ -29,7 +29,7 @@ async def post_content(url, json: Optional[Any] = None, **kwargs):
         params["json"] = to_jsonable_python(json)
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         response = await client.post(**params, **kwargs)
-        response.raise_for_status()
+        await AgentError.check(response)
         return response.json()
 
 
@@ -38,7 +38,7 @@ async def delete(url, **kwargs):
     params = {"url": url, "headers": RequestContext.headers}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         response = await client.delete(**params, **kwargs)
-        response.raise_for_status()
+        await AgentError.check(response)
         return response.json()
 
 
@@ -51,10 +51,7 @@ async def stream_content(url: str, body):
     request = {"url": url, "json": body, "method": "POST", "headers": headers}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         async with client.stream(**request) as response:
-            try:
-                response.raise_for_status()
-            except HTTPStatusError as e:
-                raise AgentError(e.response.status_code, "".join([b async for b in e.response.aiter_text()]))
+            await AgentError.check(response)
             async for sse_event in EventSource(response).aiter_sse():
                 if sse_event.data:
                     data = json.loads(sse_event.data)
@@ -65,7 +62,20 @@ async def stream_content(url: str, body):
 
 
 class AgentError(Exception):
-    def __init__(self, status_code: int, message: str):
+    message: str
+    status_code: int
+    response: Any
+
+    def __init__(self, status_code: int, message: str, response=None):
         super().__init__(f"{status_code} ({codes.get_reason_phrase(status_code)}): {message}")
         self.message = message
         self.status_code = status_code
+        self.response = response
+
+    @classmethod
+    async def check(cls, response, message_override=None):
+        try:
+            response.raise_for_status()
+        except HTTPStatusError as e:
+            message = message_override or "".join([b async for b in e.response.aiter_text()])
+            raise cls(e.response.status_code, message, response)

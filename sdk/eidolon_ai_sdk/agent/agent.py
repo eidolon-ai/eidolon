@@ -52,7 +52,7 @@ def register_action(
     *allowed_states: str,
     name: str = None,
     description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
-    input_model: typing.Optional[typing.Callable[[object, FnHandler], BaseModel]] = None,
+    input_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Type[BaseModel]]] = None,
     output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
 ):
     if not allowed_states:
