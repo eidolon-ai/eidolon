@@ -134,7 +134,7 @@ class SimpleAgent(Agent, Specable[SimpleAgentSpec]):
         return fn
 
     async def _act(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
-        request_body = (to_jsonable_python(kwargs.get("body") or {}))
+        request_body = to_jsonable_python(kwargs.get("body") or {})
         body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
         if isinstance(request_body, dict):
             body.update(request_body)
