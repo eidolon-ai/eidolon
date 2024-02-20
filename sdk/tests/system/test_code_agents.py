@@ -4,7 +4,6 @@ import httpx
 import pytest
 import pytest_asyncio
 from fastapi import Body, HTTPException
-from httpx import HTTPStatusError
 
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
 from eidolon_ai_sdk.agent.client import Agent, Process, ProcessStatus
@@ -16,6 +15,7 @@ from eidolon_ai_sdk.io.events import (
     EndStreamContextEvent,
     SuccessEvent,
 )
+from eidolon_ai_sdk.util.aiohttp import AgentError
 from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
@@ -106,7 +106,7 @@ class TestHelloWorld:
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_http_error(self, server, program):
-        with pytest.raises(HTTPStatusError) as exc:
+        with pytest.raises(AgentError) as exc:
             await Agent.get("HelloWorld").program(program, "hello")
         assert exc.value.response.status_code == 418
         assert exc.value.response.json() == "hello is not a name"
@@ -119,14 +119,14 @@ class TestHelloWorld:
         assert events[ErrorEvent].reason == dict(detail="hello is not a name", status_code=418)
         assert events[AgentStateEvent].state == "http_error"
 
-        with pytest.raises(HTTPStatusError) as exc:
+        with pytest.raises(AgentError) as exc:
             await Process.get(stream).status()
         assert exc.value.response.status_code == 418
         assert exc.value.response.json() == "hello is not a name"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_unhandled_error(self, server, program):
-        with pytest.raises(HTTPStatusError) as exc:
+        with pytest.raises(AgentError) as exc:
             await Agent.get("HelloWorld").program(program, "error")
         assert exc.value.response.status_code == 500
         assert exc.value.response.json() == "big bad server error"
@@ -139,7 +139,7 @@ class TestHelloWorld:
         assert events[ErrorEvent].reason == dict(detail="big bad server error", status_code=500)
         assert events[AgentStateEvent].state == "unhandled_error"
 
-        with pytest.raises(HTTPStatusError) as exc:
+        with pytest.raises(AgentError) as exc:
             await Process.get(stream).status()
         assert exc.value.response.status_code == 500
         assert exc.value.response.json() == "big bad server error"
@@ -183,7 +183,7 @@ class TestHelloWorld:
         deleted = await process.delete()
         assert deleted.process_id == process.process_id
         assert deleted.deleted == 1
-        with pytest.raises(HTTPStatusError) as exc:
+        with pytest.raises(AgentError) as exc:
             await process.status()
         assert exc.value.response.status_code == 404
 
