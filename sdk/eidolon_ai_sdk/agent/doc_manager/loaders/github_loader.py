@@ -2,8 +2,7 @@ import asyncio
 import fnmatch
 import os
 from asyncio import Task
-from typing import Dict, Any, AsyncIterator, List, cast
-from urllib.parse import urlparse
+from typing import Dict, Any, AsyncIterator, List, Optional
 
 from httpx import AsyncClient
 
@@ -19,10 +18,11 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
     owner: str
     repo: str
     client_args: dict = {}
+    root_path: Optional[str] = None
     pattern: str = "**/*"
 
     def root_content(self):
-        return f"https://api.github.com/repos/{self.owner}/{self.repo}/contents"
+        return f"https://api.github.com/repos/{self.owner}/{self.repo}/contents/{self.root_path or ''}"
 
 
 class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):

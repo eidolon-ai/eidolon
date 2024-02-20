@@ -6,7 +6,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader,
 
 @pytest.fixture
 def github_loader():
-    return GitHubLoader(GitHubLoaderSpec(owner="eidolon-ai", repo="eidolon", pattern="sdk/**/*.py"))
+    return GitHubLoader(GitHubLoaderSpec(owner="eidolon-ai", repo="eidolon", pattern="sdk/**/conftest.py", root_path="sdk/tests"))
 
 
 @pytest.mark.vcr()
