@@ -4,11 +4,13 @@ import time
 from pydantic import BaseModel, Field
 from typing import List
 
-from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader, FileInfo
+from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader, FileInfo, RemovedFile, ModifiedFile, \
+    AddedFile
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.util.logger import logger
 
 
 class SearchResult(BaseModel):
@@ -94,10 +96,15 @@ class DocumentManager(Specable[DocumentManagerSpec]):
 
             self.logger.info(f"Found {len(data)} files in symbolic memory")
 
-            ret = await self.loader.get_changes(data)
-            await asyncio.gather(
-                *[self._addFile(file_info) async for file_info in ret.added_files],
-                *[self._replaceFile(file_info) async for file_info in ret.modified_files],
-                *[self._removeFile(file_path) async for file_path in ret.removed_files],
-            )
+            tasks = []
+            async for change in self.loader.get_changes(data):
+                if isinstance(change, AddedFile):
+                    tasks.append(self._addFile(change.file_info))
+                elif isinstance(change, ModifiedFile):
+                    tasks.append(self._replaceFile(change.file_info))
+                elif isinstance(change, RemovedFile):
+                    tasks.append(self._removeFile(change.file_path))
+                else:
+                    logger.warning(f"Unknown change type {change}")
+            await asyncio.gather(*tasks)
             self.last_reload = time.time()

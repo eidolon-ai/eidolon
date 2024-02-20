@@ -1,13 +1,12 @@
 import hashlib
 import os
 from pathlib import Path
-from typing import Dict, Any, Iterable
+from typing import Dict, Any, AsyncIterator
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     DocumentLoader,
-    FileChangeset,
     FileInfo,
-    DocumentLoaderSpec,
+    DocumentLoaderSpec, FileChange, ModifiedFile, AddedFile, RemovedFile,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.reference_model import Specable, T
@@ -45,13 +44,11 @@ class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
         if not self.root_path.exists():
             raise ValueError(f"Root directory {self.root_dir} does not exist")
 
-    async def list_files(self) -> Iterable[str]:
+    async def list_files(self) -> AsyncIterator[str]:
         for file in self.root_path.glob(self.spec.pattern):
             yield str(file.relative_to(self.root_dir))
 
-    async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> FileChangeset:
-        added = {}
-        modified = {}
+    async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> AsyncIterator[FileChange]:
         # iterate over all python files in the root_dir
         for file in self.root_path.glob(self.spec.pattern):
             if file.is_file():
@@ -65,28 +62,14 @@ class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
                         file_hash = hash_file(file)
                         # if the file exists in symbolic memory, check if the hashes are different
                         if "hash" not in file_hash != metadata[file_path]:
-                            modified[file_path] = {"timestamp": timestamp, "file_hash": file_hash}
-                    # delete from hashes
+                            new_metadata = {"timestamp": timestamp, "file_hash": file_hash}
+                            yield ModifiedFile(FileInfo(file_path, new_metadata, DataBlob.from_path(str(self.root_path / file_path))))
                     del metadata[file_path]
                 else:
                     timestamp = os.path.getmtime(file)
                     file_hash = hash_file(file)
-                    added[file_path] = {"timestamp": timestamp, "file_hash": file_hash}
+                    new_metadata = {"timestamp": timestamp, "file_hash": file_hash}
+                    yield AddedFile(FileInfo(file_path, new_metadata, DataBlob.from_path(str(self.root_path / file_path))))
 
-        self.logger.info(f"Found {len(added)} added files")
-        self.logger.info(f"Found {len(modified)} modified files")
-        self.logger.info(f"Found {len(metadata)} deleted files")
-
-        async def added_files():
-            for file_path in added:
-                yield FileInfo(file_path, added[file_path], DataBlob.from_path(str(self.root_path / file_path)))
-
-        async def modified_files():
-            for file_path in modified:
-                yield FileInfo(file_path, modified[file_path], DataBlob.from_path(str(self.root_path / file_path)))
-
-        async def deleted_files():
-            for file_path in metadata:
-                yield file_path
-
-        return FileChangeset(added_files=added_files(), modified_files=modified_files(), removed_files=deleted_files())
+        for not_found in metadata.keys():
+            yield RemovedFile(not_found)
