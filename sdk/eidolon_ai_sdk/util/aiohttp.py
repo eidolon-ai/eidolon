@@ -64,11 +64,13 @@ async def stream_content(url: str, body):
 class AgentError(Exception):
     message: str
     status_code: int
+    response: Any
 
-    def __init__(self, status_code: int, message: str):
+    def __init__(self, status_code: int, message: str, response=None):
         super().__init__(f"{status_code} ({codes.get_reason_phrase(status_code)}): {message}")
         self.message = message
         self.status_code = status_code
+        self.response = response
 
     @classmethod
     async def check(cls, response, message_override=None):
@@ -76,4 +78,4 @@ class AgentError(Exception):
             response.raise_for_status()
         except HTTPStatusError as e:
             message = message_override or "".join([b async for b in e.response.aiter_text()])
-            raise cls(e.response.status_code, message)
+            raise cls(e.response.status_code, message, response)
