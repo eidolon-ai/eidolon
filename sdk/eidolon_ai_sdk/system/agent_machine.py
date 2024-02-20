@@ -40,13 +40,15 @@ class AgentMachine(Specable[MachineSpec]):
 
     def __init__(self, spec: MachineSpec):
         super().__init__(spec)
-        agents = {}
+        agents = []
         for name, r in AgentOS.get_resources(AgentResource).items():
             with _error_wrapper(r):
-                agents[name] = r.spec.instantiate()
+                agents.append((r.spec.instantiate(), r.metadata))
 
         self.memory = self.spec.get_agent_memory()
-        self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
+        self.agent_controllers = [
+            AgentController(metadata, instance) for instance, metadata in agents
+        ]
         self.app = None
         self.security_manager = self.spec.security_manager.instantiate()
 

@@ -2,7 +2,7 @@ import asyncio
 
 from fastapi import Body
 from pydantic import BaseModel, Field, model_validator
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 from urllib.parse import urlparse
 
 from eidolon_ai_sdk.agent.agent import register_program, AgentState
@@ -13,6 +13,7 @@ from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTr
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
+from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
@@ -23,7 +24,7 @@ def make_description(agent: object, _handler: FnHandler) -> str:
 
 class RetrieverAgentSpec(BaseModel):
     # these three fields are required and override the defaults of the subcomponents
-    name: str = Field(description="The name of the document store to use.")
+    name: Optional[str] = Field(None, description="The name of the document store to use.")
     description: str = Field(
         description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
     )
@@ -93,7 +94,7 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
 
     @register_program(description=make_description)
     async def search(
-        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+        self, agent_metadata: Metadata, question: Annotated[str, Body(description="The question to search for", embed=True)]
     ) -> List[DocSummary]:
         """
         Process the question by searching the document store.
@@ -106,7 +107,7 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
             questions = await self.question_transformer.transform(question)
         else:
             questions = [question]
-        _docs = await asyncio.gather(*(self._embed_question(question) for question in questions))
+        _docs = await asyncio.gather(*(self._embed_question(agent_metadata, question) for question in questions))
         question_to_docs = {tu[0]: tu[1] for tu in zip(questions, _docs)}
         rerank_questions = {}
         for question, docs in question_to_docs.items():
@@ -118,7 +119,7 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         reranked_docs = reranked_docs[: self.spec.max_num_results]
 
         docs = AgentOS.similarity_memory.vector_store.get_docs(
-            f"doc_contents_{self.spec.name}", [doc[0] for doc in reranked_docs]
+            f"doc_contents_{self.spec.name or agent_metadata.name}", [doc[0] for doc in reranked_docs]
         )
         summaries = []
         async for doc in docs:
@@ -129,9 +130,9 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
 
         return summaries
 
-    async def _embed_question(self, question):
+    async def _embed_question(self, agent_metadata, question):
         embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
         results_ = await AgentOS.similarity_memory.vector_store.raw_query(
-            f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results
+            f"doc_contents_{self.spec.name or agent_metadata.name}", embedded_q, self.spec.max_num_results
         )
         return results_

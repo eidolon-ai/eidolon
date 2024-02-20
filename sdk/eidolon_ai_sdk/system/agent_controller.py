@@ -44,6 +44,7 @@ from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_event
 from eidolon_ai_sdk.system.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import for_name
 from eidolon_ai_sdk.util.logger import logger
 
@@ -51,11 +52,13 @@ from eidolon_ai_sdk.util.logger import logger
 # todo, agent controller has become a mega impl, we should break up responsibilities
 class AgentController:
     name: str
+    metadata: Metadata
     agent: object
     actions: typing.Dict[str, FnHandler]
 
-    def __init__(self, name, agent):
-        self.name = name
+    def __init__(self, metadata: Metadata, agent):
+        self.name = metadata.name
+        self.metadata = metadata
         self.actions = {}
         self.agent = agent
         for handler in get_handlers(self.agent):
@@ -177,8 +180,11 @@ class AgentController:
             )
         RequestContext.set("process_id", process_id)
 
-        if "process_id" in dict(inspect.signature(handler.fn).parameters):
+        params = dict(inspect.signature(handler.fn).parameters)
+        if "process_id" in params:
             kwargs["process_id"] = process_id
+        if "agent_metadata" in params:
+            kwargs["agent_metadata"] = self.metadata
 
         # get the accepted content types
         accept_header = request.headers.get("Accept")
@@ -361,6 +367,8 @@ class AgentController:
             else:
                 replace: Parameter = params["process_id"].replace(annotation=str)
                 params["process_id"] = replace
+        if "agent_metadata" in params:
+            del params["agent_metadata"]
         elif not isEndpointAProgram:
             params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
 
