@@ -1,3 +1,4 @@
+from fastapi import Body
 from jinja2 import Environment, StrictUndefined
 
 from eidolon_ai_sdk.agent.agent import Agent, AgentSpec, register_program
@@ -14,7 +15,7 @@ class SqlAgentSpec(AgentSpec):
 
 class SqlAgent(Agent, Specable[SqlAgentSpec]):
     @register_program()
-    async def execute(self, process_id, query: str):
+    async def execute(self, process_id, query: str = Body()):
         """
         execute sql query from natural language
         :param process_id:
