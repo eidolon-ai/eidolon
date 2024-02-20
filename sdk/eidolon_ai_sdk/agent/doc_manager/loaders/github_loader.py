@@ -1,5 +1,6 @@
 import asyncio
 import fnmatch
+import os
 from asyncio import Task
 from typing import Dict, Any, AsyncIterator, List, cast
 from urllib.parse import urlparse
@@ -25,13 +26,6 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
 
 
 class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
-    def __init__(self, spec, **kwargs: object):
-        super().__init__(spec, **kwargs)
-        parsed_url = urlparse(self.spec.repo_url)
-        if not all([parsed_url.scheme, parsed_url.netloc, parsed_url.path]):
-            raise ValueError(f"Invalid GitHub URL: {self.spec.repo_url}")
-        self.owner, self.repo = parsed_url.path.strip("/").split("/")
-
     async def list_files(self) -> AsyncIterator[str]:
         async with AsyncClient(**self.spec.client_args) as client:
             async for file in self._raw_list_files(client):
@@ -47,13 +41,18 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
                     if metadata[file["path"]]["sha"] != file["sha"]:
                         tasks.append(asyncio.create_task(self._file_op(ModifiedFile, file, client)))
                     del metadata[file["path"]]
-            async for completed_task in cast(asyncio.as_completed(tasks), AsyncIterator[Task]):
-                yield await completed_task
+            while tasks:
+                done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                for task in done:
+                    yield await task
             for file_path in metadata:
                 yield RemovedFile(file_path)
 
     async def _raw_list_files(self, client: AsyncClient, url=None) -> AsyncIterator[Dict[str, Any]]:
-        response = await client.get(url=url or self.spec.root_content())
+        token_ = os.environ['GITHUB_TOKEN']
+        headers = {"Authorization": f"Bearer {token_}"} if token_ else None
+        response = await client.get(url=url or self.spec.root_content(), headers=headers)
+        # response = await client.get(url=url or self.spec.root_content())
         response.raise_for_status()
         streams = []
         for record in response.json():
@@ -66,8 +65,8 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
                 streams.append(self._raw_list_files(client, record["url"]))
             else:
                 logger.warning(f"Unknown file type: {record['type']}")
-            async for e in merge_streams(streams):
-                yield e
+        async for e in merge_streams(streams):
+            yield e
 
     async def _data(self, client, file):
         response = await client.get(file["download_url"])
