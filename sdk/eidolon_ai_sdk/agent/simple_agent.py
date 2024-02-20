@@ -1,38 +1,49 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Literal, Optional, Union, Dict, Any, Type
+from typing import List, Literal, Optional, Union, Dict, Any, AsyncIterable
 
+from fastapi import Body, UploadFile
 from jinja2 import Environment, meta, StrictUndefined
 from openai import BaseModel
-from pydantic import model_validator, field_validator
+from pydantic import field_validator
 from pydantic_core import to_jsonable_python
 
-from eidolon_ai_sdk.agent.agent import AgentSpec, Agent, AgentState, register_action
+from eidolon_ai_sdk.agent.agent import AgentSpec, Agent, register_action
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserTextCPUMessage
-from eidolon_ai_sdk.io.events import AgentStateEvent
-from eidolon_ai_sdk.system.fn_handler import FnHandler
+from eidolon_ai_sdk.io.events import AgentStateEvent, StreamEvent
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
+
+
+class StringSignature(BaseModel):
+    body: str = Body(..., media_type="text/plain")
+
+
+class StringOptionalFile(BaseModel):
+    body: str = Body(..., media_type="text/plain")
+    file: Optional[UploadFile] = None
+
+
+class StringRequiredFile(BaseModel):
+    body: str = Body(..., media_type="text/plain")
+    file: UploadFile
+
+
+class StringMultipleFiles(BaseModel):
+    body: str = Body(..., media_type="text/plain")
+    file: List[UploadFile] = []
 
 
 class ActionDefinition(BaseModel):
     name: str = "converse"
     description: Optional[str] = None
-    user_prompt: str = "{{ statement }}"
+    user_prompt: str = "{{ body }}"
     input_schema: dict = None
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
     files: Literal["disable", "single-optional", "single", "multiple"] = "disable"
     allowed_states: List[str] = ["initialized", "idle", "http_error"]
     output_state: str = "idle"
-
-    @model_validator(mode="after")
-    def _set_input_schema_default(self):
-        if self.input_schema is None:
-            env = Environment()
-            user_vars = meta.find_undeclared_variables(env.parse(self.user_prompt))
-            self.input_schema = {v: dict(type="string") for v in user_vars if v != "datetime_iso"}
-        return self
 
     @field_validator("input_schema")
     def validate_prompt_properties(cls, input_dict):
@@ -45,6 +56,47 @@ class ActionDefinition(BaseModel):
                         "prompt_properties cannot contain format = 'binary' fields. Use the files option instead"
                     )
         return input_dict
+
+    def make_input_schema(self, agent, handler):
+        input_schema = self.input_schema
+        required_body = True
+        if input_schema is None:
+            env = Environment()
+            user_vars = meta.find_undeclared_variables(env.parse(self.user_prompt))
+            if not user_vars:
+                required_body = False
+            elif len(user_vars) == 1 and "body" in user_vars:
+                if self.files == "single-optional":
+                    return StringOptionalFile
+                elif self.files == "single":
+                    return StringRequiredFile
+                elif self.files == "multiple":
+                    return StringMultipleFiles
+                else:
+                    return StringSignature
+            else:
+                input_schema = {v: dict(type="string") for v in user_vars if v != "datetime_iso" and v != "body"}
+
+        properties: Dict[str, Any] = {}
+        if input_schema:
+            properties["body"] = dict(type="object", properties=input_schema)
+
+        required = ["body"] if required_body else []
+        if self.files == "single-optional":
+            properties["file"] = dict(type="string", format="binary")
+        elif self.files == "single":
+            properties["file"] = dict(type="string", format="binary")
+            required.append("file")
+        elif self.files == "multiple":
+            properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
+        schema = {"type": "object", "properties": properties, "required": required}
+        return schema_to_model(schema, f"{handler.name.capitalize()}{self.name.capitalize()}InputModel")
+
+    def make_output_schema(self, agent, handler):
+        if not self.output_schema:
+            raise ValueError("output_schema must be specified")
+        model_name = f"{handler.name.capitalize()}{self.name.capitalize()}OutputModel"
+        return str if self.output_schema == "str" else schema_to_model(self.output_schema, model_name)
 
 
 class SimpleAgentSpec(AgentSpec):
@@ -63,8 +115,8 @@ class SimpleAgent(Agent, Specable[SimpleAgentSpec]):
                 register_action(
                     *action.allowed_states,
                     name=action.name,
-                    input_model=_make_input_schema(action),
-                    output_model=_make_output_schema(action),
+                    input_model=action.make_input_schema,
+                    output_model=action.make_output_schema,
                     description=action.description,
                 )(self._act_wrapper(action)),
             )
@@ -81,13 +133,16 @@ class SimpleAgent(Agent, Specable[SimpleAgentSpec]):
 
         return fn
 
-    async def _act(self, action: ActionDefinition, process_id, **kwargs) -> AgentState[Any]:
-        body = dict(datetime_iso=datetime.now().isoformat())
-        body.update(kwargs.get("body") or {})
-        body = to_jsonable_python(body)
+    async def _act(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
+        request_body = (to_jsonable_python(kwargs.get("body") or {}))
+        body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
+        if isinstance(request_body, dict):
+            body.update(request_body)
 
-        files = kwargs.get("file", [])
-        files = files if isinstance(files, list) else [files]
+        files = kwargs.get("file", []) or []
+        if not isinstance(files, list):
+            files = [files]
+
         image_messages = [ImageCPUMessage(image=file.file, prompt=file.filename) for file in files if file]
 
         env = Environment(undefined=StrictUndefined)
@@ -99,41 +154,3 @@ class SimpleAgent(Agent, Specable[SimpleAgentSpec]):
         async for event in response:
             yield event
         yield AgentStateEvent(state=action.output_state)
-
-
-def _make_input_schema(action: ActionDefinition):
-    def fn(agent: object, handler: FnHandler) -> Type[BaseModel]:
-        properties: Dict[str, Any] = {}
-        if action.input_schema:
-            properties["body"] = dict(type="object", properties=action.input_schema)
-
-        required = ["body"]
-        if action.files == "single" or action.files == "single-optional":
-            properties["file"] = dict(type="string", format="binary")
-            if action.files == "single":
-                required.append("file")
-        elif action.files == "multiple":
-            properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
-            required.append("file")
-        elif "files" in properties:
-            del properties["file"]
-        schema = {"type": "object", "properties": properties, "required": required}
-        return schema_to_model(schema, f"{handler.name.capitalize()}{action.name.capitalize()}InputModel")
-
-    return fn
-
-
-def _make_output_schema(action: ActionDefinition):
-    def fn(agent: object, handler: FnHandler) -> Type[Any]:
-        # noinspection PyUnresolvedReferences
-        if not action.output_schema:
-            raise ValueError("output_schema must be specified")
-
-        if action.output_schema == "str":
-            return str
-        else:
-            return schema_to_model(
-                action.output_schema, f"{handler.name.capitalize()}{action.name.capitalize()}OutputModel"
-            )
-
-    return fn

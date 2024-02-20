@@ -30,8 +30,8 @@ class Agent(BaseModel):
     def stream_program(self, program_name: str, body: Optional[Any] = None) -> AgentResponseIterator:
         return Program(machine=self.machine, agent=self.agent, program=program_name).stream_execute(body)
 
-    async def program(self, program_name: str, body: Optional[Any] = None) -> ProcessStatus:
-        return await Program(machine=self.machine, agent=self.agent, program=program_name).execute(body)
+    async def program(self, program_name: str, body: Optional[Any] = None, **kwargs) -> ProcessStatus:
+        return await Program(machine=self.machine, agent=self.agent, program=program_name).execute(body, **kwargs)
 
     def stream_action(self, action_name: str, process_id: str, body: Any) -> AgentResponseIterator:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{process_id}/actions/{action_name}")
@@ -74,9 +74,9 @@ class Program(BaseModel):
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
         return AgentResponseIterator(stream_content(url, body))
 
-    async def execute(self, body: Optional[Any] = None) -> ProcessStatus:
+    async def execute(self, body: Optional[Any] = None, **kwargs) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
-        json_ = await post_content(url, body)
+        json_ = await post_content(url, body, **kwargs)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
 
@@ -85,7 +85,7 @@ class Process(BaseModel):
     agent: str
     process_id: str
 
-    async def action(self, action_name: str, body: dict | BaseModel) -> ProcessStatus:
+    async def action(self, action_name: str, body: dict | BaseModel | str) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/actions/{action_name}")
         json_ = await post_content(url, body)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
