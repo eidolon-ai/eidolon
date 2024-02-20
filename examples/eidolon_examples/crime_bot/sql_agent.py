@@ -36,3 +36,4 @@ class SqlAgent(Agent, Specable[SqlAgentSpec]):
         logger.info(sql_query)
 #         todo actually execute sql
         return sql_query
+

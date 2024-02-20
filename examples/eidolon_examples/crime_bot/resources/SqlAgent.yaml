@@ -5,22 +5,6 @@ metadata:
 spec:
   implementation: eidolon_examples.crime_bot.sql_agent.SqlAgent
   system_prompt: |-
-    Capitalization Instruction:
-    
-    Revised Capitalization and City Naming Convention Instruction:
-
-            When generating T-SQL queries, always capitalize values that match the 'City' and 'StateCode' fields from the data schema. For example, if a city name like 'Atlanta' is mentioned in the user query, it should appear as 'ATLANTA' in the T-SQL query.
-
-            
-            For specific cities that have multiple naming conventions in the database, such as 'Wausau', the chatbot should be programmed to recognize and include all possible variants of this city name in the SQL query. This means:
-
-            - If the user mentions 'Wausau' in any form, the SQL query should be designed to search for all variations of Wausau that exist in the database, such as 'WAUSAU', 'CITY OF WAUSAU', 'TOWNSHIP OF WAUSAU', etc.
-            
-            - The chatbot should automatically expand the search to these variants to ensure comprehensive coverage of the database records related to 'Wausau'.
-
-            
-            This approach ensures that the T-SQL queries accurately capture all relevant data associated with 'Wausau', regardless of the specific naming convention used in the database.
-    
     
     User Lingo:
     
@@ -47,7 +31,8 @@ spec:
     
     Data Schema (all fields are treated as strings):
 
-    ID, DateOfIncident, CaseNumber, CrimeType, Details, AddressFull, Street, City, StateCode, PostalCode, CountryCode, Latitude, Longitude
+    Incident Datetime, Incident Date, Incident Time, Incident Year, Incident Day of Week, Report Datetime, Row ID, Incident ID, Incident Number, CAD Number, Report Type Code, Report Type Description, Filed Online, Incident Code, Incident Category, Incident Subcategory, Incident Description, Resolution, Intersection, CNN, Police District, Analysis Neighborhood, Supervisor District, Supervisor District 2012, Latitude, Longitude, Point, Neighborhoods, ESNCAG - Boundary File, Central Market/Tenderloin Boundary Polygon - Updated, Civic Center Harm Reduction Project Boundary, HSOC Zones as of 2018-06-05, Invest In Neighborhoods (IIN) Areas, Current Supervisor Districts, Current Police Districts
+
     
     
     Limit Instruction:
@@ -65,14 +50,10 @@ spec:
 
     3. Ensuring Relevance and Diversity: Make sure that the responses are relevant to the query and provide valuable insights. The goal is to avoid overwhelming the user with excessive data while still delivering comprehensive and pertinent information.
 
-    4. Simplifying Data Presentation: In cases where the nature of the query implies fewer than 10 results (e.g., asking for the top 5), the 'TOP 10' clause should still be applied. This standardizes the response format and simplifies data presentation for the user.
 
     
     These guidelines aim to ensure that the chatbot's responses are tailored to efficiently and effectively address user queries, with a focus on data relevance and concise presentation.
     
-    Crime Type:
-    
-    Public Service Call, Auto Theft, Harassment, Contraband Possession (Non Drug), Arrest, Murder, Sexual Assault, Arson, Larceny, Shooting, Kidnapping, Animal Call / Citation, Trespassing/Loitering, Loitering, Theft from Auto, Assault, Drugs, Fraud, Disturbance, Penal, Burglary, Assist Other Agency, WANTEDSUSPECT, Loitering (Drugs), Theft, UNMAPPED, Embezzlement, Prostitution, Loiterating (Sex), Breaking and Entering, Abortion, Robbery, Weapons, Manslaughter, Other, Drugs and Alcohol, Missing Person, Jostling, Anticipatory Offenses, Warrant Related, Hit and Run, Agriculture, Vandalism, Traffic, Shoplifting, Loitering (Gambling), Alcohol Related, Domestic Disturbance, Attempted Murder, Parole Related Offence, Disruption, Fortune Telling, Driving Under the Influence, Terrorism, Alarm Residential/Commercial, Battery, Assault with Deadly Weapon, Child Abandonment, Non Penal
 
   extra_template_args:
-    table_name: CrimeDataUSA_Full
+    table_name: IncidentReports
