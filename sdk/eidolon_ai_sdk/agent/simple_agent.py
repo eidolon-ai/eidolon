@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List, Literal, Optional, Union, Dict, Any, AsyncIterable
 
-from fastapi import Body, UploadFile
+from fastapi import Body
 from jinja2 import Environment, meta, StrictUndefined
 from openai import BaseModel
 from pydantic import field_validator
@@ -14,25 +14,6 @@ from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserT
 from eidolon_ai_sdk.io.events import AgentStateEvent, StreamEvent
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
-
-
-class StringSignature(BaseModel):
-    body: str = Body(..., media_type="text/plain")
-
-
-class StringOptionalFile(BaseModel):
-    body: str = Body(..., media_type="text/plain")
-    file: Optional[UploadFile] = None
-
-
-class StringRequiredFile(BaseModel):
-    body: str = Body(..., media_type="text/plain")
-    file: UploadFile
-
-
-class StringMultipleFiles(BaseModel):
-    body: str = Body(..., media_type="text/plain")
-    file: List[UploadFile] = []
 
 
 class ActionDefinition(BaseModel):
@@ -58,30 +39,20 @@ class ActionDefinition(BaseModel):
         return input_dict
 
     def make_input_schema(self, agent, handler):
-        input_schema = self.input_schema
-        required_body = True
-        if input_schema is None:
-            env = Environment()
-            user_vars = meta.find_undeclared_variables(env.parse(self.user_prompt))
-            if not user_vars:
-                required_body = False
-            elif len(user_vars) == 1 and "body" in user_vars:
-                if self.files == "single-optional":
-                    return StringOptionalFile
-                elif self.files == "single":
-                    return StringRequiredFile
-                elif self.files == "multiple":
-                    return StringMultipleFiles
-                else:
-                    return StringSignature
-            else:
-                input_schema = {v: dict(type="string") for v in user_vars if v != "datetime_iso" and v != "body"}
-
         properties: Dict[str, Any] = {}
-        if input_schema:
-            properties["body"] = dict(type="object", properties=input_schema)
+        required = []
+        user_vars = meta.find_undeclared_variables(Environment().parse(self.user_prompt))
+        if self.input_schema is not None:
+            properties["body"] = dict(type="object", properties=self.input_schema)
+            required.append("body")
+        elif len(user_vars) == 1 and "body" in user_vars:
+            properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
+            required.append("body")
+        elif user_vars:
+            props = {v: dict(type="string") for v in user_vars if v != "datetime_iso" and v != "body"}
+            properties["body"] = dict(type="object", properties=props)
+            required.append("body")
 
-        required = ["body"] if required_body else []
         if self.files == "single-optional":
             properties["file"] = dict(type="string", format="binary")
         elif self.files == "single":
