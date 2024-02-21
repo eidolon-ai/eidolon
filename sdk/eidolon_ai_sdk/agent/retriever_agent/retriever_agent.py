@@ -24,11 +24,11 @@ def make_description(agent: object, _handler: FnHandler) -> str:
 
 class RetrieverAgentSpec(BaseModel):
     # these three fields are required and override the defaults of the subcomponents
-    name: Optional[str] = Field(None, description="The name of the document store to use.")
+    name: Optional[str] = Field(description="The name of the document store to use.")
     description: str = Field(
         description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
     )
-    loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
+    loader_root_location: str = Field(None, description="A URL specifying the root location of the loader.")
 
     loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
     max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
@@ -51,14 +51,13 @@ class RetrieverAgentSpec(BaseModel):
         if "spec" not in doc_manager_spec["loader"]:
             doc_manager_spec["loader"]["spec"] = dict()
 
-        if "loader_root_location" not in spec:
-            raise ValueError("loader_root_location must be specified in the spec")
-        loader_url = urlparse(spec["loader_root_location"])
-        if loader_url.scheme == "file":
-            doc_manager_spec["loader"]["implementation"] = fqn(FilesystemLoader)
-            doc_manager_spec["loader"]["root_dir"] = spec["loader_root_location"][7:]
-        else:
-            raise ValueError("loader_root_location spec must be a file:// url")
+        if "loader_root_location" in spec:
+            loader_url = urlparse(spec["loader_root_location"])
+            if loader_url.scheme == "file":
+                doc_manager_spec["loader"]["implementation"] = fqn(FilesystemLoader)
+                doc_manager_spec["loader"]["root_dir"] = spec["loader_root_location"][7:]
+            else:
+                raise ValueError("loader_root_location spec must be a file:// url")
         if "loader_pattern" in spec:
             doc_manager_spec["loader"]["pattern"] = spec["loader_pattern"]
 

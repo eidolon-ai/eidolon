@@ -1,0 +1,18 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: code_search
+
+spec:
+  implementation: RetrieverAgent
+  name: "code_search"
+  description: "Searches for code snippets in the source code"
+  max_num_results: 50
+  document_manager:
+    loader:
+      implementation: "GitHubLoader"
+      owner: "eidolon-ai"
+      repo: "eidolon"
+      root_path: "examples/eidolon_examples"
+      pattern: "**/*.py"
+

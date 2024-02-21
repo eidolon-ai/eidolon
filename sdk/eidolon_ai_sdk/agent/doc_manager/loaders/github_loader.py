@@ -71,7 +71,8 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
     async def _data(self, client, file):
         response = await client.get(file["download_url"])
         response.raise_for_status()
-        return DataBlob("".join([c async for c in response.aiter_text()]))
+        data = await response.aread()
+        return DataBlob.from_bytes(data, path=file["path"])
 
     async def _file_op(self, op, file, client):
         new_metadata = {"sha": file["sha"], "size": file["size"], "download_url": file["download_url"]}

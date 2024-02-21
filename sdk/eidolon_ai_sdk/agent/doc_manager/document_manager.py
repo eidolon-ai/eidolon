@@ -69,8 +69,8 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                 return
             await AgentOS.similarity_memory.vector_store.add(f"doc_contents_{self.spec.name}", docs)
             self.logger.info(f"Added file {file_info.path}")
-        except Exception as e:
-            self.logger.warning(f"Failed to parse file {file_info.path}: {e}")
+        except Exception:
+            self.logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
 
     async def _removeFile(self, path: str):
         # get the doc ids for the file
