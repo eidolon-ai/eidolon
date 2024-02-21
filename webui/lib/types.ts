@@ -31,7 +31,7 @@ export interface ChatEvent extends Record<string, any> {
   category: string,
 }
 
-export class EidosClient {
+export class EidolonClient {
   private machineUrl: string
   private isLoaded = false
 
@@ -58,6 +58,8 @@ export class EidosClient {
         ret.schema = requestBody.content["application/json"].schema
       } else if ("multipart/form-data" in requestBody.content) {
         ret.schema = requestBody.content["multipart/form-data"].schema
+      } else if ("text/plain" in requestBody.content) {
+        ret.schema = requestBody.content["text/plain"].schema
       }
     }
     return ret
