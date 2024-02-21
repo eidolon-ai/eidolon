@@ -6,8 +6,15 @@ from typing import Dict, Any, AsyncIterator, List, Optional
 
 from httpx import AsyncClient
 
-from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoaderSpec, DocumentLoader, FileInfo, \
-    AddedFile, ModifiedFile, RemovedFile, FileChange
+from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
+    DocumentLoaderSpec,
+    DocumentLoader,
+    FileInfo,
+    AddedFile,
+    ModifiedFile,
+    RemovedFile,
+    FileChange,
+)
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.logger import logger
@@ -49,7 +56,7 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
                 yield RemovedFile(file_path)
 
     async def _raw_list_files(self, client: AsyncClient, url=None) -> AsyncIterator[Dict[str, Any]]:
-        token_ = os.environ['GITHUB_TOKEN']
+        token_ = os.environ["GITHUB_TOKEN"]
         headers = {"Authorization": f"Bearer {token_}"} if token_ else None
         response = await client.get(url=url or self.spec.root_content(), headers=headers)
         # response = await client.get(url=url or self.spec.root_content())

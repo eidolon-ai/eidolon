@@ -4,8 +4,13 @@ import time
 from pydantic import BaseModel, Field
 from typing import List
 
-from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader, FileInfo, RemovedFile, ModifiedFile, \
-    AddedFile
+from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
+    DocumentLoader,
+    FileInfo,
+    RemovedFile,
+    ModifiedFile,
+    AddedFile,
+)
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS

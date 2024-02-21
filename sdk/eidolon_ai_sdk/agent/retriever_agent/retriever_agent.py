@@ -13,7 +13,6 @@ from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTr
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
-from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
 
 

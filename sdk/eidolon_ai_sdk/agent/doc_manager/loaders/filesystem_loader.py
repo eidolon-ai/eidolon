@@ -6,7 +6,11 @@ from typing import Dict, Any, AsyncIterator
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     DocumentLoader,
     FileInfo,
-    DocumentLoaderSpec, FileChange, ModifiedFile, AddedFile, RemovedFile,
+    DocumentLoaderSpec,
+    FileChange,
+    ModifiedFile,
+    AddedFile,
+    RemovedFile,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.reference_model import Specable, T
@@ -63,13 +67,17 @@ class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
                         # if the file exists in symbolic memory, check if the hashes are different
                         if "hash" not in file_hash != metadata[file_path]:
                             new_metadata = {"timestamp": timestamp, "file_hash": file_hash}
-                            yield ModifiedFile(FileInfo(file_path, new_metadata, DataBlob.from_path(str(self.root_path / file_path))))
+                            yield ModifiedFile(
+                                FileInfo(file_path, new_metadata, DataBlob.from_path(str(self.root_path / file_path)))
+                            )
                     del metadata[file_path]
                 else:
                     timestamp = os.path.getmtime(file)
                     file_hash = hash_file(file)
                     new_metadata = {"timestamp": timestamp, "file_hash": file_hash}
-                    yield AddedFile(FileInfo(file_path, new_metadata, DataBlob.from_path(str(self.root_path / file_path))))
+                    yield AddedFile(
+                        FileInfo(file_path, new_metadata, DataBlob.from_path(str(self.root_path / file_path)))
+                    )
 
         for not_found in metadata.keys():
             yield RemovedFile(not_found)

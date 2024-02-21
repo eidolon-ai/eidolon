@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pydantic import BaseModel
-from typing import Dict, Any, AsyncIterable, Iterable, AsyncIterator
+from typing import Dict, Any, AsyncIterator
 
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.reference_model import Specable
