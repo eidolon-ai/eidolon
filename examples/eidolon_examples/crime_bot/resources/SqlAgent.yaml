@@ -30,8 +30,9 @@ spec:
     Data Schema:
     
     Data Schema (all fields are treated as strings):
-
-    Incident Datetime, Incident Date, Incident Time, Incident Year, Incident Day of Week, Report Datetime, Row ID, Incident ID, Incident Number, CAD Number, Report Type Code, Report Type Description, Filed Online, Incident Code, Incident Category, Incident Subcategory, Incident Description, Resolution, Intersection, CNN, Police District, Analysis Neighborhood, Supervisor District, Supervisor District 2012, Latitude, Longitude, Point, Neighborhoods, ESNCAG - Boundary File, Central Market/Tenderloin Boundary Polygon - Updated, Civic Center Harm Reduction Project Boundary, HSOC Zones as of 2018-06-05, Invest In Neighborhoods (IIN) Areas, Current Supervisor Districts, Current Police Districts
+    IncidentDatetime,IncidentDate,IncidentTime,IncidentYear,IncidentDayOfWeek,ReportDatetime,RowID,IncidentID,IncidentNumber,CADNumber,ReportTypeCode,ReportTypeDescription,FiledOnline,IncidentCode,IncidentCategory,IncidentSubcategory,IncidentDescription,Resolution,Intersection,CNN,PoliceDistrict,AnalysisNeighborhood,SupervisorDistrict,SupervisorDistrict2012,Latitude,Longitude,Point,Neighborhoods,ESNCAGBoundaryFile,CentralMarketTenderloinBoundaryPolygonUpdated,CivicCenterHarmReductionProjectBoundary,HSOCZonesAsOf20180605,InvestInNeighborhoodsAreas,CurrentSupervisorDistricts,CurrentPoliceDistricts
+    
+    Incident Catogories: "Motor Vehicle Theft", "Case Closure", "Stolen Property", "Disorderly Conduct", "Drug Offense", "Drug Violation", "Weapons Offense", "Vandalism", "Robbery", "Vehicle Impounded", "Suicide", "Civil Sidewalks", "Courtesy Report", "Fire Report", "NULL", "Rape", "Assault", "Gambling", "Human Trafficking (A)", "Non-Criminal", "Lost Property", "Traffic Collision", "Forgery And Counterfeiting", "Sex Offense", "Homicide", "Liquor Laws", "Weapons Offence", "Malicious Mischief", "Weapons Carrying Etc", "Other Offenses", "Motor Vehicle Theft?", "Suspicious", "Burglary", "Missing Person", "Fraud", "Human Trafficking (B)", "Other Miscellaneous", "Miscellaneous Investigation", "Suspicious Occ", "Other", "Traffic Violation Arrest", "Human Trafficking", "Larceny Theft", "Recovered Vehicle", "Arson", "Embezzlement", "Warrant", "Offences Against The Family And Children", "Prostitution", "Vehicle Misplaced"
 
     
     
@@ -49,11 +50,7 @@ spec:
     - For SQL queries, append a 'TOP 10' clause to limit the results to 10 entries. This applies to all SQL queries regardless of their nature, ensuring that the data returned is manageable and relevant.
 
     3. Ensuring Relevance and Diversity: Make sure that the responses are relevant to the query and provide valuable insights. The goal is to avoid overwhelming the user with excessive data while still delivering comprehensive and pertinent information.
-
-
     
     These guidelines aim to ensure that the chatbot's responses are tailored to efficiently and effectively address user queries, with a focus on data relevance and concise presentation.
-    
-
   extra_template_args:
     table_name: IncidentReports

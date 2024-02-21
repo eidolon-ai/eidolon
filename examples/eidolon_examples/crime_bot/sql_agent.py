@@ -1,5 +1,8 @@
 from fastapi import Body
 from jinja2 import Environment, StrictUndefined
+import pyodbc
+from typing import Dict
+import os 
 
 from eidolon_ai_sdk.agent.agent import Agent, AgentSpec, register_program
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
@@ -32,9 +35,39 @@ class SqlAgent(Agent, Specable[SqlAgentSpec]):
         )
         response_text = response_text.replace("```SQL", "").replace("```", "").strip()
         start_idx = response_text.find("SELECT")
-        sql_query = response_text[start_idx:] if start_idx != -1 else response_text
-        sql_query = sql_query.rstrip(';').strip()
-        logger.info(sql_query)
+        sql_statement = response_text[start_idx:] if start_idx != -1 else response_text
+        sql_statement = sql_statement.rstrip(';').strip()
+        logger.info(sql_statement)
 #         todo actually execute sql
-        return sql_query
+        return sql_query(sql_statement)
 
+def sql_query(sql_statement: str) -> Dict:
+    # Updated connection string with new database details
+    conn_str = os.environ.get("CRIME_SQL_CONNECTION_STRING")
+    
+    # try:
+    #     # Establish a connection to the database
+    with pyodbc.connect(conn_str) as conn:
+        print("Connected Successfully")
+        # Create a cursor from the connection
+        cursor = conn.cursor()
+        
+        # Execute the provided SQL statement
+        cursor.execute(sql_statement)
+        
+        # Fetch all the results
+        results = cursor.fetchall()
+        
+        # Assuming you want to return the results as a list of dictionaries
+        columns = [column[0] for column in cursor.description]
+        return [dict(zip(columns, row)) for row in results]
+            
+    # except pyodbc.Error as e:
+    #     print("An error occurred:", e)
+    #     # return {}  # Return an empty dictionary or handle the error as appropriate
+
+# # Example usage:
+# sql_statement = "SELECT TOP 10 * FROM IncidentReports"  # Replace with your actual SQL query
+# results = sql_query(sql_statement)
+# for row in results:
+#     print(row)
