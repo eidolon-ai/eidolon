@@ -16,7 +16,7 @@ export default defineConfig({
             social: {
                 github: 'https://github.com/eidolon-ai/eidolon',
                 youtube: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
-                discord: 'https://discord.gg/Wk3ntSna',
+                discord: 'https://discord.gg/6kVQrHpeqG',
                 linkedin: 'https://www.linkedin.com/company/august-data/',
             },
             sidebar: [
