@@ -165,13 +165,21 @@ export async function getChat(id: string) {
   if (!userId || !id) {
     return null
   }
-  const json = await fetch(`${chatServerURL}/system/processes/${id}?userId=${userId}`).then(resp => resp.json())
+  const json = await fetch(`${chatServerURL}/system/processes/${id}?userId=${userId}`).then(resp => {
+    if (resp.ok) {
+      return resp.json()
+    } else {
+      console.log("error", resp)
+      return undefined
+    }
+  })
 
-  json.id = json.process_id
-  json.title = json.title || json.agent
-  json.userId = userId
-  json.path = `/chat/${json.id}`
-
+  if (json) {
+    json.id = json.process_id
+    json.title = json.title || json.agent
+    json.userId = userId
+    json.path = `/chat/${json.id}`
+  }
   return json as Chat
 }
 

@@ -44,7 +44,6 @@ export function SidebarList() {
   }
 
   useEffect(() => {
-    console.log("here")
     getChatsForUI().then(chats => setDataByDate(chats))
     return () => {
     }
