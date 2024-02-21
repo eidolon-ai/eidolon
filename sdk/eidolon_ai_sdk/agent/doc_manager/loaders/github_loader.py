@@ -26,7 +26,8 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
     repo: str
     client_args: dict = {}
     root_path: Optional[str] = None
-    pattern: str = "**/*"
+    pattern: str | List[str] = "**/*"
+    exclude: str | List[str] = []
 
     def root_content(self):
         return f"https://api.github.com/repos/{self.owner}/{self.repo}/contents/{self.root_path or ''}"
@@ -62,9 +63,21 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
         # response = await client.get(url=url or self.spec.root_content())
         response.raise_for_status()
         streams = []
+        patterns = self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern]
+        excluded = self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude]
         for record in response.json():
             if record["type"] == "file":
-                if fnmatch.fnmatch(record["path"], self.spec.pattern):
+                matched = False
+                for p in patterns:
+                    if fnmatch.fnmatch(record["path"], p):
+                        matched = True
+                        break
+                if matched:
+                    for e in excluded:
+                        if fnmatch.fnmatch(record["path"], e):
+                            matched = False
+                            break
+                if matched:
                     yield record
                 else:
                     logger.debug(f"Skipping file {record['path']}")

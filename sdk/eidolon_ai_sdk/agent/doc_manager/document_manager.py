@@ -94,6 +94,8 @@ class DocumentManager(Specable[DocumentManagerSpec]):
 
     async def sync_docs(self, force: bool = False):
         if force or self.last_reload + self.spec.recheck_frequency < time.time():
+            self.logger.info(f"Syncing files from {self.spec.name}")
+
             self.last_reload = time.time()
             data = {}
             async for file in AgentOS.symbolic_memory.find(self.collection_name, {}):
