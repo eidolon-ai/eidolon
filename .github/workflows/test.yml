@@ -125,6 +125,14 @@ jobs:
   test-webui:
     runs-on: ubuntu-latest
     steps:
+#      - name: Set Node.js 21.x
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 21.x
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
       - uses: actions/checkout@v4
       - name: lint
         run: npm run lint
