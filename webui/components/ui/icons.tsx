@@ -26,7 +26,7 @@ export function IconGoogle({className, ...props}: React.ComponentProps<'svg'>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 326667 333333" shapeRendering="geometricPrecision"
          textRendering="geometricPrecision" imageRendering="optimizeQuality" fillRule="evenodd" clipRule="evenodd"
-         className={cn('h-4 w-4', className)} {...props}>
+         className={cn('size-4', className)} {...props}>
       <path
         d="M326667 170370c0-13704-1112-23704-3518-34074H166667v61851h91851c-1851 15371-11851 38519-34074 54074l-311 2071 49476 38329 3428 342c31481-29074 49630-71852 49630-122593m0 0z"
         fill="#4285f4"/>

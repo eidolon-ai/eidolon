@@ -27,8 +27,8 @@ You will also need a running Eidolon Machine. For instructions on how to run a m
 You need to create a `.env` file in the weibui directory of the project. Copy
 the contents of the 'template.env' file and paste it into the `.env` file.
 
-```zsh
-cp template.env .env
+```bash
+make .env
 ```
 
 The content are described in the template file.
@@ -44,6 +44,6 @@ pnpm install
 pnpm run dev
 ```
 
-This command will start the Eidolon Web UI on a local development server, usually accessible at `http://localhost:3000`.
+This command will start the Eidolon Web UI on a local development server, usually accessible at [http://localhost:3000](http://localhost:3000).
 
 Happy coding!
