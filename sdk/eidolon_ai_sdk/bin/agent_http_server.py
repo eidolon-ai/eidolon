@@ -18,13 +18,13 @@ from starlette.responses import Response, JSONResponse
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.io.events import StreamEvent
+from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_sdk.system.request_context import ContextMiddleware
+from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()

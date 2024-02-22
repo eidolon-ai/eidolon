@@ -17,10 +17,11 @@ replay = "eidolon_ai_sdk.bin.replay:app"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
+eidolon_ai_client = {path = "../client/python", develop = true}
 fastapi = "^0.109.0"
 pyyaml = "^6.0.1"
 jsonschema = "^4.21.1"
-httpx = "^0.26.0"
+httpx = "^0.27.0"
 uvicorn = "^0.27.0"
 numpy = "^1.26.3"
 motor = "^3.3.2"

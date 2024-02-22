@@ -1,18 +1,22 @@
 from __future__ import annotations
 
-import jsonref
-from pydantic import BaseModel, Field, Extra
+import os
 from typing import List, Any, AsyncIterator, Optional
 from urllib.parse import urljoin
 
-from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.io.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
-from eidolon_ai_sdk.system.agent_contract import DeleteProcessResponse
-from eidolon_ai_sdk.util.aiohttp import stream_content, get_content, post_content, delete
+import jsonref
+from pydantic import BaseModel, Field, Extra
+
+from eidolon_ai_client.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
+from eidolon_ai_client.util.aiohttp import stream_content, get_content, post_content, delete
+
+
+def current_machine_url() -> str:
+    return os.environ.get("EIDOLON_LOCAL_MACHINE", "http://localhost:8080")
 
 
 class Machine(BaseModel):
-    machine: str = Field(default_factory=AgentOS.current_machine_url)
+    machine: str = Field(default_factory=current_machine_url)
 
     async def get_schema(self) -> dict:
         url = urljoin(self.machine, "openapi.json")
@@ -24,7 +28,7 @@ class Machine(BaseModel):
 
 
 class Agent(BaseModel):
-    machine: str = Field(default_factory=AgentOS.current_machine_url)
+    machine: str = Field(default_factory=current_machine_url)
     agent: str
 
     def stream_program(self, program_name: str, body: Optional[Any] = None) -> AgentResponseIterator:
@@ -58,7 +62,7 @@ class Agent(BaseModel):
 
 
 class Program(BaseModel):
-    machine: str = Field(default_factory=AgentOS.current_machine_url)
+    machine: str = Field(default_factory=current_machine_url)
     agent: str
     program: str
 
@@ -81,7 +85,7 @@ class Program(BaseModel):
 
 
 class Process(BaseModel):
-    machine: str = Field(default_factory=AgentOS.current_machine_url)
+    machine: str = Field(default_factory=current_machine_url)
     agent: str
     process_id: str
 
@@ -155,3 +159,8 @@ class AgentResponseIterator(AsyncIterator[StreamEvent]):
 
     async def iteration_complete(self):
         pass
+
+
+class DeleteProcessResponse(BaseModel):
+    process_id: str
+    deleted: int

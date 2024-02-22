@@ -6,7 +6,7 @@ from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit, MemoryUnitConfig
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class RawMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):

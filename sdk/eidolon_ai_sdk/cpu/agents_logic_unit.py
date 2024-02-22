@@ -1,14 +1,14 @@
 from pydantic import BaseModel
 from typing import List, Any, Dict, AsyncIterator
 
-from eidolon_ai_sdk.agent.client import Machine, Agent, AgentResponseIterator
+from eidolon_ai_client.client import Machine, Agent, AgentResponseIterator
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
-from eidolon_ai_sdk.io.events import StreamEvent
+from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 

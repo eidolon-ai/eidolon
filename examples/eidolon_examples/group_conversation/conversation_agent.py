@@ -6,7 +6,7 @@ from eidolon_ai_sdk.agent.agent import AgentState, register_program, register_ac
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText
-from eidolon_ai_sdk.io.events import AgentStateEvent
+from eidolon_ai_client.events import AgentStateEvent
 from eidolon_ai_sdk.system.reference_model import Reference, Specable
 
 
