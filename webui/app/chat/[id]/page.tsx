@@ -1,9 +1,9 @@
 import {notFound, redirect} from 'next/navigation'
 
-import {getChat} from "@/app/api/chat/route";
 import * as React from "react";
 import {getServerSession} from "next-auth";
 import {ChatEvents} from "@/components/chat-events";
+import {getChat} from "@/app/api/chat/messages/chatHelpers";
 
 export const runtime = 'nodejs'
 export const preferredRegion = 'home'

@@ -1,4 +1,3 @@
-import {getChats} from "@/app/api/chat/route";
 import {redirect} from "next/navigation";
 import {getServerSession} from "next-auth";
 
