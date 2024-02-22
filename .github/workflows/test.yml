@@ -127,11 +127,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: lint
-      run: npm lint
+      run: npm run lint
       working-directory: webui
     - name: build
-      run: npm build
+      run: npm run build
       working-directory: webui
     - name: test
-      run: npm test --if-present
+      run: npm run test --if-present
       working-directory: webui
