@@ -57,7 +57,7 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
                 yield RemovedFile(file_path)
 
     async def _raw_list_files(self, client: AsyncClient, url=None) -> AsyncIterator[Dict[str, Any]]:
-        token_ = os.environ["GITHUB_TOKEN"]
+        token_ = os.environ.get("GITHUB_TOKEN")
         headers = {"Authorization": f"Bearer {token_}"} if token_ else None
         response = await client.get(url=url or self.spec.root_content(), headers=headers)
         # response = await client.get(url=url or self.spec.root_content())
