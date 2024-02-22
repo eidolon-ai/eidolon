@@ -18,7 +18,7 @@ from starlette.responses import JSONResponse
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     StartAgentCallEvent,
     AgentStateEvent,
     BaseStreamEvent,
@@ -41,11 +41,11 @@ from eidolon_ai_sdk.system.agent_contract import (
 )
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
-from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 # todo, agent controller has become a mega impl, we should break up responsibilities

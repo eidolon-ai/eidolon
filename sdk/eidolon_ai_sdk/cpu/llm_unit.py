@@ -5,7 +5,7 @@ from typing import List, Any, Dict, Literal, Union, AsyncIterator
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_sdk.io.events import StreamEvent
+from eidolon_ai_client.events import StreamEvent
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,

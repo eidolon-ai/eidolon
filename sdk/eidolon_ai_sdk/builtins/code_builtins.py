@@ -25,7 +25,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore

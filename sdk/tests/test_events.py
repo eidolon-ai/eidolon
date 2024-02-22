@@ -1,4 +1,4 @@
-from eidolon_ai_sdk.io.events import BaseStreamEvent
+from eidolon_ai_client.events import BaseStreamEvent
 
 
 def test_from_dict():

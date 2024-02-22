@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class SearchResult(BaseModel):

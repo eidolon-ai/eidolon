@@ -4,8 +4,8 @@ from fastapi import Body, HTTPException
 from typing import Annotated
 
 from eidolon_ai_sdk.agent.agent import register_program
-from eidolon_ai_sdk.agent.client import Agent
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.client import Agent
+from eidolon_ai_client.events import (
     AgentStateEvent,
     StringOutputEvent,
     StartAgentCallEvent,
@@ -41,7 +41,7 @@ class TestHelloWorld:
 
     @pytest_asyncio.fixture(scope="function")
     async def client(self, server):
-        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
+        async with httpx.AsyncClient(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     def compare_events(self, events, expected_events):
@@ -60,13 +60,13 @@ class TestHelloWorld:
             assert event_copy == expected_event_copy
 
     async def test_hello_world(self, server, client):
-        post = client.post("/agents/HelloWorld/programs/idle", json="world")
+        post = await client.post("/agents/HelloWorld/programs/idle", json="world")
         assert post.status_code == 200
         data = post.json()
         process_id = data["process_id"]
         assert data["data"] == "Hello, world!"
 
-        response = client.get(f"/agents/HelloWorld/processes/{process_id}/events")
+        response = await client.get(f"/agents/HelloWorld/processes/{process_id}/events")
         events = response.json()
         expected_events = [
             UserInputEvent(input=dict(name="world")),
@@ -90,5 +90,5 @@ class TestHelloWorld:
 
         assert process_id is not None
 
-        events = client.get(f"/agents/HelloWorld/processes/{process_id}/events")
+        events = await client.get(f"/agents/HelloWorld/processes/{process_id}/events")
         self.compare_events(events.json(), server_events)

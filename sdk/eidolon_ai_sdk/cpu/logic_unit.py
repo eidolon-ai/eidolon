@@ -8,12 +8,11 @@ from pydantic import BaseModel, TypeAdapter
 from typing import Dict, List, AsyncIterator, Coroutine
 
 from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_message import ToolCall
 from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_sdk.io.events import SuccessEvent, ObjectOutputEvent, ErrorEvent, BaseStreamEvent, StringOutputEvent
+from eidolon_ai_client.events import SuccessEvent, ObjectOutputEvent, ErrorEvent, BaseStreamEvent, StringOutputEvent, ToolCall
 from eidolon_ai_sdk.system.fn_handler import register_handler, FnHandler, get_handlers
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 @dataclass

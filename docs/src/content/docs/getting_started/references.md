@@ -166,7 +166,7 @@ from fastapi import Body
 from pydantic import BaseModel
 from eidolon_ai_sdk.agent.agent import register_program, Agent
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class TestCase(BaseModel):

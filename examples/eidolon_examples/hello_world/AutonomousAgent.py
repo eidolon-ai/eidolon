@@ -4,7 +4,7 @@ from typing import Annotated
 
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action, Agent
 from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
-from eidolon_ai_sdk.io.events import AgentStateEvent
+from eidolon_ai_client.events import AgentStateEvent
 
 
 class IdleStateRepresentation(BaseModel):

@@ -12,7 +12,7 @@ from srsly.ruamel_yaml import YAML
 from srsly.ruamel_yaml.scalarstring import walk_tree
 
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class ReplayConfig(BaseModel):

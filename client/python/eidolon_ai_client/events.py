@@ -5,8 +5,6 @@ from enum import Enum
 from pydantic import BaseModel, TypeAdapter, field_serializer
 from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional
 
-from eidolon_ai_sdk.cpu.llm_message import ToolCall
-
 
 class Category(Enum):
     START = "start"
@@ -169,3 +167,9 @@ async def convert_output_object(it: AsyncIterator[StreamEvent], output_format: T
         if event.is_root_and_type(ObjectOutputEvent):
             event.content = model.validate_python(event.content)
         yield event
+
+
+class ToolCall(BaseModel):
+    tool_call_id: str
+    name: str
+    arguments: Dict[str, Any]

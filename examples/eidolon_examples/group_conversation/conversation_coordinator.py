@@ -12,7 +12,7 @@ from eidolon_examples.group_conversation.conversation_agent import (
     Statement,
 )
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_sdk.agent.client import Machine
+from eidolon_ai_client.client import Machine
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable
 

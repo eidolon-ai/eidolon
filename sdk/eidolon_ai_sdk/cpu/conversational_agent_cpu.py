@@ -8,13 +8,13 @@ from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     StreamEvent,
     LLMToolCallRequestEvent,
     ToolCallStartEvent,
 )
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError, merge_streams
 
 
