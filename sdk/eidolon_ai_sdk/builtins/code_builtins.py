@@ -2,6 +2,7 @@ from typing import Tuple
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
+from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
 from eidolon_ai_sdk.agent.doc_manager.parsers.auto_parser import AutoParser
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
@@ -121,6 +122,7 @@ def named_builtins():
         RAGFusionReranker,
         (DocumentLoader, FilesystemLoader),
         FilesystemLoader,
+        GitHubLoader,
         ToTChecker,
         OpenAiSpeech,
         # config objects
