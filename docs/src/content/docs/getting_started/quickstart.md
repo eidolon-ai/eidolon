@@ -34,14 +34,10 @@ kind: Agent
 metadata:
   name: hello_world
 spec:
-  implementation: GenericAgent
   description: "This is an example of a generic agent which greets people by name."
   system_prompt: "You are a friendly greeter who greets people by name while using emojis"
-  user_prompt: "Hi, my name is {{name}}"
-  input_schema:
-    name:
-      type: string
-      description: The caller's name
+  actions:
+    - user_prompt: "Hi, my name is {{name}}"
 ```
 
 ## Step 3: Run Eidolon Server
