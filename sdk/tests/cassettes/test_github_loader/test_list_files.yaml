@@ -1,0 +1,1232 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/__init__.py"}},{"name":"agent","path":"sdk/tests/agent","sha":"2d23fed62f35dbf40a67d894349c35571cf0a952","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/2d23fed62f35dbf40a67d894349c35571cf0a952","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/2d23fed62f35dbf40a67d894349c35571cf0a952","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent"}},{"name":"conftest.py","path":"sdk/tests/conftest.py","sha":"d3cc014532d5bc85a92adc586c16a621fd58e112","size":12065,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/conftest.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/conftest.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d3cc014532d5bc85a92adc586c16a621fd58e112","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/conftest.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/conftest.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d3cc014532d5bc85a92adc586c16a621fd58e112","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/conftest.py"}},{"name":"cpu","path":"sdk/tests/cpu","sha":"1820090a3a9c5df18879bdf11018d99a16f2c088","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/cpu?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/cpu","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/1820090a3a9c5df18879bdf11018d99a16f2c088","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/cpu?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/1820090a3a9c5df18879bdf11018d99a16f2c088","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/cpu"}},{"name":"images","path":"sdk/tests/images","sha":"e1574fb7e93ec022ca1d71379e4a83bea512e62c","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/images?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/images","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/e1574fb7e93ec022ca1d71379e4a83bea512e62c","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/images?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/e1574fb7e93ec022ca1d71379e4a83bea512e62c","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/images"}},{"name":"impl","path":"sdk/tests/impl","sha":"d13bd29f9c0f0b0e15e1816dd50024b90a9e7aba","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/impl","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/d13bd29f9c0f0b0e15e1816dd50024b90a9e7aba","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/d13bd29f9c0f0b0e15e1816dd50024b90a9e7aba","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/impl"}},{"name":"system","path":"sdk/tests/system","sha":"7f2688cb21f7d668d5c6ec0e24e7f7139dbb82b6","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/system","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/7f2688cb21f7d668d5c6ec0e24e7f7139dbb82b6","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/7f2688cb21f7d668d5c6ec0e24e7f7139dbb82b6","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/system"}},{"name":"test_events.py","path":"sdk/tests/test_events.py","sha":"5419ee6b388499f622c0ac4b2c2b9d14a6e755c1","size":150,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_events.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_events.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/5419ee6b388499f622c0ac4b2c2b9d14a6e755c1","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/test_events.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_events.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/5419ee6b388499f622c0ac4b2c2b9d14a6e755c1","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_events.py"}},{"name":"test_replay.py","path":"sdk/tests/test_replay.py","sha":"0334b5b41494d1fb8fac63feec93ebf6af099d47","size":4786,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_replay.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_replay.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/0334b5b41494d1fb8fac63feec93ebf6af099d47","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/test_replay.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_replay.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/0334b5b41494d1fb8fac63feec93ebf6af099d47","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_replay.py"}},{"name":"test_request_context.py","path":"sdk/tests/test_request_context.py","sha":"e251c5b5215122612c1e19fb8fa61035316ba7a5","size":514,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_request_context.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_request_context.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e251c5b5215122612c1e19fb8fa61035316ba7a5","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/test_request_context.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_request_context.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e251c5b5215122612c1e19fb8fa61035316ba7a5","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_request_context.py"}},{"name":"test_stream_collector.py","path":"sdk/tests/test_stream_collector.py","sha":"796a163e53d4985fed2539c5755ae7d2add0408c","size":1804,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_stream_collector.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_stream_collector.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/796a163e53d4985fed2539c5755ae7d2add0408c","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/test_stream_collector.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_stream_collector.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/796a163e53d4985fed2539c5755ae7d2add0408c","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_stream_collector.py"}},{"name":"test_web_search.py","path":"sdk/tests/test_web_search.py","sha":"6aa963043456c34f6a4642a977833205bc65ee64","size":519,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_web_search.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_web_search.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6aa963043456c34f6a4642a977833205bc65ee64","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/test_web_search.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/test_web_search.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6aa963043456c34f6a4642a977833205bc65ee64","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/test_web_search.py"}},{"name":"util","path":"sdk/tests/util","sha":"7cb4c95fef61cc0672d672a3f225ec433cb4aa87","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/util","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/7cb4c95fef61cc0672d672a3f225ec433cb4aa87","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/7cb4c95fef61cc0672d672a3f225ec433cb4aa87","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/util"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BA:25592D:157CE2:1EFB58:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4476'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '524'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent?ref=main
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/agent/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/__init__.py"}},{"name":"cassettes","path":"sdk/tests/agent/cassettes","sha":"c9de494a8533845a8fbbb7d4bc78e98d14fbdaed","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/cassettes","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/c9de494a8533845a8fbbb7d4bc78e98d14fbdaed","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/c9de494a8533845a8fbbb7d4bc78e98d14fbdaed","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/cassettes"}},{"name":"doc_manager","path":"sdk/tests/agent/doc_manager","sha":"70a742d7170e89be69c3d7be904ae660886b3c2e","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/doc_manager","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/70a742d7170e89be69c3d7be904ae660886b3c2e","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/70a742d7170e89be69c3d7be904ae660886b3c2e","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/doc_manager"}},{"name":"retriever_docs","path":"sdk/tests/agent/retriever_docs","sha":"07373e7973c0fa7894dd808a5195b91a8af413c7","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/retriever_docs","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/07373e7973c0fa7894dd808a5195b91a8af413c7","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/07373e7973c0fa7894dd808a5195b91a8af413c7","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/retriever_docs"}},{"name":"test_retriever_agent.py","path":"sdk/tests/agent/test_retriever_agent.py","sha":"a39fbbf9087bc04e5b199a04bfc211100bb7735d","size":1320,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/test_retriever_agent.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/test_retriever_agent.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/a39fbbf9087bc04e5b199a04bfc211100bb7735d","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/test_retriever_agent.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/test_retriever_agent.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/a39fbbf9087bc04e5b199a04bfc211100bb7735d","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/test_retriever_agent.py"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BA:25592D:157CE4:1EFB59:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4475'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '525'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/images?ref=main
+  response:
+    content: '[{"name":"cat.png","path":"sdk/tests/images/cat.png","sha":"b346e800748974075991481150e98004439576c4","size":320,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/images/cat.png?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/images/cat.png","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/b346e800748974075991481150e98004439576c4","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/images/cat.png","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/images/cat.png?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/b346e800748974075991481150e98004439576c4","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/images/cat.png"}},{"name":"dog.png","path":"sdk/tests/images/dog.png","sha":"de2459a31500df5f5c49cb86376f460070a5bb72","size":1888,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/images/dog.png?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/images/dog.png","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/de2459a31500df5f5c49cb86376f460070a5bb72","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/images/dog.png","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/images/dog.png?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/de2459a31500df5f5c49cb86376f460070a5bb72","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/images/dog.png"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BC:282C91:E2190:148468:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4474'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '526'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system?ref=main
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/system/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/__init__.py"}},{"name":"cassettes","path":"sdk/tests/system/cassettes","sha":"2ab6297071363775242aae4d4a1514cb2123ed1c","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/system/cassettes","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/2ab6297071363775242aae4d4a1514cb2123ed1c","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/2ab6297071363775242aae4d4a1514cb2123ed1c","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/system/cassettes"}},{"name":"test_code_agents.py","path":"sdk/tests/system/test_code_agents.py","sha":"16d8a97934a6d382c831e75e5f2382db23923cfe","size":13508,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_code_agents.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_code_agents.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/16d8a97934a6d382c831e75e5f2382db23923cfe","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/test_code_agents.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_code_agents.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/16d8a97934a6d382c831e75e5f2382db23923cfe","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_code_agents.py"}},{"name":"test_event_recording.py","path":"sdk/tests/system/test_event_recording.py","sha":"b4ceea5a224cefafe2187ee3454bd86655996a0d","size":3473,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_event_recording.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_event_recording.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/b4ceea5a224cefafe2187ee3454bd86655996a0d","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/test_event_recording.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_event_recording.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/b4ceea5a224cefafe2187ee3454bd86655996a0d","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_event_recording.py"}},{"name":"test_generic_agent.py","path":"sdk/tests/system/test_generic_agent.py","sha":"ba46ff1353a04cae4be9fd81e140dc054dbe6534","size":15585,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_generic_agent.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_generic_agent.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/ba46ff1353a04cae4be9fd81e140dc054dbe6534","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/test_generic_agent.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_generic_agent.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/ba46ff1353a04cae4be9fd81e140dc054dbe6534","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_generic_agent.py"}},{"name":"test_reference_model.py","path":"sdk/tests/system/test_reference_model.py","sha":"d18d095c4c2e664413fb1248de11b059295e6774","size":6098,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_reference_model.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_reference_model.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d18d095c4c2e664413fb1248de11b059295e6774","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/test_reference_model.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/test_reference_model.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d18d095c4c2e664413fb1248de11b059295e6774","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/test_reference_model.py"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BE:253F79:1690E3:200FFB:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4472'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '528'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/cpu?ref=main
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/cpu/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/cpu/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/cpu/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/cpu/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/cpu/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/cpu/__init__.py"}},{"name":"test_conversational_logic_unit.py","path":"sdk/tests/cpu/test_conversational_logic_unit.py","sha":"f7d88058343cf83f399850f340e581f5f47c8ed4","size":3204,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/cpu/test_conversational_logic_unit.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/cpu/test_conversational_logic_unit.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/f7d88058343cf83f399850f340e581f5f47c8ed4","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/cpu/test_conversational_logic_unit.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/cpu/test_conversational_logic_unit.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/f7d88058343cf83f399850f340e581f5f47c8ed4","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/cpu/test_conversational_logic_unit.py"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BB:252DF3:14DD0F:1E5B8E:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4471'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '529'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util?ref=main
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/util/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/util/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/__init__.py"}},{"name":"test_class_utils.py","path":"sdk/tests/util/test_class_utils.py","sha":"9c5cb872675010b34e7de81922e68c573bbf0a5b","size":2483,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/test_class_utils.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/test_class_utils.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/9c5cb872675010b34e7de81922e68c573bbf0a5b","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/util/test_class_utils.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/test_class_utils.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/9c5cb872675010b34e7de81922e68c573bbf0a5b","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/test_class_utils.py"}},{"name":"test_schema_to_model.py","path":"sdk/tests/util/test_schema_to_model.py","sha":"dfbb276bca6f4be2482e6c1458bfb138f5415f82","size":5635,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/test_schema_to_model.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/test_schema_to_model.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/dfbb276bca6f4be2482e6c1458bfb138f5415f82","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/util/test_schema_to_model.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/test_schema_to_model.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/dfbb276bca6f4be2482e6c1458bfb138f5415f82","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/test_schema_to_model.py"}},{"name":"test_str_utils.py","path":"sdk/tests/util/test_str_utils.py","sha":"9a6e36d70f76195bacb1ae5b5194b062cdbc787f","size":1656,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/test_str_utils.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/test_str_utils.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/9a6e36d70f76195bacb1ae5b5194b062cdbc787f","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/util/test_str_utils.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/util/test_str_utils.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/9a6e36d70f76195bacb1ae5b5194b062cdbc787f","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/util/test_str_utils.py"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BF:2537C8:177F8B:20FEC7:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4473'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '527'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl?ref=main
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/impl/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/impl/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/impl/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/impl/__init__.py"}},{"name":"test_local_symbolic_memory.py","path":"sdk/tests/impl/test_local_symbolic_memory.py","sha":"88e8668b39dba79aa2522db92c3f539578623b19","size":4210,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl/test_local_symbolic_memory.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/impl/test_local_symbolic_memory.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/88e8668b39dba79aa2522db92c3f539578623b19","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/impl/test_local_symbolic_memory.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl/test_local_symbolic_memory.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/88e8668b39dba79aa2522db92c3f539578623b19","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/impl/test_local_symbolic_memory.py"}},{"name":"test_messsage_summarizer.py","path":"sdk/tests/impl/test_messsage_summarizer.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl/test_messsage_summarizer.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/impl/test_messsage_summarizer.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/impl/test_messsage_summarizer.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/impl/test_messsage_summarizer.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/impl/test_messsage_summarizer.py"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BD:2552AA:161075:1F8F74:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4470'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '530'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs?ref=main
+  response:
+    content: '[{"name":"bar","path":"sdk/tests/agent/retriever_docs/bar","sha":"d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","size":310,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/bar?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/bar","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/bar","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/bar?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/bar"}},{"name":"baz","path":"sdk/tests/agent/retriever_docs/baz","sha":"6256a12c95bdd0f48b6f38e553433f54747097e0","size":391,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/baz?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/baz","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/baz","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/baz?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/baz"}},{"name":"boo","path":"sdk/tests/agent/retriever_docs/boo","sha":"4b44fe6f7b06882acc5208e3cb6d19dec1135e95","size":335,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/boo?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/boo","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/boo","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/boo?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/boo"}},{"name":"car","path":"sdk/tests/agent/retriever_docs/car","sha":"d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","size":310,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/car?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/car","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/car","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/car?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/car"}},{"name":"caz","path":"sdk/tests/agent/retriever_docs/caz","sha":"6256a12c95bdd0f48b6f38e553433f54747097e0","size":391,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/caz?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/caz","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/caz","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/caz?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/caz"}},{"name":"coo","path":"sdk/tests/agent/retriever_docs/coo","sha":"4b44fe6f7b06882acc5208e3cb6d19dec1135e95","size":335,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/coo?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/coo","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/coo","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/coo?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/coo"}},{"name":"dar","path":"sdk/tests/agent/retriever_docs/dar","sha":"d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","size":310,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/dar?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/dar","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/dar","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/dar?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/dar"}},{"name":"daz","path":"sdk/tests/agent/retriever_docs/daz","sha":"6256a12c95bdd0f48b6f38e553433f54747097e0","size":391,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/daz?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/daz","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/daz","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/daz?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/daz"}},{"name":"doo","path":"sdk/tests/agent/retriever_docs/doo","sha":"4b44fe6f7b06882acc5208e3cb6d19dec1135e95","size":335,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/doo?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/doo","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/doo","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/doo?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/doo"}},{"name":"ear","path":"sdk/tests/agent/retriever_docs/ear","sha":"d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","size":310,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/ear?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/ear","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/ear","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/ear?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/d7fd9445df0af66972e23ff3b6c05a8ef90ce55f","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/ear"}},{"name":"eaz","path":"sdk/tests/agent/retriever_docs/eaz","sha":"6256a12c95bdd0f48b6f38e553433f54747097e0","size":391,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/eaz?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/eaz","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/eaz","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/eaz?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/6256a12c95bdd0f48b6f38e553433f54747097e0","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/eaz"}},{"name":"eoo","path":"sdk/tests/agent/retriever_docs/eoo","sha":"4b44fe6f7b06882acc5208e3cb6d19dec1135e95","size":335,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/eoo?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/eoo","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/eoo","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/eoo?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/eoo"}},{"name":"foo","path":"sdk/tests/agent/retriever_docs/foo","sha":"4b44fe6f7b06882acc5208e3cb6d19dec1135e95","size":335,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/foo?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/foo","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/retriever_docs/foo","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/retriever_docs/foo?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b44fe6f7b06882acc5208e3cb6d19dec1135e95","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/retriever_docs/foo"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BC:282C91:E2195:14846E:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4468'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '532'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes?ref=main
+  response:
+    content: '[{"name":"test_generic_agent","path":"sdk/tests/system/cassettes/test_generic_agent","sha":"e92d7fa1c1bbe990312ec1c4720d01f15cb342f8","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/system/cassettes/test_generic_agent","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/e92d7fa1c1bbe990312ec1c4720d01f15cb342f8","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/e92d7fa1c1bbe990312ec1c4720d01f15cb342f8","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/system/cassettes/test_generic_agent"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BF:2537C8:177F8E:20FECE:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4469'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '531'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager?ref=main
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/agent/doc_manager/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/doc_manager/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/__init__.py"}},{"name":"parsers","path":"sdk/tests/agent/doc_manager/parsers","sha":"15856bcd3f8d9ff69f45d048037acd063c065ac2","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/doc_manager/parsers","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/15856bcd3f8d9ff69f45d048037acd063c065ac2","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/15856bcd3f8d9ff69f45d048037acd063c065ac2","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/doc_manager/parsers"}},{"name":"transformer","path":"sdk/tests/agent/doc_manager/transformer","sha":"8b9cd1ac2e0f290738977fd6eccc9cf2737678f6","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/transformer?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/doc_manager/transformer","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/8b9cd1ac2e0f290738977fd6eccc9cf2737678f6","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/transformer?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/8b9cd1ac2e0f290738977fd6eccc9cf2737678f6","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/doc_manager/transformer"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BE:253F79:1690E7:201000:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4467'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '533'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes?ref=main
+  response:
+    content: '[{"name":"test_retriever_agent","path":"sdk/tests/agent/cassettes/test_retriever_agent","sha":"69f559788795adcf335334290518de66a4d7c64f","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes/test_retriever_agent?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/cassettes/test_retriever_agent","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/69f559788795adcf335334290518de66a4d7c64f","download_url":null,"type":"dir","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes/test_retriever_agent?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/trees/69f559788795adcf335334290518de66a4d7c64f","html":"https://github.com/eidolon-ai/eidolon/tree/main/sdk/tests/agent/cassettes/test_retriever_agent"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BD:2552AA:16107A:1F8F7B:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4466'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '534'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes/test_retriever_agent?ref=main
+  response:
+    content: '[{"name":"test_search.yaml","path":"sdk/tests/agent/cassettes/test_retriever_agent/test_search.yaml","sha":"48087271a775240e9fed3ec3c5eac7579a004c39","size":209977,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes/test_retriever_agent/test_search.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/cassettes/test_retriever_agent/test_search.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/48087271a775240e9fed3ec3c5eac7579a004c39","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/cassettes/test_retriever_agent/test_search.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/cassettes/test_retriever_agent/test_search.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/48087271a775240e9fed3ec3c5eac7579a004c39","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/cassettes/test_retriever_agent/test_search.yaml"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BD:2552AA:16107C:1F8F7C:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4465'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '535'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent?ref=main
+  response:
+    content: '[{"name":"TestAgentsWithReferences.test_can_communicate.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_communicate.yaml","sha":"354c81e5143c3b1a7a1cc80a0f59d393a73bb46d","size":15449,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_communicate.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_communicate.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/354c81e5143c3b1a7a1cc80a0f59d393a73bb46d","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_communicate.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_communicate.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/354c81e5143c3b1a7a1cc80a0f59d393a73bb46d","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_communicate.yaml"}},{"name":"TestAgentsWithReferences.test_can_replay_tool_calls.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_replay_tool_calls.yaml","sha":"c794267bdc75713ee11019ce960cab67942a1cb8","size":23422,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_replay_tool_calls.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_replay_tool_calls.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/c794267bdc75713ee11019ce960cab67942a1cb8","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_replay_tool_calls.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_replay_tool_calls.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/c794267bdc75713ee11019ce960cab67942a1cb8","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_can_replay_tool_calls.yaml"}},{"name":"TestAgentsWithReferences.test_list_body.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_list_body.yaml","sha":"070b0b53ba52b08157513131e60487aa2d1191a9","size":15763,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_list_body.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_list_body.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/070b0b53ba52b08157513131e60487aa2d1191a9","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_list_body.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_list_body.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/070b0b53ba52b08157513131e60487aa2d1191a9","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_list_body.yaml"}},{"name":"TestAgentsWithReferences.test_passes_context.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_passes_context.yaml","sha":"8891567302dc38f85d6effea6d972e8e2208cd7e","size":38403,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_passes_context.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_passes_context.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/8891567302dc38f85d6effea6d972e8e2208cd7e","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_passes_context.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_passes_context.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/8891567302dc38f85d6effea6d972e8e2208cd7e","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_passes_context.yaml"}},{"name":"TestAgentsWithReferences.test_respond_after_tool_call.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_respond_after_tool_call.yaml","sha":"740a149dc3ca29906efca2a67f36074bd5cfe436","size":15448,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_respond_after_tool_call.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_respond_after_tool_call.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/740a149dc3ca29906efca2a67f36074bd5cfe436","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_respond_after_tool_call.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_respond_after_tool_call.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/740a149dc3ca29906efca2a67f36074bd5cfe436","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_respond_after_tool_call.yaml"}},{"name":"TestAgentsWithReferences.test_string_only_body.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_string_only_body.yaml","sha":"749f6687f4e4e1088b8091b63c5b6fd703a02dab","size":14810,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_string_only_body.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_string_only_body.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/749f6687f4e4e1088b8091b63c5b6fd703a02dab","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_string_only_body.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_string_only_body.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/749f6687f4e4e1088b8091b63c5b6fd703a02dab","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestAgentsWithReferences.test_string_only_body.yaml"}},{"name":"TestGenericAgent.test_continued_conversation.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_continued_conversation.yaml","sha":"2cc7f4ce5c038e79201e1c4bcf81463a7c25ed64","size":20989,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_continued_conversation.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_continued_conversation.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/2cc7f4ce5c038e79201e1c4bcf81463a7c25ed64","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_continued_conversation.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_continued_conversation.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/2cc7f4ce5c038e79201e1c4bcf81463a7c25ed64","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_continued_conversation.yaml"}},{"name":"TestGenericAgent.test_deletes_conversational_memory.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_deletes_conversational_memory.yaml","sha":"f74ad51fa45c43b33d223f713d70be5189fac87e","size":5579,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_deletes_conversational_memory.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_deletes_conversational_memory.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/f74ad51fa45c43b33d223f713d70be5189fac87e","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_deletes_conversational_memory.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_deletes_conversational_memory.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/f74ad51fa45c43b33d223f713d70be5189fac87e","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_deletes_conversational_memory.yaml"}},{"name":"TestGenericAgent.test_llm_calls.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_llm_calls.yaml","sha":"4b3a99a55784903d651d22c8b027cf0aa0f9bb5d","size":4914,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_llm_calls.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_llm_calls.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b3a99a55784903d651d22c8b027cf0aa0f9bb5d","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_llm_calls.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_llm_calls.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/4b3a99a55784903d651d22c8b027cf0aa0f9bb5d","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgent.test_llm_calls.yaml"}},{"name":"TestGenericAgentWithToolCalls.test_normal_tool_call.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestGenericAgentWithToolCalls.test_normal_tool_call.yaml","sha":"2d56cf74f0fd06b103d1850ae5fbbe35ebbf0d7d","size":10835,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgentWithToolCalls.test_normal_tool_call.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgentWithToolCalls.test_normal_tool_call.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/2d56cf74f0fd06b103d1850ae5fbbe35ebbf0d7d","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgentWithToolCalls.test_normal_tool_call.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgentWithToolCalls.test_normal_tool_call.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/2d56cf74f0fd06b103d1850ae5fbbe35ebbf0d7d","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestGenericAgentWithToolCalls.test_normal_tool_call.yaml"}},{"name":"TestOutputTests.test_can_replay_llm_requests.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_can_replay_llm_requests.yaml","sha":"98a5cbe2c90e05785835a6efad0e9b3f79dac038","size":26529,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_can_replay_llm_requests.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_can_replay_llm_requests.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/98a5cbe2c90e05785835a6efad0e9b3f79dac038","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_can_replay_llm_requests.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_can_replay_llm_requests.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/98a5cbe2c90e05785835a6efad0e9b3f79dac038","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_can_replay_llm_requests.yaml"}},{"name":"TestOutputTests.test_generic_agent_cleans_up_images.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_cleans_up_images.yaml","sha":"73355877daf5b06f90f71fe2772b83de92bba10f","size":19013,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_cleans_up_images.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_cleans_up_images.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/73355877daf5b06f90f71fe2772b83de92bba10f","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_cleans_up_images.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_cleans_up_images.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/73355877daf5b06f90f71fe2772b83de92bba10f","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_cleans_up_images.yaml"}},{"name":"TestOutputTests.test_generic_agent_supports_image.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_image.yaml","sha":"105b4e47fb767cffd6d106d5a2b5506081f37d59","size":18313,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_image.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_image.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/105b4e47fb767cffd6d106d5a2b5506081f37d59","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_image.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_image.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/105b4e47fb767cffd6d106d5a2b5506081f37d59","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_image.yaml"}},{"name":"TestOutputTests.test_generic_agent_supports_multiple_images.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_multiple_images.yaml","sha":"e05588c763f343346307077a347f6583afd654c9","size":75999,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_multiple_images.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_multiple_images.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e05588c763f343346307077a347f6583afd654c9","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_multiple_images.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_multiple_images.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e05588c763f343346307077a347f6583afd654c9","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_multiple_images.yaml"}},{"name":"TestOutputTests.test_generic_agent_supports_object_output.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output.yaml","sha":"78ecfee3334157aa9cdc4468d86c96b2d07e27f3","size":7591,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/78ecfee3334157aa9cdc4468d86c96b2d07e27f3","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/78ecfee3334157aa9cdc4468d86c96b2d07e27f3","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output.yaml"}},{"name":"TestOutputTests.test_generic_agent_supports_object_output_with_stream.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output_with_stream.yaml","sha":"7f59cfe087b0aeb9582ebad4f4f99883528a39ef","size":7593,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output_with_stream.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output_with_stream.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/7f59cfe087b0aeb9582ebad4f4f99883528a39ef","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output_with_stream.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output_with_stream.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/7f59cfe087b0aeb9582ebad4f4f99883528a39ef","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_object_output_with_stream.yaml"}},{"name":"TestOutputTests.test_generic_agent_supports_string_stream.yaml","path":"sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_string_stream.yaml","sha":"b35abd23caf7048fe4293ec48446128f58a3a529","size":7817,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_string_stream.yaml?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_string_stream.yaml","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/b35abd23caf7048fe4293ec48446128f58a3a529","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_string_stream.yaml","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_string_stream.yaml?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/b35abd23caf7048fe4293ec48446128f58a3a529","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/system/cassettes/test_generic_agent/TestOutputTests.test_generic_agent_supports_string_stream.yaml"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BC:282C91:E2196:14846F:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4464'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '536'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/transformer?ref=main
+  response:
+    content: '[{"name":"__init__.py","path":"sdk/tests/agent/doc_manager/transformer/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/transformer/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/transformer/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/doc_manager/transformer/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/transformer/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/transformer/__init__.py"}},{"name":"test_RecursiveCharacterTextSplitter.py","path":"sdk/tests/agent/doc_manager/transformer/test_RecursiveCharacterTextSplitter.py","sha":"5c68777903039019b0f8fe66cf5a169beb28e638","size":1816,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/transformer/test_RecursiveCharacterTextSplitter.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/transformer/test_RecursiveCharacterTextSplitter.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/5c68777903039019b0f8fe66cf5a169beb28e638","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/doc_manager/transformer/test_RecursiveCharacterTextSplitter.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/transformer/test_RecursiveCharacterTextSplitter.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/5c68777903039019b0f8fe66cf5a169beb28e638","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/transformer/test_RecursiveCharacterTextSplitter.py"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BF:2537C8:177F92:20FED1:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4463'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '537'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      host:
+      - api.github.com
+      user-agent:
+      - python-httpx/0.26.0
+    method: GET
+    uri: https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers?ref=main
+  response:
+    content: '[{"name":"AgentXOS.pdf","path":"sdk/tests/agent/doc_manager/parsers/AgentXOS.pdf","sha":"aeff024a96558192032454a91051e26f5b799472","size":1185792,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/AgentXOS.pdf?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/AgentXOS.pdf","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/aeff024a96558192032454a91051e26f5b799472","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/doc_manager/parsers/AgentXOS.pdf","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/AgentXOS.pdf?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/aeff024a96558192032454a91051e26f5b799472","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/AgentXOS.pdf"}},{"name":"__init__.py","path":"sdk/tests/agent/doc_manager/parsers/__init__.py","sha":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","size":0,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/__init__.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/__init__.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/doc_manager/parsers/__init__.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/__init__.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/__init__.py"}},{"name":"test_pdf_parser.py","path":"sdk/tests/agent/doc_manager/parsers/test_pdf_parser.py","sha":"646b248a0fd708bd5d8c59ab3154f769a813a5de","size":2341,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/test_pdf_parser.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/test_pdf_parser.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/646b248a0fd708bd5d8c59ab3154f769a813a5de","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/doc_manager/parsers/test_pdf_parser.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/test_pdf_parser.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/646b248a0fd708bd5d8c59ab3154f769a813a5de","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/test_pdf_parser.py"}},{"name":"test_text_parser.py","path":"sdk/tests/agent/doc_manager/parsers/test_text_parser.py","sha":"f4e443a6502f762336751081573e8ccd796d1e1a","size":1161,"url":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/test_text_parser.py?ref=main","html_url":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/test_text_parser.py","git_url":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/f4e443a6502f762336751081573e8ccd796d1e1a","download_url":"https://raw.githubusercontent.com/eidolon-ai/eidolon/main/sdk/tests/agent/doc_manager/parsers/test_text_parser.py","type":"file","_links":{"self":"https://api.github.com/repos/eidolon-ai/eidolon/contents/sdk/tests/agent/doc_manager/parsers/test_text_parser.py?ref=main","git":"https://api.github.com/repos/eidolon-ai/eidolon/git/blobs/f4e443a6502f762336751081573e8ccd796d1e1a","html":"https://github.com/eidolon-ai/eidolon/blob/main/sdk/tests/agent/doc_manager/parsers/test_text_parser.py"}}]'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Content-Encoding:
+      - gzip
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 20 Feb 2024 21:46:46 GMT
+      ETag:
+      - W/"064e0a81d6dafea36f4c96a8e2042364540bb63d"
+      Last-Modified:
+      - Tue, 20 Feb 2024 17:44:26 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-OAuth-Scopes:
+      - ''
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-GitHub-Media-Type:
+      - github.v3; format=json
+      X-GitHub-Request-Id:
+      - E5BE:253F79:1690EA:201008:65D51DC6
+      X-OAuth-Scopes:
+      - read:project, repo:status
+      X-RateLimit-Limit:
+      - '5000'
+      X-RateLimit-Remaining:
+      - '4462'
+      X-RateLimit-Reset:
+      - '1708466020'
+      X-RateLimit-Resource:
+      - core
+      X-RateLimit-Used:
+      - '538'
+      X-XSS-Protection:
+      - '0'
+      github-authentication-token-expiration:
+      - 2024-05-20 20:12:56 UTC
+      x-github-api-version-selected:
+      - '2022-11-28'
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1
