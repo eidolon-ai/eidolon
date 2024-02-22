@@ -125,13 +125,13 @@ jobs:
   test-webui:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: lint
-      run: npm run lint
-      working-directory: webui
-    - name: build
-      run: npm run build
-      working-directory: webui
-    - name: test
-      run: npm run test --if-present
-      working-directory: webui
+      - uses: actions/checkout@v4
+      - name: lint
+        run: npm run lint
+        working-directory: webui
+      - name: build
+        run: npm run build
+        working-directory: webui
+      - name: test
+        run: npm run test --if-present
+        working-directory: webui
