@@ -129,10 +129,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 21.x
-      - name: Run install
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: install
+      - name: Install dependencies
+        run: yarn install
       - uses: actions/checkout@v4
       - name: lint
         run: npm run lint
