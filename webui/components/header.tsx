@@ -2,12 +2,14 @@
 
 import * as React from 'react'
 import {signOut, useSession} from "next-auth/react";
-import {AppBar, Avatar, Box, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
+import {AppBar, Avatar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
+import {useRouter} from "next/navigation";
 
 export function Header() {
   const {data: session} = useSession()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const router = useRouter()
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -32,10 +34,16 @@ export function Header() {
   return (
     <AppBar position="fixed" sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
       <Toolbar variant={"dense"}>
+        <Button
+          onClick={() => {
+            router.push('/')
+          }}
+        >
         <Avatar src={"/eidolon_with_gradient.png"} sx={{height: "32px", width: "32px"}}/>
         <Typography variant="h5" component="div" sx={{marginLeft: '18px', display: {xs: 'none', sm: 'block'}, color: "darkgoldenrod"}} noWrap>
           Eidolon
         </Typography>
+          </Button>
         <Box sx={{flexGrow: 1}}/>
         {session?.user && (
           <div>
