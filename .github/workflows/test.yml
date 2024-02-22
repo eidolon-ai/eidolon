@@ -149,9 +149,13 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
+        working-directory: webui
       - name: lint
         run: pnpm lint
+        working-directory: webui
       - name: build
         run: pnpm build
+        working-directory: webui
       - name: test
         run: pnpm test --if-present
+        working-directory: webui
