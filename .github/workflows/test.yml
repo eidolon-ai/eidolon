@@ -121,3 +121,17 @@ jobs:
           CSE_ID: ${{ secrets.CLOUD_SEARCH_ENGINE_ID }}
           CSE_TOKEN: ${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}
         working-directory: sdk
+
+  test-webui:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: lint
+      run: npm lint
+      working-directory: webui
+    - name: build
+      run: npm build
+      working-directory: webui
+    - name: test
+      run: npm test --if-present
+      working-directory: webui
