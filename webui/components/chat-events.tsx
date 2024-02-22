@@ -198,23 +198,15 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, handleActio
 }) => {
   const {data: session} = useSession()
   const getUserInput = (element: UserRequestElement) => {
+    // todo, make sure this renders file inputs correctly
     let content = {...element.content}
     delete content["process_id"]
-    if (content["body"]) {
-      // copy contents of body object to top level
-      const body = content["body"]
-      delete content["body"]
-      content = {...content, ...body}
-    }
-
     if (Object.keys(content).length === 0) {
-      return "*No input*"
+      return "*No Input*"
     } else if (Object.keys(content).length === 1) {
-      const value = JSON.stringify(content[Object.keys(content)[0]], undefined, "  ")
-      content = `"${Object.keys(content)[0]}": ${value}`
-    } else {
-      content = JSON.stringify(content, undefined, "  ")
+      content = content[Object.keys(content)[0]]
     }
+    content = JSON.stringify(content, undefined, "  ")
     return '```json\n' + content + "\n```"
   }
 

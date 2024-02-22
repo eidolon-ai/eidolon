@@ -3,7 +3,7 @@
 import {AgentInputForm} from "@/components/agent-input/agent-input-form";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {EidosClient, OperationInfo, ProcessState} from "@/lib/types";
+import {EidolonClient, OperationInfo, ProcessState} from "@/lib/types";
 import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
@@ -21,7 +21,7 @@ interface AgentProcessProps {
 export function AgentProcess({agent, processState, handleAction, handleCancel}: AgentProcessProps) {
   const [bigForm, setBigForm] = useState(false)
 
-  const [client] = useState(new EidosClient("http://localhost:8080"))
+  const [client] = useState(new EidolonClient("http://localhost:8080"))
   const [operations, setOperations] = useState<OperationInfo[]>([])
   useEffect(() => {
     if (processState?.available_actions) {

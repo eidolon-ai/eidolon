@@ -23,6 +23,7 @@ mdit-py-plugins = "^0.4.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
+setuptools = "^69.1.0"
 
 
 [tool.poetry.group.test.dependencies]
