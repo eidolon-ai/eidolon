@@ -2,7 +2,7 @@ from fastapi import Body
 from typing import Annotated
 
 from eidolon_ai_sdk.agent.agent import register_program, register_action
-from eidolon_ai_sdk.io.events import StringOutputEvent, AgentStateEvent, ObjectOutputEvent
+from eidolon_ai_client.events import StringOutputEvent, AgentStateEvent, ObjectOutputEvent
 
 
 class StreamingTest:

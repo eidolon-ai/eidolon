@@ -6,7 +6,7 @@ from typing import List, Literal, Optional, TypeVar, Type
 import yaml
 from pydantic import BaseModel
 
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class Metadata(BaseModel):

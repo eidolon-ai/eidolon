@@ -17,7 +17,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.stream_collector import merge_streams
 
 

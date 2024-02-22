@@ -7,7 +7,7 @@ from urllib.request import Request
 from pydantic import BaseModel
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 _request_context = ContextVar("request_context")
 

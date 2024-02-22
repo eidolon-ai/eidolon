@@ -11,7 +11,7 @@ from pydantic_core import to_jsonable_python
 
 from eidolon_ai_sdk.agent.agent import AgentSpec, Agent, register_action
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserTextCPUMessage
-from eidolon_ai_sdk.io.events import AgentStateEvent, StreamEvent
+from eidolon_ai_client.events import AgentStateEvent, StreamEvent
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 

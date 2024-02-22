@@ -8,10 +8,10 @@ from fastapi import Body
 from typing import Annotated, List
 
 from eidolon_ai_sdk.agent.agent import register_program
-from eidolon_ai_sdk.agent.client import Agent
+from eidolon_ai_client.client import Agent
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     StartAgentCallEvent,
     ObjectOutputEvent,
     SuccessEvent,
@@ -20,9 +20,9 @@ from eidolon_ai_sdk.io.events import (
     UserInputEvent,
 )
 from eidolon_ai_sdk.memory.file_memory import FileMemory
-from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
-from eidolon_ai_sdk.util.aiohttp import stream_content, post_content, delete
+from eidolon_ai_client.util.aiohttp import stream_content, post_content, delete
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.replay import ReplayConfig, replay
@@ -71,19 +71,19 @@ class TestGenericAgent:
 
     @pytest_asyncio.fixture(scope="function")
     async def client(self, server):
-        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
+        async with httpx.AsyncClient(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
     @pytest.fixture
     async def agent(self, server) -> Agent:
         return Agent.get("GenericAgent")
 
-    def test_can_start(self, client):
-        docs = client.get("/docs")
+    async def test_can_start(self, client):
+        docs = await client.get("/docs")
         assert docs.status_code == 200
 
-    def test_llm_calls(self, client):
-        post = client.post(
+    async def test_llm_calls(self, client):
+        post = await client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! What is the capital of France?"),
         )
@@ -91,14 +91,14 @@ class TestGenericAgent:
         json = post.json()
         assert "paris" in json["data"].lower()
 
-    def test_continued_conversation(self, client):
-        post = client.post(
+    async def test_continued_conversation(self, client):
+        post = await client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke"),
         )
         post.raise_for_status()
         process_id = post.json()["process_id"]
-        follow_up = client.post(
+        follow_up = await client.post(
             f"/agents/GenericAgent/processes/{process_id}/actions/respond",
             json=dict(statement="Can you sing me Happy Birthday?"),
         )
@@ -166,27 +166,27 @@ class TestAgentsWithReferences:
 
     @pytest_asyncio.fixture(scope="function")
     async def client(self, server):
-        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
+        async with httpx.AsyncClient(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
-    def test_can_communicate(self, client):
-        post = client.post(
+    async def test_can_communicate(self, client):
+        post = await client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
         )
         post.raise_for_status()
         assert HelloWorld.calls["greeter1"] == [{"name": "Luke"}]
 
-    def test_string_only_body(self, client):
-        post = client.post(
+    async def test_string_only_body(self, client):
+        post = await client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke. Can ask greeter2 to greet me?"),
         )
         post.raise_for_status()
         assert HelloWorld.calls["greeter2"] == [{"name": "Luke"}]
 
-    def test_list_body(self, client, patch_async_vcr_send):
-        post = client.post(
+    async def test_list_body(self, client):
+        post = await client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke. Can ask greeter3 to greet me?"),
         )
@@ -203,7 +203,7 @@ class TestAgentsWithReferences:
 
     async def test_respond_after_tool_call(self, client, server):
         t0 = len(HelloWorld.calls["greeter1"])
-        post = client.post(
+        post = await client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
         )
@@ -212,7 +212,7 @@ class TestAgentsWithReferences:
         assert "Luke" in post.json()["data"]
 
     async def test_can_replay_tool_calls(self, client, enable_replay, vcr):
-        post = client.post(
+        post = await client.post(
             "/agents/GenericAgent/programs/question",
             json=dict(instruction="Hi! my name is Luke. Can ask greeter1 to greet me?"),
         )

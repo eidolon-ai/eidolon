@@ -13,7 +13,7 @@ from eidolon_ai_sdk.cpu.agents_logic_unit import (
 )
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.io.events import SuccessEvent
+from eidolon_ai_client.events import SuccessEvent
 
 
 class FooModel(BaseModel):

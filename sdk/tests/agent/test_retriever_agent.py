@@ -1,6 +1,6 @@
 import pytest
 
-from eidolon_ai_sdk.agent.client import Agent
+from eidolon_ai_client.client import Agent
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource

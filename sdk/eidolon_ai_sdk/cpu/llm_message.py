@@ -2,6 +2,8 @@ from typing import List, Dict, Any, Literal
 
 from pydantic import BaseModel
 
+from eidolon_ai_client.events import ToolCall
+
 
 # Base LLMMessage class
 # todo, replace LLMMessage with LLMMessageTypes
@@ -46,10 +48,6 @@ class UserMessage(LLMMessage):
 
 
 # ToolCall class
-class ToolCall(BaseModel):
-    tool_call_id: str
-    name: str
-    arguments: Dict[str, Any]
 
 
 # Derived AssistantMessage class
