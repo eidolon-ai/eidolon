@@ -20,8 +20,8 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import Draggable from 'react-draggable';
 import {EidolonClient} from "@/lib/types";
-import {createPID} from "@/app/api/chat/route";
 import {useRouter} from "next/navigation";
+import {createPID} from "@/app/api/chat/messages/chatHelpers";
 
 function PaperComponent(props: PaperProps) {
   return (
