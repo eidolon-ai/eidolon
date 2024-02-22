@@ -25,15 +25,15 @@ You will also need a running Eidolon Machine. For instructions on how to run a m
 
 **Environment Configuration**:
 You need to create a `.env` file in the weibui directory of the project. Copy
-the contents of the 'template.env' file and paste it into the `.env` file. 
-Then, replace the placeholder values with your actual data.
+the contents of the 'template.env' file and paste it into the `.env` file.
 
 ```zsh
 cp template.env .env
-open .env
 ```
 
 The content are described in the template file.
+You will need to change the defaults if you would like to enable authentication or are running the eidos on
+a port other than 8080.
 
 ## Running the Server
 
