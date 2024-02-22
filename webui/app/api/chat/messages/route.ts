@@ -1,9 +1,7 @@
 'use server'
 
-import {ChatEvent} from "@/lib/types";
 import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
-import {revalidatePath} from "next/cache";
+import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 
 const chatServerURL = process.env.EIDOLON_SERVER
 
@@ -53,20 +51,5 @@ export async function POST(req: Request) {
     console.error('Error fetching SSE stream:', error);
     return new Response('Failed to obtain stream', {status: 500})
   }
-}
-
-
-export async function getChatEvents(agentName: string, processId: string) {
-  revalidatePath(`${chatServerURL}/agents/${agentName}/processes/${processId}/events`)
-  const userId = await getUserId()
-  const results = await fetch(`${chatServerURL}/agents/${agentName}/processes/${processId}/events?userId=${userId}`)
-    .then(resp => resp.json())
-
-  const ret = []
-  for (const json of results) {
-    ret.push(json as ChatEvent)
-  }
-
-  return ret
 }
 

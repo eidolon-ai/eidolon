@@ -17,14 +17,13 @@ import {
 } from "@/lib/display-elements";
 import "@/components/chat-events.css"
 import {AgentProcess} from "@/components/agent-input/agent-process";
-import {getChatEvents} from "@/app/api/chat/messages/route";
 import {createParser, ParseEvent} from "eventsource-parser";
 import {ParsedEvent} from "eventsource-parser/src/types";
-import {getPIDStatus} from "@/app/api/chat/route";
 import {useSession} from "next-auth/react";
 import {EidolonMarkdown} from "@/components/eidolon-markdown";
 import {ToolCall} from "@/components/tool-call-element";
 import {ChatScrollAnchor} from "@/components/chat-scroll-anchor";
+import {getChatEvents, getPIDStatus} from "@/app/api/chat/messages/chatHelpers";
 
 interface ChatEventProps {
   agentName: string,
