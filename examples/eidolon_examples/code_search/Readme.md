@@ -13,20 +13,19 @@ Our adventure begins in the `resources` directory, where the magic happens. Here
 ### Document Producer Agent
 This agent stands at the core of our operation, tasked with crafting the documentation. Picture it as the master chef in a gourmet kitchen, ensuring every piece of documentation is meticulously prepared.
 
-Here's a glimpse into the agent's definition:
+Here's a peak at the agent's definition:
 ```yaml
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
   name: doc_producer
+
 spec:
-  implementation: GenericAgent
   description: An agent that searches the eidolon code and documentation
   agent_refs: ["SearchCode", "SearchDocs"]
   system_prompt: ...
-  user_prompt: ...
 ```
-The "GenericAgent" acts as a conversational agent. The `agent_refs` field specifies the RAG components it employs to search for code and documentation, highlighting its resourcefulness.
+The default Agent (SimpleAgent) acts as a conversational agent driven by a system prompt. Here The `agent_refs` field specifies other agents who will act as the RAG components it employs to search for code and documentation, highlighting its resourcefulness.
 
 ### Search Code/Doc Agents
 These components, our RAG equivalents for code and document files, serve as the specialized sous-chefs of our operation. One knows code, while the other adeptly navigates documentation.
