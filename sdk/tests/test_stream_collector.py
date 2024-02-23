@@ -1,6 +1,6 @@
 import pytest
 
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     StringOutputEvent,
     ErrorEvent,
     StartStreamContextEvent,

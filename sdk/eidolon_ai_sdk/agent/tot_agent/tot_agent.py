@@ -19,7 +19,7 @@ from eidolon_ai_sdk.agent.tot_agent.thought_generators import (
 from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 

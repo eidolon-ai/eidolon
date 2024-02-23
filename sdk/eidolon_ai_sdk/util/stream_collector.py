@@ -4,7 +4,7 @@ from typing import Optional, AsyncIterator, List, Callable
 
 from aiostream import stream
 
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     BaseStreamEvent,
     StringOutputEvent,
     ObjectOutputEvent,
@@ -14,7 +14,7 @@ from eidolon_ai_sdk.io.events import (
     EndStreamContextEvent,
     SuccessEvent,
 )
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class StreamCollector(AsyncIterator[StreamEvent]):

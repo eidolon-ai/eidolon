@@ -7,7 +7,7 @@ from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIt
 
 from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes
 from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.io.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
+from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
 from eidolon_ai_sdk.system.reference_model import Specable
 
 

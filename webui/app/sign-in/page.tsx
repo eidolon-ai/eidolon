@@ -11,9 +11,9 @@ import LoginIcon from '@mui/icons-material/Login';
 import {getSigninOptions} from "@/app/sign-in/signon-options";
 
 const providerMap: Record<string, [string, React.JSX.Element]> = {
-  'google': ["Login with Google", <IconGoogle style={{height:"24px", width:"24px"}}/>],
-  'github': ["Login with GitHub", <IconGitHub style={{height:"24px", width:"24px"}}/>],
-  'noop': ["Login", <LoginIcon style={{height:"24px", width:"24px"}}/>]
+  'google': ["Login with Google", <IconGoogle key="google" style={{height:"24px", width:"24px"}}/>],
+  'github': ["Login with GitHub", <IconGitHub key="github" style={{height:"24px", width:"24px"}}/>],
+  'noop': ["Login", <LoginIcon key="noop" style={{height:"24px", width:"24px"}}/>]
 }
 
 export default function SignInPage() {
@@ -42,6 +42,7 @@ export default function SignInPage() {
         let [text, icon] = providerMap[provider]
         return (
           <Button
+            key={provider}  // Add this line
             variant={"outlined"}
             startIcon={icon}
             onClick={() => {

@@ -11,9 +11,9 @@ from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_ac
 from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
 from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.io.events import AgentStateEvent
+from eidolon_ai_client.events import AgentStateEvent
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
-from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.util.stream_collector import StringStreamCollector
 
 

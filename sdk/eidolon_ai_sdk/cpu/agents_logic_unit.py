@@ -1,14 +1,14 @@
 from pydantic import BaseModel
 from typing import List, Any, Dict, AsyncIterator
 
-from eidolon_ai_sdk.agent.client import Machine, Agent, AgentResponseIterator
+from eidolon_ai_client.client import Machine, Agent, AgentResponseIterator
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
-from eidolon_ai_sdk.io.events import StreamEvent
+from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
@@ -79,20 +79,17 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         tools = []
         for agent in self.spec.agents:
             agent_client = Agent.get(agent)
-            agent = agent_client.agent
-
-            prefix = f"/agents/{agent}/programs/"
             machine_schema = await self._get_schema(agent_client.machine)
-            for path in filter(lambda p: p.startswith(prefix), machine_schema["paths"].keys()):
+            for action in await agent_client.programs():
+                path = f"/agents/{agent}/processes/{{process_id}}/actions/{action}"
                 try:
-                    program = path.removeprefix(prefix)
-                    name = self._name(agent, action=program)
+                    name = self._name(agent, action=action)
                     tool = self._build_tool_def(
                         agent,
-                        program,
+                        action,
                         name,
                         machine_schema["paths"][path]["post"],
-                        self._program_tool(agent_client, program, call_context),
+                        self._program_tool(agent_client, action, call_context),
                     )
                     tools.append(tool)
                 except ValueError:
@@ -141,10 +138,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
 
     # todo, this needs to create history record before iterating
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
-        def fn(_self, body):
-            return RecordAgentResponseIterator(
-                agent.stream_program(program, body), call_context.process_id, call_context.thread_id
-            )
+        async def fn(_self, body):
+            async for event in RecordAgentResponseIterator(
+                (await agent.create_process()).stream_action(program, body), call_context.process_id, call_context.thread_id
+            ):
+                yield event
 
         return fn
 
@@ -152,7 +150,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     def _process_tool(self, agent: Agent, action: str, process_id: str, call_context: CallContext):
         def fn(_self, body):
             return RecordAgentResponseIterator(
-                agent.stream_action(action, process_id, body), call_context.process_id, call_context.thread_id
+                agent.process(process_id).stream_action(action, body), call_context.process_id, call_context.thread_id
             )
 
         return fn

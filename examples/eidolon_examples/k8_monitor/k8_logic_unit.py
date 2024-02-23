@@ -9,9 +9,9 @@ from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.io.events import StringOutputEvent, OutputEvent
+from eidolon_ai_client.events import StringOutputEvent, OutputEvent
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class K8LogicUnitSpec(BaseModel):

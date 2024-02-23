@@ -2,6 +2,7 @@ from typing import Tuple
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
+from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
 from eidolon_ai_sdk.agent.doc_manager.parsers.auto_parser import AutoParser
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
@@ -24,7 +25,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
@@ -121,6 +122,7 @@ def named_builtins():
         RAGFusionReranker,
         (DocumentLoader, FilesystemLoader),
         FilesystemLoader,
+        GitHubLoader,
         ToTChecker,
         OpenAiSpeech,
         # config objects

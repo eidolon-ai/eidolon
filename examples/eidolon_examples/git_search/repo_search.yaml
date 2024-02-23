@@ -1,0 +1,20 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: repo_search
+
+spec:
+  implementation: RetrieverAgent
+  name: "example_search"
+  description: "Search the Eidolon github repository for code, examples, and documentation"
+  document_manager:
+    loader:
+      implementation: GitHubLoader
+      owner: "eidolon-ai"
+      repo: "eidolon"
+      pattern:
+        - "examples/**/getting_started/**/*.yaml"
+        - "examples/**/git_search/**/*.yaml"
+        - "**/*.md"
+        - "**/*.py"
+      exclude: "**/test/**/*"
