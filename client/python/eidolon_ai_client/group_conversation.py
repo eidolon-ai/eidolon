@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from eidolon_ai_client.client import Process, Agent, ProcessStatus, AgentResponseIterator, DeleteProcessResponse
 from eidolon_ai_client.events import StartStreamContextEvent, EndStreamContextEvent
-from eidolon_ai_client.util.iostream import merge_streams
+from eidolon_ai_client.util.stream_collector import merge_streams
 
 
 class GroupConversation:
@@ -28,12 +28,12 @@ class GroupConversation:
             statuses.append(await agent.action(action_name, body, **kwargs))
         return statuses
 
-    def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
+    async def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
         async def run_one(agent_name: str, agent_pid: str):
             yield StartStreamContextEvent(context_id=agent_name)
             try:
                 async for a_event in (
-                        Agent.get(agent_name).stream_action(action_name, agent_pid, body, **kwargs)
+                        Agent.get(agent_name).process(agent_pid).stream_action(action_name, body, **kwargs)
                 ):
                     a_event.stream_context = agent_name
                     yield a_event

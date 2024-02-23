@@ -43,6 +43,15 @@ class Agent(BaseModel):
     def process(self, process_id: str) -> Process:
         return Process(machine=self.machine, agent=self.agent, process_id=process_id)
 
+    async def run_program(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs):
+        process = await self.create_process()
+        return await process.action(action_name, body, **kwargs)
+
+    async def stream_program(self, action_name: str, body: Optional[Any] = None, **kwargs):
+        process = await self.create_process()
+        async for event in process.stream_action(action_name, body, **kwargs):
+            yield event
+
     @classmethod
     def get(cls, location: str) -> Agent:
         """
