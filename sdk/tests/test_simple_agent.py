@@ -1,10 +1,10 @@
 import pytest
 
-from eidolon_ai_client.client import Agent, ProcessStatus
+from eidolon_ai_client.client import Agent
+from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
-from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
@@ -86,24 +86,28 @@ async def server(run_app):
 
 
 async def test_default_agent():
-    resp = await Agent.get("default").program("converse", body="What is the capital of France?")
+    process = await Agent.get("default").create_process()
+    resp = await process.action("converse", body="What is the capital of France?")
     assert "paris" in resp.data.lower()
 
 
 async def test_no_vars():
-    resp = await Agent.get("test_no_vars").program("converse")
+    process = await Agent.get("test_no_vars").create_process()
+    resp = await process.action("converse")
     assert "paris" in resp.data.lower()
 
 
 async def test_multiple_prompt_args():
-    resp = await Agent.get("multiple_prompt_args").program(
+    process = await Agent.get("multiple_prompt_args").create_process()
+    resp = await process.action(
         "converse", body=dict(a1="What is the capital of", a2="France?")
     )
     assert "paris" in resp.data.lower()
 
 
 async def test_json_output():
-    resp = await Agent.get("json_output").program("converse", body="What is the capital of France?")
+    process = await Agent.get("json_output").create_process()
+    resp = await process.action("converse", body="What is the capital of France?")
     assert "population" in resp.data
     assert isinstance(resp.data["population"], int) and resp.data["population"] > 0
     assert "paris" in resp.data["capital"].lower()
@@ -111,15 +115,18 @@ async def test_json_output():
 
 async def test_states():
     process = await Agent.get("states").create_process()
-    assert process.state == "initialized"
-    assert process.available_actions == ["first"]
-    first: ProcessStatus = await process.action("first", body="What is the capital of France?")
-    assert first.state == "s2"
-    assert first.available_actions == ["second"]
+    status = await process.status()
+    assert status.state == "initialized"
+    assert status.available_actions == ["first"]
+    first = await process.action("first", body="What is the capital of France?")
+    status = await first.status()
+    assert status.state == "s2"
+    assert status.available_actions == ["second"]
     assert "paris" in first.data.lower()
-    second: ProcessStatus = await first.action("second", body="What about Spain?")
-    assert second.state == "idle"
-    assert second.available_actions == []
+    second = await first.action("second", body="What about Spain?")
+    status = await second.status()
+    assert status.state == "idle"
+    assert status.available_actions == []
     assert "madrid" in second.data.lower()
 
     with pytest.raises(AgentError) as e:
@@ -135,24 +142,28 @@ async def test_states_bad_initial_program():
 
 
 async def test_refs():
-    resp = await Agent.get("refs").program(
+    process = await Agent.get("refs").create_process()
+    resp = await process.action(
         "converse", body="Start a conversation with system_prompt and what its favorite country is."
     )
     assert "france" in resp.data.lower()
 
 
 async def test_with_tools():
-    resp = await Agent.get("with_tools").program("converse", body="What is the meaning of life?")
+    process = await Agent.get("with_tools").create_process()
+    resp = await process.action("converse", body="What is the meaning of life?")
     assert "42" in resp.data.lower()
 
 
 async def test_optional_file_with_no_file():
-    resp = await Agent.get("optional_file").program("converse", data=dict(body="What is the capital of France?"))
+    process = await Agent.get("optional_file").create_process()
+    resp = await process.action("converse", data=dict(body="What is the capital of France?"))
     assert "paris" in resp.data.lower()
 
 
 async def test_optional_file_with_file(dog):
-    resp = await Agent.get("optional_file").program(
+    process = await Agent.get("optional_file").create_process()
+    resp = await process.action(
         "converse",
         data=dict(body="How many legs does the animal have?"),
         files=dict(file=dog),
@@ -161,23 +172,27 @@ async def test_optional_file_with_file(dog):
 
 
 async def test_optional_file_no_body_with_no_file():
-    resp = await Agent.get("optional_file_no_body").program("converse")
+    process = await Agent.get("optional_file_no_body").create_process()
+    resp = await process.action("converse")
     assert resp.data  # no error, llm will complain about lack of file but that is irrelevant
 
 
 async def test_optional_file_no_body_with_file(dog):
-    resp = await Agent.get("optional_file_no_body").program("converse", files=dict(file=dog))
+    process = await Agent.get("optional_file_no_body").create_process()
+    resp = await process.action("converse", files=dict(file=dog))
     assert "four" in resp.data.lower()
 
 
 async def test_single_file_with_no_file():
     with pytest.raises(AgentError) as e:
-        await Agent.get("single_file").program("converse", body="What is the capital of France?")
+        process = await Agent.get("single_file").create_process()
+        await process.action("converse", body="What is the capital of France?")
     assert e.value.status_code == 422
 
 
 async def test_single_file_with_file(dog):
-    resp = await Agent.get("single_file").program(
+    process = await Agent.get("single_file").create_process()
+    resp = await process.action(
         "converse",
         data=dict(body="How many legs does the animal have?"),
         files=dict(file=dog),
@@ -187,22 +202,26 @@ async def test_single_file_with_file(dog):
 
 async def test_single_file_no_body_with_no_file():
     with pytest.raises(AgentError) as e:
-        await Agent.get("single_file_no_body").program("converse")
+        process = await Agent.get("single_file_no_body").create_process()
+        await process.action("converse", None)
     assert e.value.status_code == 422
 
 
 async def test_single_file_no_body_with_file(dog):
-    resp = await Agent.get("single_file_no_body").program("converse", files=dict(file=dog))
+    process = await Agent.get("single_file_no_body").create_process()
+    resp = await process.action("converse", files=dict(file=dog))
     assert "four" in resp.data.lower()
 
 
 async def test_multiple_files(cat, dog):
-    resp = await Agent.get("multiple_files").program(
+    process = await Agent.get("multiple_files").create_process()
+    resp = await process.action(
         "converse", data=dict(body="what do these images have in common?"), files=[("file", dog), ("file", cat)]
     )
     assert "animals" in resp.data.lower()
 
 
 async def test_multiple_files_no_body(cat, dog):
-    resp = await Agent.get("multiple_files_no_body").program("converse", files=[("file", dog), ("file", cat)])
+    process = await Agent.get("multiple_files_no_body").create_process()
+    resp = await process.action("converse", files=[("file", dog), ("file", cat)])
     assert "animals" in resp.data.lower()
