@@ -1,6 +1,6 @@
 import pytest
 
-from eidolon_ai_client.client import Agent, ProcessStatus
+from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
