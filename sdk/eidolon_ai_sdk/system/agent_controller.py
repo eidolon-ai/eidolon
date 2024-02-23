@@ -93,6 +93,14 @@ class AgentController:
             tags=[self.name],
         )
 
+        app.add_api_route(
+            f"/agents/{self.name}/programs",
+            endpoint=self.get_programs,
+            methods=["GET"],
+            response_model=typing.List[str],
+            tags=[self.name],
+        )
+
         added_actions = {}
         for handler in [*self.actions.values().__reversed__()]:
             handler_name = handler.name
@@ -105,15 +113,6 @@ class AgentController:
                     f"Action {handler_name} is already registered for path {added_actions[handler_name]}. "
                     f"Skipping registration for path {path}"
                 )
-
-        app.add_api_route(
-            f"/agents/{self.name}/programs",
-            endpoint=self.get_programs,
-            methods=["GET"],
-            response_model=typing.List[str],
-            tags=[self.name],
-        )
-
         app.add_api_route(
             f"/agents/{self.name}/processes/{{process_id}}/status",
             endpoint=self.get_process_info,
@@ -382,6 +381,9 @@ class AgentController:
         return _run_program
 
     async def get_programs(self):
+        """
+        Get the operations that are available for this agent that can be run from the initial state
+        """
         programs = []
         for handler in [*self.actions.values().__reversed__()]:
             handler_name = handler.name
@@ -420,6 +422,11 @@ class AgentController:
         return await load_events(self.name, process_id)
 
     async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
+        """
+        Create a new process. Use this method first to get a process id before calling any other action
+        :param args: An optional title for the process
+        :return:
+        """
         process = await self._create_process(state="initialized", title=args.title)
         return JSONResponse(
             StateSummary(
@@ -431,6 +438,9 @@ class AgentController:
         )
 
     async def delete_process(self, process_id: str):
+        """
+        Delete a process and all of its children
+        """
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
@@ -469,6 +479,9 @@ class AgentController:
             skip: int = 0,
             sort: typing.Literal["ascending", "descending"] = "ascending",
     ):
+        """
+        List all processes for this agent. Supports paging and sorting
+        """
         query = dict(agent=self.name)
         count = await AgentOS.symbolic_memory.count(ProcessDoc.collection, query)
         cursor = AgentOS.symbolic_memory.find(
