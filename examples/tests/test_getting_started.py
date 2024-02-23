@@ -3,6 +3,8 @@ import pytest
 from httpx import Client
 from jsonref import requests
 
+from conftest import get_process_id
+
 
 class TestAgentCommunication:
     @pytest.fixture(scope="class", autouse=True)
@@ -16,15 +18,17 @@ class TestAgentCommunication:
             yield server
 
     def test_can_hit_generic_agent(self, server_loc):
+        process_id = get_process_id(server_loc, "hello_world")
         response = requests.post(
-            f"{server_loc}/agents/hello_world/programs/question",
+            f"{server_loc}/agents/hello_world/processes/{process_id}/actions/question",
             json=dict(name="Joe Dirt"),
         )
         assert response.status_code == 200
         assert "Joe Dirt" in response.json()["data"]
 
     def test_can_hit_qa_agent(self, server_loc):
-        response = requests.post(f"{server_loc}/agents/qa/programs/question")
+        process_id = get_process_id(server_loc, "qa")
+        response = requests.post(f"{server_loc}/agents/qa/processes/{process_id}/actions/question")
         assert response.status_code == 200
         assert "Success" in response.json()["data"]
 
@@ -41,17 +45,19 @@ class TestCustomAgents:
             yield server
 
     def test_can_hit_generic_agent(self, server_loc):
+        process_id = get_process_id(server_loc, "hello_world")
         response = requests.post(
-            f"{server_loc}/agents/hello_world/programs/enter",
+            f"{server_loc}/agents/hello_world/processes/{process_id}/actions/enter",
             json=dict(name="Joe Dirt"),
         )
         assert response.status_code == 200
         assert "Joe Dirt" in response.json()["data"]
 
     def test_can_hit_qa_agent(self, server_loc):
+        process_id = get_process_id(server_loc, "qa")
         with Client(timeout=httpx.Timeout(120)) as client:
             response = client.post(
-                f"{server_loc}/agents/qa/programs/test",
+                f"{server_loc}/agents/qa/processes/{process_id}/actions/test",
                 json="hello_world",
             )
             assert response.status_code == 200

@@ -52,11 +52,25 @@ eidolon-server -m local_dev hello_world
 
 ### Step 4: Try it out!
 
+First create a process for your conversation.
+
+```bash
+curl -X POST http://0.0.0.0:8080/agents/hello_world/processes; echo
+````
+
+The result should be a json object with a process id. For example:
+
+```json
+{"process_id":"hello_world-1"}
+```
+
 Now let's try to make a request to your server from another terminal window.
 
 ```bash
-curl -X POST http://0.0.0.0:8080/agents/hello_world/programs/converse -H 'Content-Type: application/json' -d '{"name": "World"}'; echo
+curl -X POST http://0.0.0.0:8080/agents/hello_world/processes/{process_id}/actions/converse -H 'Content-Type: application/json' -d '{"name": "World"}'; echo
 ```
+
+Replace `{process_id}` with the process id you received from the previous command.
 
 You should now see something like `Hello, World! 🌍👋`
 

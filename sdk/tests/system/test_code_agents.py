@@ -5,8 +5,7 @@ import pytest
 import pytest_asyncio
 from fastapi import Body, HTTPException
 
-from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_client.client import Agent, Process
+from eidolon_ai_client.client import Agent, Process, ProcessStatus
 from eidolon_ai_client.events import (
     ErrorEvent,
     AgentStateEvent,
@@ -16,7 +15,13 @@ from eidolon_ai_client.events import (
     SuccessEvent,
 )
 from eidolon_ai_client.util.aiohttp import AgentError
+from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
 from eidolon_ai_sdk.util.stream_collector import stream_manager
+
+
+async def run_program(agent, program, **kwargs) -> ProcessStatus:
+    process = await Agent.get(agent).create_process()
+    return await process.action(program, **kwargs)
 
 
 class HelloWorld:
@@ -87,22 +92,22 @@ class TestHelloWorld:
             yield client
 
     @pytest.fixture(scope="function")
-    def agent(self, server):
+    def agent(self, server) -> Agent:
         return Agent.get("HelloWorld")
 
     def test_can_start(self, client):
         docs = client.get("/docs")
         assert docs.status_code == 200
 
-    def test_hello_world(self, client):
-        post = client.post("/agents/HelloWorld/programs/idle", json="world")
-        assert post.status_code == 200
-        assert post.json()["data"] == "Hello, world!"
+    async def test_hello_world(self, agent):
+        process = await agent.create_process()
+        post = await process.action("idle", "world")
+        assert post.data == "Hello, world!"
 
-    def test_automatic_state_transition(self, client):
-        post = client.post("/agents/HelloWorld/programs/idle", json="world")
-        assert post.status_code == 200
-        assert post.json()["state"] == "terminated"
+    async def test_automatic_state_transition(self, agent):
+        process = await agent.create_process()
+        post = await process.action("idle", "world")
+        assert post.state == "terminated"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_http_error(self, server, program):
@@ -240,100 +245,77 @@ class TestStateMachine:
 
     @pytest_asyncio.fixture(scope="function")
     async def client(self, server):
-        with httpx.Client(base_url=server, timeout=httpx.Timeout(60)) as client:
+        async with httpx.AsyncClient(base_url=server, timeout=httpx.Timeout(60)) as client:
             yield client
 
-    def test_can_list_processes(self, client):
-        url = "/agents/StateMachine/programs/idle"
+    async def test_can_list_processes(self, client):
+        first = (await run_program("StateMachine", "idle", json=dict(desired_state="church", response="blurb"))).process_id
+        second = (await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="blurb"))).process_id
+        third = (await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="blurb"))).process_id
 
-        first = client.post(url, json=dict(desired_state="church", response="blurb")).json()["process_id"]
-        second = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
-        third = client.post(url, json=dict(desired_state="foo", response="blurb")).json()["process_id"]
-
-        processes = client.get("/agents/StateMachine/processes")
-        assert processes.status_code == 200
+        processes = await client.get("/agents/StateMachine/processes")
         assert processes.json()["total"] == 3
         assert {p["process_id"] for p in processes.json()["processes"]} == {first, second, third}
 
         # update the first process: it should be at end of list now
-        assert first == client.post(f"/agents/StateMachine/processes/{first}/actions/terminate").json()["process_id"]
+        assert first == (await Agent.get("StateMachine").process(first).action("terminate")).process_id
 
-        processes = client.get("/agents/StateMachine/processes")
+        processes = await client.get("/agents/StateMachine/processes")
         assert processes.json()["total"] == 3
         assert [p["process_id"] for p in processes.json()["processes"]] == [second, third, first]
 
-    def test_can_start(self, client):
-        post = client.post(
-            "/agents/StateMachine/programs/idle",
-            json=dict(desired_state="bar", response="low man on the totem pole"),
-        )
-        assert post.status_code == 200
-        assert post.json()["state"] == "bar"
-        assert post.json()["data"] == "low man on the totem pole"
+    async def test_can_start(self):
+        post = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+        assert post.state == "bar"
+        assert post.data == "low man on the totem pole"
 
-    def test_can_transition_state(self, client):
-        init = client.post(
-            "/agents/StateMachine/programs/idle",
-            json=dict(desired_state="foo", response="low man on the totem pole"),
-        )
-        assert init.status_code == 200
-        assert init.json()["state"] == "foo"
+    async def test_can_transition_state(self):
+        init = await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="low man on the totem pole"))
+        assert init.state == "foo"
 
-        to_bar = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/to_bar")
-        assert to_bar.status_code == 200
-        assert to_bar.json()["state"] == "bar"
+        to_bar = await init.action("to_bar")
+        assert to_bar.state == "bar"
 
-    def test_allowed_actions(self, client):
-        init = client.post(
-            "/agents/StateMachine/programs/idle",
-            json=dict(desired_state="foo", response="low man on the totem pole"),
-        )
-        assert "to_church" in init.json()["available_actions"]
+    async def test_allowed_actions(self):
+        process = await Agent.get("StateMachine").create_process()
+        init = await process.action("idle", json=dict(desired_state="foo", response="low man on the totem pole"))
+        assert "to_church" in init.available_actions
 
-        to_bar = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/to_bar")
-        assert "to_church" not in to_bar.json()["available_actions"]
+        to_bar = await process.action("to_bar")
+        assert "to_church" not in to_bar.available_actions
 
-        to_church = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/to_church")
-        assert to_church.status_code == 409
+        # now test that this action throws a AgentError and assert that the status_code is 409
+        with pytest.raises(AgentError) as exc:
+            await process.action("to_church")
+        assert exc.value.response.status_code == 409
 
     @pytest.mark.skip(reason="un comment idle signature when bug is fixed")
-    def test_default_in_body(self, client):
-        init = client.post(
-            "/agents/StateMachine/programs/idle",
-            json=dict(desired_state="foo", response="low man on the totem pole"),
-        )
+    async def test_default_in_body(self):
+        init = await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="low man on the totem pole"),
+                                 )
         init.raise_for_status()
-        assert init.json()["data"] == "default response"
+        assert init.data == "default response"
 
-    def test_state_machine_termination(self, client):
-        init = client.post(
-            "/agents/StateMachine/programs/idle",
-            json=dict(desired_state="church", response="blurb"),
-        )
-        assert init.status_code == 200
-        assert init.json()["state"] == "church"
+    async def test_state_machine_termination(self):
+        process = await Agent.get("StateMachine").create_process()
+        init = await process.action("idle", json=dict(desired_state="church", response="blurb"))
+        assert init.state == "church"
 
-        terminated = client.post(f"/agents/StateMachine/processes/{init.json()['process_id']}/actions/terminate")
-        assert terminated.status_code == 200
-        assert terminated.json()["state"] == "terminated"
-        assert terminated.json()["data"] == "Only God can terminate me"
-        assert terminated.json()["available_actions"] == []
+        terminated = await process.action("terminate")
+        assert terminated.state == "terminated"
+        assert terminated.data == "Only God can terminate me"
+        assert terminated.available_actions == []
 
-    def test_can_register_function_as_action_and_program(self, client):
-        program = client.post("/agents/StateMachine/programs/action_program")
-        assert program.status_code == 200
-        action = client.post(
-            f"/agents/StateMachine/processes/{program.json()['process_id']}/actions/action_program",
-        )
-        assert action.status_code == 200
+    async def test_can_register_function_as_action_and_program(self):
+        process = await Agent.get("StateMachine").create_process()
+        await process.action("action_program")
+        await process.action("action_program")
 
-    def test_agents_are_separate(self, client):
-        init = client.post(
-            "/agents/StateMachine/programs/idle",
-            json=dict(desired_state="church", response="blurb"),
-        )
-        assert init.status_code == 200
-        assert init.json()["state"] == "church"
+    async def test_agents_are_separate(self):
+        process = await Agent.get("StateMachine").create_process()
+        init = await process.action("idle", json=dict(desired_state="church", response="blurb"))
+        assert init.state == "church"
 
-        not_found = client.post(f"/agents/StateMachine2/processes/{init.json()['process_id']}/actions/terminate")
-        assert not_found.status_code == 404
+        with pytest.raises(AgentError) as exc:
+            await Agent.get("StateMachine2").process(process.process_id).action("terminate")
+        assert exc.value.response.status_code == 404

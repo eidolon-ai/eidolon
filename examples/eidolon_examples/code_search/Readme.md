@@ -58,13 +58,29 @@ poetry run eidolon-server eidolon_examples/code_search/resources
 ## Sample Request
 With the server operational, it's time to put our setup to the test with a sample request. Our doc_producer agent stands ready to generate the needed documentation.
 
+First create a process for your conversation.
+
+```bash
+curl -X POST http://0.0.0.0:8080/agents/hello_world/processes; echo
+````
+
+The result should be a json object with a process id. For example:
+
+```json
+{"process_id":"hello_world-1"}
+```
+
+Now let's try to make a request to your server.
+
 ```bash
 curl -X 'POST' \
-  'http://localhost:8080/agents/doc_producer/programs/question' \
+  'http://localhost:8080/agents/doc_producer/processes/{process_id}/actions/question' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{ "instruction": "How do I create an Agent? Be concise" }'
 ```
+
+Where `{process_id}` is the process id you received from the previous request.
 
 ## Self-Exploration Challenge
 
