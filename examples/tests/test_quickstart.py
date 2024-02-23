@@ -13,7 +13,7 @@ def http_server(eidolon_server, eidolon_examples):
 def test_can_hit_generic_agent(server_loc):
     process_id = get_process_id(server_loc, "hello_world")
     response = requests.post(
-        f"{server_loc}/agents/hello_world/processes/{process_id}/actions/question",
+        f"{server_loc}/agents/hello_world/processes/{process_id}/actions/converse",
         json=dict(name="World"),
     )
     assert response.status_code == 200
