@@ -42,13 +42,13 @@ async def delete(url, **kwargs):
         return response.json()
 
 
-async def stream_content(url: str, body):
+async def stream_content(url: str, body, **kwargs):
     body = to_jsonable_python(body)
     headers = {
         **RequestContext.headers,
         "Accept": "text/event-stream",
     }
-    request = {"url": url, "json": body, "method": "POST", "headers": headers}
+    request = {"url": url, "json": body, "method": "POST", "headers": headers, **kwargs}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         async with client.stream(**request) as response:
             await AgentError.check(response)

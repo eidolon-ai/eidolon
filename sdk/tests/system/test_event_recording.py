@@ -80,7 +80,7 @@ class TestHelloWorld:
 
     async def test_hello_world_streaming(self, client):
         agent = Agent.get("HelloWorld")
-        stream = agent.stream_program("idle_streaming", "error")
+        stream = (await agent.create_process()).stream_action("idle_streaming", "error")
         server_events = []
         process_id = None
         async for e in stream:

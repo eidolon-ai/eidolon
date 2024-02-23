@@ -107,13 +107,15 @@ class TestHelloWorld:
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_http_error(self, server, program):
         with pytest.raises(AgentError) as exc:
-            await Agent.get("HelloWorld").program(program, "hello")
+            process = await Agent.get("HelloWorld").create_process()
+            await process.action(program, "hello")
         assert exc.value.response.status_code == 418
         assert exc.value.response.json() == "hello is not a name"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_streaming_http_error(self, server, program):
-        stream = Agent.get("HelloWorld").stream_program(program, "hello")
+        agent = Agent.get("HelloWorld")
+        stream = (await agent.create_process()).stream_action(program, "hello")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
         assert events[ErrorEvent].reason == dict(detail="hello is not a name", status_code=418)
@@ -127,13 +129,14 @@ class TestHelloWorld:
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_unhandled_error(self, server, program):
         with pytest.raises(AgentError) as exc:
-            await Agent.get("HelloWorld").program(program, "error")
+            process = await Agent.get("HelloWorld").create_process()
+            await process.action(program, "error")
         assert exc.value.response.status_code == 500
         assert exc.value.response.json() == "big bad server error"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_streaming_unhandled_error(self, agent, program):
-        stream = agent.stream_program(program, "error")
+        stream = (await agent.create_process()).stream_action(program, "error")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
         assert events[ErrorEvent].reason == dict(detail="big bad server error", status_code=500)
@@ -145,11 +148,12 @@ class TestHelloWorld:
         assert exc.value.response.json() == "big bad server error"
 
     async def test_lots_o_context(self, agent):
-        resp = await agent.program("lots_o_context")
+        process = await agent.create_process()
+        resp = await process.action("lots_o_context")
         assert resp.data == "12"
 
     async def test_lots_o_context_streaming(self, agent):
-        events = [e async for e in agent.stream_program("lots_o_context")]
+        events = [e async for e in (await agent.create_process()).stream_action("lots_o_context")]
         assert events[2:-1] == [
             StringOutputEvent(content="1"),
             StringOutputEvent(content="2"),
@@ -172,14 +176,15 @@ class TestHelloWorld:
         ]
 
     async def test_creating_processes_without_program(self, agent):
-        process: ProcessStatus = await agent.create_process()
-        assert process.state == "initialized"
-        assert "idle" in process.available_actions
+        process = await agent.create_process()
+        status = await process.status()
+        assert status.state == "initialized"
+        assert "idle" in status.available_actions
         action = await process.action("idle", "Luke")
         assert action.data == "Hello, Luke!"
 
     async def test_delete_process(self, agent):
-        process: ProcessStatus = await agent.create_process()
+        process = await agent.create_process()
         deleted = await process.delete()
         assert deleted.process_id == process.process_id
         assert deleted.deleted == 1
@@ -191,7 +196,7 @@ class TestHelloWorld:
         assert not HelloWorld.created_processes
 
         # we expect to observe the process being created as a side effect of calling create_process
-        process: ProcessStatus = await agent.create_process()
+        process = await agent.create_process()
         assert HelloWorld.created_processes
 
         # and we should see it cleaned up as part of process deletion
