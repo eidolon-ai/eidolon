@@ -360,7 +360,7 @@ class MeaningOfLife(LogicUnit):
 
 class TestGenericAgentWithToolCalls:
     @pytest.fixture(scope="class")
-    async def agent(self, run_app, generic_agent_root):
+    async def agent(self, run_app, generic_agent_root) -> Agent:
         generic_agent = generic_agent_root.model_copy(deep=True)
         generic_agent.spec["cpu"]["logic_units"] = [fqn(MeaningOfLife)]
         generic_agent.spec["cpu"]["llm_unit"].model = "gpt-4-turbo-preview"
@@ -368,5 +368,6 @@ class TestGenericAgentWithToolCalls:
             yield Agent.get("GenericAgent")
 
     async def test_normal_tool_call(self, agent):
-        resp = await agent.program("question", dict(instruction="what is the meaning of life?"))
+        process = await agent.create_process()
+        resp = await process.action("question", dict(instruction="what is the meaning of life?"))
         assert "42" in resp.data
