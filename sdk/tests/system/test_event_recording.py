@@ -4,7 +4,7 @@ from fastapi import Body, HTTPException
 from typing import Annotated
 
 from eidolon_ai_sdk.agent.agent import register_program
-from eidolon_ai_client.client import Agent
+from eidolon_ai_client.client import Agent, ProcessStatus
 from eidolon_ai_client.events import (
     AgentStateEvent,
     StringOutputEvent,
@@ -12,6 +12,11 @@ from eidolon_ai_client.events import (
     SuccessEvent,
     UserInputEvent,
 )
+
+
+async def run_program(agent, program, **kwargs) -> ProcessStatus:
+    process = await Agent.get(agent).create_process()
+    return await process.action(program, **kwargs)
 
 
 class HelloWorld:
@@ -60,17 +65,15 @@ class TestHelloWorld:
             assert event_copy == expected_event_copy
 
     async def test_hello_world(self, server, client):
-        post = await client.post("/agents/HelloWorld/programs/idle", json="world")
-        assert post.status_code == 200
-        data = post.json()
-        process_id = data["process_id"]
-        assert data["data"] == "Hello, world!"
+        process = await Agent.get("HelloWorld").create_process()
+        post = await process.action("idle", "world")
+        assert post.data == "Hello, world!"
 
-        response = await client.get(f"/agents/HelloWorld/processes/{process_id}/events")
+        response = await client.get(f"/agents/HelloWorld/processes/{process.process_id}/events")
         events = response.json()
         expected_events = [
             UserInputEvent(input=dict(name="world")),
-            StartAgentCallEvent(machine=server, agent_name="HelloWorld", call_name="idle", process_id=process_id),
+            StartAgentCallEvent(machine=server, agent_name="HelloWorld", call_name="idle", process_id=process.process_id),
             StringOutputEvent(content="Hello, world!"),
             AgentStateEvent(state="terminated", available_actions=[]),
             SuccessEvent(),

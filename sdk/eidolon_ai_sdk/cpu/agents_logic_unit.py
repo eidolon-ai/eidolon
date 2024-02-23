@@ -79,20 +79,17 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         tools = []
         for agent in self.spec.agents:
             agent_client = Agent.get(agent)
-            agent = agent_client.agent
-
-            prefix = f"/agents/{agent}/programs/"
             machine_schema = await self._get_schema(agent_client.machine)
-            for path in filter(lambda p: p.startswith(prefix), machine_schema["paths"].keys()):
+            for action in await agent_client.programs():
+                path = f"/agents/{agent}/processes/{{process_id}}/actions/{action}"
                 try:
-                    program = path.removeprefix(prefix)
-                    name = self._name(agent, action=program)
+                    name = self._name(agent, action=action)
                     tool = self._build_tool_def(
                         agent,
-                        program,
+                        action,
                         name,
                         machine_schema["paths"][path]["post"],
-                        self._program_tool(agent_client, program, call_context),
+                        self._program_tool(agent_client, action, call_context),
                     )
                     tools.append(tool)
                 except ValueError:

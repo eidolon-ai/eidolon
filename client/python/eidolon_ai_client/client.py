@@ -31,6 +31,10 @@ class Agent(BaseModel):
     machine: str = Field(default_factory=current_machine_url)
     agent: str
 
+    async def programs(self) -> List[str]:
+        url = urljoin(self.machine, f"agents/{self.agent}/programs")
+        return await get_content(url)
+
     async def create_process(self) -> Process:
         url = urljoin(self.machine, f"agents/{self.agent}/processes")
         json_ = await post_content(url)
@@ -51,29 +55,6 @@ class Agent(BaseModel):
             return cls(agent=location)
 
 
-class Program(BaseModel):
-    machine: str = Field(default_factory=current_machine_url)
-    agent: str
-    program: str
-
-    @classmethod
-    def get(cls, location: str):
-        parts = location.split(".")
-        kwargs = dict(program=parts[-1], agent=parts[-2])
-        if len(parts) > 2:
-            kwargs["machine"] = ".".join(parts[:-2])
-        return cls(**kwargs)
-
-    def stream_execute(self, body: Optional[Any] = None) -> AgentResponseIterator:
-        url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
-        return AgentResponseIterator(stream_content(url, body))
-
-    async def execute(self, body: Optional[Any] = None, **kwargs) -> ProcessStatus:
-        url = urljoin(self.machine, f"agents/{self.agent}/programs/{self.program}")
-        json_ = await post_content(url, body, **kwargs)
-        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
-
-
 class Process(BaseModel):
     machine: str = Field(default_factory=current_machine_url)
     agent: str
@@ -81,7 +62,12 @@ class Process(BaseModel):
 
     async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/actions/{action_name}")
-        json_ = await post_content(url, body, **kwargs)
+        args = {
+            "url": url, **kwargs
+        }
+        if body:
+            args["json"] = body
+        json_ = await post_content(**args)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
