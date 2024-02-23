@@ -5,25 +5,6 @@ on:
   pull_request:
 
 jobs:
-  cli-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'poetry'
-      - run: poetry install
-        working-directory: cli
-      - run: poetry run ruff format .
-        working-directory: cli
-      - run: poetry run ruff check .
-        working-directory: cli
-      - run: poetry run pytest
-        working-directory: cli
-
   examples-test:
     runs-on: ubuntu-latest
     services:

@@ -5,6 +5,7 @@ import time
 from contextlib import contextmanager
 
 import pytest
+from jsonref import requests
 
 
 def tail(file_path, sleep_sec=0.1):
@@ -69,3 +70,8 @@ def eidolon_examples():
 @pytest.fixture
 def server_loc():
     return "http://localhost:8080"
+
+
+def get_process_id(server_loc, agent: str):
+    return requests.post(f"{server_loc}/agents/{agent}/processes").json()["process_id"]
+

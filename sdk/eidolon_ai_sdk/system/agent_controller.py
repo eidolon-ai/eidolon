@@ -15,9 +15,6 @@ from pydantic_core import PydanticUndefined, to_jsonable_python
 from sse_starlette import EventSourceResponse, ServerSentEvent
 from starlette.responses import JSONResponse
 
-from eidolon_ai_sdk.agent.agent import AgentState
-from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_client.events import (
     StartAgentCallEvent,
     AgentStateEvent,
@@ -32,6 +29,11 @@ from eidolon_ai_client.events import (
     UserInputEvent,
     CanceledEvent,
 )
+from eidolon_ai_client.util.logger import logger
+from eidolon_ai_client.util.request_context import RequestContext
+from eidolon_ai_sdk.agent.agent import AgentState
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     ListProcessesResponse,
@@ -41,11 +43,9 @@ from eidolon_ai_sdk.system.agent_contract import (
 )
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
-from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
-from eidolon_ai_client.util.logger import logger
 
 
 # todo, agent controller has become a mega impl, we should break up responsibilities
@@ -93,12 +93,18 @@ class AgentController:
             tags=[self.name],
         )
 
+        app.add_api_route(
+            f"/agents/{self.name}/programs",
+            endpoint=self.get_programs,
+            methods=["GET"],
+            response_model=typing.List[str],
+            tags=[self.name],
+        )
+
         added_actions = {}
         for handler in [*self.actions.values().__reversed__()]:
             handler_name = handler.name
             path = f"/agents/{self.name}/processes/{{process_id}}/actions/{handler_name}"
-            if "initialized" in handler.extra["allowed_states"]:
-                await self.add_route(app, handler, f"/agents/{self.name}/programs/{handler_name}", True)
             if handler_name not in added_actions:
                 await self.add_route(app, handler, path, False)
                 added_actions[handler_name] = path
@@ -107,7 +113,6 @@ class AgentController:
                     f"Action {handler_name} is already registered for path {added_actions[handler_name]}. "
                     f"Skipping registration for path {path}"
                 )
-
         app.add_api_route(
             f"/agents/{self.name}/processes/{{process_id}}/status",
             endpoint=self.get_process_info,
@@ -144,10 +149,10 @@ class AgentController:
         pass
 
     async def run_program(
-        self,
-        handler: FnHandler,
-        process_id: typing.Optional[str] = None,
-        **kwargs,
+            self,
+            handler: FnHandler,
+            process_id: typing.Optional[str] = None,
+            **kwargs,
     ):
         request = typing.cast(Request, kwargs.pop("__request"))
         if not process_id:
@@ -261,10 +266,10 @@ class AgentController:
                     ended = event.is_root_end_event()
                     transitioned = event.is_root_and_type(AgentStateEvent)
                     if (
-                        isinstance(event, StringOutputEvent)
-                        and events_to_store
-                        and isinstance(events_to_store[-1], StringOutputEvent)
-                        and event.stream_context == events_to_store[-1].stream_context
+                            isinstance(event, StringOutputEvent)
+                            and events_to_store
+                            and isinstance(events_to_store[-1], StringOutputEvent)
+                            and event.stream_context == events_to_store[-1].stream_context
                     ):
                         events_to_store[-1].content += event.content
                     else:
@@ -286,11 +291,11 @@ class AgentController:
             await store_events(self.name, process.record_id, events_to_store)
 
     async def stream_agent_iterator(
-        self,
-        stream: AsyncIterator[StreamEvent],
-        process: ProcessDoc,
-        call_name,
-        user_input: typing.Dict[str, typing.Any],
+            self,
+            stream: AsyncIterator[StreamEvent],
+            process: ProcessDoc,
+            call_name,
+            user_input: typing.Dict[str, typing.Any],
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         seen_end = False
@@ -375,14 +380,26 @@ class AgentController:
         _run_program.__signature__ = sig.replace(parameters=params_values, return_annotation=typing.Any)
         return _run_program
 
+    async def get_programs(self):
+        """
+        Get the operations that are available for this agent that can be run from the initial state
+        """
+        programs = []
+        for handler in [*self.actions.values().__reversed__()]:
+            handler_name = handler.name
+            if "initialized" in handler.extra["allowed_states"]:
+                programs.append(handler_name)
+
+        return JSONResponse(programs, 200)
+
     async def get_process_info(self, process_id: str):
         latest_record = await self.get_latest_process_event(process_id)
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
         elif (
-            latest_record.state == "unhandled_error"
-            or latest_record.state == "http_error"
-            or latest_record.state == "error"
+                latest_record.state == "unhandled_error"
+                or latest_record.state == "http_error"
+                or latest_record.state == "error"
         ):
             detail = latest_record.error_info
             status_code = 500
@@ -405,6 +422,11 @@ class AgentController:
         return await load_events(self.name, process_id)
 
     async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
+        """
+        Create a new process. Use this method first to get a process id before calling any other action
+        :param args: An optional title for the process
+        :return:
+        """
         process = await self._create_process(state="initialized", title=args.title)
         return JSONResponse(
             StateSummary(
@@ -416,6 +438,9 @@ class AgentController:
         )
 
     async def delete_process(self, process_id: str):
+        """
+        Delete a process and all of its children
+        """
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
@@ -448,12 +473,15 @@ class AgentController:
         return num_deleted + 1
 
     async def list_processes(
-        self,
-        request: Request,
-        limit: int = 20,
-        skip: int = 0,
-        sort: typing.Literal["ascending", "descending"] = "ascending",
+            self,
+            request: Request,
+            limit: int = 20,
+            skip: int = 0,
+            sort: typing.Literal["ascending", "descending"] = "ascending",
     ):
+        """
+        List all processes for this agent. Supports paging and sorting
+        """
         query = dict(agent=self.name)
         count = await AgentOS.symbolic_memory.count(ProcessDoc.collection, query)
         cursor = AgentOS.symbolic_memory.find(
@@ -488,9 +516,9 @@ class AgentController:
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
         elif (
-            latest_record.state == "unhandled_error"
-            or latest_record.state == "http_error"
-            or latest_record.state == "error"
+                latest_record.state == "unhandled_error"
+                or latest_record.state == "http_error"
+                or latest_record.state == "error"
         ):
             detail = latest_record.error_info
             status_code = 500
