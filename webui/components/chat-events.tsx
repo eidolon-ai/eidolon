@@ -17,14 +17,13 @@ import {
 } from "@/lib/display-elements";
 import "@/components/chat-events.css"
 import {AgentProcess} from "@/components/agent-input/agent-process";
-import {getChatEvents} from "@/app/api/chat/messages/route";
 import {createParser, ParseEvent} from "eventsource-parser";
 import {ParsedEvent} from "eventsource-parser/src/types";
-import {getPIDStatus} from "@/app/api/chat/route";
 import {useSession} from "next-auth/react";
 import {EidolonMarkdown} from "@/components/eidolon-markdown";
 import {ToolCall} from "@/components/tool-call-element";
 import {ChatScrollAnchor} from "@/components/chat-scroll-anchor";
+import {getChatEvents, getPIDStatus} from "@/app/api/chat/messages/chatHelpers";
 
 interface ChatEventProps {
   agentName: string,
@@ -198,23 +197,15 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, handleActio
 }) => {
   const {data: session} = useSession()
   const getUserInput = (element: UserRequestElement) => {
+    // todo, make sure this renders file inputs correctly
     let content = {...element.content}
     delete content["process_id"]
-    if (content["body"]) {
-      // copy contents of body object to top level
-      const body = content["body"]
-      delete content["body"]
-      content = {...content, ...body}
-    }
-
     if (Object.keys(content).length === 0) {
-      return "*No input*"
+      return "*No Input*"
     } else if (Object.keys(content).length === 1) {
-      const value = JSON.stringify(content[Object.keys(content)[0]], undefined, "  ")
-      content = `"${Object.keys(content)[0]}": ${value}`
-    } else {
-      content = JSON.stringify(content, undefined, "  ")
+      content = content[Object.keys(content)[0]]
     }
+    content = JSON.stringify(content, undefined, "  ")
     return '```json\n' + content + "\n```"
   }
 

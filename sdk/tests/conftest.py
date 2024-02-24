@@ -4,7 +4,7 @@ import socket
 import threading
 from contextlib import asynccontextmanager
 from typing import Iterable
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch
 
 import httpx
 import pytest
@@ -15,7 +15,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
-from vcr.stubs.httpx_stubs import _shared_vcr_send, _record_responses
 
 import eidolon_ai_sdk.system.processes as processes
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -38,48 +37,6 @@ def pytest_collection_modifyitems(items):
         item.add_marker(pytest.mark.vcr)
         item.fixturenames.append("patched_vcr_object_handling")
         item.fixturenames.append("deterministic_process_ids")
-        item.fixturenames.append("patch_async_vcr_send")
-
-
-@pytest.fixture
-def patch_async_vcr_send(monkeypatch):
-    async def mock_async_vcr_send(cassette, real_send, *args, **kwargs):
-        if len(args) == 1 and "stream" in kwargs and kwargs["stream"] is True:
-            args = (args[0], kwargs["request"])
-            del kwargs["request"]
-        vcr_request, response = _shared_vcr_send(cassette, real_send, *args, **kwargs)
-        if response:
-            # add cookies from response to session cookie store
-            args[0].cookies.extract_cookies(response)
-            return response
-
-        real_response = await real_send(*args, **kwargs)
-        if "text/event-stream" in real_response.headers["Content-Type"]:
-            aiter_bytes = real_response.aiter_bytes
-
-            async def _sub(*args2, **kwargs2):
-                acc = []
-                async for x in aiter_bytes(*args2, **kwargs2):
-                    acc.append(x)
-                    yield x
-
-                if hasattr(real_response, "_content"):
-                    orig_content = real_response._content
-                else:
-                    orig_content = "____NOT_SET____"
-                real_response._content = b"".join(acc)
-                _record_responses(cassette, vcr_request, real_response)
-                if orig_content == "____NOT_SET____":
-                    del real_response._content
-                else:
-                    real_response._content = orig_content
-
-            real_response.aiter_bytes = _sub
-            return real_response
-        else:
-            return _record_responses(cassette, vcr_request, real_response)
-
-    monkeypatch.setattr(httpx_stubs, "_async_vcr_send", AsyncMock(side_effect=mock_async_vcr_send))
 
 
 @pytest.fixture(scope="module")

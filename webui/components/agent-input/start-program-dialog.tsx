@@ -19,9 +19,9 @@ import {
 import * as React from "react";
 import {useEffect, useState} from "react";
 import Draggable from 'react-draggable';
-import {EidosClient} from "@/lib/types";
-import {createPID} from "@/app/api/chat/route";
+import {EidolonClient} from "@/lib/types";
 import {useRouter} from "next/navigation";
+import {createPID} from "@/app/api/chat/messages/chatHelpers";
 
 function PaperComponent(props: PaperProps) {
   return (
@@ -42,7 +42,7 @@ export function StartProgramDialog({open, onClose}: { open: boolean, onClose: (w
 
   const [agents, setAgents] = useState<string[]>([])
   useEffect(() => {
-    const client = new EidosClient("http://localhost:8080")
+    const client = new EidolonClient("http://localhost:8080")
     client.getAgents().then(agents => {
       setAgents(agents)
       setAgent(agents[0])

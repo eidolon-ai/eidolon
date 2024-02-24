@@ -6,7 +6,7 @@ from pymongo.errors import DuplicateKeyError
 from typing import ClassVar, Any, cast, AsyncIterable, Optional, Dict
 
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.io.events import StreamEvent
+from eidolon_ai_client.events import StreamEvent
 
 
 class MongoDoc(BaseModel, extra="allow"):

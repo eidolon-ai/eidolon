@@ -1,0 +1,6 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: conversational_agent
+spec:
+  system_prompt: "You are a helpful assistant."

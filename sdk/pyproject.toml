@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eidolon-ai-sdk"
-version = "0.1.15"
+version = "0.1.16"
 description = "An Open Source Agent Services Framework"
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
@@ -17,10 +17,11 @@ replay = "eidolon_ai_sdk.bin.replay:app"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
+eidolon_ai_client = {path = "../client/python", develop = true}
 fastapi = "^0.109.0"
 pyyaml = "^6.0.1"
 jsonschema = "^4.21.1"
-httpx = "^0.26.0"
+httpx = "^0.27.0"
 uvicorn = "^0.27.0"
 numpy = "^1.26.3"
 motor = "^3.3.2"
@@ -42,7 +43,6 @@ pillow = "^10.2.0"
 python-docx = "^1.1.0"
 python-jose = "^3.3.0"
 authlib = "^1.3.0"
-aiostream = "^0.5.2"
 httpx-sse = "^0.4.0"
 sse-starlette = "^2.0.0"
 dill = "^0.3.8"

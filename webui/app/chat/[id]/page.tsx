@@ -1,9 +1,9 @@
 import {notFound, redirect} from 'next/navigation'
 
-import {getChat} from "@/app/api/chat/route";
 import * as React from "react";
 import {getServerSession} from "next-auth";
 import {ChatEvents} from "@/components/chat-events";
+import {getChat} from "@/app/api/chat/messages/chatHelpers";
 
 export const runtime = 'nodejs'
 export const preferredRegion = 'home'
@@ -19,6 +19,7 @@ export default async function ChatPage({params}: ChatPageProps) {
 
   if (!session?.user) {
     redirect(`/sign-in?next=/chat/${params.id}`)
+    return
   }
 
   const chat = await getChat(params.id)

@@ -6,14 +6,15 @@ from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
-from eidolon_ai_sdk.agent.client import Program
+from eidolon_ai_client.client import Agent
+from eidolon_ai_client.events import StartStreamContextEvent, OutputEvent
+from eidolon_ai_client.util.stream_collector import merge_streams
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, Thread
 from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes, SystemCPUMessage
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
-from eidolon_ai_sdk.io.events import StartStreamContextEvent, OutputEvent
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable, Reference
-from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, merge_streams
+from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager
 
 
 class InputValidatorBody(BaseModel):
@@ -114,13 +115,22 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
                 detail=reasons or "Reqeust flagged by input validator",
             )
 
-    def _check_input(self, v: str, prompts):
-        program_stream = Program.get(v).stream_execute(InputValidatorBody(prompts=prompts))
+    def parse_action(self, agent_action: str):
+        return agent_action.split(".")
+
+    def _check_input(self, v: str, prompts) -> StreamCollector:
+        [agent, action] = self.parse_action(v)
+        program_stream = Agent.get(agent).stream_program(
+            action,
+            InputValidatorBody(prompts=prompts)
+        )
         context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}")
         return stream_manager(program_stream, context)
 
     def _check_output(self, v, prompts, resp, output_format) -> StreamCollector:
-        program_stream = Program.get(v).stream_execute(
+        [agent, action] = self.parse_action(v)
+        program_stream = Agent.get(agent).stream_program(
+            action,
             OutputValidatorBody(prompts=prompts, output_schema=output_format, response=resp)
         )
         context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}")

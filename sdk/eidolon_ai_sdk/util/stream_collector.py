@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from typing import Optional, AsyncIterator, List, Callable
 
-from aiostream import stream
-
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     BaseStreamEvent,
     StringOutputEvent,
     ObjectOutputEvent,
@@ -14,7 +12,7 @@ from eidolon_ai_sdk.io.events import (
     EndStreamContextEvent,
     SuccessEvent,
 )
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class StreamCollector(AsyncIterator[StreamEvent]):
@@ -95,14 +93,3 @@ def stream_manager(
 
 class ManagedContextError(Exception):
     pass
-
-
-async def merge_streams(streams: List[AsyncIterator]) -> AsyncIterator:
-    if len(streams) > 1:
-        merged_stream = stream.merge(streams[0], *streams[1:])
-        async with merged_stream.stream() as s:
-            async for value in s:
-                yield value
-    elif len(streams) == 1:
-        async for v in streams[0]:
-            yield v

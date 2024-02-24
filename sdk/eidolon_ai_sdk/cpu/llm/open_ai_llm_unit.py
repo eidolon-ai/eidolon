@@ -18,19 +18,18 @@ from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import (
     LLMMessage,
     AssistantMessage,
-    ToolCall,
     ToolResponseMessage,
     UserMessage,
     SystemMessage,
 )
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     StringOutputEvent,
     ObjectOutputEvent,
-    LLMToolCallRequestEvent,
+    LLMToolCallRequestEvent, ToolCall,
 )
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger as eidolon_logger
+from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")

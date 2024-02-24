@@ -1,6 +1,6 @@
 import pytest
 
-from eidolon_ai_sdk.agent.client import Agent
+from eidolon_ai_client.client import Agent
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
@@ -24,16 +24,18 @@ def retriever(test_dir):
 
 
 @pytest.fixture(scope="module")
-async def agent(retriever, run_app):
+async def agent(retriever, run_app) -> Agent:
     async with run_app(retriever):
         yield Agent.get("RetrieverAgent")
 
 
 async def test_list_files(agent):
-    found = await agent.program("list_files")
+    process = await agent.create_process()
+    found = await process.action("list_files")
     assert set(found.data) == {"caz", "car", "doo", "dar", "daz", "coo", "ear", "eaz", "foo", "boo", "baz", "bar", "eoo"}
 
 
 async def test_search(agent):
-    found = await agent.program("search", body={"question": "foo"})
+    process = await agent.create_process()
+    found = await process.action("search", body={"question": "foo"})
     assert found.data

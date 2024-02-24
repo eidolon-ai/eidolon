@@ -11,4 +11,4 @@ def http_server(eidolon_server, eidolon_examples):
 def test_server_is_running(server_loc):
     response = requests.get(f"{server_loc}/openapi.json")
     assert response.status_code == 200
-    assert "/agents/doc_producer/programs/question" in response.json()["paths"]
+    assert "/agents/doc_producer/processes/{process_id}/actions/converse" in response.json()["paths"]

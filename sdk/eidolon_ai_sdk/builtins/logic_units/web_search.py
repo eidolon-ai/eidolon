@@ -10,13 +10,13 @@ from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class SearchResult(BaseModel):
     url: str
     title: str
-    description: str
+    description: Optional[str]
 
 
 # Requires custom search engine + token setup in google project. See more at https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list
@@ -83,7 +83,7 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         if not resp["items"]:
             raise RuntimeError("Error retrieving results")
         for item in resp["items"]:
-            yield SearchResult(url=item["link"], title=item["title"], description=item["snippet"])
+            yield SearchResult(url=item["link"], title=item["title"], description=item.get("snippet"))
 
     async def _req(self, term, results, lang):
         async with self._get(

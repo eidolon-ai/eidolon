@@ -1,6 +1,5 @@
 'use client'
 
-import {deleteChat, getChatsForUI} from '@/app/api/chat/route'
 import {Chat} from "@/lib/types";
 import {Box, Button, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
 import * as React from "react";
@@ -9,6 +8,7 @@ import {SidebarItem} from "@/components/sidebar-item";
 import {usePathname, useRouter} from "next/navigation";
 import {StartProgramDialog} from "@/components/agent-input/start-program-dialog";
 import {useSession} from "next-auth/react";
+import {deleteChat, getChatsForUI} from "@/app/api/chat/messages/chatHelpers";
 
 export function SidebarList() {
   const {data: session} = useSession()
@@ -44,7 +44,6 @@ export function SidebarList() {
   }
 
   useEffect(() => {
-    console.log("here")
     getChatsForUI().then(chats => setDataByDate(chats))
     return () => {
     }

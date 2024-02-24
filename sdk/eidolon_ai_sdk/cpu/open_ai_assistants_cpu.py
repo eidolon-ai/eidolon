@@ -19,7 +19,7 @@ from eidolon_ai_sdk.cpu.llm_message import ToolResponseMessage, LLMMessage
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.system.reference_model import Specable, Reference
-from eidolon_ai_sdk.util.logger import logger
+from eidolon_ai_client.util.logger import logger
 
 
 class OpenAIAssistantsCPUSpec(AgentCPUSpec):

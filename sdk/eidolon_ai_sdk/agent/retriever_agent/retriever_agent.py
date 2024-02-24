@@ -1,9 +1,9 @@
 import asyncio
+from typing import Annotated, List
+from urllib.parse import urlparse
 
 from fastapi import Body
 from pydantic import BaseModel, Field, model_validator
-from typing import Annotated, List
-from urllib.parse import urlparse
 
 from eidolon_ai_sdk.agent.agent import register_program, AgentState
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
@@ -27,7 +27,7 @@ class RetrieverAgentSpec(BaseModel):
     description: str = Field(
         description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
     )
-    loader_root_location: str = Field(description="A URL specifying the root location of the loader.")
+    loader_root_location: str = Field(None, description="A URL specifying the root location of the loader.")
 
     loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
     max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
@@ -50,14 +50,13 @@ class RetrieverAgentSpec(BaseModel):
         if "spec" not in doc_manager_spec["loader"]:
             doc_manager_spec["loader"]["spec"] = dict()
 
-        if "loader_root_location" not in spec:
-            raise ValueError("loader_root_location must be specified in the spec")
-        loader_url = urlparse(spec["loader_root_location"])
-        if loader_url.scheme == "file":
-            doc_manager_spec["loader"]["implementation"] = fqn(FilesystemLoader)
-            doc_manager_spec["loader"]["root_dir"] = spec["loader_root_location"][7:]
-        else:
-            raise ValueError("loader_root_location spec must be a file:// url")
+        if "loader_root_location" in spec:
+            loader_url = urlparse(spec["loader_root_location"])
+            if loader_url.scheme == "file":
+                doc_manager_spec["loader"]["implementation"] = fqn(FilesystemLoader)
+                doc_manager_spec["loader"]["root_dir"] = spec["loader_root_location"][7:]
+            else:
+                raise ValueError("loader_root_location spec must be a file:// url")
         if "loader_pattern" in spec:
             doc_manager_spec["loader"]["pattern"] = spec["loader_pattern"]
 

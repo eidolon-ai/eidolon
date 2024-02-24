@@ -9,9 +9,9 @@ from eidolon_examples.group_conversation.conversation_agent import (
     SpeakResult,
     ThoughtResult,
 )
-from eidolon_ai_sdk.agent.client import Machine
+from eidolon_ai_client.client import Machine
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.io.events import (
+from eidolon_ai_client.events import (
     ObjectOutputEvent,
     AgentContextStartEvent,
     AgentContextEndEvent,

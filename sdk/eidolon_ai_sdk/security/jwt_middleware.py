@@ -9,7 +9,7 @@ from typing import List, Optional, Any
 
 from eidolon_ai_sdk.security.security_manager import BaseTokenProcessor
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.system.request_context import RequestContext
+from eidolon_ai_client.util.request_context import RequestContext
 
 
 class BaseJWTMiddlewareSpec(BaseModel):
