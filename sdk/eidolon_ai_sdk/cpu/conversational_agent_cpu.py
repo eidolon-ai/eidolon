@@ -15,7 +15,8 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError, merge_streams
+from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
+from eidolon_ai_client.util.stream_collector import merge_streams
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
