@@ -1,9 +1,14 @@
 import asyncio
 import random
-from fastapi import Body
-from pydantic import BaseModel, TypeAdapter, Field
 from typing import Tuple, List, Annotated, TypeVar, Dict
 
+from fastapi import Body
+from pydantic import BaseModel, TypeAdapter, Field
+
+from eidolon_ai_client.client import Machine
+from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_examples.group_conversation.conversation_agent import (
     SpeakResult,
     ThoughtResult,
@@ -11,10 +16,6 @@ from eidolon_examples.group_conversation.conversation_agent import (
     StatementsForAgent,
     Statement,
 )
-from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_client.client import Machine
-from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class NextTurn(BaseModel):
@@ -48,9 +49,9 @@ class InnerMonologue(BaseModel):
 class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
     @register_program()
     async def start_conversation(
-        self,
-        process_id,
-        topic: Annotated[StartConversation, Body(description="The topic of the new conversation", embed=True)],
+            self,
+            process_id,
+            topic: Annotated[StartConversation, Body(description="The topic of the new conversation", embed=True)],
     ) -> AgentState[str]:
         """
         Called to start the conversation. Every user will get a turn in each turn of the conversation.
@@ -58,7 +59,7 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         # start conversation with every agent
         agent_pids = []
         for agent in self.spec.agents:
-            response = await Machine().agent(agent).program("start_conversation", {"topic": topic.topic})
+            response = await Machine().agent(agent).run_program("start_conversation", {"topic": topic.topic})
             agent_pid = response.process_id
             agent_pids.append((agent, agent_pid))
             await AgentOS.symbolic_memory.insert_one(
@@ -122,7 +123,7 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
 
     @register_action("idle")
     async def add_inner_monologue(
-        self, process_id, monologue: Annotated[InnerMonologue, Body(description="The thought to add", embed=True)]
+            self, process_id, monologue: Annotated[InnerMonologue, Body(description="The thought to add", embed=True)]
     ) -> AgentState[str]:
         conversation_state = await self._restore_state(process_id)
         for agent_name, state_agent_pid in conversation_state.agent_pids:
