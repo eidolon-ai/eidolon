@@ -70,7 +70,7 @@ async def _s(*_args, after=None):
 
 
 def _m(stream, context: str):
-    return stream_manager(stream, StartStreamContextEvent(context_id=context))
+    return stream_manager(stream, StartStreamContextEvent(context_id=context, title=context))
 
 
 @pytest.fixture(autouse=True)
@@ -162,15 +162,15 @@ class TestHelloWorld:
         assert events[2:-1] == [
             StringOutputEvent(content="1"),
             StringOutputEvent(content="2"),
-            StartStreamContextEvent(context_id="c1"),
+            StartStreamContextEvent(context_id="c1", title="c1"),
             StringOutputEvent(content="3", stream_context="c1"),
             StringOutputEvent(content="4", stream_context="c1"),
             SuccessEvent(stream_context="c1"),
             EndStreamContextEvent(context_id="c1"),
-            StartStreamContextEvent(context_id="c2"),
+            StartStreamContextEvent(context_id="c2", title="c2"),
             StringOutputEvent(content="5", stream_context="c2"),
             StringOutputEvent(content="6", stream_context="c2"),
-            StartStreamContextEvent(context_id="c3", stream_context="c2"),
+            StartStreamContextEvent(context_id="c3", stream_context="c2", title="c3"),
             StringOutputEvent(content="7", stream_context="c2.c3"),
             StringOutputEvent(content="8", stream_context="c2.c3"),
             SuccessEvent(stream_context="c2.c3"),

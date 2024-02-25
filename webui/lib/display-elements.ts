@@ -110,6 +110,16 @@ export const makeElement = (event: ChatEvent) => {
         contextId: event.context_id,
         children: []
       } as ToolCallElement
+    case "context_start":
+      return {
+        type: "tool-call",
+        title: event.title,
+        sub_title: event.sub_title || "",
+        is_active: true,
+        is_agent: event.is_agent_call || false,
+        contextId: event.context_id,
+        children: []
+      } as ToolCallElement
     case "context_end":
       return {
         type: "tool-call-end",

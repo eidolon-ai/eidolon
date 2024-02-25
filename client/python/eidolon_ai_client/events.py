@@ -53,6 +53,8 @@ class StartStreamContextEvent(BaseStreamEvent):
     category: Literal[Category.START] = Category.START
     event_type: Literal["context_start"] = "context_start"
     context_id: str
+    title: str
+    sub_title: str = ""
 
     def get_nested_context(self):
         context = self.stream_context + "." if self.stream_context else ""
@@ -68,8 +70,6 @@ class EndStreamContextEvent(BaseStreamEvent):
 class ToolCallStartEvent(StartStreamContextEvent):
     event_type: Literal["tool_call_start"] = "tool_call_start"
     tool_call: ToolCall
-    title: str
-    sub_title: str = ""
     is_agent_call: bool = False
 
 
