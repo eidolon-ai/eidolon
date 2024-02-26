@@ -125,10 +125,10 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             thoughts = conversation["thought"] if conversation["thought"] and len(conversation["thought"].strip()) > 0 else "*agent had no thoughts*"
             speak = conversation["speak"] if conversation["speak"] and len(conversation["speak"].strip()) > 0 else "*agent said nothing*"
             yield StringOutputEvent(content=f"##### Agent: {agent}\n")
-            yield StringOutputEvent(content=f"<span style='color:#6677aa'>Emotions: ")
+            yield StringOutputEvent(content="<span style='color:#6677aa'>Emotions: ")
             yield StringOutputEvent(content=emotions)
             yield StringOutputEvent(content="</span>\n\n")
-            yield StringOutputEvent(content=f"<span style='color:#66aa44'>Thoughts: ")
+            yield StringOutputEvent(content="<span style='color:#66aa44'>Thoughts: ")
             yield StringOutputEvent(content=thoughts)
             yield StringOutputEvent(content="</span>\n\n")
             yield StringOutputEvent(content=speak)
