@@ -13,6 +13,12 @@ from openai.types.chat.chat_completion_chunk import ChoiceDelta
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field, BaseModel
 
+from eidolon_ai_client.events import (
+    StringOutputEvent,
+    ObjectOutputEvent,
+    LLMToolCallRequestEvent, ToolCall,
+)
+from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import (
@@ -23,13 +29,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidolon_ai_client.events import (
-    StringOutputEvent,
-    ObjectOutputEvent,
-    LLMToolCallRequestEvent, ToolCall,
-)
-from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_client.util.logger import logger as eidolon_logger
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
@@ -133,6 +133,8 @@ class OpenAiGPTSpec(BaseModel):
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
+    client: AnnotatedReference[AsyncOpenAI]
+    client_args: dict = {}
 
 
 class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
@@ -159,7 +161,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(fn=_openai_completion, name_override="openai_completion", parser=_raw_parser)
+        llm_request = replayable(fn=_openai_completion(self.spec), name_override="openai_completion", parser=_raw_parser)
         llm_response = await llm_request(**request)
         complete_message = ""
         tools_to_call = []
@@ -264,8 +266,11 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
     return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
 
 
-async def _openai_completion(*args, **kwargs):
-    return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
+def _openai_completion(spec: OpenAiGPTSpec):
+    async def fn(*args, **kwargs):
+        spec.client.instantiate(**spec.client_args)
+        return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
+    return fn
 
 
 async def _raw_parser(resp):

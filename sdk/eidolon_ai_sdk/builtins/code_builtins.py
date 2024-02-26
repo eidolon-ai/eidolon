@@ -1,5 +1,9 @@
 from typing import Tuple
 
+from openai import AsyncOpenAI
+from openai._base_client import AsyncAPIClient
+from openai.lib.azure import AsyncAzureOpenAI
+
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
@@ -125,6 +129,9 @@ def named_builtins():
         GitHubLoader,
         ToTChecker,
         OpenAiSpeech,
+        (AsyncAPIClient, AsyncOpenAI),
+        AsyncOpenAI,
+        AsyncAzureOpenAI,
         # config objects
         ReplayConfig,
     ]
