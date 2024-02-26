@@ -7,6 +7,8 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 import yaml
 from PIL import Image
 from openai import AsyncOpenAI, AsyncStream
+from openai._base_client import AsyncAPIClient
+from openai.lib.azure import AsyncAzureOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk, ChatCompletionMessage
 from openai.types.chat.chat_completion import ChatCompletion
 from openai.types.chat.chat_completion_chunk import ChoiceDelta
@@ -268,8 +270,8 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
 
 def _openai_completion(spec: OpenAiGPTSpec):
     async def fn(*args, **kwargs):
-        spec.client.instantiate(**spec.client_args)
-        return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
+        client: AsyncOpenAI = spec.client.instantiate(**spec.client_args)
+        return await client.chat.completions.create(*args, **kwargs)
     return fn
 
 

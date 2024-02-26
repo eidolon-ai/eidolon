@@ -129,7 +129,6 @@ def named_builtins():
         GitHubLoader,
         ToTChecker,
         OpenAiSpeech,
-        (AsyncAPIClient, AsyncOpenAI),
         AsyncOpenAI,
         AsyncAzureOpenAI,
         # config objects
