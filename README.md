@@ -1,5 +1,3 @@
-google-site-verification: google45b6290295583074.html
-
 # Welcome to Eidolon - an Open Source Agent Services Framework 
 
 <img alt="img_1" height="400" width="400" src="./docs/src/assets/main_images/img_1.png"/>
