@@ -5,6 +5,7 @@ import {signOut, useSession} from "next-auth/react";
 import {AppBar, Avatar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {useRouter} from "next/navigation";
+import Link from 'next/link';
 
 export function Header() {
   const {data: session} = useSession()
@@ -71,7 +72,11 @@ export function Header() {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <Link href="/profile">
+                <MenuItem onClick={handleClose}>
+                  Profile
+                </MenuItem>
+              </Link>
               <MenuItem onClick={handleSignout}>Sign out</MenuItem>
             </Menu>
           </div>
