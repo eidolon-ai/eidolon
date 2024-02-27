@@ -7,8 +7,6 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 import yaml
 from PIL import Image
 from openai import AsyncOpenAI, AsyncStream
-from openai._base_client import AsyncAPIClient
-from openai.lib.azure import AsyncAzureOpenAI
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk, ChatCompletionMessage
 from openai.types.chat.chat_completion import ChatCompletion
 from openai.types.chat.chat_completion_chunk import ChoiceDelta

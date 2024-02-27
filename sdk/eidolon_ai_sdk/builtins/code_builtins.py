@@ -1,7 +1,6 @@
 from typing import Tuple
 
 from openai import AsyncOpenAI
-from openai._base_client import AsyncAPIClient
 from openai.lib.azure import AsyncAzureOpenAI
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
