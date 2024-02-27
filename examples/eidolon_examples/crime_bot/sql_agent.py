@@ -7,7 +7,7 @@ import os
 from eidolon_ai_sdk.agent.agent import Agent, AgentSpec, register_program
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_sdk.util.logger import logger
+# from eidolon_ai_sdk.util.logger import logger
 
 
 class SqlAgentSpec(AgentSpec):
@@ -37,7 +37,7 @@ class SqlAgent(Agent, Specable[SqlAgentSpec]):
         start_idx = response_text.find("SELECT")
         sql_statement = response_text[start_idx:] if start_idx != -1 else response_text
         sql_statement = sql_statement.rstrip(';').strip()
-        logger.info(sql_statement)
+        # logger.info(sql_statement)
 #         todo actually execute sql
         return sql_query(sql_statement)
 
