@@ -1,6 +1,11 @@
-name: Bump SDK Version
+name: Publish Client
 on:
-  - workflow_dispatch
+  workflow_run:
+    workflows: [ "Bump Client Version" ]
+    types:
+      - completed
+  workflow_dispatch:
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -18,11 +23,9 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
+      - run: poetry install
+        working-directory: client/python
       - run: |
-          poetry version patch
-          echo "SDK_VERSION=$(poetry version -s)" >> $GITHUB_ENV
-        working-directory: sdk
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Bump patch version"
-          tagging_message: sdk/${{ env.SDK_VERSION }}
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry publish --build
+        working-directory: client/python
