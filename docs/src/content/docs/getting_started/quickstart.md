@@ -9,7 +9,7 @@ This document covers installing **Eidolon**, creating your first **AgentProgram*
 ## Prerequisites
 
 * [Python 3.11](https://formulae.brew.sh/formula/python@3.11)
-* [OpenAI api key](https://platform.openai.com/account/api-keys "Create an OpenAI key"): You should have an envar OPENAI_API_KEY set to your OpenAI api key.
+* [OpenAI api key](https://platform.openai.com/account/api-keys): You should have an envar OPENAI_API_KEY set to your OpenAI api key.
 
 ## Step 1: Install Eidolon SDK
 

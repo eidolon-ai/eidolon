@@ -6,18 +6,12 @@ export default defineConfig({
     site: 'https://www.eidolonai.com',
     integrations: [
         starlight({
-            title: 'Eidolon: A service based AI LLM framework for developers. An open source alternative to LangChain',
-            components: {
-                SiteTitle: './src/components/FixedTitle.astro',
-            },
+            title: 'Eidolon',
 //             components: {
 //                 todo ThemeSelect has issues finding StarlightThemeProvider
 //                 ThemeSelect: './src/components/ThemeSelect.astro',
 //                 Hero: './src/components/NewHero.astro',
 //             },
-            editLink: {
-                baseUrl: 'https://github.com/eidolon-ai/eidolon/docs/',
-            },
             favicon: '/favicon.ico',
             head: [
                 {
@@ -42,7 +36,6 @@ export default defineConfig({
                 youtube: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
                 discord: 'https://discord.gg/6kVQrHpeqG',
                 linkedin: 'https://www.linkedin.com/company/august-data/',
-                'x.com': 'https://x.com/AgentSaaS',
             },
             sidebar: [
                 {
