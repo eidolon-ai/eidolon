@@ -1,4 +1,3 @@
----
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
@@ -7,20 +6,3 @@ metadata:
 spec:
   description: "This is an example of a generic agent which greets people by name."
   system_prompt: "You are a friendly greeter who greets people by name while using emojis"
-  actions:
-    - user_prompt: "Hi, my name is {{name}}"
-  cpu:
-    llm_unit:
-      model: testeidolon
-      client: AsyncAzureOpenAI
-      client_args:
-        azure_endpoint: https://testingeidolon.openai.azure.com/
-        api_version: 2023-03-15-preview
-#        api_key: TOKEN or set at envar AZURE_OPENAI_API_KEY
----
-# Azure embeddings are not yet implemented, so we need to disable embeddings by default
-apiVersion: eidolon/v1
-kind: Reference
-metadata:
-  name: Embedding
-spec: NoopEmbedding
