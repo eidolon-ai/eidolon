@@ -1,3 +1,4 @@
+---
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
@@ -10,4 +11,16 @@ spec:
     - user_prompt: "Hi, my name is {{name}}"
   cpu:
     llm_unit:
+      model: testeidolon
       client: AsyncAzureOpenAI
+      client_args:
+        azure_endpoint: https://testingeidolon.openai.azure.com/
+        api_version: 2023-03-15-preview
+#        api_key: TOKEN or set at envar AZURE_OPENAI_API_KEY
+---
+# Azure embeddings are not yet implemented, so we need to disable embeddings by default
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: Embedding
+spec: NoopEmbedding

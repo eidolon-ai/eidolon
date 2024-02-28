@@ -162,11 +162,13 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
         llm_request = replayable(fn=_openai_completion(self.spec.client), name_override="openai_completion", parser=_raw_parser)
-        llm_response = await llm_request(client_args=self.spec.client_args, **request)
         complete_message = ""
         tools_to_call = []
-        async for m_chunk in llm_response:
+        async for m_chunk in llm_request(client_args=self.spec.client_args, **request):
             chunk = cast(ChatCompletionChunk, m_chunk)
+            if not chunk.choices:
+                logger.info("open ai llm chunk has no choices, skipping")
+                continue
             message = chunk.choices[0].delta
 
             logger.debug(
@@ -269,7 +271,8 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
 def _openai_completion(client_ref):
     async def fn(client_args: dict = None, **kwargs):
         client: AsyncOpenAI = client_ref.instantiate(**(client_args or {}))
-        return await client.chat.completions.create(**kwargs)
+        async for e in await client.chat.completions.create(**kwargs):
+            yield e
     return fn
 
 
@@ -283,7 +286,12 @@ async def _raw_parser(resp):
     """
     calling_tools = False
     prefix = ""
-    async for message in _normalize_openai(resp):
+    async for m_chunk in resp:
+        chunk = cast(ChatCompletionChunk, m_chunk)
+        if not chunk.choices:
+            continue
+        message = chunk.choices[0].delta
+
         if message.tool_calls:
             calling_tools = True
             for i, tool_call in enumerate(message.tool_calls):
@@ -297,17 +305,3 @@ async def _raw_parser(resp):
         if message.content:
             yield message.content
             prefix = "\n"
-
-
-async def _normalize_openai(resp) -> AsyncIterator[ChoiceDelta | ChatCompletionMessage]:
-    """
-    Normalizes different types of responses from openai depending on how the request was made.
-    This is important since arguments like streaming can be mutated when replaying requests.
-    """
-    if isinstance(resp, AsyncStream):
-        async for m_chunk in resp:
-            yield cast(ChatCompletionChunk, m_chunk).choices[0].delta
-    elif isinstance(resp, ChatCompletion):
-        yield resp.choices[0].message
-    else:
-        raise ValueError(f"Unknown response type {type(resp)}")
