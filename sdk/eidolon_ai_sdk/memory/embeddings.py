@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Any, Literal, AsyncGenerator, Optional, List
+from typing import Sequence, Any, AsyncGenerator, Optional, List
 
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
