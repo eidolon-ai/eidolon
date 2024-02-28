@@ -161,8 +161,8 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(fn=_openai_completion(self.spec), name_override="openai_completion", parser=_raw_parser)
-        llm_response = await llm_request(**request)
+        llm_request = replayable(fn=_openai_completion(self.spec.client), name_override="openai_completion", parser=_raw_parser)
+        llm_response = await llm_request(client_args=self.spec.client_args, **request)
         complete_message = ""
         tools_to_call = []
         async for m_chunk in llm_response:
@@ -266,10 +266,10 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
     return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
 
 
-def _openai_completion(spec: OpenAiGPTSpec):
-    async def fn(*args, **kwargs):
-        client: AsyncOpenAI = spec.client.instantiate(**spec.client_args)
-        return await client.chat.completions.create(*args, **kwargs)
+def _openai_completion(client_ref):
+    async def fn(client_args: dict = None, **kwargs):
+        client: AsyncOpenAI = client_ref.instantiate(**(client_args or {}))
+        return await client.chat.completions.create(**kwargs)
     return fn
 
 
