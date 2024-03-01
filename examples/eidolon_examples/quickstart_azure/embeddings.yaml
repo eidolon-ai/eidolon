@@ -1,0 +1,6 @@
+# Azure embeddings can enabled by defining client/client_args similar to in azure_llm_unit, but disable by default for simplicity
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: Embedding
+spec: NoopEmbedding

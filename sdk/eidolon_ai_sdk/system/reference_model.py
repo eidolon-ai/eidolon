@@ -73,6 +73,9 @@ class Reference(BaseModel):
             def _dump_ref(cls, value):
                 return value.model_dump(exclude_defaults=True) if isinstance(value, Reference) else value
 
+            def __reduce__(self):
+                return _ReferenceGetter(), (self._bound, self._default, self.model_dump(exclude_defaults=True)), self.__getstate__()
+
         return _Reference
 
     @model_validator(mode="before")
@@ -169,3 +172,8 @@ class AnnotatedReference(Reference):
         if not isinstance(params, tuple):
             params = (params, params.__name__)
         return Annotated[Reference[params], Field(default_factory=Reference[params])]
+
+
+class _ReferenceGetter(object):
+    def __call__(self, p1, p2, dump):
+        return Reference[(p1, p2)].model_validate(dump)
