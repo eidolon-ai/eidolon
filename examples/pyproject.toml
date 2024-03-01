@@ -14,6 +14,7 @@ pydub = "^0.25.1"
 ruamel-yaml = "^0.18.6"
 kubernetes = "^29.0.0"
 pyodbc = "^5.1.0"
+pymysql = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
