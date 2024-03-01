@@ -13,6 +13,13 @@ from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, SystemM
 from eidolon_ai_sdk.system.reference_model import Reference, Specable
 
 
+class AgentThought(BaseModel):
+    thought: str = Field(default="", description="The thought you want to express or an empty string if you don't have a thought.")
+    desire_to_speak: bool = Field(description="If true, you want to speak. If false, you do not want to speak.")
+    emotion: Optional[str] = Field(default=None, description="The emotion you want to express or leave empty if you do not want to express an emotion."
+                                                             "The emotion must be a single word and an emojis that represent the emotion. Include both")
+
+
 class Thought(BaseModel):
     is_inner_voice: bool = Field(
         description="If true, the thought will be added as the agent's inner monologue. If false, the thought will be a user message."
@@ -26,7 +33,8 @@ class ConversationAgentSpec(BaseModel):
     agent_name: str
     system_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when the conversation starts.")
     personality: str
-    ping_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when they are pinged.")
+    think_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when they are pinged to think.")
+    speak_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when they are to speak.")
 
 
 class ConversationAgent(Specable[ConversationAgentSpec]):
@@ -40,32 +48,22 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         self.system_prompt = self.spec.system_prompt
         if not self.system_prompt:
             self.system_prompt = "You are an agent mimicking a human. You will be given a topic and you should respond to it as if you were a human."
-        self.ping_prompt = self.spec.ping_prompt
-        if not self.ping_prompt:
-            self.ping_prompt = dedent("""
+        self.think_prompt = self.spec.think_prompt
+        if not self.think_prompt:
+            self.think_prompt = dedent("""
                 You have been pinged. You can do one or all of the following:
-                - Respond to the last thing said
                 - Express a thought
                 - Show an emotion
+                - Express a desire to speak
                 
-                The people who have spoken since you last spoke are: {{agents_spoke_since_me}}
+                You can and should include markdown in each section of the response.
                 
-                You must format your response like this:
-                '''thought
-                I wish John would stop talking so much.
-                '''
-                '''emotion
-                I'm feeling really happy right now.
-                '''
-                '''speak
-                I think we should talk about the weather.
-                '''
-                
-                If you don't want to do any of the above, just respond with empty text.
-                
-                You can and should include markdown in each section of the response. Separate each section with a newline.
-                
-                Remember, you don't need to respond to every ping. You can choose to ignore them, but if you want to speak or you want to express your thoughts or emotions, you should respond to the ping.
+                Remember, you don't need to respond to every ping. You can choose to ignore them, but if you want to express your thoughts or emotions, you should respond to the ping.
+            """).strip()
+        self.speak_prompt = self.spec.speak_prompt
+        if not self.speak_prompt:
+            self.speak_prompt = dedent("""
+                You have been pinged to speak. Respond with what you want to say or an empty string if you do not want to say anything.
             """).strip()
 
     @register_program()
@@ -106,21 +104,26 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         yield AgentStateEvent(state="idle")
 
     @register_action("idle")
-    async def ping(self, process_id):
+    async def think(self, process_id):
         """
         Called to allow the agent to do one or all of the following:
-        - Respond to the last thing said
         - Express a thought
         - Express a desire to speak
         - Show an emotion
         """
-        # todo -- get the agents that have spoken since the last time this agent spoke
-        agents_spoke_since_me = []
-        agents = ", ".join(agents_spoke_since_me)
-        if len(agents_spoke_since_me) == 0:
-            agents = "[No one has spoken]"
 
-        prompt = UserTextCPUMessage(prompt=self.env.from_string(self.ping_prompt).render(agents_spoke_since_me=agents))
+        prompt = UserTextCPUMessage(prompt=self.env.from_string(self.think_prompt).render())
+        t = await self.cpu.main_thread(process_id)
+        async for event in t.stream_request(prompts=[prompt], output_format=AgentThought):
+            yield event
+        yield AgentStateEvent(state="idle")
+
+    @register_action("idle")
+    async def speak(self, process_id):
+        """
+        Called to allow the agent to speak
+        """
+        prompt = UserTextCPUMessage(prompt=self.speak_prompt)
         t = await self.cpu.main_thread(process_id)
         async for event in t.stream_request(prompts=[prompt], output_format=str):
             yield event

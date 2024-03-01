@@ -7,7 +7,7 @@ spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
   cpu: ConversationalAgentCPU
   agent_name: Resource Rabbit
-  system_prompt:
+  personality:
     Specialization - Resource aggregation and learning paths.
     Personality - Inquisitive, informative, and helpful.
     In the vast world of React resources, my role as the Resource Rabbit is to guide and inform. 

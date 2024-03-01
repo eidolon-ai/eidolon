@@ -1,17 +1,15 @@
-import random
-import re
-from typing import Tuple, List, Annotated, TypeVar
+from typing import Tuple, List, Annotated, TypeVar, Dict
 
 from fastapi import Body
 from pydantic import BaseModel
 
 from eidolon_ai_client.client import Agent, ProcessStatus
-from eidolon_ai_client.events import AgentStateEvent, StringOutputEvent
+from eidolon_ai_client.events import AgentStateEvent, StringOutputEvent, ObjectOutputEvent
 from eidolon_ai_client.group_conversation import GroupConversation
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_examples.group_conversation.conversation_agent import Thought
+from eidolon_examples.group_conversation.conversation_agent import Thought, AgentThought
 
 
 class ConversationState(BaseModel):
@@ -85,47 +83,38 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         yield AgentStateEvent(state="idle")
 
     async def _ping_agents(self, group: GroupConversation):
-        def parse_response(response: str):
-            pattern = r"'''(thought|emotion|speak)\n(.*?)\n'''"
-            matches = re.findall(pattern, response, re.DOTALL)
+        yield StringOutputEvent(content="### Gathering agent thoughts and emotions.\n")
+        thought_responses: Dict[str, AgentThought] = {}
+        async for event in group.stream_action("think"):
+            if event.stream_context in self.spec.agents and isinstance(event, ObjectOutputEvent):
+                thought_responses[event.stream_context] = event.content
+            yield event
 
-            # Dictionary to store the parsed data
-            parsed_data = {key: "" for key in ["thought", "emotion", "speak"]}
-            for match in matches:
-                key, content = match
-                parsed_data[key] = content.strip()
-
-            emotion = parsed_data['emotion'] if parsed_data['emotion'] else "<agent showed no emotion>"
-            spoken = parsed_data['speak'] if parsed_data['speak'] else "<agent said nothing>"
-            parsed_data["outer_voice"] = f"Agent {agent} emotions appear to be \"{emotion} and they said:\n{spoken}\n\n"
-
-            return parsed_data
-
+        yield StringOutputEvent(content="### Allowing agents to speak.\n")
         conversations_per_agent = {}
-        async for event in group.stream_action("ping"):
+        async for event in group.stream_action("speak"):
             if event.stream_context in self.spec.agents and isinstance(event, StringOutputEvent):
                 if event.stream_context not in conversations_per_agent:
                     conversations_per_agent[event.stream_context] = ""
                 conversations_per_agent[event.stream_context] += event.content
             yield event
 
-        conversation_responses = {}
-        for agent, conversation in conversations_per_agent.items():
-            conversation_responses[agent] = parse_response(conversation)
-
+        yield StringOutputEvent(content="### Recording thoughts with other agents.\n")
         for agent_process in group.agents:
             local_conversations = []
-            for agent, conversation in conversation_responses.items():
+            for agent, conversation in conversations_per_agent.items():
                 if agent != agent_process.agent:
-                    local_conversations.append(Thought(is_inner_voice=False, agent_name=agent, thought=conversation["outer_voice"]))
+                    local_conversations.append(Thought(is_inner_voice=False, agent_name=agent, thought=conversation))
             await Agent.get(agent_process.agent).process(agent_process.process_id).action("add_thoughts", {"thoughts": local_conversations})
 
-        for agent, conversation in conversation_responses.items():
-            emotions = conversation["emotion"] if conversation["emotion"] and len(conversation["emotion"].strip()) > 0 else "*agent showed no emotion*"
-            thoughts = conversation["thought"] if conversation["thought"] and len(conversation["thought"].strip()) > 0 else "*agent had no thoughts*"
-            speak = conversation["speak"] if conversation["speak"] and len(conversation["speak"].strip()) > 0 else "*agent said nothing*"
+        for agent_process in group.agents:
+            agent = agent_process.agent
+            thought = thought_responses[agent]
+            emotions = thought["emotion"] if thought["emotion"] and len(thought["emotion"].strip()) > 0 else "*agent showed no emotion*"
+            thoughts = thought["thought"] if thought["thought"] and len(thought["thought"].strip()) > 0 else "*agent had no thoughts*"
+            speak = conversations_per_agent[agent] if conversations_per_agent[agent] and len(conversations_per_agent[agent].strip()) > 0 else "*agent said nothing*"
             yield StringOutputEvent(content=f"##### Agent: {agent}\n")
-            yield StringOutputEvent(content="<span style='color:#6677aa'>Emotions: ")
+            yield StringOutputEvent(content="<span style='color:#6677aa'>Emotion: ")
             yield StringOutputEvent(content=emotions)
             yield StringOutputEvent(content="</span>\n\n")
             yield StringOutputEvent(content="<span style='color:#66aa44'>Thoughts: ")
@@ -146,17 +135,3 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             history = AgentCallHistory(parent_process_id=process_id, parent_thread_id=None, machine=agent.machine, agent=agent.agent,
                                        remote_process_id=agent.process_id, state=agent.state, available_actions=agent.available_actions)
             await history.upsert()
-
-    @staticmethod
-    def weighted_random_choice(items: List[Tuple[T, float]]) -> T:
-        total_weight = sum(weight for item, weight in items)
-        random_num = random.uniform(0, total_weight)
-        print(f"items: {items}")
-        print(f"total_weight: {total_weight}, random_num: {random_num}")
-
-        current_sum = 0
-        for item, weight in items:
-            current_sum += weight
-            if current_sum >= random_num:
-                print(f"selecting {item}")
-                return item
