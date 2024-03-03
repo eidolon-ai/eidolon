@@ -126,14 +126,8 @@ class CanceledEvent(EndStreamEvent):
 
 class ErrorEvent(EndStreamEvent):
     event_type: Literal["error"] = "error"
-    reason: Any
-
-    @field_serializer("reason")
-    def serialize_reason(self, reason: Any):
-        if isinstance(reason, Exception):
-            return f"{type(reason).__name__}: {reason}"
-        else:
-            return reason
+    reason: str
+    details: dict = {}
 
 
 class AgentStateEvent(BaseStreamEvent):

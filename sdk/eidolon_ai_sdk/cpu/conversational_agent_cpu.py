@@ -1,5 +1,7 @@
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
 
+from fastapi import HTTPException
+
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread, CPUException
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.call_context import CallContext
@@ -75,6 +77,8 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             conversation.extend(conversation_messages)
             async for event in self._llm_execution_cycle(call_context, output_format, conversation):
                 yield event
+        except HTTPException as e:
+            raise e
         except CPUException as e:
             raise e
         except Exception as e:

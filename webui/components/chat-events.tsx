@@ -76,7 +76,6 @@ export function ChatEvents({agentName, processId}: ChatEventProps) {
   function getChatEventInUI() {
     getChatEvents(agentName, processId).then((events) => {
       setElementsAndLookup({elements: [], lookup: {}})
-      console.log(elementsAndLookup)
       setProcessState(undefined)
       const local_elements: ElementsAndLookup = {elements: [], lookup: {}}
       events.forEach(event => {

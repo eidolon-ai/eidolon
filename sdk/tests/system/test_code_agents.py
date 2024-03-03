@@ -115,7 +115,7 @@ class TestHelloWorld:
             process = await Agent.get("HelloWorld").create_process()
             await process.action(program, "hello")
         assert exc.value.response.status_code == 418
-        assert exc.value.response.json() == "hello is not a name"
+        assert exc.value.response.json()['data'] == "hello is not a name"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_streaming_http_error(self, server, program):
@@ -123,13 +123,12 @@ class TestHelloWorld:
         stream = (await agent.create_process()).stream_action(program, "hello")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
-        assert events[ErrorEvent].reason == dict(detail="hello is not a name", status_code=418)
+        assert events[ErrorEvent].reason == "hello is not a name"
+        assert events[ErrorEvent].details['status_code'] == 418
         assert events[AgentStateEvent].state == "http_error"
 
-        with pytest.raises(AgentError) as exc:
-            await Process.get(stream).status()
-        assert exc.value.response.status_code == 418
-        assert exc.value.response.json() == "hello is not a name"
+        found = await Process.get(stream).status()
+        assert found.state == "http_error"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_unhandled_error(self, server, program):
@@ -137,20 +136,21 @@ class TestHelloWorld:
             process = await Agent.get("HelloWorld").create_process()
             await process.action(program, "error")
         assert exc.value.response.status_code == 500
-        assert exc.value.response.json() == "big bad server error"
+        assert exc.value.response.json() == {'available_actions': [],
+                                             'data': 'big bad server error',
+                                             'process_id': f'test_unhandled_error[{program}]_0',
+                                             'state': 'unhandled_error'}
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_streaming_unhandled_error(self, agent, program):
         stream = (await agent.create_process()).stream_action(program, "error")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
-        assert events[ErrorEvent].reason == dict(detail="big bad server error", status_code=500)
+        assert events[ErrorEvent].reason == "big bad server error"
         assert events[AgentStateEvent].state == "unhandled_error"
 
-        with pytest.raises(AgentError) as exc:
-            await Process.get(stream).status()
-        assert exc.value.response.status_code == 500
-        assert exc.value.response.json() == "big bad server error"
+        found = await Process.get(stream).status()
+        assert found.state == "unhandled_error"
 
     async def test_lots_o_context(self, agent):
         process = await agent.create_process()
