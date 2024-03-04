@@ -78,23 +78,48 @@ export async function POST(req: Request): Promise<Response> {
 
 
 
-export async function GET(req: Request) {
-    // Example: Fetch all users
+export async function GET(req: Request): Promise<Response> {
+    console.log('GET request');
     try {
+        const sesh = await getServerSession(req); // Make sure to pass `req` if your session function needs it
+        
+        let email = sesh?.user?.email;
+        if (!email) {
+            return new Response(JSON.stringify({ error: 'User not authenticated' }), {
+                status: 401, // Unauthorized
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
         const connection = await createConnection(dbConfig);
-        const [rows] = await connection.query(`SELECT * FROM users`);
+        const [users] = await connection.execute<RowDataPacket[]>(
+            `SELECT token_remaining FROM users WHERE email = ?`,
+            [email]
+        );
+
         await connection.end();
-        return new Response(JSON.stringify(rows), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
+
+        if (users.length > 0) {
+            return new Response(JSON.stringify(users[0]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        } else {
+            return new Response(JSON.stringify({ error: 'User not found' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed to fetch users' }), {
+        console.error(error);
+        return new Response(JSON.stringify({ error: 'Failed to fetch user data' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
         });
     }
 }
+
+
 
 export async function PUT(req: Request) {
     try {
