@@ -103,65 +103,78 @@ export function ChatEvents({agentName, processId}: ChatEventProps) {
   }
 
   const executeAction = async (operation: OperationInfo, data: Record<string, any>) => {
-    setProcessState({state: "processing", available_actions: []})
+    setProcessState({state: "processing", available_actions: []});
     if (cancelFetchController.current) {
       cancelFetchController.current.abort();
     }
-
+  
     cancelFetchController.current = new AbortController();
     try {
-      const path = operation.path.replace("{process_id}", processId)
-
+      // Call to the backend to decrement the user's token count
+      const decrementTokenResponse = await fetch('/api/users', {
+        method: 'PUT', // Use the PUT method as defined in your backend route
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // No need to send body data because user identification is handled via session in the backend
+      });
+  
+      // Optional: Check response from decrement token call
+      if (!decrementTokenResponse.ok) {
+        throw new Error('Failed to decrement token');
+      }
+  
+      const path = operation.path.replace("{process_id}", processId);
+  
       const response = await fetch(`/api/chat/messages`, {
         signal: cancelFetchController.current.signal,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "text/event-stream"
+          "Accept": "text/event-stream",
         },
-        body: JSON.stringify({path: path, data: data}),
-        next: {}
-      })
-
+        body: JSON.stringify({ path: path, data: data }),
+      });
+  
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
-
+  
       const processChunk = (chunk: string) => {
         try {
           const eventSourceParser = createParser((inEvent: ParseEvent) => {
-            const event = inEvent as ParsedEvent
-            const data = JSON.parse(event.data)
-            const local_elements = {...elementsAndLookup}
-            processEvent(data as ChatEvent, local_elements)
-            setElementsAndLookup(local_elements)
-          })
-          eventSourceParser.feed(chunk)
+            const event = inEvent as ParsedEvent;
+            const data = JSON.parse(event.data);
+            const local_elements = { ...elementsAndLookup };
+            processEvent(data as ChatEvent, local_elements);
+            setElementsAndLookup(local_elements);
+          });
+          eventSourceParser.feed(chunk);
         } catch (error) {
           console.error('Error parsing data:', error);
         }
       };
-
+  
       while (true) {
-        const {done, value} = await reader.read();
+        const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, {stream: true});
+        const chunk = decoder.decode(value, { stream: true });
         processChunk(chunk);
       }
-
+  
       setAgentState();
-      cancelFetchController.current = null;
     } catch (error) {
-      console.error('Error fetching SSE stream:', error);
+      console.error('Error:', error);
+    } finally {
       if (cancelFetchController.current) {
         cancelFetchController.current.abort();
         cancelFetchController.current = null;
       }
-    } finally {
       if (processState?.state === "processing") {
-        setProcessState(undefined)
+        setProcessState(undefined);
       }
     }
-  }
+  };
+  
 
   return (
     <Box sx={{

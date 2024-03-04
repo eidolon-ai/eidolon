@@ -1,0 +1,12 @@
+# We need to configure the default LLMUnit to use an Azure client
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: LLMUnit
+spec:
+  model: testeidolon
+  client: AsyncAzureOpenAI
+  client_args:
+    azure_endpoint: https://testingeidolon.openai.azure.com/
+    api_version: 2023-03-15-preview
+#    api_key: TOKEN or envar set at AZURE_OPENAI_API_KEY
