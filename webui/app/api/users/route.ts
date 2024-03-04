@@ -1,6 +1,8 @@
 import { createConnection } from 'mysql2/promise';
 import { config } from 'dotenv';
 import {getServerSession} from "next-auth";
+import { RowDataPacket, FieldPacket } from 'mysql2';
+
 
 
 // Load environment variables for database configuration
@@ -15,38 +17,62 @@ const dbConfig = {
     port: Number(process.env.DB_PORT || 3306),
 };
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<Response> {
     try {
-        const sesh = await getServerSession();
-        let email = null; // Default to null, adjust as needed
-        if (sesh && sesh.user) {
+        const sesh = await getServerSession(); // Make sure to pass `req` if your session function needs it
+        let email: string | null = null; // Default to null, adjust as needed
+
+        if (sesh && sesh.user && sesh.user.email) {
             email = sesh.user.email;
-            }
+        }
+
+        // Ensure email is present
+        if (!email) {
+            return new Response(JSON.stringify({ error: 'No email provided' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
         const connection = await createConnection(dbConfig);
-                // First, check if the user already exists
-        const users = await connection.execute(
+
+        // First, check if the user already exists
+        const [users] = await connection.execute<RowDataPacket[]>(
             `SELECT * FROM users WHERE email = ?`,
             [email]
         );
-        console.log(users)
 
-        // await connection.execute(
-        //     `UPDATE users SET token_remaining = token_remaining + 5 WHERE email = ?`,
-        //     [email]
-        // );
+        // Now you can safely check users.length because TypeScript knows users is an array
+        if (users.length === 0) {
+            // User does not exist, add them with default tokens
+            await connection.execute(
+                `INSERT INTO users (google_id, name, email, google_image_url, token_remaining, signup_date) VALUES (?, ?, ?, ?, 5, NOW())`,
+                [sesh.user.google_id || null, sesh.user.name, email, sesh.user.google_image_url || null]
+            );
+            console.log('User added with default tokens');
+        } else {
+            // User exists, update their tokens
+            await connection.execute(
+                `UPDATE users SET token_remaining = token_remaining + 5 WHERE email = ?`,
+                [email]
+            );
+            console.log('Tokens updated for existing user');
+        }
 
         await connection.end();
-        // return new Response(JSON.stringify({ message: '5 tokens added successfully' }), {
-        //     status: 200,
-        //     headers: { 'Content-Type': 'application/json' },
-        // });
+        return new Response(JSON.stringify({ message: 'Operation successful' }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+        });
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed to add tokens' }), {
+        console.error(error);
+        return new Response(JSON.stringify({ error: 'Failed to execute operation' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
         });
     }
 }
+
 
 
 export async function GET(req: Request) {
