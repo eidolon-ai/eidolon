@@ -18,6 +18,12 @@ export default function PreviewPage() {
   }, []);
 
   return (
+    <div>
+    <form action="/api/users" method="POST">
+      <button type="submit" role="link">
+          Subtract Token
+      </button>
+    </form>
     <form action="/api/checkout_sessions" method="POST">
       <section>
         <button type="submit" role="link">
@@ -52,6 +58,7 @@ export default function PreviewPage() {
         `}
       </style>
     </form>
+    </div>
   );
 }
 

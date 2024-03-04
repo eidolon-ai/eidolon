@@ -1,5 +1,4 @@
 const { createConnection } = require('mysql2/promise');
-
 const { config } = require('dotenv');
 
 // Load environment variables
@@ -21,9 +20,19 @@ async function testConnection() {
             database,
             port,
         });
-        
         console.log("Connection successful.");
-        
+
+        // Execute the query "SELECT * FROM users"
+        const [rows] = await connection.query("SELECT * FROM users");
+
+        // Process the query results
+        if (rows.length > 0) {
+            console.log("Retrieved users:");
+            console.log(rows);
+        } else {
+            console.log("No users found.");
+        }
+
         // Close the connection
         await connection.end();
     } catch (error) {
