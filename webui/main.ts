@@ -1,4 +1,4 @@
-const { createConnection } = require('mysql2/promise');
+// const { createConnection } = require('mysql2/promise');
 const { config } = require('dotenv');
 
 // Load environment variables
@@ -9,7 +9,7 @@ const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
 const database = process.env.DB_NAME;
-const port = Number(process.env.DB_PORT || 3306);
+// const port = Number(process.env.DB_PORT || 3306);
 
 async function testConnection() {
     try {
