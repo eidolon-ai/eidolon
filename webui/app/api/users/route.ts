@@ -123,24 +123,49 @@ export async function GET(req: Request): Promise<Response> {
 
 export async function PUT(req: Request) {
     try {
-        const sesh = await getServerSession();
-        console.log(sesh);
+        const sesh = await getServerSession(); 
         let email = null; // Default to null, adjust as needed
-        if (sesh && sesh.user) {
+
+        if (sesh && sesh.user && sesh.user.email) {
             email = sesh.user.email;
-            }
+        } else {
+            // If session or user email is not found, return an error response
+            return new Response(JSON.stringify({ error: 'User not authenticated or email not found' }), {
+                status: 401, // Unauthorized
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
         const connection = await createConnection(dbConfig);
-        await connection.execute(
-            `UPDATE users SET token_remaining = token_remaining - 1 WHERE email = ?`,
+        
+        // First, fetch the current tokens remaining for the user
+        const [rows] = await connection.execute<RowDataPacket[]>(
+            `SELECT token_remaining FROM users WHERE email = ?`,
             [email]
         );
-        console.log('query executed')
-        await connection.end();
-        return new Response(JSON.stringify({ message: '1 token subtracted successfully' }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
+
+        if (rows.length > 0 && rows[0].token_remaining > 0) {
+            // If tokens are available, subtract one and update the database
+            await connection.execute(
+                `UPDATE users SET token_remaining = token_remaining - 1 WHERE email = ? AND token_remaining > 0`,
+                [email]
+            );
+            console.log('1 token subtracted successfully');
+            await connection.end();
+            return new Response(JSON.stringify({ message: '1 token subtracted successfully' }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        } else {
+            // If no tokens are remaining, return an error response
+            await connection.end();
+            return new Response(JSON.stringify({ error: 'No tokens remaining to subtract' }), {
+                status: 400, // Bad Request
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
     } catch (error) {
+        console.error(error);
         return new Response(JSON.stringify({ error: 'Failed to subtract tokens' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
