@@ -1,4 +1,3 @@
-from typing import Union, Annotated
 
 from fastapi.params import Body
 
