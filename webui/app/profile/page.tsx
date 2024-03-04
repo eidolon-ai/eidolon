@@ -16,14 +16,20 @@ export default function PreviewPage() {
       console.log('Order canceled -- continue to shop around and checkout when you’re ready.');
     }
   }, []);
-
+  const updateUser = () => {
+    fetch('/api/users', {
+      method: 'PUT',
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+  }
   return (
     <div>
-    <form action="/api/users" method="POST">
-      <button type="submit" role="link">
+      <button role="link" onClick={updateUser}>
           Subtract Token
       </button>
-    </form>
     <form action="/api/checkout_sessions" method="POST">
       <section>
         <button type="submit" role="link">

@@ -55,7 +55,7 @@ export async function GET(req: Request) {
     }
 }
 
-export async function POST(req: Request) {
+export async function PUT(req: Request) {
     const sesh = await getServerSession();
     let email = null; // Default to null, adjust as needed
     if (sesh && sesh.user) {
