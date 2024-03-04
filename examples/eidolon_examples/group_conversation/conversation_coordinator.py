@@ -1,30 +1,15 @@
-import asyncio
-import random
 from typing import Tuple, List, Annotated, TypeVar, Dict
 
 from fastapi import Body
-from pydantic import BaseModel, TypeAdapter, Field
+from pydantic import BaseModel
 
-from eidolon_ai_client.client import Machine
+from eidolon_ai_client.client import Agent, ProcessStatus
+from eidolon_ai_client.events import AgentStateEvent, StringOutputEvent, ObjectOutputEvent
+from eidolon_ai_client.group_conversation import GroupConversation
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_examples.group_conversation.conversation_agent import (
-    SpeakResult,
-    ThoughtResult,
-    CharacterThought,
-    StatementsForAgent,
-    Statement,
-)
-
-
-class NextTurn(BaseModel):
-    num_turns: int = Field(1, description="The number of turns to take.")
-
-
-class StartConversation(BaseModel):
-    topic: str
-    num_concurrent_conversations: int = 1
+from eidolon_examples.group_conversation.conversation_agent import Thought, AgentThought
 
 
 class ConversationState(BaseModel):
@@ -51,177 +36,102 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
     async def start_conversation(
             self,
             process_id,
-            topic: Annotated[StartConversation, Body(description="The topic of the new conversation", embed=True)],
+            topic: Annotated[str, Body(description="The topic of the new conversation", embed=True)],
     ) -> AgentState[str]:
         """
         Called to start the conversation. Every user will get a turn in each turn of the conversation.
         """
         # start conversation with every agent
-        agent_pids = []
-        for agent in self.spec.agents:
-            response = await Machine().agent(agent).run_program("start_conversation", {"topic": topic.topic})
-            agent_pid = response.process_id
-            agent_pids.append((agent, agent_pid))
-            await AgentOS.symbolic_memory.insert_one(
-                "conversation_coordinator_messages",
-                {"process_id": process_id, "agent_name": agent, "desire_to_speak": 0.5},
-            )
+        group = await GroupConversation.create(self.spec.agents)
+        await self._store_state(process_id, group)
+        await group.action("start_conversation")
 
-        # record the pids of the agents with our process_id in memory
-        await AgentOS.symbolic_memory.insert_one(
-            "conversation_coordinator",
-            ConversationState(
-                process_id=process_id,
-                agent_pids=agent_pids,
-                topic=topic.topic,
-                num_concurrent_conversations=topic.num_concurrent_conversations,
-            ).model_dump(),
-        )
+        await group.action("add_thoughts", {"thoughts": [Thought(
+            is_inner_voice=False,
+            agent_name="Coordinator",
+            thought=f"Your are in a conversation with agents {', '.join(self.spec.agents)}.\n"
+                    f"You are all discussing the topic of {topic}.\n"
+        ).model_dump()]})
 
-        return AgentState(name="idle", data="Agents started. Waiting for first turn...")
+        async for event in self._ping_agents(group):
+            yield event
 
-    async def _restore_state(self, process_id) -> ConversationState:
-        result = await AgentOS.symbolic_memory.find_one("conversation_coordinator", {"process_id": process_id})
-        return ConversationState.model_validate(result)
+        await self._store_state(process_id, group)
 
-    async def _record_single(self, agent_name, agent_pid, statements: List[Statement]):
-        thought_response = (
-            await Machine()
-            .agent(agent_name)
-            .process(agent_pid)
-            .action("record_statement", {"statements": StatementsForAgent(statements=statements).model_dump()})
-        )
-        thought = ThoughtResult.model_validate(thought_response.data)
-        await AgentOS.symbolic_memory.upsert_one(
-            "conversation_coordinator_messages",
-            {"desire_to_speak": thought.desire_to_speak},
-            {"process_id": agent_pid, "agent_name": agent_name},
-        )
-        return agent_name, thought.desire_to_speak
-
-    async def record_statements(self, conversation_state, statements_to_record: List[Statement]):
-        acc = []
-        for r_agent_name, r_agent_pid in conversation_state.agent_pids:
-            acc.append(self._record_single(r_agent_name, r_agent_pid, statements_to_record))
-        return await asyncio.gather(*acc)
-
-    async def _restore_message(self, process_id, conversation_state: ConversationState):
-        results = AgentOS.symbolic_memory.find("conversation_coordinator_messages", {"process_id": process_id})
-        agent_responses = {}
-        for agent_name, _ in conversation_state.agent_pids:
-            async for result in results:
-                if result["agent_name"] == agent_name:
-                    agent_responses[agent_name] = {
-                        "desire_to_speak": result["desire_to_speak"],
-                    }
-                    break
-            if agent_name not in agent_responses:
-                agent_responses[agent_name] = {
-                    "desire_to_speak": 0.5,
-                }
-        return agent_responses
+        yield AgentStateEvent(state="idle")
 
     @register_action("idle")
-    async def add_inner_monologue(
-            self, process_id, monologue: Annotated[InnerMonologue, Body(description="The thought to add", embed=True)]
+    async def ping_agents(self, process_id):
+        group = await self._restore_state(process_id)
+        async for event in self._ping_agents(group):
+            yield event
+
+        yield AgentStateEvent(state="idle")
+
+    @register_action("idle")
+    async def add_thoughts(
+            self,
+            process_id,
+            thoughts: Annotated[List[Thought], Body(embed=True), "The thoughts to add to the agent's inner monologue."]
     ) -> AgentState[str]:
-        conversation_state = await self._restore_state(process_id)
-        for agent_name, state_agent_pid in conversation_state.agent_pids:
-            if agent_name == monologue.agent_name:
-                await self._record_single(
-                    agent_name,
-                    state_agent_pid,
-                    [Statement(speaker=monologue.agent_name, text=monologue.statement, voice_level=0.5)],
-                )
-
-        return AgentState(name="idle", data="Thought recorded")
-
-    @register_action("idle")
-    async def get_thoughts(self, process_id) -> AgentState[Dict[str, List[CharacterThought]]]:
-        conversation_state = await self._restore_state(process_id)
-        all_characters = [agent_name for agent_name, _ in conversation_state.agent_pids]
-        thoughts = {}
-        acc = []
-        for agent_name, state_agent_pid in conversation_state.agent_pids:
-            acc.append(
-                Machine()
-                .agent(agent_name)
-                .process(state_agent_pid)
-                .action("describe_thoughts", {"people": all_characters})
-            )
-
-        results = await asyncio.gather(*acc)
-        for agent_name, result in zip(all_characters, results):
-            character_thoughts = TypeAdapter(List[CharacterThought]).validate_python(result.data)
-            thoughts[agent_name] = character_thoughts
-
-        return AgentState(name="idle", data=thoughts)
-
-    @register_action("idle")
-    async def next_turn(self, process_id, obj: NextTurn) -> AgentState[str]:
         """
-        Called to start the next turn of the conversation.
+        Called to record a thought either from another agent or from the coordinator.
         """
-        # get the pids of the agents with our process_id in memory
-        conversation_state = await self._restore_state(process_id)
+        group = await self._restore_state(process_id)
+        await group.action("add_thoughts", {"thoughts": thoughts})
 
-        agent_responses = await self._restore_message(process_id, conversation_state)
+        yield AgentStateEvent(state="idle")
 
-        async def let_agent_speak(agent_name, agent_pid):
-            response = await Machine().agent(agent_name).process(agent_pid).action("speak", {})
-            agent_response = SpeakResult.model_validate(response.data)
+    async def _ping_agents(self, group: GroupConversation):
+        yield StringOutputEvent(content="### Gathering agent thoughts and emotions.\n")
+        thought_responses: Dict[str, AgentThought] = {}
+        async for event in group.stream_action("think"):
+            if event.stream_context in self.spec.agents and isinstance(event, ObjectOutputEvent):
+                thought_responses[event.stream_context] = event.content
+            yield event
 
-            if agent_response.voice_level < 0.25:
-                color = "green"
-            elif agent_response.voice_level < 0.5:
-                color = "yellow"
-            elif agent_response.voice_level < 0.75:
-                color = "orange"
-            else:
-                color = "red"
+        yield StringOutputEvent(content="### Allowing agents to speak.\n")
+        conversations_per_agent = {}
+        async for event in group.stream_action("speak"):
+            if event.stream_context in self.spec.agents and isinstance(event, StringOutputEvent):
+                if event.stream_context not in conversations_per_agent:
+                    conversations_per_agent[event.stream_context] = ""
+                conversations_per_agent[event.stream_context] += event.content
+            yield event
 
-            output = f"**{agent_name}**💭💭💭: <span color='gray'>{agent_response.inner_dialog}</span>\n\n"
-            output += (
-                f"**{agent_name}**{agent_response.emoji}: <span color='{color}'>{agent_response.response}</span>\n\n"
-            )
-            agent_responses[agent_name]["desire_to_speak"] = agent_response.desire_to_speak
-            return output, Statement(
-                speaker=agent_name, text=agent_response.response, voice_level=agent_response.voice_level
-            )
+        yield StringOutputEvent(content="### Recording thoughts with other agents.\n")
+        for agent_process in group.agents:
+            local_conversations = []
+            for agent, conversation in conversations_per_agent.items():
+                if agent != agent_process.agent:
+                    local_conversations.append(Thought(is_inner_voice=False, agent_name=agent, thought=conversation))
+            await Agent.get(agent_process.agent).process(agent_process.process_id).action("add_thoughts", {"thoughts": local_conversations})
 
-        method_output = ""
-        for _ in range(obj.num_turns):
-            speaking = {}
-            for _ in range(min(conversation_state.num_concurrent_conversations, len(conversation_state.agent_pids))):
-                weighted_agents = [
-                    ((a_name, agent_pid), agent_responses[a_name]["desire_to_speak"])
-                    for a_name, agent_pid in conversation_state.agent_pids
-                    if a_name not in speaking
-                ]
-                agent_name, agent_pid = self.weighted_random_choice(weighted_agents)
-                speaking[agent_name] = agent_pid
+        for agent_process in group.agents:
+            agent = agent_process.agent
+            thought = thought_responses[agent]
+            emotions = thought["emotion"] if thought["emotion"] and len(thought["emotion"].strip()) > 0 else "*agent showed no emotion*"
+            thoughts = thought["thought"] if thought["thought"] and len(thought["thought"].strip()) > 0 else "*agent had no thoughts*"
+            speak = conversations_per_agent[agent] if conversations_per_agent[agent] and len(conversations_per_agent[agent].strip()) > 0 else "*agent said nothing*"
+            yield StringOutputEvent(content=f"##### Agent: {agent}\n")
+            yield StringOutputEvent(content="<span style='color:#6677aa'>Emotion: ")
+            yield StringOutputEvent(content=emotions)
+            yield StringOutputEvent(content="</span>\n\n")
+            yield StringOutputEvent(content="<span style='color:#66aa44'>Thoughts: ")
+            yield StringOutputEvent(content=thoughts)
+            yield StringOutputEvent(content="</span>\n\n")
+            yield StringOutputEvent(content=speak)
+            yield StringOutputEvent(content="\n\n---\n")
 
-            speeches = [let_agent_speak(agent_name, agent_pid) for agent_name, agent_pid in speaking.items()]
-            statements = await asyncio.gather(*speeches)
+    async def _restore_state(self, process_id) -> GroupConversation:
+        processes = []
+        for process in await AgentCallHistory.get_agent_state(parent_process_id=process_id):
+            processes.append(
+                ProcessStatus(machine=process.machine, agent=process.agent, process_id=process.remote_process_id, state=process.state, available_actions=process.available_actions))
+        return await GroupConversation.restore(processes)
 
-            agents_desire = await self.record_statements(conversation_state, [statement for _, statement in statements])
-            for agent_name, desire_to_speak in agents_desire:
-                agent_responses[agent_name]["desire_to_speak"] = desire_to_speak
-            for output, _ in statements:
-                method_output += output
-
-        return AgentState(name="idle", data=method_output)
-
-    @staticmethod
-    def weighted_random_choice(items: List[Tuple[T, float]]) -> T:
-        total_weight = sum(weight for item, weight in items)
-        random_num = random.uniform(0, total_weight)
-        print(f"items: {items}")
-        print(f"total_weight: {total_weight}, random_num: {random_num}")
-
-        current_sum = 0
-        for item, weight in items:
-            current_sum += weight
-            if current_sum >= random_num:
-                print(f"selecting {item}")
-                return item
+    async def _store_state(self, process_id: str, group: GroupConversation):
+        for agent in group.agents:
+            history = AgentCallHistory(parent_process_id=process_id, parent_thread_id=None, machine=agent.machine, agent=agent.agent,
+                                       remote_process_id=agent.process_id, state=agent.state, available_actions=agent.available_actions)
+            await history.upsert()

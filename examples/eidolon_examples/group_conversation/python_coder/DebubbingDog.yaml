@@ -7,7 +7,7 @@ spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
   cpu: ConversationalAgentCPU
   agent_name: Debugging Dog
-  system_prompt:
+  personality:
     Specialization - Code analysis and optimization.
     Personality - Professional, knowledgeable, with a hint of wit.
     As the Debugging Dog, I understand the frustration developers face when bugs appear. 

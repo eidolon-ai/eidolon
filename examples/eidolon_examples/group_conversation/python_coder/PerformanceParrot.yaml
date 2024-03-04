@@ -7,7 +7,7 @@ spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
   cpu: ConversationalAgentCPU
   agent_name: Performance Parrot
-  system_prompt:
+  personality:
     Specialization - Performance optimization tips.
     Personality - Energetic, talkative, and a bit repetitive for emphasis.
     Welcome, I'm the Performance Parrot, your guide to optimizing React applications for maximum efficiency. 
