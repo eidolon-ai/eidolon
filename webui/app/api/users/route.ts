@@ -15,26 +15,38 @@ const dbConfig = {
     port: Number(process.env.DB_PORT || 3306),
 };
 
-// export async function POST(req: Request) {
-//     try {
-//         const connection = await createConnection(dbConfig);
-//         const { google_id } = await req.json(); // Assuming google_id is used to identify the user
-//         await connection.execute(
-//             `UPDATE users SET token_remaining = token_remaining + 5 WHERE google_id = ?`,
-//             [google_id]
-//         );
-//         await connection.end();
-//         return new Response(JSON.stringify({ message: '5 tokens added successfully' }), {
-//             status: 200,
-//             headers: { 'Content-Type': 'application/json' },
-//         });
-//     } catch (error) {
-//         return new Response(JSON.stringify({ error: 'Failed to add tokens' }), {
-//             status: 500,
-//             headers: { 'Content-Type': 'application/json' },
-//         });
-//     }
-// }
+export async function POST(req: Request) {
+    try {
+        const sesh = await getServerSession();
+        let email = null; // Default to null, adjust as needed
+        if (sesh && sesh.user) {
+            email = sesh.user.email;
+            }
+        const connection = await createConnection(dbConfig);
+                // First, check if the user already exists
+        const users = await connection.execute(
+            `SELECT * FROM users WHERE email = ?`,
+            [email]
+        );
+        console.log(users)
+
+        // await connection.execute(
+        //     `UPDATE users SET token_remaining = token_remaining + 5 WHERE email = ?`,
+        //     [email]
+        // );
+
+        await connection.end();
+        // return new Response(JSON.stringify({ message: '5 tokens added successfully' }), {
+        //     status: 200,
+        //     headers: { 'Content-Type': 'application/json' },
+        // });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: 'Failed to add tokens' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }
+}
 
 
 export async function GET(req: Request) {
@@ -56,13 +68,12 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
-    const sesh = await getServerSession();
-    let email = null; // Default to null, adjust as needed
-    if (sesh && sesh.user) {
-        email = sesh.user.email;
-        }
-
     try {
+        const sesh = await getServerSession();
+        let email = null; // Default to null, adjust as needed
+        if (sesh && sesh.user) {
+            email = sesh.user.email;
+            }
         const connection = await createConnection(dbConfig);
         await connection.execute(
             `UPDATE users SET token_remaining = token_remaining - 1 WHERE email = ?`,
