@@ -1,5 +1,7 @@
 import asyncio
 import os
+
+import dotenv
 import time
 from asyncio import sleep
 from functools import wraps
@@ -13,6 +15,8 @@ from typer.models import DeveloperExceptionConfig
 from eidolon_ai_sdk.util.replay import replay
 
 app = typer.Typer()
+
+dotenv.load_dotenv()
 
 
 def coro(f):

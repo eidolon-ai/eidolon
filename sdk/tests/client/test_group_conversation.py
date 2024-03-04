@@ -79,6 +79,6 @@ async def test_stream_action(server):
         ]
 
     for name in ["fred", "barney", "wilma", "betty"]:
-        assert StartStreamContextEvent(context_id=name) in conversations_by_context[""]
+        assert StartStreamContextEvent(context_id=name, title=name) in conversations_by_context[""]
         assert EndStreamContextEvent(context_id=name) in conversations_by_context[""]
         assert conversations_by_context[name] == expected_user_events(name, agents_to_context[name])

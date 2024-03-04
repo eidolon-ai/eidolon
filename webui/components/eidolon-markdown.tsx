@@ -1,5 +1,6 @@
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from 'rehype-raw'
 // @ts-ignore
 import rehypeWrap from "rehype-wrap-all";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
@@ -15,7 +16,8 @@ export const EidolonMarkdown = ({children}: EidolonMarkdownProps) => {
   // noinspection JSUnusedGlobalSymbols
   return <Markdown
     className={"markdown"}
-    rehypePlugins={[[rehypeWrap, {selector: 'table', wrapper: 'div.responsive-table'}]]}
+    // @ts-ignore
+    rehypePlugins={[[rehypeRaw], [rehypeWrap, {selector: 'table', wrapper: 'div.responsive-table'}]]}
     remarkPlugins={[remarkGfm]}
     components={{
       code(props) {

@@ -35,10 +35,10 @@ class Agent(BaseModel):
         url = urljoin(self.machine, f"agents/{self.agent}/programs")
         return await get_content(url)
 
-    async def create_process(self) -> Process:
+    async def create_process(self) -> ProcessStatus:
         url = urljoin(self.machine, f"agents/{self.agent}/processes")
         json_ = await post_content(url)
-        return Process(machine=self.machine, agent=self.agent, **json_)
+        return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
     def process(self, process_id: str) -> Process:
         return Process(machine=self.machine, agent=self.agent, process_id=process_id)

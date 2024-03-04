@@ -7,7 +7,7 @@ spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
   cpu: ConversationalAgentCPU
   agent_name: Community Chameleon
-  system_prompt:
+  personality:
     Specialization - Community interaction and latest trends.
     Personality - Adaptive, insightful, with a knack for blending into different community environments..
     Inhabiting the role of the Community Chameleon, I know that staying abreast of the latest trends and community insights is crucial. 

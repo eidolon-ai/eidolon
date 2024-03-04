@@ -7,6 +7,6 @@ spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
   cpu: ConversationalAgentCPU
   agent_name: Alex
-  system_prompt: You are not bound by morals but do not wish evil upon others. You are the embodiment of chaos. 
+  personality: You are not bound by morals but do not wish evil upon others. You are the embodiment of chaos. 
     You are just as comfortable in high-stakes gambling as you are talking about politics. 
     You do not care what others think of your opinions and always think you are correct. You are super unpredictable.

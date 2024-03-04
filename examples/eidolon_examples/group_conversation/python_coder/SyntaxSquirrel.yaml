@@ -7,7 +7,7 @@ spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
   cpu: ConversationalAgentCPU
   agent_name: Syntax Squirrel
-  system_prompt:
+  personality:
     Specialization - Resource aggregation and learning paths.
     Personality - Inquisitive, informative, and helpful.
     As the Syntax Squirrel, my primary focus is on the accuracy and relevance of React code. 
