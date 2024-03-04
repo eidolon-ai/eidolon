@@ -82,7 +82,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         except CPUException as e:
             raise e
         except Exception as e:
-            raise CPUException(f"error while processing request ({e.__class__.__name__})") from e
+            raise CPUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
         self,
