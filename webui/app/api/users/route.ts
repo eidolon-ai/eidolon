@@ -1,7 +1,7 @@
 import { createConnection } from 'mysql2/promise';
 import { config } from 'dotenv';
 import {getServerSession} from "next-auth";
-import { RowDataPacket, FieldPacket } from 'mysql2';
+import { RowDataPacket } from 'mysql2';
 
 
 
@@ -17,6 +17,9 @@ const dbConfig = {
     port: Number(process.env.DB_PORT || 3306),
 };
 
+
+  
+  // Assuming sesh.user is of type User
 export async function POST(req: Request): Promise<Response> {
     try {
         const sesh = await getServerSession(); // Make sure to pass `req` if your session function needs it
@@ -46,8 +49,8 @@ export async function POST(req: Request): Promise<Response> {
         if (users.length === 0) {
             // User does not exist, add them with default tokens
             await connection.execute(
-                `INSERT INTO users (google_id, name, email, google_image_url, token_remaining, signup_date) VALUES (?, ?, ?, ?, 5, NOW())`,
-                [sesh.user.google_id || null, sesh.user.name, email, sesh.user.google_image_url || null]
+                `INSERT INTO users (name, email, google_image_url, token_remaining, signup_date) VALUES (?, ?, ?, 5, NOW())`,
+                [sesh?.user?.name, email, sesh?.user?.image]
             );
             console.log('User added with default tokens');
         } else {
@@ -96,6 +99,7 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
     try {
         const sesh = await getServerSession();
+        console.log(sesh);
         let email = null; // Default to null, adjust as needed
         if (sesh && sesh.user) {
             email = sesh.user.email;

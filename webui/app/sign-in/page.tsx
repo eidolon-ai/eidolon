@@ -47,7 +47,7 @@ export default function SignInPage() {
             startIcon={icon}
             onClick={() => {
               setIsLoading(true)
-              signIn(provider, {callbackUrl: `/check`})
+              signIn(provider, { callbackUrl: `/check?added=true` });
             }}
           >
             {text}
