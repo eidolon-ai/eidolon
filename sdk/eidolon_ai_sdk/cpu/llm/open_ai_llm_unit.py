@@ -7,7 +7,7 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 import yaml
 from PIL import Image
 from fastapi import HTTPException
-from openai import AsyncOpenAI, APIConnectionError, RateLimitError
+from openai import AsyncOpenAI, APIConnectionError, RateLimitError, InternalServerError
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field, BaseModel
@@ -208,7 +208,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
-        except APIConnectionError as e:
+        except APIConnectionError | InternalServerError as e:
             raise HTTPException(502, f"OpenAI Error: {e.message}") from e
         except RateLimitError as e:
             raise HTTPException(429, "OpenAI Rate Limit Exceeded") from e
