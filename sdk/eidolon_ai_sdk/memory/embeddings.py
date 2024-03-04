@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Any, Literal, AsyncGenerator, Optional, List
+from typing import Sequence, Any, AsyncGenerator, Optional, List
 
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 
 
@@ -58,12 +58,9 @@ class NoopEmbedding(Embedding, Specable[EmbeddingSpec]):
 
 
 class OpenAIEmbeddingSpec(EmbeddingSpec):
-    model: Literal[
-        "text-embedding-davinci-001",
-        "text-embedding-babbage-001",
-        "text-embedding-curie-001",
-        "text-embedding-ada-002",
-    ] = Field(default="text-embedding-ada-002", description="The name of the model to use.")
+    model: str = Field(default="text-embedding-ada-002", description="The name of the model to use.")
+    client: AnnotatedReference[AsyncOpenAI]
+    client_args: dict = {}
 
 
 class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
@@ -75,7 +72,7 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
 
     async def start(self):
         await super().start()
-        self.llm = AsyncOpenAI()
+        self.llm = self.spec.client.instantiate(**self.spec.client_args)
 
     async def stop(self):
         await super().stop()
