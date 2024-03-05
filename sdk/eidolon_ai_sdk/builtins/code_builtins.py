@@ -29,6 +29,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.security.google_authorizor import GoogleJWTMiddleware
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
@@ -45,7 +46,7 @@ from eidolon_ai_sdk.memory.noop_memory import NoopVectorStore
 from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
 from eidolon_ai_sdk.memory.vector_store import VectorStore
-from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.security_manager import SecurityManager, NoopAuthProcessor, BaseTokenProcessor
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
@@ -83,6 +84,8 @@ def named_builtins():
         AgentMachine,
         # security manager
         SecurityManager,
+        (BaseTokenProcessor, NoopAuthProcessor),
+        GoogleJWTMiddleware,
         # agents
         ("Agent", SimpleAgent),
         SimpleAgent,

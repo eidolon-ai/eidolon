@@ -8,7 +8,7 @@ from importlib.metadata import version, PackageNotFoundError
 import dotenv
 import uvicorn
 import yaml
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.openapi.utils import get_openapi
 from pydantic import TypeAdapter
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
@@ -19,6 +19,7 @@ from starlette.responses import Response, JSONResponse
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_client.events import StreamEvent
+from eidolon_ai_sdk.security.security_manager import SecurityManager
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -193,11 +194,15 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 class SecurityMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
-        resp = await AgentOS.security_manager.authorization_processor.dispatch(request)
-        if not resp:
-            return await call_next(request)
-        else:
-            return resp
+        security: SecurityManager = AgentOS.security_manager
+        if request.url.path not in security.spec.safe_paths:
+            try:
+                resp = await security.authorization_processor.check_auth(request)
+                if resp:  # defensive coding in case security manager returns a response instead of throwing an exception
+                    return resp
+            except HTTPException as e:
+                return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
+        return await call_next(request)
 
 
 def main():
@@ -228,7 +233,6 @@ def main():
 # noinspection PyTypeChecker
 def start_app(lifespan):
     _app = FastAPI(lifespan=lifespan)
-    _app.add_middleware(LoggingMiddleware)
     _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(ContextMiddleware)
     _app.add_middleware(
@@ -238,6 +242,7 @@ def start_app(lifespan):
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    _app.add_middleware(LoggingMiddleware)
     return _app
 
 

@@ -4,7 +4,7 @@ from authlib.integrations.requests_client import OAuth2Session
 from pydantic import BaseModel, Field
 from typing import List, Optional, Any
 
-from eidolon_ai_sdk.security.jwt_middleware import BaseJWTMiddleware
+from eidolon_ai_sdk.security.jwt_middleware import BaseJWTProcessor
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -22,7 +22,7 @@ class GoogleJWTMiddlewareSpec(BaseModel):
     )
 
 
-class GoogleJWTMiddleware(BaseJWTMiddleware, Specable[GoogleJWTMiddlewareSpec]):
+class GoogleJWTMiddleware(BaseJWTProcessor, Specable[GoogleJWTMiddlewareSpec]):
     async def get_signing_keys(self):
         async with httpx.AsyncClient() as client:
             resp = await client.get(self.spec.jwks_url)

@@ -1,0 +1,7 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: assistant
+
+spec:
+  description: "A simple assistant"

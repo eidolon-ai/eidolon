@@ -1,0 +1,7 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: SecurityManager
+
+spec:
+  authorization_processor: GoogleJWTMiddleware

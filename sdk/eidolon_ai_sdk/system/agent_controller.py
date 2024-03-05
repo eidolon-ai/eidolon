@@ -34,6 +34,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.security.security_manager import PermissionException
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     ListProcessesResponse,
@@ -154,6 +155,7 @@ class AgentController:
             process_id: typing.Optional[str] = None,
             **kwargs,
     ):
+        await AgentOS.security_manager.check_permission(self.name, "update", process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
         if not process_id:
             if "initialized" not in handler.extra["allowed_states"]:
@@ -393,6 +395,7 @@ class AgentController:
         return JSONResponse(programs, 200)
 
     async def get_process_info(self, process_id: str):
+        await AgentOS.security_manager.check_permission(self.name, "read", process_id)
         latest_record = await self.get_latest_process_event(process_id)
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
@@ -419,6 +422,7 @@ class AgentController:
             )
 
     async def get_process_events(self, process_id: str):
+        await AgentOS.security_manager.check_permission(self.name, "read", process_id)
         return await load_events(self.name, process_id)
 
     async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
@@ -427,7 +431,9 @@ class AgentController:
         :param args: An optional title for the process
         :return:
         """
+        await AgentOS.security_manager.check_permission(self.name, "create")
         process = await self._create_process(state="initialized", title=args.title)
+        await AgentOS.security_manager.record_resource(self.name, process.record_id)
         return JSONResponse(
             StateSummary(
                 process_id=process.record_id,
@@ -441,6 +447,7 @@ class AgentController:
         """
         Delete a process and all of its children
         """
+        await AgentOS.security_manager.check_permission(self.name, "delete")
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
@@ -482,6 +489,7 @@ class AgentController:
         """
         List all processes for this agent. Supports paging and sorting
         """
+        await AgentOS.security_manager.check_permission(self.name, "read")
         query = dict(agent=self.name)
         count = await AgentOS.symbolic_memory.count(ProcessDoc.collection, query)
         cursor = AgentOS.symbolic_memory.find(
@@ -490,13 +498,17 @@ class AgentController:
         acc = []
         async for doc in cursor:
             process = ProcessDoc.model_validate(doc)
-            acc.append(
-                StateSummary(
-                    process_id=process.record_id,
-                    state=process.state,
-                    available_actions=self.get_available_actions(process.state),
+            try:
+                await AgentOS.security_manager.check_permission(self.name, "read", process.record_id)
+                acc.append(
+                    StateSummary(
+                        process_id=process.record_id,
+                        state=process.state,
+                        available_actions=self.get_available_actions(process.state),
+                    )
                 )
-            )
+            except PermissionException:
+                logger.debug(f"Skipping process {process.record_id} due to lack of permissions")
             if len(acc) == limit:
                 break
         if len(acc) + skip <= count:

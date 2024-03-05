@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from fastapi import Request, Response, FastAPI
+from fastapi import Request, Response, FastAPI, HTTPException
 from authlib.jose import jwt, JoseError
 
 # noinspection PyPackageRequirements
@@ -12,11 +12,11 @@ from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.request_context import RequestContext
 
 
-class BaseJWTMiddlewareSpec(BaseModel):
+class BaseJWTProcessorSpec(BaseModel):
     pass
 
 
-class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]):
+class BaseJWTProcessor(BaseTokenProcessor, ABC, Specable[BaseJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -39,10 +39,10 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
         jwks = await self.get_signing_keys()
         return jwt.decode(token, jwks)
 
-    async def dispatch(self, request: Request) -> Optional[Response]:
+    async def check_auth(self, request: Request):
         auth_header = request.headers.get("Authorization")
         if not auth_header:
-            return JSONResponse(status_code=401, content={"detail": "Authorization header missing"})
+            raise HTTPException(status_code=401, detail="Authorization header missing")
 
         token = auth_header[7:]
 
@@ -50,7 +50,5 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
             userInfo = await self.process_token(token)
             RequestContext.set("Authorization", auth_header, propagate=True)
             RequestContext.set("jwt", userInfo)
-
         except JoseError as e:
-            print(e)
-            return JSONResponse(status_code=401, content={"detail": str(e)})
+            raise HTTPException(status_code=401, detail=str(e))

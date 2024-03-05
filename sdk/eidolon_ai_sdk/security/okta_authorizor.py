@@ -1,9 +1,9 @@
 import httpx
 
-from eidolon_ai_sdk.security.jwt_middleware import BaseJWTMiddleware
+from eidolon_ai_sdk.security.jwt_middleware import BaseJWTProcessor
 
 
-class OKTAAuth(BaseJWTMiddleware):
+class OKTAAuth(BaseJWTProcessor):
     OKTA_DOMAIN = "your_okta_domain"
     JWKS_URL = f"https://{OKTA_DOMAIN}/oauth2/default/v1/keys"
     AUDIENCE = "your_api_audience"
