@@ -157,7 +157,7 @@ class AgentController:
             process_id: typing.Optional[str] = None,
             **kwargs,
     ):
-        await self.security.check_permission(self.name, "update", process_id)
+        await self.security.check_permission("update", self.name, process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
         if not process_id:
             if "initialized" not in handler.extra["allowed_states"]:
@@ -397,7 +397,7 @@ class AgentController:
         return JSONResponse(programs, 200)
 
     async def get_process_info(self, process_id: str):
-        await self.security.check_permission(self.name, "read", process_id)
+        await self.security.check_permission("read", self.name, process_id)
         latest_record = await self.get_latest_process_event(process_id)
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
@@ -424,7 +424,7 @@ class AgentController:
             )
 
     async def get_process_events(self, process_id: str):
-        await self.security.check_permission(self.name, "read", process_id)
+        await self.security.check_permission("read", self.name, process_id)
         return await load_events(self.name, process_id)
 
     async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
@@ -433,7 +433,7 @@ class AgentController:
         :param args: An optional title for the process
         :return:
         """
-        await self.security.check_permission(self.name, "create")
+        await self.security.check_permission("create", self.name)
         process = await self._create_process(state="initialized", title=args.title)
         await self.security.record_resource(self.name, process.record_id)
         return JSONResponse(
@@ -449,7 +449,7 @@ class AgentController:
         """
         Delete a process and all of its children
         """
-        await self.security.check_permission(self.name, "delete")
+        await self.security.check_permission("delete", self.name)
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
@@ -491,7 +491,7 @@ class AgentController:
         """
         List all processes for this agent. Supports paging and sorting
         """
-        await self.security.check_permission(self.name, "read")
+        await self.security.check_permission("read", self.name)
         query = dict(agent=self.name)
         count = await AgentOS.symbolic_memory.count(ProcessDoc.collection, query)
         cursor = AgentOS.symbolic_memory.find(
@@ -501,7 +501,7 @@ class AgentController:
         async for doc in cursor:
             process = ProcessDoc.model_validate(doc)
             try:
-                await self.security.check_permission(self.name, "read", process.record_id)
+                await self.security.check_permission("read", self.name, process.record_id)
                 acc.append(
                     StateSummary(
                         process_id=process.record_id,
