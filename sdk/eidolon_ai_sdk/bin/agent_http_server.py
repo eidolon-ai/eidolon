@@ -21,7 +21,7 @@ from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.security.security_manager import SecurityManager
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_client.util.request_context import ContextMiddleware
+from eidolon_ai_client.util.request_context import ContextMiddleware, RequestContext
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
@@ -197,9 +197,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         security: SecurityManager = AgentOS.security_manager
         if request.url.path not in security.spec.safe_paths:
             try:
-                resp = await security.authorization_processor.check_auth(request)
-                if resp:  # defensive coding in case security manager returns a response instead of throwing an exception
-                    return resp
+                user = await security.authentication_processor.check_auth(request)
+                RequestContext.set("user", user)
             except HTTPException as e:
                 return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
         return await call_next(request)

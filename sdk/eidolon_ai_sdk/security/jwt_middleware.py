@@ -5,18 +5,18 @@ from authlib.jose import jwt, JoseError
 # noinspection PyPackageRequirements
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Set
 
-from eidolon_ai_sdk.security.security_manager import AuthorizationProcessor
+from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor, Permission, PermissionException
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_client.util.request_context import RequestContext
+from eidolon_ai_client.util.request_context import RequestContext, User
 
 
 class BaseJWTProcessorSpec(BaseModel):
     pass
 
 
-class BaseJWTProcessor(AuthorizationProcessor, ABC, Specable[BaseJWTProcessorSpec]):
+class BaseJWTProcessor(AuthenticationProcessor, ABC, Specable[BaseJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -47,8 +47,9 @@ class BaseJWTProcessor(AuthorizationProcessor, ABC, Specable[BaseJWTProcessorSpe
         token = auth_header[7:]
 
         try:
-            userInfo = await self.process_token(token)
+            user_info = await self.process_token(token)
             RequestContext.set("Authorization", auth_header, propagate=True)
-            RequestContext.set("jwt", userInfo)
+            RequestContext.set("jwt", user_info)
+            return User(**user_info)  # todo, format user_info properly, this will throw
         except JoseError as e:
             raise HTTPException(status_code=401, detail=str(e))

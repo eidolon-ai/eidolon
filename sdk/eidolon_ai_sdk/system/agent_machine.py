@@ -40,17 +40,18 @@ class AgentMachine(Specable[MachineSpec]):
 
     def __init__(self, spec: MachineSpec):
         super().__init__(spec)
-        agents = {}
-        for name, r in AgentOS.get_resources(AgentResource).items():
-            with _error_wrapper(r):
-                agents[name] = r.spec.instantiate()
-
         self.memory = self.spec.get_agent_memory()
-        self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
+        self.agent_controllers = []
         self.app = None
         self.security_manager = self.spec.security_manager.instantiate()
 
     async def start(self, app):
+        agents = {}
+        for name, r in AgentOS.get_resources(AgentResource).items():
+            with _error_wrapper(r):
+                agents[name] = r.spec.instantiate()
+        self.agent_controllers.extend([AgentController(name, agent) for name, agent in agents.items()])
+
         if self.app:
             raise Exception("Machine already started")
         for program in self.agent_controllers:
@@ -62,6 +63,7 @@ class AgentMachine(Specable[MachineSpec]):
         if self.app:
             for program in self.agent_controllers:
                 await program.stop(self.app)
+            self.agent_controllers = []
             await self.memory.stop()
             self.app = None
 

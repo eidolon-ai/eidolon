@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from urllib.request import Request
 
 from pydantic import BaseModel
@@ -46,7 +46,7 @@ class _RequestContextMeta(type):
             raise ValueError("key cannot contain commas")
         _get_context()[key] = _Record(key=key, value=value, propagate=propagate)
 
-    def get(self, key, default=None):
+    def get(self, key, default=...):
         context = _get_context()
         if default is ... and key not in context:
             raise KeyError(key)
@@ -58,6 +58,15 @@ class _RequestContextMeta(type):
         if to_propagate:
             to_propagate["X-Eidolon-Context"] = ",".join(f"{k}" for k in to_propagate.keys())
         return to_propagate
+
+    @property
+    def user(self) -> User:
+        return self.get("user", default=...)
+
+
+class User(BaseModel):
+    id: str
+    name: Optional[str] = None
 
 
 class RequestContext(metaclass=_RequestContextMeta):
