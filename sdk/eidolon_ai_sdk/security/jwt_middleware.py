@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from starlette.responses import JSONResponse
 from typing import List, Optional, Any
 
-from eidolon_ai_sdk.security.security_manager import BaseTokenProcessor
+from eidolon_ai_sdk.security.security_manager import AuthorizationProcessor
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.request_context import RequestContext
 
@@ -16,7 +16,7 @@ class BaseJWTProcessorSpec(BaseModel):
     pass
 
 
-class BaseJWTProcessor(BaseTokenProcessor, ABC, Specable[BaseJWTProcessorSpec]):
+class BaseJWTProcessor(AuthorizationProcessor, ABC, Specable[BaseJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

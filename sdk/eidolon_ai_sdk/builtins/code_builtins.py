@@ -46,7 +46,7 @@ from eidolon_ai_sdk.memory.noop_memory import NoopVectorStore
 from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
 from eidolon_ai_sdk.memory.vector_store import VectorStore
-from eidolon_ai_sdk.security.security_manager import SecurityManager, NoopAuthProcessor, BaseTokenProcessor
+from eidolon_ai_sdk.security.security_manager import SecurityManager, NoopAuthProcessor, AuthorizationProcessor
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
@@ -84,7 +84,7 @@ def named_builtins():
         AgentMachine,
         # security manager
         SecurityManager,
-        (BaseTokenProcessor, NoopAuthProcessor),
+        (AuthorizationProcessor, NoopAuthProcessor),
         GoogleJWTMiddleware,
         # agents
         ("Agent", SimpleAgent),

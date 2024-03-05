@@ -15,7 +15,7 @@ class PermissionException(Exception):
         self.missing = [missing] if isinstance(missing, str) else missing
         super().__init__(f"Missing permissions: {', '.join(self.missing)}")
 
-class BaseTokenProcessor(ABC):
+class AuthorizationProcessor(ABC):
     @abstractmethod
     async def check_auth(self, request: Request):
         pass
@@ -29,7 +29,7 @@ class BaseTokenProcessor(ABC):
         pass
 
 
-class NoopAuthProcessor(BaseTokenProcessor):
+class NoopAuthProcessor(AuthorizationProcessor):
     async def check_auth(self, request: Request):
         pass
 
@@ -42,12 +42,12 @@ class NoopAuthProcessor(BaseTokenProcessor):
 
 
 class SecurityManagerSpec(BaseModel):
-    authorization_processor: AnnotatedReference[BaseTokenProcessor]
+    authorization_processor: AnnotatedReference[AuthorizationProcessor]
     safe_paths: Set[str] = {"/system/health", "/docs", "/favicon.ico", "/openapi.json"}
 
 
 class SecurityManager(Specable[SecurityManagerSpec]):
-    authorization_processor: BaseTokenProcessor
+    authorization_processor: AuthorizationProcessor
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
