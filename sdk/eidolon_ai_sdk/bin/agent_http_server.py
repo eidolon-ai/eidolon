@@ -187,7 +187,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         except Exception as e:
             logger.exception("Unhandled exception")
             raise e
-        logger.info(f"Response: {response.status_code}")
+        if response.status_code >= 500:
+            logger.error(f"Response: {response.status_code}")
+        else:
+            logger.info(f"Response: {response.status_code}")
         return response
 
 
