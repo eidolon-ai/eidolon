@@ -2,7 +2,23 @@
 
 <img alt="img_1" height="400" width="400" src="./docs/src/assets/main_images/img_1.png"/>
 
-The Eidolon framework represents a sophisticated architecture for designing and operating agent-based systems. It is purpose-built to support the agile development of software agents—modular components designed to perform specific tasks autonomously within a distributed computing environment. At its core, the eidolon system facilitates an extensive range of functionalities, enabling developers to construct, customize, and scale agent operations effectively.
+Eidolon helps developers designing and deploying agent-based services.
+
+## Why Eidolon?
+### 1. Easy to deploy
+With Eidolon, agents are services, so there is no extra work when it comes time to deploy.
+
+### 2. Simple agent-to-agent communication
+Since agents are services with well-defined interfaces, they easily communicate with tools dynamically generated from 
+the openapi json schema defined by the agent services. 
+
+### 3. Painless component customization and upgrade
+With a focus on modularity, Eidolon makes it easy to swap out components. Grab an off the shelf llm, rag impl, tools, 
+etc or just define your own.
+
+This means no vendor lock-in but also means that an agent's components can be surgically upgraded without needing to 
+touch other parts of the agent. In the rapidly evolving world of AI Agents, this is required otherwise projects will be 
+outdated before they are even deployed.
 
 
 ## Demo
@@ -85,3 +101,12 @@ And that's it! You have successfully set up and used a basic project using the E
 ## Further Reading
 
 For full documentation, visit [www.eidolonai.com](https://www.eidolonai.com/).
+
+## Contributing
+
+We welcome and appreciate contributions! 
+
+Reach out to us on [discord](https://discord.gg/6kVQrHpeqG) if you have 
+any questions or suggestions.
+
+If you need help with the mechanics of contributing, check out the [First Contributions Repository](https://github.com/firstcontributions/first-contributions). 
