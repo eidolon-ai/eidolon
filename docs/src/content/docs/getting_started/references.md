@@ -222,6 +222,11 @@ Make your agent a "Specable" object for customizable configurations, referenced 
 _qa.py_
 ```python
 # ...
+from eidolon_ai_sdk.agent.agent import AgentSpec
+from eidolon_ai_sdk.system.reference_model import Specable
+
+# ...
+
 class QASpec(AgentSpec):
     validate_agent: bool = False
 
