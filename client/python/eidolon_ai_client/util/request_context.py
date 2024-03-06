@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import fnmatch
 from contextvars import ContextVar
 from typing import Any, Dict, Optional
 from urllib.request import Request
 
 from pydantic import BaseModel
+from starlette.exceptions import HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from eidolon_ai_client.util.logger import logger
@@ -14,7 +16,7 @@ _request_context = ContextVar("request_context")
 
 class _Record(BaseModel):
     key: str
-    value: str
+    value: Any
     propagate: bool
 
 
@@ -60,13 +62,21 @@ class _RequestContextMeta(type):
         return to_propagate
 
     @property
-    def user(self) -> User:
+    def current_user(self) -> User:
         return self.get("user", default=...)
 
 
 class User(BaseModel):
     id: str
     name: Optional[str] = None
+    functional_permissions: Dict[str, set[str]] = dict()
+
+    def agent_process_permissions(self, agent: str) -> set[str]:
+        permissions = set()
+        for pattern in self.functional_permissions.keys():
+            if fnmatch.fnmatch(f"eidolon/agents/{agent}/processes", pattern):
+                permissions = permissions.union(self.functional_permissions[pattern])
+        return permissions
 
 
 class RequestContext(metaclass=_RequestContextMeta):
@@ -79,6 +89,8 @@ class ContextMiddleware(BaseHTTPMiddleware):
         if context_headers:
             context_headers = context_headers.split(",")
         for header in context_headers:
+            if header.lower() == "user":
+                raise HTTPException(status_code=429, detail="User context header not allowed")
             try:
                 RequestContext.set(header, request.headers[header], propagate=True)
             except KeyError:

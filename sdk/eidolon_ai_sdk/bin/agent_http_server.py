@@ -1,31 +1,33 @@
 import argparse
+import copy
 import logging.config
 import pathlib
 from collections import deque
 from contextlib import asynccontextmanager
 from importlib.metadata import version, PackageNotFoundError
+from typing import cast, Annotated, Literal, Optional
 
 import dotenv
 import uvicorn
 import yaml
 from fastapi import FastAPI, HTTPException
 from fastapi.openapi.utils import get_openapi
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, Field
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
+from eidolon_ai_client.events import StreamEvent
+from eidolon_ai_client.util.logger import logger
+from eidolon_ai_client.util.request_context import ContextMiddleware, RequestContext, User
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_client.events import StreamEvent
-from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.security_manager import SecurityManager, PermissionException, AuthorizationProcessor
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_client.util.request_context import ContextMiddleware, RequestContext
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
-from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()
@@ -76,6 +78,17 @@ def parse_args():
     return parser.parse_args()
 
 
+def _allowed_path(path: str) -> bool:
+    parts = path.split("/")
+    allowed = True
+    if parts[1] == "agents":
+        user: Optional[User] = RequestContext.get("user", default=None)
+        allowed = user and "read" in user.agent_process_permissions(parts[2])
+    if not allowed:
+        logger.debug(f"Disallowed path: {path}")
+    return allowed
+
+
 @asynccontextmanager
 async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO, replay_override=...):
     def custom_openapi():
@@ -122,33 +135,35 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
     async def version():
         return {"version": EIDOLON_SDK_VERSION}
 
-    # todo, this needs pagination
     @app.get("/system/processes", tags=["system"], description="Get all processes")
-    async def processes():
+    async def processes(
+            skip: int = 0,
+            limit: Annotated[int, Field(ge=1, le=100)] = 100,
+            sort: Literal["ascending", "descending"] = "ascending",
+    ):
+        security: AuthorizationProcessor = AgentOS.security_manager.authorization_processor
         child_pids = await AgentCallHistory.get_child_pids()
         processes = []
-        async for process in ProcessDoc.find(query={}, projection={"data": 0}):
-            process = process.model_dump()
-            process["process_id"] = process["_id"]
-            del process["_id"]
-            if process["process_id"] in child_pids:
-                process["parent_process_id"] = child_pids[process["process_id"]]
-            processes.append(process)
+        async for process in ProcessDoc.find(query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)):
+            process = cast(ProcessDoc, process)
+            try:
+                await security.check_permission("read", process.agent, process.record_id)
+                if skip > 0:
+                    skip -= 1
+                else:
+                    process_dump = process.model_dump()
+                    process_dump["process_id"] = process_dump["_id"]
+                    del process_dump["_id"]
+                    if process_dump["process_id"] in child_pids:
+                        process_dump["parent_process_id"] = child_pids[process_dump["process_id"]]
+                    processes.append(process_dump)
+            except PermissionException:
+                logger.debug(f"Skipping process {process.record_id} due to lack of permissions")
+
+            if len(processes) >= limit:
+                break
 
         return JSONResponse(content=processes, status_code=200)
-
-    @app.get("/system/processes/{process_id}", tags=["system"], description="Get all processes")
-    async def process(process_id: str):
-        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
-        if not process_obj:
-            return JSONResponse(content={"error": f"Process {process_id} not found"}, status_code=404)
-        process_obj = process_obj.model_dump()
-        process_obj["process_id"] = process_obj["_id"]
-        if process_obj.get("data"):
-            del process_obj["data"]
-        del process_obj["_id"]
-
-        return JSONResponse(content=process_obj, status_code=200)
 
     try:
         for resource_or_tuple in resource_generator:
@@ -201,8 +216,16 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 RequestContext.set("user", user)
             except HTTPException as e:
                 return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
-        return await call_next(request)
-
+        try:
+            return await call_next(request)
+        except PermissionException as pe:
+            user: User = RequestContext.current_user
+            logger.warning(f"Handled PermissionException for user '{user.name}' ({user.id}): {pe}")
+            # todo, check this is identical to 404 response for bad path so agents are not discoverable
+            if "read" in pe.missing:
+                return JSONResponse(status_code=404, content={"detail": "Not Found"})
+            # todo, check this is right status code, done with no internet
+            return JSONResponse(status_code=403, content={"detail": str(pe)})
 
 def main():
     args = parse_args()
@@ -232,7 +255,6 @@ def main():
 # noinspection PyTypeChecker
 def start_app(lifespan):
     _app = FastAPI(lifespan=lifespan)
-    _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(ContextMiddleware)
     _app.add_middleware(
         CORSMiddleware,
@@ -241,6 +263,7 @@ def start_app(lifespan):
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(LoggingMiddleware)
     return _app
 

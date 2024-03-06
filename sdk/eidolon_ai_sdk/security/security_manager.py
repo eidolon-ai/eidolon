@@ -18,7 +18,7 @@ class PermissionException(Exception):
         self.missing = [missing] if isinstance(missing, str) else missing
         self.process = process
         super().__init__(
-            f"Missing permissions: {', '.join(self.missing)}" + (f" for process {process}" if process else ""))
+            f"Missing permissions {', '.join(self.missing)}" + (f" for process {process}" if process else ""))
 
 
 class AuthenticationProcessor(ABC):
@@ -32,18 +32,18 @@ class AuthenticationProcessor(ABC):
         """
         pass
 
-    @abstractmethod
-    async def get_functional_permissions(self, user: User, agent: str) -> Set[Permission]:
-        """
-        Get the functional permissions of the provided user for the agent.
-        """
-        pass
 
+class NoopAuthProcessor(AuthenticationProcessor):
+    async def check_auth(self, request: Request) -> User:
+        return User(
+            id="NOOP_DEFAULT_USER",
+            name="noop default user",
+            functional_permissions={"eidolon/agents/*/processes": {"create", "read", "update", "delete"}}
+        )
 
 class AuthorizationProcessor(ABC):
     @abstractmethod
-    async def check_permission(self, permissions: Permission | Set[Permission], agent: str,
-                               process: Optional[str] = None):
+    async def check_permission(self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None):
         """
         Checks if the authenticated user has the specified permission(s) to the provided agent process.
 
@@ -55,19 +55,11 @@ class AuthorizationProcessor(ABC):
         pass
 
     @abstractmethod
-    async def record_resource(self, agent: str, process: Optional[str] = None):
+    async def record_resource(self, agent: str, process: str):
         """
         Called when a process is created. Should propagate any state needed for future resource checks.
         """
         pass
-
-
-class NoopAuthProcessor(AuthenticationProcessor):
-    async def check_auth(self, request: Request) -> User:
-        return User(id="NOOP_DEFAULT_USER", name="noop default user")
-
-    async def get_functional_permissions(self, user: User, agent: str) -> Set[Permission]:
-        return {"create", "read", "update", "delete"}
 
 
 class SecurityManagerSpec(BaseModel):

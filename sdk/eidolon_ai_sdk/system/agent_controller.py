@@ -34,7 +34,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import PermissionException, AuthenticationProcessor, \
+from eidolon_ai_sdk.security.security_manager import PermissionException, \
     AuthorizationProcessor
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
@@ -158,7 +158,7 @@ class AgentController:
             process_id: typing.Optional[str] = None,
             **kwargs,
     ):
-        await self.security.check_permission("update", self.name, process_id)
+        await self.security.check_permission({"read", "update"}, self.name, process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
         if not process_id:
             if "initialized" not in handler.extra["allowed_states"]:
@@ -450,7 +450,7 @@ class AgentController:
         """
         Delete a process and all of its children
         """
-        await self.security.check_permission("delete", self.name)
+        await self.security.check_permission({"read", "delete"}, self.name, process_id)
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         num_delete = await self._delete_process(process_id) if process_obj else 0
         return JSONResponse(
@@ -485,8 +485,8 @@ class AgentController:
     async def list_processes(
             self,
             request: Request,
-            limit: int = 20,
             skip: int = 0,
+            limit: typing.Annotated[int, Field(ge=1, le=100)] = 100,
             sort: typing.Literal["ascending", "descending"] = "ascending",
     ):
         """
