@@ -42,12 +42,9 @@ class GoogleJWTMiddleware(BaseJWTMiddleware, Specable[GoogleJWTMiddlewareSpec]):
 
     async def process_token(self, token: str) -> Optional[Any]:
         # need to call into google to exchange the token for a user info
-        print(f"Token: {token}")
         authlib_session = OAuth2Session(self.spec.audience, token={"access_token": token, "token_type": "Bearer"})
         response = authlib_session.get("https://openidconnect.googleapis.com/v1/userinfo")
         if response.status_code == 200:
-            print("User info: ", response.json())
             return response.json()
         else:
-            print("Error fetching user info: ", response.status_code, response.text)
             raise Exception(f"Error fetching user info: {response.status_code} {response.text}")

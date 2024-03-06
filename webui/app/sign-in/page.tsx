@@ -6,7 +6,7 @@ import {signIn, useSession} from "next-auth/react"
 import {redirect} from 'next/navigation'
 import * as React from "react";
 import {Box, Button, CircularProgress} from "@mui/material";
-import {IconGitHub, IconGoogle, IconEntra} from "@/components/ui/icons";
+import {IconEntra, IconGitHub, IconGoogle} from "@/components/ui/icons";
 import LoginIcon from '@mui/icons-material/Login';
 import {getSigninOptions} from "@/app/sign-in/signon-options";
 
@@ -39,23 +39,19 @@ export default function SignInPage() {
   return (
     <div style={{display:"flex", flexDirection:"column"}}>
       {isLoading && <Box sx={{display: 'flex'}}><CircularProgress/></Box>}
-      {!isLoading && providers.map(provider => {
-        let [text, icon] = providerMap[provider]
-        return (
+      {!isLoading && (
           <Button
-            key={provider}  // Add this line
             variant={"outlined"}
             sx={{margin: "8px"}}
-            startIcon={icon}
             onClick={() => {
               setIsLoading(true)
-              signIn(provider, {callbackUrl: `/`})
+              signIn(undefined, {callbackUrl: `/`})
             }}
           >
-            {text}
+            Login
           </Button>
         )
-      })}
+      }
     </div>
   )
 }
