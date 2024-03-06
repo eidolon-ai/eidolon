@@ -44,7 +44,7 @@ async def test_stream_manager_records_errors_and_reraises():
     assert events == [
         StartStreamContextEvent(context_id="foo", title="foo"),
         StringOutputEvent(stream_context="foo", content="test"),
-        ErrorEvent(stream_context="foo", reason=error),
+        ErrorEvent(stream_context="foo", reason="RuntimeError: test error"),
         EndStreamContextEvent(context_id="foo"),
     ]
     assert e.value.args[0] == "Error in stream context foo"
