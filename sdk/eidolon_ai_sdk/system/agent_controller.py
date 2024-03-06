@@ -34,8 +34,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import PermissionException, \
-    AuthorizationProcessor
+from eidolon_ai_sdk.security.security_manager import PermissionException, AuthorizationProcessor
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     ListProcessesResponse,
@@ -146,7 +145,7 @@ class AgentController:
                 },
                 202: {
                     "content": {"text/event-stream": {"schema": {"$ref": "#/components/schemas/EventTypes"}}},
-                }
+                },
             },
             description=handler.description(self.agent, handler),
         )
@@ -155,10 +154,10 @@ class AgentController:
         pass
 
     async def run_program(
-            self,
-            handler: FnHandler,
-            process_id: typing.Optional[str] = None,
-            **kwargs,
+        self,
+        handler: FnHandler,
+        process_id: typing.Optional[str] = None,
+        **kwargs,
     ):
         await self.security.check_permission({"read", "update"}, self.name, process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
@@ -174,6 +173,7 @@ class AgentController:
         else:
             process = await self.get_latest_process_event(process_id)
             if not process:
+                logger.warning(f"Process {process_id} not found, but permissions indicate it should have existed")
                 raise HTTPException(status_code=404, detail="Process not found")
             if process.state not in handler.extra["allowed_states"]:
                 logger.warning(
@@ -253,7 +253,7 @@ class AgentController:
         process.state = state_change_event.state
         if final_event.is_root_and_type(ErrorEvent):
             data = final_event.reason
-            status_code = final_event.details.get('status_code', 500)
+            status_code = final_event.details.get("status_code", 500)
         else:
             data = result_object if result_object else string_result
             status_code = 200
@@ -279,10 +279,10 @@ class AgentController:
                     ended = event.is_root_end_event()
                     transitioned = event.is_root_and_type(AgentStateEvent)
                     if (
-                            isinstance(event, StringOutputEvent)
-                            and events_to_store
-                            and isinstance(events_to_store[-1], StringOutputEvent)
-                            and event.stream_context == events_to_store[-1].stream_context
+                        isinstance(event, StringOutputEvent)
+                        and events_to_store
+                        and isinstance(events_to_store[-1], StringOutputEvent)
+                        and event.stream_context == events_to_store[-1].stream_context
                     ):
                         events_to_store[-1].content += event.content
                     else:
@@ -304,11 +304,11 @@ class AgentController:
             await store_events(self.name, process.record_id, events_to_store)
 
     async def stream_agent_iterator(
-            self,
-            stream: AsyncIterator[StreamEvent],
-            process: ProcessDoc,
-            call_name,
-            user_input: typing.Dict[str, typing.Any],
+        self,
+        stream: AsyncIterator[StreamEvent],
+        process: ProcessDoc,
+        call_name,
+        user_input: typing.Dict[str, typing.Any],
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         seen_end = False
@@ -426,7 +426,7 @@ class AgentController:
         :param args: An optional title for the process
         :return:
         """
-        await self.security.check_permission("create", self.name)
+        await self.security.check_permission({"read", "create"}, self.name)
         process = await self._create_process(state="initialized", title=args.title)
         await self.security.record_resource(self.name, process.record_id)
         return JSONResponse(
@@ -475,18 +475,17 @@ class AgentController:
         return num_deleted + 1
 
     async def list_processes(
-            self,
-            request: Request,
-            skip: int = 0,
-            limit: typing.Annotated[int, Field(ge=1, le=100)] = 100,
-            sort: typing.Literal["ascending", "descending"] = "ascending",
+        self,
+        request: Request,
+        skip: int = 0,
+        limit: typing.Annotated[int, Field(ge=1, le=100)] = 100,
+        sort: typing.Literal["ascending", "descending"] = "ascending",
     ):
         """
         List all processes for this agent. Supports paging and sorting
         """
         await self.security.check_permission("read", self.name)
         query = dict(agent=self.name)
-        count = await AgentOS.symbolic_memory.count(ProcessDoc.collection, query)
         cursor = AgentOS.symbolic_memory.find(
             ProcessDoc.collection, query, sort=dict(updated=1 if sort == "ascending" else -1), skip=skip
         )
@@ -506,13 +505,10 @@ class AgentController:
                 logger.debug(f"Skipping process {process.record_id} due to lack of permissions")
             if len(acc) == limit:
                 break
-        if len(acc) + skip <= count:
-            next_page_url = f"{request.url}agents/{self.name}/processes/?limit={limit}&skip={skip + limit}"
-        else:
-            next_page_url = None
+        next_page_url = f"{request.url}agents/{self.name}/processes/?limit={limit}&skip={skip + limit}"
         return JSONResponse(
             ListProcessesResponse(
-                total=count,
+                total=len(acc),
                 processes=acc,
                 next=next_page_url,
             ).model_dump(),

@@ -140,7 +140,9 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
         async def fn(_self, body):
             async for event in RecordAgentResponseIterator(
-                (await agent.create_process()).stream_action(program, body), call_context.process_id, call_context.thread_id
+                (await agent.create_process()).stream_action(program, body),
+                call_context.process_id,
+                call_context.thread_id,
             ):
                 yield event
 

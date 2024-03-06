@@ -1,5 +1,4 @@
 import argparse
-import copy
 import logging.config
 import pathlib
 from collections import deque
@@ -137,14 +136,16 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
 
     @app.get("/system/processes", tags=["system"], description="Get all processes")
     async def processes(
-            skip: int = 0,
-            limit: Annotated[int, Field(ge=1, le=100)] = 100,
-            sort: Literal["ascending", "descending"] = "ascending",
+        skip: int = 0,
+        limit: Annotated[int, Field(ge=1, le=100)] = 100,
+        sort: Literal["ascending", "descending"] = "ascending",
     ):
         security: AuthorizationProcessor = AgentOS.security_manager.authorization_processor
         child_pids = await AgentCallHistory.get_child_pids()
         processes = []
-        async for process in ProcessDoc.find(query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)):
+        async for process in ProcessDoc.find(
+            query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
+        ):
             process = cast(ProcessDoc, process)
             try:
                 await security.check_permission("read", process.agent, process.record_id)
@@ -226,9 +227,13 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             logger.warning(f"Handled PermissionException for user '{user.name}' ({user.id}): {pe}")
             # todo, check this is identical to 404 response for bad path so agents are not discoverable
             if "read" in pe.missing:
-                return JSONResponse(status_code=404, content={"detail": "Not Found"})
+                if pe.process:
+                    return JSONResponse(status_code=404, content={"detail": "Process Not Found"})
+                else:
+                    return JSONResponse(status_code=404, content={"detail": "Not Found"})
             # todo, check this is right status code, done with no internet
             return JSONResponse(status_code=403, content={"detail": str(pe)})
+
 
 def main():
     args = parse_args()

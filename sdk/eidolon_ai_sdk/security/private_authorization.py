@@ -1,9 +1,12 @@
-from typing import Optional, Set, cast, List
+from typing import Optional, Set, List
 
 from eidolon_ai_client.util.request_context import RequestContext, User
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.security.security_manager import AuthorizationProcessor, Permission, AuthenticationProcessor, \
-    PermissionException
+from eidolon_ai_sdk.security.security_manager import (
+    AuthorizationProcessor,
+    Permission,
+    PermissionException,
+)
 from eidolon_ai_sdk.system.processes import MongoDoc
 
 
@@ -18,7 +21,9 @@ class AuthDoc(MongoDoc):
 
 
 class PrivateAuthorization(AuthorizationProcessor):
-    async def check_permission(self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None):
+    async def check_permission(
+        self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
+    ):
         permissions: Set[Permission] = {permissions} if isinstance(permissions, str) else permissions
         user: User = RequestContext.current_user
         functional = user.agent_process_permissions(agent)
@@ -30,8 +35,11 @@ class PrivateAuthorization(AuthorizationProcessor):
         if process_id:
             missing_resource = permissions
             async for doc in AuthDoc.find(
-                    query=dict(subject_id=user.id, subject_type='user'),
-                    projection=dict(permissions=1),
+                query=dict(
+                    subject_id=user.id, subject_type="user", resource_type=f"{agent}/process", resource_id=process_id
+                ),
+                projection=dict(permissions=1),
+                convert=False,
             ):
                 missing_resource = missing_resource.difference(doc["permissions"])
             if missing_resource:

@@ -310,13 +310,17 @@ def deterministic_id_generator(test_name):
 
 
 @pytest.fixture()
-def deterministic_process_ids(request):
+def test_name(request):
+    return request.node.name
+
+
+@pytest.fixture()
+def deterministic_process_ids(test_name):
     """
     Tool call responses contain the process id, which means it does name make cache hits for vcr.
     This method patches object id for processes so that it returns a deterministic id based on the test name.
     """
 
-    test_name = request.node.name
     id_generator = deterministic_id_generator(test_name)
 
     def patched_ObjectId(*args, **kwargs):

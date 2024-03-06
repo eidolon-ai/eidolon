@@ -17,7 +17,10 @@ class PermissionException(Exception):
     def __init__(self, missing: Permission | Set[Permission], process: Optional[str] = None):
         self.missing = [missing] if isinstance(missing, str) else missing
         self.process = process
-        reason = f"Missing permission(s) {', '.join(self.missing)}" + (f" for process {process}" if process else "")
+        if process:
+            reason = f"Missing Resource Permission: {', '.join(self.missing)}"
+        else:
+            reason = f"Missing Permission: {', '.join(self.missing)}"
         super().__init__(reason)
 
 
@@ -38,12 +41,15 @@ class NoopAuthProcessor(AuthenticationProcessor):
         return User(
             id="NOOP_DEFAULT_USER",
             name="noop default user",
-            functional_permissions={"eidolon/agents/*/processes": {"create", "read", "update", "delete"}}
+            functional_permissions={"eidolon/agents/*/processes": {"create", "read", "update", "delete"}},
         )
+
 
 class AuthorizationProcessor(ABC):
     @abstractmethod
-    async def check_permission(self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None):
+    async def check_permission(
+        self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
+    ):
         """
         Checks if the authenticated user has the specified permission(s) to the provided agent process.
 

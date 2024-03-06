@@ -73,7 +73,9 @@ class TestHelloWorld:
         events = response.json()
         expected_events = [
             UserInputEvent(input=dict(name="world")),
-            StartAgentCallEvent(machine=server, agent_name="HelloWorld", call_name="idle", process_id=process.process_id),
+            StartAgentCallEvent(
+                machine=server, agent_name="HelloWorld", call_name="idle", process_id=process.process_id
+            ),
             StringOutputEvent(content="Hello, world!"),
             AgentStateEvent(state="terminated", available_actions=[]),
             SuccessEvent(),

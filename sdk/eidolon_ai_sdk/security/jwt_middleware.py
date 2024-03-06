@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
-from fastapi import Request, Response, FastAPI, HTTPException
+from fastapi import Request, FastAPI, HTTPException
 from authlib.jose import jwt, JoseError
 
 # noinspection PyPackageRequirements
 from pydantic import BaseModel
-from starlette.responses import JSONResponse
-from typing import List, Optional, Any, Set
+from typing import List, Optional, Any
 
-from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor, Permission, PermissionException
+from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.request_context import RequestContext, User
 
