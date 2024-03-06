@@ -1,7 +1,6 @@
 {
-  "name": "next-template",
+  "name": "eidolon-webui",
   "version": "0.0.2",
-  "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
@@ -48,6 +47,7 @@
     "react-markdown": "^8.0.7",
     "react-syntax-highlighter": "^15.5.0",
     "react-textarea-autosize": "^8.5.3",
+    "rehype-raw": "^7.0.0",
     "rehype-wrap-all": "^1.1.0",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",

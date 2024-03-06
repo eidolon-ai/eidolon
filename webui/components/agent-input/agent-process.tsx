@@ -63,7 +63,7 @@ export function AgentProcess({agent, processState, handleAction, handleCancel}: 
       </div>
     )
     button = <Skeleton variant="circular" width={36} height={36}/>
-  } else if (processState?.state === 'http_error') {
+  } else if ((processState?.state === 'http_error' || processState?.state === 'error' || processState?.state === 'unhandled_error') && processState?.available_actions?.length === 0) {
     content = (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
         <h2>Error</h2>

@@ -189,14 +189,6 @@ export async function getPIDStatus(agentName: string, process_id: string) {
         .then(resp => {
             if (resp.status === 404) {
                 return null
-            } else if (resp.status !== 200) {
-                return resp.text().then(text => {
-                    return {
-                        state: "http_error",
-                        error: text,
-                        available_actions: []
-                    } as ProcessState
-                })
             }
             return resp.json().then((json: Record<string, any>) => json as ProcessState)
         })
