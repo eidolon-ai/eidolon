@@ -143,8 +143,10 @@ class AgentController:
             responses={
                 200: {
                     "model": self.create_response_model(handler),
-                    "content": {"text/event-stream": {"schema": {"$ref": "#/components/schemas/EventTypes"}}},
                 },
+                202: {
+                    "content": {"text/event-stream": {"schema": {"$ref": "#/components/schemas/EventTypes"}}},
+                }
             },
             description=handler.description(self.agent, handler),
         )
@@ -214,7 +216,7 @@ class AgentController:
                     raise e
 
             return EventSourceResponse(
-                with_sse(self.agent_event_stream(handler, process, last_state, **kwargs)), status_code=200
+                with_sse(self.agent_event_stream(handler, process, last_state, **kwargs)), status_code=202
             )
         else:
             # run the program synchronously
@@ -250,14 +252,20 @@ class AgentController:
 
         process.state = state_change_event.state
         if final_event.is_root_and_type(ErrorEvent):
-            process.error_info = final_event.reason
-            return self.doc_to_response(process, None)
+            data = final_event.reason
+            status_code = final_event.details.get('status_code', 500)
         else:
-            if result_object:
-                data = result_object
-            else:
-                data = string_result
-            return self.doc_to_response(process, data)
+            data = result_object if result_object else string_result
+            status_code = 200
+        return JSONResponse(
+            SyncStateResponse(
+                process_id=process.record_id,
+                state=process.state,
+                data=data,
+                available_actions=self.get_available_actions(process.state),
+            ).model_dump(),
+            status_code,
+        )
 
     async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
@@ -334,7 +342,7 @@ class AgentController:
             if not seen_end:
                 await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
                 yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
-                yield ErrorEvent(reason=dict(detail=e.detail, status_code=e.status_code))
+                yield ErrorEvent(reason=e.detail, details=dict(status_code=e.status_code))
         except Exception as e:
             logger.exception(f"Unhandled Error {e}")
             if not seen_end:
@@ -342,7 +350,7 @@ class AgentController:
                 yield AgentStateEvent(
                     state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
                 )
-                yield ErrorEvent(reason=dict(detail=str(e), status_code=500))
+                yield ErrorEvent(reason=str(e), details=dict(status_code=500))
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
         response = await handler.fn(self.agent, **kwargs)
@@ -363,6 +371,7 @@ class AgentController:
                 kwargs["annotation"] = typing.Annotated[model.model_fields[field].annotation, model.model_fields[field]]
             if model.model_fields[field].default is not PydanticUndefined:
                 kwargs["default"] = model.model_fields[field].default
+                model.model_fields[field].default = PydanticUndefined
 
             params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
         if "process_id" in params:
@@ -402,27 +411,10 @@ class AgentController:
         latest_record = await self.get_latest_process_event(process_id)
         if not latest_record:
             return JSONResponse(dict(detail="Process not found"), 404)
-        elif (
-                latest_record.state == "unhandled_error"
-                or latest_record.state == "http_error"
-                or latest_record.state == "error"
-        ):
-            detail = latest_record.error_info
-            status_code = 500
-            if isinstance(latest_record.error_info, dict):
-                detail = latest_record.error_info.get("detail", latest_record.error_info)
-                status_code = latest_record.error_info.get("status_code", 500)
-            logger.info(f"Successfully retrieved stored error response, status_code={status_code}")
-            return JSONResponse(detail, status_code)
-        else:
-            return JSONResponse(
-                StateSummary(
-                    process_id=latest_record.record_id,
-                    state=latest_record.state,
-                    available_actions=self.get_available_actions(latest_record.state),
-                ).model_dump(),
-                200,
-            )
+        state = latest_record.state
+        actions = self.get_available_actions(latest_record.state)
+        summary = StateSummary(process_id=latest_record.record_id, state=state, available_actions=actions).model_dump()
+        return JSONResponse(summary, 200)
 
     async def get_process_events(self, process_id: str):
         await self.security.check_permission("read", self.name, process_id)
@@ -528,29 +520,15 @@ class AgentController:
         )
 
     def doc_to_response(self, latest_record: ProcessDoc, data: typing.Any):
-        if not latest_record:
-            return JSONResponse(dict(detail="Process not found"), 404)
-        elif (
-                latest_record.state == "unhandled_error"
-                or latest_record.state == "http_error"
-                or latest_record.state == "error"
-        ):
-            detail = latest_record.error_info
-            status_code = 500
-            if isinstance(latest_record.error_info, dict):
-                detail = latest_record.error_info.get("detail", latest_record.error_info)
-                status_code = latest_record.error_info.get("status_code", 500)
-            return JSONResponse(detail, status_code)
-        else:
-            return JSONResponse(
-                SyncStateResponse(
-                    process_id=latest_record.record_id,
-                    state=latest_record.state,
-                    data=data,
-                    available_actions=self.get_available_actions(latest_record.state),
-                ).model_dump(),
-                200,
-            )
+        return JSONResponse(
+            SyncStateResponse(
+                process_id=latest_record.record_id,
+                state=latest_record.state,
+                data=data,
+                available_actions=self.get_available_actions(latest_record.state),
+            ).model_dump(),
+            200,
+        )
 
     def get_available_actions(self, state):
         return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]

@@ -1,0 +1,6 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: ErrorProneCodeAgent
+
+spec: "eidolon_examples.hello_world.error_helper.ErrorProneCodeAgent"
