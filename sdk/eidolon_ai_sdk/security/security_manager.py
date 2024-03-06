@@ -17,8 +17,8 @@ class PermissionException(Exception):
     def __init__(self, missing: Permission | Set[Permission], process: Optional[str] = None):
         self.missing = [missing] if isinstance(missing, str) else missing
         self.process = process
-        super().__init__(
-            f"Missing permissions {', '.join(self.missing)}" + (f" for process {process}" if process else ""))
+        reason = f"Missing permission(s) {', '.join(self.missing)}" + (f" for process {process}" if process else "")
+        super().__init__(reason)
 
 
 class AuthenticationProcessor(ABC):

@@ -1,4 +1,4 @@
-from typing import Optional, Set, cast
+from typing import Optional, Set, cast, List
 
 from eidolon_ai_client.util.request_context import RequestContext, User
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -13,7 +13,7 @@ class AuthDoc(MongoDoc):
     resource_id: str
     subject_type: str
     subject_id: str
-    permissions: Set[Permission]
+    permissions: List[Permission]
     extra: dict = {}
 
 
@@ -27,15 +27,15 @@ class PrivateAuthorization(AuthorizationProcessor):
             raise PermissionException(missing_functional)
         user: User = RequestContext.current_user
 
-        missing_resource = permissions
-        async for doc in AuthDoc.find(
-                query=dict(subject_id=user.id, subject_type='user'),
-                projection=dict(permissions=1),
-        ):
-            doc: AuthDoc = doc
-            missing_resource = missing_resource.difference(doc.permissions)
-        if missing_resource:
-            raise PermissionException(missing_resource, process_id)
+        if process_id:
+            missing_resource = permissions
+            async for doc in AuthDoc.find(
+                    query=dict(subject_id=user.id, subject_type='user'),
+                    projection=dict(permissions=1),
+            ):
+                missing_resource = missing_resource.difference(doc["permissions"])
+            if missing_resource:
+                raise PermissionException(missing_resource, process_id)
 
     async def record_resource(self, agent: str, process_id: str):
         user: User = RequestContext.current_user
@@ -44,9 +44,10 @@ class PrivateAuthorization(AuthorizationProcessor):
             resource_id=process_id,
             subject_type="user",
             subject_id=user.id,
-            permissions={"read", "update", "delete"},
+            permissions=["read", "update", "delete"],
             extra=dict(username=user.name),
         )
 
-    async def delete_process(self, process_id):
+    @staticmethod
+    async def delete_process(process_id):
         await AgentOS.symbolic_memory.delete(AuthDoc.collection, {"resource_id": process_id})

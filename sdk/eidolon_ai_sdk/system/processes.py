@@ -30,7 +30,7 @@ class MongoDoc(BaseModel, extra="allow"):
     async def find(cls, **kwargs):
         docs = AgentOS.symbolic_memory.find(cls.collection, **kwargs)
         async for doc in docs:
-            yield cls.model_validate(doc)
+            yield cls.model_validate(doc) if "projection" not in kwargs else doc
 
     @classmethod
     async def create(cls, **data):
