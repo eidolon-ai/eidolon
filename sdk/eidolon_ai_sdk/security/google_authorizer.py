@@ -23,10 +23,16 @@ class GoogleJWTMiddlewareSpec(BaseModel):
 
 
 class GoogleJWTMiddleware(BaseJWTMiddleware, Specable[GoogleJWTMiddlewareSpec]):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.signing_keys = None
+
     async def get_signing_keys(self):
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(self.spec.jwks_url)
-            return resp.json()["keys"]
+        if not self.signing_keys:
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(self.spec.jwks_url)
+                self.signing_keys = resp.json()["keys"]
+        return self.signing_keys
 
     async def get_audience_and_issuer(self):
         return self.spec.audience, self.spec.issuer
@@ -36,9 +42,12 @@ class GoogleJWTMiddleware(BaseJWTMiddleware, Specable[GoogleJWTMiddlewareSpec]):
 
     async def process_token(self, token: str) -> Optional[Any]:
         # need to call into google to exchange the token for a user info
+        print(f"Token: {token}")
         authlib_session = OAuth2Session(self.spec.audience, token={"access_token": token, "token_type": "Bearer"})
         response = authlib_session.get("https://openidconnect.googleapis.com/v1/userinfo")
         if response.status_code == 200:
+            print("User info: ", response.json())
             return response.json()
         else:
+            print("Error fetching user info: ", response.status_code, response.text)
             raise Exception(f"Error fetching user info: {response.status_code} {response.text}")
