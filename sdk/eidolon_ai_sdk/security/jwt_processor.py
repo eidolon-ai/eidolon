@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
-from fastapi import Request, FastAPI, HTTPException
-from authlib.jose import jwt, JoseError
-
-# noinspection PyPackageRequirements
-from pydantic import BaseModel
 from typing import List, Optional, Any
 
+from authlib.jose import jwt
+from fastapi import Request, FastAPI, HTTPException
+# noinspection PyPackageRequirements
+from pydantic import BaseModel
+
+from eidolon_ai_client.util.logger import logger
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor, User
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_client.util.request_context import RequestContext
 
 
 class BaseJWTProcessorSpec(BaseModel):
@@ -50,5 +51,6 @@ class BaseJWTProcessor(AuthenticationProcessor, ABC, Specable[BaseJWTProcessorSp
             RequestContext.set("Authorization", auth_header, propagate=True)
             RequestContext.set("jwt", user_info)
             return User(**user_info)  # todo, format user_info properly, this will throw
-        except JoseError as e:
+        except Exception as e:
+            logger.exception("Error processing jwt")
             raise HTTPException(status_code=401, detail=str(e))

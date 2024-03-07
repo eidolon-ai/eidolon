@@ -30,6 +30,7 @@ from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
+from eidolon_ai_sdk.security.msft_authorizer import MSFTJWTProcessor
 from eidolon_ai_sdk.security.private_authorization import PrivateAuthorization
 
 try:
@@ -93,6 +94,7 @@ def named_builtins():
         (AuthenticationProcessor, NoopAuthProcessor),
         NoopAuthProcessor,
         GoogleJWTProcessor,
+        MSFTJWTProcessor,
         (AuthorizationProcessor, PrivateAuthorization),
         PrivateAuthorization,
         # agents
