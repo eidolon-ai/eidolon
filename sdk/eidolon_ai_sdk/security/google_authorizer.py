@@ -23,10 +23,15 @@ class GoogleJWTMiddlewareSpec(BaseModel):
 
 
 class GoogleJWTMiddleware(BaseJWTProcessor, Specable[GoogleJWTMiddlewareSpec]):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.signing_keys = None
     async def get_signing_keys(self):
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(self.spec.jwks_url)
-            return resp.json()["keys"]
+        if not self.signing_keys:
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(self.spec.jwks_url)
+                self.signing_keys = resp.json()["keys"]
+        return self.signing_keys
 
     async def get_audience_and_issuer(self):
         return self.spec.audience, self.spec.issuer

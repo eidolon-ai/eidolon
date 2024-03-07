@@ -803,23 +803,25 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.1"
+version = "0.1.0"
 description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
-files = [
-    {file = "eidolon_ai_client-0.1.1-py3-none-any.whl", hash = "sha256:765308c22c38376b4b074d857fd22cd2c97afb0e7ef975edfc0ec1344d7695f7"},
-    {file = "eidolon_ai_client-0.1.1.tar.gz", hash = "sha256:d93dec7d57f746266f62594141905adaada7d975189d01a47750cd81b2e42109"},
-]
+files = []
+develop = true
 
 [package.dependencies]
-aiostream = ">=0.5.2,<0.6.0"
-httpx = ">=0.27.0,<0.28.0"
-httpx-sse = ">=0.4.0,<0.5.0"
-jsonref = ">=1.1.0,<2.0.0"
-pydantic = ">=2.6.1,<3.0.0"
-setuptools = ">=69.0.2,<70.0.0"
-sse-starlette = ">=2.0.0,<3.0.0"
+aiostream = "^0.5.2"
+httpx = "^0.27.0"
+httpx-sse = "^0.4.0"
+jsonref = "^1.1.0"
+pydantic = "^2.6.1"
+setuptools = "^69.0.2"
+sse-starlette = "^2.0.0"
+
+[package.source]
+type = "directory"
+url = "../client/python"
 
 [[package]]
 name = "eidolon-ai-sdk"
@@ -834,7 +836,7 @@ develop = true
 authlib = "^1.3.0"
 chromadb = "^0.4.18"
 dill = "^0.3.8"
-eidolon-ai-client = "^0.1.1"
+eidolon-ai-client = "^0.1.0"
 esprima = "^4.0.1"
 fastapi = "^0.109.0"
 filetype = "^1.2.0"
@@ -4934,4 +4936,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "1434a821f82ea30ade489ca49d1484a851b7df497279934f64838908c6e1ca27"
+content-hash = "37502f30f6cb78b0bff856612e18fe91c40b015a1ecbd12dd724be9bee8b33d0"
