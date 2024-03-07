@@ -4,7 +4,8 @@ from functools import cache
 from typing import Literal
 
 import kubernetes
-from kubernetes.client import CoreV1Api, ApiException, OpenApiException, AppsV1Api
+from kubernetes.client import CoreV1Api, ApiException, OpenApiException, AppsV1Api, RbacAuthorizationV1Api, \
+    StorageV1Api, NetworkingV1Api
 from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
@@ -28,7 +29,7 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
         if not K8LogicUnit.loaded:
             kubernetes.config.load_kube_config()
             K8LogicUnit.loaded = True
-        for api in [CoreV1Api, AppsV1Api]:
+        for api in [CoreV1Api, AppsV1Api, NetworkingV1Api, StorageV1Api, RbacAuthorizationV1Api]:
             description = (
                 f"This tool gives access to query and modify a kubernetes cluster.\n"
                 f"It is a wrapper around kubernetes.client.api.\n"
