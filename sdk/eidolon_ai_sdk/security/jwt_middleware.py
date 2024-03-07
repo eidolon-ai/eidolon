@@ -50,7 +50,7 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
             userInfo = await self.process_token(token)
             RequestContext.set("Authorization", auth_header, propagate=True)
             RequestContext.set("jwt", userInfo)
-
+            return None
         except JoseError as e:
             print(e)
             return JSONResponse(status_code=401, content={"detail": str(e)})
