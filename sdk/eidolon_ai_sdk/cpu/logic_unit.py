@@ -46,7 +46,7 @@ class LLMToolWrapper:
                 yield SuccessEvent()
         except Exception as e:
             logging.exception("error calling tool " + self.eidolon_handler.name)
-            yield ErrorEvent(reason=e)
+            yield ErrorEvent(reason=str(e))
 
     @classmethod
     async def from_logic_units(
