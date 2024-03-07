@@ -5,11 +5,11 @@ import httpx
 from jose import jwt
 from pydantic import BaseModel, Field
 
-from eidolon_ai_sdk.security.jwt_middleware import BaseJWTMiddleware
+from eidolon_ai_sdk.security.jwt_processor import BaseJWTProcessor
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class MSFTJWTMiddlewareSpec(BaseModel):
+class MSFTJWTProcessorSpec(BaseModel):
     jwks_url: str = Field(
         "https://login.microsoftonline.com/common/discovery/keys",
         description="The URL to fetch the JWKS from. Defaults to https://login.microsoftonline.com/common/discovery/keys",
@@ -27,7 +27,7 @@ class MSFTJWTMiddlewareSpec(BaseModel):
     )
 
 
-class MSFTJWTMiddleware(BaseJWTProcessor, Specable[MSFTJWTMiddlewareSpec]):
+class MSFTJWTProcessor(BaseJWTProcessor, Specable[MSFTJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.signing_keys = None

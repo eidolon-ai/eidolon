@@ -1,6 +1,6 @@
 import httpx
 
-from eidolon_ai_sdk.security.jwt_middleware import BaseJWTProcessor
+from eidolon_ai_sdk.security.jwt_processor import BaseJWTProcessor
 
 
 class OKTAAuth(BaseJWTProcessor):
