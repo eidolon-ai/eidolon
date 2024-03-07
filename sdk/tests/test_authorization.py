@@ -5,10 +5,9 @@ from starlette.requests import Request
 
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
-from eidolon_ai_client.util.request_context import User
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor, Permission
+from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor, Permission, User
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
@@ -24,13 +23,22 @@ class TestAuthenticationProcessor(AuthenticationProcessor):
     user: User
 
     def __init__(self):
-        self.user = User(id="uninitialized")
+        self.user = User(id="default")
+
+    def reset(self, test_name):
+        self.user.id = test_name
+        self.user.functional_permissions = [
+            "eidolon/agents/HelloWorld/processes/create",
+            "eidolon/agents/HelloWorld/processes/read",
+            "eidolon/agents/HelloWorld/processes/update",
+            "eidolon/agents/HelloWorld/processes/delete",
+        ]
 
     def remove_permission(self, permission: Permission):
-        self.user.functional_permissions["eidolon/agents/*/processes"].remove(permission)
+        self.user.functional_permissions.remove(f"eidolon/agents/HelloWorld/processes/{permission}")
 
     def remove_all_permissions(self):
-        self.user.functional_permissions["eidolon/agents/*/processes"].clear()
+        self.user.functional_permissions.clear()
 
     async def check_auth(self, request: Request) -> User:
         return self.user
@@ -48,8 +56,7 @@ async def server(run_app):
 @fixture()
 def auth(test_name, server) -> TestAuthenticationProcessor:
     processor: TestAuthenticationProcessor = AgentOS.security_manager.authentication_processor
-    processor.user.id = test_name
-    processor.user.functional_permissions = {"eidolon/agents/*/processes": {"create", "read", "update", "delete"}}
+    processor.reset(test_name)
     yield processor
 
 

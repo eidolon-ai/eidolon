@@ -6,9 +6,9 @@ from authlib.jose import jwt, JoseError
 from pydantic import BaseModel
 from typing import List, Optional, Any
 
-from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor
+from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor, User
 from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_client.util.request_context import RequestContext, User
+from eidolon_ai_client.util.request_context import RequestContext
 
 
 class BaseJWTProcessorSpec(BaseModel):

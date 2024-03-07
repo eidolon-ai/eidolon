@@ -4,7 +4,7 @@ import pathlib
 from collections import deque
 from contextlib import asynccontextmanager
 from importlib.metadata import version, PackageNotFoundError
-from typing import cast, Annotated, Literal, Optional
+from typing import cast, Annotated, Literal
 
 import dotenv
 import uvicorn
@@ -19,10 +19,10 @@ from starlette.responses import Response, JSONResponse
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_client.util.request_context import ContextMiddleware, RequestContext, User
+from eidolon_ai_client.util.request_context import ContextMiddleware, RequestContext
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import SecurityManager, PermissionException, AuthorizationProcessor
+from eidolon_ai_sdk.security.security_manager import SecurityManager, PermissionException, AuthorizationProcessor, User
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -75,17 +75,6 @@ def parse_args():
 
     # Parse command line arguments
     return parser.parse_args()
-
-
-def _allowed_path(path: str) -> bool:
-    parts = path.split("/")
-    allowed = True
-    if parts[1] == "agents":
-        user: Optional[User] = RequestContext.get("user", default=None)
-        allowed = user and "read" in user.agent_process_permissions(parts[2])
-    if not allowed:
-        logger.debug(f"Disallowed path: {path}")
-    return allowed
 
 
 @asynccontextmanager
@@ -148,7 +137,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         ):
             process = cast(ProcessDoc, process)
             try:
-                await security.check_permission("read", process.agent, process.record_id)
+                await security.check_permissions("read", process.agent, process.record_id)
                 if skip > 0:
                     skip -= 1
                 else:
@@ -223,7 +212,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         try:
             return await call_next(request)
         except PermissionException as pe:
-            user: User = RequestContext.current_user
+            user = User.get_current()
             logger.warning(f"Handled PermissionException for user '{user.name}' ({user.id}): {pe}")
             # todo, check this is identical to 404 response for bad path so agents are not discoverable
             if "read" in pe.missing:

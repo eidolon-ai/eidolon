@@ -1,13 +1,45 @@
+from __future__ import annotations
+
+import fnmatch
 from abc import ABC, abstractmethod
-from typing import Optional, Set, Literal
+from copy import copy
+from typing import Optional, Set, Literal, Dict, List
 
 from fastapi import Request
 from pydantic import BaseModel
 
-from eidolon_ai_client.util.request_context import User
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 Permission = Literal["create", "read", "update", "delete"]  # probably expands to include concept of know
+
+class User(BaseModel):
+    id: str
+    name: Optional[str] = None
+    functional_permissions: List[str] = []
+
+    def check_functional_permissions(self, permissions: Permission | Set[Permission], agent):
+        permissions = {permissions} if isinstance(permissions, str) else permissions
+        missing = permissions.copy()
+        for permission in permissions:
+            for pattern in self.functional_permissions:
+                if fnmatch.fnmatch(f"eidolon/agents/{agent}/processes/{permission}", pattern):
+                    missing.remove(permission)
+                    break
+        if missing:
+            raise PermissionException(missing)
+
+    def agent_process_permissions(self, agent: str) -> set[str]:
+        permissions = set()
+        for pattern in self.functional_permissions.keys():
+            if fnmatch.fnmatch(f"eidolon/agents/{agent}/processes", pattern):
+                permissions = permissions.union(self.functional_permissions[pattern])
+        return permissions
+
+    @staticmethod
+    def get_current() -> User:
+        return RequestContext.get("user", default=...)
+
 
 
 class PermissionException(Exception):
@@ -41,13 +73,13 @@ class NoopAuthProcessor(AuthenticationProcessor):
         return User(
             id="NOOP_DEFAULT_USER",
             name="noop default user",
-            functional_permissions={"eidolon/agents/*/processes": {"create", "read", "update", "delete"}},
+            functional_permissions=["eidolon/agents/*/processes/*"],
         )
 
 
 class AuthorizationProcessor(ABC):
     @abstractmethod
-    async def check_permission(
+    async def check_permissions(
         self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
     ):
         """

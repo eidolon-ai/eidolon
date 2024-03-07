@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import fnmatch
 from contextvars import ContextVar
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Set
 from urllib.request import Request
 
 from pydantic import BaseModel
@@ -59,23 +59,6 @@ class _RequestContextMeta(type):
         if to_propagate:
             to_propagate["X-Eidolon-Context"] = ",".join(f"{k}" for k in to_propagate.keys())
         return to_propagate
-
-    @property
-    def current_user(self) -> User:
-        return self.get("user", default=...)
-
-
-class User(BaseModel):
-    id: str
-    name: Optional[str] = None
-    functional_permissions: Dict[str, set[str]] = dict()
-
-    def agent_process_permissions(self, agent: str) -> set[str]:
-        permissions = set()
-        for pattern in self.functional_permissions.keys():
-            if fnmatch.fnmatch(f"eidolon/agents/{agent}/processes", pattern):
-                permissions = permissions.union(self.functional_permissions[pattern])
-        return permissions
 
 
 class RequestContext(metaclass=_RequestContextMeta):

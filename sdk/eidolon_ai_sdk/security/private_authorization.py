@@ -1,11 +1,11 @@
 from typing import Optional, Set, List
 
-from eidolon_ai_client.util.request_context import RequestContext, User
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.security.security_manager import (
     AuthorizationProcessor,
     Permission,
-    PermissionException,
+    PermissionException, User,
 )
 from eidolon_ai_sdk.system.processes import MongoDoc
 
@@ -21,16 +21,12 @@ class AuthDoc(MongoDoc):
 
 
 class PrivateAuthorization(AuthorizationProcessor):
-    async def check_permission(
+    async def check_permissions(
         self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
     ):
         permissions: Set[Permission] = {permissions} if isinstance(permissions, str) else permissions
-        user: User = RequestContext.current_user
-        functional = user.agent_process_permissions(agent)
-        missing_functional = permissions.difference(functional)
-        if missing_functional:
-            raise PermissionException(missing_functional)
-        user: User = RequestContext.current_user
+        user = User.get_current()
+        user.check_functional_permissions(permissions, agent)
 
         if process_id:
             missing_resource = permissions
@@ -46,7 +42,7 @@ class PrivateAuthorization(AuthorizationProcessor):
                 raise PermissionException(missing_resource, process_id)
 
     async def record_resource(self, agent: str, process_id: str):
-        user: User = RequestContext.current_user
+        user = User.get_current()
         await AuthDoc.create(
             resource_type=f"{agent}/process",
             resource_id=process_id,

@@ -29,7 +29,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.security.google_authorizor import GoogleJWTMiddleware
+from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.security.private_authorization import PrivateAuthorization
 
 try:
@@ -92,7 +92,7 @@ def named_builtins():
         SecurityManager,
         (AuthenticationProcessor, NoopAuthProcessor),
         NoopAuthProcessor,
-        GoogleJWTMiddleware,
+        GoogleJWTProcessor,
         (AuthorizationProcessor, PrivateAuthorization),
         PrivateAuthorization,
         # agents
