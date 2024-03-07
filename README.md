@@ -6,7 +6,7 @@ Eidolon helps developers designing and deploying agent-based services.
 
 ## Why Eidolon?
 ### 1. Easy to deploy
-With Eidolon, agents are services, so there is no extra work when it comes time to deploy.
+With Eidolon, agents are services, so there is no extra work when it comes time to deploy. The HTTP server is built in.
 
 ### 2. Simple agent-to-agent communication
 Since agents are services with well-defined interfaces, they easily communicate with tools dynamically generated from 
@@ -16,10 +16,8 @@ the openapi json schema defined by the agent services.
 With a focus on modularity, Eidolon makes it easy to swap out components. Grab an off the shelf llm, rag impl, tools, 
 etc or just define your own.
 
-This means no vendor lock-in but also means that an agent's components can be surgically upgraded without needing to 
-touch other parts of the agent. In the rapidly evolving world of AI Agents, this is required otherwise projects will be 
-outdated before they are even deployed.
-
+This means no vendor lock-in and minimizes the work needed to upgrade portions of an agent. Without this flexibility, 
+developers will not be able to adapt their agents to the rapidly changing AI landscape.
 
 ## Demo
 [Deploy a Chatbot: Help Swifties learn about Kelce](https://www.youtube.com/watch?v=jU_HYhWm6qE)
