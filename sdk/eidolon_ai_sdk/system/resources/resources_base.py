@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sys
 from typing import List, Literal, Optional, TypeVar, Type
 
 import yaml
@@ -35,12 +36,15 @@ def load_resources(path):
     logger.debug(f"Loading resources from {os.path.abspath(path)}")
     if not os.path.exists(path):
         raise ValueError(f"Path {path} does not exist")
+    resource_path = os.path.dirname(os.path.realpath(path))
+    if resource_path not in sys.path:
+        sys.path.append(resource_path)
     if os.path.isfile(path):
         yield from _load_resources_from_file(path)
     else:
         for file_loc in (os.path.join(p, f) for p, _, files in os.walk(path) for f in files):
             try:
-                if file_loc.endswith(".yaml"):
+                if file_loc.endswith((".yaml", "yml")):
                     yield from _load_resources_from_file(file_loc)
                 else:
                     logger.info(f"Skipping {file_loc}")
