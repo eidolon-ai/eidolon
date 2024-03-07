@@ -41,7 +41,7 @@ class K8LogicUnit(Specable[K8LogicUnitSpec], LogicUnit):
             setattr(
                 self,
                 api.__name__,
-                llm_function(description=description)(K8LogicUnit._tool_builder(api)),
+                llm_function(name=api.__name__, description=description)(K8LogicUnit._tool_builder(api)),
             )
 
     @staticmethod
