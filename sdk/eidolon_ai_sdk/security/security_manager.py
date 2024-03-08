@@ -2,15 +2,20 @@ from __future__ import annotations
 
 import fnmatch
 from abc import ABC, abstractmethod
+from contextvars import ContextVar
 from typing import Optional, Set, Literal, List
 
 from fastapi import Request
 from pydantic import BaseModel
+from starlette.responses import JSONResponse
 
-from eidolon_ai_client.util.request_context import RequestContext
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 Permission = Literal["create", "read", "update", "delete"]  # probably expands to include concept of know
+
+
+_user_var = ContextVar("current_user")
 
 
 class User(BaseModel):
@@ -38,7 +43,11 @@ class User(BaseModel):
 
     @staticmethod
     def get_current() -> User:
-        return RequestContext.get("user", default=...)
+        return _user_var.get()
+
+    @staticmethod
+    def set_current(user: User):
+        return _user_var.set(user)
 
 
 class PermissionException(Exception):
@@ -114,3 +123,14 @@ class SecurityManager(Specable[SecurityManagerSpec]):
         super().__init__(**kwargs)
         self.authentication_processor = self.spec.authentication_processor.instantiate()
         self.authorization_processor = self.spec.authorization_processor.instantiate()
+
+
+def permission_exception_handler(request: Request, exc: PermissionException):
+    user = User.get_current()
+    logger.warning(f"Missing Permissions (user '{user.name}' | id '{user.id}'): {exc}")
+    if "read" in exc.missing:
+        if exc.process:
+            return JSONResponse(status_code=404, content={"detail": "Process Not Found"})
+        else:
+            return JSONResponse(status_code=404, content={"detail": "Not Found"})
+    return JSONResponse(status_code=403, content={"detail": str(exc)})

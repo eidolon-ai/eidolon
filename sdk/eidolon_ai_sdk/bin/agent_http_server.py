@@ -9,20 +9,25 @@ from typing import cast, Annotated, Literal
 import dotenv
 import uvicorn
 import yaml
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from pydantic import TypeAdapter, Field
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import Response, JSONResponse
+from starlette.responses import JSONResponse
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_client.util.request_context import ContextMiddleware, RequestContext
+from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import SecurityManager, PermissionException, AuthorizationProcessor, User
+from eidolon_ai_sdk.security.security_manager import (
+    PermissionException,
+    AuthorizationProcessor,
+    permission_exception_handler,
+)
+from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -214,31 +219,6 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         return response
 
 
-class SecurityMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
-        security: SecurityManager = AgentOS.security_manager
-        if request.url.path not in security.spec.safe_paths:
-            try:
-                user = await security.authentication_processor.check_auth(request)
-                RequestContext.set("user", user)
-            except HTTPException as e:
-                logger.info(f"Auth Denied: {e.detail}")
-                return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
-        try:
-            return await call_next(request)
-        except PermissionException as pe:
-            user = User.get_current()
-            logger.warning(f"Missing Permissions (user '{user.name}' | id '{user.id}'): {pe}")
-            # todo, check this is identical to 404 response for bad path so agents are not discoverable
-            if "read" in pe.missing:
-                if pe.process:
-                    return JSONResponse(status_code=404, content={"detail": "Process Not Found"})
-                else:
-                    return JSONResponse(status_code=404, content={"detail": "Not Found"})
-            # todo, check this is right status code, done with no internet
-            return JSONResponse(status_code=403, content={"detail": str(pe)})
-
-
 def main():
     args = parse_args()
     log_level_str = "debug" if args.debug else "info"
@@ -277,6 +257,7 @@ def start_app(lifespan):
     )
     _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(LoggingMiddleware)
+    _app.add_exception_handler(PermissionException, permission_exception_handler)
     return _app
 
 

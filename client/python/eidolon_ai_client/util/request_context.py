@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import fnmatch
 from contextvars import ContextVar
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict
 from urllib.request import Request
 
 from pydantic import BaseModel
-from starlette.exceptions import HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from eidolon_ai_client.util.logger import logger
@@ -71,8 +69,6 @@ class ContextMiddleware(BaseHTTPMiddleware):
         if context_headers:
             context_headers = context_headers.split(",")
         for header in context_headers:
-            if header.lower() == "user":
-                raise HTTPException(status_code=429, detail="User context header not allowed")
             try:
                 RequestContext.set(header, request.headers[header], propagate=True)
             except KeyError:
