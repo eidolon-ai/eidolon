@@ -149,7 +149,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             ToolCallStartEvent(
                 tool_call=tc,
                 context_id=tc.tool_call_id,
-                title=tool_def.eidolon_handler.extra["title"],
+                title=tool_def.eidolon_handler.extra.get("title", tool_def.eidolon_handler.name),
                 sub_title=tool_def.eidolon_handler.extra.get("sub_title", ""),
                 is_agent_call=tool_def.eidolon_handler.extra.get("agent_call", False),
             ),
