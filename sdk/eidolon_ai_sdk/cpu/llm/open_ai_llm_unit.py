@@ -208,7 +208,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
-        except APIConnectionError | InternalServerError as e:
+        except APIConnectionError as e:
+            raise HTTPException(502, f"OpenAI Error: {e.message}") from e
+        except InternalServerError as e:
             raise HTTPException(502, f"OpenAI Error: {e.message}") from e
         except RateLimitError as e:
             raise HTTPException(429, "OpenAI Rate Limit Exceeded") from e
