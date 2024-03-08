@@ -115,8 +115,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     @staticmethod
     def _body_model(endpoint_schema, name):
         body = endpoint_schema.get("requestBody")
-        if "application/json" in body["content"]:
-            json_schema = body["content"]["application/json"]["schema"] if body else dict(type="object", properties={})
+        if not body:
+            json_schema = dict(type="object", properties={})
+            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+        elif "application/json" in body["content"]:
+            json_schema = body["content"]["application/json"]["schema"]
             return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
         elif "text/plain" in body["content"]:
             return schema_to_model(dict(type="object", properties=dict(body=dict(type="string"))), "Input")
