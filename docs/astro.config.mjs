@@ -6,7 +6,7 @@ export default defineConfig({
     site: 'https://www.eidolonai.com',
     integrations: [
         starlight({
-            title: 'Eidolon: A service based AI LLM framework for developers. An open source alternative to LangChain',
+            title: 'Eidolon',
             components: {
                 SiteTitle: './src/components/FixedTitle.astro',
             },
