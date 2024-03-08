@@ -3,6 +3,7 @@ from typing import List, Optional, Any
 
 from authlib.jose import jwt
 from fastapi import Request, FastAPI, HTTPException
+
 # noinspection PyPackageRequirements
 from pydantic import BaseModel
 
@@ -51,8 +52,8 @@ class BaseJWTProcessor(AuthenticationProcessor, ABC, Specable[BaseJWTProcessorSp
             RequestContext.set("Authorization", auth_header, propagate=True)
             RequestContext.set("jwt", user_info)
             return User(
-                id=user_info['oid'],
-                name=user_info.get('name'),
+                id=user_info["oid"],
+                name=user_info.get("name"),
                 functional_permissions=["eidolon/agents/*/processes/*"],  # todo, check rbac here
             )
         except Exception as e:

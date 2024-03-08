@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import fnmatch
 from abc import ABC, abstractmethod
-from copy import copy
-from typing import Optional, Set, Literal, Dict, List
+from typing import Optional, Set, Literal, List
 
 from fastapi import Request
 from pydantic import BaseModel
@@ -12,6 +11,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 Permission = Literal["create", "read", "update", "delete"]  # probably expands to include concept of know
+
 
 class User(BaseModel):
     id: str
@@ -39,7 +39,6 @@ class User(BaseModel):
     @staticmethod
     def get_current() -> User:
         return RequestContext.get("user", default=...)
-
 
 
 class PermissionException(Exception):

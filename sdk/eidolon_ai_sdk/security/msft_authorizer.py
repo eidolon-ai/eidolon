@@ -20,10 +20,11 @@ class MSFTJWTProcessorSpec(BaseModel):
     )
     issuer_prefix: str = Field(
         default="https://sts.windows.net",
-        description="The issuer prefix of the JWT. Defaults to sts.windows.net.  The tenant id will be appended to this value.  For example, sts.windows.net/your_tenant_id"
+        description="The issuer prefix of the JWT. Defaults to sts.windows.net.  The tenant id will be appended to this value.  For example, sts.windows.net/your_tenant_id",
     )
     tenant_id: str = Field(
-        default=os.environ.get("AZURE_AD_TENANT_ID"), description="The tenant id of the JWT. Defaults to the environment variable AZURE_AD_TENANT_ID"
+        default=os.environ.get("AZURE_AD_TENANT_ID"),
+        description="The tenant id of the JWT. Defaults to the environment variable AZURE_AD_TENANT_ID",
     )
 
 
@@ -31,7 +32,9 @@ class MSFTJWTProcessor(BaseJWTProcessor, Specable[MSFTJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.signing_keys = None
-        self.jwks_url = f"https://login.microsoftonline.com/{self.spec.tenant_id}/discovery/keys?appid={self.spec.audience}"
+        self.jwks_url = (
+            f"https://login.microsoftonline.com/{self.spec.tenant_id}/discovery/keys?appid={self.spec.audience}"
+        )
 
     async def get_signing_keys(self):
         if not self.signing_keys:
@@ -49,10 +52,7 @@ class MSFTJWTProcessor(BaseJWTProcessor, Specable[MSFTJWTProcessorSpec]):
     async def process_token(self, token: str) -> Optional[Any]:
         jwks = await self.get_signing_keys()
         audience, issuer = await self.get_audience_and_issuer()
-        token = jwt.decode(token=token,
-                           key=jwks,
-                           algorithms=self.get_algorithms(),
-                           audience=self.spec.audience,
-                           issuer=issuer
-                           )
+        token = jwt.decode(
+            token=token, key=jwks, algorithms=self.get_algorithms(), audience=self.spec.audience, issuer=issuer
+        )
         return token

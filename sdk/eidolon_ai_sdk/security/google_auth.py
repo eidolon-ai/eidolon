@@ -26,6 +26,7 @@ class GoogleJWTProcessor(BaseJWTProcessor, Specable[GoogleJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.signing_keys = None
+
     async def get_signing_keys(self):
         if not self.signing_keys:
             async with httpx.AsyncClient() as client:
