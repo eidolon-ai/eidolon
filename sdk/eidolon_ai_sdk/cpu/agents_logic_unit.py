@@ -115,10 +115,13 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     @staticmethod
     def _body_model(endpoint_schema, name):
         body = endpoint_schema.get("requestBody")
-        if body and "application/json" not in body["content"]:
-            raise ValueError(f"Agent action at {name} does not support application/json")
-        json_schema = body["content"]["application/json"]["schema"] if body else dict(type="object", properties={})
-        return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+        if "application/json" in body["content"]:
+            json_schema = body["content"]["application/json"]["schema"] if body else dict(type="object", properties={})
+            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+        elif "text/plain" in body["content"]:
+            return schema_to_model(dict(type="object", properties=dict(body=dict(type="string"))), "Input")
+        else:
+            raise ValueError(f"Agent action at {name} does not support text/plain or application/json")
 
     @staticmethod
     def _description(endpoint_schema, name):
