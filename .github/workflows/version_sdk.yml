@@ -20,9 +20,9 @@ jobs:
           cache: 'poetry'
       - run: |
           poetry version patch
-          echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
+          echo "SDK_VERSION=$(poetry version -s)" >> $GITHUB_ENV
         working-directory: sdk
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump patch version"
-          tagging_message: v${{ env.VERSION }}
+          tagging_message: sdk/${{ env.SDK_VERSION }}

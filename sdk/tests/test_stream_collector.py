@@ -23,10 +23,10 @@ async def test_terminates_without_raising():
 
 
 async def test_adds_context():
-    collector = stream_manager(raising_stream(), StartStreamContextEvent(context_id="foo"))
+    collector = stream_manager(raising_stream(), StartStreamContextEvent(context_id="foo", title="foo"))
     events = [event async for event in collector]
     assert events == [
-        StartStreamContextEvent(context_id="foo"),
+        StartStreamContextEvent(context_id="foo", title="foo"),
         StringOutputEvent(stream_context="foo", content="test"),
         SuccessEvent(stream_context="foo"),
         EndStreamContextEvent(context_id="foo"),
@@ -37,14 +37,14 @@ async def test_adds_context():
 async def test_stream_manager_records_errors_and_reraises():
     events = []
     error = RuntimeError("test error")
-    collector = stream_manager(raising_stream(error), StartStreamContextEvent(context_id="foo"))
+    collector = stream_manager(raising_stream(error), StartStreamContextEvent(context_id="foo", title="foo"))
     with pytest.raises(ManagedContextError) as e:
         async for event in collector:
             events.append(event)
     assert events == [
-        StartStreamContextEvent(context_id="foo"),
+        StartStreamContextEvent(context_id="foo", title="foo"),
         StringOutputEvent(stream_context="foo", content="test"),
-        ErrorEvent(stream_context="foo", reason=error),
+        ErrorEvent(stream_context="foo", reason="RuntimeError: test error"),
         EndStreamContextEvent(context_id="foo"),
     ]
     assert e.value.args[0] == "Error in stream context foo"

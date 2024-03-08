@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import io
 import os
 from functools import wraps
@@ -38,16 +39,15 @@ def default_deserializer(str_):
 
 
 async def default_parser(resp):
-    yield resp
+    yield await resp
 
 
 def replayable(
-    fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
+        fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
     config = AgentOS.get_instance(ReplayConfig)
 
-    @wraps(fn)
-    async def wrapper(*args, **kwargs):
+    async def maybe_save_args(*args, **kwargs):
         if config.save_loc:
             try:
                 existing_dirs = [os.path.split(d)[-1] for d in await AgentOS.file_memory.glob(config.save_loc + "/*")]
@@ -70,9 +70,22 @@ def replayable(
                 await AgentOS.file_memory.write_file(loc + "/parser.dill", dill.dumps(parser))
             except Exception as e:
                 logger.exception(f"Error saving resume point: {e}")
+
+    @wraps(fn)
+    async def wrapper_async_gen(*args, **kwargs):
+        await maybe_save_args(*args, **kwargs)
+        async for e in fn(*args, **kwargs):
+            yield e
+
+    @wraps(fn)
+    async def wrapper_async(*args, **kwargs):
+        await maybe_save_args(*args, **kwargs)
         return await fn(*args, **kwargs)
 
-    return wrapper
+    if inspect.isasyncgenfunction(fn):
+        return wrapper_async_gen
+    else:
+        return wrapper_async
 
 
 async def replay(loc):
@@ -90,5 +103,5 @@ async def replay(loc):
 
     with open(data_file[0]) as file:
         args, kwargs = deserializer(file.read())
-    async for e in parser(await fn(*args, **kwargs)):
+    async for e in parser(fn(*args, **kwargs)):
         yield e

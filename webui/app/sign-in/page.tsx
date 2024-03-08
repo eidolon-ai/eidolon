@@ -6,13 +6,14 @@ import {signIn, useSession} from "next-auth/react"
 import {redirect} from 'next/navigation'
 import * as React from "react";
 import {Box, Button, CircularProgress} from "@mui/material";
-import {IconGitHub, IconGoogle} from "@/components/ui/icons";
+import {IconEntra, IconGitHub, IconGoogle} from "@/components/ui/icons";
 import LoginIcon from '@mui/icons-material/Login';
 import {getSigninOptions} from "@/app/sign-in/signon-options";
 
 const providerMap: Record<string, [string, React.JSX.Element]> = {
   'google': ["Login with Google", <IconGoogle key="google" style={{height:"24px", width:"24px"}}/>],
   'github': ["Login with GitHub", <IconGitHub key="github" style={{height:"24px", width:"24px"}}/>],
+  'azure': ["Login with Microsoft Entra", <IconEntra key="azure" style={{height:"24px", width:"24px"}}/>],
   'noop': ["Login", <LoginIcon key="noop" style={{height:"24px", width:"24px"}}/>]
 }
 
@@ -36,24 +37,21 @@ export default function SignInPage() {
     redirect('/')
   }
   return (
-    <div>
+    <div style={{display:"flex", flexDirection:"column"}}>
       {isLoading && <Box sx={{display: 'flex'}}><CircularProgress/></Box>}
-      {!isLoading && providers.map(provider => {
-        let [text, icon] = providerMap[provider]
-        return (
+      {!isLoading && (
           <Button
-            key={provider}  // Add this line
             variant={"outlined"}
-            startIcon={icon}
+            sx={{margin: "8px"}}
             onClick={() => {
               setIsLoading(true)
-              signIn(provider, {callbackUrl: `/`})
+              signIn(undefined, {callbackUrl: `/`})
             }}
           >
-            {text}
+            Login
           </Button>
         )
-      })}
+      }
     </div>
   )
 }

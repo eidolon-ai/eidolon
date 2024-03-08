@@ -8,7 +8,7 @@ from eidolon_ai_client.util.stream_collector import merge_streams
 
 
 class GroupConversation:
-    def __init__(self, agents: List[Process]):
+    def __init__(self, agents: List[ProcessStatus]):
         self.agents = agents
 
     @classmethod
@@ -19,18 +19,19 @@ class GroupConversation:
         return cls(agent_pids)
 
     @classmethod
-    async def restore(cls, processes: List[Process]):
+    async def restore(cls, processes: List[ProcessStatus]):
         return cls(processes)
 
     async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> List[ProcessStatus]:
         statuses = []
         for agent in self.agents:
             statuses.append(await agent.action(action_name, body, **kwargs))
+        self.agents = statuses
         return statuses
 
     async def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
         async def run_one(agent_name: str, agent_pid: str):
-            yield StartStreamContextEvent(context_id=agent_name)
+            yield StartStreamContextEvent(context_id=agent_name, title=agent_name)
             try:
                 async for a_event in (
                         Agent.get(agent_name).process(agent_pid).stream_action(action_name, body, **kwargs)
@@ -47,6 +48,8 @@ class GroupConversation:
         combined_calls = merge_streams(tasks)
         async for event in combined_calls:
             yield event
+
+        self.agents = await self.status()
 
     async def status(self) -> List[ProcessStatus]:
         statuses = []

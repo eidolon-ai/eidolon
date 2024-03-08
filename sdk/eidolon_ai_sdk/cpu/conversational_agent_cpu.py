@@ -1,5 +1,7 @@
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
 
+from fastapi import HTTPException
+
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread, CPUException
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.call_context import CallContext
@@ -75,10 +77,12 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             conversation.extend(conversation_messages)
             async for event in self._llm_execution_cycle(call_context, output_format, conversation):
                 yield event
+        except HTTPException as e:
+            raise e
         except CPUException as e:
             raise e
         except Exception as e:
-            raise CPUException(f"error while processing request ({e.__class__.__name__})") from e
+            raise CPUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
         self,
@@ -145,7 +149,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             ToolCallStartEvent(
                 tool_call=tc,
                 context_id=tc.tool_call_id,
-                title=tool_def.eidolon_handler.extra["title"],
+                title=tool_def.eidolon_handler.extra.get("title", tool_def.eidolon_handler.name),
                 sub_title=tool_def.eidolon_handler.extra.get("sub_title", ""),
                 is_agent_call=tool_def.eidolon_handler.extra.get("agent_call", False),
             ),

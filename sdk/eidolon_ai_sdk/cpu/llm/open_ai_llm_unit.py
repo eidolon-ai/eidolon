@@ -6,13 +6,18 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 
 import yaml
 from PIL import Image
-from openai import AsyncOpenAI, AsyncStream
-from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk, ChatCompletionMessage
-from openai.types.chat.chat_completion import ChatCompletion
-from openai.types.chat.chat_completion_chunk import ChoiceDelta
+from fastapi import HTTPException
+from openai import AsyncOpenAI, APIConnectionError, RateLimitError, InternalServerError
+from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field, BaseModel
 
+from eidolon_ai_client.events import (
+    StringOutputEvent,
+    ObjectOutputEvent,
+    LLMToolCallRequestEvent, ToolCall,
+)
+from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import (
@@ -23,13 +28,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidolon_ai_client.events import (
-    StringOutputEvent,
-    ObjectOutputEvent,
-    LLMToolCallRequestEvent, ToolCall,
-)
-from eidolon_ai_sdk.system.reference_model import Specable
-from eidolon_ai_client.util.logger import logger as eidolon_logger
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
@@ -133,6 +132,8 @@ class OpenAiGPTSpec(BaseModel):
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
+    client: AnnotatedReference[AsyncOpenAI]
+    client_args: dict = {}
 
 
 class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
@@ -159,51 +160,60 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(fn=_openai_completion, name_override="openai_completion", parser=_raw_parser)
-        llm_response = await llm_request(**request)
+        llm_request = replayable(fn=_openai_completion(self.spec.client), name_override="openai_completion", parser=_raw_parser)
         complete_message = ""
         tools_to_call = []
-        async for m_chunk in llm_response:
-            chunk = cast(ChatCompletionChunk, m_chunk)
-            message = chunk.choices[0].delta
+        try:
+            async for m_chunk in llm_request(client_args=self.spec.client_args, **request):
+                chunk = cast(ChatCompletionChunk, m_chunk)
+                if not chunk.choices:
+                    logger.info("open ai llm chunk has no choices, skipping")
+                    continue
+                message = chunk.choices[0].delta
 
-            logger.debug(
-                f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
-                extra=dict(content=message.content, tool_calls=message.tool_calls),
-            )
+                logger.debug(
+                    f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
+                    extra=dict(content=message.content, tool_calls=message.tool_calls),
+                )
 
-            for tool_call in message.tool_calls or []:
-                index = tool_call.index
-                if index == len(tools_to_call):
-                    tools_to_call.append({"id": "", "name": "", "arguments": ""})
-                if tool_call.id:
-                    tools_to_call[index]["id"] = tool_call.id
-                if tool_call.function:
-                    if tool_call.function.name:
-                        tools_to_call[index]["name"] = tool_call.function.name
-                    if tool_call.function.arguments:
-                        tools_to_call[index]["arguments"] += tool_call.function.arguments
+                for tool_call in message.tool_calls or []:
+                    index = tool_call.index
+                    if index == len(tools_to_call):
+                        tools_to_call.append({"id": "", "name": "", "arguments": ""})
+                    if tool_call.id:
+                        tools_to_call[index]["id"] = tool_call.id
+                    if tool_call.function:
+                        if tool_call.function.name:
+                            tools_to_call[index]["name"] = tool_call.function.name
+                        if tool_call.function.arguments:
+                            tools_to_call[index]["arguments"] += tool_call.function.arguments
 
-            if message.content:
-                if can_stream_message:
-                    logger.debug(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
-                    yield StringOutputEvent(content=message.content)
-                else:
-                    complete_message += message.content
+                if message.content:
+                    if can_stream_message:
+                        logger.debug(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
+                        yield StringOutputEvent(content=message.content)
+                    else:
+                        complete_message += message.content
 
-        logger.info(f"open ai llm tool calls: {json.dumps(tools_to_call)}", extra=dict(tool_calls=tools_to_call))
-        if len(tools_to_call) > 0:
-            for tool in tools_to_call:
-                tool_call = _convert_tool_call(tool)
-                yield LLMToolCallRequestEvent(tool_call=tool_call)
-        if not can_stream_message:
-            logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
-            if not self.spec.force_json:
-                # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
+            logger.info(f"open ai llm tool calls: {json.dumps(tools_to_call)}", extra=dict(tool_calls=tools_to_call))
+            if len(tools_to_call) > 0:
+                for tool in tools_to_call:
+                    tool_call = _convert_tool_call(tool)
+                    yield LLMToolCallRequestEvent(tool_call=tool_call)
+            if not can_stream_message:
+                logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
+                if not self.spec.force_json:
+                    # message format looks like json```{...}```, parse content and pull out the json
+                    complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
-            content = json.loads(complete_message) if complete_message else {}
-            yield ObjectOutputEvent(content=content)
+                content = json.loads(complete_message) if complete_message else {}
+                yield ObjectOutputEvent(content=content)
+        except APIConnectionError as e:
+            raise HTTPException(502, f"OpenAI Error: {e.message}") from e
+        except InternalServerError as e:
+            raise HTTPException(502, f"OpenAI Error: {e.message}") from e
+        except RateLimitError as e:
+            raise HTTPException(429, "OpenAI Rate Limit Exceeded") from e
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
@@ -264,8 +274,12 @@ def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
     return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
 
 
-async def _openai_completion(*args, **kwargs):
-    return await AsyncOpenAI().chat.completions.create(*args, **kwargs)
+def _openai_completion(client_ref):
+    async def fn(client_args: dict = None, **kwargs):
+        client: AsyncOpenAI = client_ref.instantiate(**(client_args or {}))
+        async for e in await client.chat.completions.create(**kwargs):
+            yield e
+    return fn
 
 
 async def _raw_parser(resp):
@@ -278,7 +292,12 @@ async def _raw_parser(resp):
     """
     calling_tools = False
     prefix = ""
-    async for message in _normalize_openai(resp):
+    async for m_chunk in resp:
+        chunk = cast(ChatCompletionChunk, m_chunk)
+        if not chunk.choices:
+            continue
+        message = chunk.choices[0].delta
+
         if message.tool_calls:
             calling_tools = True
             for i, tool_call in enumerate(message.tool_calls):
@@ -292,17 +311,3 @@ async def _raw_parser(resp):
         if message.content:
             yield message.content
             prefix = "\n"
-
-
-async def _normalize_openai(resp) -> AsyncIterator[ChoiceDelta | ChatCompletionMessage]:
-    """
-    Normalizes different types of responses from openai depending on how the request was made.
-    This is important since arguments like streaming can be mutated when replaying requests.
-    """
-    if isinstance(resp, AsyncStream):
-        async for m_chunk in resp:
-            yield cast(ChatCompletionChunk, m_chunk).choices[0].delta
-    elif isinstance(resp, ChatCompletion):
-        yield resp.choices[0].message
-    else:
-        raise ValueError(f"Unknown response type {type(resp)}")

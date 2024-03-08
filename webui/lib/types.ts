@@ -1,5 +1,6 @@
 import OpenAPIParser from "@readme/openapi-parser";
 import {OpenAPIV3_1} from "openapi-types";
+import {getAuthHeaders} from "@/app/api/chat/messages/chatHelpers";
 
 export interface Chat extends Record<string, any> {
   id: string
@@ -67,7 +68,13 @@ export class EidolonClient {
 
   private async initialize() {
     if (!this.isLoaded) {
-      const api = await OpenAPIParser.validate(`${this.machineUrl}/openapi.json`) as OpenAPIV3_1.Document
+      const auth_headers = await getAuthHeaders()
+      const results = await fetch(`${this.machineUrl}/openapi.json`,{headers: auth_headers})
+      if (results.status !== 200) {
+        throw new Error(`Failed to fetch openapi.json: ${results.statusText}`)
+      }
+      const response = await results.json()
+      const api = await OpenAPIParser.validate(response) as OpenAPIV3_1.Document
       const paths = api.paths!
       const agentRE = /\/agents\/([^/]+)/
       const agents = new Set<string>()

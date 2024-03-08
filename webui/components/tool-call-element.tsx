@@ -37,11 +37,11 @@ export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProp
   return (
     <Card variant={"outlined"} sx={{marginTop: "12px"}}>
       <CardHeader
-        sx={{padding: "12px 8px 0px 8px"}}
+        sx={{padding: "4px 8px 4px 8px"}}
         avatar={
           element.is_agent
-            ? <Avatar sx={{height: "32px", width: "32px"}} src="/eidolon_with_gradient.png"/>
-            : <Avatar sx={{height: "32px", width: "32px"}}><CodeOffRoundedIcon/></Avatar>
+            ? <Avatar sx={{height: "24px", width: "24px"}} src="/eidolon_with_gradient.png"/>
+            : <Avatar sx={{height: "24px", width: "24px"}}><CodeOffRoundedIcon/></Avatar>
         }
         onClick={handleExpandClick}
         action={
@@ -60,8 +60,6 @@ export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProp
         subheader={element.sub_title}
       >
       </CardHeader>
-      <CardActions disableSpacing>
-      </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Divider/>
