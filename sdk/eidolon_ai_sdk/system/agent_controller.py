@@ -68,10 +68,10 @@ class AgentController:
                 )
             else:
                 self.actions[handler.name] = handler
-        self.security = AgentOS.security_manager.authorization_processor
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent '{self.name}'")
+        self.security = AgentOS.security_manager.authorization_processor
         app.add_api_route(
             f"/agents/{self.name}/processes",
             endpoint=self.list_processes,
