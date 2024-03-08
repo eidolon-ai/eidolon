@@ -21,8 +21,7 @@ spec:
     If you need additional information to perform an action, you may ask the user clarifying questions.
     ALWAYS Think carefully and be concise.
   actions:
-    - name: converse
-      user_prompt: |-
+    - user_prompt: |-
         Current Time ISO: {{ datetime_iso }}
         Request: {{ body }}
   agent_refs: [ K8Worker ]
