@@ -155,6 +155,20 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
 
         return JSONResponse(content=processes, status_code=200)
 
+    # todo, this should be removed and ui should target /agents/{agent_name}/processes/{process_id}
+    @app.get("/system/processes/{process_id}", tags=["system"], description="Get a process")
+    async def process(process_id: str):
+        process_doc: ProcessDoc = await ProcessDoc.find_one(query={"_id": process_id})
+        if not process_doc:
+            logger.info(f"Process {process_id} does not exist")
+            return JSONResponse(content={"detail": "Not Found"}, status_code=404)
+        else:
+            security: AuthorizationProcessor = AgentOS.security_manager.authorization_processor
+            await security.check_permissions("read", process_doc.agent, process_id)
+            process_obj = process_doc.model_dump(exclude={"data"})
+            process_obj["process_id"] = process_obj.pop("_id")
+            return JSONResponse(content=process_obj, status_code=200)
+
     try:
         for resource_or_tuple in resource_generator:
             if isinstance(resource_or_tuple, Resource):
@@ -208,12 +222,13 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 user = await security.authentication_processor.check_auth(request)
                 RequestContext.set("user", user)
             except HTTPException as e:
+                logger.info(f"Auth Denied: {e.detail}")
                 return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
         try:
             return await call_next(request)
         except PermissionException as pe:
             user = User.get_current()
-            logger.warning(f"Handled PermissionException for user '{user.name}' ({user.id}): {pe}")
+            logger.warning(f"Missing Permissions (user '{user.name}' | id '{user.id}'): {pe}")
             # todo, check this is identical to 404 response for bad path so agents are not discoverable
             if "read" in pe.missing:
                 if pe.process:

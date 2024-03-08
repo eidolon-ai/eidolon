@@ -50,7 +50,11 @@ class BaseJWTProcessor(AuthenticationProcessor, ABC, Specable[BaseJWTProcessorSp
             user_info = await self.process_token(token)
             RequestContext.set("Authorization", auth_header, propagate=True)
             RequestContext.set("jwt", user_info)
-            return User(**user_info)  # todo, format user_info properly, this will throw
+            return User(
+                id=user_info['oid'],
+                name=user_info.get('name'),
+                functional_permissions=["eidolon/agents/*/processes/*"],  # todo, check rbac here
+            )
         except Exception as e:
             logger.exception("Error processing jwt")
             raise HTTPException(status_code=401, detail=str(e))
