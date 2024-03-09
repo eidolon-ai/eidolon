@@ -42,3 +42,11 @@ class TestStrUtils:
 
     def test_variable_surrounded_by_text(self):
         assert replace_env_var_in_string("Path: pre_${FOO}_post/app") == "Path: pre_/somepath_post/app"
+
+    def test_replaces_defaults_even_if_not_in_env(self):
+        resp = replace_env_var_in_string("test ${NOTINENV}", NOTINENV="default")
+        assert resp == "test default"
+
+    def test_env_var_is_chosen_over_default(self):
+        resp = replace_env_var_in_string("test ${FOO}", FOO="default")
+        assert resp == "test /somepath"

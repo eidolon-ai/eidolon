@@ -50,7 +50,9 @@ class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
                 raise ValueError(f"The root_dir must be an absolute path. Received: {path}->{value}")
 
             return f"file://{path.absolute()}"
-        if not (url.startswith("http://") or url.startswith("https://")):
+        elif url.startswith("http://") or url.startswith("https://"):
+            return url
+        else:
             raise ValueError("url must start with file://, http://, or https://")
 
 
