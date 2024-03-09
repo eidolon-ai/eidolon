@@ -15,9 +15,10 @@ export default defineConfig({
 //                 ThemeSelect: './src/components/ThemeSelect.astro',
 //                 Hero: './src/components/NewHero.astro',
 //             },
-            editLink: {
-                baseUrl: 'https://github.com/eidolon-ai/eidolon/docs/',
-            },
+            // editLink: {
+            //      todo Edit Page leads to 404
+            //     baseUrl: 'https://github.com/eidolon-ai/eidolon/tree/main/docs/src/content/docs',
+            // },
             favicon: '/favicon.ico',
             head: [
                 {
@@ -45,6 +46,9 @@ export default defineConfig({
                 'x.com': 'https://x.com/AgentSaaS',
             },
             sidebar: [
+                {
+                    label: 'Introduction', link: '/introduction'
+                },
                 {
                     label: 'Getting Started',
                     items: [
