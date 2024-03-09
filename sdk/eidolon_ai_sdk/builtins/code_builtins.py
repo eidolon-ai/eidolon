@@ -52,7 +52,9 @@ from eidolon_ai_sdk.security.security_manager import (
     SecurityManager,
     NoopAuthProcessor,
     AuthenticationProcessor,
-    AuthorizationProcessor,
+    ProcessAuthorizer,
+    FunctionalAuthorizer,
+    NoopFunctionalAuthorizer,
 )
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -95,8 +97,10 @@ def named_builtins():
         NoopAuthProcessor,
         GoogleJWTProcessor,
         MSFTJWTProcessor,
-        (AuthorizationProcessor, PrivateAuthorization),
+        (ProcessAuthorizer, PrivateAuthorization),
         PrivateAuthorization,
+        (FunctionalAuthorizer, NoopFunctionalAuthorizer),
+        NoopFunctionalAuthorizer,
         # agents
         ("Agent", SimpleAgent),
         SimpleAgent,

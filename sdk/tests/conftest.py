@@ -128,7 +128,8 @@ def run_app(app_builder, port):
             yield f"http://localhost:{port}"
         finally:
             # server_wrapper[0].force_exit = True
-            server_wrapper[0].should_exit = True
+            if isinstance(server_wrapper[0], uvicorn.Server):
+                server_wrapper[0].should_exit = True
             server_thread.join()
 
     return fn

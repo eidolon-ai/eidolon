@@ -24,8 +24,8 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.security.security_manager import (
     PermissionException,
-    AuthorizationProcessor,
     permission_exception_handler,
+    SecurityManager,
 )
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
 from eidolon_ai_sdk.system.processes import ProcessDoc
@@ -134,31 +134,31 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         limit: Annotated[int, Field(ge=1, le=100)] = 100,
         sort: Literal["ascending", "descending"] = "ascending",
     ):
-        security: AuthorizationProcessor = AgentOS.security_manager.authorization_processor
+        security: SecurityManager = AgentOS.security_manager
         child_pids = await AgentCallHistory.get_child_pids()
-        processes = []
-        async for process in ProcessDoc.find(
+        processes_acc = []
+        async for process_ in ProcessDoc.find(
             query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
         ):
-            process = cast(ProcessDoc, process)
+            process_ = cast(ProcessDoc, process_)
             try:
-                await security.check_permissions("read", process.agent, process.record_id)
+                await security.check_permissions("read", process_.agent, process_.record_id)
                 if skip > 0:
                     skip -= 1
                 else:
-                    process_dump = process.model_dump()
+                    process_dump = process_.model_dump()
                     process_dump["process_id"] = process_dump["_id"]
                     del process_dump["_id"]
                     if process_dump["process_id"] in child_pids:
                         process_dump["parent_process_id"] = child_pids[process_dump["process_id"]]
-                    processes.append(process_dump)
+                    processes_acc.append(process_dump)
             except PermissionException:
-                logger.debug(f"Skipping process {process.record_id} due to lack of permissions")
+                logger.debug(f"Skipping process {process_.record_id} due to lack of permissions")
 
-            if len(processes) >= limit:
+            if len(processes_acc) >= limit:
                 break
 
-        return JSONResponse(content=processes, status_code=200)
+        return JSONResponse(content=processes_acc, status_code=200)
 
     # todo, this should be removed and ui should target /agents/{agent_name}/processes/{process_id}
     @app.get("/system/processes/{process_id}", tags=["system"], description="Get a process")
@@ -168,7 +168,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             logger.info(f"Process {process_id} does not exist")
             return JSONResponse(content={"detail": "Not Found"}, status_code=404)
         else:
-            security: AuthorizationProcessor = AgentOS.security_manager.authorization_processor
+            security: SecurityManager = AgentOS.security_manager
             await security.check_permissions("read", process_doc.agent, process_id)
             process_obj = process_doc.model_dump(exclude={"data"})
             process_obj["process_id"] = process_obj.pop("_id")

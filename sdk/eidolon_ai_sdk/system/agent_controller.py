@@ -34,7 +34,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import PermissionException, AuthorizationProcessor
+from eidolon_ai_sdk.security.security_manager import PermissionException, SecurityManager
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     ListProcessesResponse,
@@ -54,7 +54,7 @@ class AgentController:
     name: str
     agent: object
     actions: typing.Dict[str, FnHandler]
-    security: AuthorizationProcessor
+    security: SecurityManager
 
     def __init__(self, name, agent):
         self.name = name
@@ -71,7 +71,7 @@ class AgentController:
 
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent '{self.name}'")
-        self.security = AgentOS.security_manager.authorization_processor
+        self.security = AgentOS.security_manager
         app.add_api_route(
             f"/agents/{self.name}/processes",
             endpoint=self.list_processes,
@@ -156,37 +156,27 @@ class AgentController:
     async def run_program(
         self,
         handler: FnHandler,
-        process_id: typing.Optional[str] = None,
+        process_id: str,
         **kwargs,
     ):
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
-        if not process_id:
-            if "initialized" not in handler.extra["allowed_states"]:
-                raise HTTPException(
-                    status_code=400,
-                    detail=f'Action "{handler.name}" is not an initializer, but no process_id was provided',
-                )
-            last_state = "initialized"
-            process = await self._create_process(state="processing")
-            process_id = process.record_id
-        else:
-            process = await self.get_latest_process_event(process_id)
-            if not process:
-                logger.warning(f"Process {process_id} not found, but permissions indicate it should have existed")
-                raise HTTPException(status_code=404, detail="Process not found")
-            if process.state not in handler.extra["allowed_states"]:
-                logger.warning(
-                    f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}"
-                )
-                raise HTTPException(
-                    status_code=409,
-                    detail=f'Action "{handler.name}" cannot process state "{process.state}"',
-                )
-            last_state = process.state
-            process = await process.update(
-                agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
+        process = await self.get_latest_process_event(process_id)
+        if not process:
+            logger.warning(f"Process {process_id} not found, but permissions indicate it should have existed")
+            raise HTTPException(status_code=404, detail="Process not found")
+        if process.state not in handler.extra["allowed_states"]:
+            logger.warning(
+                f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}"
             )
+            raise HTTPException(
+                status_code=409,
+                detail=f'Action "{handler.name}" cannot process state "{process.state}"',
+            )
+        last_state = process.state
+        process = await process.update(
+            agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
+        )
         RequestContext.set("process_id", process_id)
 
         if "process_id" in dict(inspect.signature(handler.fn).parameters):
@@ -428,7 +418,7 @@ class AgentController:
         """
         await self.security.check_permissions({"read", "create"}, self.name)
         process = await self._create_process(state="initialized", title=args.title)
-        await self.security.record_resource(self.name, process.record_id)
+        await self.security.process_authorizer.record_process(self.name, process.record_id)
         return JSONResponse(
             StateSummary(
                 process_id=process.record_id,

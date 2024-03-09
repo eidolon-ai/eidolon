@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import fnmatch
 from abc import ABC, abstractmethod
 from contextvars import ContextVar
-from typing import Optional, Set, Literal, List
+from typing import Optional, Set, Literal
 
 from fastapi import Request
 from pydantic import BaseModel
@@ -21,25 +20,7 @@ _user_var = ContextVar("current_user")
 class User(BaseModel):
     id: str
     name: Optional[str] = None
-    functional_permissions: List[str] = []
-
-    def check_functional_permissions(self, permissions: Permission | Set[Permission], agent):
-        permissions = {permissions} if isinstance(permissions, str) else permissions
-        missing = permissions.copy()
-        for permission in permissions:
-            for pattern in self.functional_permissions:
-                if fnmatch.fnmatch(f"eidolon/agents/{agent}/processes/{permission}", pattern):
-                    missing.remove(permission)
-                    break
-        if missing:
-            raise PermissionException(missing)
-
-    def agent_process_permissions(self, agent: str) -> set[str]:
-        permissions = set()
-        for pattern in self.functional_permissions.keys():
-            if fnmatch.fnmatch(f"eidolon/agents/{agent}/processes", pattern):
-                permissions = permissions.union(self.functional_permissions[pattern])
-        return permissions
+    extra: dict = {}
 
     @staticmethod
     def get_current() -> User:
@@ -51,17 +32,14 @@ class User(BaseModel):
 
 
 class PermissionException(Exception):
-    process: Optional[str]
     missing: Set[Permission]
+    process: Optional[str]
 
     def __init__(self, missing: Permission | Set[Permission], process: Optional[str] = None):
-        self.missing = [missing] if isinstance(missing, str) else missing
+        self.missing = {missing} if isinstance(missing, str) else missing
         self.process = process
-        if process:
-            reason = f"Missing Resource Permission: {', '.join(self.missing)}"
-        else:
-            reason = f"Missing Permission: {', '.join(self.missing)}"
-        super().__init__(reason)
+        reason = "Missing Resource Permission: " if process else "Missing Permission: "
+        super().__init__(reason + ", ".join(self.missing))
 
 
 class AuthenticationProcessor(ABC):
@@ -78,59 +56,67 @@ class AuthenticationProcessor(ABC):
 
 class NoopAuthProcessor(AuthenticationProcessor):
     async def check_auth(self, request: Request) -> User:
-        return User(
-            id="NOOP_DEFAULT_USER",
-            name="noop default user",
-            functional_permissions=["eidolon/agents/*/processes/*"],
-        )
+        return User(id="NOOP_DEFAULT_USER", name="noop default user")
 
 
-class AuthorizationProcessor(ABC):
+class ProcessAuthorizer(ABC):
     @abstractmethod
-    async def check_permissions(
-        self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
-    ):
+    async def check_process_perms(self, permissions: Set[Permission], agent: str, process_id: str):
         """
         Checks if the authenticated user has the specified permission(s) to the provided agent process.
-
-        Checks functional permissions only if processes is omitted.
-        Checks functional AND resource permissions when process is included.
-
         :raises PermissionException: If the agent does not have the required permissions.
         """
         pass
 
     @abstractmethod
-    async def record_resource(self, agent: str, process: str):
+    async def record_process(self, agent: str, resource_id: str):
         """
         Called when a process is created. Should propagate any state needed for future resource checks.
         """
         pass
 
 
+class FunctionalAuthorizer:
+    @abstractmethod
+    async def check_functional_perms(self, permissions: Set[Permission], target):
+        pass
+
+
+class NoopFunctionalAuthorizer(FunctionalAuthorizer):
+    async def check_functional_perms(self, *args, **kwargs):
+        pass
+
+
 class SecurityManagerSpec(BaseModel):
     authentication_processor: AnnotatedReference[AuthenticationProcessor]
-    authorization_processor: AnnotatedReference[AuthorizationProcessor]
+    functional_authorizer: AnnotatedReference[FunctionalAuthorizer]
+    process_authorizer: AnnotatedReference[ProcessAuthorizer]
 
     safe_paths: Set[str] = {"/system/health", "/docs", "/favicon.ico", "/openapi.json"}
 
 
 class SecurityManager(Specable[SecurityManagerSpec]):
     authentication_processor: AuthenticationProcessor
-    authorization_processor: AuthorizationProcessor
+    functional_authorizer: FunctionalAuthorizer
+    process_authorizer: ProcessAuthorizer
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.authentication_processor = self.spec.authentication_processor.instantiate()
-        self.authorization_processor = self.spec.authorization_processor.instantiate()
+        self.functional_authorizer = self.spec.functional_authorizer.instantiate()
+        self.process_authorizer = self.spec.process_authorizer.instantiate()
+
+    async def check_permissions(
+        self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
+    ):
+        permissions = {permissions} if isinstance(permissions, str) else permissions
+        await self.functional_authorizer.check_functional_perms(permissions, f"agents/{agent}/processes")
+        if process_id:
+            await self.process_authorizer.check_process_perms(permissions, agent, process_id)
 
 
 def permission_exception_handler(request: Request, exc: PermissionException):
-    user = User.get_current()
-    logger.warning(f"Missing Permissions (user '{user.name}' | id '{user.id}'): {exc}")
-    if "read" in exc.missing:
-        if exc.process:
-            return JSONResponse(status_code=404, content={"detail": "Process Not Found"})
-        else:
-            return JSONResponse(status_code=404, content={"detail": "Not Found"})
+    logger.warning(str(exc))
+    if "read" in exc.missing and exc.process:
+        return JSONResponse(status_code=404, content={"detail": "Process Not Found"})
     return JSONResponse(status_code=403, content={"detail": str(exc)})
