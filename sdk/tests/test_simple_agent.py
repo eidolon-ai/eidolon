@@ -99,9 +99,7 @@ async def test_no_vars():
 
 async def test_multiple_prompt_args():
     process = await Agent.get("multiple_prompt_args").create_process()
-    resp = await process.action(
-        "converse", body=dict(a1="What is the capital of", a2="France?")
-    )
+    resp = await process.action("converse", body=dict(a1="What is the capital of", a2="France?"))
     assert "paris" in resp.data.lower()
 
 

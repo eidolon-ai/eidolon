@@ -15,7 +15,8 @@ from pydantic import Field, BaseModel
 from eidolon_ai_client.events import (
     StringOutputEvent,
     ObjectOutputEvent,
-    LLMToolCallRequestEvent, ToolCall,
+    LLMToolCallRequestEvent,
+    ToolCall,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -160,7 +161,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(fn=_openai_completion(self.spec.client), name_override="openai_completion", parser=_raw_parser)
+        llm_request = replayable(
+            fn=_openai_completion(self.spec.client), name_override="openai_completion", parser=_raw_parser
+        )
         complete_message = ""
         tools_to_call = []
         try:
@@ -190,7 +193,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
                 if message.content:
                     if can_stream_message:
-                        logger.debug(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
+                        logger.debug(
+                            f"open ai llm stream response: {message.content}", extra=dict(content=message.content)
+                        )
                         yield StringOutputEvent(content=message.content)
                     else:
                         complete_message += message.content
@@ -279,6 +284,7 @@ def _openai_completion(client_ref):
         client: AsyncOpenAI = client_ref.instantiate(**(client_args or {}))
         async for e in await client.chat.completions.create(**kwargs):
             yield e
+
     return fn
 
 

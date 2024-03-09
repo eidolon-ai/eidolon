@@ -74,7 +74,11 @@ class Reference(BaseModel):
                 return value.model_dump(exclude_defaults=True) if isinstance(value, Reference) else value
 
             def __reduce__(self):
-                return _ReferenceGetter(), (self._bound, self._default, self.model_dump(exclude_defaults=True)), self.__getstate__()
+                return (
+                    _ReferenceGetter(),
+                    (self._bound, self._default, self.model_dump(exclude_defaults=True)),
+                    self.__getstate__(),
+                )
 
         return _Reference
 

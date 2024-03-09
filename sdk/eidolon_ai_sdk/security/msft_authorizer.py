@@ -5,11 +5,11 @@ import httpx
 from jose import jwt
 from pydantic import BaseModel, Field
 
-from eidolon_ai_sdk.security.jwt_middleware import BaseJWTMiddleware
+from eidolon_ai_sdk.security.jwt_processor import BaseJWTProcessor
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class MSFTJWTMiddlewareSpec(BaseModel):
+class MSFTJWTProcessorSpec(BaseModel):
     jwks_url: str = Field(
         "https://login.microsoftonline.com/common/discovery/keys",
         description="The URL to fetch the JWKS from. Defaults to https://login.microsoftonline.com/common/discovery/keys",
@@ -19,19 +19,22 @@ class MSFTJWTMiddlewareSpec(BaseModel):
         description="Your azure client or application ID. Defaults to the environment variable AZURE_AD_CLIENT_ID",
     )
     issuer_prefix: str = Field(
-        default="sts.windows.net",
-        description="The issuer prefix of the JWT. Defaults to sts.windows.net.  The tenant id will be appended to this value.  For example, sts.windows.net/your_tenant_id"
+        default="https://sts.windows.net",
+        description="The issuer prefix of the JWT. Defaults to sts.windows.net.  The tenant id will be appended to this value.  For example, sts.windows.net/your_tenant_id",
     )
     tenant_id: str = Field(
-        default=os.environ.get("AZURE_AD_TENANT_ID"), description="The tenant id of the JWT. Defaults to the environment variable AZURE_AD_TENANT_ID"
+        default=os.environ.get("AZURE_AD_TENANT_ID"),
+        description="The tenant id of the JWT. Defaults to the environment variable AZURE_AD_TENANT_ID",
     )
 
 
-class MSFTJWTMiddleware(BaseJWTMiddleware, Specable[MSFTJWTMiddlewareSpec]):
+class MSFTJWTProcessor(BaseJWTProcessor, Specable[MSFTJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.signing_keys = None
-        self.jwks_url = f"https://login.microsoftonline.com/{self.spec.tenant_id}/discovery/keys?appid={self.spec.audience}"
+        self.jwks_url = (
+            f"https://login.microsoftonline.com/{self.spec.tenant_id}/discovery/keys?appid={self.spec.audience}"
+        )
 
     async def get_signing_keys(self):
         if not self.signing_keys:
@@ -41,23 +44,15 @@ class MSFTJWTMiddleware(BaseJWTMiddleware, Specable[MSFTJWTMiddlewareSpec]):
         return self.signing_keys
 
     async def get_audience_and_issuer(self):
-        return self.spec.audience, self.spec.issuer_prefix + "/" + self.spec.tenant_id
+        return self.spec.audience, self.spec.issuer_prefix + "/" + self.spec.tenant_id + "/"
 
     def get_algorithms(self) -> List[str]:
         return ["RS256"]
 
     async def process_token(self, token: str) -> Optional[Any]:
         jwks = await self.get_signing_keys()
-
-        issuer = f'https://login.microsoftonline.com/{self.spec.tenant_id.strip()}/v2.0'
-        try:
-            token = jwt.decode(token=token,
-                               key=jwks,
-                               algorithms=self.get_algorithms(),
-                               audience=self.spec.audience,
-                               issuer=issuer
-                               )
-            return token
-        except Exception as e:
-            print(f"Error decoding token: {e}")
-            raise e
+        audience, issuer = await self.get_audience_and_issuer()
+        token = jwt.decode(
+            token=token, key=jwks, algorithms=self.get_algorithms(), audience=self.spec.audience, issuer=issuer
+        )
+        return token

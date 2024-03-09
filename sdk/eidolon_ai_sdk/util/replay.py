@@ -43,7 +43,7 @@ async def default_parser(resp):
 
 
 def replayable(
-        fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
+    fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
     config = AgentOS.get_instance(ReplayConfig)
 

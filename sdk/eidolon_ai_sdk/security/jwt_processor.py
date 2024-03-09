@@ -1,22 +1,23 @@
 from abc import ABC, abstractmethod
-from fastapi import Request, Response, FastAPI
-from authlib.jose import jwt, JoseError
+from typing import List, Optional, Any
+
+from authlib.jose import jwt
+from fastapi import Request, FastAPI, HTTPException
 
 # noinspection PyPackageRequirements
 from pydantic import BaseModel
-from starlette.responses import JSONResponse
-from typing import List, Optional, Any
 
-from eidolon_ai_sdk.security.security_manager import BaseTokenProcessor
-from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.request_context import RequestContext
+from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor
+from eidolon_ai_sdk.security.user import User
+from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class BaseJWTMiddlewareSpec(BaseModel):
+class BaseJWTProcessorSpec(BaseModel):
     pass
 
 
-class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]):
+class BaseJWTProcessor(AuthenticationProcessor, ABC, Specable[BaseJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -39,18 +40,17 @@ class BaseJWTMiddleware(BaseTokenProcessor, ABC, Specable[BaseJWTMiddlewareSpec]
         jwks = await self.get_signing_keys()
         return jwt.decode(token, jwks)
 
-    async def dispatch(self, request: Request) -> Optional[Response]:
+    async def check_auth(self, request: Request):
         auth_header = request.headers.get("Authorization")
         if not auth_header:
-            return JSONResponse(status_code=401, content={"detail": "Authorization header missing"})
+            raise HTTPException(status_code=401, detail="Authorization header missing")
 
         token = auth_header[7:]
 
         try:
-            userInfo = await self.process_token(token)
+            user_info = await self.process_token(token)
             RequestContext.set("Authorization", auth_header, propagate=True)
-            RequestContext.set("jwt", userInfo)
-            return None
-        except JoseError as e:
-            print(e)
-            return JSONResponse(status_code=401, content={"detail": str(e)})
+            RequestContext.set("jwt", user_info)
+            return User(id=user_info["oid"], name=user_info.get("name"))
+        except Exception as e:
+            raise HTTPException(status_code=401, detail=str(e)) from e

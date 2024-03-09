@@ -5,7 +5,15 @@ from fastapi import Body
 from openai import BaseModel
 
 from eidolon_ai_client.client import Machine
-from eidolon_ai_client.events import StringOutputEvent, AgentStateEvent, StartAgentCallEvent, StartStreamContextEvent, UserInputEvent, SuccessEvent, EndStreamContextEvent
+from eidolon_ai_client.events import (
+    StringOutputEvent,
+    AgentStateEvent,
+    StartAgentCallEvent,
+    StartStreamContextEvent,
+    UserInputEvent,
+    SuccessEvent,
+    EndStreamContextEvent,
+)
 from eidolon_ai_client.group_conversation import GroupConversation
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.system.reference_model import Specable
@@ -35,7 +43,7 @@ def a(name: str):
         kind="Agent",
         apiVersion="eidolon/v1",
         spec=dict(implementation=fqn(HelloWorld), my_name=name),
-        metadata=Metadata(name=name)
+        metadata=Metadata(name=name),
     )
 
 
@@ -52,7 +60,7 @@ async def test_action(server):
         "fred says: hello, Dave!",
         "barney says: hello, Dave!",
         "wilma says: hello, Dave!",
-        "betty says: hello, Dave!"
+        "betty says: hello, Dave!",
     ]
     assert expected == [event.data for event in results]
 
@@ -72,10 +80,14 @@ async def test_stream_action(server):
     def expected_user_events(name, process_id):
         return [
             UserInputEvent(stream_context=name, input={"name": "Dave"}),
-            StartAgentCallEvent(stream_context=name, machine=Machine().machine, agent_name=name, call_name="idle", process_id=process_id),
+            StartAgentCallEvent(
+                stream_context=name, machine=Machine().machine, agent_name=name, call_name="idle", process_id=process_id
+            ),
             StringOutputEvent(stream_context=name, content=f"{name} says: hello, Dave!"),
-            AgentStateEvent(stream_context=name, state="idle", available_actions=['idle', 'reply']),
-            SuccessEvent(stream_context=name, )
+            AgentStateEvent(stream_context=name, state="idle", available_actions=["idle", "reply"]),
+            SuccessEvent(
+                stream_context=name,
+            ),
         ]
 
     for name in ["fred", "barney", "wilma", "betty"]:

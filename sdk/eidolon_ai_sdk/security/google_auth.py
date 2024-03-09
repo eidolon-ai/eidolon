@@ -4,11 +4,11 @@ from authlib.integrations.requests_client import OAuth2Session
 from pydantic import BaseModel, Field
 from typing import List, Optional, Any
 
-from eidolon_ai_sdk.security.jwt_middleware import BaseJWTMiddleware
+from eidolon_ai_sdk.security.jwt_processor import BaseJWTProcessor
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class GoogleJWTMiddlewareSpec(BaseModel):
+class GoogleJWTProcessorSpec(BaseModel):
     jwks_url: str = Field(
         "https://www.googleapis.com/oauth2/v3/certs",
         description="The URL to fetch the JWKS from. Defaults to https://www.googleapis.com/oauth2/v3/certs",
@@ -22,7 +22,7 @@ class GoogleJWTMiddlewareSpec(BaseModel):
     )
 
 
-class GoogleJWTMiddleware(BaseJWTMiddleware, Specable[GoogleJWTMiddlewareSpec]):
+class GoogleJWTProcessor(BaseJWTProcessor, Specable[GoogleJWTProcessorSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.signing_keys = None

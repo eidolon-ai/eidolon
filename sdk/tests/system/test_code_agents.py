@@ -115,7 +115,7 @@ class TestHelloWorld:
             process = await Agent.get("HelloWorld").create_process()
             await process.action(program, "hello")
         assert exc.value.response.status_code == 418
-        assert exc.value.response.json()['data'] == "hello is not a name"
+        assert exc.value.response.json()["data"] == "hello is not a name"
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_streaming_http_error(self, server, program):
@@ -124,7 +124,7 @@ class TestHelloWorld:
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
         assert events[ErrorEvent].reason == "hello is not a name"
-        assert events[ErrorEvent].details['status_code'] == 418
+        assert events[ErrorEvent].details["status_code"] == 418
         assert events[AgentStateEvent].state == "http_error"
 
         found = await Process.get(stream).status()
@@ -136,10 +136,12 @@ class TestHelloWorld:
             process = await Agent.get("HelloWorld").create_process()
             await process.action(program, "error")
         assert exc.value.response.status_code == 500
-        assert exc.value.response.json() == {'available_actions': [],
-                                             'data': 'big bad server error',
-                                             'process_id': f'test_unhandled_error[{program}]_0',
-                                             'state': 'unhandled_error'}
+        assert exc.value.response.json() == {
+            "available_actions": [],
+            "data": "big bad server error",
+            "process_id": f"test_unhandled_error[{program}]_0",
+            "state": "unhandled_error",
+        }
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
     async def test_streaming_unhandled_error(self, agent, program):
@@ -249,7 +251,9 @@ class TestStateMachine:
             yield client
 
     async def test_can_list_processes(self, client):
-        first = (await run_program("StateMachine", "idle", json=dict(desired_state="church", response="blurb"))).process_id
+        first = (
+            await run_program("StateMachine", "idle", json=dict(desired_state="church", response="blurb"))
+        ).process_id
         second = (await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="blurb"))).process_id
         third = (await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="blurb"))).process_id
 
@@ -265,12 +269,16 @@ class TestStateMachine:
         assert [p["process_id"] for p in processes.json()["processes"]] == [second, third, first]
 
     async def test_can_start(self):
-        post = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+        post = await run_program(
+            "StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole")
+        )
         assert post.state == "bar"
         assert post.data == "low man on the totem pole"
 
     async def test_can_transition_state(self):
-        init = await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="low man on the totem pole"))
+        init = await run_program(
+            "StateMachine", "idle", json=dict(desired_state="foo", response="low man on the totem pole")
+        )
         assert init.state == "foo"
 
         to_bar = await init.action("to_bar")
@@ -291,8 +299,11 @@ class TestStateMachine:
 
     @pytest.mark.skip(reason="un comment idle signature when bug is fixed")
     async def test_default_in_body(self):
-        init = await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="low man on the totem pole"),
-                                 )
+        init = await run_program(
+            "StateMachine",
+            "idle",
+            json=dict(desired_state="foo", response="low man on the totem pole"),
+        )
         init.raise_for_status()
         assert init.data == "default response"
 

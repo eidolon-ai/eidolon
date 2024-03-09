@@ -1,0 +1,6 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: AuthenticationProcessor
+
+spec: MSFTJWTProcessor
