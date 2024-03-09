@@ -9,6 +9,6 @@ async def test_go_to_url():
 
 async def test_search():
     search = Search(processing_unit_locator=None, spec=WebSearchConfig())
-    found = await search.search("test")
+    found = await search.search(search, "test")
     assert len(found) == 10
     assert "test" in found[0].description

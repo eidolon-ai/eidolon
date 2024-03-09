@@ -53,15 +53,17 @@ class SearchSpec(BaseModel):
     cse_id: str = Field(
         default_factory=lambda: os.environ["CSE_ID"],
         validate_default=True,
-        desctiption="Google Custom Search Engine Id."
+        desctiption="Google Custom Search Engine Id.",
     )
     cse_token: str = Field(
         default_factory=lambda: os.environ["CSE_TOKEN"],
         validate_default=True,
-        desctiption="Google Project dev token, must have search permissions."
+        desctiption="Google Project dev token, must have search permissions.",
     )
     siteSearch: Optional[str] = Field(None, description="Restricts results to URLs from a specified site.")
-    includeSiteSearchSites: bool = Field(True, description="Controls whether to include or exclude results from the site specified in siteSearch.")
+    includeSiteSearchSites: bool = Field(
+        True, description="Controls whether to include or exclude results from the site specified in siteSearch."
+    )
     name: str = "search"
     description: str = None
 
@@ -69,11 +71,11 @@ class SearchSpec(BaseModel):
     def _validate(self):
         if not self.description:
             self.description = (
-                "Search google and get the results." if self.siteSearch
+                "Search google and get the results."
+                if self.siteSearch
                 else f"Search google on {self.siteSearch} and get the results."
             )
         return self
-
 
 
 class Search(LogicUnit, Specable[SearchSpec]):
@@ -85,6 +87,7 @@ class Search(LogicUnit, Specable[SearchSpec]):
     def _search(self):
         async def fn(self_, term: str, num_results: int = 10, lang: str = "en") -> List[SearchResult]:
             return [r async for r in self_._search_results(term, num_results, lang)]
+
         return fn
 
     async def _search_results(self, term, num_results, lang):
@@ -110,9 +113,7 @@ class Search(LogicUnit, Specable[SearchSpec]):
             params["siteSearch"] = self.spec.siteSearch
             params["siteSearchFilter"] = "i" if self.spec.includeSiteSearchSites else "e"
 
-        async with _get(
-                url="https://customsearch.googleapis.com/customsearch/v1",
-                params=params) as resp:
+        async with _get(url="https://customsearch.googleapis.com/customsearch/v1", params=params) as resp:
             resp.raise_for_status()
             return resp.json()
 
