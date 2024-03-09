@@ -9,13 +9,10 @@ from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.security.security_manager import (
-    AuthenticationProcessor,
-    Permission,
-    User,
-    FunctionalAuthorizer,
-    PermissionException,
-)
+from eidolon_ai_sdk.security.functional_authorizer import FunctionalAuthorizer
+from eidolon_ai_sdk.security.permissions import PermissionException, Permission
+from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor
+from eidolon_ai_sdk.security.user import User
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn

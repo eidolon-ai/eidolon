@@ -9,7 +9,8 @@ from pydantic import BaseModel
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
-from eidolon_ai_sdk.security.security_manager import AuthenticationProcessor, User
+from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor
+from eidolon_ai_sdk.security.user import User
 from eidolon_ai_sdk.system.reference_model import Specable
 
 

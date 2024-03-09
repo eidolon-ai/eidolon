@@ -5,7 +5,8 @@ from starlette.responses import Response, JSONResponse
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.security.security_manager import SecurityManager, User
+from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.user import User
 
 
 class SecurityMiddleware(BaseHTTPMiddleware):

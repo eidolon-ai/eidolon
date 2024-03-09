@@ -23,10 +23,9 @@ from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.security.security_manager import (
-    PermissionException,
-    permission_exception_handler,
     SecurityManager,
 )
+from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource

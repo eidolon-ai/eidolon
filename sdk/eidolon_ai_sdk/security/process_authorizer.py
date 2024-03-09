@@ -1,13 +1,29 @@
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import Set, List
 
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.security.security_manager import (
-    ProcessAuthorizer,
-    Permission,
-    PermissionException,
-    User,
-)
+from eidolon_ai_sdk.security.permissions import Permission, PermissionException
+from eidolon_ai_sdk.security.user import User
 from eidolon_ai_sdk.system.processes import MongoDoc
+
+
+class ProcessAuthorizer(ABC):
+    @abstractmethod
+    async def check_process_perms(self, permissions: Set[Permission], agent: str, process_id: str):
+        """
+        Checks if the authenticated user has the specified permission(s) to the provided agent process.
+        :raises PermissionException: If the agent does not have the required permissions.
+        """
+        pass
+
+    @abstractmethod
+    async def record_process(self, agent: str, resource_id: str):
+        """
+        Called when a process is created. Should propagate any state needed for future resource checks.
+        """
+        pass
 
 
 class AuthDoc(MongoDoc):
@@ -20,7 +36,7 @@ class AuthDoc(MongoDoc):
     extra: dict = {}
 
 
-class PrivateAuthorization(ProcessAuthorizer):
+class PrivateAuthorizer(ProcessAuthorizer):
     async def check_process_perms(self, permissions: Set[Permission], agent: str, process_id: str):
         if process_id:
             missing_resource = permissions

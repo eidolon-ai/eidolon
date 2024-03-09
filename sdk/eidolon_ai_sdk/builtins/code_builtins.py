@@ -31,7 +31,6 @@ from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.security.msft_authorizer import MSFTJWTProcessor
-from eidolon_ai_sdk.security.private_authorization import PrivateAuthorization
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
@@ -48,14 +47,10 @@ from eidolon_ai_sdk.memory.noop_memory import NoopVectorStore
 from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
 from eidolon_ai_sdk.memory.vector_store import VectorStore
-from eidolon_ai_sdk.security.security_manager import (
-    SecurityManager,
-    NoopAuthProcessor,
-    AuthenticationProcessor,
-    ProcessAuthorizer,
-    FunctionalAuthorizer,
-    NoopFunctionalAuthorizer,
-)
+from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.functional_authorizer import FunctionalAuthorizer, NoopFunctionalAuthorizer
+from eidolon_ai_sdk.security.process_authorizer import ProcessAuthorizer, PrivateAuthorizer
+from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor, NoopAuthProcessor
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
@@ -97,8 +92,8 @@ def named_builtins():
         NoopAuthProcessor,
         GoogleJWTProcessor,
         MSFTJWTProcessor,
-        (ProcessAuthorizer, PrivateAuthorization),
-        PrivateAuthorization,
+        (ProcessAuthorizer, PrivateAuthorizer),
+        PrivateAuthorizer,
         (FunctionalAuthorizer, NoopFunctionalAuthorizer),
         NoopFunctionalAuthorizer,
         # agents

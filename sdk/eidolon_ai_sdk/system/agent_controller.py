@@ -34,7 +34,8 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import PermissionException, SecurityManager
+from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.permissions import PermissionException
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     ListProcessesResponse,
