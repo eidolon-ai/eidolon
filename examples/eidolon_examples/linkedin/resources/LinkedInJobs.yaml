@@ -1,0 +1,10 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: LinkedInJobs
+
+spec:
+  implementation: WebSearchAgent
+  name: "search_linkedin_jobs"
+  description: "Searches linkedin jobs matching the given criteria. Be very specific in the query parameters to get the best results"
+  siteSearch: "linkedin.com/jobs"

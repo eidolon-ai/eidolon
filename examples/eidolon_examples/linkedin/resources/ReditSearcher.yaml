@@ -1,0 +1,10 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: RedditSearcher
+
+spec:
+  implementation: WebSearchAgent
+  name: "search_reddit"
+  description: "Searches redit for articles matching the query. Be very specific in the query parameters to get the best results"
+  siteSearch: "reddit.com"

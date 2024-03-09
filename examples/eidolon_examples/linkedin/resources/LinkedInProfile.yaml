@@ -1,0 +1,10 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: LinkedInProfile
+
+spec:
+  implementation: WebSearchAgent
+  name: "search_linkedin_profiles"
+  description: "Searches linkedin for profiles matching the given criteria. Be very specific in the query parameters to get the best results"
+  siteSearch: "linkedin.com/in"

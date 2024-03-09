@@ -1,0 +1,10 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: LinkedInCompany
+
+spec:
+  implementation: WebSearchAgent
+  name: "search_linkedin_pulse"
+  description: "Searches linkedin companies matching the given criteria. Be very specific in the query parameters to get the best results"
+  siteSearch: "linkedin.com/company"

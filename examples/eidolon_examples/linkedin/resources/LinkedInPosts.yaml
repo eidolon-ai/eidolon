@@ -1,0 +1,10 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: LinkedInPosts
+
+spec:
+  implementation: WebSearchAgent
+  name: "search_linkedin_posts"
+  description: "Searches linkedin for posts matching the given criteria. Be very specific in the query parameters to get the best results"
+  siteSearch: "linkedin.com/posts"
