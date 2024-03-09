@@ -5,7 +5,8 @@ metadata:
 
 spec:
   description: An agent that searches for information on various sites
-  agent_refs: [LinkedInProfile, LinkedInPosts, LinkedInCompany, LinkedInPulse, LinkedInJobs, RedditSearcher]
+  cpu:
+    logic_units: [LinkedInProfile, LinkedInPosts, LinkedInCompany, LinkedInPulse, LinkedInJobs, RedditSearcher, Browser]
   system_prompt:
     You are a copilot. You will help users search for information on LinkedIn and Reddit. 
   

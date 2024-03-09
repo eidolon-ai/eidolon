@@ -1,10 +1,10 @@
 apiVersion: eidolon/v1
-kind: Agent
+kind: Reference
 metadata:
   name: LinkedInPulse
 
 spec:
-  implementation: WebSearchAgent
+  implementation: Search
   name: "search_linkedin_pulse"
   description: "Searches linkedin pulse articles matching the given criteria. Be very specific in the query parameters to get the best results"
-  siteSearch: "linkedin.com/posts"
+  siteSearch: "linkedin.com/pulse"

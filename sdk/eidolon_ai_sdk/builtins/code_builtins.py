@@ -19,8 +19,7 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
-from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch
-from eidolon_ai_sdk.builtins.web_search_agent import WebSearchAgent
+from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
 from eidolon_ai_sdk.cpu.conversation_memory_unit import RawMemoryUnit
@@ -103,7 +102,6 @@ def named_builtins():
         GenericAgent,
         TreeOfThoughtsAgent,
         RetrieverAgent,
-        WebSearchAgent,
         # cpu
         (AgentCPU, ConversationalAgentCPU),
         ConversationalAgentCPU,
@@ -114,6 +112,8 @@ def named_builtins():
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
         WebSearch,
+        Search,
+        Browser,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
         MongoSymbolicMemory,
