@@ -3,14 +3,6 @@ title: Quickstart
 description: A Hello World example to get you up and running with Eidolon.
 ---
 
-## Goals
-This document covers installing **Eidolon**, creating your first **AgentProgram**, and running an **AgentMachine**.
-
-## Prerequisites
-
-* [Python 3.11](https://formulae.brew.sh/formula/python@3.11)
-* [OpenAI api key](https://platform.openai.com/account/api-keys "Create an OpenAI key"): You should have an envar OPENAI_API_KEY set to your OpenAI api key.
-
 ## Step 1: Install Eidolon SDK
 
 First, you need to install the Eidolon SDK. Open your terminal and run the following command:

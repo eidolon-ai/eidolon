@@ -52,7 +52,30 @@ export default defineConfig({
                 {
                     label: 'Getting Started',
                     items: [
-                        {label: 'Quickstart', link: '/getting_started/quickstart/'},
+                        {
+                            label: 'Quickstart', 
+                            items: [
+                                {label:'Introduction', link:'/getting_started/quickstart/introduction'},
+                                {label:'Setup', link:'/getting_started/quickstart/setup'},
+                                {label:'Create an Agent', link:'/getting_started/quickstart/create'},
+                                {label:'Run and Try', link:'/getting_started/quickstart/run'},
+                            ]
+                        },
+                        {   
+                            label: 'Demos',
+                            items: [
+                                {label:'Introduction', link: '/getting_started/demos/introduction'},
+                                {label:'Chatbot Demo', link: '/getting_started/demos/swifties'}
+                            ] 
+                        },
+                        {   
+                            label: 'Tutorials',
+                            items: [
+                                {label:'Introduction', link: '/getting_started/tutorials/introduction'},
+                                {label:'EidolonGPT', link: '/getting_started/tutorials/gpt'},
+                                {label:'Code Search', link: '/getting_started/tutorials/docs'}
+                            ] 
+                        },
                         {label: 'Tutorials', link: '/getting_started/tutorials/'},
                         {label: 'References', link: '/getting_started/references/'},
                     ],
