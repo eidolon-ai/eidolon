@@ -7,7 +7,6 @@ from fastapi import Request, FastAPI, HTTPException
 # noinspection PyPackageRequirements
 from pydantic import BaseModel
 
-from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor
 from eidolon_ai_sdk.security.user import User
@@ -54,5 +53,4 @@ class BaseJWTProcessor(AuthenticationProcessor, ABC, Specable[BaseJWTProcessorSp
             RequestContext.set("jwt", user_info)
             return User(id=user_info["oid"], name=user_info.get("name"))
         except Exception as e:
-            logger.exception("Error processing jwt")
-            raise HTTPException(status_code=401, detail=str(e))
+            raise HTTPException(status_code=401, detail=str(e)) from e

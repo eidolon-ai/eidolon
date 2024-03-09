@@ -171,7 +171,7 @@ export async function getChats(): Promise<Chat[]> {
         }
     ).then(resp => {
         if (resp.status === 401) {
-            console.log('Unauthorized! Status: 401');
+            console.log('Unauthenticated! Status: 401');
             return [];
         } else if (!resp.ok) {
             throw new Error(`HTTP error! status: ${resp.status}`);
