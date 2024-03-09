@@ -41,7 +41,7 @@ if (providerTypes.includes('azure')) {
       tenantId: process.env.AZURE_AD_TENANT_ID,
       authorization: {
         params: {
-          scope: "openid profile email 428c42f4-86bb-4334-b03d-14492f795d5b/.default",
+          scope: "openid profile email " + process.env.AZURE_AD_PROFILE_EMAIL,
         },
       }
     }),

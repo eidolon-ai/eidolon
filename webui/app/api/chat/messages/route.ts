@@ -2,6 +2,7 @@
 
 import {getServerSession} from "next-auth";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
+import {getAuthHeaders} from "@/app/api/chat/messages/chatHelpers";
 
 const chatServerURL = process.env.EIDOLON_SERVER
 
@@ -10,13 +11,14 @@ const getUserId = (async () => (await getServerSession(authOptions))?.user?.id)
 export async function POST(req: Request) {
   const params = await req.json()
   try {
-
+    const auth_headers = await getAuthHeaders()
     const response = await fetch(`${chatServerURL}${params.path}`, {
       method: "POST",
       body: JSON.stringify(params.data),
       headers: {
-        'accept': 'text/event-stream',
-        "Content-Type": "application/json"
+        "accept": "text/event-stream",
+        "Content-Type": "application/json",
+        ...auth_headers
       }
     })
     if (response.body) {

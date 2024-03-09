@@ -1,34 +1,39 @@
-from typing import Optional
+from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from fastapi import Request, Response, FastAPI
+from typing import Optional, Set
+
 from pydantic import BaseModel
-from starlette.middleware.base import BaseHTTPMiddleware
 
+from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor
+from eidolon_ai_sdk.security.functional_authorizer import FunctionalAuthorizer
+from eidolon_ai_sdk.security.permissions import Permission
+from eidolon_ai_sdk.security.process_authorizer import ProcessAuthorizer
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
-class BaseTokenProcessor(ABC):
-    @abstractmethod
-    async def dispatch(self, request: Request) -> Optional[Response]:
-        pass
-
-
-class NoopAuthProcessor(BaseTokenProcessor):
-    def add_login_route(self, app: FastAPI):
-        pass
-
-    async def dispatch(self, request: Request):
-        return None
-
-
 class SecurityManagerSpec(BaseModel):
-    authorization_processor: AnnotatedReference[BaseTokenProcessor, NoopAuthProcessor]
+    authentication_processor: AnnotatedReference[AuthenticationProcessor]
+    functional_authorizer: AnnotatedReference[FunctionalAuthorizer]
+    process_authorizer: AnnotatedReference[ProcessAuthorizer]
+
+    safe_paths: Set[str] = {"/system/health", "/docs", "/favicon.ico", "/openapi.json"}
 
 
 class SecurityManager(Specable[SecurityManagerSpec]):
-    authorization_processor: BaseHTTPMiddleware
+    authentication_processor: AuthenticationProcessor
+    functional_authorizer: FunctionalAuthorizer
+    process_authorizer: ProcessAuthorizer
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.authorization_processor = self.spec.authorization_processor.instantiate()
+        self.authentication_processor = self.spec.authentication_processor.instantiate()
+        self.functional_authorizer = self.spec.functional_authorizer.instantiate()
+        self.process_authorizer = self.spec.process_authorizer.instantiate()
+
+    async def check_permissions(
+        self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
+    ):
+        permissions = {permissions} if isinstance(permissions, str) else permissions
+        await self.functional_authorizer.check_functional_perms(permissions, f"agents/{agent}/processes")
+        if process_id:
+            await self.process_authorizer.check_process_perms(permissions, agent, process_id)

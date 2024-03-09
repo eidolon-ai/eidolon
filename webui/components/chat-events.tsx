@@ -23,7 +23,7 @@ import {useSession} from "next-auth/react";
 import {EidolonMarkdown} from "@/components/eidolon-markdown";
 import {ToolCall} from "@/components/tool-call-element";
 import {ChatScrollAnchor} from "@/components/chat-scroll-anchor";
-import {getChatEvents, getPIDStatus} from "@/app/api/chat/messages/chatHelpers";
+import {getAuthHeaders, getChatEvents, getPIDStatus} from "@/app/api/chat/messages/chatHelpers";
 
 interface ChatEventProps {
   agentName: string,

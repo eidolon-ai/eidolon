@@ -5,7 +5,14 @@ from fastapi import Body
 
 from eidolon_ai_client import client
 from eidolon_ai_client.client import Agent
-from eidolon_ai_client.events import StringOutputEvent, AgentStateEvent, UserInputEvent, Category, StartAgentCallEvent, SuccessEvent
+from eidolon_ai_client.events import (
+    StringOutputEvent,
+    AgentStateEvent,
+    UserInputEvent,
+    Category,
+    StartAgentCallEvent,
+    SuccessEvent,
+)
 from eidolon_ai_sdk.agent.agent import register_action
 
 
@@ -41,13 +48,25 @@ async def test_stream_program(server):
     process = await agent.create_process()
     resp = [event async for event in process.stream_action("idle", body="Dave")]
     expected = [
-        UserInputEvent(stream_context=None, category=Category.INPUT, event_type='user_input', input={'name': 'Dave'}),
-        StartAgentCallEvent(stream_context=None,
-                            category=Category.START, event_type='agent_call', machine=client.current_machine_url(), agent_name='HelloWorld', call_name='idle',
-                            process_id='test_stream_program_0'),
-        StringOutputEvent(stream_context=None, category=Category.OUTPUT, event_type='string', content='Hello, Dave!'),
-        AgentStateEvent(stream_context=None, category=Category.TRANSFORM, event_type='agent_state', state='idle', available_actions=['idle', 'reply']),
-        SuccessEvent(stream_context=None, category=Category.END, event_type='success')
+        UserInputEvent(stream_context=None, category=Category.INPUT, event_type="user_input", input={"name": "Dave"}),
+        StartAgentCallEvent(
+            stream_context=None,
+            category=Category.START,
+            event_type="agent_call",
+            machine=client.current_machine_url(),
+            agent_name="HelloWorld",
+            call_name="idle",
+            process_id="test_stream_program_0",
+        ),
+        StringOutputEvent(stream_context=None, category=Category.OUTPUT, event_type="string", content="Hello, Dave!"),
+        AgentStateEvent(
+            stream_context=None,
+            category=Category.TRANSFORM,
+            event_type="agent_state",
+            state="idle",
+            available_actions=["idle", "reply"],
+        ),
+        SuccessEvent(stream_context=None, category=Category.END, event_type="success"),
     ]
     assert expected == resp
 
@@ -56,25 +75,49 @@ async def test_stream_followup(server):
     agent = Agent.get("HelloWorld")
     process = await agent.create_process()
     expected = [
-        UserInputEvent(stream_context=None, category=Category.INPUT, event_type='user_input', input={'name': 'Dave'}),
-        StartAgentCallEvent(stream_context=None,
-                            category=Category.START, event_type='agent_call', machine=client.current_machine_url(), agent_name='HelloWorld', call_name='idle',
-                            process_id='test_stream_followup_0'),
-        StringOutputEvent(stream_context=None, category=Category.OUTPUT, event_type='string', content='Hello, Dave!'),
-        AgentStateEvent(stream_context=None, category=Category.TRANSFORM, event_type='agent_state', state='idle', available_actions=['idle', 'reply']),
-        SuccessEvent(stream_context=None, category=Category.END, event_type='success')
+        UserInputEvent(stream_context=None, category=Category.INPUT, event_type="user_input", input={"name": "Dave"}),
+        StartAgentCallEvent(
+            stream_context=None,
+            category=Category.START,
+            event_type="agent_call",
+            machine=client.current_machine_url(),
+            agent_name="HelloWorld",
+            call_name="idle",
+            process_id="test_stream_followup_0",
+        ),
+        StringOutputEvent(stream_context=None, category=Category.OUTPUT, event_type="string", content="Hello, Dave!"),
+        AgentStateEvent(
+            stream_context=None,
+            category=Category.TRANSFORM,
+            event_type="agent_state",
+            state="idle",
+            available_actions=["idle", "reply"],
+        ),
+        SuccessEvent(stream_context=None, category=Category.END, event_type="success"),
     ]
     resp = [event async for event in process.stream_action("idle", body="Dave")]
     assert expected == resp
 
     expected = [
-        UserInputEvent(stream_context=None, category=Category.INPUT, event_type='user_input', input={'name': 'Jim'}),
-        StartAgentCallEvent(stream_context=None,
-                            category=Category.START, event_type='agent_call', machine=client.current_machine_url(), agent_name='HelloWorld', call_name='reply',
-                            process_id='test_stream_followup_0'),
-        StringOutputEvent(stream_context=None, category=Category.OUTPUT, event_type='string', content='Hello, Jim!'),
-        AgentStateEvent(stream_context=None, category=Category.TRANSFORM, event_type='agent_state', state='idle', available_actions=['idle', 'reply']),
-        SuccessEvent(stream_context=None, category=Category.END, event_type='success')
+        UserInputEvent(stream_context=None, category=Category.INPUT, event_type="user_input", input={"name": "Jim"}),
+        StartAgentCallEvent(
+            stream_context=None,
+            category=Category.START,
+            event_type="agent_call",
+            machine=client.current_machine_url(),
+            agent_name="HelloWorld",
+            call_name="reply",
+            process_id="test_stream_followup_0",
+        ),
+        StringOutputEvent(stream_context=None, category=Category.OUTPUT, event_type="string", content="Hello, Jim!"),
+        AgentStateEvent(
+            stream_context=None,
+            category=Category.TRANSFORM,
+            event_type="agent_state",
+            state="idle",
+            available_actions=["idle", "reply"],
+        ),
+        SuccessEvent(stream_context=None, category=Category.END, event_type="success"),
     ]
     resp = [event async for event in process.stream_action("reply", body="Jim")]
     assert expected == resp

@@ -64,7 +64,7 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         self.client = None
 
     async def start(self):
-        self.connect()
+        pass
 
     def connect(self):
         url = urlparse(self.spec.url)
