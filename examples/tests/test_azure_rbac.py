@@ -10,7 +10,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 
 @pytest.fixture()
 def azure_jwt():
-    tenant_id = os.environ['AZURE_AD_TENANT_ID']
+    tenant_id = os.environ["AZURE_AD_TENANT_ID"]
     eidolon_application_id = os.environ["AZURE_AD_CLIENT_ID"]
     test_application_id = os.environ["AZURE_AD_TEST_CLIENT_ID"]
     test_application_secret = os.environ["AZURE_AD_TEST_CLIENT_SECRET"]
