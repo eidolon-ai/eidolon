@@ -169,7 +169,15 @@ export async function getChats(): Promise<Chat[]> {
             next: {tags: ['chats']},
             headers: auth_headers
         }
-    ).then(resp => resp.json())
+    ).then(resp => {
+        if (resp.status === 401) {
+            console.log('Unauthenticated! Status: 401');
+            return [];
+        } else if (!resp.ok) {
+            throw new Error(`HTTP error! status: ${resp.status}`);
+        }
+        return resp.json();
+    })
 
     const ret = []
     for (const json of results) {

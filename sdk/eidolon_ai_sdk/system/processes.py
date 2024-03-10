@@ -27,10 +27,10 @@ class MongoDoc(BaseModel, extra="allow"):
             return None
 
     @classmethod
-    async def find(cls, **kwargs):
+    async def find(cls, convert=True, **kwargs):
         docs = AgentOS.symbolic_memory.find(cls.collection, **kwargs)
         async for doc in docs:
-            yield cls.model_validate(doc)
+            yield cls.model_validate(doc) if convert else doc
 
     @classmethod
     async def create(cls, **data):

@@ -10,7 +10,14 @@ from typing import Dict, List, AsyncIterator, Coroutine
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_client.events import SuccessEvent, ObjectOutputEvent, ErrorEvent, BaseStreamEvent, StringOutputEvent, ToolCall
+from eidolon_ai_client.events import (
+    SuccessEvent,
+    ObjectOutputEvent,
+    ErrorEvent,
+    BaseStreamEvent,
+    StringOutputEvent,
+    ToolCall,
+)
 from eidolon_ai_sdk.system.fn_handler import register_handler, FnHandler, get_handlers
 from eidolon_ai_client.util.logger import logger
 
@@ -46,7 +53,7 @@ class LLMToolWrapper:
                 yield SuccessEvent()
         except Exception as e:
             logging.exception("error calling tool " + self.eidolon_handler.name)
-            yield ErrorEvent(reason=e)
+            yield ErrorEvent(reason=str(e))
 
     @classmethod
     async def from_logic_units(

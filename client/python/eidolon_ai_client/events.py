@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from enum import Enum
-from pydantic import BaseModel, TypeAdapter, field_serializer
+from pydantic import BaseModel, TypeAdapter
 from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional
 
 

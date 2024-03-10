@@ -43,6 +43,12 @@ class Agent(BaseModel):
     def process(self, process_id: str) -> Process:
         return Process(machine=self.machine, agent=self.agent, process_id=process_id)
 
+    async def processes(self) -> ProcessesResponse:
+        url = urljoin(self.machine, f"agents/{self.agent}/processes")
+        json_ = await get_content(url)
+        json_['processes'] = [dict(machine=self.machine, agent=self.agent, **kwargs) for kwargs in json_['processes']]
+        return ProcessesResponse(**json_)
+
     async def run_program(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs):
         process = await self.create_process()
         return await process.action(action_name, body, **kwargs)
@@ -88,6 +94,10 @@ class Process(BaseModel):
         json_ = await get_content(url)
         return ProcessStatus(machine=self.machine, agent=self.agent, **json_)
 
+    async def events(self):
+        url = urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}/events")
+        return await get_content(url)
+
     async def delete(self) -> DeleteProcessResponse:
         deleted = await delete(urljoin(self.machine, f"agents/{self.agent}/processes/{self.process_id}"))
         return DeleteProcessResponse.model_validate(deleted)
@@ -97,6 +107,12 @@ class Process(BaseModel):
         if not stream_response.machine or not stream_response.agent or not stream_response.process_id:
             raise ValueError("stream_response insufficiently iterated")
         return cls(machine=stream_response.machine, agent=stream_response.agent, process_id=stream_response.process_id)
+
+
+class ProcessesResponse(BaseModel):
+    total: int
+    processes: List[ProcessStatus]
+    next: Optional[str] = None
 
 
 class ProcessStatus(Process, extra=Extra.allow):

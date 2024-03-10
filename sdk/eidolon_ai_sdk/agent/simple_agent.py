@@ -42,6 +42,9 @@ class ActionDefinition(BaseModel):
         properties: Dict[str, Any] = {}
         required = []
         user_vars = meta.find_undeclared_variables(Environment().parse(self.user_prompt))
+        # pop out any reserved keywords we will inject
+        if "datetime_iso" in user_vars:
+            user_vars.remove("datetime_iso")
         if self.input_schema is not None:
             properties["body"] = dict(type="object", properties=self.input_schema)
             required.append("body")
@@ -49,7 +52,7 @@ class ActionDefinition(BaseModel):
             properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
             required.append("body")
         elif user_vars:
-            props = {v: dict(type="string") for v in user_vars if v != "datetime_iso" and v != "body"}
+            props = {v: dict(type="string") for v in user_vars}
             properties["body"] = dict(type="object", properties=props)
             required.append("body")
 
