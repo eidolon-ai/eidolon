@@ -28,7 +28,7 @@ def azure_jwt():
     return response.json()
 
 
-# @pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def http_server(eidolon_server, eidolon_examples):
     with eidolon_server(eidolon_examples / "azure_auth_rbac", log_file="azure_auth_rbac.txt") as server:
         yield server
