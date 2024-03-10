@@ -56,7 +56,7 @@ export default defineConfig({
                             label: 'Quickstart', 
                             items: [
                                 {label:'Introduction', link:'/getting_started/quickstart/introduction'},
-                                {label:'Setup', link:'/getting_started/quickstart/setup'},
+                                {label:'Prerequisites', link:'/getting_started/quickstart/prereq'},
                                 {label:'Create an Agent', link:'/getting_started/quickstart/create'},
                                 {label:'Run and Try', link:'/getting_started/quickstart/run'},
                             ]
@@ -76,7 +76,6 @@ export default defineConfig({
                                 {label:'Code Search', link: '/getting_started/tutorials/docs'}
                             ] 
                         },
-                        {label: 'Tutorials', link: '/getting_started/tutorials/'},
                         {label: 'References', link: '/getting_started/references/'},
                     ],
 // 					autogenerate: { directory: 'getting_started'},
