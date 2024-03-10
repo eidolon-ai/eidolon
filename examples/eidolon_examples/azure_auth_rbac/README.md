@@ -6,6 +6,8 @@ This guide provides detailed steps on how to configure Azure authentication for 
 
 Begin by navigating to the Azure portal and initiating a new "App registration". It's crucial to record the application (client ID) as it will be required in later steps.
 
+**UI ONLY**: Create a Secret for the UI to use within `Certificates & secrets` (this will be set to envar `AZURE_CLIENT_SECRET`).
+
 ## Step 2: Configuring Eidolon for Azure Authentication
 
 To integrate Azure authentication, adjust the `AuthenticationProcessor` setting in your configuration to `AzureJWTProcessor`.
@@ -27,13 +29,13 @@ spec:
   tenant_id: your_azure_tenant_id  # Use your Azure tenant ID here
 ```
 
-## Azure RBAC Configuration
+# Azure RBAC Configuration
 
 Azure RBAC allows you to manage fine-grained permissions for different entities in your application. Follow these steps if you need to implement RBAC.
 
-### Step 3: Creating Application Roles in Azure (Optional)
+## Step 3: Creating Application Roles in Azure
 
-Create roles for various permissions by defining them as follows:
+Create `appRoles` for your `app registration` for various permissions by defining them as follows:
 - `agents/*/processes/{PERM}`
 - Substitute `{PERM}` with specific permissions: `create`, `read`, `update`, `delete`, or `*` to encompass all permissions.
 
@@ -51,3 +53,6 @@ metadata:
   name: FunctionalAuthorizer
 spec: GlobPatternFunctionalAuthorizer
 ```
+
+### Step 5: Access from external applications
+If you need to access the machine from an external application, add the relevant eidolon permissions in the api permissions of the application registration.
