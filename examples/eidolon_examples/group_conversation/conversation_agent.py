@@ -14,26 +14,37 @@ from eidolon_ai_sdk.system.reference_model import Reference, Specable
 
 
 class AgentThought(BaseModel):
-    thought: str = Field(default="", description="The thought you want to express or an empty string if you don't have a thought.")
+    thought: str = Field(
+        default="", description="The thought you want to express or an empty string if you don't have a thought."
+    )
     desire_to_speak: bool = Field(description="If true, you want to speak. If false, you do not want to speak.")
-    emotion: Optional[str] = Field(default=None, description="The emotion you want to express or leave empty if you do not want to express an emotion."
-                                                             "The emotion must be a single word and an emojis that represent the emotion. Include both")
+    emotion: Optional[str] = Field(
+        default=None,
+        description="The emotion you want to express or leave empty if you do not want to express an emotion."
+        "The emotion must be a single word and an emojis that represent the emotion. Include both",
+    )
 
 
 class Thought(BaseModel):
     is_inner_voice: bool = Field(
         description="If true, the thought will be added as the agent's inner monologue. If false, the thought will be a user message."
     )
-    agent_name: Optional[str] = Field(default=None, description="The name of the agent that the thought is about or leave empty if an inner thought.")
+    agent_name: Optional[str] = Field(
+        default=None, description="The name of the agent that the thought is about or leave empty if an inner thought."
+    )
     thought: str = Field(description="The thought to add to the agent's inner monologue.")
 
 
 class ConversationAgentSpec(BaseModel):
     cpu: Reference[ConversationalAgentCPU]
     agent_name: str
-    system_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when the conversation starts.")
+    system_prompt: Optional[str] = Field(
+        default=None, description="The prompt to show the agent when the conversation starts."
+    )
     personality: str
-    think_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when they are pinged to think.")
+    think_prompt: Optional[str] = Field(
+        default=None, description="The prompt to show the agent when they are pinged to think."
+    )
     speak_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when they are to speak.")
 
 
@@ -50,7 +61,8 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
             self.system_prompt = "You are an agent mimicking a human. You will be given a topic and you should respond to it as if you were a human."
         self.think_prompt = self.spec.think_prompt
         if not self.think_prompt:
-            self.think_prompt = dedent("""
+            self.think_prompt = dedent(
+                """
                 You have been pinged. You can do one or all of the following:
                 - Express a thought
                 - Show an emotion
@@ -59,17 +71,18 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
                 You can and should include markdown in each section of the response.
                 
                 Remember, you don't need to respond to every ping. You can choose to ignore them, but if you want to express your thoughts or emotions, you should respond to the ping.
-            """).strip()
+            """
+            ).strip()
         self.speak_prompt = self.spec.speak_prompt
         if not self.speak_prompt:
-            self.speak_prompt = dedent("""
+            self.speak_prompt = dedent(
+                """
                 You have been pinged to speak. Respond with what you want to say or an empty string if you do not want to say anything.
-            """).strip()
+            """
+            ).strip()
 
     @register_program()
-    async def start_conversation(
-            self, process_id
-    ):
+    async def start_conversation(self, process_id):
         """
         Called to start the conversation. Will return a new state dictating what the agent wants to do next.
         """
@@ -77,14 +90,16 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         await t.set_boot_messages(
             prompts=[
                 SystemCPUMessage(prompt=self.system_prompt),
-                SystemCPUMessage(prompt="Your personality is:\n" + self.spec.personality)
+                SystemCPUMessage(prompt="Your personality is:\n" + self.spec.personality),
             ],
         )
         yield AgentStateEvent(state="idle")
 
     @register_action("idle")
     async def add_thoughts(
-            self, process_id, thoughts: Annotated[List[Thought], Body(embed=True), "The thoughts to add to the agent's inner monologue."]
+        self,
+        process_id,
+        thoughts: Annotated[List[Thought], Body(embed=True), "The thoughts to add to the agent's inner monologue."],
     ):
         """
         Called to record a thought either from another agent or from the coordinator.
@@ -95,7 +110,9 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
             if thought.is_inner_voice:
                 messages.append(SystemMessage(content=f"I have a thought: {thought.thought}"))
             else:
-                messages.append(UserMessage(content=[UserMessageText(text=f"{thought.agent_name} said: {thought.thought}")]))
+                messages.append(
+                    UserMessage(content=[UserMessageText(text=f"{thought.agent_name} said: {thought.thought}")])
+                )
 
         await self.cpu.memory_unit.storeMessages(
             call_context=t.call_context(),
