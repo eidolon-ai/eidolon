@@ -48,7 +48,11 @@ from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
 from eidolon_ai_sdk.memory.vector_store import VectorStore
 from eidolon_ai_sdk.security.security_manager import SecurityManager
-from eidolon_ai_sdk.security.functional_authorizer import FunctionalAuthorizer, NoopFunctionalAuth, GlobPatternFunctionalAuthorizer
+from eidolon_ai_sdk.security.functional_authorizer import (
+    FunctionalAuthorizer,
+    NoopFunctionalAuth,
+    GlobPatternFunctionalAuthorizer,
+)
 from eidolon_ai_sdk.security.process_authorizer import ProcessAuthorizer, PrivateAuthorizer
 from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor, NoopAuthProcessor
 from eidolon_ai_sdk.system.agent_machine import AgentMachine

@@ -2,7 +2,6 @@ import os
 
 import pytest
 import requests
-from jose import jwt
 
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
@@ -19,7 +18,7 @@ def azure_jwt():
         "grant_type": "client_credentials",
         "client_id": client_id,
         "client_secret": client_secret,
-        "scope": f"openid profile email {client_id}/.default"
+        "scope": f"openid profile email {client_id}/.default",
     }
     response = requests.post(url, data=payload)
     response.raise_for_status()  # This will raise an exception for HTTP errors
@@ -36,6 +35,7 @@ def http_server(eidolon_server, eidolon_examples):
 @pytest.fixture
 def agent(server_loc, azure_jwt):
     return Agent(machine=server_loc, agent="assistant")
+
 
 @pytest.mark.asyncio
 async def test_get_azure_jwt(agent):

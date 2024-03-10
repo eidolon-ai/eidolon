@@ -24,7 +24,9 @@ class GlobPatternFunctionalAuthorizer(FunctionalAuthorizer):
         try:
             patterns = User.get_current().extra["permissions"]
         except KeyError:
-            raise RuntimeError("'permissions' not set on user object, this likely indicates an incompatible AuthenticationProcessor")
+            raise RuntimeError(
+                "'permissions' not set on user object, this likely indicates an incompatible AuthenticationProcessor"
+            )
         missing = permissions.copy()
         for p in permissions:
             for pattern in patterns:
