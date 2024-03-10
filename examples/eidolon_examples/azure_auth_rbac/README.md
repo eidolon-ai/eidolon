@@ -23,7 +23,7 @@ metadata:
   name: AuthenticationProcessor
 spec:
   implementation: AzureJWTProcessor
-  client_id: your_azure_app_id  # Use your Azure app ID here
+  client_id: your_azure_client_id  # Use your Azure app ID here
   tenant_id: your_azure_tenant_id  # Use your Azure tenant ID here
 ```
 

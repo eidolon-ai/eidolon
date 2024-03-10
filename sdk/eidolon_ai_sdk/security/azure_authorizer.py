@@ -11,7 +11,7 @@ from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class AzureJWTProcessorSpec(BaseModel):
-    app_id: str = Field(
+    client_id: str = Field(
         os.environ.get("AZURE_AD_CLIENT_ID"),
         description="Your azure client or application ID. Defaults to the environment variable AZURE_AD_CLIENT_ID",
     )
@@ -30,7 +30,7 @@ class AzureJWTProcessor(BaseJWTProcessor, Specable[AzureJWTProcessorSpec]):
         super().__init__(**kwargs)
         self.signing_keys = None
         self.jwks_url = (
-            f"https://login.microsoftonline.com/{self.spec.tenant_id}/discovery/keys?appid={self.spec.app_id}"
+            f"https://login.microsoftonline.com/{self.spec.tenant_id}/discovery/keys?appid={self.spec.client_id}"
         )
 
     async def get_signing_keys(self):
@@ -41,7 +41,7 @@ class AzureJWTProcessor(BaseJWTProcessor, Specable[AzureJWTProcessorSpec]):
         return self.signing_keys
 
     async def get_audience_and_issuer(self):
-        return self.spec.app_id, self.spec.issuer_prefix + "/" + self.spec.tenant_id + "/"
+        return self.spec.client_id, self.spec.issuer_prefix + "/" + self.spec.tenant_id + "/"
 
     def get_algorithms(self) -> List[str]:
         return ["RS256"]
@@ -50,6 +50,6 @@ class AzureJWTProcessor(BaseJWTProcessor, Specable[AzureJWTProcessorSpec]):
         jwks = await self.get_signing_keys()
         audience, issuer = await self.get_audience_and_issuer()
         token = jwt.decode(
-            token=token, key=jwks, algorithms=self.get_algorithms(), audience=self.spec.app_id, issuer=issuer
+            token=token, key=jwks, algorithms=self.get_algorithms(), audience=self.spec.client_id, issuer=issuer
         )
         return token
