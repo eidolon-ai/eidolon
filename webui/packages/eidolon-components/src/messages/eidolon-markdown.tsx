@@ -1,5 +1,8 @@
+// @ts-ignore
 import Markdown from "react-markdown";
+// @ts-ignore
 import remarkGfm from "remark-gfm";
+// @ts-ignore
 import rehypeRaw from 'rehype-raw'
 // @ts-ignore
 import rehypeWrap from "rehype-wrap-all";

@@ -1,16 +1,15 @@
-import {ToolCallElement} from "@/lib/display-elements";
-import {OperationInfo} from "@/lib/types";
-import {Avatar, Card, CardActions, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
+import {ToolCallElement} from "../lib/display-elements.js";
+import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
 import * as React from "react";
-import CodeOffRoundedIcon from "@mui/icons-material/CodeOffRounded";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {ChatDisplayElement} from "@/components/chat-events";
+import {ExpandMore, CodeOffRounded} from "@mui/icons-material";
+import {ChatDisplayElement} from "./chat-display-element.js";
+import {OperationInfo} from "@repo/eidolon-client/client";
 
-interface ExpandMoreProps extends IconButtonProps {
+interface ExpandMoreDivProps extends IconButtonProps {
   expand: boolean;
 }
 
-const ExpandMore = styled((props: ExpandMoreProps) => {
+const ExpandMoreDiv = styled((props: ExpandMoreDivProps) => {
   const {expand, ...other} = props;
   return <IconButton {...other} />;
 })(({theme, expand}) => ({
@@ -41,19 +40,19 @@ export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProp
         avatar={
           element.is_agent
             ? <Avatar sx={{height: "24px", width: "24px"}} src="/eidolon_with_gradient.png"/>
-            : <Avatar sx={{height: "24px", width: "24px"}}><CodeOffRoundedIcon/></Avatar>
+            : <Avatar sx={{height: "24px", width: "24px"}}><CodeOffRounded/></Avatar>
         }
         onClick={handleExpandClick}
         action={
           <div style={{display: "flex", alignItems: "center"}}>
             {element.is_active && <CircularProgress variant={"indeterminate"} size={"16px"}/>}
-            <ExpandMore
+            <ExpandMoreDiv
               expand={expanded}
               aria-expanded={expanded}
               aria-label="show more"
             >
-              <ExpandMoreIcon/>
-            </ExpandMore>
+              <ExpandMore/>
+            </ExpandMoreDiv>
           </div>
         }
         title={element.is_agent ? (element.title + " Agent") : element.title}

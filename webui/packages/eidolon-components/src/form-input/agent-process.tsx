@@ -1,15 +1,15 @@
 'use client'
 
-import {AgentInputForm} from "@/components/agent-input/agent-input-form";
+import {AgentInputForm} from "./agent-input-form.js";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {EidolonClient, OperationInfo, ProcessState} from "@/lib/types";
-import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded';
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
+import {EidolonClient, OperationInfo, ProcessState} from "@repo/eidolon-client/client";
+import {ArrowCircleUpRounded} from '@mui/icons-material';
+import {AddCircleRounded} from '@mui/icons-material';
+import {RemoveCircleRounded} from '@mui/icons-material';
 import {Button, Paper, Skeleton} from "@mui/material";
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import {ButtonScrollToBottom} from "@/components/button-scroll-to-bottom";
+import {CancelRounded} from '@mui/icons-material';
+import {ButtonScrollToBottom} from "./button-scroll-to-bottom.js";
 
 interface AgentProcessProps {
   agent: string
@@ -42,7 +42,7 @@ export function AgentProcess({agent, processState, handleAction, handleCancel}: 
   )
 
   let button = (
-    <Button form="agent-input-form" variant={'text'} type={"submit"}><ArrowCircleUpRoundedIcon style={{fontSize: 36}}/></Button>
+    <Button form="agent-input-form" variant={'text'} type={"submit"}><ArrowCircleUpRounded style={{fontSize: 36}}/></Button>
   )
   if (processState?.state === "initialized") {
     // do nothing???
@@ -53,7 +53,7 @@ export function AgentProcess({agent, processState, handleAction, handleCancel}: 
       </div>
     )
     button = (
-      <Button variant={'text'} onClick={handleCancel}><CancelRoundedIcon style={{fontSize: 36}}/></Button>
+      <Button variant={'text'} onClick={handleCancel}><CancelRounded style={{fontSize: 36}}/></Button>
     )
   } else if (!processState) {
     content = (
@@ -111,11 +111,11 @@ export function AgentProcess({agent, processState, handleAction, handleCancel}: 
               flexDirection: 'column',
               justifyContent: 'space-between'
             }}>
-            {bigForm && (<Button onClick={toggleFormSize} variant={'text'}><RemoveCircleRoundedIcon
+            {bigForm && (<Button onClick={toggleFormSize} variant={'text'}><RemoveCircleRounded
               style={{fontSize: 18}}/></Button>)
             }
             {!bigForm &&
-              (<Button onClick={toggleFormSize} variant={'text'}><AddCircleRoundedIcon
+              (<Button onClick={toggleFormSize} variant={'text'}><AddCircleRounded
                 style={{fontSize: 18}}/></Button>)
             }
             {button}

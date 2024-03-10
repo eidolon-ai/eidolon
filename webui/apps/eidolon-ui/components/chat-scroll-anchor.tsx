@@ -1,9 +1,9 @@
 'use client'
 
-import * as React from 'react'
 import {useInView} from 'react-intersection-observer'
 
 import {useAtBottom} from '@/lib/hooks/use-at-bottom'
+import React from "react";
 
 interface ChatScrollAnchorProps {
   trackVisibility?: boolean

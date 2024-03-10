@@ -2,7 +2,6 @@
 
 import {ChatEvent, OperationInfo, ProcessState} from "@/lib/types";
 import {Avatar, Box, Divider} from "@mui/material";
-import * as React from "react";
 import {useEffect, useRef, useState} from "react";
 import {
   AgentStartElement,
