@@ -75,10 +75,20 @@ export default defineConfig({
                                 {label:'EidolonGPT', link: '/getting_started/tutorials/gpt'},
                                 {label:'Code Search', link: '/getting_started/tutorials/docs'}
                             ] 
-                        },
-                        {label: 'References', link: '/getting_started/references/'},
+                        }
                     ],
 // 					autogenerate: { directory: 'getting_started'},
+                },
+                {
+                    label: 'References',
+                    items: [
+                        {label: 'Introduction', link: '/references/introduction/'},
+                        {label: 'Setup', link: '/references/setup'},
+                        {label: 'Agent Communication', link: '/references/communication'},
+                        {label: 'Custom Agents', link: '/references/custom'},
+                        {label: 'Pluggable Resources', link: '/references/pluggable'},
+                        {label: 'Defining a Machine', link: '/references/defining'},
+                    ],
                 },
                 {
                     label: 'Architecture',

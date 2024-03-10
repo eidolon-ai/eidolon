@@ -9,7 +9,7 @@ Eidolon can do a lot of things, but sometimes the best way to learn is to start 
 
 In this tutorial, we'll guide you through the process of building a simple conversational agent using the Eidolon framework. This agent will be capable of understanding and responding to user inputs in a conversational manner, similar to GPTs you may be familiar with.
 
-[Check out our Tutorial on Github](https://github.com/eidolon-ai/eidolon/tree/main/examples/eidolon_examples/conversational_chatbot "Eidolon Conversational Chatbot Example")
+<a title="EidolonGTP Example" target="_blank" href="https://github.com/eidolon-ai/eidolon/tree/main/examples/eidolon_examples/conversational_chatbot">Check out our tutorial on github</a>
 
 #### Prerequisites
 
@@ -58,7 +58,7 @@ eidolon-server -m local_dev $AGENT_DIRECTORY
 
 This command starts the Eidolon server with your agent loaded. The `-m local_dev` option specifies using the `local_dev` built-in Machine resource, which uses in-memory symbolic memory so you don't need mongo running.
 
-Your backend machine (with your agent) is now running, and you can see available endpoints at the [swagger ui](http://localhost:8080/docs). 
+Your backend machine (with your agent) is now running, and you can see available endpoints at the <a title="swagger ui" target="_blank" href="http://localhost:8080/docs">swagger ui</a>.
 
 #### Step 4: Try It out!
 You can now create a new conversation, or `process`, on your agent.
@@ -80,13 +80,13 @@ If you want to interact with your conversational agent with a web rather than re
 
 It handles streaming and argument parsing so you can focus on the conversation.
 
-See the [eidolon-ui docs](https://github.com/eidolon-ai/eidolon/tree/main/webui) to get started.
+See the <a title="ui docs" target="_blank" href="https://github.com/eidolon-ai/eidolon/tree/main/webui">eidolon-ui docs</a> to get started.
 
 #### Next Steps
 You have now built a conversational agent using Eidolon, and perhaps even ran the Eidolon UI. Congratulations!
 
 Try experimenting with the system prompt to see how you can customize your Agent. Similarly, there is much more to a "SimpleAgent" (the default type of agent) 
 than fits in this example. To learn see to introduce custom user-prompts, multiple actions, or even a state machine take a look at the 
-[SimpleAgentSpec](https://github.com/eidolon-ai/eidolon/blob/main/sdk/eidolon_ai_sdk/agent/simple_agent.py)
+<a target="_blank" href="https://github.com/eidolon-ai/eidolon/blob/main/sdk/eidolon_ai_sdk/agent/simple_agent.py">SimpleAgentSpec</a>
 
 
