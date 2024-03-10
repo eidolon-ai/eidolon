@@ -34,6 +34,7 @@ if (providerTypes.includes('google')) {
 }
 
 if (providerTypes.includes('azure')) {
+  const default_scope = process.env.AZURE_AD_CLIENT_ID + "/.default"
   providers.push(
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID!,
@@ -41,7 +42,7 @@ if (providerTypes.includes('azure')) {
       tenantId: process.env.AZURE_AD_TENANT_ID,
       authorization: {
         params: {
-          scope: "openid profile email " + process.env.AZURE_AD_PROFILE_EMAIL,
+          scope: `openid profile email ${default_scope}`,
         },
       }
     }),
