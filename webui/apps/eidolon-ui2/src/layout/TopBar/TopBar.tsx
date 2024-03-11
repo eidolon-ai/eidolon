@@ -12,6 +12,8 @@ interface Props {
  * @component TopBar
  */
 const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...restOfProps }) => {
+  // const {data: session} = useServerSession()
+
   return (
     <AppBar
       component="div"

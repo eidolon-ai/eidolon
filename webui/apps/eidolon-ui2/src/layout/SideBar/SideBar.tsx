@@ -4,7 +4,7 @@ import { Stack, Divider, Drawer, DrawerProps, FormControlLabel, Switch, Tooltip 
 import { AppIconButton } from '../../components';
 import { useAppStore } from '../../store/AppStore';
 import { LinkToPage } from '../../utils/type';
-import { useEventLogout, useEventSwitchDarkMode, useOnMobile } from '../../hooks';
+import {useEventLogout, useEventSwitchDarkMode, useIsAuthenticated, useOnMobile} from '../../hooks';
 import SideBarNavList from './SideBarNavList';
 import { SIDEBAR_WIDTH, TOP_BAR_DESKTOP_HEIGHT } from '../config';
 
@@ -24,6 +24,7 @@ interface Props extends Pick<DrawerProps, 'anchor' | 'className' | 'open' | 'var
 const SideBar: FunctionComponent<Props> = ({ anchor, open, variant, items, onClose, ...restOfProps }) => {
   const [state] = useAppStore();
   const onMobile = useOnMobile();
+  const isAuthenticated = useIsAuthenticated()
 
   const onSwitchDarkMode = useEventSwitchDarkMode();
   const onLogout = useEventLogout();
@@ -36,7 +37,6 @@ const SideBar: FunctionComponent<Props> = ({ anchor, open, variant, items, onClo
     },
     [variant, onClose]
   );
-
   return (
     <Drawer
       anchor={anchor}
@@ -79,7 +79,7 @@ const SideBar: FunctionComponent<Props> = ({ anchor, open, variant, items, onClo
             />
           </Tooltip>
 
-          {state.isAuthenticated && <AppIconButton icon="logout" title="Logout Current User" onClick={onLogout} />}
+          {isAuthenticated && <AppIconButton icon="logout" title="Logout Current User" onClick={onLogout} />}
         </Stack>
       </Stack>
     </Drawer>
