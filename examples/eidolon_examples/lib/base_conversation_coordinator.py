@@ -10,7 +10,8 @@ from typing import Tuple, List, TypeVar, Dict, Any, cast
 from eidolon_ai_client.client import Machine
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_client.events import (
-    EndStreamContextEvent, StartStreamContextEvent,
+    EndStreamContextEvent,
+    StartStreamContextEvent,
 )
 from eidolon_ai_sdk.system.reference_model import Specable
 
@@ -48,7 +49,9 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
     def speak_to_agents(self, process_id: str, agents: List[str], message: str):
         # todo -- this needs to record the response from each agent and send it to all other agents
-        return self._run_action_in_agents_stream(process_id, agents, Action(action_name="speak", args={"message": message}))
+        return self._run_action_in_agents_stream(
+            process_id, agents, Action(action_name="speak", args={"message": message})
+        )
 
     def get_all_agent_thoughts(self, process_id: str, message: str):
         return self._run_action_in_all_agents(process_id, Action(action_name="get_thoughts", args={"message": message}))
@@ -109,7 +112,9 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
 
     async def _run_action_in_agents(self, process_id, agents: List[str], action: Action) -> List[Tuple[str, T]]:
         async def run_one(agent_name: str, agent_pid: str) -> Tuple[str, T]:
-            return agent_name, await Machine().agent(agent_name).process(agent_pid).action(action.action_name, action.args)
+            return agent_name, await Machine().agent(agent_name).process(agent_pid).action(
+                action.action_name, action.args
+            )
 
         conversation_state = await self._restore_state(process_id)
         tasks = []
@@ -122,7 +127,6 @@ class BaseConversationCoordinator(ABC, Specable[BaseConversationCoordinatorSpec]
     async def _restore_state(self, process_id) -> ConversationState:
         result = await AgentOS.symbolic_memory.find_one("conversation_coordinator", {"process_id": process_id})
         return ConversationState.model_validate(result)
-
 
     def choose_agents_to_speak(self, num_concurrent_conversations: int, desire_to_speak: Dict[str, float]) -> List[str]:
         agents_to_speak = []

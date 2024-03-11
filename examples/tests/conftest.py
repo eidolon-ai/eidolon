@@ -74,4 +74,3 @@ def server_loc():
 
 def get_process_id(server_loc, agent: str):
     return requests.post(f"{server_loc}/agents/{agent}/processes").json()["process_id"]
-
