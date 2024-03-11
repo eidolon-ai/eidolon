@@ -10,7 +10,6 @@ export interface Chat extends Record<string, any> {
   parent_process_id?: string
   created: string
   updated: string
-  userId: string
   path: string
   sharePath?: string
   children?: Chat[]

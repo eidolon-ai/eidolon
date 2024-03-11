@@ -1,36 +1,39 @@
+// noinspection JSUnusedGlobalSymbols
+
 'use client'
 
-import {Chat} from "@/lib/types";
+import {Chat} from "../lib/types.js";
 import {Box, Button, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {SidebarItem} from "@/components/sidebar-item";
-import {usePathname, useRouter} from "next/navigation";
-import {StartProgramDialog} from "@/components/agent-input/start-program-dialog";
-import {useSession} from "next-auth/react";
-import {deleteChat, getChatsForUI} from "@/app/api/chat/messages/chatHelpers";
+import {ProcessSummary} from "./process-summary.js";
+import {deleteChat, getChatsForUI} from "./process-list-helpers.js";
 
-export function SidebarList() {
-  const {data: session} = useSession()
+export interface ProcessListProps {
+  isSelected: (chat: Chat) => boolean
+  selectChat: (chat: Chat) => void
+  goHome: () => void
+  createChat: () => void
+}
 
-  const pathname = usePathname()
-  const router = useRouter()
+export function ProcessList({isSelected, selectChat, goHome, createChat}: ProcessListProps) {
   const [dataByDate, setDataByDate] = useState<Record<string, Chat[]>>({})
-  const handleDelete = (agentName: string, process_id: string) => {
-    deleteChat(agentName, process_id).then(() => {
-      if (pathname === `/chat/${process_id}`) {
+  const handleDelete = (chat: Chat) => {
+    const process_id = chat.process_id
+    deleteChat(process_id).then(() => {
+      if (isSelected(chat)) {
         // get the previous item in the list from the current process_id and navigate to it by iterating through the
         // dataByDate object and then each array of chats, keeping the previous item in a variable
         let previousItem: Chat | undefined
         let replaceWithNextItem = false
-        for (const [date, chats] of Object.entries(dataByDate)) {
+        for (const [_date, chats] of Object.entries(dataByDate)) {
           for (const chat of chats) {
             if (replaceWithNextItem) {
-              return router.replace(`/chat/${chat.process_id}`)
+              return selectChat(chat)
             }
             if (chat.process_id === process_id) {
               if (previousItem) {
-                return router.replace(`/chat/${previousItem.process_id}`)
+                return selectChat(previousItem)
               } else {
                 replaceWithNextItem = true
               }
@@ -38,7 +41,7 @@ export function SidebarList() {
             previousItem = chat
           }
         }
-        return router.replace("/")
+        goHome()
       }
     }).then(() => getChatsForUI().then(chats => setDataByDate(chats)))
   }
@@ -48,13 +51,6 @@ export function SidebarList() {
     return () => {
     }
   }, []);
-
-  const [open, setOpen] = React.useState(false)
-
-  const onDialogClose = (wasCanceled: boolean) => {
-    setOpen(false)
-    getChatsForUI().then(chats => setDataByDate(chats))
-  }
 
   let listComponents = (
     <List>
@@ -74,7 +70,13 @@ export function SidebarList() {
               <ListSubheader>{date}</ListSubheader>
               {chats.map(chat => {
                 return (
-                  <SidebarItem key={chat.id} chat={chat} handleDelete={handleDelete}/>
+                  <ProcessSummary
+                    key={chat.id}
+                    chat={chat}
+                    handleDelete={handleDelete}
+                    isSelected={isSelected}
+                    selectChat={selectChat}
+                  />
                 )
               })}
             </Box>
@@ -84,10 +86,6 @@ export function SidebarList() {
     )
   }
 
-  if (!session?.user) {
-    return
-  }
-
   return (
     <>
       <Button
@@ -95,8 +93,7 @@ export function SidebarList() {
         sx={{margin: '8px 16px 16px 16px '}}
         // disabled={isCreatePending}
         onClick={(event) => {
-          // todo -- change to create a new pid for the
-          setOpen(true)
+          createChat()
           // router.push("?modal=true")
           event.preventDefault()
           event.stopPropagation()
@@ -107,7 +104,6 @@ export function SidebarList() {
       <Box sx={{overflow: 'auto'}}>
         {listComponents}
       </Box>
-      <StartProgramDialog open={open} onClose={onDialogClose}/>
     </>
   )
 }

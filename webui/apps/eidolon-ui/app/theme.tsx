@@ -6,7 +6,7 @@ import {Roboto} from 'next/font/google';
 import * as React from "react";
 import {PropsWithChildren} from "react";
 import {Box, CssBaseline, Drawer, Toolbar} from "@mui/material";
-import {SidebarList} from "@/components/sidebar-list";
+import {ProcessList} from "@/components/process-list";
 import {Header} from "@/components/header";
 
 const roboto = Roboto({
@@ -71,7 +71,7 @@ export function MyProvider({children}: PropsWithChildren) {
           }}
         >
           <Toolbar/>
-          <SidebarList/>
+          <ProcessList/>
         </Drawer>
         <Box component="main" flexGrow={1}>
           <Toolbar/>

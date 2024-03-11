@@ -7,7 +7,7 @@ import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, List
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export function SidebarItem({chat, handleDelete}: {
+export function ProcessSummary({chat, handleDelete}: {
   chat: Chat,
   handleDelete: (agentName: string, process_id: string) => void
 }) {
@@ -55,7 +55,7 @@ export function SidebarItem({chat, handleDelete}: {
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {chat.children!.map(
-              child => (<SidebarItem key={child.process_id} handleDelete={handleDelete} chat={child}/>))}
+              child => (<ProcessSummary key={child.process_id} handleDelete={handleDelete} chat={child}/>))}
           </List>
         </Collapse>
       )}
