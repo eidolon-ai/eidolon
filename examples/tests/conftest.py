@@ -1,11 +1,15 @@
 import os
 import pathlib
 import subprocess
+
+import dotenv
 import time
 from contextlib import contextmanager
 
 import pytest
 from jsonref import requests
+
+dotenv.load_dotenv()
 
 
 def tail(file_path, sleep_sec=0.1):
