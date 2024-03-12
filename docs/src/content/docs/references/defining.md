@@ -18,7 +18,7 @@ metadata:
 
 spec:
   symbolic_memory:
-    implementation: "eidolon_ai_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    implementation: "MongoSymbolicMemory"
     mongo_database_name: "eidolon"
 ```
 
