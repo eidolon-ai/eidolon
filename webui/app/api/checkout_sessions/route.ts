@@ -1,19 +1,21 @@
-import type {NextApiRequest, NextApiResponse} from 'next';
+import type {NextRequest, } from 'next/server';
 import Stripe from 'stripe';
 import {redirect} from "next/navigation";
-import { NextResponse } from 'next/server';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const baseURL = process.env.NEXTAUTH_URL;
-
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+const stripePriceId = process.env.STRIPE_PRICE_ID;
+export async function POST(req: NextRequest, res: Response) {
   try {
     // Create Checkout Sessions from body params.
     console.log("stripe_before")
     const session = await stripe.checkout.sessions.create({
       line_items: [{
         // Provide the exact Price ID of the product you want to sell
-        price: 'price_1OoGyiGBK4zTc9Yyi2Nk52on',
+        price: stripePriceId,
         quantity: 1,
       }],
       mode: 'payment',
@@ -25,7 +27,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     // Redirect to the session URL
     console.log(res)
     console.log("*****session", session.url)
-    return NextResponse.redirect(session.url!, 302);
+    return Response.redirect(session.url!, 302);
   } catch (err) {
     // Make sure to return a response in case of error
     console.error('Error creating Stripe Session:', err);

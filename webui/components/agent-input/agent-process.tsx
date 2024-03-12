@@ -18,10 +18,11 @@ interface AgentProcessProps {
   handleCancel: () => void
 }
 
+const eidolonServer = process.env.EIDOLON_SERVER
 export function AgentProcess({agent, processState, handleAction, handleCancel}: AgentProcessProps) {
   const [bigForm, setBigForm] = useState(false)
 
-  const [client] = useState(new EidolonClient("http://localhost:8080"))
+  const [client] = useState(new EidolonClient(eidolonServer || "http://localhost:8080"))
   const [operations, setOperations] = useState<OperationInfo[]>([])
   useEffect(() => {
     if (processState?.available_actions) {

@@ -45,9 +45,9 @@ export default function SignInPage() {
             key={provider}  // Add this line
             variant={"outlined"}
             startIcon={icon}
-            onClick={() => {
+            onClick={async () => {
               setIsLoading(true)
-              signIn(provider, { callbackUrl: `/check?added=true` });
+              await signIn(provider, { callbackUrl: `/` });
             }}
           >
             {text}

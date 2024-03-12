@@ -8,9 +8,9 @@ const chatServerURL = process.env.EIDOLON_SERVER
 const getUserId = (async () => (await getServerSession(authOptions))?.user?.id)
 
 export async function POST(req: Request) {
+  console.log('Fetching SSE stream')
   const params = await req.json()
   try {
-
     const response = await fetch(`${chatServerURL}${params.path}`, {
       method: "POST",
       body: JSON.stringify(params.data),

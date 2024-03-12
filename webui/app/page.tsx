@@ -11,6 +11,6 @@ export default async function IndexPage() {
   }
 
   return (
-    <img src="/background.png" alt="background" style={{height:"100%", opacity:.8}} />
+    <img src="/background.png" alt="background" style={{height:"100%", width: "100%", opacity:1}} />
   )
 }

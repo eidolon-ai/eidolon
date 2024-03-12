@@ -36,13 +36,13 @@ function PaperComponent(props: PaperProps) {
 
 export function StartProgramDialog({open, onClose}: { open: boolean, onClose: (wasCanceled: boolean) => void }) {
   const router = useRouter()
-
+  const eidolonServer = process.env.EIDOLON_SERVER
   const [title, setTitle] = useState<string>("")
   const [agent, setAgent] = useState<string>("")
 
   const [agents, setAgents] = useState<string[]>([])
   useEffect(() => {
-    const client = new EidolonClient("http://localhost:8080")
+    const client = new EidolonClient(eidolonServer || "http://localhost:8080")
     client.getAgents().then(agents => {
       setAgents(agents)
       setAgent(agents[0])
@@ -120,3 +120,5 @@ export function StartProgramDialog({open, onClose}: { open: boolean, onClose: (w
     </Dialog>
   )
 }
+
+//updated envar

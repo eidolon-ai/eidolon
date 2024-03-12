@@ -21,9 +21,12 @@ export function Header() {
   };
 
   const handleSignout = async () => {
-    await signOut()
+    await signOut({ redirect: false }).then(() => {
+      router.push('/');
+    });
     setAnchorEl(null);
   };
+  
 
   const getIcon = () => {
     if (!session?.user?.image) {

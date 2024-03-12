@@ -1,87 +1,88 @@
+'use server'
 import { createConnection } from 'mysql2/promise';
 import { config } from 'dotenv';
-import {getServerSession} from "next-auth";
+import {getServerSession, Session} from "next-auth";
 import { RowDataPacket } from 'mysql2';
+import { NextRequest, NextResponse } from 'next/server';
 
-
-
-// Load environment variables for database configuration
 config();
-
-// Database configuration
-const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: Number(process.env.DB_PORT || 3306),
-};
-
-
-  
-  // Assuming sesh.user is of type User
-export async function POST(req: Request): Promise<Response> {
-    try {
-        const sesh = await getServerSession(); // Make sure to pass `req` if your session function needs it
-        let email: string | null = null; // Default to null, adjust as needed
-
-        if (sesh && sesh.user && sesh.user.email) {
-            email = sesh.user.email;
-        }
-
-        // Ensure email is present
-        if (!email) {
-            return new Response(JSON.stringify({ error: 'No email provided' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' },
-            });
-        }
-
-        const connection = await createConnection(dbConfig);
-
-        // First, check if the user already exists
-        const [users] = await connection.execute<RowDataPacket[]>(
-            `SELECT * FROM users WHERE email = ?`,
-            [email]
-        );
-
-        // Now you can safely check users.length because TypeScript knows users is an array
-        if (users.length === 0) {
-            // User does not exist, add them with default tokens
-            await connection.execute(
-                `INSERT INTO users (name, email, google_image_url, token_remaining, signup_date) VALUES (?, ?, ?, 5, NOW())`,
-                [sesh?.user?.name, email, sesh?.user?.image]
-            );
-            console.log('User added with default tokens');
-        } else {
-            // User exists, update their tokens
-            await connection.execute(
-                `UPDATE users SET token_remaining = token_remaining + 5 WHERE email = ?`,
-                [email]
-            );
-            console.log('Tokens updated for existing user');
-        }
-
-        await connection.end();
-        return new Response(JSON.stringify({ message: 'Operation successful' }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    } catch (error) {
-        console.error(error);
-        return new Response(JSON.stringify({ error: 'Failed to execute operation' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    }
+interface DbConfig {
+    host: string;
+    user: string;
+    password: string;
+    database: string;
+    port: number;
+    ssl: {
+        ca: string;
+    };
 }
+
+const caCert = process.env.CA_CERT;
+
+// Configure the database connection
+const dbConfig: DbConfig = {
+        host: process.env.DB_HOST || "",
+        user: process.env.DB_USER || "",
+        password: process.env.DB_PASSWORD || "",
+        database: process.env.DB_NAME || "",
+        port: parseInt(process.env.DB_PORT || "3306"),
+        ssl: {
+            ca: caCert || "",
+        },
+    };
+
+
+
+
+export async function POST(req: NextRequest, res: NextResponse) {
+    try {
+      const { email, name, image } = await req.json();
+      await createUser(email, name, image);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function createUser(email: string | undefined, name: string | undefined, image: string | undefined) {
+    try {
+      if (!email) {
+        throw new Error('Email not found in session');
+      }
+  
+      const connection = await createConnection(dbConfig);
+  
+      try {
+        const [users] = await connection.execute<RowDataPacket[]>(
+          `SELECT * FROM users WHERE email = ?`,
+          [email]
+        );
+  
+        if (users.length === 0) {
+          // User does not exist, add them with default tokens.
+          await connection.execute(
+            `INSERT INTO users (name, email, google_image_url, token_remaining, signup_date) VALUES (?, ?, ?, 5, NOW())`,
+            [name, email, image]
+          );
+          console.log('User added with default tokens');
+        } else {
+          // User exists. Consider not updating tokens or handle other user-specific updates here.
+          console.log('Existing user logged in');
+        }
+      } finally {
+        await connection.end();
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
 
 
 export async function GET(req: Request): Promise<Response> {
     console.log('GET request');
     try {
-        const sesh = await getServerSession(req); // Make sure to pass `req` if your session function needs it
+        const sesh = await getServerSession(); // Make sure to pass `req` if your session function needs it
         
         let email = sesh?.user?.email;
         if (!email) {
@@ -92,6 +93,7 @@ export async function GET(req: Request): Promise<Response> {
         }
 
         const connection = await createConnection(dbConfig);
+        console.log('Connection established')
         const [users] = await connection.execute<RowDataPacket[]>(
             `SELECT token_remaining FROM users WHERE email = ?`,
             [email]

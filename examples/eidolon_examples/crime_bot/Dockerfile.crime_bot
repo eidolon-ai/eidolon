@@ -1,0 +1,45 @@
+ARG EIDOLON_VERSION=latest
+FROM docker.io/eidolonai/sdk:$EIDOLON_VERSION
+ENV PYTHONUNBUFFERED=1
+ENV OPENAI_API_KEY=$OPENAI_API_KEY
+ENV MONGO_DB_NAME=$MONGO_DB_NAME
+ENV MONGO_CONNECTION_STRING=$MONGO_CONNECTION_STRING
+ENV CRIME_SQL_CONNECTION_STRING=$CRIME_SQL_CONNECTION_STRING
+# Add the ODBC configuration file
+ADD odbcinst.ini /etc/odbcinst.ini
+
+# Install system dependencies required for your project
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+        gnupg2 \
+        unixodbc-dev \
+        apt-transport-https \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Poetry for Python package management
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    ln -s $HOME/.local/bin/poetry /usr/local/bin/poetry
+
+# Configure Poetry: do not create a virtual environment
+RUN poetry config virtualenvs.create false
+
+# Copy only the necessary files for installing dependencies to avoid Docker cache busting
+COPY pyproject.toml poetry.lock* /
+
+# Install Python dependencies
+RUN poetry install --no-interaction --no-ansi
+
+# Copy the rest of your application code
+COPY resources /resources
+COPY agent_machine /agent_machine
+ENV PYTHONPATH="${PYTHONPATH}:/agent_machine"
+
+
+WORKDIR /
+
+CMD ["eidolon-server", "resources/", "-m", "local_dev"]
