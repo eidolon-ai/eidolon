@@ -1,14 +1,14 @@
 ---
-title: Welcome to Eidolon
-description: An Open Source Agent Services Framework
+title: Build with Eidolon
+description: Open Source Agent Services Framework
 template: splash
 hero:
-  tagline: An Open Source Agent Services Framework
+  tagline: Open Source Agent Services Framework
   image:
     file: ../../assets/main_images/eidolon_with_gradient.png
   actions:
-    - text: Get Started
-      link: /getting_started/quickstart/
+    - text: Quickstart Guide
+      link: /getting_started/quickstart/introduction
       icon: right-arrow
       variant: primary
     - text: View on GitHub
@@ -22,15 +22,19 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 <CardGrid>
 	<Card title="Examples" icon="pencil">
-		 Hate writing docs? [Build an Agent for that](https://github.com/eidolon-ai/eidolon/tree/main/examples/eidolon_examples/code_search "Code Search Example")
+		Hate writing docs? <a target="_blank" title="Code Search Example" href="https://github.com/eidolon-ai/eidolon/tree/main/examples/eidolon_examples/code_search">We've built an Agent for that</a>
+		<br/>
+		<a target="_blank" title="" href="https://github.com/eidolon-ai/eidolon/tree/main/examples/eidolon_examples">Browse examples Built with Eidolon</a>
 	</Card>
 	<Card title="Demos" icon="youtube">
-		 [Deploy a chatbot](https://www.youtube.com/watch?v=jU_HYhWm6qE "Chatbot demo") to help Swifties learn about Travis Kelce.
+		[Deploy a chatbot](/getting_started/demos/swifties) to help Swifties learn about Travis Kelce
+		<br/>
+		[Browse Video Demos of Eidolon](/getting_started/demos/introduction)
 	</Card>
-	<Card title="Architecture" icon="open-book">
-		The operating system for LLM agents. [Learn More](/architecture/introduction/ "Eidolon Architecture")
+	<Card title="Docs" icon="open-book">
+		Browse the [documentation](/introduction) for Eidolon
 	</Card>
-	<Card title="References" icon="document">
-		Feature [Documentation](/getting_started/references/ "Eidolon Getting started").
+	<Card title="Community" icon="discord">
+		Connect with Eidolon on [Discord](https://discord.com/invite/6kVQrHpeqG "Eidolon Discord")
 	</Card>
 </CardGrid>
