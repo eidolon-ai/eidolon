@@ -1,3 +1,0 @@
-import LoginPage from '../login/page';
-
-export default LoginPage; // Just reuse a Login page as a demo...

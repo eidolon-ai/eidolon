@@ -1,16 +1,27 @@
-import { Metadata, NextPage } from 'next';
-import { Stack, Typography } from '@mui/material';
-import { AppLink } from '@/components';
-import DemoAppAlert from '../dev/components/DemoAppAlerts';
-import DemoAppButton from '../dev/components/DemoAppButton';
-import DemoAppIcon from '../dev/components/DemoAppIcon';
-import DemoAppIconButton from '../dev/components/DemoAppIconButton';
-import DemoAppImage from '../dev/components/DemoAppImage';
+import {Metadata, NextPage} from 'next';
+import {Grid, Paper, Typography} from '@mui/material';
 
 export const metadata: Metadata = {
   title: '_TITLE_',
   description: '_DESCRIPTION_',
 };
+
+export const applications = {
+  "dev": {
+    "name": "Eidolon Developer Tool",
+    "description": "The developer tools can be used to test and debug any Eidolon operation.",
+    "version": "0.1.0",
+    "image": "/"
+  }
+}
+
+const Item = () => {
+  return (
+    <Paper sx={{p: 2, textAlign: 'center'}}>
+      <Typography variant="h6">xs=2</Typography>
+    </Paper>
+  )
+}
 
 /**
  * Main page of the Application
@@ -18,25 +29,13 @@ export const metadata: Metadata = {
  */
 const Home: NextPage = () => {
   return (
-    <Stack spacing={2} padding={2}>
-      <Stack>
-        <Typography variant="h3">About application</Typography>
-        <Typography variant="body1">
-          This application is a mix of{' '}
-          <AppLink href="https://nextjs.org/docs/api-reference/create-next-app">Create Next App</AppLink> and{' '}
-          <AppLink href="https://mui.com/">MUI</AppLink> with set of reusable components and utilities to build
-          professional <AppLink href="https://nextjs.org/">NextJS</AppLink> application faster.
-        </Typography>
-      </Stack>
-
-      <Stack alignItems="center" spacing={1}>
-        <DemoAppAlert />
-        <DemoAppButton />
-        <DemoAppIcon />
-        <DemoAppIconButton />
-        <DemoAppImage />
-      </Stack>
-    </Stack>
+    <Grid container spacing={{xs: 3, md: 3}} columns={{xs: 4, sm: 8, md: 12}}>
+      {Array.from(Array(6)).map((_, index) => (
+        <Grid item xs={2} sm={4} md={4} key={index}>
+          <Item></Item>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

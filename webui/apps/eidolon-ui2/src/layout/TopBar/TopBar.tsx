@@ -1,17 +1,25 @@
-import { AppBar, Toolbar, Typography } from '@mui/material';
-import { FunctionComponent, ReactNode } from 'react';
+import {AppBar, Avatar, Button, Divider, FormControl, FormHelperText, InputLabel, MenuItem, Select, Toolbar, Typography} from '@mui/material';
+import {FunctionComponent, ReactNode} from 'react';
+import {HEADER_BG_COLOR_DARK, HEADER_BG_COLOR_LIGHT, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT} from "../config";
+import {useOnMobile} from "../../hooks/index";
+import {useAppStore} from "../../store/index";
+import * as React from "react";
+import {useRouter} from "next/navigation";
 
 interface Props {
   endNode?: ReactNode;
   startNode?: ReactNode;
   title?: string;
+  goToApp: (app: string) => void
 }
 
 /**
  * Renders TopBar composition
  * @component TopBar
  */
-const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...restOfProps }) => {
+const TopBar: FunctionComponent<Props> = ({goToApp, endNode, startNode, title = '', ...restOfProps}) => {
+  const onMobile = useOnMobile();
+  const [state, dispatch] = useAppStore();
   // const {data: session} = useServerSession()
 
   return (
@@ -19,26 +27,37 @@ const TopBar: FunctionComponent<Props> = ({ endNode, startNode, title = '', ...r
       component="div"
       sx={
         {
+          justifyContent: 'center',
+          height: onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT,
+          bgcolor: state.darkMode ? HEADER_BG_COLOR_DARK : HEADER_BG_COLOR_LIGHT,
           // boxShadow: 'none', // Uncomment to hide shadow
         }
       }
       {...restOfProps}
     >
-      <Toolbar disableGutters sx={{ paddingX: 1 }}>
+      <Toolbar variant={"dense"} disableGutters sx={{
+        paddingX: 1,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
         {startNode}
 
-        <Typography
-          variant="h6"
-          sx={{
-            marginX: 1,
-            flexGrow: 1,
-            textAlign: 'center',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {title}
-        </Typography>
-
+        <FormControl variant="standard" sx={{m: '1px', minWidth: '300px'}} size="small">
+          <InputLabel id="choose_app_label">Choose Application</InputLabel>
+          <Select
+            id="choose-app"
+            labelId={"choose_app_label"}
+            margin={"dense"}
+            value={""}
+            // onChange={handleChange}
+            label="Age"
+            sx={{fontSize: '.75em', margin: '0px', padding: '0px'}}
+          >
+            <MenuItem value={10}>Ten</MenuItem>
+            <MenuItem value={20}>Twenty</MenuItem>
+            <MenuItem value={30}>Thirty</MenuItem>
+          </Select>
+        </FormControl>
         {endNode}
       </Toolbar>
     </AppBar>

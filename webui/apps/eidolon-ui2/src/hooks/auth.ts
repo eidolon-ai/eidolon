@@ -1,19 +1,16 @@
-import { useCallback } from 'react';
-import { sessionStorageGet, sessionStorageDelete } from '@/utils/sessionStorage';
-import { useAppStore } from '../store';
+import {useCallback} from 'react';
+import {sessionStorageDelete} from '@/utils/sessionStorage';
+import {useAppStore} from '../store';
+import {useSession} from "next-auth/react";
+import {auth} from "../../auth";
 
 /**
  * Hook to detect is current user authenticated or not
  * @returns {boolean} true if user is authenticated, false otherwise
  */
-export function useIsAuthenticated() {
-  const [state] = useAppStore();
-  let result = state.isAuthenticated;
-
-  // TODO: AUTH: replace next line with access token verification
-  result = Boolean(sessionStorageGet('access_token', ''));
-
-  return result;
+export function useIsAuthenticated(): boolean {
+  const session = useSession();
+  return !!session?.data;
 }
 
 /**

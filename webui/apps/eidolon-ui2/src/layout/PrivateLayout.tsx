@@ -1,23 +1,19 @@
 'use client';
-import { useState, useCallback, FunctionComponent, PropsWithChildren } from 'react';
-import { useRouter } from 'next/navigation';
-import { Stack } from '@mui/material';
-import { AppIconButton } from '@/components';
+import * as React from 'react';
+import {FunctionComponent, PropsWithChildren, useCallback, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Avatar, Button, Stack, Typography} from '@mui/material';
 import ErrorBoundary from '../components/ErrorBoundary';
 import SideBar from './SideBar';
 import TopBar from './TopBar';
-import { LinkToPage } from '../utils/type';
-import { useOnMobile } from '../hooks/layout';
-import {
-  SIDEBAR_DESKTOP_ANCHOR,
-  SIDEBAR_MOBILE_ANCHOR,
-  SIDEBAR_WIDTH,
-  TOP_BAR_DESKTOP_HEIGHT,
-  TOP_BAR_MOBILE_HEIGHT,
-} from './config';
+import {LinkToPage} from '../utils/type';
+import {useOnMobile} from '../hooks/index';
+import {SIDEBAR_DESKTOP_ANCHOR, SIDEBAR_MOBILE_ANCHOR, SIDEBAR_WIDTH, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT,} from './config';
+import {UserProfile} from "../components/UserProfile/UserProfile";
+import {UsageIndicator} from "../components/UsageIndicator/UsageIndicator";
 
 // TODO: change to your app name or other word
-const TITLE_PRIVATE = '_TITLE_ app'; // Title for pages after authentication
+const TITLE_PRIVATE = 'Eidolon'; // Title for pages after authentication
 
 /**
  * SideBar navigation items with links
@@ -48,15 +44,51 @@ if (process.env.NEXT_PUBLIC_DEBUG) {
   });
 }
 
+const RightSideBarItems = () => {
+  return (
+    <Stack direction="row" spacing={"16px"} alignItems={"center"} width={'240px'} minWidth={'240px'}>
+      <UsageIndicator></UsageIndicator>
+      <UserProfile/>
+    </Stack>
+  )
+}
+
+const HeaderStartItems = () => {
+  const router = useRouter()
+  return (
+    <div style={{width: '240px', minWidth: '240px', display: 'flex', alignItems: 'center'}}>
+      <Button
+        onClick={() => {
+          router.push('/')
+        }}
+      >
+        <Avatar src={"/img/eidolon_with_gradient.png"} sx={{height: "32px", width: "32px"}}/>
+      </Button>
+      <Typography
+        variant="h5"
+        sx={{
+          marginLeft: '0px',
+          textAlign: 'left',
+          whiteSpace: 'nowrap',
+          color: "darkgoldenrod"
+        }}
+        noWrap
+      >
+        Eidolon
+      </Typography>
+    </div>
+  )
+}
+
 /**
  * Renders "Private Layout" composition
  * @layout PrivateLayout
  */
-const PrivateLayout: FunctionComponent<PropsWithChildren> = ({ children }) => {
+const PrivateLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
   const router = useRouter();
   const onMobile = useOnMobile();
   const [sideBarVisible, setSideBarVisible] = useState(false);
-  const shouldOpenSideBar = onMobile ? sideBarVisible : true;
+  const shouldOpenSideBar = false;
   const title = TITLE_PRIVATE;
 
   const onLogoClick = useCallback(() => {
@@ -84,8 +116,14 @@ const PrivateLayout: FunctionComponent<PropsWithChildren> = ({ children }) => {
     >
       <Stack component="header">
         <TopBar
-          startNode={<AppIconButton icon="logo" onClick={shouldOpenSideBar ? onLogoClick : onSideBarOpen} />}
+          startNode={HeaderStartItems()}
+          endNode={RightSideBarItems()}
           title={title}
+          goToApp={
+            () => {
+              router.push('/dev')
+            }
+          }
         />
 
         <SideBar
