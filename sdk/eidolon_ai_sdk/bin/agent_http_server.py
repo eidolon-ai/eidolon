@@ -266,7 +266,6 @@ def start_app(lifespan):
     trace.set_tracer_provider(TracerProvider())
     LoggingInstrumentor().instrument()
 
-
     return _app
 
 

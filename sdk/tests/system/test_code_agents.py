@@ -38,24 +38,22 @@ class HelloWorld:
 
     @register_program()
     async def recurse(self, request: Request, n: Annotated[int, Body()]):
-
         child = None
         if n > 0:
             process = await Agent.get("HelloWorld").create_process()
-            rtn = await process.action("recurse", json=str(n-1))
+            rtn = await process.action("recurse", json=str(n - 1))
             child = rtn.data
         span = get_current_span()
         span_context = span.get_span_context()
         parent = None
         if hasattr(span, "parent") and span.parent:
-            parent = dict(trace=format(span.parent.trace_id, '032x'), span=format(span.parent.span_id, '016x'))
+            parent = dict(trace=format(span.parent.trace_id, "032x"), span=format(span.parent.span_id, "016x"))
         return dict(
-            self=dict(trace=format(span_context.trace_id, '032x'), span=format(span_context.span_id, '016x')),
+            self=dict(trace=format(span_context.trace_id, "032x"), span=format(span_context.span_id, "016x")),
             child=child,
             parent=parent,
-            traceparent=request.headers.get('traceparent')
+            traceparent=request.headers.get("traceparent"),
         )
-
 
     @register_program()
     async def idle(self, name: Annotated[str, Body()]):
@@ -236,19 +234,18 @@ class TestHelloWorld:
         process = await agent.create_process()
         resp = await process.action("recurse", json=2)
         outer = resp.data
-        middle = outer['child']
-        inner = middle['child']
+        middle = outer["child"]
+        inner = middle["child"]
 
-        assert not outer['parent']
-        assert middle['parent'] == outer['self']
-        assert inner['parent'] == middle['self']
-        assert not inner['child']
+        assert not outer["parent"]
+        assert middle["parent"] == outer["self"]
+        assert inner["parent"] == middle["self"]
+        assert not inner["child"]
 
-        assert middle['parent']['trace'] in middle['traceparent']
-        assert middle['parent']['span'] in middle['traceparent']
-        assert inner['parent']['trace'] in inner['traceparent']
-        assert inner['parent']['span'] in inner['traceparent']
-
+        assert middle["parent"]["trace"] in middle["traceparent"]
+        assert middle["parent"]["span"] in middle["traceparent"]
+        assert inner["parent"]["trace"] in inner["traceparent"]
+        assert inner["parent"]["span"] in inner["traceparent"]
 
 
 class StateMachine:
