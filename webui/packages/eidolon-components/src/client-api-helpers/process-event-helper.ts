@@ -1,6 +1,6 @@
 import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements.js";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
-import {ChatEvent, ProcessState} from "@repo/eidolon-client/client";
+import {ChatEvent} from "@repo/eidolon-client/client";
 
 const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
   const element = makeElement(event)
@@ -31,17 +31,18 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
   }
 }
 
-export async function executeServerAction(path: string, data: Record<string, any>, elementsAndLookup: ElementsAndLookup,
-                                          updateElements: (elements: ElementsAndLookup) => void, cancelFetchController: AbortController) {
+export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
+                                             data: Record<string, any>, elementsAndLookup: ElementsAndLookup,
+                                             updateElements: (elements: ElementsAndLookup) => void, cancelFetchController: AbortController) {
 
-  const response = await fetch(`/api/chat/messages`, {
+  const response = await fetch(`/eidolon/api/process/${processId}/messages`, {
     signal: cancelFetchController.signal,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Accept": "text/event-stream"
     },
-    body: JSON.stringify({path: path, data: data}),
+    body: JSON.stringify({machineUrl, agent, operation, data: data}),
   })
 
   const reader = response.body!.getReader();
@@ -71,10 +72,9 @@ export async function executeServerAction(path: string, data: Record<string, any
 
 }
 
-export async function getChatEventInUI(agentName: string, processId: string) {
-  const response = await fetch(`/api/chat/messages`, {
+export async function getChatEventInUI(processId: string) {
+  const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     method: "GET",
-    body: JSON.stringify({agentName: agentName, processId: processId}),
   })
 
   if (!response.ok) {
@@ -88,15 +88,4 @@ export async function getChatEventInUI(agentName: string, processId: string) {
   })
 
   return local_elements
-}
-
-
-export async function getPIDStatus(agentName: string, process_id: string) {
-    return fetch(`/api/agents/${agentName}/processes/${process_id}/status`)
-        .then(resp => {
-            if (resp.status === 404) {
-                return null
-            }
-            return resp.json().then((json: Record<string, any>) => json as ProcessState)
-        })
 }

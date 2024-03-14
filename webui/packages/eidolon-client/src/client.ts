@@ -8,6 +8,7 @@ export interface ChatEvent extends Record<string, any> {
 
 export interface OperationInfo {
   label: string
+  machine: string
   agent: string
   name: string
   path: string
@@ -39,6 +40,7 @@ export class EidolonClient {
   private processRequestBody(agent: string, name: string, path: string, requestBody: any) {
     const ret = {
       label: `${agent}:${name}`,
+      machine: this.machineUrl,
       agent: agent,
       name: name,
       path: path,

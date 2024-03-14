@@ -1,95 +1,16 @@
-import {Chat} from "../lib/types.js";
+import {ProcessStatus} from "../lib/types.js";
 import {DateTime, Interval} from "luxon";
 
-export async function getChat(id: string) {
-  const json = await fetch(`/api/chat/id`).then(resp => {
-    if (resp.ok) {
-      return resp.json()
-    } else {
-      console.log("error", resp)
-      return undefined
-    }
-  })
-
-  if (json) {
-    json.id = json.process_id
-    json.title = json.title || json.agent
-    json.path = `/chat/${json.id}`
-  }
-  return json as Chat
-}
-
-export async function deleteChat(process_id: string) {
-  await fetch(`/api/chat/${process_id}`, {
-    method: "DELETE",
-  })
-}
-
-export async function getChats(): Promise<Chat[]> {
-  const results = await fetch(`$/api/chat`,
-    {
-      // @ts-ignore
-      next: {tags: ['chats']},
-    }
-  ).then(resp => {
-    if (resp.status === 401) {
-      console.log('Unauthenticated! Status: 401');
-      return [];
-    } else if (!resp.ok) {
-      throw new Error(`HTTP error! status: ${resp.status}`);
-    }
-    return resp.json();
-  })
-
-  const ret = []
-  for (const json of results) {
-    json.id = json.process_id
-    json.title = json.title || json.agent
-    json.path = `/chat/${json.id}`
-    ret.push(json as Chat)
-  }
-
-  return ret
-}
-
-export async function getChatsForUI() {
-  let data = (await getChats()).sort((a, b) => {
-    return DateTime.fromISO(b.updated).toMillis() - DateTime.fromISO(a.updated).toMillis()
-  })
-  data = Object.values(data.reduce((collector, item) => {
-    if (!item.parent_process_id) {
-      collector[item.process_id] = {...collector[item.process_id], ...item}
-    } else {
-      if (!collector[item.parent_process_id]) {
-        collector[item.parent_process_id] = {
-          agent: item.agent,
-          id: item.parent_process_id,
-          title: item.parent_process_id,
-          state: "Draft",
-          path: `/chat/${item.parent_process_id}`,
-          created: item.created,
-          updated: item.updated,
-          process_id: item.parent_process_id,
-          children: []
-        }
-      }
-      if (!collector[item.parent_process_id]!.children) {
-        collector[item.parent_process_id]!.children = []
-      }
-      collector[item.parent_process_id]!.children!.push(item)
-    }
-    return collector
-  }, {} as Record<string, Chat>))
-
-  return data.reduce((collector, item) => {
+export const groupProcessesByUpdateDate = async (processes: ProcessStatus[]) => {
+  return processes.reduce((collector, item) => {
     const title = groupChat(item)
     if (!collector[title]) collector[title] = []
     collector[title]!.push(item)
     return collector
-  }, {} as Record<string, Chat[]>)
+  }, {} as Record<string, ProcessStatus[]>)
 }
 
-const groupChat = (item: Chat) => {
+const groupChat = (item: ProcessStatus) => {
   let dateTime = DateTime.fromISO(item.updated);
   return groups.reduce((reducer, fn) => {
     const test = fn(dateTime)

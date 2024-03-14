@@ -13,7 +13,6 @@
     "format:check": "prettier --check \"{app,lib,components}**/*.{ts,tsx,mdx}\" --cache"
   },
   "dependencies": {
-    "@repo/eidolon-components": "workspace:*",
     "@emotion/cache": "^11.11.0",
     "@mdi/js": "^7.4.47",
     "@mdi/react": "^1.6.1",

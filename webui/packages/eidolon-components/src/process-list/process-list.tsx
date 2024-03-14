@@ -2,29 +2,30 @@
 
 'use client'
 
-import {Chat} from "../lib/types.js";
+import {ProcessStatus} from "../lib/types.js";
 import {Box, Button, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {ProcessSummary} from "./process-summary.js";
-import {deleteChat, getChatsForUI} from "./process-list-helpers.js";
+import {deleteProcess, getRootProcesses} from "../client-api-helpers/process-helper.js";
+import {groupProcessesByUpdateDate} from "./group-processes.js";
 
 export interface ProcessListProps {
-  isSelected: (chat: Chat) => boolean
-  selectChat: (chat: Chat) => void
+  isSelected: (chat: ProcessStatus) => boolean
+  selectChat: (chat: ProcessStatus) => void
   goHome: () => void
   createChat: () => void
 }
 
 export function ProcessList({isSelected, selectChat, goHome, createChat}: ProcessListProps) {
-  const [dataByDate, setDataByDate] = useState<Record<string, Chat[]>>({})
-  const handleDelete = (chat: Chat) => {
+  const [dataByDate, setDataByDate] = useState<Record<string, ProcessStatus[]>>({})
+  const handleDelete = (chat: ProcessStatus) => {
     const process_id = chat.process_id
-    deleteChat(process_id).then(() => {
+    deleteProcess(process_id).then(() => {
       if (isSelected(chat)) {
         // get the previous item in the list from the current process_id and navigate to it by iterating through the
         // dataByDate object and then each array of chats, keeping the previous item in a variable
-        let previousItem: Chat | undefined
+        let previousItem: ProcessStatus | undefined
         let replaceWithNextItem = false
         for (const [_date, chats] of Object.entries(dataByDate)) {
           for (const chat of chats) {
@@ -43,11 +44,11 @@ export function ProcessList({isSelected, selectChat, goHome, createChat}: Proces
         }
         goHome()
       }
-    }).then(() => getChatsForUI().then(chats => setDataByDate(chats)))
+    }).then(() => getRootProcesses().then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats)))
   }
 
   useEffect(() => {
-    getChatsForUI().then(chats => setDataByDate(chats))
+    getRootProcesses().then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats))
     return () => {
     }
   }, []);
@@ -71,7 +72,7 @@ export function ProcessList({isSelected, selectChat, goHome, createChat}: Proces
               {chats.map(chat => {
                 return (
                   <ProcessSummary
-                    key={chat.id}
+                    key={chat.process_id}
                     chat={chat}
                     handleDelete={handleDelete}
                     isSelected={isSelected}

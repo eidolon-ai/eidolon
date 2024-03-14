@@ -4,26 +4,27 @@ import {Box} from "@mui/material";
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
 import {ElementsAndLookup} from "../lib/display-elements.js";
-import "./chat-events.css"
+import "./eidolon-events.css"
 import {AgentProcess} from "../form-input/agent-process.js";
 import {ChatScrollAnchor} from "./chat-scroll-anchor.js";
 import {ChatDisplayElement} from "./chat-display-element.js";
-import {executeServerAction, getChatEventInUI, getPIDStatus} from "./chat-events-helper.js";
+import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper.js";
 import {OperationInfo, ProcessState} from "@repo/eidolon-client/client";
+import {getProcessStatus} from "../client-api-helpers/process-helper.js";
 
 interface ChatEventProps {
   agentName: string,
   processId: string,
 }
 
-export function ChatEvents({agentName, processId}: ChatEventProps) {
+export function EidolonEvents({agentName, processId}: ChatEventProps) {
   const [elementsAndLookup, setElementsAndLookup] =
     useState<ElementsAndLookup>({elements: [], lookup: {}})
   const [processState, setProcessState] = useState<ProcessState | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
 
   function setAgentState() {
-    getPIDStatus(agentName, processId).then((status) => {
+    getProcessStatus(processId).then((status) => {
       if (status) {
         setProcessState(status)
       }
@@ -33,7 +34,7 @@ export function ChatEvents({agentName, processId}: ChatEventProps) {
   function getChatEvents() {
     setElementsAndLookup({elements: [], lookup: {}})
     setProcessState(undefined)
-    getChatEventInUI(agentName, processId).then((elements) => {
+    getChatEventInUI(processId).then((elements) => {
       if (elements) {
         setElementsAndLookup(elements)
       }
@@ -64,7 +65,7 @@ export function ChatEvents({agentName, processId}: ChatEventProps) {
     cancelFetchController.current = new AbortController();
     try {
       const path = operation.path.replace("{process_id}", processId)
-      await executeServerAction(path, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)
+      await executeServerOperation(operation.machine, operation.agent, operation.name, processId, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)
 
       setAgentState();
       cancelFetchController.current = null;

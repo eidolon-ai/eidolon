@@ -1,16 +1,16 @@
 'use client'
 
-import {Chat} from "../lib/types.js";
+import {ProcessStatus} from "../lib/types.js";
 import * as React from "react";
 import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText} from "@mui/material";
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {Delete} from '@mui/icons-material';
 
 export interface ProcessSummaryProps {
-  chat: Chat,
-  handleDelete: (chat: Chat) => void
-  isSelected: (chat: Chat) => boolean
-  selectChat: (chat: Chat) => void
+  chat: ProcessStatus,
+  handleDelete: (chat: ProcessStatus) => void
+  isSelected: (chat: ProcessStatus) => boolean
+  selectChat: (chat: ProcessStatus) => void
 }
 
 export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: ProcessSummaryProps) {
@@ -28,7 +28,7 @@ export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: Pro
       sx={{"&:hover .MuiListItemSecondaryAction-root": {visibility: "inherit"}}}
     >
       <ListItemButton
-        key={chat?.id}
+        key={chat?.process_id}
         selected={isSelected(chat)}
       >
         <ListItemIcon onClick={handleExpandClick}>
