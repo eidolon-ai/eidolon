@@ -48,11 +48,12 @@ class HelloWorld:
         span_context = span.get_span_context()
         parent = None
         if hasattr(span, "parent") and span.parent:
-            parent = dict(trace=str(span.parent.trace_id), span=str(span.parent.span_id))
+            parent = dict(trace=format(span.parent.trace_id, '032x'), span=format(span.parent.span_id, '016x'))
         return dict(
-            self=dict(trace=str(span_context.trace_id), span=str(span_context.span_id)),
+            self=dict(trace=format(span_context.trace_id, '032x'), span=format(span_context.span_id, '016x')),
             child=child,
             parent=parent,
+            traceparent=request.headers.get('traceparent')
         )
 
 
@@ -242,6 +243,11 @@ class TestHelloWorld:
         assert middle['parent'] == outer['self']
         assert inner['parent'] == middle['self']
         assert not inner['child']
+
+        assert middle['parent']['trace'] in middle['traceparent']
+        assert middle['parent']['span'] in middle['traceparent']
+        assert inner['parent']['trace'] in inner['traceparent']
+        assert inner['parent']['span'] in inner['traceparent']
 
 
 

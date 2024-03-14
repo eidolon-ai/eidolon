@@ -36,7 +36,6 @@ from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 from eidolon_ai_sdk.util.replay import ReplayConfig
-from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 
 dotenv.load_dotenv()
 
