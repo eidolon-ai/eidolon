@@ -12,10 +12,8 @@ from eidolon_ai_client.util.request_context import RequestContext
 
 
 # noinspection PyShadowingNames
-async def get_content(url: str, json: Optional[Dict[str, Any]] = None, **kwargs):
+async def get_content(url: str, **kwargs):
     params = {"url": url, "headers": _headers()}
-    if json:
-        params["json"] = json
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         response = await client.get(**params, **kwargs)
         await AgentError.check(response)

@@ -50,7 +50,6 @@ eidolon-ai-client = "^0.1.2"
 opentelemetry-instrumentation-fastapi = "^0.44b0"
 opentelemetry-instrumentation-logging = "^0.44b0"
 opentelemetry-sdk = "^1.23.0"
-opentelemetry-instrumentation-httpx = "^0.44b0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"

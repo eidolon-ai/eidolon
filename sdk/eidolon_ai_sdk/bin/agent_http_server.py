@@ -251,12 +251,6 @@ def main():
 # noinspection PyTypeChecker
 def start_app(lifespan):
     _app = FastAPI(lifespan=lifespan)
-
-    @_app.get(path="/luke", tags=["test"], description="Luke is a not understanding why this isn't working")
-    async def health():
-        return {"status": "ok"}
-
-
     _app.add_middleware(ContextMiddleware)
     _app.add_middleware(
         CORSMiddleware,
@@ -271,7 +265,7 @@ def start_app(lifespan):
 
     FastAPIInstrumentor.instrument_app(_app)
     trace.set_tracer_provider(TracerProvider())
-    LoggingInstrumentor().instrument(set_logging_format=True)
+    LoggingInstrumentor().instrument()
 
 
     return _app
