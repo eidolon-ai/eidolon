@@ -24,6 +24,4 @@ Permission = Literal["create", "read", "update", "delete"]  # probably expands t
 
 def permission_exception_handler(request: Request, exc: PermissionException):
     logger.warning(str(exc))
-    if "read" in exc.missing and exc.process:
-        return JSONResponse(status_code=404, content={"detail": "Process Not Found"})
     return JSONResponse(status_code=403, content={"detail": str(exc)})

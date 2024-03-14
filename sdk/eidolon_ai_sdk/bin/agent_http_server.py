@@ -12,9 +12,13 @@ import yaml
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from opentelemetry import trace
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource as OtelResource
 from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
 from pydantic import TypeAdapter, Field
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
@@ -262,11 +266,29 @@ def start_app(lifespan):
     _app.add_middleware(LoggingMiddleware)
     _app.add_exception_handler(PermissionException, permission_exception_handler)
 
+    trace.set_tracer_provider(TracerProvider(
+        sampler=CustomSampler(),
+        resource=OtelResource.create({SERVICE_NAME: "eidolon"})
+    ))
     FastAPIInstrumentor.instrument_app(_app)
-    trace.set_tracer_provider(TracerProvider())
     LoggingInstrumentor().instrument()
-
+    provider: TracerProvider = trace.get_tracer_provider()
+    # BatchSpanProcessor alternative
+    provider.add_span_processor(SimpleSpanProcessor(JaegerExporter(
+        agent_host_name='localhost',
+        agent_port=6831,
+    )))
     return _app
+
+
+class CustomSampler(Sampler):
+    def should_sample(self, context, trace_id, name, kind, attributes, parent_links):
+        if name.endswith("http receive") or name.endswith("http send"):
+            return SamplingResult(Decision.RECORD_ONLY)
+        return SamplingResult(Decision.RECORD_AND_SAMPLE)
+
+    def get_description(self):
+        return "CustomSampler"
 
 
 if __name__ == "__main__":

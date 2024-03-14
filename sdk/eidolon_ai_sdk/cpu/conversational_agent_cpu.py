@@ -1,6 +1,7 @@
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
 
 from fastapi import HTTPException
+from opentelemetry import trace
 
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread, CPUException
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
@@ -19,6 +20,9 @@ from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference,
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 from eidolon_ai_client.util.stream_collector import merge_streams
+
+
+tracer = trace.get_tracer("cpu")
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
@@ -70,13 +74,14 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
-            conversation = await self.memory_unit.getConversationHistory(call_context)
-            conversation_messages = await self.io_unit.process_request(call_context, prompts)
-            if self.record_memory:
-                await self.memory_unit.storeMessages(call_context, conversation_messages)
-            conversation.extend(conversation_messages)
-            async for event in self._llm_execution_cycle(call_context, output_format, conversation):
-                yield event
+            with tracer.start_as_current_span("cpu_request"):
+                conversation = await self.memory_unit.getConversationHistory(call_context)
+                conversation_messages = await self.io_unit.process_request(call_context, prompts)
+                if self.record_memory:
+                    await self.memory_unit.storeMessages(call_context, conversation_messages)
+                conversation.extend(conversation_messages)
+                async for event in self._llm_execution_cycle(call_context, output_format, conversation):
+                    yield event
         except HTTPException as e:
             raise e
         except CPUException as e:
@@ -99,10 +104,11 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             )
             # yield the events but capture the output, so it can be rolled into one event for memory.
             stream_collector = StreamCollector(execute_llm_)
-            async for event in stream_collector:
-                if event.is_root_and_type(LLMToolCallRequestEvent):
-                    tool_call_events.append(event)
-                yield event
+            with tracer.start_as_current_span("llm_execution"):
+                async for event in stream_collector:
+                    if event.is_root_and_type(LLMToolCallRequestEvent):
+                        tool_call_events.append(event)
+                    yield event
             if stream_collector.get_content():
                 logger.info(f"LLM Response: {stream_collector.get_content()}")
 
@@ -115,12 +121,12 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             conversation.append(assistant_message)
 
-            # process tool calls
-            async for e in merge_streams(
-                [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
-            ):
-                yield e
-            if not tool_call_events:
+            if tool_call_events:
+                with tracer.start_as_current_span("tool_calls"):
+                    streams = [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
+                    async for e in merge_streams(streams):
+                        yield e
+            else:
                 return
 
         raise CPUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
