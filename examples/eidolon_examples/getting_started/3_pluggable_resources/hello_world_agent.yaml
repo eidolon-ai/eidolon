@@ -1,6 +1,0 @@
-apiVersion: eidolon/v1
-kind: Agent
-metadata:
-  name: hello_world
-
-spec: "eidolon_examples.getting_started.2_custom_agents.hello_world.HelloWorld"
