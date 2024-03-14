@@ -1,6 +1,6 @@
-from typing import Any, Dict, Optional
-
 import json
+from functools import cache
+from typing import Any, Dict, Optional
 
 from httpx import Timeout, AsyncClient, HTTPStatusError, codes
 from httpx_sse import EventSource
@@ -13,18 +13,17 @@ from eidolon_ai_client.util.request_context import RequestContext
 
 # noinspection PyShadowingNames
 async def get_content(url: str, json: Optional[Dict[str, Any]] = None, **kwargs):
+    params = {"url": url, "headers": _headers()}
+    if json:
+        params["json"] = json
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
-        params = {"url": url, "headers": RequestContext.headers}
-        if json:
-            params["json"] = json
         response = await client.get(**params, **kwargs)
         await AgentError.check(response)
         return response.json()
 
 
-# noinspection PyShadowingNames
 async def post_content(url, json: Optional[Any] = None, **kwargs):
-    params = {"url": url, "headers": RequestContext.headers}
+    params = {"url": url, "headers": _headers()}
     if json:
         params["json"] = to_jsonable_python(json)
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
@@ -35,11 +34,29 @@ async def post_content(url, json: Optional[Any] = None, **kwargs):
 
 # noinspection PyShadowingNames
 async def delete(url, **kwargs):
-    params = {"url": url, "headers": RequestContext.headers}
+    params = {"url": url, "headers": _headers()}
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         response = await client.delete(**params, **kwargs)
         await AgentError.check(response)
         return response.json()
+
+
+@cache
+def maybe_propagator():
+    try:
+        from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+        return TraceContextTextMapPropagator
+    except ImportError:
+        return None
+
+
+# noinspection PyShadowingNames
+def _headers():
+    headers = RequestContext.headers
+    TraceContextTextMapPropagator = maybe_propagator()
+    if TraceContextTextMapPropagator:
+        TraceContextTextMapPropagator().inject(carrier=headers)
+    return headers
 
 
 async def stream_content(url: str, body, **kwargs):

@@ -271,9 +271,6 @@ def start_app(lifespan):
 
     FastAPIInstrumentor.instrument_app(_app)
     trace.set_tracer_provider(TracerProvider())
-    # Automatically instrument all instances of httpx.AsyncClient
-    HTTPXClientInstrumentor().instrument()
-
     LoggingInstrumentor().instrument(set_logging_format=True)
 
 

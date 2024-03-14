@@ -3,7 +3,8 @@ from typing import Annotated
 import httpx
 import pytest
 import pytest_asyncio
-from fastapi import Body, HTTPException
+from fastapi import Body, HTTPException, Request
+from opentelemetry.trace import get_current_span
 
 from eidolon_ai_client.client import Agent, Process, ProcessStatus
 from eidolon_ai_client.events import (
@@ -34,6 +35,26 @@ class HelloWorld:
     @classmethod
     async def delete_process(cls, process_id):
         HelloWorld.created_processes.remove(process_id)
+
+    @register_program()
+    async def recurse(self, request: Request, n: Annotated[int, Body()]):
+
+        child = None
+        if n > 0:
+            process = await Agent.get("HelloWorld").create_process()
+            rtn = await process.action("recurse", json=str(n-1))
+            child = rtn.data
+        span = get_current_span()
+        span_context = span.get_span_context()
+        parent = None
+        if hasattr(span, "parent") and span.parent:
+            parent = dict(trace=str(span.parent.trace_id), span=str(span.parent.span_id))
+        return dict(
+            self=dict(trace=str(span_context.trace_id), span=str(span_context.span_id)),
+            child=child,
+            parent=parent,
+        )
+
 
     @register_program()
     async def idle(self, name: Annotated[str, Body()]):
@@ -209,6 +230,19 @@ class TestHelloWorld:
         # and we should see it cleaned up as part of process deletion
         await process.delete()
         assert not HelloWorld.created_processes
+
+    async def test_recurse_passes_opentelementry_info(self, agent):
+        process = await agent.create_process()
+        resp = await process.action("recurse", json=2)
+        outer = resp.data
+        middle = outer['child']
+        inner = middle['child']
+
+        assert not outer['parent']
+        assert middle['parent'] == outer['self']
+        assert inner['parent'] == middle['self']
+        assert not inner['child']
+
 
 
 class StateMachine:
