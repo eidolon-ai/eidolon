@@ -92,7 +92,13 @@ export const config: NextAuthConfig = {
     },
     authorized({request, auth}) {
       const {pathname} = request.nextUrl
-      if (pathname.startsWith("/dev")) return !!auth
+      let pathNameTest
+      if (process.env.NEXT_PUBLIC_DEBUG) {
+        pathNameTest = pathname.startsWith("/") && pathname !== "/"
+      } else {
+        pathNameTest = pathname.startsWith("/")
+      }
+      if (pathNameTest) return !!auth
       return true
     }
   }

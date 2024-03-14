@@ -1,25 +1,34 @@
 import {Metadata, NextPage} from 'next';
-import {Grid, Paper, Typography} from '@mui/material';
+import {Card, CardActionArea, CardContent, CardMedia, Paper, Typography} from '@mui/material';
+import Grid from "@mui/material/Unstable_Grid2";
+import {ReactNode} from "react";
+import {EidolonApp, getAppRegistry} from "@/utils/eidolon-apps";
 
 export const metadata: Metadata = {
-  title: '_TITLE_',
-  description: '_DESCRIPTION_',
+  title: 'Eidolon',
+  description: 'Eidolon Home',
 };
 
-export const applications = {
-  "dev": {
-    "name": "Eidolon Developer Tool",
-    "description": "The developer tools can be used to test and debug any Eidolon operation.",
-    "version": "0.1.0",
-    "image": "/"
-  }
-}
-
-const Item = () => {
+const Item = ({path, app, ...rest}: { path: string, app: EidolonApp }) => {
   return (
-    <Paper sx={{p: 2, textAlign: 'center'}}>
-      <Typography variant="h6">xs=2</Typography>
-    </Paper>
+    <Card>
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          image={app.image}
+          sx={{maxWidth: '100%'}}
+          alt={app.name}
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {app.name}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {app.description}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   )
 }
 
@@ -28,15 +37,30 @@ const Item = () => {
  * @page Home
  */
 const Home: NextPage = () => {
+  const gridItems: ReactNode[] = []
+  Object.entries(getAppRegistry()).forEach(([pathPart, app], index) => {
+    gridItems.push((
+      <Grid key={index} xs={12} sm={6} md={4} lg={3} xl={2}>
+        <Item path={pathPart} app={app}/>
+      </Grid>
+    ))
+  })
+
   return (
-    <Grid container spacing={{xs: 3, md: 3}} columns={{xs: 4, sm: 8, md: 12}}>
-      {Array.from(Array(6)).map((_, index) => (
-        <Grid item xs={2} sm={4} md={4} key={index}>
-          <Item></Item>
-        </Grid>
-      ))}
-    </Grid>
-  );
-};
+    <Paper
+      elevation={0}
+      sx={{
+        padding: 2,
+        margin: 2,
+        textAlign: 'center',
+        height: '100%',
+      }}
+    >
+      <Grid container justifyContent={"space-evenly"} spacing={4} >
+        {gridItems}
+      </Grid>
+    </Paper>
+  )
+}
 
 export default Home;

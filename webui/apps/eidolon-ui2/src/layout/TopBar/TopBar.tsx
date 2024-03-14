@@ -41,23 +41,6 @@ const TopBar: FunctionComponent<Props> = ({goToApp, endNode, startNode, title = 
         alignItems: 'center',
       }}>
         {startNode}
-
-        <FormControl variant="standard" sx={{m: '1px', minWidth: '300px'}} size="small">
-          <InputLabel id="choose_app_label">Choose Application</InputLabel>
-          <Select
-            id="choose-app"
-            labelId={"choose_app_label"}
-            margin={"dense"}
-            value={""}
-            // onChange={handleChange}
-            label="Age"
-            sx={{fontSize: '.75em', margin: '0px', padding: '0px'}}
-          >
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </FormControl>
         {endNode}
       </Toolbar>
     </AppBar>

@@ -1,18 +1,18 @@
-import {Avatar, Box, Divider, Drawer, IconButton, LinearProgress, ListItem, Paper, ToggleButton, ToggleButtonGroup, Tooltip, Typography} from "@mui/material";
+import {Avatar, Box, Divider, Drawer, IconButton, ListItem, Paper, Tooltip, Typography} from "@mui/material";
 import * as React from "react";
 import {useSession} from "next-auth/react";
 import {AccountCircle, Close} from "@mui/icons-material";
-import {signOut} from "../../../auth";
+import { signOut } from "next-auth/react"
 import {useRouter} from "next/navigation";
 import List from "@mui/material/List";
 import Button from "@mui/material/Button";
 import {UsageIndicator} from "../UsageIndicator/UsageIndicator";
+import {ToggleTheme} from "./ToggleTheme";
 
 export const UserProfile = () => {
   const {data: session} = useSession()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const router = useRouter()
-  const [theme, setTheme] = React.useState("light");
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -32,10 +32,6 @@ export const UserProfile = () => {
     setAnchorEl(null);
     await signOut()
   };
-
-  const handleThemeChange = (event: React.MouseEvent<HTMLElement>, newTheme: string | null) => {
-    setTheme(newTheme!);
-  }
 
   const getIcon = () => {
     if (!session?.user?.image) {
@@ -83,27 +79,7 @@ export const UserProfile = () => {
           <Divider/>
           <List>
             <ListItem>
-              <Box>
-                <Typography variant={"subtitle2"}>Theme</Typography>
-                <ToggleButtonGroup
-                  color={"secondary"}
-                  size={"small"}
-                  value={theme}
-                  exclusive
-                  onChange={handleThemeChange}
-                  aria-label="text alignment"
-                >
-                  <ToggleButton value="light" aria-label="left aligned">
-                    Light
-                  </ToggleButton>
-                  <ToggleButton value="system" aria-label="centered">
-                    System
-                  </ToggleButton>
-                  <ToggleButton value="dark" aria-label="right aligned">
-                    Dark
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
+              <ToggleTheme/>
             </ListItem>
           </List>
           <Divider/>
@@ -126,6 +102,7 @@ export const UserProfile = () => {
         </div>
         <Button variant={"outlined"} color={"primary"}
                 sx={{margin: "0px 8px 16px 8px"}}
+                onClick={handleSignout}
         >
           Sign out
         </Button>
@@ -153,52 +130,6 @@ export const UserProfile = () => {
       >
         {list()}
       </Drawer>
-      {/*      <Menu
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        slotProps={{
-          paper: {
-            "style": {
-              "width": "180px"
-            }
-          }
-        }}
-      >
-        <MenuList>
-          <MenuItem>
-            <ToggleButtonGroup
-              size={"small"}
-              value={theme}
-              exclusive
-              onChange={handleThemeChange}
-              aria-label="text alignment"
-            >
-              <ToggleButton value="light" aria-label="left aligned">
-                Light
-              </ToggleButton>
-              <ToggleButton value="system" aria-label="centered">
-                System
-              </ToggleButton>
-              <ToggleButton value="dark" aria-label="right aligned">
-                Dark
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </MenuItem>
-          <MenuItem onClick={handleProfile}>Profile</MenuItem>
-          <MenuItem onClick={handleSignout}>Sign out</MenuItem>
-        </MenuList>
-      </Menu>*/}
     </div>
   )
 }

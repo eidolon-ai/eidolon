@@ -5,7 +5,8 @@ import { useAppStore } from '../store';
  * Returns event handler to toggle Dark/Light modes
  * @returns {function} calling this event toggles dark/light mode
  */
-export function useEventSwitchDarkMode() {
+/*
+export function useEventUpdateDarkMode() {
   const [state, dispatch] = useAppStore();
 
   return useCallback(() => {
@@ -15,3 +16,4 @@ export function useEventSwitchDarkMode() {
     });
   }, [state, dispatch]);
 }
+*/

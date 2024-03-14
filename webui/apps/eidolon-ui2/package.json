@@ -21,15 +21,16 @@
     "url": "https://github.com/eidolon-ai/eidolon"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "build:static": "next build && next export",
+    "dev": "npm run build-eidolon && next dev",
+    "build": "npm run build-eidolon && next build",
+    "build:static": "npm run build-eidolon && next build && next export",
     "format": "prettier ./ --write",
     "lint": "next lint",
-    "start": "next start",
-    "test": "jest --watch",
-    "test:ci": "jest --ci",
-    "type": "tsc"
+    "start": "npm run build-eidolon && next start",
+    "test": "npm run build-eidolon && jest --watch",
+    "test:ci": "npm run build-eidolon && jest --ci",
+    "type": "tsc",
+    "build-eidolon": "node eidolon-app.build.js"
   },
   "dependencies": {
     "@repo/typescript-config": "workspace:*",

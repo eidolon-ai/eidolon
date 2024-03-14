@@ -10,8 +10,8 @@ import {SessionProvider} from "next-auth/react";
 const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)?.main || '#FFFFFF';
 
 export const metadata: Metadata = {
-  title: '_TITLE_',
-  description: '_DESCRIPTION_',
+  title: 'Eidolon',
+  description: 'Eidolon',
   manifest: '/site.webmanifest',
   // TODO: Add Open Graph metadata
 };

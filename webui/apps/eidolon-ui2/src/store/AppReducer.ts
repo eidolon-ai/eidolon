@@ -1,6 +1,7 @@
 import { Reducer } from 'react';
 import { localStorageSet } from '../utils/localStorage';
 import { AppStoreState } from './AppStore';
+import {IS_SERVER} from "../utils/index";
 
 /**
  * Reducer for global AppStore using "Redux styled" actions
@@ -31,11 +32,14 @@ const AppReducer: Reducer<AppStoreState, any> = (state, action) => {
         currentUser: undefined, // Also reset previous user data
       };
     case 'DARK_MODE': {
-      const darkMode = action?.darkMode ?? action?.payload;
+      const darkMode = action?.darkMode || action?.payload;
       localStorageSet('darkMode', darkMode);
+      const prefersDarkMode = IS_SERVER ? false : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const newDarkMode = darkMode === "system" ? prefersDarkMode : darkMode === "dark"
       return {
         ...state,
-        darkMode,
+        themeMode: darkMode,
+        darkMode: newDarkMode,
       };
     }
     default:

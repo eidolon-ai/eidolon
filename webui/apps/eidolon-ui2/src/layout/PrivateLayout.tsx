@@ -1,18 +1,17 @@
 'use client';
 import * as React from 'react';
-import {FunctionComponent, PropsWithChildren, useCallback, useState} from 'react';
+import {FunctionComponent, PropsWithChildren} from 'react';
 import {useRouter} from 'next/navigation';
-import {Avatar, Button, Stack, Typography} from '@mui/material';
+import {Stack} from '@mui/material';
 import ErrorBoundary from '../components/ErrorBoundary';
-import SideBar from './SideBar';
 import TopBar from './TopBar';
 import {LinkToPage} from '../utils/type';
 import {useOnMobile} from '../hooks/index';
-import {SIDEBAR_DESKTOP_ANCHOR, SIDEBAR_MOBILE_ANCHOR, SIDEBAR_WIDTH, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT,} from './config';
+import {SIDEBAR_DESKTOP_ANCHOR, SIDEBAR_WIDTH, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT,} from './config';
 import {UserProfile} from "../components/UserProfile/UserProfile";
 import {UsageIndicator} from "../components/UsageIndicator/UsageIndicator";
+import {EidolonHeader} from "../components/EidolonHeader";
 
-// TODO: change to your app name or other word
 const TITLE_PRIVATE = 'Eidolon'; // Title for pages after authentication
 
 /**
@@ -53,33 +52,6 @@ const RightSideBarItems = () => {
   )
 }
 
-const HeaderStartItems = () => {
-  const router = useRouter()
-  return (
-    <div style={{width: '240px', minWidth: '240px', display: 'flex', alignItems: 'center'}}>
-      <Button
-        onClick={() => {
-          router.push('/')
-        }}
-      >
-        <Avatar src={"/img/eidolon_with_gradient.png"} sx={{height: "32px", width: "32px"}}/>
-      </Button>
-      <Typography
-        variant="h5"
-        sx={{
-          marginLeft: '0px',
-          textAlign: 'left',
-          whiteSpace: 'nowrap',
-          color: "darkgoldenrod"
-        }}
-        noWrap
-      >
-        Eidolon
-      </Typography>
-    </div>
-  )
-}
-
 /**
  * Renders "Private Layout" composition
  * @layout PrivateLayout
@@ -87,22 +59,7 @@ const HeaderStartItems = () => {
 const PrivateLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
   const router = useRouter();
   const onMobile = useOnMobile();
-  const [sideBarVisible, setSideBarVisible] = useState(false);
   const shouldOpenSideBar = false;
-  const title = TITLE_PRIVATE;
-
-  const onLogoClick = useCallback(() => {
-    // Navigate to first SideBar's item or to '/' when clicking on Logo/Menu icon when SideBar is already visible
-    router.push(SIDE_BAR_ITEMS?.[0]?.path || '/');
-  }, [router]);
-
-  const onSideBarOpen = useCallback(() => {
-    if (!sideBarVisible) setSideBarVisible(true); // Don't re-render Layout when SideBar is already open
-  }, [sideBarVisible]);
-
-  const onSideBarClose = useCallback(() => {
-    if (sideBarVisible) setSideBarVisible(false); // Don't re-render Layout when SideBar is already closed
-  }, [sideBarVisible]);
 
   return (
     <Stack
@@ -116,22 +73,14 @@ const PrivateLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
     >
       <Stack component="header">
         <TopBar
-          startNode={HeaderStartItems()}
+          startNode={EidolonHeader()}
           endNode={RightSideBarItems()}
-          title={title}
+          title={TITLE_PRIVATE}
           goToApp={
             () => {
               router.push('/dev')
             }
           }
-        />
-
-        <SideBar
-          anchor={onMobile ? SIDEBAR_MOBILE_ANCHOR : SIDEBAR_DESKTOP_ANCHOR}
-          open={shouldOpenSideBar}
-          variant={onMobile ? 'temporary' : 'persistent'}
-          items={SIDE_BAR_ITEMS}
-          onClose={onSideBarClose}
         />
       </Stack>
 
