@@ -11,6 +11,10 @@ import uvicorn
 import yaml
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
+from opentelemetry import trace
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
+from opentelemetry.sdk.trace import TracerProvider
 from pydantic import TypeAdapter, Field
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
@@ -22,16 +26,17 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_manager import (
     SecurityManager,
 )
-from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 from eidolon_ai_sdk.util.replay import ReplayConfig
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 
 dotenv.load_dotenv()
 
@@ -246,6 +251,12 @@ def main():
 # noinspection PyTypeChecker
 def start_app(lifespan):
     _app = FastAPI(lifespan=lifespan)
+
+    @_app.get(path="/luke", tags=["test"], description="Luke is a not understanding why this isn't working")
+    async def health():
+        return {"status": "ok"}
+
+
     _app.add_middleware(ContextMiddleware)
     _app.add_middleware(
         CORSMiddleware,
@@ -257,6 +268,15 @@ def start_app(lifespan):
     _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(LoggingMiddleware)
     _app.add_exception_handler(PermissionException, permission_exception_handler)
+
+    FastAPIInstrumentor.instrument_app(_app)
+    trace.set_tracer_provider(TracerProvider())
+    # Automatically instrument all instances of httpx.AsyncClient
+    HTTPXClientInstrumentor().instrument()
+
+    LoggingInstrumentor().instrument(set_logging_format=True)
+
+
     return _app
 
 
