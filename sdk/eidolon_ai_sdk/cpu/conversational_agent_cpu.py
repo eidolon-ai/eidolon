@@ -74,14 +74,13 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
-            with tracer.start_as_current_span("cpu_request"):
-                conversation = await self.memory_unit.getConversationHistory(call_context)
-                conversation_messages = await self.io_unit.process_request(call_context, prompts)
-                if self.record_memory:
-                    await self.memory_unit.storeMessages(call_context, conversation_messages)
-                conversation.extend(conversation_messages)
-                async for event in self._llm_execution_cycle(call_context, output_format, conversation):
-                    yield event
+            conversation = await self.memory_unit.getConversationHistory(call_context)
+            conversation_messages = await self.io_unit.process_request(call_context, prompts)
+            if self.record_memory:
+                await self.memory_unit.storeMessages(call_context, conversation_messages)
+            conversation.extend(conversation_messages)
+            async for event in self._llm_execution_cycle(call_context, output_format, conversation):
+                yield event
         except HTTPException as e:
             raise e
         except CPUException as e:
@@ -97,14 +96,16 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
     ) -> AsyncIterator[StreamEvent]:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
-            tool_call_events = []
-            execute_llm_ = self.llm_unit.execute_llm(
-                call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format
-            )
-            # yield the events but capture the output, so it can be rolled into one event for memory.
-            stream_collector = StreamCollector(execute_llm_)
-            with tracer.start_as_current_span("llm_execution"):
+            with tracer.start_as_current_span("building tools"):
+                tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
+                tool_call_events = []
+                llm_facing_tools = [w.llm_message for w in tool_defs.values()]
+            with tracer.start_as_current_span("llm execution"):
+                execute_llm_ = self.llm_unit.execute_llm(
+                    call_context, conversation, llm_facing_tools, output_format
+                )
+                # yield the events but capture the output, so it can be rolled into one event for memory.
+                stream_collector = StreamCollector(execute_llm_)
                 async for event in stream_collector:
                     if event.is_root_and_type(LLMToolCallRequestEvent):
                         tool_call_events.append(event)

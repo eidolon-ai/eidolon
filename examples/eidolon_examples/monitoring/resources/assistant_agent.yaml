@@ -1,0 +1,8 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: assistant
+
+spec:
+  description: "This is a friendly assistant"
+  system_prompt: "You are a friendly assistant"

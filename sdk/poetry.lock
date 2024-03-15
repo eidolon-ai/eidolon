@@ -2115,54 +2115,6 @@ deprecated = ">=1.2.6"
 importlib-metadata = ">=6.0,<7.0"
 
 [[package]]
-name = "opentelemetry-exporter-jaeger"
-version = "1.21.0"
-description = "Jaeger Exporters for OpenTelemetry"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "opentelemetry_exporter_jaeger-1.21.0-py3-none-any.whl", hash = "sha256:3d645eff7e31461d917be5c6635803ad7913cbb7662feed014ba2fe6e005b209"},
-    {file = "opentelemetry_exporter_jaeger-1.21.0.tar.gz", hash = "sha256:e5650af9d09adad35add56b93d9856bd410644d25b0b5b87e6111467b9877dc2"},
-]
-
-[package.dependencies]
-opentelemetry-exporter-jaeger-proto-grpc = "1.21.0"
-opentelemetry-exporter-jaeger-thrift = "1.21.0"
-
-[[package]]
-name = "opentelemetry-exporter-jaeger-proto-grpc"
-version = "1.21.0"
-description = "Jaeger Protobuf Exporter for OpenTelemetry"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "opentelemetry_exporter_jaeger_proto_grpc-1.21.0-py3-none-any.whl", hash = "sha256:cf8ec4761c56d611e7bfb9538d4d85ea6a67cd1548f12deff83afaa5c447816e"},
-    {file = "opentelemetry_exporter_jaeger_proto_grpc-1.21.0.tar.gz", hash = "sha256:359ceb15b72e798881b4b7b2afdcbc189aef3a0508944856ac70d74968574ed7"},
-]
-
-[package.dependencies]
-googleapis-common-protos = ">=1.52,<1.60.0"
-grpcio = ">=1.0.0,<2.0.0"
-opentelemetry-api = ">=1.3,<2.0"
-opentelemetry-sdk = ">=1.11,<2.0"
-
-[[package]]
-name = "opentelemetry-exporter-jaeger-thrift"
-version = "1.21.0"
-description = "Jaeger Thrift Exporter for OpenTelemetry"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "opentelemetry_exporter_jaeger_thrift-1.21.0-py3-none-any.whl", hash = "sha256:4364b8dfa6965707c72c43d85942b1491982b7d44f0123d593513e8bedafa9e2"},
-    {file = "opentelemetry_exporter_jaeger_thrift-1.21.0.tar.gz", hash = "sha256:41119bc7e5602cec83dd7d7060f061ecbc91de231272e8f515b07ef9a4b6e41c"},
-]
-
-[package.dependencies]
-opentelemetry-api = ">=1.3,<2.0"
-opentelemetry-sdk = ">=1.11,<2.0"
-thrift = ">=0.10.0"
-
-[[package]]
 name = "opentelemetry-exporter-otlp-proto-common"
 version = "1.23.0"
 description = "OpenTelemetry Protobuf encoding"
@@ -4086,24 +4038,6 @@ tensorflow = ["tensorflow (>=2.0.0,<2.6.0)"]
 torch = ["torch (>=1.6.0)"]
 
 [[package]]
-name = "thrift"
-version = "0.16.0"
-description = "Python bindings for the Apache Thrift RPC system"
-optional = false
-python-versions = "*"
-files = [
-    {file = "thrift-0.16.0.tar.gz", hash = "sha256:2b5b6488fcded21f9d312aa23c9ff6a0195d0f6ae26ddbd5ad9e3e25dfc14408"},
-]
-
-[package.dependencies]
-six = ">=1.7.2"
-
-[package.extras]
-all = ["tornado (>=4.0)", "twisted"]
-tornado = ["tornado (>=4.0)"]
-twisted = ["twisted"]
-
-[[package]]
 name = "tiktoken"
 version = "0.5.2"
 description = "tiktoken is a fast BPE tokeniser for use with OpenAI's models"
@@ -5010,4 +4944,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "cbd06244764e85060c0a04745dfc722e235810bab04f85234d1f6f4a89ac1520"
+content-hash = "8d2695f6cd87cdb8b925d2addc16a4b55e6037b75c4d63dafbdcaa1f36a84bb9"

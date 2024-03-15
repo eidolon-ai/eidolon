@@ -12,12 +12,11 @@ import yaml
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from opentelemetry import trace
-from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource as OtelResource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
 from pydantic import TypeAdapter, Field
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -35,6 +34,7 @@ from eidolon_ai_sdk.security.security_manager import (
     SecurityManager,
 )
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
+from eidolon_ai_sdk.system.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -42,6 +42,12 @@ from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resou
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()
+
+try:
+    from opentelemetry.instrumentation.logging import LoggingInstrumentor
+    LoggingInstrumentor().instrument()
+except ImportError:
+    pass
 
 try:
     EIDOLON_SDK_VERSION = version("eidolon-ai-sdk")
@@ -202,6 +208,9 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         if AgentOS.get_instance(ReplayConfig).save_loc:
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
+
+        AgentOS.get_instance(OpenTelemetryManager).setup()
+
         yield
         await machine.stop()
     except BaseException:
@@ -265,30 +274,8 @@ def start_app(lifespan):
     _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(LoggingMiddleware)
     _app.add_exception_handler(PermissionException, permission_exception_handler)
-
-    trace.set_tracer_provider(TracerProvider(
-        sampler=CustomSampler(),
-        resource=OtelResource.create({SERVICE_NAME: "eidolon"})
-    ))
     FastAPIInstrumentor.instrument_app(_app)
-    LoggingInstrumentor().instrument()
-    provider: TracerProvider = trace.get_tracer_provider()
-    # BatchSpanProcessor alternative
-    provider.add_span_processor(SimpleSpanProcessor(JaegerExporter(
-        agent_host_name='localhost',
-        agent_port=6831,
-    )))
     return _app
-
-
-class CustomSampler(Sampler):
-    def should_sample(self, context, trace_id, name, kind, attributes, parent_links):
-        if name.endswith("http receive") or name.endswith("http send"):
-            return SamplingResult(Decision.RECORD_ONLY)
-        return SamplingResult(Decision.RECORD_AND_SAMPLE)
-
-    def get_description(self):
-        return "CustomSampler"
 
 
 if __name__ == "__main__":
