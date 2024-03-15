@@ -101,9 +101,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
-                execute_llm_ = self.llm_unit.execute_llm(
-                    call_context, conversation, llm_facing_tools, output_format
-                )
+                execute_llm_ = self.llm_unit.execute_llm(call_context, conversation, llm_facing_tools, output_format)
                 # yield the events but capture the output, so it can be rolled into one event for memory.
                 stream_collector = StreamCollector(execute_llm_)
                 async for event in stream_collector:

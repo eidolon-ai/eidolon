@@ -11,13 +11,7 @@ import uvicorn
 import yaml
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.sdk.resources import SERVICE_NAME, Resource as OtelResource
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
 from pydantic import TypeAdapter, Field
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
@@ -45,6 +39,7 @@ dotenv.load_dotenv()
 
 try:
     from opentelemetry.instrumentation.logging import LoggingInstrumentor
+
     LoggingInstrumentor().instrument()
 except ImportError:
     pass

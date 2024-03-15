@@ -43,8 +43,9 @@ class CustomSampler(Sampler):
         self.prune_receive = prune_receive
         self.prune_send = prune_send
 
-    def should_sample(self, parent_context, trace_id: int, name: str, kind=None, attributes=None, links=None,
-                      trace_state=None):
+    def should_sample(
+        self, parent_context, trace_id: int, name: str, kind=None, attributes=None, links=None, trace_state=None
+    ):
         # http receive / send are verbose with streaming, but should be recorded since they record http status
         if self.prune_send and name.endswith("http send"):
             return SamplingResult(Decision.RECORD_ONLY)
