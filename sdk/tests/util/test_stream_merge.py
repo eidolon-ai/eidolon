@@ -8,7 +8,9 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.trace import get_current_span
 
 
-@pytest.mark.skip(reason="Currently preventing us from automatically generating spans on context objects automatically")
+@pytest.mark.skip(
+    reason="Currently preventing us from automatically generating spans on context objects automatically: https://stackoverflow.com/questions/78164625/unable-to-use-opentelemetry-span-with-generators-merged-via-aiostream-stream-mer"
+)
 async def test_recurse_streaming_context():
     trace.set_tracer_provider(TracerProvider())
 
