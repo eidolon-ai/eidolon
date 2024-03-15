@@ -35,13 +35,10 @@ from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.security.security_manager import SecurityManager
-from eidolon_ai_sdk.security.permissions import PermissionException
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
-    ListProcessesResponse,
     StateSummary,
     DeleteProcessResponse,
-    CreateProcessArgs,
 )
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
@@ -73,29 +70,6 @@ class AgentController:
     async def start(self, app: FastAPI):
         logger.info(f"Starting agent '{self.name}'")
         self.security = AgentOS.security_manager
-        app.add_api_route(
-            f"/agents/{self.name}/processes",
-            endpoint=self.list_processes,
-            methods=["GET"],
-            response_model=ListProcessesResponse,
-            tags=[self.name],
-        )
-
-        app.add_api_route(
-            f"/agents/{self.name}/processes",
-            endpoint=self.create_process,
-            methods=["POST"],
-            response_model=StateSummary,
-            tags=[self.name],
-        )
-
-        app.add_api_route(
-            f"/agents/{self.name}/processes/{{process_id}}",
-            endpoint=self.delete_process,
-            methods=["DELETE"],
-            response_model=DeleteProcessResponse,
-            tags=[self.name],
-        )
 
         app.add_api_route(
             f"/agents/{self.name}/programs",
@@ -108,7 +82,7 @@ class AgentController:
         added_actions = {}
         for handler in [*self.actions.values().__reversed__()]:
             handler_name = handler.name
-            path = f"/agents/{self.name}/processes/{{process_id}}/actions/{handler_name}"
+            path = f"/processes/{{process_id}}/agent/{self.name}/actions/{handler_name}"
             if handler_name not in added_actions:
                 await self.add_route(app, handler, path, False)
                 added_actions[handler_name] = path
@@ -117,21 +91,6 @@ class AgentController:
                     f"Action {handler_name} is already registered for path {added_actions[handler_name]}. "
                     f"Skipping registration for path {path}"
                 )
-        app.add_api_route(
-            f"/agents/{self.name}/processes/{{process_id}}/status",
-            endpoint=self.get_process_info,
-            methods=["GET"],
-            response_model=SyncStateResponse,
-            tags=[self.name],
-        )
-
-        app.add_api_route(
-            f"/agents/{self.name}/processes/{{process_id}}/events",
-            endpoint=self.get_process_events,
-            methods=["GET"],
-            response_model=typing.List[typing.Dict[str, typing.Any]],
-            tags=[self.name],
-        )
 
     async def add_route(self, app, handler, path, isEndpointAProgram: bool):
         endpoint = self.process_action(handler, isEndpointAProgram)
@@ -254,6 +213,10 @@ class AgentController:
                 state=process.state,
                 data=data,
                 available_actions=self.get_available_actions(process.state),
+                agent=self.name,
+                title=process.title,
+                created=process.created,
+                updated=process.updated,
             ).model_dump(),
             status_code,
         )
@@ -397,34 +360,28 @@ class AgentController:
 
         return JSONResponse(programs, 200)
 
-    async def get_process_info(self, process_id: str):
-        await self.security.check_permissions("read", self.name, process_id)
-        latest_record = await self.get_latest_process_event(process_id)
-        if not latest_record:
-            return JSONResponse(dict(detail="Process not found"), 404)
-        state = latest_record.state
-        actions = self.get_available_actions(latest_record.state)
-        summary = StateSummary(process_id=latest_record.record_id, state=state, available_actions=actions).model_dump()
-        return JSONResponse(summary, 200)
-
     async def get_process_events(self, process_id: str):
         await self.security.check_permissions("read", self.name, process_id)
         return await load_events(self.name, process_id)
 
-    async def create_process(self, args: CreateProcessArgs = CreateProcessArgs()):
+    async def create_process(self, title: typing.Optional[str]):
         """
         Create a new process. Use this method first to get a process id before calling any other action
-        :param args: An optional title for the process
+        :param title: An optional title for the process
         :return:
         """
         await self.security.check_permissions({"read", "create"}, self.name)
-        process = await self._create_process(state="initialized", title=args.title)
+        process = await self._create_process(state="initialized", title=title)
         await self.security.process_authorizer.record_process(self.name, process.record_id)
         return JSONResponse(
             StateSummary(
+                agent=self.name,
                 process_id=process.record_id,
                 state=process.state,
                 available_actions=self.get_available_actions(process.state),
+                title=process.title,
+                created=process.created,
+                updated=process.updated,
             ).model_dump(),
             200,
         )
@@ -465,47 +422,6 @@ class AgentController:
         await ProcessDoc.delete(_id=process_id)
         return num_deleted + 1
 
-    async def list_processes(
-        self,
-        request: Request,
-        skip: int = 0,
-        limit: typing.Annotated[int, Field(ge=1, le=100)] = 100,
-        sort: typing.Literal["ascending", "descending"] = "ascending",
-    ):
-        """
-        List all processes for this agent. Supports paging and sorting
-        """
-        await self.security.check_permissions("read", self.name)
-        query = dict(agent=self.name)
-        cursor = AgentOS.symbolic_memory.find(
-            ProcessDoc.collection, query, sort=dict(updated=1 if sort == "ascending" else -1), skip=skip
-        )
-        acc = []
-        async for doc in cursor:
-            process = ProcessDoc.model_validate(doc)
-            try:
-                await self.security.check_permissions("read", self.name, process.record_id)
-                acc.append(
-                    StateSummary(
-                        process_id=process.record_id,
-                        state=process.state,
-                        available_actions=self.get_available_actions(process.state),
-                    )
-                )
-            except PermissionException:
-                logger.debug(f"Skipping process {process.record_id} due to lack of permissions")
-            if len(acc) == limit:
-                break
-        next_page_url = f"{request.url}agents/{self.name}/processes/?limit={limit}&skip={skip + limit}"
-        return JSONResponse(
-            ListProcessesResponse(
-                total=len(acc),
-                processes=acc,
-                next=next_page_url,
-            ).model_dump(),
-            200,
-        )
-
     def doc_to_response(self, latest_record: ProcessDoc, data: typing.Any):
         return JSONResponse(
             SyncStateResponse(
@@ -513,6 +429,10 @@ class AgentController:
                 state=latest_record.state,
                 data=data,
                 available_actions=self.get_available_actions(latest_record.state),
+                agent=self.name,
+                title=latest_record.title,
+                created=latest_record.created,
+                updated=latest_record.updated,
             ).model_dump(),
             200,
         )

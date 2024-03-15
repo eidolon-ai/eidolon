@@ -5,7 +5,9 @@ import typing
 from pydantic import Field, BaseModel
 
 
+
 class CreateProcessArgs(BaseModel):
+    agent: str = Field(description="The executable agent for the process.")
     title: typing.Optional[str] = Field(None, description="The title of the process")
 
 
@@ -15,9 +17,14 @@ class DeleteProcessResponse(BaseModel):
 
 
 class StateSummary(BaseModel):
+    agent: str = Field(..., description="The agent that is running the process.")
     process_id: str = Field(..., description="The ID of the conversation.")
+    parent_process_id: typing.Optional[str] = Field(None, description="The ID of the parent conversation.")
     state: str = Field(..., description="The state of the conversation.")
     available_actions: typing.List[str] = Field(..., description="The actions available from the current state.")
+    title: typing.Optional[str] = None
+    created: str = None
+    updated: str = None
 
 
 class SyncStateResponse(StateSummary):

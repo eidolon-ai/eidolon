@@ -89,7 +89,7 @@ export namespace ServerHandler {
         const agent = reqBody["agent"]
         const operation = reqBody["operation"]
         const auth_headers = await getAuthHeaders(accessToken)
-        const path = `${machineUrl}/processes/${params.processid}/${agent}/${operation}`
+        const path = `${machineUrl}/processes/${params.processid}/${agent}/actions/${operation}`
         const response = await fetch(path, {
           method: "POST",
           body: JSON.stringify(reqBody.data),

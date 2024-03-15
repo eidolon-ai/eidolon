@@ -4,30 +4,23 @@ import pathlib
 from collections import deque
 from contextlib import asynccontextmanager
 from importlib.metadata import version, PackageNotFoundError
-from typing import cast, Annotated, Literal
 
 import dotenv
 import uvicorn
 import yaml
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from pydantic import TypeAdapter, Field
+from pydantic import TypeAdapter
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import (
-    SecurityManager,
-)
 from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
-from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
@@ -126,52 +119,6 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
     @app.get("/system/version", tags=["system"], description="Get the version of the EIDOS SDK")
     async def version():
         return {"version": EIDOLON_SDK_VERSION}
-
-    @app.get("/system/processes", tags=["system"], description="Get all processes")
-    async def processes(
-        skip: int = 0,
-        limit: Annotated[int, Field(ge=1, le=100)] = 100,
-        sort: Literal["ascending", "descending"] = "ascending",
-    ):
-        security: SecurityManager = AgentOS.security_manager
-        child_pids = await AgentCallHistory.get_child_pids()
-        processes_acc = []
-        async for process_ in ProcessDoc.find(
-            query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
-        ):
-            process_ = cast(ProcessDoc, process_)
-            try:
-                await security.check_permissions("read", process_.agent, process_.record_id)
-                if skip > 0:
-                    skip -= 1
-                else:
-                    process_dump = process_.model_dump()
-                    process_dump["process_id"] = process_dump["_id"]
-                    del process_dump["_id"]
-                    if process_dump["process_id"] in child_pids:
-                        process_dump["parent_process_id"] = child_pids[process_dump["process_id"]]
-                    processes_acc.append(process_dump)
-            except PermissionException:
-                logger.debug(f"Skipping process {process_.record_id} due to lack of permissions")
-
-            if len(processes_acc) >= limit:
-                break
-
-        return JSONResponse(content=processes_acc, status_code=200)
-
-    # todo, this should be removed and ui should target /agents/{agent_name}/processes/{process_id}
-    @app.get("/system/processes/{process_id}", tags=["system"], description="Get a process")
-    async def process(process_id: str):
-        process_doc: ProcessDoc = await ProcessDoc.find_one(query={"_id": process_id})
-        if not process_doc:
-            logger.info(f"Process {process_id} does not exist")
-            return JSONResponse(content={"detail": "Not Found"}, status_code=404)
-        else:
-            security: SecurityManager = AgentOS.security_manager
-            await security.check_permissions("read", process_doc.agent, process_id)
-            process_obj = process_doc.model_dump(exclude={"data"})
-            process_obj["process_id"] = process_obj.pop("_id")
-            return JSONResponse(content=process_obj, status_code=200)
 
     try:
         for resource_or_tuple in resource_generator:
