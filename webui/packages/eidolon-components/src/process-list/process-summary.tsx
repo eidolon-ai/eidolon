@@ -1,13 +1,14 @@
 'use client'
 
-import {ProcessStatus} from "../lib/types.js";
 import * as React from "react";
 import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText} from "@mui/material";
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {Delete} from '@mui/icons-material';
+import {ProcessStatus} from "@eidolon/client";
+import {ProcessStatusWithChildren} from "../client-api-helpers/process-helper.js";
 
 export interface ProcessSummaryProps {
-  chat: ProcessStatus,
+  chat: ProcessStatusWithChildren,
   handleDelete: (chat: ProcessStatus) => void
   isSelected: (chat: ProcessStatus) => boolean
   selectChat: (chat: ProcessStatus) => void

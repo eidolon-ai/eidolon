@@ -3,20 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./index.js"
-  },
+  "main": "./index.js",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component"
   },
   "dependencies": {
+    "@eidolon/client": "workspace:*",
     "@mui/icons-material": "^5.15.12",
     "@mui/material": "^5.15.12",
     "@mui/material-nextjs": "^5.15.11",
     "@mui/x-tree-view": "^6.17.0",
     "@readme/openapi-parser": "^2.5.0",
-    "@repo/eidolon-client": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@rjsf/core": "^5.17.1",

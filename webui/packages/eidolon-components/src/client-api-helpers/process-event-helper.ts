@@ -1,6 +1,6 @@
 import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements.js";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
-import {ChatEvent} from "@repo/eidolon-client/client";
+import {ChatEvent} from "@eidolon/client";
 
 const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
   const element = makeElement(event)

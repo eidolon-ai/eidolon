@@ -9,7 +9,7 @@ import {AgentProcess} from "../form-input/agent-process.js";
 import {ChatScrollAnchor} from "./chat-scroll-anchor.js";
 import {ChatDisplayElement} from "./chat-display-element.js";
 import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper.js";
-import {OperationInfo, ProcessState} from "@repo/eidolon-client/client";
+import {OperationInfo, ProcessStatus} from "@eidolon/client"
 import {getProcessStatus} from "../client-api-helpers/process-helper.js";
 
 interface ChatEventProps {
@@ -20,7 +20,7 @@ interface ChatEventProps {
 export function EidolonEvents({agentName, processId}: ChatEventProps) {
   const [elementsAndLookup, setElementsAndLookup] =
     useState<ElementsAndLookup>({elements: [], lookup: {}})
-  const [processState, setProcessState] = useState<ProcessState | undefined>(undefined)
+  const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
 
   function setAgentState() {
@@ -57,7 +57,7 @@ export function EidolonEvents({agentName, processId}: ChatEventProps) {
   }
 
   const executeAction = async (operation: OperationInfo, data: Record<string, any>) => {
-    setProcessState({state: "processing", available_actions: []})
+    setProcessState(undefined)
     if (cancelFetchController.current) {
       cancelFetchController.current.abort();
     }

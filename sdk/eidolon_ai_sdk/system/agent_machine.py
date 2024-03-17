@@ -178,16 +178,27 @@ class AgentMachine(Specable[MachineSpec]):
             logger.info(f"Process {process_id} does not exist")
             return JSONResponse(content={"detail": "Process Not Found"}, status_code=404)
         else:
+            child_pids = await AgentCallHistory.get_child_pids()
             security: SecurityManager = AgentOS.security_manager
             await security.check_permissions("read", process_doc.agent, process_id)
-            process_obj = process_doc.model_dump(exclude={"data"})
-            process_obj["process_id"] = process_obj.pop("_id")
+            process_ = cast(ProcessDoc, process_doc)
             controller = self._get_agent_controller(process_doc.agent)
+            available_actions = []
             if controller:
-                process_obj["available_actions"] = controller.get_available_actions(process_doc.state)
-            else:
-                process_obj["available_actions"] = []
-            return JSONResponse(content=process_obj, status_code=200)
+                available_actions = controller.get_available_actions(process_doc.state)
+
+            summary = StateSummary(
+                agent=process_.agent,
+                process_id=process_.record_id,
+                state=process_.state,
+                available_actions=available_actions,
+                title=process_.title,
+                created=process_.created,
+                updated=process_.updated,
+            )
+            if summary.process_id in child_pids:
+                summary.parent_process_id = child_pids[summary.process_id]
+            return JSONResponse(content=summary.model_dump(), status_code=200)
 
     async def create_process(self, args: CreateProcessArgs):
         """

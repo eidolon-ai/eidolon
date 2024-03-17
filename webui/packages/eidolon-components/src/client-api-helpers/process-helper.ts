@@ -1,7 +1,9 @@
-import {ProcessStatus} from "../lib/types.js";
 import {DateTime} from "luxon";
-import {ProcessState} from "@repo/eidolon-client/client";
+import {ProcessStatus} from "@eidolon/client";
 
+export interface ProcessStatusWithChildren extends ProcessStatus {
+  children?: ProcessStatus[]
+}
 
 export async function getProcessStatus(process_id: string) {
     return fetch(`/api/eidolon/process/${process_id}`)
@@ -9,7 +11,7 @@ export async function getProcessStatus(process_id: string) {
             if (resp.status === 404) {
                 return null
             }
-            return resp.json().then((json: Record<string, any>) => json as ProcessState)
+            return resp.json().then((json: Record<string, any>) => json as ProcessStatus)
         })
 }
 
@@ -19,20 +21,21 @@ export async function deleteProcess(process_id: string) {
   })
 }
 
-export async function getRootProcesses(): Promise<ProcessStatus[]> {
+export async function getRootProcesses(): Promise<ProcessStatusWithChildren[]> {
   let data = (await getProcessesFromServer()).sort((a, b) => {
     return DateTime.fromISO(b.updated).toMillis() - DateTime.fromISO(a.updated).toMillis()
   })
-  return Object.values(data.reduce((collector, item) => {
+  return Object.values(data.reduce((collector: Record<string, ProcessStatusWithChildren>, item) => {
     if (!item.parent_process_id) {
       collector[item.process_id] = {...collector[item.process_id], ...item}
     } else {
       if (!collector[item.parent_process_id]) {
         collector[item.parent_process_id] = {
+          machine: item.machine,
           agent: item.agent,
-          id: item.parent_process_id,
           title: item.parent_process_id,
           state: "Draft",
+          available_actions: item.available_actions,
           created: item.created,
           updated: item.updated,
           process_id: item.parent_process_id,

@@ -2,13 +2,13 @@
 
 'use client'
 
-import {ProcessStatus} from "../lib/types.js";
 import {Box, Button, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {ProcessSummary} from "./process-summary.js";
 import {deleteProcess, getRootProcesses} from "../client-api-helpers/process-helper.js";
 import {groupProcessesByUpdateDate} from "./group-processes.js";
+import {ProcessStatus} from "@eidolon/client";
 
 export interface ProcessListProps {
   isSelected: (chat: ProcessStatus) => boolean
