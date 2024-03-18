@@ -30,7 +30,8 @@ def test_tool_calls(server_loc):
     process_id = get_process_id(server_loc, "ExampleGeneric")
     # prep with some information to use on the subsequent response to demonstrate is handled well
     response = requests.post(
-        f"{server_loc}/agents/ExampleGeneric/processes/{process_id}/actions/question", json=dict(instruction="Hi! My name is Luke.")
+        f"{server_loc}/agents/ExampleGeneric/processes/{process_id}/actions/question",
+        json=dict(instruction="Hi! My name is Luke."),
     )
     response.raise_for_status()
     response2 = requests.post(

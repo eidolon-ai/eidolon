@@ -204,7 +204,12 @@ export async function createPID(agentName: string, title: string) {
 
     revalidateTag(`chats`)
     const json = await results.json()
-    return json["process_id"]
+    if (!results.ok) {
+        console.error('Error creating process: ', json)
+        throw new Error(`HTTP error! status: ${results.status}`)
+    } else {
+        return json["process_id"]
+    }
 }
 
 export async function getPIDStatus(agentName: string, process_id: string) {

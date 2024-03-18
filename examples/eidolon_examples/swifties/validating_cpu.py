@@ -120,18 +120,14 @@ class ValidatingCPU(AgentCPU, Specable[ValidatingCPUSpec]):
 
     def _check_input(self, v: str, prompts) -> StreamCollector:
         [agent, action] = self.parse_action(v)
-        program_stream = Agent.get(agent).stream_program(
-            action,
-            InputValidatorBody(prompts=prompts)
-        )
+        program_stream = Agent.get(agent).stream_program(action, InputValidatorBody(prompts=prompts))
         context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}")
         return stream_manager(program_stream, context)
 
     def _check_output(self, v, prompts, resp, output_format) -> StreamCollector:
         [agent, action] = self.parse_action(v)
         program_stream = Agent.get(agent).stream_program(
-            action,
-            OutputValidatorBody(prompts=prompts, output_schema=output_format, response=resp)
+            action, OutputValidatorBody(prompts=prompts, output_schema=output_format, response=resp)
         )
         context = StartStreamContextEvent(context_id=f"validator_{v.replace('.', '_')}")
         return stream_manager(program_stream, context)

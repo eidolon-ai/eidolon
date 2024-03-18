@@ -34,9 +34,9 @@ class InnerMonologue(BaseModel):
 class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
     @register_program()
     async def start_conversation(
-            self,
-            process_id,
-            topic: Annotated[str, Body(description="The topic of the new conversation", embed=True)],
+        self,
+        process_id,
+        topic: Annotated[str, Body(description="The topic of the new conversation", embed=True)],
     ) -> AgentState[str]:
         """
         Called to start the conversation. Every user will get a turn in each turn of the conversation.
@@ -46,12 +46,19 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         await self._store_state(process_id, group)
         await group.action("start_conversation")
 
-        await group.action("add_thoughts", {"thoughts": [Thought(
-            is_inner_voice=False,
-            agent_name="Coordinator",
-            thought=f"Your are in a conversation with agents {', '.join(self.spec.agents)}.\n"
-                    f"You are all discussing the topic of {topic}.\n"
-        ).model_dump()]})
+        await group.action(
+            "add_thoughts",
+            {
+                "thoughts": [
+                    Thought(
+                        is_inner_voice=False,
+                        agent_name="Coordinator",
+                        thought=f"Your are in a conversation with agents {', '.join(self.spec.agents)}.\n"
+                        f"You are all discussing the topic of {topic}.\n",
+                    ).model_dump()
+                ]
+            },
+        )
 
         async for event in self._ping_agents(group):
             yield event
@@ -70,9 +77,9 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
 
     @register_action("idle")
     async def add_thoughts(
-            self,
-            process_id,
-            thoughts: Annotated[List[Thought], Body(embed=True), "The thoughts to add to the agent's inner monologue."]
+        self,
+        process_id,
+        thoughts: Annotated[List[Thought], Body(embed=True), "The thoughts to add to the agent's inner monologue."],
     ) -> AgentState[str]:
         """
         Called to record a thought either from another agent or from the coordinator.
@@ -105,14 +112,30 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             for agent, conversation in conversations_per_agent.items():
                 if agent != agent_process.agent:
                     local_conversations.append(Thought(is_inner_voice=False, agent_name=agent, thought=conversation))
-            await Agent.get(agent_process.agent).process(agent_process.process_id).action("add_thoughts", {"thoughts": local_conversations})
+            await (
+                Agent.get(agent_process.agent)
+                .process(agent_process.process_id)
+                .action("add_thoughts", {"thoughts": local_conversations})
+            )
 
         for agent_process in group.agents:
             agent = agent_process.agent
             thought = thought_responses[agent]
-            emotions = thought["emotion"] if thought["emotion"] and len(thought["emotion"].strip()) > 0 else "*agent showed no emotion*"
-            thoughts = thought["thought"] if thought["thought"] and len(thought["thought"].strip()) > 0 else "*agent had no thoughts*"
-            speak = conversations_per_agent[agent] if conversations_per_agent[agent] and len(conversations_per_agent[agent].strip()) > 0 else "*agent said nothing*"
+            emotions = (
+                thought["emotion"]
+                if thought["emotion"] and len(thought["emotion"].strip()) > 0
+                else "*agent showed no emotion*"
+            )
+            thoughts = (
+                thought["thought"]
+                if thought["thought"] and len(thought["thought"].strip()) > 0
+                else "*agent had no thoughts*"
+            )
+            speak = (
+                conversations_per_agent[agent]
+                if conversations_per_agent[agent] and len(conversations_per_agent[agent].strip()) > 0
+                else "*agent said nothing*"
+            )
             yield StringOutputEvent(content=f"##### Agent: {agent}\n")
             yield StringOutputEvent(content="<span style='color:#6677aa'>Emotion: ")
             yield StringOutputEvent(content=emotions)
@@ -127,11 +150,25 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
         processes = []
         for process in await AgentCallHistory.get_agent_state(parent_process_id=process_id):
             processes.append(
-                ProcessStatus(machine=process.machine, agent=process.agent, process_id=process.remote_process_id, state=process.state, available_actions=process.available_actions))
+                ProcessStatus(
+                    machine=process.machine,
+                    agent=process.agent,
+                    process_id=process.remote_process_id,
+                    state=process.state,
+                    available_actions=process.available_actions,
+                )
+            )
         return await GroupConversation.restore(processes)
 
     async def _store_state(self, process_id: str, group: GroupConversation):
         for agent in group.agents:
-            history = AgentCallHistory(parent_process_id=process_id, parent_thread_id=None, machine=agent.machine, agent=agent.agent,
-                                       remote_process_id=agent.process_id, state=agent.state, available_actions=agent.available_actions)
+            history = AgentCallHistory(
+                parent_process_id=process_id,
+                parent_thread_id=None,
+                machine=agent.machine,
+                agent=agent.agent,
+                remote_process_id=agent.process_id,
+                state=agent.state,
+                available_actions=agent.available_actions,
+            )
             await history.upsert()
