@@ -84,11 +84,22 @@ class Search(LogicUnit, Specable[SearchSpec]):
 
     def _search(self):
         if "dateRestrict" in self.spec.params:
+
             async def fn(self_, term: str, num_results: int = 10, lang: str = "en") -> List[SearchResult]:
-                return [r async for r in self_._search_results(term, num_results, lang, self.spec.params["dateRestrict"])]
+                return [
+                    r async for r in self_._search_results(term, num_results, lang, self.spec.params["dateRestrict"])
+                ]
         else:
-            async def fn(self_, term: str, num_results: int = 10, lang: str = "en", dateRestrict: Optional[str]=self.spec.defaultDateRestrict) -> List[SearchResult]:
+
+            async def fn(
+                self_,
+                term: str,
+                num_results: int = 10,
+                lang: str = "en",
+                dateRestrict: Optional[str] = self.spec.defaultDateRestrict,
+            ) -> List[SearchResult]:
                 return [r async for r in self_._search_results(term, num_results, lang, dateRestrict)]
+
         return fn
 
     async def _search_results(self, term, num_results, lang, date_restrict):
@@ -103,7 +114,6 @@ class Search(LogicUnit, Specable[SearchSpec]):
             yield SearchResult(url=item["link"], title=item["title"], description=item.get("snippet"))
 
     async def _req(self, term, results, lang, date_restrict):
-            
         params = {
             "q": term,
             "num": results,  # Prevents multiple requests
@@ -114,7 +124,6 @@ class Search(LogicUnit, Specable[SearchSpec]):
         if date_restrict:
             params["dateRestrict"] = date_restrict
         params.update(self.spec.params)
-            
 
         async with _get(url="https://customsearch.googleapis.com/customsearch/v1", params=params) as resp:
             resp.raise_for_status()
