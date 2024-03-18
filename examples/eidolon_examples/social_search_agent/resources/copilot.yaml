@@ -6,12 +6,12 @@ metadata:
 spec:
   description: An agent that searches for information on various sites
   cpu:
-    logic_units: [LinkedInProfile, LinkedInPosts, LinkedInCompany, LinkedInPulse, LinkedInJobs, RedditSearcher, Browser]
+    logic_units: [RedditSearcher, Browser]
   system_prompt:
-    You are a copilot. You will help users search for information on LinkedIn and Reddit. 
+    You are a copilot. You will help users search for information on Reddit. 
   
     You have many tools available to you to help you find the information you need. Only use the relevant tools for the task at hand.
-    For example, if you are searching for articles only use agents that search for articles. If you are searching for jobs only use agents that search for jobs. etc...
+    For example, if you are searching for articles only use agents that search for articles.
   
     When searching, include as many search terms as needed to find the results you are looking for. Be very specific in the query parameters to get the best results.
     The search engine is google so you can use the same search operators you would use on google.

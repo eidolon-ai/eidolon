@@ -60,12 +60,10 @@ class SearchSpec(BaseModel):
         validate_default=True,
         desctiption="Google Project dev token, must have search permissions.",
     )
-    siteSearch: Optional[str] = Field(None, description="Restricts results to URLs from a specified site.")
-    includeSiteSearchSites: bool = Field(
-        True, description="Controls whether to include or exclude results from the site specified in siteSearch."
-    )
     name: str = "search"
     description: str = None
+    defaultDateRestrict: Optional[str] = None
+    params: Optional[dict] = {}
 
     @model_validator(mode="after")
     def _validate(self):
@@ -85,23 +83,27 @@ class Search(LogicUnit, Specable[SearchSpec]):
         setattr(self, "search", llm_function(name=self.spec.name, description=self.spec.description)(self._search()))
 
     def _search(self):
-        async def fn(self_, term: str, num_results: int = 10, lang: str = "en") -> List[SearchResult]:
-            return [r async for r in self_._search_results(term, num_results, lang)]
-
+        if "dateRestrict" in self.spec.params:
+            async def fn(self_, term: str, num_results: int = 10, lang: str = "en") -> List[SearchResult]:
+                return [r async for r in self_._search_results(term, num_results, lang, self.spec.params["dateRestrict"])]
+        else:
+            async def fn(self_, term: str, num_results: int = 10, lang: str = "en", dateRestrict: Optional[str]=self.spec.defaultDateRestrict) -> List[SearchResult]:
+                return [r async for r in self_._search_results(term, num_results, lang, dateRestrict)]
         return fn
 
-    async def _search_results(self, term, num_results, lang):
+    async def _search_results(self, term, num_results, lang, date_restrict):
         if num_results > 100:
             raise ValueError("Cannot return more than 100 results")
         escaped_term = term.replace(" ", "+")
-        resp = await self._req(escaped_term, num_results, lang)
+        resp = await self._req(escaped_term, num_results, lang, date_restrict)
         items = []
         if "items" in resp:
             items = resp["items"]
         for item in items:
             yield SearchResult(url=item["link"], title=item["title"], description=item.get("snippet"))
 
-    async def _req(self, term, results, lang):
+    async def _req(self, term, results, lang, date_restrict):
+            
         params = {
             "q": term,
             "num": results,  # Prevents multiple requests
@@ -109,9 +111,10 @@ class Search(LogicUnit, Specable[SearchSpec]):
             "cx": self.spec.cse_id,
             "key": self.spec.cse_token,
         }
-        if self.spec.siteSearch:
-            params["siteSearch"] = self.spec.siteSearch
-            params["siteSearchFilter"] = "i" if self.spec.includeSiteSearchSites else "e"
+        if date_restrict:
+            params["dateRestrict"] = date_restrict
+        params.update(self.spec.params)
+            
 
         async with _get(url="https://customsearch.googleapis.com/customsearch/v1", params=params) as resp:
             resp.raise_for_status()
