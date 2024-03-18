@@ -6,7 +6,7 @@ export default defineConfig({
     site: 'https://www.eidolonai.com',
     integrations: [
         starlight({
-            title: 'Eidolon: A service based AI LLM framework for developers. An open source alternative to LangChain',
+            title: 'Eidolon',
             components: {
                 SiteTitle: './src/components/FixedTitle.astro',
             },
@@ -15,9 +15,10 @@ export default defineConfig({
 //                 ThemeSelect: './src/components/ThemeSelect.astro',
 //                 Hero: './src/components/NewHero.astro',
 //             },
-            editLink: {
-                baseUrl: 'https://github.com/eidolon-ai/eidolon/docs/',
-            },
+            // editLink: {
+            //      todo Edit Page leads to 404
+            //     baseUrl: 'https://github.com/eidolon-ai/eidolon/tree/main/docs/src/content/docs',
+            // },
             favicon: '/favicon.ico',
             head: [
                 {
@@ -46,13 +47,48 @@ export default defineConfig({
             },
             sidebar: [
                 {
+                    label: 'Introduction', link: '/introduction'
+                },
+                {
                     label: 'Getting Started',
                     items: [
-                        {label: 'Quickstart', link: '/getting_started/quickstart/'},
-                        {label: 'Tutorials', link: '/getting_started/tutorials/'},
-                        {label: 'References', link: '/getting_started/references/'},
+                        {
+                            label: 'Quickstart', 
+                            items: [
+                                {label:'Introduction', link:'/getting_started/quickstart/introduction'},
+                                {label:'Prerequisites', link:'/getting_started/quickstart/prereq'},
+                                {label:'Create an Agent', link:'/getting_started/quickstart/create'},
+                                {label:'Run and Try', link:'/getting_started/quickstart/run'},
+                            ]
+                        },
+                        {   
+                            label: 'Demos',
+                            items: [
+                                {label:'Introduction', link: '/getting_started/demos/introduction'},
+                                {label:'Chatbot Demo', link: '/getting_started/demos/swifties'}
+                            ] 
+                        },
+                        {   
+                            label: 'Tutorials',
+                            items: [
+                                {label:'Introduction', link: '/getting_started/tutorials/introduction'},
+                                {label:'EidolonGPT', link: '/getting_started/tutorials/gpt'},
+                                {label:'Code Search', link: '/getting_started/tutorials/docs'}
+                            ] 
+                        }
                     ],
 // 					autogenerate: { directory: 'getting_started'},
+                },
+                {
+                    label: 'References',
+                    items: [
+                        {label: 'Introduction', link: '/references/introduction/'},
+                        {label: 'Setup', link: '/references/setup'},
+                        {label: 'Agent Communication', link: '/references/communication'},
+                        {label: 'Custom Agents', link: '/references/custom'},
+                        {label: 'Pluggable Resources', link: '/references/pluggable'},
+                        {label: 'Defining a Machine', link: '/references/defining'},
+                    ],
                 },
                 {
                     label: 'Architecture',

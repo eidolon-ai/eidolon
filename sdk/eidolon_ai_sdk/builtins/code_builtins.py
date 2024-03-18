@@ -30,7 +30,7 @@ from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
-from eidolon_ai_sdk.security.msft_authorizer import MSFTJWTProcessor
+from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
@@ -48,7 +48,11 @@ from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
 from eidolon_ai_sdk.memory.vector_store import VectorStore
 from eidolon_ai_sdk.security.security_manager import SecurityManager
-from eidolon_ai_sdk.security.functional_authorizer import FunctionalAuthorizer, NoopFunctionalAuthorizer
+from eidolon_ai_sdk.security.functional_authorizer import (
+    FunctionalAuthorizer,
+    NoopFunctionalAuth,
+    GlobPatternFunctionalAuthorizer,
+)
 from eidolon_ai_sdk.security.process_authorizer import ProcessAuthorizer, PrivateAuthorizer
 from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor, NoopAuthProcessor
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
@@ -91,11 +95,12 @@ def named_builtins():
         (AuthenticationProcessor, NoopAuthProcessor),
         NoopAuthProcessor,
         GoogleJWTProcessor,
-        MSFTJWTProcessor,
+        AzureJWTProcessor,
         (ProcessAuthorizer, PrivateAuthorizer),
         PrivateAuthorizer,
-        (FunctionalAuthorizer, NoopFunctionalAuthorizer),
-        NoopFunctionalAuthorizer,
+        (FunctionalAuthorizer, NoopFunctionalAuth),
+        NoopFunctionalAuth,
+        GlobPatternFunctionalAuthorizer,
         # agents
         ("Agent", SimpleAgent),
         SimpleAgent,

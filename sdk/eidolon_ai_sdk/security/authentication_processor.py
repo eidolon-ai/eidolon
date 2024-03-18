@@ -21,4 +21,4 @@ class AuthenticationProcessor(ABC):
 
 class NoopAuthProcessor(AuthenticationProcessor):
     async def check_auth(self, request: Request) -> User:
-        return User(id="NOOP_DEFAULT_USER", name="noop default user")
+        return User(id="NOOP_DEFAULT_USER", name="noop default user", extra={"permissions": ["agents/*/processes/*"]})
