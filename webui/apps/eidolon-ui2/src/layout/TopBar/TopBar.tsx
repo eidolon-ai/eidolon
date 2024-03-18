@@ -27,6 +27,7 @@ const TopBar: FunctionComponent<Props> = ({goToApp, endNode, startNode, title = 
       component="div"
       sx={
         {
+          zIndex: (theme) => theme.zIndex.drawer + 1 ,
           justifyContent: 'center',
           height: onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT,
           bgcolor: state.darkMode ? HEADER_BG_COLOR_DARK : HEADER_BG_COLOR_LIGHT,

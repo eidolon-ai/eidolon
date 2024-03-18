@@ -1,9 +1,9 @@
-import {beforeEach, describe, expect, test} from "@jest/globals";
+import {describe, expect, test} from "@jest/globals";
 import {EidolonClient} from "../src/client";
 import autoSetupPolly from "./polly_helper";
 
 describe('eidolon-client', () => {
-  let pollyContext = autoSetupPolly();
+  autoSetupPolly();
 
   describe('main', () => {
     test('getAgents returns correct values', async () => {
@@ -26,9 +26,9 @@ describe('eidolon-client', () => {
     test("getProcesses contains newly created processes", async () => {
       const client = new EidolonClient("http://localhost:8080")
       const initial_processes = await client.getProcesses()
-      const p1 = await client.createProcess("HelloWorld")
-      const p2 = await client.createProcess("HelloWorld")
-      const p3 = await client.createProcess("HelloWorld")
+      const {status: p1} = await client.createProcess("HelloWorld")
+      const {status: p2} = await client.createProcess("HelloWorld")
+      const {status: p3} = await client.createProcess("HelloWorld")
       const processes = await client.getProcesses(initial_processes.total, 100)
       const processesList = processes.processes.filter(p =>
         p.process_id === p1.process_id || p.process_id === p2.process_id || p.process_id === p3.process_id)
@@ -40,7 +40,8 @@ describe('eidolon-client', () => {
   describe('eidolon-client/agent', () => {
     test('programs returns correct values', async () => {
       const client = new EidolonClient("http://localhost:8080")
-      const agent = await client.agent("HelloWorld")
+      const {process} = await client.createProcess("HelloWorld")
+      const agent = process.agent("HelloWorld")
       const programs = await agent.programs()
       expect(programs).toEqual([
         "return_string",
@@ -55,18 +56,16 @@ describe('eidolon-client', () => {
   describe('eidolon-client/process', () => {
     test('status returns correct values', async () => {
       const client = new EidolonClient("http://localhost:8080")
-      const p1 = await client.createProcess("HelloWorld")
-      const agent = await client.agent("HelloWorld")
-      const process = await agent.process(p1.process_id)
+      const {status: p1} = await client.createProcess("HelloWorld")
+      const process = client.process(p1.process_id)
       const status = await process.status()
       expect(status).toEqual(p1)
     })
 
     test('delete deletes processes', async () => {
       const client = new EidolonClient("http://localhost:8080")
-      const p1 = await client.createProcess("HelloWorld")
-      const agent = await client.agent("HelloWorld")
-      const process = await agent.process(p1.process_id)
+      const {status: p1} = await client.createProcess("HelloWorld")
+      const process = client.process(p1.process_id)
       expect(await process.status()).toEqual(p1)
       await process.delete()
       const processes = await client.getProcesses()
@@ -75,19 +74,19 @@ describe('eidolon-client', () => {
 
     test("action returns correct values", async () => {
       const client = new EidolonClient("http://localhost:8080")
-      const p1 = await client.createProcess("HelloWorld")
-      const agent = await client.agent("HelloWorld")
-      const process = await agent.process(p1.process_id)
-      const result = await process.action("execute", {name: "World"})
+      const {process: p1} = await client.createProcess("HelloWorld")
+      const process = client.process(p1.process_id)
+      const agent = process.agent("HelloWorld")
+      const result = await agent.action("execute", {name: "World"})
       expect(result.data).toEqual({"welcome_message": "Hello, World World!"})
     })
 
     test("stream_action returns correct values", async () => {
       const client = new EidolonClient("http://localhost:8080")
-      const p1 = await client.createProcess("StreamingTest")
-      const agent = await client.agent("StreamingTest")
-      const process = await agent.process(p1.process_id)
-      const result = process.stream_action("streaming", {name: "World"})
+      const {process: p1} = await client.createProcess("StreamingTest")
+      const process = client.process(p1.process_id)
+      const agent = process.agent("StreamingTest")
+      const result = agent.stream_action("streaming", {name: "World"})
       const events = []
       for await (const data of result) {
         events.push(data)
@@ -141,10 +140,10 @@ describe('eidolon-client', () => {
 
     test("events returns correct values", async () => {
       const client = new EidolonClient("http://localhost:8080")
-      const p1 = await client.createProcess("StreamingTest")
-      const agent = await client.agent("StreamingTest")
-      const process = await agent.process(p1.process_id)
-      await process.action("streaming", {name: "World"})
+      const {process: p1} = await client.createProcess("StreamingTest")
+      const process = client.process(p1.process_id)
+      const agent = process.agent("StreamingTest")
+      await agent.action("streaming", {name: "World"})
       const expectedEvents = [
         {
           category: 'input',

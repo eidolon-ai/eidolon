@@ -2,22 +2,21 @@
 
 'use client'
 
-import {Box, Button, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
+import {Box, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {ProcessSummary} from "./process-summary.js";
-import {deleteProcess, getRootProcesses} from "../client-api-helpers/process-helper.js";
-import {groupProcessesByUpdateDate} from "./group-processes.js";
+import {ProcessSummary} from "./process-summary";
+import {deleteProcess, getRootProcesses} from "../client-api-helpers/process-helper";
+import {groupProcessesByUpdateDate} from "./group-processes";
 import {ProcessStatus} from "@eidolon/client";
 
 export interface ProcessListProps {
   isSelected: (chat: ProcessStatus) => boolean
   selectChat: (chat: ProcessStatus) => void
   goHome: () => void
-  createChat: () => void
 }
 
-export function ProcessList({isSelected, selectChat, goHome, createChat}: ProcessListProps) {
+export function ProcessList({isSelected, selectChat, goHome}: ProcessListProps) {
   const [dataByDate, setDataByDate] = useState<Record<string, ProcessStatus[]>>({})
   const handleDelete = (chat: ProcessStatus) => {
     const process_id = chat.process_id
@@ -88,24 +87,9 @@ export function ProcessList({isSelected, selectChat, goHome, createChat}: Proces
   }
 
   return (
-    <>
-      <Button
-        variant={"outlined"}
-        sx={{margin: '8px 16px 16px 16px '}}
-        // disabled={isCreatePending}
-        onClick={(event) => {
-          createChat()
-          // router.push("?modal=true")
-          event.preventDefault()
-          event.stopPropagation()
-        }}
-      >
-        New Chat
-      </Button>
-      <Box sx={{overflow: 'auto'}}>
-        {listComponents}
-      </Box>
-    </>
+    <Box sx={{overflow: 'auto'}}>
+      {listComponents}
+    </Box>
   )
 }
 

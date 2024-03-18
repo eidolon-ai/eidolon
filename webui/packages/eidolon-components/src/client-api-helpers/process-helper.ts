@@ -53,7 +53,7 @@ export async function getRootProcesses(): Promise<ProcessStatusWithChildren[]> {
 }
 
 async function getProcessesFromServer(): Promise<ProcessStatus[]> {
-  const results = await fetch(`$/api/eidolon/process`,
+  const results = await fetch(`/api/eidolon/process`,
     {
       // @ts-ignore
       next: {tags: ['chats']},
@@ -69,7 +69,7 @@ async function getProcessesFromServer(): Promise<ProcessStatus[]> {
   })
 
   const ret = []
-  for (const json of results) {
+  for (const json of results.processes) {
     json.id = json.process_id
     json.title = json.title || json.agent
     json.path = `/chat/${json.id}`

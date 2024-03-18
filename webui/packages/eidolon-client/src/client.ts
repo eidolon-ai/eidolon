@@ -188,41 +188,17 @@ export class EidolonClient {
     if (results.status !== 200) {
       throw new Error(`Failed to create process: ${results.statusText}`)
     }
-    let process = await results.json() as ProcessStatus;
-    addMachineIfMissing(this.machineUrl, process)
-    return process
+    let status = await results.json() as ProcessStatus;
+    addMachineIfMissing(this.machineUrl, status)
+    return {process: this.process(status.process_id), status: status}
   }
 
-  public async agent(agentName: string) {
-    return new Agent(this.machineUrl, agentName, this.headers)
+  public process(process_id: string) {
+    return new Process(this.machineUrl, process_id, this.headers)
   }
 }
 
 class Agent {
-  private readonly machineUrl: string
-  private readonly agent: string
-  private readonly headers: Record<string, string>
-
-  constructor(machineUrl: string, agent: string, headers: Record<string, string> = {}) {
-    this.machineUrl = machineUrl
-    this.agent = agent
-    this.headers = headers
-  }
-
-  public async programs() {
-    const results = await fetch(`${this.machineUrl}/agents/${this.agent}/programs`, {headers: this.headers})
-    if (results.status !== 200) {
-      throw new Error(`Failed to fetch programs: ${results.statusText}`)
-    }
-    return await results.json() as string[]
-  }
-
-  public async process(process_id: string) {
-    return new Process(this.machineUrl, this.agent, process_id, this.headers)
-  }
-}
-
-class Process {
   private readonly machineUrl: string
   private readonly agent: string
   private readonly process_id: string
@@ -231,33 +207,16 @@ class Process {
   constructor(machineUrl: string, agent: string, process_id: string, headers: Record<string, string> = {}) {
     this.machineUrl = machineUrl
     this.agent = agent
-    this.process_id = process_id
     this.headers = headers
+    this.process_id = process_id
   }
 
-  public async status() {
-    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}`, {headers: this.headers})
+  public async programs() {
+    const results = await fetch(`${this.machineUrl}/agents/${this.agent}/programs`, {headers: this.headers})
     if (results.status !== 200) {
-      throw new Error(`Failed to fetch process status: ${results.statusText}`)
+      throw new Error(`Failed to fetch programs: ${results.statusText}`)
     }
-    let process = await results.json() as ProcessStatus;
-    addMachineIfMissing(this.machineUrl, process)
-    return process
-  }
-
-  public async delete() {
-    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}`, {headers: this.headers, method: 'DELETE'})
-    if (results.status !== 200) {
-      throw new Error(`Failed to delete process: ${results.statusText}`)
-    }
-  }
-
-  public async events() {
-    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/events`, {headers: this.headers})
-    if (results.status !== 200) {
-      throw new Error(`Failed to fetch process events: ${results.statusText}`)
-    }
-    return await results.json() as ChatEvent[]
+    return await results.json() as string[]
   }
 
   public async action(action: string, body: Record<string, any>) {
@@ -272,7 +231,7 @@ class Process {
     return (await results.json()) as ProcessStatusWithData
   }
 
-  public async* stream_action(action: string, body: Record<string, any>): AsyncGenerator<ChatEvent, void, unknown> {
+  public async* stream_action(action: string, body: Record<string, any>): AsyncGenerator<ChatEvent> {
     const decoder = new TextDecoder();
     const path = `${this.machineUrl}/processes/${this.process_id}/agent/${this.agent}/actions/${action}`
     const response = await fetch(path, {
@@ -328,5 +287,45 @@ class Process {
     } else {
       throw new Error('Failed to obtain stream')
     }
+  }}
+
+class Process {
+  private readonly headers: Record<string, string>
+  readonly machineUrl: string
+  readonly process_id: string
+
+  constructor(machineUrl: string, process_id: string, headers: Record<string, string> = {}) {
+    this.machineUrl = machineUrl
+    this.process_id = process_id
+    this.headers = headers
+  }
+
+  public async status() {
+    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}`, {headers: this.headers})
+    if (results.status !== 200) {
+      throw new Error(`Failed to fetch process status: ${results.statusText}`)
+    }
+    let process = await results.json() as ProcessStatus;
+    addMachineIfMissing(this.machineUrl, process)
+    return process
+  }
+
+  public async delete() {
+    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}`, {headers: this.headers, method: 'DELETE'})
+    if (results.status !== 200) {
+      throw new Error(`Failed to delete process: ${results.statusText}`)
+    }
+  }
+
+  public async events() {
+    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/events`, {headers: this.headers})
+    if (results.status !== 200) {
+      throw new Error(`Failed to fetch process events: ${results.statusText}`)
+    }
+    return await results.json() as ChatEvent[]
+  }
+
+  public agent(agentName: string) {
+    return new Agent(this.machineUrl, agentName, this.process_id, this.headers)
   }
 }
