@@ -70,8 +70,8 @@ class SearchSpec(BaseModel):
         if not self.description:
             self.description = (
                 "Search google and get the results."
-                if self.siteSearch
-                else f"Search google on {self.siteSearch} and get the results."
+                if 'siteSearch' in self.params
+                else f"Search google on {self.params['siteSearch']} and get the results."
             )
         return self
 
