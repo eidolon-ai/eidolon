@@ -79,7 +79,7 @@ Now let's try to make a request to your server.
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:8080/agents/doc_producer/processes/{process_id}/actions/question' \
+  'http://localhost:8080/processes/{process_id}/agent/doc_producer/actions/question' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{ "instruction": "How do I create an Agent? Be concise" }'

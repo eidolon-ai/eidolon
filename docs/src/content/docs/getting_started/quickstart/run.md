@@ -29,7 +29,7 @@ The result should be a json object with a process id. For example:
 Now let's try to make a request to your server from another terminal window.
 
 ```bash
-curl -X POST http://0.0.0.0:8080/agents/hello_world/processes/{process_id}/actions/converse -H 'Content-Type: application/json' -d '{"name": "World"}'; echo
+curl -X POST http://0.0.0.0:8080/processes/{process_id}/agent/hello_world/actions/converse -H 'Content-Type: application/json' -d '{"name": "World"}'; echo
 ```
 
 Replace `{process_id}` with the process id you received from the previous command.
