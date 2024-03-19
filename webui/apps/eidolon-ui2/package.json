@@ -27,7 +27,7 @@
     "format": "prettier ./ --write",
     "lint": "next lint",
     "start": "npm run build-eidolon && next start",
-    "test": "npm run build-eidolon && jest --ci",
+    "test": "npm run build-eidolon && jest --ci --passWithNoTests",
     "type": "tsc",
     "build-eidolon": "node eidolon-app.build.js"
   },
