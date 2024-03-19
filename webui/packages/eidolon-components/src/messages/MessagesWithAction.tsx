@@ -1,7 +1,6 @@
 'use client'
 
 import {Box} from "@mui/material";
-import * as React from "react";
 import {OperationInfo, ProcessStatus} from "@eidolon/client";
 import {useEffect, useRef, useState} from "react";
 import {ElementsAndLookup} from "../lib/display-elements";
@@ -36,7 +35,6 @@ export function MessagesWithAction({machineUrl, agent, processId}: MessagesWithA
 // First we fetch the chat events from the server
   useEffect(() => {
     getChatEvents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agent, processId]);
 
   function setAgentState() {

@@ -5,7 +5,7 @@ import {PropsWithChildren} from "react";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
 
 export interface DevTooLayoutProps extends PropsWithChildren {
-  agentName: string | undefined
+  agentName?: string
 }
 
 export function ProcessWithListLayout(props: DevTooLayoutProps) {

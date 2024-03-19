@@ -1,4 +1,4 @@
-const { resolve } = require("node:path");
+const {resolve} = require("node:path");
 
 const project = resolve(process.cwd(), "tsconfig.json");
 
@@ -14,30 +14,43 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: ["eslint:recommended", "prettier", "eslint-config-turbo"],
-  plugins: ["only-warn"],
-  globals: {
-    React: true,
-    JSX: true,
-  },
-  env: {
-    browser: true,
-  },
-  settings: {
-    "import/resolver": {
-      typescript: {
-        project,
-      },
+    extends: ["eslint:recommended", "prettier", "eslint-config-turbo"],
+    plugins: ["only-warn"],
+    globals: {
+        React: true,
+        JSX: true,
     },
-  },
-  ignorePatterns: [
-    // Ignore dotfiles
-    ".*.js",
-    "node_modules/",
-    "dist/",
-  ],
-  overrides: [
-    // Force ESLint to detect .tsx files
-    { files: ["*.js?(x)", "*.ts?(x)"] },
-  ],
+    env: {
+        browser: true,
+    },
+    settings: {
+        "import/resolver": {
+            typescript: {
+                project,
+            },
+        },
+    },
+    rules: {
+        'no-unused-vars': [
+            'warn',
+            {
+                argsIgnorePattern: '^_',
+                varsIgnorePattern: '^_',
+            },
+        ],
+    },
+    ignorePatterns: [
+        // Ignore dotfiles
+        ".*.js",
+        "index.ts",
+        "jest.config.ts",
+        "node_modules/",
+        "dist/",
+        "test/",
+        "coverage/"
+    ],
+    overrides: [
+        // Force ESLint to detect .tsx files
+        {files: ["*.js?(x)", "*.ts?(x)"]},
+    ],
 };

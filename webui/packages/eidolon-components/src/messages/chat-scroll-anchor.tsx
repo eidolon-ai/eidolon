@@ -1,9 +1,9 @@
 'use client'
 
-import * as React from 'react'
 import {useInView} from 'react-intersection-observer'
 
 import {useAtBottom} from '../hooks/use-at-bottom'
+import {useEffect} from "react";
 
 interface ChatScrollAnchorProps {
   trackVisibility?: boolean
@@ -17,7 +17,7 @@ export function ChatScrollAnchor({trackVisibility}: ChatScrollAnchorProps) {
     rootMargin: '0px 0px -150px 0px'
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAtBottom && trackVisibility && !inView) {
       entry?.target.scrollIntoView({
         block: 'start'

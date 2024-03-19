@@ -33,6 +33,7 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
 
 export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
                                              data: Record<string, any>, elementsAndLookup: ElementsAndLookup,
+                                             // eslint-disable-next-line no-unused-vars
                                              updateElements: (elements: ElementsAndLookup) => void, cancelFetchController: AbortController) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     signal: cancelFetchController.signal,
@@ -62,6 +63,7 @@ export async function executeServerOperation(machineUrl: string, agent: string, 
     }
   };
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const {done, value} = await reader.read();
     if (done) break;

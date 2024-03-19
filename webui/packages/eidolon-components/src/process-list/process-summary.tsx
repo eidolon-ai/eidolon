@@ -1,21 +1,24 @@
 'use client'
 
-import * as React from "react";
 import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText} from "@mui/material";
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {Delete} from '@mui/icons-material';
 import {ProcessStatus} from "@eidolon/client";
 import {ProcessStatusWithChildren} from "../client-api-helpers/process-helper";
+import {useState} from "react";
 
 export interface ProcessSummaryProps {
   chat: ProcessStatusWithChildren,
+  // eslint-disable-next-line no-unused-vars
   handleDelete: (chat: ProcessStatus) => void
+  // eslint-disable-next-line no-unused-vars
   isSelected: (chat: ProcessStatus) => boolean
+  // eslint-disable-next-line no-unused-vars
   selectChat: (chat: ProcessStatus) => void
 }
 
 export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: ProcessSummaryProps) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleExpandClick = (event: { stopPropagation: () => void; }) => {
     setOpen(!open);

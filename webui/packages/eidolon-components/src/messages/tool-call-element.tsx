@@ -1,17 +1,16 @@
 import {ToolCallElement} from "../lib/display-elements";
 import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
-import * as React from "react";
 import {ExpandMore, CodeOffRounded} from "@mui/icons-material";
 import {ChatDisplayElement} from "./chat-display-element";
 import {OperationInfo} from "@eidolon/client";
+import {useState} from "react";
 
 interface ExpandMoreDivProps extends IconButtonProps {
   expand: boolean;
 }
 
 const ExpandMoreDiv = styled((props: ExpandMoreDivProps) => {
-  const {expand, ...other} = props;
-  return <IconButton {...other} />;
+  return <IconButton {...props} />;
 })(({theme, expand}) => ({
   transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
   marginLeft: 'auto',
@@ -23,11 +22,12 @@ const ExpandMoreDiv = styled((props: ExpandMoreDivProps) => {
 export interface ToolCallElementProps {
   element: ToolCallElement
   agentName: string
+  // eslint-disable-next-line no-unused-vars
   handleAction: (operation: OperationInfo, data: Record<string, any>) => void
 }
 
 export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProps) => {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

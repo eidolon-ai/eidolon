@@ -1,11 +1,11 @@
-import * as React from 'react'
+import {useEffect, useState} from "react";
 
 export function useAtBottom() {
-  const [isAtBottom, setIsAtBottom] = React.useState(false)
+  const [isAtBottom, setIsAtBottom] = useState(false)
   const element = () => {
     return document.getElementById("chat-elements-scroll-region")!
   }
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       if (element()) {
         const div = element()

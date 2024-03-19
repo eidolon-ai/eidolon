@@ -1,14 +1,10 @@
 'use client'
 
-import * as React from 'react'
-import {ButtonProps, Fab} from "@mui/material";
+import {Fab} from "@mui/material";
 import {ArrowDownward} from "@mui/icons-material";
 import {useAtBottom} from "../hooks/use-at-bottom";
 
-interface ButtonScrollToBottomProps extends ButtonProps {
-}
-
-export function ButtonScrollToBottom({className, ...props}: ButtonScrollToBottomProps) {
+export function ButtonScrollToBottom() {
   const isAtBottom = useAtBottom()
 
   if (!isAtBottom) {

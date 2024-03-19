@@ -1,7 +1,6 @@
 
 // @ts-ignore
 import {Avatar, Divider} from "@mui/material";
-import * as React from "react";
 import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements";
 import {ToolCall} from "./tool-call-element";
 import {OperationInfo} from "@eidolon/client";
@@ -11,6 +10,7 @@ export interface ChatDisplayElementProps {
   rawElement: DisplayElement
   agentName: string
   topLevel: boolean
+  // eslint-disable-next-line no-unused-vars
   handleAction: (operation: OperationInfo, data: Record<string, any>) => void
   userImage?: string
 }

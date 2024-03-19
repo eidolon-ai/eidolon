@@ -8,7 +8,6 @@ import rehypeRaw from 'rehype-raw'
 import rehypeWrap from "rehype-wrap-all";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {materialLight} from "react-syntax-highlighter/dist/esm/styles/prism";
-import * as React from "react";
 import "./eidolon-markdown.css"
 
 interface EidolonMarkdownProps {
@@ -24,7 +23,7 @@ export const EidolonMarkdown = ({children}: EidolonMarkdownProps) => {
     remarkPlugins={[remarkGfm]}
     components={{
       code(props) {
-        const {children, className, node, ...rest} = props
+        const {children, className, ...rest} = props
         const match = /language-(\w+)/.exec(className || '')
         return match ? (
           <SyntaxHighlighter

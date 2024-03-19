@@ -1,7 +1,6 @@
 'use client'
 
 import {Box} from "@mui/material";
-import * as React from "react";
 import {ElementsAndLookup} from "../lib/display-elements";
 import "./eidolon-events.css"
 import {ChatScrollAnchor} from "./chat-scroll-anchor";
@@ -10,6 +9,7 @@ import {OperationInfo} from "@eidolon/client";
 
 export interface EidolonEventProps {
   agentName: string,
+  // eslint-disable-next-line no-unused-vars
   handleAction: (operation: OperationInfo, data: Record<string, any>) => void
   elementsAndLookup: ElementsAndLookup
 }

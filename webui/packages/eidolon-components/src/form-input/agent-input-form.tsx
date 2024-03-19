@@ -9,6 +9,7 @@ import {OperationInfo} from "@eidolon/client";
 const log = (type: any) => console.log.bind(console, type);
 
 interface AgentInputFormProps {
+  // eslint-disable-next-line no-unused-vars
   handleSubmit: (formJson: Record<string, any>) => void
   operations: OperationInfo[]
   isProgram: boolean

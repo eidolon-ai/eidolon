@@ -3,7 +3,6 @@
 'use client'
 
 import {Box, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
-import * as React from "react";
 import {useEffect, useState} from "react";
 import {ProcessSummary} from "./process-summary";
 import {deleteProcess, getRootProcesses} from "../client-api-helpers/process-helper";
@@ -11,7 +10,9 @@ import {groupProcessesByUpdateDate} from "./group-processes";
 import {ProcessStatus} from "@eidolon/client";
 
 export interface ProcessListProps {
+  // eslint-disable-next-line no-unused-vars
   isSelected: (chat: ProcessStatus) => boolean
+  // eslint-disable-next-line no-unused-vars
   selectChat: (chat: ProcessStatus) => void
   goHome: () => void
   machineURL: string
@@ -27,7 +28,7 @@ export function ProcessList({machineURL, isSelected, selectChat, goHome}: Proces
         // dataByDate object and then each array of chats, keeping the previous item in a variable
         let previousItem: ProcessStatus | undefined
         let replaceWithNextItem = false
-        for (const [_date, chats] of Object.entries(dataByDate)) {
+        for (const [_, chats] of Object.entries(dataByDate)) {
           for (const chat of chats) {
             if (replaceWithNextItem) {
               return selectChat(chat)

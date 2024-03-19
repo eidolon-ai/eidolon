@@ -1,7 +1,6 @@
 'use client'
 
 import {AgentInputForm} from "./agent-input-form";
-import * as React from "react";
 import {useEffect, useState} from "react";
 import {EidolonClient, OperationInfo, ProcessStatus} from "@eidolon/client";
 import {ArrowCircleUpRounded} from '@mui/icons-material';
@@ -14,6 +13,7 @@ import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 interface AgentProcessProps {
   agent: string
   processState?: ProcessStatus
+  // eslint-disable-next-line no-unused-vars
   handleAction: (operation: OperationInfo, data: Record<string, any>) => void
   handleCancel: () => void
 }

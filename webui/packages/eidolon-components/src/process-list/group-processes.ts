@@ -64,7 +64,7 @@ const groups = [
       .contains(date), date.toFormat('LLLL')]
   },
   // older
-  (_date: DateTime): testTuple => {
+  (_: DateTime): testTuple => {
     return [true, "Older"]
   },
 ]

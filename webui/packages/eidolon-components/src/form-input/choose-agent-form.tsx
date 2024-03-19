@@ -1,13 +1,13 @@
 'use client'
 
 import {FormControl, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
-import * as React from "react";
 import {useEffect, useState} from "react";
 import {createProcess} from "../client-api-helpers/process-helper";
 import {EidolonClient} from "@eidolon/client";
 
 export interface ChooseAgentFormProps {
   machineUrl: string,
+  // eslint-disable-next-line no-unused-vars
   handleSubmit: (proces_id: string) => void
 }
 
