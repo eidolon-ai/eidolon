@@ -1,16 +1,17 @@
 import os
 from contextlib import asynccontextmanager
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 # from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 from httpx import AsyncClient, Timeout
-from jinja2 import Environment, StrictUndefined
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.system.fn_handler import FnHandler
+from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class SearchResult(BaseModel):
@@ -19,27 +20,14 @@ class SearchResult(BaseModel):
     description: Optional[str]
 
 
-# Requires custom search engine + token setup in google project. See more at https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list
-class WebSearchConfig(BaseModel):
-    cse_id: str = Field(None, desctiption="Google Custom Search Engine Id.")
-    cse_token: str = Field(None, desctiption="Google Project dev token, must have search permissions.")
-    summarizer: Optional[str] = "BeautifulSoup"
+class BrowseSpec(BaseModel):
+    summarizer: Literal["BeautifulSoup"] = "BeautifulSoup"
 
 
-class WebSearch(LogicUnit, Specable[WebSearchConfig]):
+class Browser(LogicUnit, Specable[BrowseSpec]):
     def __init__(self, **kwargs):
         LogicUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
-        self.spec.cse_id = self.spec.cse_id or os.environ["CSE_ID"]
-        self.spec.cse_token = self.spec.cse_token or os.environ["CSE_TOKEN"]
-        self.jinja_env = Environment(undefined=StrictUndefined)
-        if not self.spec.cse_id or not self.spec.cse_token:
-            raise ValueError("missing required cse_id or cse_token")
-
-    @asynccontextmanager
-    async def _get(self, **kwargs):
-        async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
-            yield await client.get(**kwargs)
 
     @llm_function()
     async def go_to_url(self, url: str) -> str:
@@ -48,7 +36,7 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
         :param url: the url to retrieve.
         :return: the html document.
         """
-        async with self._get(url=url) as resp:
+        async with _get(url=url) as resp:
             text = resp.text
             if not resp.is_success:
                 logger.warning(f"Request to url '{url}' return {resp.status_code}")
@@ -59,42 +47,107 @@ class WebSearch(LogicUnit, Specable[WebSearchConfig]):
             else:
                 raise ValueError(f"Summarizer {self.spec.summarizer} not supported")
 
-    @llm_function()
-    async def search(
-        self,
-        term: str,
-        num_results: int = 10,
-        lang: str = "en",
-    ) -> List[SearchResult]:
-        """
-        Search google and get the results. Cannot return more than 100 results
-        :param term: the search query
-        :param num_results: the number of results to return (default 10, max 100)
-        :param lang: the language to search in (default en)
-        :return: A list of SearchResults including url, title, and description
-        """
-        return [r async for r in self._search_results(term, num_results, lang)]
 
-    async def _search_results(self, term, num_results, lang):
+# Requires custom search engine + token setup in google project. See more at https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list
+class SearchSpec(BaseModel):
+    cse_id: str = Field(
+        default_factory=lambda: os.environ["CSE_ID"],
+        validate_default=True,
+        desctiption="Google Custom Search Engine Id.",
+    )
+    cse_token: str = Field(
+        default_factory=lambda: os.environ["CSE_TOKEN"],
+        validate_default=True,
+        desctiption="Google Project dev token, must have search permissions.",
+    )
+    name: str = "search"
+    description: str = None
+    defaultDateRestrict: Optional[str] = None
+    params: Optional[dict] = {}
+
+    @model_validator(mode="after")
+    def _validate(self):
+        if not self.description:
+            self.description = (
+                f"Search google on {self.params['siteSearch']} and get the results." if 'siteSearch' in self.params else "Search google and get the results."
+            )
+        return self
+
+
+class Search(LogicUnit, Specable[SearchSpec]):
+    def __init__(self, **kwargs):
+        LogicUnit.__init__(self, **kwargs)
+        Specable.__init__(self, **kwargs)
+        setattr(self, "search", llm_function(name=self.spec.name, description=self.spec.description)(self._search()))
+
+    def _search(self):
+        if "dateRestrict" in self.spec.params:
+
+            async def fn(self_, term: str, num_results: int = 10, lang: str = "en") -> List[SearchResult]:
+                return [
+                    r async for r in self_._search_results(term, num_results, lang, self.spec.params["dateRestrict"])
+                ]
+        else:
+
+            async def fn(
+                self_,
+                term: str,
+                num_results: int = 10,
+                lang: str = "en",
+                dateRestrict: Optional[str] = self.spec.defaultDateRestrict,
+            ) -> List[SearchResult]:
+                return [r async for r in self_._search_results(term, num_results, lang, dateRestrict)]
+
+        return fn
+
+    async def _search_results(self, term, num_results, lang, date_restrict):
         if num_results > 100:
             raise ValueError("Cannot return more than 100 results")
         escaped_term = term.replace(" ", "+")
-        resp = await self._req(escaped_term, num_results, lang)
-        if not resp["items"]:
-            raise RuntimeError("Error retrieving results")
-        for item in resp["items"]:
+        resp = await self._req(escaped_term, num_results, lang, date_restrict)
+        items = []
+        if "items" in resp:
+            items = resp["items"]
+        for item in items:
             yield SearchResult(url=item["link"], title=item["title"], description=item.get("snippet"))
 
-    async def _req(self, term, results, lang):
-        async with self._get(
-            url="https://customsearch.googleapis.com/customsearch/v1",
-            params={
-                "q": term,
-                "num": results,  # Prevents multiple requests
-                "hl": lang,
-                "cx": self.spec.cse_id,
-                "key": self.spec.cse_token,
-            },
-        ) as resp:
+    async def _req(self, term, results, lang, date_restrict):
+        params = {
+            "q": term,
+            "num": results,  # Prevents multiple requests
+            "hl": lang,
+            "cx": self.spec.cse_id,
+            "key": self.spec.cse_token,
+        }
+        if date_restrict:
+            params["dateRestrict"] = date_restrict
+        params.update(self.spec.params)
+
+        async with _get(url="https://customsearch.googleapis.com/customsearch/v1", params=params) as resp:
             resp.raise_for_status()
             return resp.json()
+
+
+class WebSearchConfig(SearchSpec, BrowseSpec):
+    pass
+
+
+class WebSearch(Specable[WebSearchConfig], LogicUnit):
+    parts: List[LogicUnit]
+
+    def __init__(self, **kwargs):
+        LogicUnit.__init__(self, **kwargs)
+        Specable.__init__(self, **kwargs)
+        self.parts = [Browser(**kwargs), Search(**kwargs)]
+
+    async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
+        acc = []
+        for part in self.parts:
+            acc.extend(await part.build_tools(call_context))
+        return acc
+
+
+@asynccontextmanager
+async def _get(**kwargs):
+    async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
+        yield await client.get(**kwargs, follow_redirects=True)
