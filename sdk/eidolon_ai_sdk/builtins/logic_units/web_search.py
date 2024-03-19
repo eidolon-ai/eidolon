@@ -69,9 +69,7 @@ class SearchSpec(BaseModel):
     def _validate(self):
         if not self.description:
             self.description = (
-                "Search google and get the results."
-                if 'siteSearch' in self.params
-                else f"Search google on {self.params['siteSearch']} and get the results."
+                f"Search google on {self.params['siteSearch']} and get the results." if 'siteSearch' in self.params else "Search google and get the results."
             )
         return self
 
