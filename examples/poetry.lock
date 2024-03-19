@@ -808,7 +808,7 @@ description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 aiostream = "^0.5.2"
@@ -830,7 +830,7 @@ description = "An Open Source Agent Services Framework"
 optional = false
 python-versions = ">=3.11,<3.12"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 authlib = "^1.3.0"
@@ -4957,4 +4957,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "734247246d296a80d3c69720a9432abb602583e1c1292783df71e6afa2f7cdb3"
+content-hash = "c1cb9e7a0fb9bdcb1baa3731dbacfafa16578f9a307b74a1efcdcebcc29d18a5"
