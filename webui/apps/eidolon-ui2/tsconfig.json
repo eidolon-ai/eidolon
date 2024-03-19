@@ -1,0 +1,27 @@
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+  },
+  "include": ["next-env.d.ts", "**/*.jsx", "**/*.ts", "**/*.tsx", "types.d.ts", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

@@ -1,6 +1,6 @@
 import json
 from functools import cache
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from httpx import Timeout, AsyncClient, HTTPStatusError, codes
 from httpx_sse import EventSource

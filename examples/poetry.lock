@@ -803,7 +803,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.3"
+version = "0.1.4"
 description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1287,13 +1287,13 @@ testing = ["flufl.flake8", "importlib-resources (>=1.3)", "packaging", "pyfakefs
 
 [[package]]
 name = "importlib-resources"
-version = "6.3.1"
+version = "6.3.2"
 description = "Read resources from Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "importlib_resources-6.3.1-py3-none-any.whl", hash = "sha256:4811639ca7fa830abdb8e9ca0a104dc6ad13de691d9fe0d3173a71304f068159"},
-    {file = "importlib_resources-6.3.1.tar.gz", hash = "sha256:29a3d16556e330c3c8fb8202118c5ff41241cc34cbfb25989bbad226d99b7995"},
+    {file = "importlib_resources-6.3.2-py3-none-any.whl", hash = "sha256:f41f4098b16cd140a97d256137cfd943d958219007990b2afb00439fc623f580"},
+    {file = "importlib_resources-6.3.2.tar.gz", hash = "sha256:963eb79649252b0160c1afcfe5a1d3fe3ad66edd0a8b114beacffb70c0674223"},
 ]
 
 [package.extras]
@@ -4957,4 +4957,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "37502f30f6cb78b0bff856612e18fe91c40b015a1ecbd12dd724be9bee8b33d0"
+content-hash = "c1cb9e7a0fb9bdcb1baa3731dbacfafa16578f9a307b74a1efcdcebcc29d18a5"

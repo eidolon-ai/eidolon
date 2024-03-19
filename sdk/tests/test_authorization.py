@@ -5,7 +5,7 @@ import requests
 from pytest_asyncio import fixture
 from starlette.requests import Request
 
-from eidolon_ai_client.client import Agent
+from eidolon_ai_client.client import Agent, Machine
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -104,30 +104,29 @@ def test_open_api_does_not_require_permissions(authorization, agent):
 async def test_system_list_processes_requires_read_permissions(authorization, agent: Agent):
     await agent.create_process()
     authorization.remove_permission("read")
-    response = requests.get(agent.machine + "/system/processes")
-    assert response.status_code == 200
-    assert not response.json()  # response is naked list, which should change, but is fine for now
+    response = await Machine().processes()
+    assert response.total == 0
 
 
 async def test_system_list_processes_requires_filters_resources_by_user(authentication, agent: Agent):
     await agent.create_process()
     authentication.user.id = "somebody_else"
-    response = requests.get(agent.machine + "/system/processes")
-    assert response.status_code == 200
-    assert not response.json()  # response is naked list, which should change, but is fine for now
+    response = await Machine().processes()
+    assert response.total == 0
 
 
 async def test_get_process_missing_agent(authorization, agent: Agent):
     with pytest.raises(AgentError) as e2:
         await Agent.get("BadAgent").process("foo").status()
     assert e2.value.status_code == 404
-    assert e2.value.response.json() == {"detail": "Not Found"}
+    assert e2.value.response.json() == {"detail": "Process Not Found"}
 
 
 async def test_get_process_missing_functional_perms(authorization, agent: Agent):
+    pid = await agent.create_process()
     authorization.remove_permission("read")
     with pytest.raises(AgentError) as e3:
-        await agent.process("foo").status()
+        await agent.process(pid.process_id).status()
     assert e3.value.status_code == 403
     assert e3.value.response.json() == {"detail": "Missing Permission: read"}
 
@@ -182,33 +181,28 @@ async def test_update_process_missing_resource_perms(authorization, agent: Agent
 
 
 async def test_delete_process_no_delete_shows_403(authorization, agent: Agent):
+    pid = await agent.create_process()
     authorization.remove_permission("delete")
     with pytest.raises(AgentError) as e1:
-        await agent.process("foo").delete()
+        await agent.process(pid.process_id).delete()
     assert e1.value.status_code == 403
     assert e1.value.response.json() == {"detail": "Missing Permission: delete"}
 
 
 async def test_delete_process_no_read_shows_403(authorization, agent: Agent):
+    pid = await agent.create_process()
     authorization.remove_permission("read")
     with pytest.raises(AgentError) as e1:
-        await agent.process("foo").delete()
+        await agent.process(pid.process_id).delete()
     assert e1.value.status_code == 403
     assert e1.value.response.json() == {"detail": "Missing Permission: read"}
 
 
 async def test_get_process_events_no_read_shows_403(authorization, agent: Agent):
+    pid = await agent.create_process()
     authorization.remove_permission("read")
     with pytest.raises(AgentError) as e1:
-        await agent.process("foo").events()
-    assert e1.value.status_code == 403
-    assert e1.value.response.json() == {"detail": "Missing Permission: read"}
-
-
-async def test_agent_list_processes_requires_read_permissions(authorization, agent: Agent):
-    authorization.remove_permission("read")
-    with pytest.raises(AgentError) as e1:
-        await agent.processes()
+        await agent.process(pid.process_id).events()
     assert e1.value.status_code == 403
     assert e1.value.response.json() == {"detail": "Missing Permission: read"}
 

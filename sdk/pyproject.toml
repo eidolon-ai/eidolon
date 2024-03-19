@@ -56,7 +56,8 @@ pytest = "^7.4.4"
 pylint = "^3.0.3"
 ruff = "^0.1.7"
 pytest-recording = "^0.13.1"
-pytest-asyncio = "^0.23.2"
+pytest-asyncio = "^0.23.4"
+eidolon-ai-client = { path = "../client/python", develop = true }
 
 [build-system]
 requires = ["poetry-core"]

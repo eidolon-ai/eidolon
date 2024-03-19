@@ -6,7 +6,7 @@ import pytest_asyncio
 from fastapi import Body, HTTPException, Request
 from opentelemetry.trace import get_current_span
 
-from eidolon_ai_client.client import Agent, Process, ProcessStatus
+from eidolon_ai_client.client import Agent, Process, ProcessStatus, Machine
 from eidolon_ai_client.events import (
     ErrorEvent,
     AgentStateEvent,
@@ -162,11 +162,17 @@ class TestHelloWorld:
             process = await Agent.get("HelloWorld").create_process()
             await process.action(program, "error")
         assert exc.value.response.status_code == 500
-        assert exc.value.response.json() == {
+        json = exc.value.response.json()
+        del json["created"]
+        del json["updated"]
+        assert json == {
+            "agent": "HelloWorld",
             "available_actions": [],
             "data": "big bad server error",
+            'parent_process_id': None,
             "process_id": f"test_unhandled_error[{program}]_0",
             "state": "unhandled_error",
+            "title": None,
         }
 
     @pytest.mark.parametrize("program", ["idle", "idle_streaming"])
@@ -300,16 +306,16 @@ class TestStateMachine:
         second = (await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="blurb"))).process_id
         third = (await run_program("StateMachine", "idle", json=dict(desired_state="foo", response="blurb"))).process_id
 
-        processes = await client.get("/agents/StateMachine/processes")
-        assert processes.json()["total"] == 3
-        assert {p["process_id"] for p in processes.json()["processes"]} == {first, second, third}
+        processes = await Machine().processes()
+        assert processes.total == 3
+        assert {p.process_id for p in processes.processes} == {first, second, third}
 
         # update the first process: it should be at end of list now
         assert first == (await Agent.get("StateMachine").process(first).action("terminate")).process_id
 
-        processes = await client.get("/agents/StateMachine/processes")
-        assert processes.json()["total"] == 3
-        assert [p["process_id"] for p in processes.json()["processes"]] == [second, third, first]
+        processes = await Machine().processes()
+        assert processes.total == 3
+        assert {p.process_id for p in processes.processes} == {second, third, first}
 
     async def test_can_start(self):
         post = await run_program(

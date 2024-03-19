@@ -17,7 +17,17 @@ npm install -g pnpm
 
 Alternatively, you can check the [official PNPM installation guide](https://pnpm.io/installation) for more methods and detailed instructions.
 
-### Running Eidolon Macnien
+### Installing Turbo Reop
+
+Turbo Repo is a tool that helps you manage multiple repositories. To install it, run the following command in your terminal:
+
+```bash
+pnpm install turbo --global
+```
+
+Alternatively, you can check the [official Turbo Repo installation guide](https://turbo.build/repo) for more methods and detailed instructions.
+
+### Running Eidolon Machine
 
 You will also need a running Eidolon Machine. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/getting_started/quickstart/)
 
@@ -41,7 +51,7 @@ To start the development server, run:
 
 ```bash
 pnpm install
-pnpm run dev
+turbo run dev
 ```
 
 This command will start the Eidolon Web UI on a local development server, usually accessible at [http://localhost:3000](http://localhost:3000).

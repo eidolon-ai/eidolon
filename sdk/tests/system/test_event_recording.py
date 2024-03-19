@@ -68,9 +68,7 @@ class TestHelloWorld:
         process = await Agent.get("HelloWorld").create_process()
         post = await process.action("idle", "world")
         assert post.data == "Hello, world!"
-
-        response = await client.get(f"/agents/HelloWorld/processes/{process.process_id}/events")
-        events = response.json()
+        events = await process.events()
         expected_events = [
             UserInputEvent(input=dict(name="world")),
             StartAgentCallEvent(
@@ -85,7 +83,8 @@ class TestHelloWorld:
 
     async def test_hello_world_streaming(self, client):
         agent = Agent.get("HelloWorld")
-        stream = (await agent.create_process()).stream_action("idle_streaming", "error")
+        process = await agent.create_process()
+        stream = (process).stream_action("idle_streaming", "error")
         server_events = []
         process_id = None
         async for e in stream:
@@ -95,5 +94,5 @@ class TestHelloWorld:
 
         assert process_id is not None
 
-        events = await client.get(f"/agents/HelloWorld/processes/{process_id}/events")
-        self.compare_events(events.json(), server_events)
+        events = await process.events()
+        self.compare_events(events, server_events)

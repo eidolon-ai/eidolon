@@ -1,9 +1,6 @@
-import httpx
 import pytest
-from httpx import Client
-from jsonref import requests
 
-from conftest import get_process_id
+from eidolon_ai_client.client import Machine
 
 
 class TestAgentCommunication:
@@ -17,20 +14,15 @@ class TestAgentCommunication:
         ) as server:
             yield server
 
-    def test_can_hit_generic_agent(self, server_loc):
-        process_id = get_process_id(server_loc, "hello_world")
-        response = requests.post(
-            f"{server_loc}/agents/hello_world/processes/{process_id}/actions/question",
-            json=dict(name="Joe Dirt"),
-        )
-        assert response.status_code == 200
-        assert "Joe Dirt" in response.json()["data"]
+    async def test_can_hit_generic_agent(self, server_loc):
+        process = await Machine(machine=server_loc).agent("hello_world").create_process()
+        response = await process.action("question", body=dict(name="Joe Dirt"))
+        assert "Joe Dirt" in response.data
 
-    def test_can_hit_qa_agent(self, server_loc):
-        process_id = get_process_id(server_loc, "qa")
-        response = requests.post(f"{server_loc}/agents/qa/processes/{process_id}/actions/question")
-        assert response.status_code == 200
-        assert "Success" in response.json()["data"]
+    async def test_can_hit_qa_agent(self, server_loc):
+        process = await Machine(machine=server_loc).agent("qa").create_process()
+        response = await process.action("question", body=dict(name="Joe Dirt"))
+        assert "Success" in response.data
 
 
 class TestCustomAgents:
@@ -44,21 +36,12 @@ class TestCustomAgents:
         ) as server:
             yield server
 
-    def test_can_hit_generic_agent(self, server_loc):
-        process_id = get_process_id(server_loc, "hello_world")
-        response = requests.post(
-            f"{server_loc}/agents/hello_world/processes/{process_id}/actions/enter",
-            json=dict(name="Joe Dirt"),
-        )
-        assert response.status_code == 200
-        assert "Joe Dirt" in response.json()["data"]
+    async def test_can_hit_generic_agent(self, server_loc):
+        process = await Machine(machine=server_loc).agent("hello_world").create_process()
+        response = await process.action("enter", body=dict(name="Joe Dirt"))
+        assert "Joe Dirt" in response.data
 
-    def test_can_hit_qa_agent(self, server_loc):
-        process_id = get_process_id(server_loc, "qa")
-        with Client(timeout=httpx.Timeout(120)) as client:
-            response = client.post(
-                f"{server_loc}/agents/qa/processes/{process_id}/actions/test",
-                json="hello_world",
-            )
-            assert response.status_code == 200
-            assert response.json()["data"]["outcome"].lower() == "success"
+    async def test_can_hit_qa_agent(self, server_loc):
+        process = await Machine(machine=server_loc).agent("qa").create_process()
+        response = await process.action("test", json="hello_world")
+        assert response.data["outcome"].lower() == "success"

@@ -59,7 +59,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         self, machine: str, agent: str, action: str, remote_process_id: str, call_context: CallContext
     ):
         agent_client = Agent.get(agent)
-        path = f"/agents/{agent}/processes/{{process_id}}/actions/{action}"
+        path = f"/processes/{{process_id}}/agent/{agent}/actions/{action}"
         machine_schema = await self._get_schema(machine)
         endpoint_schema = machine_schema["paths"][path]["post"]
         try:
@@ -81,7 +81,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             agent_client = Agent.get(agent)
             machine_schema = await self._get_schema(agent_client.machine)
             for action in await agent_client.programs():
-                path = f"/agents/{agent}/processes/{{process_id}}/actions/{action}"
+                path = f"/processes/{{process_id}}/agent/{agent}/actions/{action}"
                 try:
                     name = self._name(agent, action=action)
                     tool = self._build_tool_def(

@@ -1,13 +1,12 @@
 import os
 import pathlib
 import subprocess
+from contextlib import contextmanager
 
 import dotenv
 import time
-from contextlib import contextmanager
-
-import pytest
 from jsonref import requests
+from pytest_asyncio import fixture
 
 dotenv.load_dotenv()
 
@@ -24,7 +23,7 @@ def tail(file_path, sleep_sec=0.1):
             yield line
 
 
-@pytest.fixture(scope="session")
+@fixture(scope="session")
 def log_dir():
     log_dir = os.getenv("EIDOLON_TEST_LOG_DIR", "/tmp/eidolon_test_logs")
     os.makedirs(log_dir, exist_ok=True)
@@ -32,7 +31,7 @@ def log_dir():
     return log_dir
 
 
-@pytest.fixture(scope="session")
+@fixture(scope="session")
 def eidolon_server(eidolon_examples, log_dir):
     @contextmanager
     def fn(resources_loc, *args, log_file=None):
@@ -66,12 +65,12 @@ def eidolon_server(eidolon_examples, log_dir):
     return fn
 
 
-@pytest.fixture(scope="session")
+@fixture(scope="session")
 def eidolon_examples():
     return pathlib.Path(__file__).parent.parent / "eidolon_examples"
 
 
-@pytest.fixture
+@fixture
 def server_loc():
     return "http://localhost:8080"
 
