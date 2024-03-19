@@ -161,6 +161,7 @@ class AgentController:
         **kwargs,
     ):
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
+        RequestContext.set("process_id", process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
         process = await self.get_latest_process_event(process_id)
         if not process:
@@ -178,10 +179,11 @@ class AgentController:
         process = await process.update(
             agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
         )
-        RequestContext.set("process_id", process_id)
-
-        if "process_id" in dict(inspect.signature(handler.fn).parameters):
+        parameters = inspect.signature(handler.fn).parameters
+        if "process_id" in parameters:
             kwargs["process_id"] = process_id
+        if "request" in parameters and parameters["request"].annotation == Request:
+            kwargs["request"] = request
 
         # get the accepted content types
         accept_header = request.headers.get("Accept")

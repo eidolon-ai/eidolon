@@ -149,11 +149,9 @@ class Reference(BaseModel):
         spec_type = self.get_spec_type(reference_class)
         if spec_type:
             kwargs["spec"] = spec_type.model_validate(self.model_extra or {})
-        elif issubclass(reference_class, BaseModel):
+        else:
             for k, v in (self.model_extra or {}).items():
                 kwargs[k] = v
-        elif self.model_extra:
-            kwargs["spec"] = self.model_extra
 
         return self._get_reference_class()(*args, **kwargs)
 
