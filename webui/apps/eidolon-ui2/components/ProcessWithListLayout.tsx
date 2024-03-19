@@ -1,14 +1,14 @@
 import {Box} from "@mui/material";
 import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
-import * as React from "react";
-import {PropsWithChildren} from "react";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
 
-export interface DevTooLayoutProps extends PropsWithChildren {
+
+export interface DevTooLayoutProps {
   agentName?: string
+  children: JSX.Element
 }
 
-export function ProcessWithListLayout(props: DevTooLayoutProps) {
+export function ProcessWithListLayout({agentName, children}: DevTooLayoutProps) {
   return (
     <Box sx={{
       display: 'flex'
@@ -23,12 +23,12 @@ export function ProcessWithListLayout(props: DevTooLayoutProps) {
       >
         <DevProcessListWithAdd
           machineURL={process.env.EIDOLON_SERVER!}
-          agentName={props.agentName}
+          agentName={agentName}
         />
       </ResizableDrawer>
       <Box component="main" flexGrow={1}>
         <Box height={"calc(100vh - 64px)"} display={"flex"} justifyContent={"center"}>
-          {props.children}
+          {children}
         </Box>
       </Box>
     </Box>

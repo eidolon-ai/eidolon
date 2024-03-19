@@ -11,7 +11,7 @@ type Props = {
   options: Omit<OptionsOfCreateCache, 'insertionPoint'>;
   /** By default <CacheProvider /> from 'import { CacheProvider } from "@emotion/react"' */
   CacheProvider?: (props: { value: EmotionCache; children: ReactNode }) => JSX.Element | null;
-  children: ReactNode;
+  children: JSX.Element;
 };
 
 const EmotionCacheProvider: FunctionComponent<Props> = ({

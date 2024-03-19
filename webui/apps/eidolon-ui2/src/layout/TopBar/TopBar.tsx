@@ -1,14 +1,13 @@
-import {AppBar, Avatar, Button, Divider, FormControl, FormHelperText, InputLabel, MenuItem, Select, Toolbar, Typography} from '@mui/material';
-import {FunctionComponent, ReactNode} from 'react';
+import {AppBar, Toolbar} from '@mui/material';
+import * as React from 'react';
+import {FunctionComponent} from 'react';
 import {HEADER_BG_COLOR_DARK, HEADER_BG_COLOR_LIGHT, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT} from "../config";
 import {useOnMobile} from "../../hooks/index";
 import {useAppStore} from "../../store/index";
-import * as React from "react";
-import {useRouter} from "next/navigation";
 
 interface Props {
-  endNode?: ReactNode;
-  startNode?: ReactNode;
+  endNode?: JSX.Element;
+  startNode?: JSX.Element;
   title?: string;
   goToApp: (app: string) => void
 }
