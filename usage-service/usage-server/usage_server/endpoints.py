@@ -21,21 +21,25 @@ async def get_usage_summary(subject_id: str) -> UsageSummary:
     return await service.get_usage(subject_id)
 
 
+in_progress_breakpoints = set()
+
+
 @usage.post(path="/subjects/{subject_id}/transactions")
 async def record_usage_transaction(
     subject_id: str, transaction: UsageDelta | UsageReset
 ) -> None:
     await service.record_transaction(subject_id, transaction)
-    asyncio.create_task(
-        _with_error_logging(service.create_breakpoint_record(subject_id))
-    )
+    if not subject_id not in in_progress_breakpoints:
+        in_progress_breakpoints.add(subject_id)
+        asyncio.create_task(_add_breakpoint(subject_id))
 
 
-async def _with_error_logging(
-    coro, error_message: str = "Error while executing background task"
-):
+async def _add_breakpoint(subject_id):
     try:
-        return await coro
+        await service.create_breakpoint_record(subject_id)
+        logger.info(f"Added breakpoint for subject {subject_id}")
     except Exception:
-        logger.exception(error_message)
+        logger.exception(f"Error while adding breakpoint for subject {subject_id}")
         raise
+    finally:
+        in_progress_breakpoints.remove(subject_id)
