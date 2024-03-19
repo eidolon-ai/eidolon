@@ -11,6 +11,7 @@ import uvicorn
 import yaml
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from pydantic import TypeAdapter, Field
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
@@ -22,11 +23,12 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_manager import (
     SecurityManager,
 )
-from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
+from eidolon_ai_sdk.system.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -34,6 +36,13 @@ from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resou
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()
+
+try:
+    from opentelemetry.instrumentation.logging import LoggingInstrumentor
+
+    LoggingInstrumentor().instrument()
+except ImportError:
+    pass
 
 try:
     EIDOLON_SDK_VERSION = version("eidolon-ai-sdk")
@@ -194,6 +203,9 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         if AgentOS.get_instance(ReplayConfig).save_loc:
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
+
+        AgentOS.get_instance(OpenTelemetryManager).setup()
+
         yield
         await machine.stop()
     except BaseException:
@@ -257,6 +269,7 @@ def start_app(lifespan):
     _app.add_middleware(SecurityMiddleware)
     _app.add_middleware(LoggingMiddleware)
     _app.add_exception_handler(PermissionException, permission_exception_handler)
+    FastAPIInstrumentor.instrument_app(_app)
     return _app
 
 

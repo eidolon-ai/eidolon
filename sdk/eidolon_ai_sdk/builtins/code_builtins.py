@@ -2,6 +2,9 @@ from typing import Tuple
 
 from openai import AsyncOpenAI
 from openai.lib.azure import AsyncAzureOpenAI
+from opentelemetry.sdk.trace import SpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.sampling import Sampler
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
@@ -31,6 +34,12 @@ from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
+from eidolon_ai_sdk.system.opentelemetry import (
+    OpenTelemetryManager,
+    CustomSampler,
+    NoopOpenTelemetry,
+    BatchOpenTelemetry,
+)
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
@@ -132,6 +141,14 @@ def named_builtins():
         (VectorStore, ChromaVectorStore),
         NoopVectorStore,
         ChromaVectorStore,
+        (OpenTelemetryManager, NoopOpenTelemetry),
+        # (OpenTelemetryManager, BatchOpenTelemetry),
+        NoopOpenTelemetry,
+        BatchOpenTelemetry,
+        (Sampler, CustomSampler),
+        CustomSampler,
+        (SpanProcessor, BatchSpanProcessor),
+        BatchSpanProcessor,
         # sub components
         (DocumentParser, AutoParser),
         AutoParser,
