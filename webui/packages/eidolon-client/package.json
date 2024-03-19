@@ -7,8 +7,7 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
-    "test": "jest",
-    "test:ci": "jest --ci"
+    "test": "jest --ci"
   },
   "dependencies": {
     "@readme/openapi-parser": "^2.5.0",
