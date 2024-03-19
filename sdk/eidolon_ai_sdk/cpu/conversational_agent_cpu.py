@@ -1,6 +1,7 @@
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
 
 from fastapi import HTTPException
+from opentelemetry import trace
 
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread, CPUException
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
@@ -19,6 +20,9 @@ from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference,
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 from eidolon_ai_client.util.stream_collector import merge_streams
+
+
+tracer = trace.get_tracer("cpu")
 
 
 class ConversationalAgentCPUSpec(AgentCPUSpec):
@@ -92,17 +96,18 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
     ) -> AsyncIterator[StreamEvent]:
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
-            tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
-            tool_call_events = []
-            execute_llm_ = self.llm_unit.execute_llm(
-                call_context, conversation, [w.llm_message for w in tool_defs.values()], output_format
-            )
-            # yield the events but capture the output, so it can be rolled into one event for memory.
-            stream_collector = StreamCollector(execute_llm_)
-            async for event in stream_collector:
-                if event.is_root_and_type(LLMToolCallRequestEvent):
-                    tool_call_events.append(event)
-                yield event
+            with tracer.start_as_current_span("building tools"):
+                tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
+                tool_call_events = []
+                llm_facing_tools = [w.llm_message for w in tool_defs.values()]
+            with tracer.start_as_current_span("llm execution"):
+                execute_llm_ = self.llm_unit.execute_llm(call_context, conversation, llm_facing_tools, output_format)
+                # yield the events but capture the output, so it can be rolled into one event for memory.
+                stream_collector = StreamCollector(execute_llm_)
+                async for event in stream_collector:
+                    if event.is_root_and_type(LLMToolCallRequestEvent):
+                        tool_call_events.append(event)
+                    yield event
             if stream_collector.get_content():
                 logger.info(f"LLM Response: {stream_collector.get_content()}")
 
@@ -115,12 +120,12 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             conversation.append(assistant_message)
 
-            # process tool calls
-            async for e in merge_streams(
-                [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
-            ):
-                yield e
-            if not tool_call_events:
+            if tool_call_events:
+                with tracer.start_as_current_span("tool_calls"):
+                    streams = [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
+                    async for e in merge_streams(streams):
+                        yield e
+            else:
                 return
 
         raise CPUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")

@@ -76,7 +76,9 @@ def get_input_model(_obj, handler: FnHandler) -> typing.Type[BaseModel]:
                 else Field(default=sig[param].default)
             )
             fields[param] = (hint, field)
-    input_model = create_model(f"{handler.name.capitalize()}InputModel", **fields)
+    input_model = create_model(
+        f"{handler.name.capitalize()}InputModel", **fields, __config__=dict(arbitrary_types_allowed=True)
+    )
     return input_model
 
 
