@@ -17,7 +17,10 @@ eidolon-server -m local_dev hello_world
 First create a process for your conversation.
 
 ```bash
-curl -X POST http://0.0.0.0:8080/processes; echo
+curl -X 'POST' 'http://localhost:8080/processes' -H 'Content-Type: application/json' -d '{
+  "agent": "hello_world",
+  "title": "quickstart"
+}'
 ````
 
 The result should be a json object with a process id. For example:
