@@ -9,14 +9,18 @@ async def test_get(client: UsageClient):
 
 
 async def test_record(client: UsageClient):
-    await client.record_transaction("test", UsageDelta(used_delta=100, allowed_delta=50))
+    await client.record_transaction(
+        "test", UsageDelta(used_delta=100, allowed_delta=50)
+    )
     summary = await client.get_summary("test")
     assert summary.used == 100
     assert summary.allowed == 650
 
 
 async def test_reset(client: UsageClient):
-    await client.record_transaction("test", UsageDelta(used_delta=100, allowed_delta=50))
+    await client.record_transaction(
+        "test", UsageDelta(used_delta=100, allowed_delta=50)
+    )
     await client.record_transaction("test", UsageReset())
     summary = await client.get_summary("test")
     assert summary.used == 0

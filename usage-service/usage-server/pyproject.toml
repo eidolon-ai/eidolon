@@ -19,6 +19,7 @@ uvicorn = "^0.28.0"
 setuptools = "^69.2.0"
 pytest = "^8.1.1"
 pytest-asyncio = "^0.23.5"
+ruff = "^0.3.3"
 
 [build-system]
 requires = ["poetry-core"]

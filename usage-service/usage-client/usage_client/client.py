@@ -7,7 +7,7 @@ class UsageClient:
     kwargs: dict
 
     def __init__(self, location: str = "http://localhost:8527", **kwargs):
-        self.kwargs=dict(base_url=location, **kwargs)
+        self.kwargs = dict(base_url=location, **kwargs)
 
     @property
     def client(self) -> AsyncClient:
@@ -19,11 +19,15 @@ class UsageClient:
             response.raise_for_status()
             return UsageSummary(**response.json())
 
-    async def record_transaction(self, subject: str, transaction: UsageDelta | UsageReset):
+    async def record_transaction(
+        self, subject: str, transaction: UsageDelta | UsageReset
+    ):
         transaction_dict = transaction.model_dump(exclude_defaults=True)
         transaction_dict["type"] = transaction.type
         async with self.client as client:
-            response = await client.post(f"/subjects/{subject}/transactions", json=transaction_dict)
+            response = await client.post(
+                f"/subjects/{subject}/transactions", json=transaction_dict
+            )
             response.raise_for_status()
 
     async def delete(self, subject: str) -> dict:

@@ -1,8 +1,6 @@
-import os
-from dataclasses import Field
 from typing import Literal
 
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel
 
 
 class UsageDelta(BaseModel):

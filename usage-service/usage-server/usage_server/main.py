@@ -18,6 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 def parse_args():
     # Set up the argument parser
     parser = argparse.ArgumentParser(description="Start a FastAPI server.")
@@ -36,8 +37,7 @@ def parse_args():
         action="store_true",
     )
 
-
-# Parse command line arguments
+    # Parse command line arguments
     return parser.parse_args()
 
 
