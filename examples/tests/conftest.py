@@ -3,9 +3,12 @@ import pathlib
 import subprocess
 from contextlib import contextmanager
 
+import dotenv
 import time
 from jsonref import requests
 from pytest_asyncio import fixture
+
+dotenv.load_dotenv()
 
 
 def tail(file_path, sleep_sec=0.1):

@@ -32,6 +32,11 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           EIDOLON_DATA_DIR: /tmp/eidolon
+          AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+          AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          AZURE_AD_TEST_CLIENT_ID: ${{ secrets.AZURE_AD_TEST_CLIENT_ID }}
+          AZURE_AD_TEST_CLIENT_SECRET: ${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}
         working-directory: examples
       - uses: actions/upload-artifact@v4
         if: ${{ !success() }}
@@ -102,6 +107,30 @@ jobs:
           CSE_ID: ${{ secrets.CLOUD_SEARCH_ENGINE_ID }}
           CSE_TOKEN: ${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}
         working-directory: sdk
+
+  usage-service-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: usage-service/usage-server
+      - run: poetry run ruff format .
+        working-directory: usage-service/usage-server
+      - run: poetry run ruff check .
+        working-directory: usage-service/usage-server
+      - run: poetry run pytest
+        working-directory: usage-service/usage-server
 
   test-webui:
     runs-on: ubuntu-latest

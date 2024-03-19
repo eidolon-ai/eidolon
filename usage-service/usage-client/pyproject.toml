@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "usage-client"
+version = "0.1.0"
+description = ""
+authors = ["Luke Lalor <lukehlalor@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.6.4"
+setuptools = "^69.2.0"
+httpx = "^0.27.0"
+
+
+[tool.poetry.group.dev.dependencies]
+setuptools = "^69.2.0"
+ruff = "^0.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

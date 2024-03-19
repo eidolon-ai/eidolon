@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "usage-server"
+version = "0.1.0"
+description = ""
+authors = ["Luke Lalor <lukehlalor@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.6.4"
+fastapi = "^0.110.0"
+usage-client = { path = "../usage-client/", develop = true }
+motor = "^3.3.2"
+python-dotenv = "^1.0.1"
+uvicorn = "^0.28.0"
+
+
+[tool.poetry.group.dev.dependencies]
+setuptools = "^69.2.0"
+pytest = "^8.1.1"
+pytest-asyncio = "^0.23.5"
+ruff = "^0.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = "project"
