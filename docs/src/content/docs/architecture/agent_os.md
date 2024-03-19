@@ -65,7 +65,7 @@ The "process_id" is the ID of the process that was created to execute the progra
 The "state" is the state of the process, in this case it is always "initialized".
 The "available_actions" are the next set of actions that can be executed in the current state. These are the programs that are registered for that Agent.
 
-In FASTAPI, program are actions that can be started from the "initialize" state and are registered as POST endpoints under the URL "/agents/{agent_name}/processes/{process_id}/actions/{program_name}" and the body of the request is the input to the program, in JSON format.
+In FASTAPI, program are actions that can be started from the "initialize" state and are registered as POST endpoints under the URL "/processes/{process_id}/agent/{agent_name}/actions/{program_name}" and the body of the request is the input to the program, in JSON format.
 The return from the API call is the output of the program follows the following JSON format:
 
 ```json
@@ -112,7 +112,7 @@ This one method now implements the Eidolon conversation model and can be used to
 
 In general the "@register_action" decorator is used to register a method as an action for a specific state. The return type of the method should be "AgentState" and the method should return the state to transition to.
 
-In FASTAPI, actions are registered as POST endpoints under the URL "/agents/{agent_name}/processes/{process_id}/actions/{action_name}" and the body of the request is the input to the program, in JSON format.
+In FASTAPI, actions are registered as POST endpoints under the URL "/processes/{process_id}/agent/{agent_name}/actions/{action_name}" and the body of the request is the input to the program, in JSON format.
 
 The return from the API call is the output of the program follows the following JSON format:
 
@@ -136,7 +136,7 @@ Methods decorated with "@register_program" are registered as programs and method
 
 Processes are created by sending a POST request to the "/agents/{agent_name}/processes" endpoint with no body.
 
-In the OpenAPI documentation, all operations are registered as POST endpoints under the URL "/agents/{agent_name}/processes/{process_id}/actions/{action_name}" and the body of the request is the input to the action, in JSON format.
+In the OpenAPI documentation, all operations are registered as POST endpoints under the URL "/processes/{process_id}/agent/{agent_name}/actions/{action_name}" and the body of the request is the input to the action, in JSON format.
 
 ## Resource Registry and its Role
 
