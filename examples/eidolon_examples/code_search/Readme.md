@@ -61,7 +61,7 @@ With the server operational, it's time to put our setup to the test with a sampl
 First create a process for your conversation.
 
 ```bash
-curl -X POST http://0.0.0.0:8080/agents/hello_world/processes; echo
+curl -X POST http://0.0.0.0:8080/processes; echo
 ````
 
 The result should be a json object with a process id. For example:

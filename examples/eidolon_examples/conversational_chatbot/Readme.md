@@ -54,14 +54,17 @@ Your backend machine (with your agent) is now running, and you can see available
 You can now create a new conversation, or `process`, on your agent.
 
 ```bash
-curl -X 'POST' 'http://localhost:8080/agents/conversational_agent/processes'
+curl -X 'POST' 'http://localhost:8080/processes' -H 'Content-Type: application/json' -d '{
+  "agent": "conversational_agent",
+  "title": "getting_started"
+}'
 ```
 
 This will return a process id, which you can use to converse with your agent.
 
 ```bash
 export PROCESS_ID=YOUR_PROCESS_ID
-curl -X 'POST' "http://localhost:8080/agents/conversational_agent/processes/$PROCESS_ID/actions/converse" -d 'What kind of tools can I build with LLM agents?'
+curl -X 'POST' "http://localhost:8080/processes/$PROCESS_ID/agent/conversational_agent/actions/converse" -d 'What kind of tools can I build with LLM agents?'
 ```
 
 #### Step 5: Start the UI.
