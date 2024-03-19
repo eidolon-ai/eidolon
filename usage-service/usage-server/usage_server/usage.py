@@ -119,8 +119,6 @@ class UsageService:
         )
         return _UsageDoc(**found) if found else None
 
-    _usage_service_singleton = []
-
     @staticmethod
     async def singleton() -> UsageService:
         if not UsageService._singleton:
