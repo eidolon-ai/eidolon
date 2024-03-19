@@ -1,12 +1,10 @@
 import asyncio
-
-
 import pytest
 import pytest_asyncio
 
-from usage_server.endpoints import service
-from usage_server.main import app
 from usage_client.client import UsageClient
+from usage_server.main import app
+from usage_server.usage import UsageService
 
 
 @pytest.fixture(scope="session")
@@ -21,5 +19,6 @@ def event_loop():
 
 @pytest_asyncio.fixture
 async def client():
-    await service.db.delete_many({})
+    s = await UsageService.singleton()
+    await s.collection.delete_many({})
     return UsageClient("http://test", app=app)

@@ -1,3 +1,4 @@
+import os
 from typing import Literal
 
 from pydantic import BaseModel
@@ -13,7 +14,7 @@ class UsageDelta(BaseModel):
 class UsageReset(BaseModel):
     type: Literal["reset"] = "reset"
     used: int = 0
-    allowed: int = None
+    allowed: int = int(os.environ.get("DEFAULT_ALLOWED", 600))
     extra: dict = {}
 
 
