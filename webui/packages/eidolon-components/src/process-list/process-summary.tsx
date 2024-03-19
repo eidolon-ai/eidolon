@@ -5,7 +5,7 @@ import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, List
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {Delete} from '@mui/icons-material';
 import {ProcessStatus} from "@eidolon/client";
-import {ProcessStatusWithChildren} from "../client-api-helpers/process-helper.js";
+import {ProcessStatusWithChildren} from "../client-api-helpers/process-helper";
 
 export interface ProcessSummaryProps {
   chat: ProcessStatusWithChildren,
@@ -19,7 +19,6 @@ export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: Pro
 
   const handleExpandClick = (event: { stopPropagation: () => void; }) => {
     setOpen(!open);
-    console.log("clicked")
     event.stopPropagation()
   };
 

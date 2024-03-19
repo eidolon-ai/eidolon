@@ -1,4 +1,4 @@
-import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements.js";
+import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
 import {ChatEvent} from "@eidolon/client";
 
@@ -34,8 +34,7 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
 export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
                                              data: Record<string, any>, elementsAndLookup: ElementsAndLookup,
                                              updateElements: (elements: ElementsAndLookup) => void, cancelFetchController: AbortController) {
-
-  const response = await fetch(`/eidolon/api/process/${processId}/messages`, {
+  const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     signal: cancelFetchController.signal,
     method: "POST",
     headers: {
@@ -72,9 +71,9 @@ export async function executeServerOperation(machineUrl: string, agent: string, 
 
 }
 
-export async function getChatEventInUI(processId: string) {
-  const response = await fetch(`/api/eidolon/process/${processId}/events`, {
-    method: "GET",
+export async function getChatEventInUI(machineUrl: string, processId: string) {
+  const response = await fetch(`/api/eidolon/process/${processId}/events?machineURL=${machineUrl}`, {
+    method: "GET"
   })
 
   if (!response.ok) {

@@ -3,30 +3,35 @@
     "name": "Explore Github docs",
     "description": "A tool to explore the Github documentation using GPT-4-latest and RAG",
     "version": "0.1.0",
-    "image": "image.webp"
+    "image": "image.webp",
+    "location": "http://localhost:8080"
   },
   "chatbot": {
     "name": "Chatbot",
     "description": "A basic chatbot using GPT-4-latest with conversational memory and no tools.",
     "version": "0.1.0",
-    "image": "image.webp"
+    "image": "image.webp",
+    "location": "http://localhost:8080"
   },
   "control-k8s": {
     "name": "Chat with kubernetes",
     "description": "Show what is running in your cluster and control it using natural language",
     "version": "0.1.0",
-    "image": "image.webp"
+    "image": "image.webp",
+    "location": "http://localhost:8080"
   },
   "dev-tool": {
     "name": "Eidolon Developer Tool",
     "description": "The developer tools can be used to test and debug any Eidolon operation.",
     "version": "0.1.0",
-    "image": "image.webp"
+    "image": "image.webp",
+    "location": "http://localhost:8080"
   },
   "minority-report": {
     "name": "SF Crime analytics",
     "description": "Explore crime in San Francisco. Showcases searching a SQL database using natural language.",
     "version": "0.1.0",
-    "image": "image.webp"
+    "image": "image.webp",
+    "location": "http://localhost:8080"
   }
 }

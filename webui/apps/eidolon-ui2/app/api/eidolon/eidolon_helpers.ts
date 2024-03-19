@@ -6,16 +6,17 @@ const getAccessToken = async () => {
   return session?.user?.access_token
 }
 
-const _processesHandler= new ProcessesHandler(getAccessToken)
-const _processHandler= new ProcessHandler(getAccessToken)
-const _processEventHandler= new ProcessEventsHandler(getAccessToken)
+export const _processesHandler= new ProcessesHandler(getAccessToken)
+export const _processHandler= new ProcessHandler(getAccessToken)
+export const _processEventHandler= new ProcessEventsHandler(getAccessToken)
 
 export const processesHandler= {
-  GET: _processesHandler.GET.bind(_processesHandler)
+  GET: _processesHandler.GET.bind(_processesHandler),
+  POST: _processesHandler.POST.bind(_processesHandler)
 }
+
 export const processHandler= {
   GET: _processHandler.GET.bind(_processHandler),
-  POST: _processHandler.POST.bind(_processHandler),
   DELETE: _processHandler.DELETE.bind(_processHandler)
 }
 

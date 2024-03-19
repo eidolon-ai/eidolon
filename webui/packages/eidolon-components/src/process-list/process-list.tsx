@@ -14,13 +14,14 @@ export interface ProcessListProps {
   isSelected: (chat: ProcessStatus) => boolean
   selectChat: (chat: ProcessStatus) => void
   goHome: () => void
+  machineURL: string
 }
 
-export function ProcessList({isSelected, selectChat, goHome}: ProcessListProps) {
+export function ProcessList({machineURL, isSelected, selectChat, goHome}: ProcessListProps) {
   const [dataByDate, setDataByDate] = useState<Record<string, ProcessStatus[]>>({})
   const handleDelete = (chat: ProcessStatus) => {
     const process_id = chat.process_id
-    deleteProcess(process_id).then(() => {
+    deleteProcess(chat.machine, process_id).then(() => {
       if (isSelected(chat)) {
         // get the previous item in the list from the current process_id and navigate to it by iterating through the
         // dataByDate object and then each array of chats, keeping the previous item in a variable
@@ -43,11 +44,11 @@ export function ProcessList({isSelected, selectChat, goHome}: ProcessListProps) 
         }
         goHome()
       }
-    }).then(() => getRootProcesses().then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats)))
+    }).then(() => getRootProcesses(chat.machine).then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats)))
   }
 
   useEffect(() => {
-    getRootProcesses().then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats))
+    getRootProcesses(machineURL).then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats))
     return () => {
     }
   }, []);

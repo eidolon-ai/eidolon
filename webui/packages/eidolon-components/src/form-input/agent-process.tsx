@@ -1,19 +1,19 @@
 'use client'
 
-import {AgentInputForm} from "./agent-input-form.js";
+import {AgentInputForm} from "./agent-input-form";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {EidolonClient, OperationInfo, ProcessState} from "@repo/eidolon-client/client";
+import {EidolonClient, OperationInfo, ProcessStatus} from "@eidolon/client";
 import {ArrowCircleUpRounded} from '@mui/icons-material';
 import {AddCircleRounded} from '@mui/icons-material';
 import {RemoveCircleRounded} from '@mui/icons-material';
 import {Button, Paper, Skeleton} from "@mui/material";
 import {CancelRounded} from '@mui/icons-material';
-import {ButtonScrollToBottom} from "./button-scroll-to-bottom.js";
+import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 
 interface AgentProcessProps {
   agent: string
-  processState?: ProcessState
+  processState?: ProcessStatus
   handleAction: (operation: OperationInfo, data: Record<string, any>) => void
   handleCancel: () => void
 }

@@ -2,10 +2,10 @@
 // @ts-ignore
 import {Avatar, Divider} from "@mui/material";
 import * as React from "react";
-import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements.js";
-import {ToolCall} from "./tool-call-element.js";
-import {OperationInfo} from "@repo/eidolon-client/client";
-import {EidolonMarkdown} from "./eidolon-markdown.js";
+import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements";
+import {ToolCall} from "./tool-call-element";
+import {OperationInfo} from "@eidolon/client";
+import {EidolonMarkdown} from "./eidolon-markdown";
 
 export interface ChatDisplayElementProps {
   rawElement: DisplayElement
@@ -34,7 +34,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, handleActio
       const element = rawElement as AgentStartElement
       return (
         <div>
-          <div className={"chat-title"}><Avatar sx={{height: "36px", width: "36px"}} src="/eidolon_with_gradient.png"/>
+          <div className={"chat-title"}><Avatar sx={{height: "36px", width: "36px"}} src="/img/eidolon_with_gradient.png"/>
             <span style={{marginLeft: '8px'}}>{element.agentName} started action {element.callName}</span></div>
         </div>
       )
@@ -45,7 +45,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, handleActio
         <div>
           <div className={"chat-title"}>{topLevel ?
             <Avatar sx={{height: "32px", width: "32px"}} src={userImage!}/> :
-            <Avatar sx={{height: "36px", width: "36px"}} src="/eidolon_with_gradient.png"/>}
+            <Avatar sx={{height: "36px", width: "36px"}} src="/img/eidolon_with_gradient.png"/>}
             <span style={{marginLeft: '8px'}}>{topLevel ? "User" : "Agent Input"}</span></div>
           <div className={"chat-indent"}>
             <EidolonMarkdown>{getUserInput(element)}</EidolonMarkdown>

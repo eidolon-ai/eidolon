@@ -3,28 +3,29 @@
 import {Box} from "@mui/material";
 import * as React from "react";
 import {useEffect, useRef, useState} from "react";
-import {ElementsAndLookup} from "../lib/display-elements.js";
+import {ElementsAndLookup} from "../lib/display-elements";
 import "./eidolon-events.css"
-import {AgentProcess} from "../form-input/agent-process.js";
-import {ChatScrollAnchor} from "./chat-scroll-anchor.js";
-import {ChatDisplayElement} from "./chat-display-element.js";
-import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper.js";
+import {AgentProcess} from "../form-input/agent-process";
+import {ChatScrollAnchor} from "./chat-scroll-anchor";
+import {ChatDisplayElement} from "./chat-display-element";
+import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper";
 import {OperationInfo, ProcessStatus} from "@eidolon/client"
-import {getProcessStatus} from "../client-api-helpers/process-helper.js";
+import {getProcessStatus} from "../client-api-helpers/process-helper";
 
-interface ChatEventProps {
+export interface EidolonEventProps {
+  machineUrl: string,
   agentName: string,
   processId: string,
 }
 
-export function EidolonEvents({agentName, processId}: ChatEventProps) {
+export function EidolonEvents({machineUrl, agentName, processId}: EidolonEventProps) {
   const [elementsAndLookup, setElementsAndLookup] =
     useState<ElementsAndLookup>({elements: [], lookup: {}})
   const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
 
   function setAgentState() {
-    getProcessStatus(processId).then((status) => {
+    getProcessStatus(machineUrl, processId).then((status) => {
       if (status) {
         setProcessState(status)
       }
@@ -34,7 +35,7 @@ export function EidolonEvents({agentName, processId}: ChatEventProps) {
   function getChatEvents() {
     setElementsAndLookup({elements: [], lookup: {}})
     setProcessState(undefined)
-    getChatEventInUI(processId).then((elements) => {
+    getChatEventInUI(machineUrl, processId).then((elements) => {
       if (elements) {
         setElementsAndLookup(elements)
       }
@@ -66,7 +67,6 @@ export function EidolonEvents({agentName, processId}: ChatEventProps) {
     try {
       const path = operation.path.replace("{process_id}", processId)
       await executeServerOperation(operation.machine, operation.agent, operation.name, processId, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)
-
       setAgentState();
       cancelFetchController.current = null;
     } catch (error) {

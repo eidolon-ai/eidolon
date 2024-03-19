@@ -4,7 +4,7 @@ import validator from '@rjsf/validator-ajv8';
 import {Form} from "@rjsf/mui";
 import {useEffect, useState} from "react";
 import {FormControl, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
-import {OperationInfo} from "@repo/eidolon-client/client";
+import {OperationInfo} from "@eidolon/client";
 
 const log = (type: any) => console.log.bind(console, type);
 

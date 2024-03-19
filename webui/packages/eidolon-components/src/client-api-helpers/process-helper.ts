@@ -5,24 +5,38 @@ export interface ProcessStatusWithChildren extends ProcessStatus {
   children?: ProcessStatus[]
 }
 
-export async function getProcessStatus(process_id: string) {
-    return fetch(`/api/eidolon/process/${process_id}`)
-        .then(resp => {
-            if (resp.status === 404) {
-                return null
-            }
-            return resp.json().then((json: Record<string, any>) => json as ProcessStatus)
-        })
+export async function getProcessStatus(machineUrl: string, process_id: string) {
+  return fetch(`/api/eidolon/process/${process_id}?machineURL=${machineUrl}`, {
+    method: "GET"
+  })
+    .then(resp => {
+      if (resp.status === 404) {
+        return null
+      }
+      return resp.json().then((json: Record<string, any>) => json as ProcessStatus)
+    })
 }
 
-export async function deleteProcess(process_id: string) {
-  await fetch(`/api/eidolon/process/${process_id}`, {
+export async function createProcess(machineUrl: string, agent: string, title: string) {
+  return await fetch(`/api/eidolon/process?machineURL=${machineUrl}`, {
+    method: "POST",
+    body: JSON.stringify({machineUrl, agent, title}),
+  }).then(resp => {
+    if (resp.status === 404) {
+      return null
+    }
+    return resp.json().then((json: Record<string, any>) => json as ProcessStatus)
+  })
+}
+
+export async function deleteProcess(machineUrl: string, process_id: string) {
+  await fetch(`/api/eidolon/process/${process_id}?machineURL=${machineUrl}`, {
     method: "DELETE",
   })
 }
 
-export async function getRootProcesses(): Promise<ProcessStatusWithChildren[]> {
-  let data = (await getProcessesFromServer()).sort((a, b) => {
+export async function getRootProcesses(machineUrl: string): Promise<ProcessStatusWithChildren[]> {
+  let data = (await getProcessesFromServer(machineUrl)).sort((a, b) => {
     return DateTime.fromISO(b.updated).toMillis() - DateTime.fromISO(a.updated).toMillis()
   })
   return Object.values(data.reduce((collector: Record<string, ProcessStatusWithChildren>, item) => {
@@ -52,8 +66,8 @@ export async function getRootProcesses(): Promise<ProcessStatusWithChildren[]> {
 
 }
 
-async function getProcessesFromServer(): Promise<ProcessStatus[]> {
-  const results = await fetch(`/api/eidolon/process`,
+async function getProcessesFromServer(machineUrl: string): Promise<ProcessStatus[]> {
+  const results = await fetch(`/api/eidolon/process?machineURL=${machineUrl}`,
     {
       // @ts-ignore
       next: {tags: ['chats']},
@@ -77,4 +91,14 @@ async function getProcessesFromServer(): Promise<ProcessStatus[]> {
   }
 
   return ret
+}
+
+export function getAppPathFromPath(pathname: string): string | undefined {
+  const pathSegments = pathname.split('/');
+  const appNameIndex = pathSegments.findIndex((segment) => segment === 'eidolon-apps');
+
+  if (appNameIndex !== -1 && appNameIndex + 1 < pathSegments.length) {
+    return pathSegments.slice(0, appNameIndex + 2).join('/')
+  }
+  return undefined
 }

@@ -9,7 +9,7 @@ import rehypeWrap from "rehype-wrap-all";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {materialLight} from "react-syntax-highlighter/dist/esm/styles/prism";
 import * as React from "react";
-import "@/components/eidolon-markdown.css"
+import "./eidolon-markdown.css"
 
 interface EidolonMarkdownProps {
   children: string | string[]

@@ -1,4 +1,4 @@
-import {ChatEvent} from "@repo/eidolon-client/client";
+import {ChatEvent} from "@eidolon/client";
 
 export interface DisplayElement {
   type: string

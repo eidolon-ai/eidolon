@@ -1,8 +1,7 @@
-import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
+import {Box} from "@mui/material";
 import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
-import List from "@mui/material/List";
-import {AddCircleOutline} from "@mui/icons-material";
-import {DevProcessList} from "./components/DevProcessList";
+import * as React from "react";
+import {DevProcessListWithAdd} from "./components/ProcessListWithAdd";
 
 export interface DevTooLayoutProps {
   children: React.ReactNode
@@ -21,27 +20,15 @@ export default function ({children}: DevTooLayoutProps) {
           [`& .MuiDrawer-paper`]: {boxSizing: 'border-box'},
         }}
       >
-        <Box sx={{overflow: 'auto'}}>
-          <Toolbar/>
-          <List>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <AddCircleOutline/>
-                </ListItemIcon>
-                <ListItemText primary={"Add Chat"}/>
-              </ListItemButton>
-            </ListItem>
-          </List>
-          <Divider/>
-          <DevProcessList/>
-        </Box>
+        <DevProcessListWithAdd
+          machineURL={process.env.EIDOLON_SERVER!}
+        />
       </ResizableDrawer>
-      <Box component="main" sx={{flexGrow: 1, p: 3}}>
-        <Toolbar/>
-        {children}
+      <Box component="main" flexGrow={1}>
+        <Box height={"calc(100vh - 64px)"} display={"flex"} justifyContent={"center"}>
+          {children}
+        </Box>
       </Box>
-
     </Box>
   );
 

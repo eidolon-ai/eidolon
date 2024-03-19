@@ -1,9 +1,9 @@
-import {ToolCallElement} from "../lib/display-elements.js";
+import {ToolCallElement} from "../lib/display-elements";
 import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
 import * as React from "react";
 import {ExpandMore, CodeOffRounded} from "@mui/icons-material";
-import {ChatDisplayElement} from "./chat-display-element.js";
-import {OperationInfo} from "@repo/eidolon-client/client";
+import {ChatDisplayElement} from "./chat-display-element";
+import {OperationInfo} from "@eidolon/client";
 
 interface ExpandMoreDivProps extends IconButtonProps {
   expand: boolean;
@@ -39,7 +39,7 @@ export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProp
         sx={{padding: "4px 8px 4px 8px"}}
         avatar={
           element.is_agent
-            ? <Avatar sx={{height: "24px", width: "24px"}} src="/eidolon_with_gradient.png"/>
+            ? <Avatar sx={{height: "24px", width: "24px"}} src="/img/eidolon_with_gradient.png"/>
             : <Avatar sx={{height: "24px", width: "24px"}}><CodeOffRounded/></Avatar>
         }
         onClick={handleExpandClick}
