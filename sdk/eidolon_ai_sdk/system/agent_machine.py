@@ -144,18 +144,21 @@ class AgentMachine(Specable[MachineSpec]):
                     skip -= 1
                 else:
                     controller = self._get_agent_controller(process_.agent)
-                    summary = StateSummary(
-                        agent=process_.agent,
-                        process_id=process_.record_id,
-                        state=process_.state,
-                        available_actions=controller.get_available_actions(process_.state),
-                        title=process_.title,
-                        created=process_.created,
-                        updated=process_.updated,
-                    )
-                    if summary.process_id in child_pids:
-                        summary.parent_process_id = child_pids[summary.process_id]
-                    processes_acc.append(summary)
+                    if not controller:
+                        logger.error(f"Could not find agent {process_.agent}, in {self.agent_controllers}, skipping process")
+                    else:
+                        summary = StateSummary(
+                            agent=process_.agent,
+                            process_id=process_.record_id,
+                            state=process_.state,
+                            available_actions=controller.get_available_actions(process_.state),
+                            title=process_.title,
+                            created=process_.created,
+                            updated=process_.updated,
+                        )
+                        if summary.process_id in child_pids:
+                            summary.parent_process_id = child_pids[summary.process_id]
+                        processes_acc.append(summary)
             except PermissionException:
                 logger.debug(f"Skipping process {process_.record_id} due to lack of permissions")
 

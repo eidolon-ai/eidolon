@@ -2,20 +2,8 @@
 
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Paper, PaperProps, Typography} from "@mui/material";
 import * as React from "react";
-import Draggable from 'react-draggable';
 import {usePathname, useRouter} from "next/navigation";
 import {ChooseAgentForm, getAppPathFromPath} from "@eidolon/components";
-
-function PaperComponent(props: PaperProps) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} />
-    </Draggable>
-  );
-}
 
 export function StartProgramDialog({open, onClose, machineUrl}: { machineUrl: string, open: boolean, onClose: (wasCanceled: boolean) => void }) {
   const router = useRouter()
@@ -37,7 +25,6 @@ export function StartProgramDialog({open, onClose, machineUrl}: { machineUrl: st
     <Dialog
       open={open}
       scroll={"paper"}
-      PaperComponent={PaperComponent}
       keepMounted={true}
       PaperProps={{
         style: {width: '50%'}

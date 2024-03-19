@@ -77,7 +77,7 @@ async function getProcessesFromServer(machineUrl: string): Promise<ProcessStatus
       console.log('Unauthenticated! Status: 401');
       return [];
     } else if (!resp.ok) {
-      throw new Error(`HTTP error! status: ${resp.status}`);
+      throw new Error(`HTTP error! status: ${resp.status}, status test: ${resp.statusText}`);
     }
     return resp.json();
   })

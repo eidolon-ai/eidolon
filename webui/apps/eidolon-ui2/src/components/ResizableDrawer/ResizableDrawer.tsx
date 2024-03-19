@@ -27,11 +27,13 @@ export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, min
 
   const handleMouseDown = () => {
     document.addEventListener("mouseup", handleMouseUp, true);
+    // @ts-ignore
     document.addEventListener("mousemove", handleMouseMove, true);
   };
 
   const handleMouseUp = () => {
     document.removeEventListener("mouseup", handleMouseUp, true);
+    // @ts-ignore
     document.removeEventListener("mousemove", handleMouseMove, true);
   };
 

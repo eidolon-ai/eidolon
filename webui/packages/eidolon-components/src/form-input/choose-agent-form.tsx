@@ -19,7 +19,6 @@ export function ChooseAgentForm({handleSubmit, machineUrl}: ChooseAgentFormProps
   useEffect(() => {
     const client = new EidolonClient(machineUrl)
     client.getAgents().then(agents => {
-      console.log("agents", agents)
       setAgents(agents)
       setAgent(agents![0]!)
     })
