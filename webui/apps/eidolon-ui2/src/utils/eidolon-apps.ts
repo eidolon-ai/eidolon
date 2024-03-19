@@ -26,7 +26,7 @@ export function getApp(path: string) {
   const appNameIndex = pathSegments.findIndex((segment) => segment === 'eidolon-apps');
 
   if (appNameIndex !== -1 && appNameIndex + 1 < pathSegments.length) {
-    const appName = pathSegments[appNameIndex + 1];
+    const appName = pathSegments[appNameIndex + 1]!
     return apps[appName];
   }
   return null;
