@@ -819,7 +819,7 @@ description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 aiostream = "^0.5.2"
@@ -4946,4 +4946,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "a814e0b799f9d82335efe2ea9ad11819521b4340343eec1fb7fdafce2fc052c4"
+content-hash = "ffa692049e93953cfad4fd73be3d8c2464ad5191ea8509fbda9de772e90ae863"

@@ -1,21 +1,10 @@
-'use client'
-
-import {Box} from "@mui/material";
-import {OperationInfo, ProcessStatus} from "@eidolon/client";
 import {useEffect, useRef, useState} from "react";
-import {ElementsAndLookup} from "../lib/display-elements";
-import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper";
-import {EidolonEvents} from "./eidolon-events";
-import {AgentProcess} from "../form-input/agent-process";
-import {getProcessStatus} from "../client-api-helpers/process-helper";
+import {OperationInfo, ProcessStatus} from "@eidolon/client";
+import {ElementsAndLookup} from "@eidolon/components/src/lib/display-elements";
+import {executeServerOperation, getChatEventInUI} from "@eidolon/components/src/client-api-helpers/process-event-helper";
+import {getProcessStatus} from "@eidolon/components/src/client-api-helpers/process-helper";
 
-export interface MessagesWithActionProps {
-  machineUrl: string
-  agent: string
-  processId: string
-}
-
-export function MessagesWithAction({machineUrl, agent, processId}: MessagesWithActionProps) {
+export function useProcessEvents(machineUrl: string, agent: string, processId: string) {
   const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
   const [elementsAndLookup, setElementsAndLookup] =
@@ -44,6 +33,7 @@ export function MessagesWithAction({machineUrl, agent, processId}: MessagesWithA
       }
     })
   }
+
   const executeAction = async (operation: OperationInfo, data: Record<string, any>) => {
     setProcessState(undefined)
     if (cancelFetchController.current) {
@@ -76,19 +66,11 @@ export function MessagesWithAction({machineUrl, agent, processId}: MessagesWithA
     getChatEvents();
   }
 
-  // todo -- move all of the stuff here into a hook that initializes this mess and returns the elementsAndLookup handle + execute action + handle cancel
-  return (
-    <Box sx={{
-      height: '100%',
-      width: '65vw',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}>
-      <EidolonEvents agentName={agent} elementsAndLookup={elementsAndLookup} handleAction={executeAction}/>
-      <AgentProcess agent={agent} processState={processState} handleAction={executeAction}
-                    handleCancel={handleCancel}/>
-    </Box>
-  )
+  return {
+    processState,
+    elementsAndLookup,
+    executeAction,
+    handleCancel
+  }
+
 }
