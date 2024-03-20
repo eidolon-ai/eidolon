@@ -34,12 +34,8 @@ You will also need a running Eidolon Machine. For instructions on how to run a m
 ## Setting Up Your Environment
 
 **Environment Configuration**:
-You need to create a `.env` file in the weibui directory of the project. Copy
+You need to create a `.env` file in the **webui/app/eidolon-ui2** directory of the project. Copy
 the contents of the 'template.env' file and paste it into the `.env` file.
-
-```bash
-make .env
-```
 
 The content are described in the template file.
 You will need to change the defaults if you would like to enable authentication or are running the eidos on

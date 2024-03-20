@@ -14,7 +14,7 @@ interface AgentProcessProps {
   agent: string
   processState?: ProcessStatus
   // eslint-disable-next-line no-unused-vars
-  handleAction: (operation: OperationInfo, data: Record<string, any>) => void
+  handleAction: (machine: string, agent: string, operation: string, data: any) => void
   handleCancel: () => void
 }
 
@@ -34,7 +34,8 @@ export function AgentProcess({agent, processState, handleAction, handleCancel}: 
   }, [client, agent, processState])
 
   const handleSubmit = (formJson: Record<string, any>) => {
-    handleAction(formJson.operation as OperationInfo, formJson.data)
+    let operation = formJson.operation as OperationInfo;
+    handleAction(operation.machine, operation.agent, operation.name, formJson.data)
   }
 
   let content = (

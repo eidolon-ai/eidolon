@@ -1,8 +1,7 @@
 import {ToolCallElement} from "../lib/display-elements";
 import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
-import {ExpandMore, CodeOffRounded} from "@mui/icons-material";
+import {CodeOffRounded, ExpandMore} from "@mui/icons-material";
 import {ChatDisplayElement} from "./chat-display-element";
-import {OperationInfo} from "@eidolon/client";
 import {useState} from "react";
 
 interface ExpandMoreDivProps extends IconButtonProps {
@@ -22,11 +21,9 @@ const ExpandMoreDiv = styled((props: ExpandMoreDivProps) => {
 export interface ToolCallElementProps {
   element: ToolCallElement
   agentName: string
-  // eslint-disable-next-line no-unused-vars
-  handleAction: (operation: OperationInfo, data: Record<string, any>) => void
 }
 
-export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProps) => {
+export const ToolCall = ({element, agentName}: ToolCallElementProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
@@ -64,8 +61,7 @@ export const ToolCall = ({element, agentName, handleAction}: ToolCallElementProp
           <Divider/>
           {element.children.map((child, index) => {
               if (index < element.children.length - 1 || child.type != "success") {
-                return <ChatDisplayElement key={index} rawElement={child} topLevel={false} agentName={agentName}
-                                           handleAction={handleAction}/>
+                return <ChatDisplayElement key={index} rawElement={child} topLevel={false} agentName={agentName}/>
               }
             }
           )}

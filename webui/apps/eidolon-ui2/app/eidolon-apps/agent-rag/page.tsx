@@ -9,7 +9,7 @@ const DevTools: NextPage = () => {
       justifyContent: 'center',
     }}>
       <Typography paragraph variant={"h3"}>
-        Eidolon Document Search
+        Eidolon Chatbot
       </Typography>
     </Box>
   );

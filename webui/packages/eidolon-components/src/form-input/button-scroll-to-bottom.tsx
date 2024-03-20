@@ -22,7 +22,7 @@ export function ButtonScrollToBottom() {
     )
   } else {
     return (
-      <div/>
+      <div style={{height: "32px"}}/>
     )
   }
 }
