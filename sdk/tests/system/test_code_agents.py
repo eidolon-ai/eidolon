@@ -109,7 +109,10 @@ class TestHelloWorld:
         open_tel = ReferenceResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name="LifecycleManager"),
-            spec=dict(managers=[OpenTelemetryManager.__name__]),
+            spec=dict(managers=[dict(
+                implementation=OpenTelemetryManager.__name__,
+                exporter=None,
+            )]),
         )
 
         async with run_app(HelloWorld, open_tel) as ra:

@@ -1,27 +1,41 @@
+from typing import Optional
+
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
+from opentelemetry.sdk.trace.export import SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.system.dynamic_middleware import FlexibleManager
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
+
+
+class NoopSpanExporter(SpanExporter):
+    def export(self, spans):
+        logger.debug(f"Exporting spans: {spans}")
+
+    def shutdown(self):
+        pass
 
 
 class OpenTelemetryConfig(BaseModel):
     service_name: str = "eidolon"
-    exporter_args: dict = {"endpoint": "http://localhost:4317", "insecure": True}
+    exporter: Optional[Reference[SpanExporter, OTLPSpanExporter]] = Field(
+        default_factory=lambda: Reference[OTLPSpanExporter](endpoint="http://localhost:4317", insecure=True)
+    )
     sampler: AnnotatedReference[Sampler]
     span_processor: AnnotatedReference[SpanProcessor]
 
 
 class OpenTelemetryManager(Specable[OpenTelemetryConfig], FlexibleManager):
-    exporter: OTLPSpanExporter
+    exporter: SpanExporter
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.exporter = OTLPSpanExporter(**self.spec.exporter_args)
+        self.exporter = self.spec.exporter.instantiate() if self.spec.exporter else NoopSpanExporter()
 
     async def __aenter__(self):
         sampler = self.spec.sampler.instantiate()
@@ -40,7 +54,7 @@ class CustomSampler(Sampler):
         self.prune_send = prune_send
 
     def should_sample(
-        self, parent_context, trace_id: int, name: str, kind=None, attributes=None, links=None, trace_state=None
+            self, parent_context, trace_id: int, name: str, kind=None, attributes=None, links=None, trace_state=None
     ):
         # http receive / send are verbose with streaming, but should be recorded since they record http status
         if self.prune_send and name.endswith("http send"):
