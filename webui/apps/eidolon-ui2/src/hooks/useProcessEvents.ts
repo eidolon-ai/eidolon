@@ -34,15 +34,15 @@ export function useProcessEvents(machineUrl: string, agent: string, processId: s
     })
   }
 
-  const executeAction = async (operation: OperationInfo, data: Record<string, any>) => {
-    setProcessState(undefined)
+  const executeAction = async (machine: string, agent: string, operation: string, data: any) => {
+    setProcessState({...processState, state: "processing"} as ProcessStatus)
     if (cancelFetchController.current) {
       cancelFetchController.current.abort();
     }
 
     cancelFetchController.current = new AbortController();
     try {
-      await executeServerOperation(operation.machine, operation.agent, operation.name, processId, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)
+      await executeServerOperation(machine, agent, operation, processId, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)
       setAgentState();
       cancelFetchController.current = null;
     } catch (error) {

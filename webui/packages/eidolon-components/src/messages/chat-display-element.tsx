@@ -1,21 +1,17 @@
-
 // @ts-ignore
 import {Avatar, Divider} from "@mui/material";
 import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements";
 import {ToolCall} from "./tool-call-element";
-import {OperationInfo} from "@eidolon/client";
 import {EidolonMarkdown} from "./eidolon-markdown";
 
 export interface ChatDisplayElementProps {
   rawElement: DisplayElement
   agentName: string
   topLevel: boolean
-  // eslint-disable-next-line no-unused-vars
-  handleAction: (operation: OperationInfo, data: Record<string, any>) => void
   userImage?: string
 }
 
-export const ChatDisplayElement = ({rawElement, agentName, topLevel, handleAction, userImage}: ChatDisplayElementProps) => {
+export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage}: ChatDisplayElementProps) => {
   const getUserInput = (element: UserRequestElement) => {
     // todo, make sure this renders file inputs correctly
     let content = {...element.content}
@@ -74,7 +70,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, handleActio
       const element = rawElement as ToolCallElement
       return (
         <div className={"chat-indent"}>
-          <ToolCall element={element} agentName={agentName} handleAction={handleAction}/>
+          <ToolCall element={element} agentName={agentName}/>
         </div>
       )
     }

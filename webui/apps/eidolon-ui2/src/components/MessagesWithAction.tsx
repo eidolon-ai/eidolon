@@ -29,7 +29,7 @@ export function MessagesWithAction({machineUrl, agent, processId}: MessagesWithA
       justifyContent: 'space-between',
       alignItems: 'center'
     }}>
-      <EidolonEvents agentName={agent} elementsAndLookup={elementsAndLookup} handleAction={executeAction}/>
+      <EidolonEvents agentName={agent} elementsAndLookup={elementsAndLookup}/>
       <AgentProcess agent={agent} processState={processState} handleAction={executeAction}
                     handleCancel={handleCancel}/>
     </Box>

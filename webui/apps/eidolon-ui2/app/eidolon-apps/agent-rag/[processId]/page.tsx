@@ -23,7 +23,7 @@ export default async function ({params}: ProcessPageProps) {
       agent={processStatus.agent}
       processId={processStatus.process_id}
       operationName={"converse"}
-      inputLabel={"How can I help you?"}
+      inputLabel={"Enter question about the documentation here..."}
     />
   )
 }
