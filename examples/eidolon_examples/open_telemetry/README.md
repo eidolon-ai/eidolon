@@ -12,9 +12,8 @@ To configure the monitoring, you must first add an OpenTelemetry reference to se
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: OpenTelemetryManager
-
-spec: BatchOpenTelemetry
+  name: LifecycleManager
+spec: OpenTelemetryManager
 ```
 
 ## Starting Jaeger with Docker

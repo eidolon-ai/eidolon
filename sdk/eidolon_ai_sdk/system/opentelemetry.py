@@ -19,13 +19,22 @@ class OpenTelemetryConfig(BaseModel):
 
 
 class OpenTelemetryManager(Specable[OpenTelemetryConfig], LifecycleManager):
+    exporter: OTLPSpanExporter
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.exporter = OTLPSpanExporter(**self.spec.exporter_args)
+
     async def __aenter__(self):
         sampler = self.spec.sampler.instantiate()
         provider_resource = Resource.create({SERVICE_NAME: self.spec.service_name})
         provider = TracerProvider(sampler=sampler, resource=provider_resource)
         trace.set_tracer_provider(provider)
-        exporter = OTLPSpanExporter(**self.spec.exporter_args)
-        provider.add_span_processor(self.spec.span_processor.instantiate(span_exporter=exporter))
+        provider.add_span_processor(self.spec.span_processor.instantiate(span_exporter=self.exporter))
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if hasattr(self, "exporter"):
+            self.exporter.shutdown()
 
 
 class CustomSampler(Sampler):
