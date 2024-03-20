@@ -34,12 +34,8 @@ from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
-from eidolon_ai_sdk.system.opentelemetry import (
-    OpenTelemetryManager,
-    CustomSampler,
-    NoopOpenTelemetry,
-    BatchOpenTelemetry,
-)
+from eidolon_ai_sdk.system.lifecycle_manager import LifecycleManager, MultiLifecycleManager
+from eidolon_ai_sdk.system.opentelemetry import OpenTelemetryManager, CustomSampler
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
@@ -141,10 +137,9 @@ def named_builtins():
         (VectorStore, ChromaVectorStore),
         NoopVectorStore,
         ChromaVectorStore,
-        (OpenTelemetryManager, NoopOpenTelemetry),
-        # (OpenTelemetryManager, BatchOpenTelemetry),
-        NoopOpenTelemetry,
-        BatchOpenTelemetry,
+        (LifecycleManager, MultiLifecycleManager),
+        MultiLifecycleManager,
+        OpenTelemetryManager,
         (Sampler, CustomSampler),
         CustomSampler,
         (SpanProcessor, BatchSpanProcessor),

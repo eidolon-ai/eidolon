@@ -2,7 +2,7 @@ import argparse
 import logging.config
 import pathlib
 from collections import deque
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, ExitStack
 from importlib.metadata import version, PackageNotFoundError
 
 import dotenv
@@ -22,6 +22,8 @@ from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
+from eidolon_ai_sdk.system.agent_machine import AgentMachine
+from eidolon_ai_sdk.system.lifecycle_manager import LifecycleManager
 from eidolon_ai_sdk.system.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -140,7 +142,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         logger.info(f"Building machine '{machine_name}'")
         machine_spec = AgentOS.get_resource(MachineResource, machine_name).spec
         logger.debug(yaml.safe_dump(machine_spec.model_dump()))
-        machine = machine_spec.instantiate()
+        machine: AgentMachine = machine_spec.instantiate()
         AgentOS.load_machine(machine)
         await machine.start(app)
 
@@ -151,9 +153,9 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
 
-        AgentOS.get_instance(OpenTelemetryManager).setup()
+        async with AgentOS.get_instance(LifecycleManager, app=app):
+            yield
 
-        yield
         await machine.stop()
     except BaseException:
         logger.exception("Failed to start AgentOS")

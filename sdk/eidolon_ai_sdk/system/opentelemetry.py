@@ -7,18 +7,8 @@ from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
 from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
 from pydantic import BaseModel
 
+from eidolon_ai_sdk.system.lifecycle_manager import LifecycleManager
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
-
-
-class OpenTelemetryManager:
-    @abstractmethod
-    def setup(self):
-        raise NotImplementedError
-
-
-class NoopOpenTelemetry(OpenTelemetryManager):
-    def setup(self):
-        logger.info("OpenTelemetry is disabled")
 
 
 class OpenTelemetryConfig(BaseModel):
@@ -28,8 +18,8 @@ class OpenTelemetryConfig(BaseModel):
     span_processor: AnnotatedReference[SpanProcessor]
 
 
-class BatchOpenTelemetry(Specable[OpenTelemetryConfig], OpenTelemetryManager):
-    def setup(self):
+class OpenTelemetryManager(Specable[OpenTelemetryConfig], LifecycleManager):
+    async def __aenter__(self):
         sampler = self.spec.sampler.instantiate()
         provider_resource = Resource.create({SERVICE_NAME: self.spec.service_name})
         provider = TracerProvider(sampler=sampler, resource=provider_resource)
