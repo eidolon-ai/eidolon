@@ -17,7 +17,7 @@ declare module 'next-auth' {
   }
 }
 
-const providerTypes = process.env.EIDOLON_AUTH_PROVIDERS?.split(',') || []
+const providerTypes = (process.env.EIDOLON_AUTH_PROVIDERS?.trim().split(',') || []).filter(x => x.trim().length > 0)
 
 const providers: Provider[] = []
 
