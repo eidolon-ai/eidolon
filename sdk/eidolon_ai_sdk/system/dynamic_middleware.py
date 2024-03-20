@@ -18,8 +18,8 @@ class FlexibleManager(AsyncContextManager):
 
 class DynamicMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
-        async with AgentOS.get_instance(AsyncContextManager, "MiddlewareManager", request=request):
-            return await call_next(request)
+        async with AgentOS.get_instance(AsyncContextManager, "MiddlewareManager", request=request) as resp:
+            return resp if resp else await call_next(request)
 
 
 class MultiManagerSpec(BaseModel):
