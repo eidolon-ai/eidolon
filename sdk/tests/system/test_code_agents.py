@@ -17,8 +17,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_sdk.system.lifecycle_manager import LifecycleManager
-from eidolon_ai_sdk.system.opentelemetry import OpenTelemetryManager
+from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.stream_collector import stream_manager
@@ -109,7 +108,7 @@ class TestHelloWorld:
     async def server(self, run_app):
         open_tel = ReferenceResource(
             apiVersion="eidolon/v1",
-            metadata=Metadata(name=LifecycleManager.__name__),
+            metadata=Metadata(name="LifecycleManager"),
             spec=dict(managers=[OpenTelemetryManager.__name__]),
         )
 

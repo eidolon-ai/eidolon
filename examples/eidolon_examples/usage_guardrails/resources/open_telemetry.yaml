@@ -1,0 +1,12 @@
+#---
+#apiVersion: eidolon/v1
+#kind: Reference
+#metadata:
+#  name: LifecycleManager
+#spec: OpenTelemetryManager
+#---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: MiddlewareManager
+spec: UsageManager

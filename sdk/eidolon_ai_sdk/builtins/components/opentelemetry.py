@@ -1,13 +1,11 @@
-from abc import abstractmethod
-
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.resources import SERVICE_NAME, Resource, logger
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
 from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
 from pydantic import BaseModel
 
-from eidolon_ai_sdk.system.lifecycle_manager import LifecycleManager
+from eidolon_ai_sdk.system.dynamic_middleware import FlexibleManager
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
@@ -18,7 +16,7 @@ class OpenTelemetryConfig(BaseModel):
     span_processor: AnnotatedReference[SpanProcessor]
 
 
-class OpenTelemetryManager(Specable[OpenTelemetryConfig], LifecycleManager):
+class OpenTelemetryManager(Specable[OpenTelemetryConfig], FlexibleManager):
     exporter: OTLPSpanExporter
 
     def __init__(self, **kwargs):
@@ -33,8 +31,7 @@ class OpenTelemetryManager(Specable[OpenTelemetryConfig], LifecycleManager):
         provider.add_span_processor(self.spec.span_processor.instantiate(span_exporter=self.exporter))
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if hasattr(self, "exporter"):
-            self.exporter.shutdown()
+        self.exporter.shutdown()
 
 
 class CustomSampler(Sampler):

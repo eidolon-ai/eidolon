@@ -46,10 +46,11 @@ httpx-sse = "^0.4.0"
 sse-starlette = "^2.0.0"
 dill = "^0.3.8"
 typer = {extras = ["all"], version = "^0.9.0"}
-eidolon-ai-client = "^0.1.5"
 opentelemetry-instrumentation-fastapi = "^0.44b0"
 opentelemetry-instrumentation-logging = "^0.44b0"
 opentelemetry-sdk = "^1.23.0"
+eidolon-ai-client = "^0.1.5"
+usage-client = { path = "../usage-service/usage-client", develop = false }
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
@@ -58,6 +59,7 @@ ruff = "^0.1.7"
 pytest-recording = "^0.13.1"
 pytest-asyncio = "^0.23.4"
 eidolon-ai-client = { path = "../client/python", develop = true }
+usage-client = { path = "../usage-service/usage-client", develop = true }
 
 [build-system]
 requires = ["poetry-core"]

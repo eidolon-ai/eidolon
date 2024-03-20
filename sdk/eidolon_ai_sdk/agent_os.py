@@ -85,10 +85,10 @@ class AgentOS:
             raise ValueError(f"Resource {name} not found in bucket {bucket}")
 
     @classmethod
-    def get_instance(cls, kind: Type[S], **kwargs) -> S:
+    def get_instance(cls, kind: Type[S], kind_name=None, **kwargs) -> S:
         from eidolon_ai_sdk.system.reference_model import Reference
 
-        return Reference[kind, kind.__name__]().instantiate(**kwargs)
+        return Reference[kind, kind_name or kind.__name__]().instantiate(**kwargs)
 
     @classmethod
     def get_resource_source(cls, bucket, name: str) -> str:
