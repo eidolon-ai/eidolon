@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "turbo build",
+    "start": "npm --prefix apps/eidolon-ui2 run start",
     "test": "turbo test",
     "dev": "turbo dev",
     "lint": "turbo lint",
