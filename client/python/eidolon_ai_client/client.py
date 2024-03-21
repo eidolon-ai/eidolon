@@ -8,7 +8,7 @@ import jsonref
 from pydantic import BaseModel, Field, Extra
 
 from eidolon_ai_client.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
-from eidolon_ai_client.util.aiohttp import stream_content, get_content, post_content, delete
+from eidolon_ai_client.util.aiohttp import stream_content, get_content, post_content, delete, get_raw
 
 
 def current_machine_url() -> str:
@@ -81,6 +81,19 @@ class Process(BaseModel):
     machine: str = Field(default_factory=current_machine_url)
     agent: str
     process_id: str
+
+    async def upload_file(self, file_contents: bytes) -> str:
+        url = urljoin(self.machine, f"processes/{self.process_id}/files")
+        json_ = await post_content(url, content=file_contents, headers={"Content-Type": "application/octet-stream"})
+        return json_['file_id']
+
+    async def download_file(self, file_id: str) -> bytes:
+        url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}")
+        return await get_raw(url)
+
+    async def delete_file(self, file_id: str) -> None:
+        url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}")
+        await delete(url)
 
     async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
         url = urljoin(self.machine, f"processes/{self.process_id}/agent/{self.agent}/actions/{action_name}")

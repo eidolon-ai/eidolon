@@ -1,10 +1,10 @@
 import typing
 from contextlib import contextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Body
 from pydantic import BaseModel, Field
 from typing import List, Optional, Annotated, Literal, cast
 
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, Response
 
 from eidolon_ai_client.client import ProcessStatus
 from eidolon_ai_client.util.logger import logger
@@ -21,6 +21,7 @@ from ..memory.file_memory import FileMemory
 from ..memory.semantic_memory import SymbolicMemory
 from ..memory.similarity_memory import SimilarityMemory
 from ..security.permissions import PermissionException
+from ..security.process_file_system import ProcessFileSystem
 from ..security.security_manager import SecurityManager
 
 
@@ -29,6 +30,7 @@ class MachineSpec(BaseModel):
     file_memory: AnnotatedReference[FileMemory] = Field(desciption="The File Memory implementation.")
     similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
     security_manager: AnnotatedReference[SecurityManager] = Field(description="The Security Manager implementation.")
+    process_file_system: AnnotatedReference[ProcessFileSystem] = Field(description="The Process File System implementation. Used to store files related to processes.")
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
@@ -46,6 +48,7 @@ class AgentMachine(Specable[MachineSpec]):
     security_manager: SecurityManager
     agent_controllers: List[AgentController]
     app: Optional[FastAPI]
+    process_file_system: ProcessFileSystem
 
     def __init__(self, spec: MachineSpec):
         super().__init__(spec)
@@ -58,6 +61,7 @@ class AgentMachine(Specable[MachineSpec]):
         self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
         self.app = None
         self.security_manager = self.spec.security_manager.instantiate()
+        self.process_file_system = self.spec.process_file_system.instantiate()
 
     async def start(self, app):
         if self.app:
@@ -103,6 +107,32 @@ class AgentMachine(Specable[MachineSpec]):
             tags=["processes"],
         )
 
+        # Add routes for the process filesystem
+        app.add_api_route(
+            "/processes/{process_id}/files",
+            endpoint=self.upload_file,
+            methods=["POST"],
+            response_model=typing.Dict[str, str],
+            tags=["processes", "files"],
+        )
+
+        app.add_api_route(
+            "/processes/{process_id}/files/{file_id}",
+            endpoint=self.download_file,
+            methods=["GET"],
+            response_model=bytes,
+            tags=["processes", "files"],
+        )
+
+        app.add_api_route(
+            "/processes/{process_id}/files/{file_id}",
+            endpoint=self._delete_file,
+            methods=["DELETE"],
+            response_model=None,
+            tags=["processes", "files"],
+        )
+
+        # Add the routes for the agent controllers
         for program in self.agent_controllers:
             await program.start(app)
         await self.memory.start()
@@ -120,6 +150,40 @@ class AgentMachine(Specable[MachineSpec]):
             if controller.name == agent_name:
                 return controller
         return None
+
+    async def upload_file(self, process_id: str,
+                          file_bytes=Body(..., description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream")):
+        """
+        Upload a file for this process
+        :param process_id:
+        :param file_bytes:
+        :return: The file id that was written
+        """
+        return JSONResponse(content={"file_id": await self.process_file_system.write_file(process_id, file_bytes)}, status_code=200)
+
+    async def download_file(self, process_id: str, file_id: str):
+        """
+        Download a file for this process
+        :param process_id:
+        :param file_id:
+        :return: The file bytes
+        """
+        contents = await self.process_file_system.read_file(process_id, file_id)
+        if not contents:
+            return JSONResponse(content={"detail": "File Not Found"}, status_code=404)
+        return Response(content=contents, media_type="application/octet-stream")
+
+    async def _delete_file(self, process_id: str, file_id: str):
+        """
+        Delete a file for this process
+        :param process_id:
+        :param file_id:
+        :return:
+        """
+        response = await self.process_file_system.delete_file(process_id, file_id)
+        if not response:
+            return JSONResponse(content={"detail": "File Not Found"}, status_code=404)
+        return JSONResponse(content=response, status_code=200)
 
     async def list_processes(
             self,

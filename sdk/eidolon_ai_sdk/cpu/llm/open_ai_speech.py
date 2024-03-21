@@ -46,6 +46,7 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
         response = await self.llm.audio.speech.create(
             model=self.spec.text_to_speech_model,
             voice=self.spec.text_to_speech_voice,
+            response_format="mp3",
             input=text,
         )
 

@@ -14,6 +14,7 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent.generic_agent import GenericAgent
+from eidolon_ai_sdk.agent.openai_whisper_agent import AutonomousSpeechAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
@@ -34,6 +35,7 @@ from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
+from eidolon_ai_sdk.security.process_file_system import ProcessFileSystem
 from eidolon_ai_sdk.system.opentelemetry import (
     OpenTelemetryManager,
     CustomSampler,
@@ -116,6 +118,7 @@ def named_builtins():
         GenericAgent,
         TreeOfThoughtsAgent,
         RetrieverAgent,
+        AutonomousSpeechAgent,
         # cpu
         (AgentCPU, ConversationalAgentCPU),
         ConversationalAgentCPU,
@@ -149,6 +152,7 @@ def named_builtins():
         CustomSampler,
         (SpanProcessor, BatchSpanProcessor),
         BatchSpanProcessor,
+        ProcessFileSystem,
         # sub components
         (DocumentParser, AutoParser),
         AutoParser,
