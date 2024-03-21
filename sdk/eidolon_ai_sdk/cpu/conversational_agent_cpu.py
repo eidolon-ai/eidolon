@@ -121,7 +121,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             conversation.append(assistant_message)
 
             if tool_call_events:
-                with tracer.start_as_current_span("tool_calls"):
+                with tracer.start_as_current_span("tool calls"):
                     streams = [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
                     async for e in merge_streams(streams):
                         yield e

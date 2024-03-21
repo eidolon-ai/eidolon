@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from usage_client.models import UsageSummary, UsageDelta, UsageReset
+from eidolon_ai_usage_client.models import UsageSummary, UsageDelta, UsageReset
 from usage_server.usage import UsageService
 
 usage = APIRouter()
@@ -23,6 +23,8 @@ Transaction = UsageDelta | UsageReset
 
 
 @usage.post(path="/subjects/{subject_id}/transactions")
-async def record_usage_transaction(subject_id: str, transaction: Transaction) -> None:
+async def record_usage_transaction(
+    subject_id: str, transaction: Transaction
+) -> UsageSummary:
     s = await UsageService.singleton()
-    await s.record_transaction(subject_id, transaction)
+    return await s.record_transaction(subject_id, transaction)

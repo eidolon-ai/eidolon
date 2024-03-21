@@ -5,7 +5,6 @@ import typing
 from pydantic import Field, BaseModel
 
 
-
 class CreateProcessArgs(BaseModel):
     agent: str = Field(description="The executable agent for the process.")
     title: typing.Optional[str] = Field(None, description="The title of the process")

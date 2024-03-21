@@ -195,11 +195,11 @@ class AgentMachine(Specable[MachineSpec]):
         return JSONResponse(content=response, status_code=200)
 
     async def list_processes(
-            self,
-            request: Request,
-            skip: int = 0,
-            limit: Annotated[int, Field(ge=1, le=100)] = 100,
-            sort: Literal["ascending", "descending"] = "ascending",
+        self,
+        request: Request,
+        skip: int = 0,
+        limit: Annotated[int, Field(ge=1, le=100)] = 100,
+        sort: Literal["ascending", "descending"] = "ascending",
     ):
         """
         List all processes. Supports paging and sorting
@@ -208,7 +208,7 @@ class AgentMachine(Specable[MachineSpec]):
         child_pids = await AgentCallHistory.get_child_pids()
         processes_acc = []
         async for process_ in ProcessDoc.find(
-                query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
+            query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
         ):
             process_ = cast(ProcessDoc, process_)
             try:
@@ -218,7 +218,9 @@ class AgentMachine(Specable[MachineSpec]):
                 else:
                     controller = self._get_agent_controller(process_.agent)
                     if not controller:
-                        logger.error(f"Could not find agent {process_.agent}, in {self.agent_controllers}, skipping process")
+                        logger.error(
+                            f"Could not find agent {process_.agent}, in {self.agent_controllers}, skipping process"
+                        )
                     else:
                         summary = StateSummary(
                             agent=process_.agent,
