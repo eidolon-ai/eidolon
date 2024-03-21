@@ -1,6 +1,9 @@
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: LifecycleManager
+  name: SpanExporter
 
-spec: OpenTelemetryManager
+spec:
+  implementation: OTLPSpanExporter
+  endpoint: http://localhost:4317
+  insecure: true

@@ -1,45 +1,38 @@
+from __future__ import annotations
+
+from abc import abstractmethod
 from contextlib import AsyncExitStack
-from typing import AsyncContextManager
+from typing import AsyncContextManager, List
 
 from openai import BaseModel
+from pydantic import PrivateAttr
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Reference, Specable
 
 
-class FlexibleManager(AsyncContextManager):
-    def __init__(self, *args, **kwargs):
-        pass
-
-    async def __aexit__(self, *args, **kwargs):
-        pass
-
-
 class DynamicMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
-        async with AgentOS.get_instance(AsyncContextManager, "MiddlewareManager", request=request) as resp:
-            return resp if resp else await call_next(request)
+        middleware = AgentOS.get_instance(Middleware)
+        return await middleware.dispatch(request, call_next)
 
 
-class MultiManagerSpec(BaseModel):
-    managers: list[Reference[AsyncContextManager]] = []
+class Middleware:
+    @abstractmethod
+    async def dispatch(self, request, call_next):
+        raise NotImplementedError()
 
 
-class MultiContextManager(FlexibleManager, Specable[MultiManagerSpec]):
-    stack = AsyncExitStack()
-    managers: list[AsyncContextManager]
+class MultiMiddleware(Middleware, BaseModel):
+    middlewares: List[Reference[Middleware]] = []
+    _original_call_next: callable = PrivateAttr(default=None)
 
-    def __init__(self, spec: MultiManagerSpec, **kwargs):
-        Specable.__init__(self, spec=spec)
+    async def dispatch(self, request, call_next):
+        self._original_call_next = self._original_call_next or call_next
+        if self.middlewares:
+            latest = self.middlewares.pop()
+            return await latest.dispatch(request, self.dispatch)
+        else:
+            return await self._original_call_next(request)
 
-        self.managers = [ref.instantiate(**kwargs) for ref in spec.managers]
-        self.stack = AsyncExitStack()
-
-    async def __aenter__(self):
-        await self.stack.__aenter__()
-        for manager in self.managers:
-            await self.stack.enter_async_context(manager)
-
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        return await self.stack.__aexit__(exc_type, exc_value, traceback)

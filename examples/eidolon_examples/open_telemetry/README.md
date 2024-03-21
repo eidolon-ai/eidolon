@@ -6,14 +6,18 @@ This document provides instructions on how to configure monitoring for your appl
 
 ## Adding OpenTelemetry Reference
 
-To configure the monitoring, you must first add an OpenTelemetry reference to set the default `OpenTelemetryManager`. This step ensures that the telemetry data is collected and managed properly.
+OpenTelemetry is enabled by default, without an exporter. So to configure monitoring, you must add an exporter to your resources. 
+The following example configures the exporter to hit a locally running Jaeger instance.
 
 ```yaml
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: LifecycleManager
-spec: OpenTelemetryManager
+  name: SpanExporter
+spec:
+  implementation: OTLPSpanExporter
+  endpoint: http://localhost:4317
+  insecure: true
 ```
 
 ## Starting Jaeger with Docker
@@ -21,19 +25,7 @@ spec: OpenTelemetryManager
 Run the following command in your terminal to start a Jaeger instance on your local machine:
 
 ```bash
-docker run --rm --name jaeger \
-  -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
-  -p 6831:6831/udp \
-  -p 6832:6832/udp \
-  -p 5778:5778 \
-  -p 16686:16686 \
-  -p 4317:4317 \
-  -p 4318:4318 \
-  -p 14250:14250 \
-  -p 14268:14268 \
-  -p 14269:14269 \
-  -p 9411:9411 \
-  jaegertracing/all-in-one:1.55
+docker run --rm --name jaeger -p 4317:4317 -p 16686:16686 jaegertracing/all-in-one:1.55
 ```
 
 ## Accessing Jaeger UI

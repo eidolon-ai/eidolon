@@ -17,9 +17,6 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager
-from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
@@ -106,16 +103,7 @@ def manage_hello_world_state():
 class TestHelloWorld:
     @pytest_asyncio.fixture(scope="class")
     async def server(self, run_app):
-        open_tel = ReferenceResource(
-            apiVersion="eidolon/v1",
-            metadata=Metadata(name="LifecycleManager"),
-            spec=dict(managers=[dict(
-                implementation=OpenTelemetryManager.__name__,
-                exporter=None,
-            )]),
-        )
-
-        async with run_app(HelloWorld, open_tel) as ra:
+        async with run_app(HelloWorld) as ra:
             yield ra
 
     @pytest_asyncio.fixture(scope="function")

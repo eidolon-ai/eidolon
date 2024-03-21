@@ -1,29 +1,30 @@
 import re
 
-from starlette.requests import Request
+from openai import BaseModel
 from starlette.responses import JSONResponse
 
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.security.user import User
-from eidolon_ai_sdk.system.dynamic_middleware import FlexibleManager
+from eidolon_ai_sdk.system.dynamic_middleware import Middleware
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
 from usage_client.client import UsageClient
 
+action_pattern = re.compile(r"^/processes/([^/]+)/agent/([^/]+)/actions/([^/]+)$")
 
-class UsageManager(FlexibleManager):
-    action_pattern = re.compile(r"^/processes/([^/]+)/agent/([^/]+)/actions/([^/]+)$")
-    request: Request
 
-    def __init__(self, request: Request, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.request = request
+class UsageMiddleware(Middleware, BaseModel):
+    path_regex: str = None
+    usage_client: AnnotatedReference[UsageClient]
 
-    async def __aenter__(self):
-        if self.request.method == "POST" and self.action_pattern.search(self.request.url.path):
-            client: UsageClient = AgentOS.get_instance(UsageClient)
+    async def dispatch(self, request, call_next):
+        search_pattern = re.compile(self.path_regex) if self.path_regex else action_pattern
+        if request.method == "POST" and search_pattern.search(request.url.path):
+            client: UsageClient = self.usage_client.instantiate()
             subject = User.get_current().id
             summary = await client.get_summary(subject)
-            return JSONResponse(status_code=429, content={
-                "detail": "Usage limit exceeded",
-                "used": summary.used,
-                "allowed": summary.allowed
-            }) if summary.used >= summary.allowed else None
+            if summary.used >= summary.allowed:
+                return JSONResponse(status_code=429, content={
+                    "detail": "Usage limit exceeded",
+                    "used": summary.used,
+                    "allowed": summary.allowed
+                })
+        return await call_next(request)

@@ -2,8 +2,9 @@ from typing import Tuple
 
 from openai import AsyncOpenAI
 from openai.lib.azure import AsyncAzureOpenAI
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import SpanProcessor
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler
 
 from eidolon_ai_client.util.logger import logger
@@ -23,8 +24,8 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
-from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler
-from eidolon_ai_sdk.builtins.components.usage_manager import UsageManager
+from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
+from eidolon_ai_sdk.builtins.components.usage_manager import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
@@ -36,7 +37,7 @@ from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
-from eidolon_ai_sdk.system.dynamic_middleware import MultiContextManager
+from eidolon_ai_sdk.system.dynamic_middleware import Middleware, MultiMiddleware
 from usage_client.client import UsageClient
 
 try:
@@ -69,7 +70,7 @@ from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 
-def _to_resource(maybe_tuple: type | Tuple[type, type]) -> ReferenceResource:
+def _to_resource(maybe_tuple: type | Tuple[type | str, type]) -> ReferenceResource:
     if isinstance(maybe_tuple, tuple):
         name = maybe_tuple[0] if isinstance(maybe_tuple[0], str) else maybe_tuple[0].__name__
         pointer = maybe_tuple[1] if isinstance(maybe_tuple[1], str) else maybe_tuple[1].__name__
@@ -112,7 +113,7 @@ def named_builtins():
         # agents
         ("Agent", SimpleAgent),
         SimpleAgent,
-        GenericAgent,
+        GenericAgent,  # deprecated
         TreeOfThoughtsAgent,
         RetrieverAgent,
         # cpu
@@ -140,10 +141,15 @@ def named_builtins():
         (VectorStore, ChromaVectorStore),
         NoopVectorStore,
         ChromaVectorStore,
-        ("MiddlewareManager", fqn(MultiContextManager)),
-        ("LifecycleManager", fqn(MultiContextManager)),
+        # middleware
+        (Middleware, MultiMiddleware),
+        MultiMiddleware,
+        UsageMiddleware,
+        # open telemetry
         OpenTelemetryManager,
-        UsageManager,
+        (SpanExporter, NoopSpanExporter),
+        NoopSpanExporter,
+        OTLPSpanExporter,
         (Sampler, CustomSampler),
         CustomSampler,
         (SpanProcessor, BatchSpanProcessor),

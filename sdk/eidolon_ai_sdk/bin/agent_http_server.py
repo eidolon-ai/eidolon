@@ -4,7 +4,6 @@ import pathlib
 from collections import deque
 from contextlib import asynccontextmanager
 from importlib.metadata import version, PackageNotFoundError
-from typing import AsyncContextManager
 
 import dotenv
 import uvicorn
@@ -21,11 +20,11 @@ from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
-from eidolon_ai_sdk.system.dynamic_middleware import DynamicMiddleware
-from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.dynamic_middleware import Middleware, DynamicMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
@@ -154,8 +153,12 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
 
-        async with AgentOS.get_instance(AsyncContextManager, "LifecycleManager", app=app):
+        open_tele = AgentOS.get_instance(OpenTelemetryManager)
+        await open_tele.start()
+        try:
             yield
+        finally:
+            await open_tele.stop()
 
         await machine.stop()
     except BaseException:

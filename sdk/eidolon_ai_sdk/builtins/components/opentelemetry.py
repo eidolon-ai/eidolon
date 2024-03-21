@@ -1,16 +1,12 @@
-from typing import Optional
-
 from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
 from opentelemetry.sdk.trace.export import SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.system.dynamic_middleware import FlexibleManager
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class NoopSpanExporter(SpanExporter):
@@ -23,28 +19,23 @@ class NoopSpanExporter(SpanExporter):
 
 class OpenTelemetryConfig(BaseModel):
     service_name: str = "eidolon"
-    exporter: Optional[Reference[SpanExporter, OTLPSpanExporter]] = Field(
-        default_factory=lambda: Reference[OTLPSpanExporter](endpoint="http://localhost:4317", insecure=True)
-    )
+    exporter: AnnotatedReference[SpanExporter]
     sampler: AnnotatedReference[Sampler]
     span_processor: AnnotatedReference[SpanProcessor]
 
 
-class OpenTelemetryManager(Specable[OpenTelemetryConfig], FlexibleManager):
+class OpenTelemetryManager(Specable[OpenTelemetryConfig]):
     exporter: SpanExporter
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.exporter = self.spec.exporter.instantiate() if self.spec.exporter else NoopSpanExporter()
-
-    async def __aenter__(self):
+    async def start(self):
+        self.exporter = self.spec.exporter.instantiate()
         sampler = self.spec.sampler.instantiate()
         provider_resource = Resource.create({SERVICE_NAME: self.spec.service_name})
         provider = TracerProvider(sampler=sampler, resource=provider_resource)
         trace.set_tracer_provider(provider)
         provider.add_span_processor(self.spec.span_processor.instantiate(span_exporter=self.exporter))
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def stop(self):
         self.exporter.shutdown()
 
 
