@@ -38,11 +38,7 @@ def manage_hello_world_state():
 class TestProcessFiles:
     @pytest_asyncio.fixture(scope="class")
     async def server(self, run_app):
-        open_tel = ReferenceResource(
-            apiVersion="eidolon/v1", metadata=Metadata(name="OpenTelemetryManager"), spec="BatchOpenTelemetry"
-        )
-
-        async with run_app(HelloWorld, open_tel) as ra:
+        async with run_app(HelloWorld) as ra:
             yield ra
 
     @pytest.fixture(scope="function")
