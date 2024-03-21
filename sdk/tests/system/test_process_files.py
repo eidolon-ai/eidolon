@@ -7,8 +7,6 @@ from fastapi import Body, HTTPException
 from eidolon_ai_client.client import Agent, ProcessStatus
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
-from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.system.resources.resources_base import Metadata
 
 
 async def run_program(agent, program, **kwargs) -> ProcessStatus:
