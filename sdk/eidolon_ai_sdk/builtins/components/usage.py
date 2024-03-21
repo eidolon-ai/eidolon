@@ -14,8 +14,8 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.security.user import User
 from eidolon_ai_sdk.system.dynamic_middleware import Middleware
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference
-from usage_client.client import UsageClient, UsageLimitExceeded
-from usage_client.models import UsageDelta
+from eidolon_ai_usage_client.client import UsageClient, UsageLimitExceeded
+from eidolon_ai_usage_client.models import UsageDelta
 
 default_cost_pattern: Pattern[str] = re.compile(r"^POST /processes/([^/]+)/agent/([^/]+)/actions/([^\s/]+)$")
 default_refund_pattern: Pattern[str] = re.compile(r"tool\scalls")

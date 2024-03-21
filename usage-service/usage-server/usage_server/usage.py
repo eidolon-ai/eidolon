@@ -10,7 +10,7 @@ from pymongo import DESCENDING
 from pymongo.errors import DuplicateKeyError
 from typing import Optional
 
-from usage_client.models import UsageDelta, UsageSummary, UsageReset
+from eidolon_ai_usage_client.models import UsageDelta, UsageSummary, UsageReset
 from usage_server.logger_ import logger
 
 dotenv.load_dotenv()

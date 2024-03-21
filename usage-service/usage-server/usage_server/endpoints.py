@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from usage_client.models import UsageSummary, UsageDelta, UsageReset
+from eidolon_ai_usage_client.models import UsageSummary, UsageDelta, UsageReset
 from usage_server.usage import UsageService
 
 usage = APIRouter()

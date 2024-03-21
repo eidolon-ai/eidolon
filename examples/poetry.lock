@@ -808,7 +808,7 @@ description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 aiostream = "^0.5.2"
@@ -830,13 +830,14 @@ description = "An Open Source Agent Services Framework"
 optional = false
 python-versions = ">=3.11,<3.12"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 authlib = "^1.3.0"
 chromadb = "^0.4.18"
 dill = "^0.3.8"
 eidolon-ai-client = "^0.1.5"
+eidolon-ai-usage-client = "^0.1.0"
 esprima = "^4.0.1"
 fastapi = "^0.109.0"
 filetype = "^1.2.0"
@@ -865,12 +866,29 @@ sse-starlette = "^2.0.0"
 tiktoken = "^0.5.1"
 typer = {version = "^0.9.0", extras = ["all"]}
 unstructured = "^0.12.3"
-usage-client = {path = "../usage-service/usage-client"}
 uvicorn = "^0.27.0"
 
 [package.source]
 type = "directory"
 url = "../sdk"
+
+[[package]]
+name = "eidolon-ai-usage-client"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.11"
+files = []
+develop = true
+
+[package.dependencies]
+httpx = "^0.27.0"
+pydantic = "^2.6.4"
+setuptools = "^69.2.0"
+
+[package.source]
+type = "directory"
+url = "../usage-service/usage-client"
 
 [[package]]
 name = "emoji"
@@ -4573,24 +4591,6 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
-name = "usage-client"
-version = "0.1.0"
-description = ""
-optional = false
-python-versions = "^3.11"
-files = []
-develop = false
-
-[package.dependencies]
-httpx = "^0.27.0"
-pydantic = "^2.6.4"
-setuptools = "^69.2.0"
-
-[package.source]
-type = "directory"
-url = "../usage-service/usage-client"
-
-[[package]]
 name = "uvicorn"
 version = "0.27.1"
 description = "The lightning-fast ASGI server."
@@ -4976,4 +4976,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "79f34481437405bd7a1c39249f81fed37d6375693b9989a86e053acf5dfc8867"
+content-hash = "7c97cef59ed00fa20cf8f6612156a443dfd251c23eaa56f0fdcd9ad780790ec3"

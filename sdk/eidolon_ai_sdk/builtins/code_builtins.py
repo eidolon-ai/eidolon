@@ -38,7 +38,7 @@ from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.system.dynamic_middleware import Middleware, MultiMiddleware
-from usage_client.client import UsageClient
+from eidolon_ai_usage_client.client import UsageClient
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore

@@ -1,7 +1,7 @@
 import pytest
 
-from usage_client.client import UsageClient, UsageLimitExceeded
-from usage_client.models import UsageReset, UsageDelta
+from eidolon_ai_usage_client.client import UsageClient, UsageLimitExceeded
+from eidolon_ai_usage_client.models import UsageReset, UsageDelta
 
 
 async def test_get(client: UsageClient):

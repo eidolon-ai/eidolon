@@ -2,7 +2,7 @@ import asyncio
 import pytest
 import pytest_asyncio
 
-from usage_client.client import UsageClient
+from eidolon_ai_usage_client.client import UsageClient
 from usage_server.main import app
 from usage_server.usage import UsageService
 

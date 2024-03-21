@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from usage_client.models import UsageSummary, UsageReset, UsageDelta
+from eidolon_ai_usage_client.models import UsageSummary, UsageReset, UsageDelta
 
 
 class UsageClient:
