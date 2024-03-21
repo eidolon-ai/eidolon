@@ -59,6 +59,18 @@ spec:
     - user_prompt: "Hi, my name is {{name}}"
 ```
 
+🚨 Don't have access to OpenAI GPT4?
+
+By default we use gpt4, but you can change the model to gpt-3.5-turbo if you don't have access to gpt4 by customizing the "cpu" within your agent's spec.
+
+
+```yaml
+spec:
+  cpu:
+    llm_unit:
+      model: "gpt-3.5-turbo"
+```
+
 ## Step 3: Run Eidolon Server
 
 Finally, open a new terminal window and run your machine using eidolon-server.
@@ -91,7 +103,7 @@ The result should be a json object with a process id. For example:
 }
 ```
 
-Now let's try to make a request to your server from another terminal window.
+Now let's try to make a request to your server.
 
 ```bash
 curl -X POST http://0.0.0.0:8080/processes/{process_id}/agent/hello_world/actions/converse -H 'Content-Type: application/json' -d '{"name": "World"}'; echo
