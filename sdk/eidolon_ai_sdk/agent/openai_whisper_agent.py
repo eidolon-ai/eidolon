@@ -31,6 +31,6 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         return text
 
     @register_program()
-    async def speech_to_text(self, text: Annotated[str, Body(description="The text to speak", embed=True)]):
+    async def text_to_speech(self, text: Annotated[str, Body(description="The text to speak", embed=True)]):
         audio_result = await self.speech_llm.text_to_speech(text)
         return Response(audio_result, 200, media_type="audio/mpeg")

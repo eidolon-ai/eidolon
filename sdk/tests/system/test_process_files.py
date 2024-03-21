@@ -1,22 +1,17 @@
 from typing import Annotated
 
-import httpx
 import pytest
 import pytest_asyncio
 from fastapi import Body, HTTPException, Request
 from opentelemetry.trace import get_current_span
 
-from eidolon_ai_client.client import Agent, Process, ProcessStatus, Machine
+from eidolon_ai_client.client import Agent, ProcessStatus
 from eidolon_ai_client.events import (
-    ErrorEvent,
-    AgentStateEvent,
     StringOutputEvent,
     StartStreamContextEvent,
-    EndStreamContextEvent,
-    SuccessEvent,
 )
 from eidolon_ai_client.util.aiohttp import AgentError
-from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
+from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.stream_collector import stream_manager
@@ -131,5 +126,5 @@ class TestProcessFiles:
         await process.delete_file(file_id)
 
         # now try again and expect a 404
-        with pytest.raises(AgentError) as e:
+        with pytest.raises(AgentError):
             await process.delete_file(file_id)
