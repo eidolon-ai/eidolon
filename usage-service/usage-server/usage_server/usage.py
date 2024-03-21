@@ -10,7 +10,7 @@ from pymongo import DESCENDING
 from pymongo.errors import DuplicateKeyError
 from typing import Optional
 
-from usage_client.models import UsageDelta, UsageSummary, UsageReset
+from eidolon_ai_usage_client.models import UsageDelta, UsageSummary, UsageReset
 from usage_server.logger_ import logger
 
 dotenv.load_dotenv()
@@ -57,9 +57,14 @@ class UsageService:
     async def ensure_unique_index(self):
         index_info = await self.collection.index_information()
         for index in index_info.values():
-            if index["key"] == [("i", DESCENDING)] and index["unique"]:
+            if (
+                index["key"] == [("i", DESCENDING), ("subject", DESCENDING)]
+                and index["unique"]
+            ):
                 return
-        await self.collection.create_index("i", unique=True)
+        await self.collection.create_index(
+            [("i", DESCENDING), ("subject", DESCENDING)], unique=True
+        )
 
     async def delete(self, subject: str):
         resp = await self.collection.delete_many({"subject": subject})
@@ -96,14 +101,7 @@ class UsageService:
                 return doc.to_summary()
             except DuplicateKeyError:
                 logger.info(f"Duplicated key error on attempt {attempt}. Retrying...")
-            raise HTTPException(
-                status_code=503, detail="Failed to insert usage record."
-            )
-
-        data = transaction.model_dump()
-        data["subject"] = subject_id
-        data["created"] = datetime.now().isoformat()
-        await self.collection.insert_one(data)
+        raise HTTPException(status_code=503, detail="Failed to insert usage record.")
 
     async def get_usage(self, subject: str) -> UsageSummary:
         latest_record = await self._get_latest(subject)

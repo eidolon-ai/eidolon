@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from usage_client.models import UsageSummary, UsageReset, UsageDelta
+from eidolon_ai_usage_client.models import UsageSummary, UsageReset, UsageDelta
 
 
 class UsageClient:
@@ -17,7 +17,10 @@ class UsageClient:
         async with self.client as client:
             response = await client.get(f"/subjects/{subject}")
             response.raise_for_status()
-            return UsageSummary(**response.json())
+            summary = UsageSummary(**response.json())
+            if summary.used >= summary.allowed:
+                raise UsageLimitExceeded(summary)
+            return summary
 
     async def record_transaction(
         self, subject: str, transaction: UsageDelta | UsageReset
@@ -35,3 +38,11 @@ class UsageClient:
             response = await client.delete(f"/subjects/{subject}")
             response.raise_for_status()
             return response.json()
+
+
+class UsageLimitExceeded(Exception):
+    summary: UsageSummary
+
+    def __init__(self, summary: UsageSummary):
+        self.summary = summary
+        super().__init__(f"Usage limit exceeded: {summary.used}/{summary.allowed}")

@@ -1,41 +1,42 @@
-from abc import abstractmethod
-
 from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.resources import SERVICE_NAME, Resource, logger
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
+from opentelemetry.sdk.trace.export import SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
 from pydantic import BaseModel
 
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
-class OpenTelemetryManager:
-    @abstractmethod
-    def setup(self):
-        raise NotImplementedError
+class NoopSpanExporter(SpanExporter):
+    def export(self, spans):
+        logger.debug(f"Exporting spans: {spans}")
 
-
-class NoopOpenTelemetry(OpenTelemetryManager):
-    def setup(self):
-        logger.info("OpenTelemetry is disabled")
+    def shutdown(self):
+        pass
 
 
 class OpenTelemetryConfig(BaseModel):
     service_name: str = "eidolon"
-    exporter_args: dict = {"endpoint": "http://localhost:4317", "insecure": True}
+    exporter: AnnotatedReference[SpanExporter]
     sampler: AnnotatedReference[Sampler]
     span_processor: AnnotatedReference[SpanProcessor]
 
 
-class BatchOpenTelemetry(Specable[OpenTelemetryConfig], OpenTelemetryManager):
-    def setup(self):
+class OpenTelemetryManager(Specable[OpenTelemetryConfig]):
+    exporter: SpanExporter
+
+    async def start(self):
+        self.exporter = self.spec.exporter.instantiate()
         sampler = self.spec.sampler.instantiate()
         provider_resource = Resource.create({SERVICE_NAME: self.spec.service_name})
         provider = TracerProvider(sampler=sampler, resource=provider_resource)
         trace.set_tracer_provider(provider)
-        exporter = OTLPSpanExporter(**self.spec.exporter_args)
-        provider.add_span_processor(self.spec.span_processor.instantiate(span_exporter=exporter))
+        provider.add_span_processor(self.spec.span_processor.instantiate(span_exporter=self.exporter))
+
+    async def stop(self):
+        self.exporter.shutdown()
 
 
 class CustomSampler(Sampler):

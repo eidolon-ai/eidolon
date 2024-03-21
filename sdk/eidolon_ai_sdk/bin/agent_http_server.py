@@ -20,9 +20,11 @@ from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import ContextMiddleware
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
-from eidolon_ai_sdk.system.opentelemetry import OpenTelemetryManager
+from eidolon_ai_sdk.system.agent_machine import AgentMachine
+from eidolon_ai_sdk.system.dynamic_middleware import DynamicMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
@@ -140,7 +142,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         logger.info(f"Building machine '{machine_name}'")
         machine_spec = AgentOS.get_resource(MachineResource, machine_name).spec
         logger.debug(yaml.safe_dump(machine_spec.model_dump()))
-        machine = machine_spec.instantiate()
+        machine: AgentMachine = machine_spec.instantiate()
         AgentOS.load_machine(machine)
         await machine.start(app)
 
@@ -151,9 +153,13 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
         logger.info("Server Started")
 
-        AgentOS.get_instance(OpenTelemetryManager).setup()
+        open_tele = AgentOS.get_instance(OpenTelemetryManager)
+        await open_tele.start()
+        try:
+            yield
+        finally:
+            await open_tele.stop()
 
-        yield
         await machine.stop()
     except BaseException:
         logger.exception("Failed to start AgentOS")
@@ -205,6 +211,7 @@ def main():
 # noinspection PyTypeChecker
 def start_app(lifespan):
     _app = FastAPI(lifespan=lifespan)
+    _app.add_middleware(DynamicMiddleware)
     _app.add_middleware(ContextMiddleware)
     _app.add_middleware(
         CORSMiddleware,
