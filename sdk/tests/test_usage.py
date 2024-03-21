@@ -1,3 +1,4 @@
+import asyncio
 from unittest.mock import MagicMock, AsyncMock
 
 import pytest
@@ -61,6 +62,11 @@ async def test_usage_enforced(agent: Agent, usage_client: MockUsageClient):
 async def test_usage_recorded(agent: Agent, usage_client: MockUsageClient):
     process = await agent.create_process()
     await process.action("do")
+    for i in range(20):
+        if usage_client.record_transaction.await_args:
+            break
+        else:
+            await asyncio.sleep(0.1)
     user = usage_client.record_transaction.await_args[0][0]
     delta: UsageDelta = usage_client.record_transaction.await_args[0][1]
     assert user == 'NOOP_DEFAULT_USER'

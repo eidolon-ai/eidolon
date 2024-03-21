@@ -151,11 +151,11 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             spec["save_loc"] = replay_override
         if AgentOS.get_instance(ReplayConfig).save_loc:
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
-        logger.info("Server Started")
 
         open_tele = AgentOS.get_instance(OpenTelemetryManager)
         await open_tele.start()
         try:
+            logger.info("Server Started")
             yield
         finally:
             await open_tele.stop()

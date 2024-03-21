@@ -172,6 +172,7 @@ class AgentController:
             )
         else:
             # run the program synchronously
+
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
@@ -258,6 +259,10 @@ class AgentController:
             raise
         finally:
             await store_events(self.name, process.record_id, events_to_store)
+            # get the latest state and if terminated, delete the process
+            latest_record = await self.get_latest_process_event(process.record_id)
+            if latest_record.delete_on_terminate and latest_record.state == "terminated":
+                await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
         self,

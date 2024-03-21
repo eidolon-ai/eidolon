@@ -18,6 +18,7 @@ class AgentOS:
     symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
     similarity_memory: "SimilarityMemory" = ...  # noqa: F821
     security_manager: "SecurityManager" = ...  # noqa: F821
+    process_file_system: "ProcessFileSystem" = ...  # noqa: F821
 
     @staticmethod
     def current_machine_url() -> str:
@@ -42,6 +43,7 @@ class AgentOS:
         cls.symbolic_memory = machine.memory.symbolic_memory
         cls.similarity_memory = machine.memory.similarity_memory
         cls.security_manager = machine.security_manager
+        cls.process_file_system = machine.process_file_system
 
     @classmethod
     def register_resource(cls, resource: Resource, source=None):  # noqa: F821
