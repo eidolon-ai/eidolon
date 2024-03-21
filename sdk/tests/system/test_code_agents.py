@@ -163,7 +163,7 @@ class TestHelloWorld:
             "agent": "HelloWorld",
             "available_actions": [],
             "data": "big bad server error",
-            'parent_process_id': None,
+            "parent_process_id": None,
             "process_id": f"test_unhandled_error[{program}]_0",
             "state": "unhandled_error",
             "title": None,

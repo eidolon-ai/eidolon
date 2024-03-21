@@ -24,7 +24,7 @@ from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManage
 from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
-from eidolon_ai_sdk.system.dynamic_middleware import Middleware, DynamicMiddleware
+from eidolon_ai_sdk.system.dynamic_middleware import DynamicMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource

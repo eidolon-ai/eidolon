@@ -31,7 +31,7 @@ class UsageMiddleware(BaseModel, Middleware):
         UsageSpanProcessor.register(
             client=self.usage_client.instantiate(),
             cost_pattern=self.cost_pattern(),
-            refund_pattern=self.refund_pattern()
+            refund_pattern=self.refund_pattern(),
         )
 
     def cost_pattern(self):
@@ -48,16 +48,12 @@ class UsageMiddleware(BaseModel, Middleware):
             try:
                 await client.get_summary(subject)
             except UsageLimitExceeded as e:
-                return JSONResponse(status_code=429, content={
-                    "detail": "Usage limit exceeded",
-                    "used": e.summary.used,
-                    "allowed": e.summary.allowed
-                })
+                return JSONResponse(
+                    status_code=429,
+                    content={"detail": "Usage limit exceeded", "used": e.summary.used, "allowed": e.summary.allowed},
+                )
             except Exception as e:
-                return JSONResponse(status_code=502, content={
-                    "detail": "Error checking usage",
-                    "error": str(e)
-                })
+                return JSONResponse(status_code=502, content={"detail": "Error checking usage", "error": str(e)})
         return await call_next(request)
 
 
@@ -98,7 +94,7 @@ class UsageSpanProcessor(SpanProcessor):
                 cost = (span.end_time - span.start_time) / units_per_second
                 refund = RequestContext.get("eidolon_refund", 0)
                 to_pay = max(0, math.ceil(cost - refund))
-                subject = span.attributes['usage_subject']
+                subject = span.attributes["usage_subject"]
                 asyncio.create_task(_billing(self.usage_client, subject, to_pay))
             elif self.refund_pattern.search(span.name):
                 duration = (span.end_time - span.start_time) / units_per_second

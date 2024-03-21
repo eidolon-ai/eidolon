@@ -34,4 +34,3 @@ class MultiMiddleware(Middleware, BaseModel):
             return await latest.dispatch(request, self.dispatch)
         else:
             return await self._original_call_next(request)
-

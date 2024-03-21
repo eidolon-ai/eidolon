@@ -43,6 +43,7 @@ async def test_adding_incrementally_works(client: UsageClient):
     assert summary.used == 100
     assert summary.allowed == 600
 
+
 async def test_uniqueness_is_per_subject(client: UsageClient):
     await client.record_transaction("foo", UsageDelta(used_delta=1))
     await client.record_transaction("bar", UsageDelta(used_delta=2))

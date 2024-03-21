@@ -23,7 +23,7 @@ class UsageClient:
             return summary
 
     async def record_transaction(
-            self, subject: str, transaction: UsageDelta | UsageReset
+        self, subject: str, transaction: UsageDelta | UsageReset
     ):
         transaction_dict = transaction.model_dump(exclude_defaults=True)
         transaction_dict["type"] = transaction.type

@@ -73,11 +73,10 @@ from eidolon_ai_sdk.util.replay import ReplayConfig
 def _to_resource(maybe_tuple: type | Tuple[type | str, type]) -> ReferenceResource:
     if isinstance(maybe_tuple, tuple):
         name = maybe_tuple[0] if isinstance(maybe_tuple[0], str) else maybe_tuple[0].__name__
-        pointer = maybe_tuple[1] if isinstance(maybe_tuple[1], str) else maybe_tuple[1].__name__
         return ReferenceResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name=name),
-            spec=pointer,
+            spec=maybe_tuple[1].__name__,
         )
     else:
         return ReferenceResource(

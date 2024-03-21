@@ -6,7 +6,6 @@ from jinja2 import Environment, StrictUndefined, meta
 from pydantic import BaseModel, field_validator, Field, model_validator
 from pydantic_core import to_jsonable_python
 
-from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import (
     Agent,
     register_action,

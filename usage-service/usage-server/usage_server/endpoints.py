@@ -23,6 +23,8 @@ Transaction = UsageDelta | UsageReset
 
 
 @usage.post(path="/subjects/{subject_id}/transactions")
-async def record_usage_transaction(subject_id: str, transaction: Transaction) -> UsageSummary:
+async def record_usage_transaction(
+    subject_id: str, transaction: Transaction
+) -> UsageSummary:
     s = await UsageService.singleton()
     return await s.record_transaction(subject_id, transaction)
