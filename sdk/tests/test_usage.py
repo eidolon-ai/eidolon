@@ -21,7 +21,7 @@ class CodeAgent:
 
 
 class MockUsageClient(UsageClient):
-    mock = None
+    mock = MagicMock()
 
     def __new__(cls, *args, **kwargs):
         return cls.mock
@@ -44,13 +44,10 @@ def agent(server):
 
 @pytest.fixture(autouse=True)
 def usage_client():
-    mock = MagicMock()
-    MockUsageClient.mock = mock
-    mock.get_summary = AsyncMock()
-    mock.record_transaction = AsyncMock()
-    mock.delete = AsyncMock()
-    yield mock
-    MockUsageClient.mock = None
+    MockUsageClient.mock.get_summary = AsyncMock()
+    MockUsageClient.mock.record_transaction = AsyncMock()
+    MockUsageClient.mock.delete = AsyncMock()
+    yield MockUsageClient.mock
 
 
 async def test_usage_enforced(agent: Agent, usage_client: MockUsageClient):
