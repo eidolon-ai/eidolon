@@ -35,7 +35,7 @@ from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
-from eidolon_ai_sdk.security.process_file_system import ProcessFileSystem
+from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
 from eidolon_ai_sdk.system.opentelemetry import (
     OpenTelemetryManager,
     CustomSampler,

@@ -75,12 +75,14 @@ class ProcessFileSystem(Specable[ProcessFileSystemSpec]):
         await self.file_memory().delete_file(path)
         return "deleted"
 
-    async def delete_process(self, process_id: str):
+    @classmethod
+    async def delete_process(cls, process_id: str):
         """
         Deletes the entire process directory
         :param process_id:
         :return:
         """
         memory: FileMemory = AgentOS.file_memory
-        found = await memory.glob(f"{Path(self.root, process_id)}/**/*")
+        pfs: ProcessFileSystem = AgentOS.process_file_system
+        found = await memory.glob(f"{Path(pfs.root, process_id)}/**/*")
         await asyncio.gather(*[memory.delete_file(file) for file in found])

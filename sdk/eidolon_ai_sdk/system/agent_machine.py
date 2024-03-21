@@ -21,7 +21,7 @@ from ..memory.file_memory import FileMemory
 from ..memory.semantic_memory import SymbolicMemory
 from ..memory.similarity_memory import SimilarityMemory
 from ..security.permissions import PermissionException
-from ..security.process_file_system import ProcessFileSystem
+from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
 from ..security.security_manager import SecurityManager
 
 
