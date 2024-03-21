@@ -119,7 +119,6 @@ class AgentController:
         process_id: str,
         **kwargs,
     ):
-        print("**** here")
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
         RequestContext.set("process_id", process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
@@ -159,7 +158,6 @@ class AgentController:
             app_json_idx = -1
 
         if event_stream_idx != -1 and (app_json_idx == -1 or event_stream_idx < app_json_idx):
-            print("*** in event")
             # stream the results
             async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
                 try:
@@ -174,7 +172,6 @@ class AgentController:
             )
         else:
             # run the program synchronously
-            print("*** in JSOn")
 
             return await self.send_response(handler, process, last_state, **kwargs)
 

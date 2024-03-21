@@ -29,7 +29,6 @@ class Machine(BaseModel):
     async def processes(self) -> ProcessesResponse:
         url = urljoin(self.machine, "/processes")
         json_ = await get_content(url)
-        print(json_)
         json_['processes'] = [{"machine":self.machine, **kwargs} for kwargs in json_['processes']]
         return ProcessesResponse(**json_)
 
