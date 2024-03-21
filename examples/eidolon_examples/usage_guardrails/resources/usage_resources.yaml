@@ -1,0 +1,13 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: Middleware
+spec: UsageMiddleware
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: OpenTelemetryManager
+spec:
+  span_processor: UsageSpanProcessor

@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from contextlib import AsyncExitStack
-from typing import AsyncContextManager, List
+from typing import List
 
 from openai import BaseModel
 from pydantic import PrivateAttr
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.system.reference_model import Reference, Specable
+from eidolon_ai_sdk.system.reference_model import Reference
 
 
 class DynamicMiddleware(BaseHTTPMiddleware):

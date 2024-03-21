@@ -25,7 +25,7 @@ from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
-from eidolon_ai_sdk.builtins.components.usage_manager import UsageMiddleware
+from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware, UsageSpanProcessor
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
@@ -154,6 +154,7 @@ def named_builtins():
         CustomSampler,
         (SpanProcessor, BatchSpanProcessor),
         BatchSpanProcessor,
+        UsageSpanProcessor,
         # sub components
         (DocumentParser, AutoParser),
         AutoParser,

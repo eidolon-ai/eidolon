@@ -4,5 +4,6 @@ metadata:
   name: assistant
 
 spec:
+  agent_refs: ["assistant"]
   description: "This is a friendly assistant"
   system_prompt: "You are a friendly assistant"
