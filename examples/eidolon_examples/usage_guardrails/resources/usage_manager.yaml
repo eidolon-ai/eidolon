@@ -2,13 +2,6 @@
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: LifecycleManager
-spec:
-  implementation: OpenTelemetryManager
-  exporter: null
----
-apiVersion: eidolon/v1
-kind: Reference
-metadata:
-  name: MiddlewareManager
-spec: UsageManager
+  name: Middleware
+spec: UsageMiddleware
+

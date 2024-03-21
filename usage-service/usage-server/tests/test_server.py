@@ -1,4 +1,6 @@
-from usage_client.client import UsageClient
+import pytest
+
+from usage_client.client import UsageClient, UsageLimitExceeded
 from usage_client.models import UsageReset, UsageDelta
 
 
@@ -49,3 +51,11 @@ async def test_uniqueness_is_per_subject(client: UsageClient):
     bar = await client.get_summary("bar")
     assert bar.used == 2
 
+
+async def test_get_summary_raises_over_limit(client: UsageClient):
+    await client.record_transaction("foo", UsageDelta(used_delta=601))
+    with pytest.raises(UsageLimitExceeded) as e:
+        await client.get_summary("foo")
+    assert e.value.summary.used == 601
+    assert e.value.summary.allowed == 600
+    assert str(e.value) == "Usage limit exceeded: 601/600"
