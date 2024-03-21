@@ -119,6 +119,7 @@ class AgentController:
         process_id: str,
         **kwargs,
     ):
+        print("**** here")
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
         RequestContext.set("process_id", process_id)
         request = typing.cast(Request, kwargs.pop("__request"))
@@ -158,6 +159,7 @@ class AgentController:
             app_json_idx = -1
 
         if event_stream_idx != -1 and (app_json_idx == -1 or event_stream_idx < app_json_idx):
+            print("*** in event")
             # stream the results
             async def with_sse(stream: AsyncIterator[BaseStreamEvent]):
                 try:
@@ -172,6 +174,8 @@ class AgentController:
             )
         else:
             # run the program synchronously
+            print("*** in JSOn")
+
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
@@ -258,6 +262,10 @@ class AgentController:
             raise
         finally:
             await store_events(self.name, process.record_id, events_to_store)
+            # get the latest state and if terminated, delete the process
+            latest_record = await self.get_latest_process_event(process.record_id)
+            if latest_record.delete_on_terminate and latest_record.state == "terminated":
+                await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
         self,

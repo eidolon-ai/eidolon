@@ -1,6 +1,6 @@
 import typing
 from contextlib import contextmanager
-from fastapi import FastAPI, Request, Body
+from fastapi import FastAPI, Request, Body, Header
 from pydantic import BaseModel, Field
 from typing import List, Optional, Annotated, Literal, cast
 
@@ -113,7 +113,7 @@ class AgentMachine(Specable[MachineSpec]):
             endpoint=self.upload_file,
             methods=["POST"],
             response_model=typing.Dict[str, str],
-            tags=["processes", "files"],
+            tags=["files"],
         )
 
         app.add_api_route(
@@ -121,7 +121,7 @@ class AgentMachine(Specable[MachineSpec]):
             endpoint=self.download_file,
             methods=["GET"],
             response_model=bytes,
-            tags=["processes", "files"],
+            tags=["files"],
         )
 
         app.add_api_route(
@@ -129,7 +129,7 @@ class AgentMachine(Specable[MachineSpec]):
             endpoint=self._delete_file,
             methods=["DELETE"],
             response_model=None,
-            tags=["processes", "files"],
+            tags=["files"],
         )
 
         # Add the routes for the agent controllers
@@ -152,14 +152,18 @@ class AgentMachine(Specable[MachineSpec]):
         return None
 
     async def upload_file(self, process_id: str,
-                          file_bytes=Body(..., description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream")):
+                          mime_type: Annotated[str | None, Header()] = None,
+                          file_bytes=Body(description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream")):
         """
         Upload a file for this process
         :param process_id:
         :param file_bytes:
         :return: The file id that was written
         """
-        return JSONResponse(content={"file_id": await self.process_file_system.write_file(process_id, file_bytes)}, status_code=200)
+        file_md = None
+        if mime_type:
+            file_md = {"mime_type": mime_type}
+        return JSONResponse(content={"file_id": await self.process_file_system.write_file(process_id, file_bytes, file_md)}, status_code=200)
 
     async def download_file(self, process_id: str, file_id: str):
         """
@@ -168,10 +172,15 @@ class AgentMachine(Specable[MachineSpec]):
         :param file_id:
         :return: The file bytes
         """
-        contents = await self.process_file_system.read_file(process_id, file_id)
+        contents, metadata = await self.process_file_system.read_file(process_id, file_id)
         if not contents:
             return JSONResponse(content={"detail": "File Not Found"}, status_code=404)
-        return Response(content=contents, media_type="application/octet-stream")
+        headers = {
+            "Content-Type": "application/octet-stream",
+        }
+        if metadata and "mime_type" in metadata:
+            headers["mime-type"] = metadata["mime_type"]
+        return Response(content=contents, headers=headers, status_code=200)
 
     async def _delete_file(self, process_id: str, file_id: str):
         """

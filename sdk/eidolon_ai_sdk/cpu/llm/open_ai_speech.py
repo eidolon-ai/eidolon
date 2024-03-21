@@ -30,7 +30,7 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
     def __init__(self, spec: OpenAiSpeechSpec, **kwargs):
         super().__init__(spec, **kwargs)
 
-    async def text_to_speech(self, text: str) -> bytes:
+    async def text_to_speech(self, text: str, response_format: str ="mp3") -> bytes:
         """
         Converts text to speech.
 
@@ -39,6 +39,7 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
 
         Returns:
             bytes: The audio data.
+            :param response_format: Response audio format. Legal values are ["mp3", "opus", "aac", "flac", "wav", "pcm"].  Defaults to "mp3".
         """
         if not self.llm:
             self.llm = AsyncOpenAI()
@@ -52,7 +53,7 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
 
         return response.content
 
-    async def speech_to_text(self, audio: bytes, prompt: Optional[str] = None, language: Optional[str] = None) -> str:
+    async def speech_to_text(self, audio: bytes, mime_type: str, prompt: Optional[str] = None, language: Optional[str] = None) -> str:
         """
         Converts speech to text.
 
@@ -65,9 +66,8 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
         """
         if not self.llm:
             self.llm = AsyncOpenAI()
-
         request = {
-            "file": audio,
+            "file": ("audio", audio, mime_type),
             "model": self.spec.speech_to_text_model,
             "temperature": self.spec.speech_to_text_temperature,
         }

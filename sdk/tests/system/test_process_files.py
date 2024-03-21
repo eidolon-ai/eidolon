@@ -54,7 +54,8 @@ class TestProcessFiles:
         process_status = await agent.create_process()
         process = agent.process(process_status.process_id)
         file_id = await process.upload_file(bts)
-        assert bts == await process.download_file(file_id)
+        id_ = await process.download_file(file_id)
+        assert bts == id_
 
     async def test_can_delete(self, agent):
         bts = "Hello, World!".encode("utf-8")
