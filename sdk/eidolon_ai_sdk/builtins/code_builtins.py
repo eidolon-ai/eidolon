@@ -37,15 +37,9 @@ from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
-from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
-from eidolon_ai_sdk.system.opentelemetry import (
-    OpenTelemetryManager,
-    CustomSampler,
-    NoopOpenTelemetry,
-    BatchOpenTelemetry,
-)
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.system.dynamic_middleware import Middleware, MultiMiddleware
+from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
 from eidolon_ai_usage_client.client import UsageClient
 
 try:
