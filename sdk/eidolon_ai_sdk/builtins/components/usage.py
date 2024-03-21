@@ -53,6 +53,7 @@ class UsageMiddleware(BaseModel, Middleware):
                     content={"detail": "Usage limit exceeded", "used": e.summary.used, "allowed": e.summary.allowed},
                 )
             except Exception as e:
+                logger.exception("Error checking usage")
                 return JSONResponse(status_code=502, content={"detail": "Error checking usage", "error": str(e)})
         return await call_next(request)
 
