@@ -54,9 +54,9 @@ def eidolon_server(eidolon_examples, log_dir):
                 if "Server Started" in line:
                     break
                 elif "Failed to start AgentOS" in line:
-                    raise RuntimeError("Failed to start AgentOS")
+                    raise RuntimeError("********* Failed to start AgentOS *********")
                 if time.time() - t0 > 30:
-                    raise RuntimeError("Server took too long to start, aborting.")
+                    raise RuntimeError("******** Server took too long to start, aborting. **********")
 
             yield server
             # After tests are done, terminate the server process

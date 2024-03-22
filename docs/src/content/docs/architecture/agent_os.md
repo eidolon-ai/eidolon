@@ -49,7 +49,7 @@ The first program, "execute", takes a name as input and returns a greeting. The 
 Both of these methods are registered with FastAPI and can be accessed through the Eidolon API. 
 Since the method doesn't return a state to transition to, both methods also transition directly to the "terminated" state after execution meaning that they are not long-running processes.
 
-Before we can communicate with a program or action, we need to start a process. Process are created by sending a POST request to the "/agents/{agent_name}/processes" endpoint with no body.
+Before we can communicate with a program or action, we need to start a process. Process are created by sending a POST request to the "/processes" with agent_name and title specified in the body.
 
 The return from the API call is the output of the program follows the following JSON format:
 
@@ -134,7 +134,7 @@ The "data" is the output of the program, in JSON format with the schema derived 
 The AgentOS uses the "@register_program" and "@register_action" decorators to register the methods of an agent with FastAPI. 
 Methods decorated with "@register_program" are registered as programs and methods decorated with "@register_action" are registered as actions for a specific state.
 
-Processes are created by sending a POST request to the "/agents/{agent_name}/processes" endpoint with no body.
+Processes are created by sending a POST request to the "/processes" endpoint with agent_name and title in the body.
 
 In the OpenAPI documentation, all operations are registered as POST endpoints under the URL "/processes/{process_id}/agent/{agent_name}/actions/{action_name}" and the body of the request is the input to the action, in JSON format.
 
@@ -154,14 +154,12 @@ metadata:
 implementation: "eidolon_ai_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
 spec:
   cpu:
-    spec:
-      llm_unit:
-        spec:
-          force_json: 'True'
-          max_tokens: '3000'
-          model: gpt-3.5-turbo-1106
-          temperature: '.1'
-      max_num_function_calls: '20'
+    llm_unit:
+      force_json: 'True'
+      max_tokens: '3000'
+      model: gpt-3.5-turbo-1106
+      temperature: '.1'
+    max_num_function_calls: '20'
 ```
 
 This resource definition defines a CPU resource named "frugal" that uses the "ConversationalAgentCPU" implementation.

@@ -20,8 +20,19 @@ async def get_content(url: str, **kwargs):
         return response.json()
 
 
-async def post_content(url, json: Optional[Any] = None, **kwargs):
+async def get_raw(url: str, **kwargs):
     params = {"url": url, "headers": _headers()}
+    async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
+        response = await client.get(**params, **kwargs)
+        await AgentError.check(response)
+        return response.content
+
+
+async def post_content(url, json: Optional[Any] = None, **kwargs):
+    headers = _headers()
+    if "headers" in kwargs:
+        headers.update(kwargs.pop("headers"))
+    params = {"url": url, "headers": headers}
     if json:
         params["json"] = to_jsonable_python(json)
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:

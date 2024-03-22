@@ -2,10 +2,12 @@ from typing import Tuple
 
 from openai import AsyncOpenAI
 from openai.lib.azure import AsyncAzureOpenAI
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import SpanProcessor
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler
 
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
@@ -14,6 +16,7 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent.generic_agent import GenericAgent
+from eidolon_ai_sdk.agent.openai_whisper_agent import AutonomousSpeechAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
@@ -22,6 +25,8 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
+from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
+from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
@@ -31,15 +36,11 @@ from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
-from eidolon_ai_sdk.system.opentelemetry import (
-    OpenTelemetryManager,
-    CustomSampler,
-    NoopOpenTelemetry,
-    BatchOpenTelemetry,
-)
+from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
+from eidolon_ai_sdk.system.dynamic_middleware import Middleware, MultiMiddleware
+from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
+from eidolon_ai_usage_client.client import UsageClient
 
 try:
     from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
@@ -71,7 +72,7 @@ from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 
-def _to_resource(maybe_tuple: type | Tuple[type, type]) -> ReferenceResource:
+def _to_resource(maybe_tuple: type | Tuple[type | str, type]) -> ReferenceResource:
     if isinstance(maybe_tuple, tuple):
         name = maybe_tuple[0] if isinstance(maybe_tuple[0], str) else maybe_tuple[0].__name__
         return ReferenceResource(
@@ -113,9 +114,10 @@ def named_builtins():
         # agents
         ("Agent", SimpleAgent),
         SimpleAgent,
-        GenericAgent,
+        GenericAgent,  # deprecated
         TreeOfThoughtsAgent,
         RetrieverAgent,
+        AutonomousSpeechAgent,
         # cpu
         (AgentCPU, ConversationalAgentCPU),
         ConversationalAgentCPU,
@@ -141,14 +143,20 @@ def named_builtins():
         (VectorStore, ChromaVectorStore),
         NoopVectorStore,
         ChromaVectorStore,
-        (OpenTelemetryManager, NoopOpenTelemetry),
-        # (OpenTelemetryManager, BatchOpenTelemetry),
-        NoopOpenTelemetry,
-        BatchOpenTelemetry,
+        # middleware
+        (Middleware, MultiMiddleware),
+        MultiMiddleware,
+        UsageMiddleware,
+        # open telemetry
+        OpenTelemetryManager,
+        (SpanExporter, NoopSpanExporter),
+        NoopSpanExporter,
+        OTLPSpanExporter,
         (Sampler, CustomSampler),
         CustomSampler,
         (SpanProcessor, BatchSpanProcessor),
         BatchSpanProcessor,
+        ProcessFileSystem,
         # sub components
         (DocumentParser, AutoParser),
         AutoParser,
@@ -167,6 +175,7 @@ def named_builtins():
         OpenAiSpeech,
         AsyncOpenAI,
         AsyncAzureOpenAI,
+        UsageClient,
         # config objects
         ReplayConfig,
     ]
