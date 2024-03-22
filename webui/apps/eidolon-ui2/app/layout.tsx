@@ -12,7 +12,6 @@ const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)
 export const metadata: Metadata = {
   title: 'Eidolon',
   description: 'Eidolon',
-  manifest: '/site.webmanifest',
   // TODO: Add Open Graph metadata
 };
 

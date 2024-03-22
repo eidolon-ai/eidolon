@@ -1,5 +1,6 @@
 import {ProcessesHandler, ProcessEventsHandler, ProcessHandler} from "@eidolon/components";
 import {auth} from "../../../auth";
+import {FileHandler, FilesHandler} from "@eidolon/components/src/server/processes-server-handler";
 
 const getAccessToken = async () => {
   const session = await auth()
@@ -9,6 +10,8 @@ const getAccessToken = async () => {
 export const _processesHandler= new ProcessesHandler(getAccessToken)
 export const _processHandler= new ProcessHandler(getAccessToken)
 export const _processEventHandler= new ProcessEventsHandler(getAccessToken)
+export const _filesEventHandler= new FilesHandler(getAccessToken)
+export const _fileEventHandler= new FileHandler(getAccessToken)
 
 export const processesHandler= {
   GET: _processesHandler.GET.bind(_processesHandler),
@@ -23,4 +26,13 @@ export const processHandler= {
 export const processEventHandler= {
   GET: _processEventHandler.GET.bind(_processEventHandler),
   POST: _processEventHandler.POST.bind(_processEventHandler),
+}
+
+export const filesHandler= {
+  POST: _filesEventHandler.POST.bind(_filesEventHandler),
+}
+
+export const fileHandler= {
+  GET: _fileEventHandler.GET.bind(_fileEventHandler),
+  DELETE: _fileEventHandler.DELETE.bind(_fileEventHandler),
 }

@@ -1,11 +1,12 @@
 'use client'
 
 import {Box, Button, Paper, Skeleton, TextField, Typography} from "@mui/material";
-import {EidolonEvents} from "@eidolon/components/src/messages/eidolon-events";
-import {useProcessEvents} from "../hooks/useProcessEvents";
 import {ArrowCircleUpRounded, CancelRounded} from "@mui/icons-material";
 import {useState} from "react";
-import {ButtonScrollToBottom} from "@eidolon/components/src/form-input/button-scroll-to-bottom";
+import {useProcessEvents} from "../hooks/useProcessEvents";
+import {EidolonEvents} from "../messages/eidolon-events";
+import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
+import Recorder from "../audio/Recorder";
 
 export interface MessagesWithActionProps {
   machineUrl: string
@@ -13,9 +14,12 @@ export interface MessagesWithActionProps {
   processId: string
   operationName: string
   inputLabel: string
+  allowSpeech?: boolean
+  speechAgent?: string
+  speechOperation?: string
 }
 
-export function MessagesWithSingleAction({machineUrl, agent, processId, operationName, inputLabel}: MessagesWithActionProps) {
+export function MessagesWithSingleAction({machineUrl, agent, processId, operationName, inputLabel, allowSpeech, speechAgent, speechOperation}: MessagesWithActionProps) {
   const {
     processState,
     elementsAndLookup,
@@ -32,7 +36,7 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
         // Handle Shift+Enter key combination
         // Add a new line to the TextField value
         event.preventDefault();
-        let { value, selectionStart, selectionEnd } = event.target as HTMLInputElement | HTMLTextAreaElement;
+        let {value, selectionStart, selectionEnd} = event.target as HTMLInputElement | HTMLTextAreaElement;
         if (selectionStart == null) {
           selectionStart = 0;
         }
@@ -56,35 +60,41 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
   }
 
   let content = (
-         <TextField
+    <div style={{display: "flex", flexDirection:"row", width:"100%"}}>
+      <TextField
         multiline
         variant={"standard"}
         label={inputLabel}
         fullWidth
         maxRows={10}
-        sx={{margin: "8px"}}
+        sx={{margin: "8px 0px 8px 8px"}}
         value={input}
         onKeyDown={handleKeyDown}
         onChange={(e) => setInput(e.target.value)}
-        />
+        inputProps={{"x-webkit-speech": "x-webkit-speech"}}
+      />
+      {allowSpeech && (<Recorder machineUrl={machineUrl} agent={speechAgent!} operation={speechOperation!} process_id={processId} setText={(text) => {
+        setInput(text)
+      }}/>)}
+    </div>
   )
   let button = (
-    <Button variant={'text'} onClick={doAction}><ArrowCircleUpRounded style={{fontSize: 36}}/></Button>
+    <Button
+      variant={'text'}
+      onClick={doAction}><ArrowCircleUpRounded
+      style={{fontSize: 36}}
+      sx={{padding: "0px"}}
+    /></Button>
   )
 
   if (processState?.state === "initialized") {
     // do nothing???
   } else if (processState?.state === "processing") {
-    content = (
-      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginRight: "16px", width: "100%"}}>
-        <Typography typography={"mono"} color={"gray"} variant={"h5"}>Running...</Typography>
-      </div>
-    )
     button = (
       <Button variant={'text'} onClick={handleCancel}><CancelRounded style={{fontSize: 36}}/></Button>
     )
   } else if (!processState) {
-      content = (
+    content = (
       <Skeleton variant="text" height={"64px"} width={"100%"} sx={{marginRight: "20px"}}/>
     )
     button = (

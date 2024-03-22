@@ -1,9 +1,9 @@
 'use client'
 
 import {Box} from "@mui/material";
-import {EidolonEvents} from "@eidolon/components/src/messages/eidolon-events";
-import {AgentProcess} from "@eidolon/components/src/form-input/agent-process";
 import {useProcessEvents} from "../hooks/useProcessEvents";
+import {EidolonEvents} from "../messages/eidolon-events";
+import {AgentProcess} from "./agent-process";
 
 export interface MessagesWithActionProps {
   machineUrl: string
