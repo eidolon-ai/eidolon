@@ -15,7 +15,7 @@ jobs:
       - run: |
           npm version patch
           echo "WEBUI_VERSION=$(npm pkg get version | tr -d '"')" >> $GITHUB_ENV
-        working-directory: sdk
+        working-directory: webui
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump webui patch version"
