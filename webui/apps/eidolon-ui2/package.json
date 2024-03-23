@@ -26,7 +26,7 @@
     "build:static": "npm run build-eidolon && next build && next export",
     "format": "prettier ./ --write",
     "lint": "next lint",
-    "start": "npm run build-eidolon && next start",
+    "start": "next start",
     "test": "npm run build-eidolon && jest --ci --passWithNoTests",
     "type": "tsc",
     "build-eidolon": "node eidolon-app.build.js"
