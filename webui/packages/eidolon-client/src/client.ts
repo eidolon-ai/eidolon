@@ -229,7 +229,7 @@ class Agent {
       body: JSON.stringify(body)
     })
     if (results.status !== 200) {
-      throw new Error(`Failed to perform action: ${results.statusText}`)
+      throw new Error(`Failed to perform action: (${results.status}) ${results.statusText}`)
     }
     return (await results.json()) as ProcessStatusWithData
   }
