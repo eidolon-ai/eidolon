@@ -1,6 +1,6 @@
 'use client'
 
-import {Box, Button, Paper, Skeleton, TextField, Typography} from "@mui/material";
+import {Box, Button, Paper, Skeleton, TextField} from "@mui/material";
 import {ArrowCircleUpRounded, CancelRounded} from "@mui/icons-material";
 import {useState} from "react";
 import {useProcessEvents} from "../hooks/useProcessEvents";

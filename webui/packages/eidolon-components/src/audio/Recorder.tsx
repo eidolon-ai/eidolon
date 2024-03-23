@@ -12,6 +12,7 @@ interface RecorderProps {
   agent: string;
   process_id: string;
   operation: string
+  // eslint-disable-next-line no-unused-vars
   setText: (text: string) => void;
 }
 
