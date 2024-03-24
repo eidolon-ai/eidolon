@@ -38,4 +38,5 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/eidolon-ui2/.next/standalo
 COPY --from=installer --chown=nextjs:nodejs /app/apps/eidolon-ui2/.next/static ./apps/eidolon-ui2/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/eidolon-ui2/public ./apps/eidolon-ui2/public
 
+EXPOSE 3000
 CMD node apps/eidolon-ui2/server.js
