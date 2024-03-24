@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push SDK Docker Image
 on:
   workflow_run:
     workflows: [ "Bump SDK Version" ]
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker:
+  docker_push_sdk:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -1,6 +1,6 @@
 {
-  "name": "my-monorepo",
-  "version": "1.0.0",
+  "name": "eidolon-monorepo",
+  "version": "1.0.1",
   "scripts": {
     "build": "turbo build",
     "start": "npm --prefix apps/eidolon-ui2 run start",
