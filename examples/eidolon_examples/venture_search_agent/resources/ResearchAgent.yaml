@@ -1,0 +1,12 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: ResearchAgent
+spec:
+  implementation: Search
+  name: "research_vc"
+  description: "Summarizes the company based on the contents of its website. Be very specific in the query parameters to get the best results."
+  defaultDateRestrict: "w1"
+  params:
+    siteSearch: {siteSearchURL}
+    siteSearchFilter: "i"

@@ -1,0 +1,12 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: VentureSearchAgent
+spec:
+  implementation: Search
+  name: "search_vc"
+  description: "Searches for companies that are in this portfolio and finds the URL to the company website. Be very specific in the query parameters to get the best results."
+  defaultDateRestrict: "w1"
+  params:
+    siteSearch: "https://a16z.com/portfolio/"
+    siteSearchFilter: "i"
