@@ -1,0 +1,17 @@
+{
+  "name": "Eidolon",
+  "short_name": "Eidolon",
+  "description": "Web tool for Eidolon",
+  "start_url": ".",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/img/favicon.ico?v=1.0",
+      "sizes": "48x48 32x32 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

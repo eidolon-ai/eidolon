@@ -2,8 +2,7 @@ import {notFound} from "next/navigation";
 import {_processHandler} from "../../../api/eidolon/eidolon_helpers";
 import manifest from "../manifest.json";
 import * as React from "react";
-import {MessagesWithAction} from "@/components/MessagesWithAction";
-import {MessagesWithSingleAction} from "@/components/MessagesWithSingleAction";
+import {MessagesWithSingleAction} from "@eidolon/components/src/form-input/MessagesWithSingleAction";
 
 export interface ProcessPageProps {
   params: {
@@ -24,6 +23,9 @@ export default async function ({params}: ProcessPageProps) {
       processId={processStatus.process_id}
       operationName={"converse"}
       inputLabel={"How can I help you?"}
+      allowSpeech={true}
+      speechAgent={"speech_agent"}
+      speechOperation={"speech_to_text"}
     />
   )
 }

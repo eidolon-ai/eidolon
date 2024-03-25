@@ -31,6 +31,19 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
   }
 }
 
+export async function executeOperation(machineUrl: string, agent: string, operation: string, processId: string,
+                                             data: Record<string, any>) {
+  const response = await fetch(`/api/eidolon/process/${processId}/events`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({machineUrl, agent, operation, data: data}),
+  })
+  return await response.json()
+}
+
 export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
                                              data: Record<string, any>, elementsAndLookup: ElementsAndLookup,
                                              // eslint-disable-next-line no-unused-vars

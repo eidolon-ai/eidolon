@@ -2,28 +2,59 @@
 
 import {useInView} from 'react-intersection-observer'
 
-import {useAtBottom} from '../hooks/use-at-bottom'
 import {useEffect} from "react";
+import {useAtBottom} from '../hooks/use-at-bottom'
 
 interface ChatScrollAnchorProps {
-  trackVisibility?: boolean
+  trackVisibility?: boolean;
 }
 
-export function ChatScrollAnchor({trackVisibility}: ChatScrollAnchorProps) {
-  const isAtBottom = useAtBottom()
-  const {ref, entry, inView} = useInView({
+export function ChatScrollAnchor({ trackVisibility }: ChatScrollAnchorProps) {
+  const isAtBottom = useAtBottom();
+  const { ref, entry, inView } = useInView({
     trackVisibility,
     delay: 100,
-    rootMargin: '0px 0px -150px 0px'
-  })
+    rootMargin: '0px 0px -20px 0px',
+  });
 
   useEffect(() => {
     if (isAtBottom && trackVisibility && !inView) {
-      entry?.target.scrollIntoView({
-        block: 'start'
-      })
-    }
-  }, [inView, entry, isAtBottom, trackVisibility])
+      const container = entry?.target.parentElement;
+      container?.classList.add('no-scrollbar');
 
-  return <div ref={ref} style={{width: "100%", height: "1px"}}/>
+      entry?.target.scrollIntoView({
+        block: 'start',
+        behavior: 'instant',
+      });
+
+      setTimeout(() => {
+        container?.classList.remove('no-scrollbar');
+      }, 500);
+    }
+  }, [inView, entry, isAtBottom, trackVisibility]);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        width: '100%',
+        height: '1px',
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none',
+      }}
+    >
+      <style>
+        {`
+          .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;     /* Firefox */
+          }
+
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari, and Opera */
+          }
+        `}
+      </style>
+    </div>
+  );
 }
