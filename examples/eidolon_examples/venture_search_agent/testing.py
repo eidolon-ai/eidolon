@@ -1,23 +1,39 @@
+from typing import List, Dict
+from fastapi import Body
+from pydantic import BaseModel, Field
+from eidolon_ai_sdk.agent.agent import register_program
 import requests
 from bs4 import BeautifulSoup
 from summarizer import Summarizer
 
-def scrape_and_summarize(url):
-    # Scrape the website
+# Define a model for the input URLs
+class UrlInput(BaseModel):
+    urls: List[str] = Field(..., description="List of URLs to scrape and summarize")
+
+# Define a model for the output summaries
+class CompanySummary(BaseModel):
+    url: str
+    summary: str
+
+class CompanySummaries(BaseModel):
+    summaries: List[CompanySummary]
+
+# Summarization function
+def scrape_and_summarize(url: str) -> str:
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
-
-    # Extract the text
-    text = ' '.join(map(lambda p: p.text, soup.find_all('p')))
-
-    # Summarize the text
+    text = ' '.join(p.text for p in soup.find_all('p'))
     model = Summarizer()
     summary = model(text)
-
     return summary
 
-# Example usage:
-url = "https://droplette.io/"
-summary = scrape_and_summarize(url)
-print(summary)
+class VenturePortfolioAgent:
+    @register_program()
+    async def summarize_websites(self, urls: UrlInput = Body(...)) -> CompanySummaries:
+        summaries = []
+        for url in urls.urls:
+            summary_text = scrape_and_summarize(url)
+            summaries.append(CompanySummary(url=url, summary=summary_text))
+        return CompanySummaries(summaries=summaries)
+
 
