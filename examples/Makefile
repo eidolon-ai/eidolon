@@ -14,5 +14,5 @@ dist/code_search: $(wildcard ${EIDOLON_SDK_DIR}/*) $(wildcard ${DOCS_DIR}/*)
 	cp -r $(EIDOLON_SDK_DIR) dist/code_search/sdk/eidolon_ai_sdk
 	cp -r $(DOCS_DIR) dist/code_search/docs
 
-docker_code_search: dist/code_search Dockerfile.code_search
+docker_code_search: dist/code_search Dockerfile
 	docker build -t ${PROJECT}/code_search -t ${PROJECT}/code_search:${VERSION} -f Dockerfile.code_search .
