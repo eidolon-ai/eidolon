@@ -9,7 +9,7 @@ spec:
     logic_units: [Browser]
   actions:
     - name: "search_portfolio"
-      user_prompt: "Give me a list of companies that has {{ url }} invested in."
+      user_prompt: "Give me a list of companies that has {{ url }} invested in based on {{investment_thesis}}."
       allowed_states: ["initialized"]
       output_state: "idle"
       output_schema:
@@ -28,10 +28,13 @@ spec:
                   type: string
                 category:  # Add this property
                   type: string
+                relevance:  # Add this property
+                  type: string
               required:
                 - name
                 - url
                 - category  # Make the category required
+                - relevance  # Make the relevance required
     - name: converse
       allowed_states: ["idle"]
   system_prompt:
