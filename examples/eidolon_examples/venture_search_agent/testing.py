@@ -1,11 +1,10 @@
 from typing import List
 from fastapi import Body
 from pydantic import BaseModel, Field
-from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentState
+from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
 import requests
 from bs4 import BeautifulSoup
-
-# Assuming the summarizer is available as before
 from summarizer import Summarizer
 
 class UrlInput(BaseModel):
@@ -15,7 +14,7 @@ class UrlInput(BaseModel):
 class CompanySummary(BaseModel):
     url: str
     summary: str
-    relevance: str  # Field to indicate match with the investment thesis
+    relevance: str
 
 class CompanySummaries(BaseModel):
     summaries: List[CompanySummary]
@@ -31,25 +30,39 @@ def scrape_and_summarize(url: str) -> str:
     else:
         return "Error retrieving webpage."
 
-class VenturePortfolioAgent:
+class VenturePortfolioAgent(Agent):
     @register_program()
-    async def summarize_websites(self, input: UrlInput = Body(...)) -> CompanySummaries:
+    async def summarize_websites(self, process_id, input: UrlInput = Body(...)) -> AgentState[CompanySummaries]:
         summaries = []
         for url in input.urls:
             summary_text = scrape_and_summarize(url)
-            # Prepare a prompt for the LLM to evaluate the relevance of the summary to the investment thesis
-            prompt = f"Given the investment thesis: '{input.investment_thesis}', evaluate the relevance of the following summary: '{summary_text}'"
-            
-            # Simulating an LLM call to evaluate relevance. Replace with your actual method to make the LLM query.
-            # The actual implementation of this call will depend on the specifics of your SDK and setup.
-            # For demonstration purposes, let's assume a placeholder response indicating high relevance.
-            relevance_result = "Highly Relevant"  # Placeholder for demonstration purposes.
-            
-            summaries.append(CompanySummary(url=url, summary=summary_text, relevance=relevance_result))
-        
-        return CompanySummaries(summaries=summaries)
+            prompt = f"""
+            Given the investment thesis: '{input.investment_thesis}', evaluate the relevance of the following company summary to the health industry:
 
-# Note: The actual implementation for making LLM calls (`self.cpu.llm_query(prompt=prompt)`) should be replaced with the specific method provided by your SDK or setup.
+            Company Summary:
+            {summary_text}
+
+            Determine if the company is directly related to health, somewhat related, or unrelated. Provide the relevance as 'high' if directly related, 'medium' if somewhat related, or 'low' if unrelated. Only respond with the relevance score (high, medium, or low).
+            """
+            
+            # Obtain the main thread of the agent's CPU
+            main_thread = await self.cpu.main_thread(process_id)
+            
+            # Create a message for LLM interaction, wrapped in UserTextCPUMessage
+            llm_message = UserTextCPUMessage(prompt=prompt.strip())
+            
+            # Send the message through the main thread and wait for the response
+            async for event in main_thread.stream_request(prompts=[llm_message], output_format=str):
+                relevance_evaluation = event.strip().lower()
+            
+            # Validate and normalize the relevance evaluation
+            if relevance_evaluation not in ["low", "medium", "high"]:
+                relevance_evaluation = "low"  # Default to low if the response is not valid
+            
+            summaries.append(CompanySummary(url=url, summary=summary_text, relevance=relevance_evaluation))
+        
+        return AgentState(name="idle", data=CompanySummaries(summaries=summaries))
+
 
 
 
