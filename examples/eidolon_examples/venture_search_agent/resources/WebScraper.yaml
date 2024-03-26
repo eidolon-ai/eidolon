@@ -1,0 +1,10 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: WebScraperAgent
+spec:
+  description: An agent that visits a website and generates a summary
+  cpu:
+    logic_units: [Browser]
+  system_prompt:
+    You are a copilot. You will retrieve the HTML document from the website at the URL provided and provide a 2 sentence summary. 
