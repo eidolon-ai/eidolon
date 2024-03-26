@@ -1,12 +1,30 @@
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
-  name: research_copilot
+  name: VenturePortfolioAgent
 
 spec:
   description: An agent that searches for information on various sites
   cpu:
-    logic_units: [VentureSearchAgent, Browser]
+    logic_units: [Browser]
+  actions:
+    - name: "search_portfolio"
+      user_prompt: "Give me a list of companies that has {{ url }} invested in."
+      allowed_states: ["initialized"]
+      output_state: "idle"
+      output_schema:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+          required:
+            - name
+    - name: converse
+      allowed_states: ["idle"]
   system_prompt:
     You are a copilot. You will return all of the company names a16z has invested in. 
     

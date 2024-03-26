@@ -1,7 +1,7 @@
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: ResearchAgent
+  name: CompanySearchTool
 spec:
   implementation: Search
   name: "research_vc"

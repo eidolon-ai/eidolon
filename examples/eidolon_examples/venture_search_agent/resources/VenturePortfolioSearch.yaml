@@ -1,7 +1,7 @@
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: VentureSearchAgent
+  name: VenturePortfolioSearch
 spec:
   implementation: Search
   name: "search_vc"
