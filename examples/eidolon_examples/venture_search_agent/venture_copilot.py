@@ -19,6 +19,9 @@ class SummarizeWebsiteBody(BaseModel):
     investment_thesis: str = Field(..., description="Investment thesis to match against company summaries")
 
 
+# todo: Streaming output
+# todo: Add parent process id so calls are nested
+
 class VentureCopilot(AgentTemplate):
     @register_program()
     async def summarize_websites(self, process_id, input: SummarizeWebsiteBody):
@@ -30,7 +33,7 @@ class VentureCopilot(AgentTemplate):
         tasks = [asyncio.create_task(coro) for coro in coroutines]
 
         # Gather results from all tasks
-        company_summaries = await asyncio.gather(*tasks, return_exceptions=True)
+        company_summaries = await asyncio.gather(*tasks)
 
         # Process and yield results
         for summary_info in company_summaries:
@@ -43,11 +46,12 @@ class VentureCopilot(AgentTemplate):
         yield AgentStateEvent(state="idle")
 
     async def research_company(self, company: dict):
-        rtn = dict(name=company["name"], category=company["category"])
+        rtn = dict(name=company["name"], category=company.get("category", "Unknown"))
         try:
-            response = await Agent.get("CompanyResearcher").run_program("search_company", {"url": company["url"],
-                                                                                           "company_name": company[
-                                                                                               "name"]})
+            response = await Agent.get("CompanyResearcher").run_program(
+                "search_company",
+                {"url": company["url"], "company_name": company["name"]},
+            )
             rtn["description"] = response.data["company_description"]
         except Exception as e:
             logger.exception(f"Error researching company {company['name']}")
