@@ -15,6 +15,9 @@ spec:
       output_schema:
         type: object
         properties:
+          company_name:
+            type: string
+            description: "The name of the company"
           relevancy_score:
             type: number
             description: "A relevancy score of the company"
@@ -27,9 +30,6 @@ spec:
           investment_thesis:
             type: string
             description: "A 2 sentence summary of the investment thesis"
-          company_name:
-            type: string
-            description: "The name of the company"
           url:
             type: string
             description: "The url of the company"

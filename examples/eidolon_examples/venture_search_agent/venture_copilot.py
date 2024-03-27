@@ -31,33 +31,64 @@ class VentureCopilot(AgentTemplate):
 
         # Prepare coroutines for both researching the company and analyzing relevancy
         coroutines = [self.research_and_rank_company(company, input.investment_thesis) for company in companies.data["companies"]]
+        print(f"Coroutines: {coroutines}")  # Debug log
+        print(f"Companies: {companies.data['companies']}")  # Debug log
         tasks = [asyncio.create_task(coro) for coro in coroutines]
 
         # Gather results from all tasks
         company_summaries = await asyncio.gather(*tasks, return_exceptions=True)
-
+        print(f"Company summaries: {company_summaries}")  # Debug log
         # Process and yield results
         for summary_info in company_summaries:
-            # Assuming summary_info is a dictionary that contains a 'data' key among others
+            print(f"Summary info: {summary_info}")  # Debug log
+
+            # Check if 'data' is present in summary_info
             if 'data' in summary_info:
-                # Yield or process further only the 'data' part
-                yield ObjectOutputEvent(content=summary_info['data'])
+                print(f"Summary info data: {summary_info['data']}")  # Debug log
+
+                # Separate the URL from the 'data' part if it exists
+                data_section = summary_info['data'].copy()  # Copy to safely modify
+                url_in_data = data_section.pop('url', None)  # Remove 'url' from 'data' if present
+
+                # Construct a new object to yield
+                yield_object = {}
+
+                # Add top-level URL if it's separate and exists, or use the URL from 'data' if present
+                if 'url' in summary_info:
+                    yield_object['url'] = summary_info['url']
+                elif url_in_data:
+                    yield_object['url'] = url_in_data
+
+                # Add the modified 'data' section without the URL
+                if data_section:
+                    yield_object['data'] = data_section
+
+                # Yield the constructed object
+                if yield_object:
+                    yield ObjectOutputEvent(content=yield_object)
             else:
                 # Handle the case where 'data' might not be present as expected
                 continue
+
 
         yield AgentStateEvent(state="idle")
 
     async def research_company(self, company: dict):
         try:
             response = await Agent.get("CompanyResearcher").run_program("search_company", {"url": company["url"], "company_name": company["name"]})
-            return {"name": company["name"], "description": response.data["company_description"]}
+            print(f"Fetched company data: {response.data}")  # Debug log
+            a = {"url": company["url"], "name": company["name"], "description": response.data["company_description"]}
+            print(f"Company info: {a}")  # Debug log
+            return {"url": company["url"], "name": company["name"], "description": response.data["company_description"]}
         except Exception as e:
+            print(f"Error fetching company data for {company['name']}: {e}")  # Error log
             return {"error": str(e), "company": company["name"]}
+
 
     async def research_and_rank_company(self, company: dict, investment_thesis: str):
         # Fetch company information
         company_info = await self.research_company(company)
+        print(f"Company info: {company_info}")  # Debug log
         if 'error' not in company_info:
             # Send information to RelevancyRanker for analysis
             analysis_result = await Agent.get("RelevancyRanker").run_program("analyze", {"company_description": company_info["description"], "investment_thesis": investment_thesis})
