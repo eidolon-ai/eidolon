@@ -17,22 +17,4 @@ spec:
         properties:
           relevancy_score:
             type: number
-            description: "A relevancy score of the company"
-          product_category:
-            type: string
-            description: "A product category of the company"
-          company_description:
-            type: string
-            description: "A 2 sentence summary of the company"
-          investment_thesis:
-            type: string
-            description: "A 2 sentence summary of the investment thesis"
-          company_name:
-            type: string
-            description: "The name of the company"
-          url:
-            type: string
-            description: "The url of the company"
-          category:
-            type: string
-            description: "The category of the company"
+            description: "A relevancy score of the company between 0 and 1"
