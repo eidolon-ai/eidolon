@@ -6,10 +6,12 @@ metadata:
 spec:
   description: An agent that searches for information on various sites
   cpu:
-    logic_units: [Browser]
+    logic_units: 
+      - implementation: Browser
+        summarizer: noop
   actions:
     - name: "search_portfolio"
-      user_prompt: "Give me a list of companies that has {{ url }} invested in based on {{investment_thesis}}."
+      user_prompt: "Give me a list of companies that has {{ url }}."
       allowed_states: ["initialized"]
       output_state: "idle"
       output_schema:
@@ -22,25 +24,21 @@ spec:
               properties:
                 name:
                   type: string
-                description:
-                  type: string
                 url:
                   type: string
                 category:  # Add this property
                   type: string
-                relevance:  # Add this property
-                  type: string
               required:
                 - name
                 - url
-                - category  # Make the category required
-                - relevance  # Make the relevance required
     - name: converse
       allowed_states: ["idle"]
   system_prompt:
-    You are a copilot. You will return all of the company names that are in this VC's portfolio. You may want to stop when you get to the bottom of the first list, but keep looking through the page. I expect at least 30 different companies to be listed to me.
+    You are a copilot. You will return all of the company names that are in this VC's portfolio. You may want to stop when you get to the bottom of the first list, but keep looking through the page. 
     
     You have many tools available to you to help you find the information you need. Only use the relevant tools for the task at hand.
+    
+    When searching, be sure to use the correct search terms to get the best results.
     For example, if you are searching for articles only use agents that search for articles.
     
     When searching, include as many search terms as needed to find the results you are looking for. Be very specific in the query parameters to get the best results.
