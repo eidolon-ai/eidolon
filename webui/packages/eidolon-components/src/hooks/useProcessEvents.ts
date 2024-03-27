@@ -1,8 +1,10 @@
+'use client'
+
 import {useEffect, useRef, useState} from "react";
-import {OperationInfo, ProcessStatus} from "@eidolon/client";
-import {ElementsAndLookup} from "@eidolon/components/src/lib/display-elements";
-import {executeServerOperation, getChatEventInUI} from "@eidolon/components/src/client-api-helpers/process-event-helper";
-import {getProcessStatus} from "@eidolon/components/src/client-api-helpers/process-helper";
+import {ProcessStatus} from "@eidolon/client";
+import {ElementsAndLookup} from "../lib/display-elements";
+import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper";
+import {getProcessStatus} from "../client-api-helpers/process-helper";
 
 export function useProcessEvents(machineUrl: string, agent: string, processId: string) {
   const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)

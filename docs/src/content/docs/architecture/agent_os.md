@@ -154,14 +154,12 @@ metadata:
 implementation: "eidolon_ai_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
 spec:
   cpu:
-    spec:
-      llm_unit:
-        spec:
-          force_json: 'True'
-          max_tokens: '3000'
-          model: gpt-3.5-turbo-1106
-          temperature: '.1'
-      max_num_function_calls: '20'
+    llm_unit:
+      force_json: 'True'
+      max_tokens: '3000'
+      model: gpt-3.5-turbo-1106
+      temperature: '.1'
+    max_num_function_calls: '20'
 ```
 
 This resource definition defines a CPU resource named "frugal" that uses the "ConversationalAgentCPU" implementation.

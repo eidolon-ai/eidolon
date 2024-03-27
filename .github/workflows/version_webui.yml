@@ -1,0 +1,22 @@
+name: Bump WebUI Version
+on:
+  - workflow_dispatch
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+      - run: |
+          npm version patch
+          echo "WEBUI_VERSION=$(npm pkg get version | tr -d '"')" >> $GITHUB_ENV
+        working-directory: webui
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Bump webui patch version"
+          tagging_message: webui/${{ env.WEBUI_VERSION }}

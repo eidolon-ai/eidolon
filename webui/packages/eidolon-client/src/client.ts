@@ -221,12 +221,15 @@ class Agent {
 
   public async action(action: string, body: Record<string, any>) {
     const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/agent/${this.agent}/actions/${action}`, {
-      headers: this.headers,
+      headers: {
+        "accept": "application/json",
+        ...this.headers
+      },
       method: 'POST',
       body: JSON.stringify(body)
     })
     if (results.status !== 200) {
-      throw new Error(`Failed to perform action: ${results.statusText}`)
+      throw new Error(`Failed to perform action: (${results.status}) ${results.statusText}`)
     }
     return (await results.json()) as ProcessStatusWithData
   }
@@ -288,7 +291,8 @@ class Agent {
     } else {
       throw new Error('Failed to obtain stream')
     }
-  }}
+  }
+}
 
 class Process {
   private readonly headers: Record<string, string>
@@ -315,6 +319,38 @@ class Process {
     const results = await fetch(`${this.machineUrl}/processes/${this.process_id}`, {headers: this.headers, method: 'DELETE'})
     if (results.status !== 200) {
       throw new Error(`Failed to delete process: ${results.statusText}`)
+    }
+  }
+
+  public async upload_file(contents: Blob, mime_type: string | null = null) {
+    const headers: Record<string, any> = {...this.headers, "Content-Type": "application/octet-stream", "Accept": "application/json"}
+    if (mime_type) {
+      headers["mime-type"] = mime_type
+    }
+    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/files`, {
+      headers: headers,
+      method: 'POST',
+      body: contents
+    })
+    if (results.status !== 200) {
+      console.error("Failed to upload file", results.statusText, results.status)
+      throw new Error(`Failed to upload file: ${results.statusText}`)
+    }
+    return (await results.json())["file_id"] as string
+  }
+
+  public async download_file(file_id: string) {
+    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/files/${file_id}`, {headers: this.headers})
+    if (results.status !== 200) {
+      throw new Error(`Failed to download file: ${results.statusText}`)
+    }
+    return await results.blob()
+  }
+
+  public async delete_file(file_id: string) {
+    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/files/${file_id}`, {headers: this.headers, method: 'DELETE'})
+    if (results.status !== 200) {
+      throw new Error(`Failed to delete file: ${results.statusText}`)
     }
   }
 

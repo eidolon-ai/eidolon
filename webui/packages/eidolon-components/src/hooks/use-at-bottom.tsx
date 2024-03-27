@@ -9,7 +9,7 @@ export function useAtBottom() {
     const handleScroll = () => {
       if (element()) {
         const div = element()
-        setIsAtBottom(div.scrollHeight - div.scrollTop - 1 < div.clientHeight)
+        setIsAtBottom(div.scrollHeight - div.scrollTop -2 < div.clientHeight)
       }
     }
 
