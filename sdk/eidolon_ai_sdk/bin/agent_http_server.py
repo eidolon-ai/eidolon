@@ -110,6 +110,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
+    logger.getChild("llm_unit").setLevel(log_level)
 
     # add system level endpoints
     @app.get(path="/system/health", tags=["system"], description="Health check")
