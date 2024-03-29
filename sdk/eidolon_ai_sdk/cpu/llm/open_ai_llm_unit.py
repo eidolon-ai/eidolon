@@ -6,6 +6,7 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 
 import yaml
 from PIL import Image
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from fastapi import HTTPException
 from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
@@ -133,6 +134,15 @@ class ArgBuilder:
         return {}
 
 
+class AzureTokenProvider(ArgBuilder, BaseModel):
+    token_provider_arg: str = "azure_ad_token_provider"
+    scopes: List[str]
+
+    def get_args(self) -> dict:
+        tp = get_bearer_token_provider(DefaultAzureCredential(), *self.scopes)
+        return {self.token_provider_arg: tp}
+
+
 class OpenAiGPTSpec(BaseModel):
     model: str = Field(default="gpt-4-turbo-preview", description="The model to use for the LLM.")
     temperature: float = 0.3
@@ -155,11 +165,11 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.temperature = self.spec.temperature
 
     async def execute_llm(
-        self,
-        call_context: CallContext,
-        messages: List[LLMMessage],
-        tools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            call_context: CallContext,
+            messages: List[LLMMessage],
+            tools: List[LLMCallFunction],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
         request["stream"] = True
@@ -217,7 +227,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json:
                     # message format looks like json```{...}```, parse content and pull out the json
-                    complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
+                    complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)

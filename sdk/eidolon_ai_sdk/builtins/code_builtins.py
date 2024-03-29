@@ -32,7 +32,7 @@ from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
 from eidolon_ai_sdk.cpu.conversation_memory_unit import RawMemoryUnit
 from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
-from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT, ArgBuilder
+from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT, ArgBuilder, AzureTokenProvider
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
@@ -176,6 +176,7 @@ def named_builtins():
         AsyncOpenAI,
         AsyncAzureOpenAI,
         ArgBuilder,
+        AzureTokenProvider,
         UsageClient,
         # config objects
         ReplayConfig,

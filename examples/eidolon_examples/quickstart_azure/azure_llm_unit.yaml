@@ -9,4 +9,7 @@ spec:
   client_args:
     azure_endpoint: https://testingeidolon.openai.azure.com/
     api_version: 2023-03-15-preview
-#    api_key: TOKEN or envar set at AZURE_OPENAI_API_KEY
+#    api_key: TOKEN or envar set at AZURE_OPENAI_API_KEY    <- fixed token
+#  client_arg_builder:                                      <- token provider
+#    implementation: AzureTokenProvider
+#    scopes: ["https://cognitiveservices.azure.com/.default"]
