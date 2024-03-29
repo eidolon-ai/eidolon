@@ -128,6 +128,11 @@ async def convert_to_openai(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
+class ArgBuilder:
+    def get_args(self) -> dict:
+        return {}
+
+
 class OpenAiGPTSpec(BaseModel):
     model: str = Field(default="gpt-4-turbo-preview", description="The model to use for the LLM.")
     temperature: float = 0.3
@@ -135,6 +140,7 @@ class OpenAiGPTSpec(BaseModel):
     max_tokens: Optional[int] = None
     client: AnnotatedReference[AsyncOpenAI]
     client_args: dict = {}
+    client_arg_builder: AnnotatedReference[ArgBuilder]
 
 
 class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
@@ -167,7 +173,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         complete_message = ""
         tools_to_call = []
         try:
-            async for m_chunk in llm_request(client_args=self.spec.client_args, **request):
+            client_args = self.spec.client_args
+            client_args.update(self.spec.client_arg_builder.instantiate().get_args())
+            async for m_chunk in llm_request(client_args=client_args, **request):
                 chunk = cast(ChatCompletionChunk, m_chunk)
                 if not chunk.choices:
                     logger.info("open ai llm chunk has no choices, skipping")

@@ -55,7 +55,7 @@ class Agent(BaseModel):
         json_['processes'] = [{"machine":self.machine, **kwargs} for kwargs in json_['processes']]
         return ProcessesResponse(**json_)
 
-    async def run_program(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs):
+    async def run_program(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
         process = await self.create_process()
         return await process.action(action_name, body, **kwargs)
 
@@ -102,7 +102,7 @@ class Process(BaseModel):
         if body:
             args["json"] = body
         json_ = await post_content(**args)
-        return ProcessStatus(**{"machine":self.machine, **json_})
+        return ProcessStatus(**{"machine": self.machine, **json_})
 
     def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
         url = urljoin(self.machine, f"processes/{self.process_id}/agent/{self.agent}/actions/{action_name}")

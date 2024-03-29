@@ -3,6 +3,7 @@ import pytest
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
+from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import ArgBuilder
 from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
@@ -15,6 +16,11 @@ class MeaningOfLife(LogicUnit):
         call this tool to get the meaning of life
         """
         return "42"
+
+
+class BadTokenArgBuilder(ArgBuilder):
+    def get_args(self) -> dict:
+        return {"base_url": "foobar", "timeout": .1}
 
 
 def r(name, **kwargs):
@@ -76,6 +82,7 @@ resources = [
         actions=[dict(files="multiple", user_prompt="what do these images have in common?")],
         cpu=image_compatible_cpu,
     ),
+    r("dynamic_client_args", cpu=dict(llm_unit=dict(client_arg_builder=dict(implementation=fqn(BadTokenArgBuilder))))),
 ]
 
 
@@ -223,3 +230,9 @@ async def test_multiple_files_no_body(cat, dog):
     process = await Agent.get("multiple_files_no_body").create_process()
     resp = await process.action("converse", files=[("file", dog), ("file", cat)])
     assert "animals" in resp.data.lower()
+
+
+async def test_dynamic_client_args():
+    with pytest.raises(AgentError) as e:
+        await Agent.get("dynamic_client_args").run_program("converse", body="What is the capital of France?")
+    assert e.value.status_code == 502
