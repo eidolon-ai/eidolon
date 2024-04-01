@@ -2,7 +2,6 @@ import fnmatch
 from io import BytesIO
 
 import boto3
-from botocore.exceptions import ClientError
 from mypy_boto3_s3 import S3ServiceResource
 from pydantic import BaseModel
 
@@ -18,7 +17,7 @@ class S3FileMemory(BaseModel, FileMemory):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._s3 = boto3.resource('s3', self.region)
+        self._s3 = boto3.resource("s3", self.region)
 
     @make_async
     def start(self):
@@ -44,7 +43,7 @@ class S3FileMemory(BaseModel, FileMemory):
 
     @make_async
     def delete_file(self, file_path: str) -> None:
-        self._s3.Bucket(self.bucket).delete_objects(Delete={'Objects': [{'Key': file_path}]})
+        self._s3.Bucket(self.bucket).delete_objects(Delete={"Objects": [{"Key": file_path}]})
 
     async def mkdir(self, directory: str, exist_ok: bool = False):
         pass

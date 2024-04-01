@@ -13,7 +13,7 @@ def s3_memory(test_name, **kwargs):
     return S3FileMemory(bucket="eidolon.test.file." + test_name.replace("_", "-").replace("[", "").replace("]", ""))
 
 
-@pytest.mark.parametrize('memory_', [file_memory, s3_memory])
+@pytest.mark.parametrize("memory_", [file_memory, s3_memory])
 class TestFileMemory:
     @pytest.fixture
     async def memory(self, tmp_path, test_name, memory_):
@@ -30,21 +30,21 @@ class TestFileMemory:
 
     @pytest.mark.vcr
     async def test_create(self, memory: FileMemory):
-        await memory.write_file("foo", file_contents=b'FOO')
+        await memory.write_file("foo", file_contents=b"FOO")
         assert await memory.exists("foo")
 
     @pytest.mark.vcr
     async def test_read(self, memory: FileMemory):
-        await memory.write_file("foo", file_contents=b'FOO')
-        assert await memory.read_file("foo") == b'FOO'
+        await memory.write_file("foo", file_contents=b"FOO")
+        assert await memory.read_file("foo") == b"FOO"
 
     @pytest.mark.vcr
     async def test_delete(self, memory: FileMemory):
-        await memory.write_file("foo", file_contents=b'FOO')
+        await memory.write_file("foo", file_contents=b"FOO")
         await memory.delete_file("foo")
         assert not await memory.exists("foo")
 
     @pytest.mark.vcr
     async def test_glob(self, memory: FileMemory):
-        await memory.write_file("bar.py", file_contents=b'FOO')
+        await memory.write_file("bar.py", file_contents=b"FOO")
         assert await memory.glob("**.py") == ["bar.py"]

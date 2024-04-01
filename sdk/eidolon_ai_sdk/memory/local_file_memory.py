@@ -149,7 +149,10 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
 
     async def glob(self, pattern):
         safe_file_path = self.resolve(pattern)
-        return [s.removeprefix(str(self.root_dir)).removeprefix("/") for s in glob.glob(str(safe_file_path), root_dir=self.root_dir)]
+        return [
+            s.removeprefix(str(self.root_dir)).removeprefix("/")
+            for s in glob.glob(str(safe_file_path), root_dir=self.root_dir)
+        ]
 
     async def start(self):
         """

@@ -30,7 +30,7 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
     def __init__(self, spec: OpenAiSpeechSpec, **kwargs):
         super().__init__(spec, **kwargs)
 
-    async def text_to_speech(self, text: str, response_format: str ="mp3") -> bytes:
+    async def text_to_speech(self, text: str, response_format: str = "mp3") -> bytes:
         """
         Converts text to speech.
 
@@ -53,7 +53,9 @@ class OpenAiSpeech(Specable[OpenAiSpeechSpec]):
 
         return response.content
 
-    async def speech_to_text(self, audio: bytes, mime_type: str, prompt: Optional[str] = None, language: Optional[str] = None) -> str:
+    async def speech_to_text(
+        self, audio: bytes, mime_type: str, prompt: Optional[str] = None, language: Optional[str] = None
+    ) -> str:
         """
         Converts speech to text.
 
