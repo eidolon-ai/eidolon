@@ -71,9 +71,7 @@ class ProcessFileSystem(Specable[ProcessFileSystemSpec]):
         await self.file_memory().mkdir(str(Path(self.root, process_id)), exist_ok=True)
         await self.file_memory().write_file(str(Path(self.root, process_id, file_id)), file_contents)
         if file_md:
-            await self.file_memory().write_file(
-                str(Path(self.root, process_id, file_id + ".md")), json.dumps(file_md).encode()
-            )
+            await self.file_memory().write_file(str(Path(self.root, process_id, file_id + ".md")), json.dumps(file_md).encode())
         return file_id
 
     async def delete_file(self, process_id: str, file_id: str):

@@ -18,7 +18,6 @@ class LocalFileMemoryConfig(BaseModel):
         """
         Validates that the provided root directory is an absolute path and exists.
         """
-        inValue = str(inValue)
         value = replace_env_var_in_string(inValue)
         # Convert the string to a Path object
         path = Path(value).resolve()
@@ -149,10 +148,7 @@ class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
 
     async def glob(self, pattern):
         safe_file_path = self.resolve(pattern)
-        return [
-            s.removeprefix(str(self.root_dir)).removeprefix("/")
-            for s in glob.glob(str(safe_file_path), root_dir=self.root_dir)
-        ]
+        return glob.glob(str(safe_file_path))
 
     async def start(self):
         """

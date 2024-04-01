@@ -72,9 +72,9 @@ class ProcessDoc(MongoDoc):
 
     @classmethod
     async def set_delete_on_terminate(cls, process_id: str, delete_on_terminate: bool = True):
-        await AgentOS.symbolic_memory.upsert_one(
-            cls.collection, document={"delete_on_terminate": delete_on_terminate}, query={"_id": process_id}
-        )
+        await AgentOS.symbolic_memory.upsert_one(cls.collection, document={
+            "delete_on_terminate": delete_on_terminate
+        }, query={"_id": process_id})
 
 
 async def store_events(agent: str, process_id: str, events: list[StreamEvent]):

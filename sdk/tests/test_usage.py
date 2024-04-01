@@ -30,12 +30,10 @@ class MockUsageClient(UsageClient):
 
 @pytest.fixture(scope="module")
 async def server(run_app):
-    c = ReferenceResource(
-        apiVersion="eidolon/v1", metadata=Metadata(name=UsageClient.__name__), spec=fqn(MockUsageClient)
-    )
-    u = ReferenceResource(
-        apiVersion="eidolon/v1", metadata=Metadata(name=Middleware.__name__), spec=UsageMiddleware.__name__
-    )
+    c = ReferenceResource(apiVersion="eidolon/v1", metadata=Metadata(name=UsageClient.__name__),
+                          spec=fqn(MockUsageClient))
+    u = ReferenceResource(apiVersion="eidolon/v1", metadata=Metadata(name=Middleware.__name__),
+                          spec=UsageMiddleware.__name__)
     async with run_app(CodeAgent, c, u) as ra:
         yield ra
 
@@ -55,7 +53,7 @@ def usage_client():
 
 async def test_usage_enforced(agent: Agent, usage_client: MockUsageClient):
     process = await agent.create_process()
-    usage_client.get_summary.side_effect = UsageLimitExceeded(UsageSummary(subject="sid", used=1, allowed=1))
+    usage_client.get_summary.side_effect = UsageLimitExceeded(UsageSummary(subject='sid', used=1, allowed=1))
     with pytest.raises(AgentError) as e:
         await process.action("do")
     assert e.value.status_code == 429
@@ -71,5 +69,5 @@ async def test_usage_recorded(agent: Agent, usage_client: MockUsageClient):
             await asyncio.sleep(0.1)
     user = usage_client.record_transaction.await_args[0][0]
     delta: UsageDelta = usage_client.record_transaction.await_args[0][1]
-    assert user == "NOOP_DEFAULT_USER"
+    assert user == 'NOOP_DEFAULT_USER'
     assert delta.used_delta >= 1
