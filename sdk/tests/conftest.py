@@ -13,7 +13,6 @@ from bson import ObjectId
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from sse_starlette.sse import AppStatus
-from vcr.record_mode import RecordMode
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
