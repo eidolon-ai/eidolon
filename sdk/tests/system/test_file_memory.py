@@ -14,7 +14,7 @@ def file_memory(tmp_path, **kwargs):
 def s3_memory(test_name, **kwargs):
     return S3FileMemory(
         bucket="eidolon.test.file." + test_name.replace("_", "-").replace("[", "").replace("]", ""),
-        kwargs=dict(aws_session_token=os.environ.get("AWS_SECRET_ACCESS_KEY") or "any_key_works_with_pre_recorded_tests")
+        kwargs=dict(aws_session_token=os.environ.get("ELASTIC_TOKEN") or "any_key_works_with_pre_recorded_tests")
     )
 
 
