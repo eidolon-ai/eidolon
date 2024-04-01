@@ -37,15 +37,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 01 Apr 2024 16:10:05 GMT
+      - Mon, 01 Apr 2024 17:39:08 GMT
       ETag:
       - '"901890a8e9c8cf6d5a1a542b229febff"'
       Server:
       - AmazonS3
       x-amz-id-2:
-      - HTeFTzpyPnrK30tSjIDdsPhO2u8nd9ZqB5S+W48jlOqIlYxT/QmyXcJr+Cq+ZaaOkctKfM6Gm4Q=
+      - HpDfwt5LCxNAZAxI0g77ZBOlzRQzmiTZztvsdKkfXnnFytrpF9Qz7ktRpD3aZRYw+LxXX1zUfJM=
       x-amz-request-id:
-      - BJ7WR3B916B9JYAP
+      - RNF3J0AJ02S8C2PA
       x-amz-server-side-encryption:
       - AES256
     status:
@@ -74,12 +74,12 @@ interactions:
     body:
       string: '<?xml version="1.0" encoding="UTF-8"?>
 
-        <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>eidolon.test.file.test-creates3-memory</Name><Prefix>foo</Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><EncodingType>url</EncodingType><IsTruncated>false</IsTruncated><Contents><Key>foo</Key><LastModified>2024-04-01T16:10:05.000Z</LastModified><ETag>&quot;901890a8e9c8cf6d5a1a542b229febff&quot;</ETag><Size>3</Size><Owner><ID>f25cf5d1638115c3ad276b713a85f3f9ab40466852f4fbfb7fa541ebfaa9c8a0</ID><DisplayName>luke</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents></ListBucketResult>'
+        <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>eidolon.test.file.test-creates3-memory</Name><Prefix>foo</Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><EncodingType>url</EncodingType><IsTruncated>false</IsTruncated><Contents><Key>foo</Key><LastModified>2024-04-01T17:39:08.000Z</LastModified><ETag>&quot;901890a8e9c8cf6d5a1a542b229febff&quot;</ETag><Size>3</Size><Owner><ID>f25cf5d1638115c3ad276b713a85f3f9ab40466852f4fbfb7fa541ebfaa9c8a0</ID><DisplayName>luke</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents></ListBucketResult>'
     headers:
       Content-Type:
       - application/xml
       Date:
-      - Mon, 01 Apr 2024 16:10:06 GMT
+      - Mon, 01 Apr 2024 17:39:09 GMT
       Server:
       - AmazonS3
       Transfer-Encoding:
@@ -87,9 +87,9 @@ interactions:
       x-amz-bucket-region:
       - us-east-1
       x-amz-id-2:
-      - eUH4pTUodV6DoeUSl/d5dDnqrD+iYhZDDGEK57lS/gK+bN3It74od/aJvTlQ2pI//9z/MGYCc/o=
+      - vxskD7/72p1B4k0AaTNpHyYjcpSI6fd0x/istvjYKKv0gzUBzWB6BEBN83KytLQlVswXWyRP3vg=
       x-amz-request-id:
-      - P0SJ9HBY2MJ3JGVS
+      - TXWDNCY86TSYM66R
     status:
       code: 200
       message: OK
