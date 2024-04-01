@@ -1,0 +1,146 @@
+interactions:
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        Rk9P
+      - 0
+      - null
+    headers:
+      Content-Length:
+      - '3'
+      Content-MD5:
+      - !!binary |
+        a0JpUXFPbkl6MjFhR2xRcklwL3Ivdz09
+      Expect:
+      - !!binary |
+        MTAwLWNvbnRpbnVl
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4zNC43NCBtZC9Cb3RvY29yZSMxLjM0Ljc0IHVhLzIuMCBvcy9tYWNvcyMyMy4yLjAg
+        bWQvYXJjaCN4ODZfNjQgbGFuZy9weXRob24jMy4xMS43IG1kL3B5aW1wbCNDUHl0aG9uIGNmZy9y
+        ZXRyeS1tb2RlI2xlZ2FjeSBCb3RvY29yZS8xLjM0Ljc0IFJlc291cmNl
+      X-Amz-Content-SHA256:
+      - !!binary |
+        VU5TSUdORUQtUEFZTE9BRA==
+      amz-sdk-request:
+      - !!binary |
+        YXR0ZW1wdD0x
+      authorization:
+      - XXXXXX
+    method: PUT
+    uri: https://s3.amazonaws.com/eidolon.test.file.test-reads3-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 01 Apr 2024 16:10:08 GMT
+      ETag:
+      - '"901890a8e9c8cf6d5a1a542b229febff"'
+      Server:
+      - AmazonS3
+      x-amz-id-2:
+      - R3oy8rOKoS3tks+AqUdGYcOaun71ePv3Esyf4jZKQpHgi45Q1n3rXXyS3ki6L8NZhvWHmWN5/jc=
+      x-amz-request-id:
+      - QVAXQMNNZ60PH4S3
+      x-amz-server-side-encryption:
+      - AES256
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4zNC43NCBtZC9Cb3RvY29yZSMxLjM0Ljc0IHVhLzIuMCBvcy9tYWNvcyMyMy4yLjAg
+        bWQvYXJjaCN4ODZfNjQgbGFuZy9weXRob24jMy4xMS43IG1kL3B5aW1wbCNDUHl0aG9uIGNmZy9y
+        ZXRyeS1tb2RlI2xlZ2FjeSBCb3RvY29yZS8xLjM0Ljc0IFJlc291cmNl
+      X-Amz-Content-SHA256:
+      - !!binary |
+        ZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3
+        ODUyYjg1NQ==
+      amz-sdk-request:
+      - !!binary |
+        YXR0ZW1wdD0x
+      authorization:
+      - XXXXXX
+    method: HEAD
+    uri: https://s3.amazonaws.com/eidolon.test.file.test-reads3-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '3'
+      Content-Type:
+      - binary/octet-stream
+      Date:
+      - Mon, 01 Apr 2024 16:10:10 GMT
+      ETag:
+      - '"901890a8e9c8cf6d5a1a542b229febff"'
+      Last-Modified:
+      - Mon, 01 Apr 2024 16:10:08 GMT
+      Server:
+      - AmazonS3
+      x-amz-id-2:
+      - xFKxQ7vnV8DZrnbW9QWoYGO4CStc9KeXel63cvoAb5vV4EQcJ2uaqrrofHGCglIkbUDfH0ve+1M=
+      x-amz-request-id:
+      - MZNMVHGGVS2GMPK5
+      x-amz-server-side-encryption:
+      - AES256
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4zNC43NCBtZC9Cb3RvY29yZSMxLjM0Ljc0IHVhLzIuMCBvcy9tYWNvcyMyMy4yLjAg
+        bWQvYXJjaCN4ODZfNjQgbGFuZy9weXRob24jMy4xMS43IG1kL3B5aW1wbCNDUHl0aG9uIGNmZy9y
+        ZXRyeS1tb2RlI2xlZ2FjeSBCb3RvY29yZS8xLjM0Ljc0IFJlc291cmNl
+      X-Amz-Content-SHA256:
+      - !!binary |
+        ZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3
+        ODUyYjg1NQ==
+      amz-sdk-request:
+      - !!binary |
+        YXR0ZW1wdD0x
+      authorization:
+      - XXXXXX
+    method: GET
+    uri: https://s3.amazonaws.com/eidolon.test.file.test-reads3-memory/foo
+  response:
+    body:
+      string: FOO
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '3'
+      Content-Type:
+      - binary/octet-stream
+      Date:
+      - Mon, 01 Apr 2024 16:10:11 GMT
+      ETag:
+      - '"901890a8e9c8cf6d5a1a542b229febff"'
+      Last-Modified:
+      - Mon, 01 Apr 2024 16:10:08 GMT
+      Server:
+      - AmazonS3
+      x-amz-id-2:
+      - 0IbDdVZi92dlTHOUVDeCf8TFeZiFvszqROr5wikJFS1iRP4Mtae6IzZYxcCE19uelq0mbIOga7s=
+      x-amz-request-id:
+      - A40CXY4M1R5MG0D8
+      x-amz-server-side-encryption:
+      - AES256
+    status:
+      code: 200
+      message: OK
+version: 1
