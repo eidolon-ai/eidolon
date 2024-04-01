@@ -1,0 +1,20 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: RelevancyRanker
+spec:
+  description: "takes the summaries and adds a relevancy score to them and product category to them"
+  system_prompt: |-
+    You are a helpful assistant who takes the summaries and adds a relevancy score to them and product category to them based on {{ company_description }} and {{ investment_thesis }}.
+  actions:
+    - name: "analyze"
+      user_prompt: |-
+        Analyze the company description and investment thesis.
+        Company description {{ company_description }}
+        Investment thesis {{ investment_thesis }}
+      output_schema:
+        type: object
+        properties:
+          relevancy_score:
+            type: number
+            description: "A relevancy score of the company between 0 and 1"
