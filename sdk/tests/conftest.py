@@ -13,6 +13,7 @@ from bson import ObjectId
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from sse_starlette.sse import AppStatus
+from vcr.record_mode import RecordMode
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
@@ -72,7 +73,7 @@ def vcr_config():
         filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None)],
         ignore_localhost=True,
         ignore_hosts=["0.0.0.0", "localhost"],
-        record_mode="new_episodes",
+        record_mode="once",
         match_on=["method", "scheme", "host", "port", "path", "query", "body"],
     )
 
