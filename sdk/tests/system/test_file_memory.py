@@ -12,10 +12,9 @@ def file_memory(tmp_path, **kwargs):
 
 
 def s3_memory(test_name, **kwargs):
-    return S3FileMemory(
-        bucket="eidolon.test.file." + test_name.replace("_", "-").replace("[", "").replace("]", ""),
-        kwargs=dict(aws_session_token=os.environ.get("ELASTIC_TOKEN") or "any_key_works_with_pre_recorded_tests")
-    )
+    os.environ.setdefault("AWS_SECRET_ACCESS_KEY", "secret_not_needed_with_saved_cassettes")
+    os.environ.setdefault("AWS_ACCESS_KEY_ID", "key_not_needed_with_saved_cassettes")
+    return S3FileMemory(bucket="eidolon.test.file." + test_name.replace("_", "-").replace("[", "").replace("]", ""))
 
 
 @pytest.mark.parametrize("memory_", [file_memory, s3_memory])
