@@ -24,7 +24,7 @@ class S3FileMemory(BaseModel, FileMemory):
 
     async def stop(self):
         pass
-    
+
     def client(self):
         if not self._client:
             self._client = boto3.resource("s3", self.region).Bucket(self.bucket)
