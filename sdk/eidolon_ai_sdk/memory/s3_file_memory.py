@@ -11,6 +11,7 @@ from eidolon_ai_sdk.util.async_wrapper import make_async
 class S3FileMemory(BaseModel, FileMemory):
     bucket: str
     region: str = "us-east-1"
+    kwargs: dict = {}
     create_bucket_on_startup: bool = False
     _client = None
 
@@ -27,7 +28,7 @@ class S3FileMemory(BaseModel, FileMemory):
 
     def client(self):
         if not self._client:
-            self._client = boto3.resource("s3", self.region).Bucket(self.bucket)
+            self._client = boto3.resource("s3", self.region, **self.kwargs).Bucket(self.bucket)
         return self._client
 
     @make_async
