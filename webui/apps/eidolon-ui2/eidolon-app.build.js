@@ -13,7 +13,7 @@ const appDirs = fs.readdirSync(eidolonAppsDir, { withFileTypes: true })
 
 // Iterate over each app directory
 appDirs.forEach(appDir => {
-  const manifestPath = path.join(eidolonAppsDir, appDir, 'manifest.json');
+  const manifestPath = path.join(eidolonAppsDir, appDir, 'app_manifest.json');
 
   // Check if the manifest.json file exists
   if (fs.existsSync(manifestPath)) {

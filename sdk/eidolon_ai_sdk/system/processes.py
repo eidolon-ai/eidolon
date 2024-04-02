@@ -45,9 +45,11 @@ class MongoDoc(BaseModel, extra="allow"):
         await AgentOS.symbolic_memory.insert_one(cls.collection, doc.model_dump())
         return doc
 
-    async def update(self, **data):
+    async def update(self, check_update_time=False, **data):
         data = dict(**data, updated=datetime.now().isoformat())
-        query = {"_id": self.record_id, "updated": self.updated}
+        query = {"_id": self.record_id}
+        if check_update_time:
+            query["updated"] = self.updated
         try:
             await AgentOS.symbolic_memory.upsert_one(self.collection, query=query, document=data)
         except DuplicateKeyError:
@@ -72,9 +74,9 @@ class ProcessDoc(MongoDoc):
 
     @classmethod
     async def set_delete_on_terminate(cls, process_id: str, delete_on_terminate: bool = True):
-        await AgentOS.symbolic_memory.upsert_one(cls.collection, document={
-            "delete_on_terminate": delete_on_terminate
-        }, query={"_id": process_id})
+        await AgentOS.symbolic_memory.upsert_one(
+            cls.collection, document={"delete_on_terminate": delete_on_terminate}, query={"_id": process_id}
+        )
 
 
 async def store_events(agent: str, process_id: str, events: list[StreamEvent]):

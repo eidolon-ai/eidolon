@@ -1,0 +1,24 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: CompanyResearcher
+spec:
+  cpu:
+    logic_units: [Browser, Search]
+  description: "Creates company summaries"
+  system_prompt: |-
+    You are a helpful assistant who goes to the url of a given company, and provides a 2 sentence summary. 
+  actions:
+    - name: "search_company"
+      user_prompt: |-
+        Give me a summary of {{ company_name }}.
+        Company website {{url}}
+        Company Category {{category}} 
+      output_schema:
+        type: object
+        properties:
+          company_description:
+            type: string
+            description: "A 2 sentence summary of the company"
+
+      

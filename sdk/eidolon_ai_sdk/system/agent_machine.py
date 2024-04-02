@@ -30,7 +30,9 @@ class MachineSpec(BaseModel):
     file_memory: AnnotatedReference[FileMemory] = Field(desciption="The File Memory implementation.")
     similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
     security_manager: AnnotatedReference[SecurityManager] = Field(description="The Security Manager implementation.")
-    process_file_system: AnnotatedReference[ProcessFileSystem] = Field(description="The Process File System implementation. Used to store files related to processes.")
+    process_file_system: AnnotatedReference[ProcessFileSystem] = Field(
+        description="The Process File System implementation. Used to store files related to processes."
+    )
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
@@ -151,9 +153,14 @@ class AgentMachine(Specable[MachineSpec]):
                 return controller
         return None
 
-    async def upload_file(self, process_id: str,
-                          mime_type: Annotated[str | None, Header()] = None,
-                          file_bytes=Body(description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream")):
+    async def upload_file(
+        self,
+        process_id: str,
+        mime_type: Annotated[str | None, Header()] = None,
+        file_bytes=Body(
+            description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream"
+        ),
+    ):
         """
         Upload a file for this process
         :param process_id:
@@ -163,7 +170,10 @@ class AgentMachine(Specable[MachineSpec]):
         file_md = None
         if mime_type:
             file_md = {"mime_type": mime_type}
-        return JSONResponse(content={"file_id": await self.process_file_system.write_file(process_id, file_bytes, file_md)}, status_code=200)
+        return JSONResponse(
+            content={"file_id": await self.process_file_system.write_file(process_id, file_bytes, file_md)},
+            status_code=200,
+        )
 
     async def download_file(self, process_id: str, file_id: str):
         """

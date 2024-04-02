@@ -23,7 +23,9 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         self.cpu = self.spec.cpu.instantiate()
 
     @register_program()
-    async def speech_to_text(self, process_id, audio: Annotated[FileHandle, Body(description="The audio file", embed=True)]):
+    async def speech_to_text(
+        self, process_id, audio: Annotated[FileHandle, Body(description="The audio file", embed=True)]
+    ):
         await ProcessDoc.set_delete_on_terminate(process_id, True)
         file, metadata = await AgentOS.process_file_system.read_file(process_id, audio.file_id)
         mimetype = "audio/wav"
@@ -37,7 +39,9 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         return {"response": text}
 
     @register_program()
-    async def text_to_speech(self, process_id: str, text: Annotated[str, Body(description="The text to speak", embed=True)]) -> FileHandle:
+    async def text_to_speech(
+        self, process_id: str, text: Annotated[str, Body(description="The text to speak", embed=True)]
+    ) -> FileHandle:
         audio_result = await self.speech_llm.text_to_speech(text)
         file_id = await AgentOS.process_file_system.write_file(process_id, audio_result, {"mimetype": "audio/mpeg"})
 

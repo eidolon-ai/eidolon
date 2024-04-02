@@ -1,6 +1,6 @@
 import {notFound} from "next/navigation";
 import {_processHandler} from "../../../api/eidolon/eidolon_helpers";
-import manifest from "../manifest.json";
+import manifest from "../app_manifest.json";
 import * as React from "react";
 import {MessagesWithAction} from "@eidolon/components";
 

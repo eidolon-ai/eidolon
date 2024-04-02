@@ -1,6 +1,6 @@
-import { Reducer } from 'react';
-import { localStorageSet } from '../utils/localStorage';
-import { AppStoreState } from './AppStore';
+import {Reducer} from 'react';
+import {localStorageSet} from '../utils/index';
+import {AppStoreState} from './AppStore';
 import {IS_SERVER} from "../utils/index";
 
 /**

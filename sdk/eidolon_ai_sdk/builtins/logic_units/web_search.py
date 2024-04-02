@@ -21,7 +21,7 @@ class SearchResult(BaseModel):
 
 
 class BrowseSpec(BaseModel):
-    summarizer: Literal["BeautifulSoup"] = "BeautifulSoup"
+    summarizer: Literal["BeautifulSoup", "noop"] = "BeautifulSoup"
 
 
 class Browser(LogicUnit, Specable[BrowseSpec]):
@@ -43,7 +43,11 @@ class Browser(LogicUnit, Specable[BrowseSpec]):
                 return text
             if self.spec.summarizer == "BeautifulSoup":
                 soup = BeautifulSoup(text, "lxml")
+                for a in soup.findAll("a"):
+                    a.replace_with(a.text + f" {a.get('href')}")
                 return soup.get_text(separator="\n", strip=True)
+            elif self.spec.summarizer == "noop":
+                return text
             else:
                 raise ValueError(f"Summarizer {self.spec.summarizer} not supported")
 

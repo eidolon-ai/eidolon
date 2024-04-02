@@ -19,6 +19,12 @@ class AgentCPUSpec(BaseModel):
 
 
 class AgentCPU(Specable[AgentCPUSpec], ABC):
+    title: str
+
+    def __init__(self, spec: T, **kwargs: object):
+        super().__init__(spec, **kwargs)
+        self.title = "default"
+
     @abstractmethod
     async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         pass

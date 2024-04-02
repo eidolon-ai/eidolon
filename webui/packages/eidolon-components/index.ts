@@ -9,3 +9,4 @@ export {type ElementsAndLookup} from "./src/lib/display-elements";
 export * from './src/hooks/useProcessEvents'
 export {MessagesWithSingleAction} from './src/form-input/MessagesWithSingleAction'
 export {MessagesWithAction} from './src/form-input/MessagesWithAction'
+export {useProcessEvents} from './src/hooks/useProcessEvents'

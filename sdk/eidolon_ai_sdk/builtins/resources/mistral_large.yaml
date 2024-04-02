@@ -1,0 +1,11 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: MistralLarge
+  annotations:
+    - title: "Mistral Large"
+spec:
+    implementation: AgentCPU
+    llm_unit:
+      implementation: MistralGPT
+      model: "mistral-large-latest"

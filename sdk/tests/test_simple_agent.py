@@ -103,6 +103,16 @@ async def test_multiple_prompt_args():
     assert "paris" in resp.data.lower()
 
 
+async def test_generating_title():
+    process = await Agent.get("json_output").create_process()
+    resp = await process.action("generate_title", body="What is the capital of France?")
+    assert "paris" in resp.data.lower()
+    resp = await process.action("converse", body="What is the capital of France?")
+    assert "population" in resp.data
+    assert isinstance(resp.data["population"], int) and resp.data["population"] > 0
+    assert "paris" in resp.data["capital"].lower()
+
+
 async def test_json_output():
     process = await Agent.get("json_output").create_process()
     resp = await process.action("converse", body="What is the capital of France?")
@@ -115,7 +125,7 @@ async def test_states():
     process = await Agent.get("states").create_process()
     status = await process.status()
     assert status.state == "initialized"
-    assert status.available_actions == ["first"]
+    assert status.available_actions == ["first", "generate_title"]
     first = await process.action("first", body="What is the capital of France?")
     status = await first.status()
     assert status.state == "s2"
@@ -124,7 +134,7 @@ async def test_states():
     second = await first.action("second", body="What about Spain?")
     status = await second.status()
     assert status.state == "idle"
-    assert status.available_actions == []
+    assert status.available_actions == ["generate_title"]
     assert "madrid" in second.data.lower()
 
     with pytest.raises(AgentError) as e:

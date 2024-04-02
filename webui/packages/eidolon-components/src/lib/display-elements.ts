@@ -125,12 +125,13 @@ export const makeElement = (event: ChatEvent) => {
         type: "tool-call-end",
         contextId: event.context_id
       } as ToolCallEndElement
-    case "agent_state":
+    case "agent_state": {
       return {
         type: "agent-state",
         state: event.state,
         availableActions: event.available_actions
       } as AgentStateElement
+    }
   }
 
   return undefined

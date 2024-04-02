@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import List, Literal, Optional, TypeVar, Type
+from typing import List, Literal, Optional, TypeVar, Type, Dict
 
 import yaml
 from pydantic import BaseModel
@@ -11,7 +11,7 @@ from eidolon_ai_client.util.logger import logger
 
 class Metadata(BaseModel):
     name: str = "DEFAULT"
-    annotations: List[str] = []
+    annotations: List[Dict[str, str]] = []
     labels: List[str] = []
 
 

@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4zNC43NCBtZC9Cb3RvY29yZSMxLjM0Ljc0IHVhLzIuMCBvcy9tYWNvcyMyMy4yLjAg
+        bWQvYXJjaCN4ODZfNjQgbGFuZy9weXRob24jMy4xMS43IG1kL3B5aW1wbCNDUHl0aG9uIGNmZy9y
+        ZXRyeS1tb2RlI2xlZ2FjeSBCb3RvY29yZS8xLjM0Ljc0IFJlc291cmNl
+      X-Amz-Content-SHA256:
+      - !!binary |
+        ZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3
+        ODUyYjg1NQ==
+      amz-sdk-request:
+      - !!binary |
+        YXR0ZW1wdD0x
+      authorization:
+      - XXXXXX
+    method: GET
+    uri: https://s3.amazonaws.com/eidolon.test.file.test-existss3-memory?prefix=foo&encoding-type=url
+  response:
+    body:
+      string: '<?xml version="1.0" encoding="UTF-8"?>
+
+        <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>eidolon.test.file.test-existss3-memory</Name><Prefix>foo</Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><EncodingType>url</EncodingType><IsTruncated>false</IsTruncated></ListBucketResult>'
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Mon, 01 Apr 2024 22:00:18 GMT
+      Server:
+      - AmazonS3
+      Transfer-Encoding:
+      - chunked
+      x-amz-bucket-region:
+      - us-east-1
+      x-amz-id-2:
+      - 3+m2+D2KweToxWayCV4HLYDlgpL6h8ETuvN7gYDIEVBpZ0gOXq7X84A+fMf1DR2YZfPLHConLDc=
+      x-amz-request-id:
+      - EKVBKTKE5BPYAHR1
+    status:
+      code: 200
+      message: OK
+version: 1

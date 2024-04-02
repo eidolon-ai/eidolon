@@ -1,18 +1,15 @@
-import asyncio
 from typing import Annotated, List
 from urllib.parse import urlparse
 
 from fastapi import Body
-from pydantic import BaseModel, Field, model_validator
+from pydantic import model_validator, Field
 
 from eidolon_ai_sdk.agent.agent import register_program, AgentState
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
-from eidolon_ai_sdk.agent.retriever_agent.document_reranker import DocumentReranker
-from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.agent.retriever_agent.retriever import RetrieverSpec, Retriever, DocSummary
 from eidolon_ai_sdk.system.fn_handler import FnHandler
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
+from eidolon_ai_sdk.system.reference_model import Specable, Reference
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
@@ -21,20 +18,16 @@ def make_description(agent: object, _handler: FnHandler) -> str:
     return agent.spec.description
 
 
-class RetrieverAgentSpec(BaseModel):
-    # these three fields are required and override the defaults of the subcomponents
+class RetrieverAgentSpec(RetrieverSpec):
     name: str = Field(description="The name of the document store to use.")
     description: str = Field(
         description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."
     )
+    # these three fields are required and override the defaults of the subcomponents
     loader_root_location: str = Field(None, description="A URL specifying the root location of the loader.")
 
     loader_pattern: str = Field(default="**/*", description="The search pattern to use when loading files.")
-    max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
-
     document_manager: Reference[DocumentManager]
-    question_transformer: AnnotatedReference[QuestionTransformer]
-    document_reranker: AnnotatedReference[DocumentReranker]
 
     # noinspection PyMethodParameters
     @model_validator(mode="before")
@@ -63,23 +56,10 @@ class RetrieverAgentSpec(BaseModel):
         return value
 
 
-class DocSummary(BaseModel):
-    id: str
-    file_name: str
-    file_path: str
-    text: str
-
-
-class RetrieverAgent(Specable[RetrieverAgentSpec]):
+class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Specable.__init__(self, **kwargs)
         self.document_manager = self.spec.document_manager.instantiate()
-
-        self.question_transformer = (
-            self.spec.question_transformer.instantiate() if self.spec.question_transformer else None
-        )
-        self.document_reranker = self.spec.document_reranker.instantiate()
 
     @register_program()
     async def list_files(self) -> AgentState[List[str]]:
@@ -92,7 +72,7 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
 
     @register_program(description=make_description)
     async def search(
-        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+            self, question: Annotated[str, Body(description="The question to search for", embed=True)]
     ) -> List[DocSummary]:
         """
         Process the question by searching the document store.
@@ -101,36 +81,4 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         """
         await self.document_manager.sync_docs()
 
-        if self.question_transformer:
-            questions = await self.question_transformer.transform(question)
-        else:
-            questions = [question]
-        _docs = await asyncio.gather(*(self._embed_question(question) for question in questions))
-        question_to_docs = {tu[0]: tu[1] for tu in zip(questions, _docs)}
-        rerank_questions = {}
-        for question, docs in question_to_docs.items():
-            rerank_questions[question] = {doc.id: doc.score for doc in docs}
-
-        reranked_docs = await self.document_reranker.rerank(rerank_questions)
-
-        # now limit reranked_docs to max_num_results
-        reranked_docs = reranked_docs[: self.spec.max_num_results]
-
-        docs = AgentOS.similarity_memory.vector_store.get_docs(
-            f"doc_contents_{self.spec.name}", [doc[0] for doc in reranked_docs]
-        )
-        summaries = []
-        async for doc in docs:
-            file_path = doc.metadata["source"]
-            summaries.append(
-                DocSummary(id=doc.id, file_name=file_path.split("/")[-1], file_path=file_path, text=doc.page_content)
-            )
-
-        return summaries
-
-    async def _embed_question(self, question):
-        embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
-        results_ = await AgentOS.similarity_memory.vector_store.raw_query(
-            f"doc_contents_{self.spec.name}", embedded_q, self.spec.max_num_results
-        )
-        return results_
+        return await super().search(f"doc_contents_{self.spec.name}", question)

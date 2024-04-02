@@ -135,8 +135,9 @@ class AgentController:
                 detail=f'Action "{handler.name}" cannot process state "{process.state}"',
             )
         last_state = process.state
+        RequestContext.set("__last_state__", last_state)
         process = await process.update(
-            agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
+            check_update_time=True, agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
         )
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:

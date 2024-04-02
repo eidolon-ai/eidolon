@@ -1,0 +1,11 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: MistralSmall
+  annotations:
+    - title: "Mistral Small"
+spec:
+    implementation: AgentCPU
+    llm_unit:
+      implementation: MistralGPT
+      model: "mistral-small-latest"

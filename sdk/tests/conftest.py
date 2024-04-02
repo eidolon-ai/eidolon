@@ -69,10 +69,10 @@ def port():
 @pytest.fixture(autouse=True)
 def vcr_config():
     return dict(
-        filter_headers=[("authorization", "XXXXXX")],
+        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None)],
         ignore_localhost=True,
         ignore_hosts=["0.0.0.0", "localhost"],
-        record_mode="new_episodes",
+        record_mode="once",
         match_on=["method", "scheme", "host", "port", "path", "query", "body"],
     )
 
