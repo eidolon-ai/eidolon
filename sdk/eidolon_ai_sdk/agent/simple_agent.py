@@ -231,6 +231,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         yield AgentStateEvent(state=action.output_state)
 
     async def _gen_title(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
+        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         execute_on_cpu = None
         request_body = to_jsonable_python(kwargs.get("body") or {})
         if "execute_on_cpu" in request_body:
@@ -254,8 +255,8 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
 
         title_message = UserTextCPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
         response = await (await cpu.new_thread(process_id)).run_request(prompts=[title_message])
-        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         await process_obj.update(title=response)
 
         yield StringOutputEvent(content=response)
-        yield AgentStateEvent(state=action.output_state)
+        # return to the previous state
+        yield AgentStateEvent(state=process_obj.state)
