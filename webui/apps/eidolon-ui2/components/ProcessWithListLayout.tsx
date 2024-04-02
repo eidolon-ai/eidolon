@@ -2,14 +2,15 @@ import {Box} from "@mui/material";
 import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
 import {ProcessesProvider} from "@eidolon/components/src/hooks/process_context";
+import {EidolonApp} from "@/utils/eidolon-apps";
 
 
 export interface DevTooLayoutProps {
-  agentName?: string
+  app: EidolonApp
   children: JSX.Element
 }
 
-export function ProcessWithListLayout({agentName, children}: DevTooLayoutProps) {
+export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
   return (
     <ProcessesProvider>
       <Box sx={{
@@ -25,7 +26,7 @@ export function ProcessWithListLayout({agentName, children}: DevTooLayoutProps) 
         >
           <DevProcessListWithAdd
             machineURL={process.env.EIDOLON_SERVER!}
-            agentName={agentName}
+            app={app}
           />
         </ResizableDrawer>
         <Box component="main" flexGrow={1}>

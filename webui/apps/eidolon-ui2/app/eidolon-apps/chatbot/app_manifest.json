@@ -1,0 +1,17 @@
+{
+  "name": "Chatbot",
+  "description": "A basic chatbot using GPT-4-latest with conversational memory and no tools.",
+  "version": "0.1.0",
+  "image": "image.webp",
+  "location": "http://localhost:8080",
+  "type": "copilot",
+  "params": {
+    "agent": "conversational_agent",
+    "operation": "converse",
+    "inputLabel": "How can I help you?",
+    "titleOperationName": "generate_title",
+    "allowSpeech": true,
+    "speechAgent": "speech_agent",
+    "speechOperation": "speech_to_text"
+  }
+}

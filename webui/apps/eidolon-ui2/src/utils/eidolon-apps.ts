@@ -7,14 +7,35 @@ export interface EidolonApp {
   version: string;
   image: string;
   location: string;
+  type: "copilot" | "dev"
+  path: string
+  params: CopilotParams | DevParams
+}
+
+export interface DevParams {
+}
+
+export interface CopilotParams {
+  "agent": string,
+  "operation": string,
+  "inputLabel": string,
+  "titleOperationName": string | undefined,
+  "allowSpeech": boolean,
+  "speechAgent": string | undefined,
+  "speechOperation": string | undefined
 }
 
 let apps: Record<string, EidolonApp> = {}
 
 for (const [key, value] of Object.entries(appRegistry)) {
-  apps[key] = value as EidolonApp
-  const image = await import(`../../app/eidolon-apps/${key}/${apps[key]!.image}`)
-  apps[key]!.image = image.default.src
+  const app = value as EidolonApp
+  const image = await import(`../../app/eidolon-apps/${key}/${app.image}`)
+  app.path = `${key}`
+  if (app.type === 'copilot') {
+    app.path = `sp/${key}`
+  }
+  app.image = image.default.src
+  apps[key] = app
 }
 
 export function getAppRegistry() {
@@ -22,12 +43,5 @@ export function getAppRegistry() {
 }
 
 export function getApp(path: string) {
-  const pathSegments = path.split('/');
-  const appNameIndex = pathSegments.findIndex((segment) => segment === 'eidolon-apps');
-
-  if (appNameIndex !== -1 && appNameIndex + 1 < pathSegments.length) {
-    const appName = pathSegments[appNameIndex + 1]!
-    return apps[appName];
-  }
-  return null;
+  return apps[path]
 }
