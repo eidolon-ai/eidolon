@@ -72,9 +72,10 @@ class ProcessFileSystem(Specable[ProcessFileSystemSpec]):
         await self.file_memory().write_file(str(Path(self.root, process_id, file_id)), file_contents)
         md_to_write = {
             "process_id": process_id,
-            "file_id": file_id,
-            **file_md
+            "file_id": file_id
         }
+        if file_md:
+            md_to_write.update(file_md)
         path = str(Path(self.root, process_id, file_id + ".md"))
         await self.file_memory().write_file(path, json.dumps(md_to_write).encode())
         return file_id
