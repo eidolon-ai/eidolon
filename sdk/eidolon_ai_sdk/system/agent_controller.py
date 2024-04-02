@@ -136,7 +136,7 @@ class AgentController:
             )
         last_state = process.state
         process = await process.update(
-            agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
+            check_update_time=True, agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
         )
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:

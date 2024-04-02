@@ -1,13 +1,12 @@
 // noinspection JSUnusedGlobalSymbols
-
 'use client'
 
 import {Box, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
-import {useEffect, useState} from "react";
 import {ProcessSummary} from "./process-summary";
-import {deleteProcess, getRootProcesses} from "../client-api-helpers/process-helper";
-import {groupProcessesByUpdateDate} from "./group-processes";
+import {deleteProcess} from "../client-api-helpers/process-helper";
 import {ProcessStatus} from "@eidolon/client";
+import {useProcesses} from "../hooks/process_context";
+import {useEffect} from "react";
 
 export interface ProcessListProps {
   // eslint-disable-next-line no-unused-vars
@@ -19,7 +18,12 @@ export interface ProcessListProps {
 }
 
 export function ProcessList({machineURL, isSelected, selectChat, goHome}: ProcessListProps) {
-  const [dataByDate, setDataByDate] = useState<Record<string, ProcessStatus[]>>({})
+  const {processes, updateProcesses} = useProcesses()
+
+  useEffect(() => {
+    updateProcesses(machineURL).then(() => {})
+  }, [machineURL])
+
   const handleDelete = (chat: ProcessStatus) => {
     const process_id = chat.process_id
     deleteProcess(chat.machine, process_id).then(() => {
@@ -28,7 +32,7 @@ export function ProcessList({machineURL, isSelected, selectChat, goHome}: Proces
         // dataByDate object and then each array of chats, keeping the previous item in a variable
         let previousItem: ProcessStatus | undefined
         let replaceWithNextItem = false
-        for (const [_, chats] of Object.entries(dataByDate)) {
+        for (const [_, chats] of Object.entries(processes)) {
           for (const chat of chats) {
             if (replaceWithNextItem) {
               return selectChat(chat)
@@ -45,14 +49,8 @@ export function ProcessList({machineURL, isSelected, selectChat, goHome}: Proces
         }
         goHome()
       }
-    }).then(() => getRootProcesses(chat.machine).then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats)))
+    }).then(() => updateProcesses(machineURL))
   }
-
-  useEffect(() => {
-    getRootProcesses(machineURL).then(groupProcessesByUpdateDate).then(chats => setDataByDate(chats))
-    return () => {
-    }
-  }, []);
 
   let listComponents = (
     <List>
@@ -63,10 +61,10 @@ export function ProcessList({machineURL, isSelected, selectChat, goHome}: Proces
 
   )
 
-  if (Object.keys(dataByDate).length) {
+  if (Object.keys(processes).length) {
     listComponents = (
       <List>
-        {Object.entries(dataByDate).map(([date, chats]) => {
+        {Object.entries(processes).map(([date, chats]) => {
           return (
             <Box key={date}>
               <ListSubheader>{date}</ListSubheader>

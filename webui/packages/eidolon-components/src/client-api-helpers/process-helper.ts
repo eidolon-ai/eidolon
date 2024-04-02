@@ -67,11 +67,7 @@ export async function getRootProcesses(machineUrl: string): Promise<ProcessStatu
 }
 
 async function getProcessesFromServer(machineUrl: string): Promise<ProcessStatus[]> {
-  const results = await fetch(`/api/eidolon/process?machineURL=${machineUrl}`,
-    {
-      // @ts-ignore
-      next: {tags: ['chats']},
-    }
+  const results = await fetch(`/api/eidolon/process?machineURL=${machineUrl}`
   ).then(resp => {
     if (resp.status === 401) {
       console.log('Unauthenticated! Status: 401');

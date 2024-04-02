@@ -1,6 +1,6 @@
 import json
 from datetime import date, datetime, time
-from typing import Dict, Any, Type
+from typing import Dict, Any, Type, Literal
 from typing import List
 from uuid import UUID
 
@@ -120,10 +120,10 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
                     )
                     fields[property_name] = wrap_optional(List[nested_item_model], makeFieldOrDefaultValue())
                 else:
-                    python_type = get_python_type(items_schema, str)
+                    python_type = get_python_type(property_name, items_schema, str)
                     fields[property_name] = wrap_optional(List[python_type], makeFieldOrDefaultValue())
             else:
-                fields[property_name] = wrap_optional(get_python_type(property_schema), makeFieldOrDefaultValue())
+                fields[property_name] = wrap_optional(get_python_type(property_name, property_schema), makeFieldOrDefaultValue())
         except Exception as e:
             raise ValueError(f"Error creating field '{property_name}': {e}")
 
@@ -142,11 +142,15 @@ class JsonProofModel(BaseModel):
         return value
 
 
-def get_python_type(property_schema, default=None):
+def get_python_type(property_name, property_schema, default=None):
     field_type = property_schema.get("type")
     if field_type == "string" and "format" in property_schema and property_schema["format"] == "binary":
         return UploadFile
     else:
+        if field_type == "string" and "enum" in property_schema and property_schema["enum"]:
+            # noinspection PyTypeHints
+            literal_ = Literal[tuple(property_schema["enum"])]
+            return literal_
         python_type = type_mapping.get(field_type, default)
         if python_type is None:
             raise ValueError(f"Unsupported type '{field_type}'")

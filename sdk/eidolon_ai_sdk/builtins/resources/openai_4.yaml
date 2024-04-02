@@ -1,0 +1,11 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: GPT4-turbo
+  annotations:
+    - title: "OpenAI GPT 4.0 Turbo"
+spec:
+    implementation: AgentCPU
+    llm_unit:
+      implementation: OpenAIGPT
+      model: "gpt-4-turbo-preview"
