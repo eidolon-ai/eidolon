@@ -63,7 +63,7 @@ class Reference(BaseModel):
 
     def __class_getitem__(cls, params):
         if not isinstance(params, tuple):
-            params = (params, params.__name__)
+            params = (params, fqn(params))
 
         class _Reference(cls):
             _bound = params[0]
