@@ -1,95 +1,40 @@
-from fastapi import Body
-from pydantic import BaseModel, Field
-from typing import Annotated, List
+from textwrap import dedent
+from typing import Annotated, List, Optional
 
-from eidolon_ai_sdk.agent.agent import AgentState, register_program, register_action
+from fastapi import Body
+from jinja2 import StrictUndefined, Environment
+from pydantic import BaseModel, Field
+
+from eidolon_ai_client.events import AgentStateEvent
+from eidolon_ai_sdk.agent.agent import register_program, register_action
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
-from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText
-from eidolon_ai_client.events import AgentStateEvent
+from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, SystemMessage
 from eidolon_ai_sdk.system.reference_model import Reference, Specable
 
 
-class SpeakToGroup(BaseModel):
-    message: str = Field(description="The message you want to say to the group")
-    group: List[str] = Field(description="The group of agents you are talking to")
+class AgentThought(BaseModel):
+    thought: str = Field(default="", description="The thought you want to express or an empty string if you don't have a thought.")
+    desire_to_speak: bool = Field(description="If true, you want to speak. If false, you do not want to speak.")
+    emotion: Optional[str] = Field(default=None, description="The emotion you want to express or leave empty if you do not want to express an emotion."
+                                                             "The emotion must be a single word and an emojis that represent the emotion. Include both")
 
 
-class Statement(BaseModel):
-    speaker: str
-    text: str
-    voice_level: float
-
-    def mood(self):
-        if self.voice_level < 0.25:
-            mood = "passive"
-        elif self.voice_level < 0.5:
-            mood = "vocal"
-        elif self.voice_level < 0.75:
-            mood = "leaning in"
-        else:
-            mood = "aggressive"
-
-        return mood
-
-    def format(self, agent_name: str):
-        speaker = self.speaker
-        if self.speaker == agent_name:
-            speaker = "<your inner voice>"
-        return f"{speaker} (mood:{self.mood()}): {self.text}\n\n"
-
-
-class StatementsForAgent(BaseModel):
-    statements: List[Statement]
-
-    def format(self, agent_name: str):
-        return "\n".join(
-            [statement.format(agent_name) for statement in self.statements if statement.speaker != agent_name]
-        )
-
-
-class ThoughtResult(BaseModel):
-    desire_to_speak: float = Field(
-        description="The desire to speak. A value between 0 and 1. The higher the value, the more the agent wants to speak."
+class Thought(BaseModel):
+    is_inner_voice: bool = Field(
+        description="If true, the thought will be added as the agent's inner monologue. If false, the thought will be a user message."
     )
-
-
-class SpeakResult(BaseModel):
-    inner_dialog: str = Field(
-        description="The inner dialog of the agent. This isn't spoken out loud, but is used to help the agent decide what to say next and how they really feel."
-    )
-    desire_to_speak: float = Field(
-        description="The desire to speak. A value between 0 and 1. The higher the value, the more the agent wants to speak."
-    )
-    voice_level: float = Field(
-        ...,
-        description="The voice level. A value between 0 and 1. The higher the value, the louder the agent is speaking and leaning into the conversation.",
-    )
-    emoji: str = Field(..., description="An emoji that describes your tone and/or mood.")
-    response: str = Field(..., description="The response the agent wants to say to others in the group.")
-
-    def mood(self):
-        if self.voice_level < 0.25:
-            mood = "passive"
-        elif self.voice_level < 0.5:
-            mood = "vocal"
-        elif self.voice_level < 0.75:
-            mood = "leaning in"
-        else:
-            mood = "aggressive"
-
-        return mood
-
-
-class CharacterThought(BaseModel):
-    agent_name: str = Field(description="The name of the agent")
-    thought: str = Field(description="The thought about the agent")
+    agent_name: Optional[str] = Field(default=None, description="The name of the agent that the thought is about or leave empty if an inner thought.")
+    thought: str = Field(description="The thought to add to the agent's inner monologue.")
 
 
 class ConversationAgentSpec(BaseModel):
     cpu: Reference[ConversationalAgentCPU]
     agent_name: str
-    system_prompt: str
+    system_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when the conversation starts.")
+    personality: str
+    think_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when they are pinged to think.")
+    speak_prompt: Optional[str] = Field(default=None, description="The prompt to show the agent when they are to speak.")
 
 
 class ConversationAgent(Specable[ConversationAgentSpec]):
@@ -98,92 +43,88 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.env = Environment(undefined=StrictUndefined)
         self.cpu = self.spec.cpu.instantiate()
         self.system_prompt = self.spec.system_prompt
+        if not self.system_prompt:
+            self.system_prompt = "You are an agent mimicking a human. You will be given a topic and you should respond to it as if you were a human."
+        self.think_prompt = self.spec.think_prompt
+        if not self.think_prompt:
+            self.think_prompt = dedent("""
+                You have been pinged. You can do one or all of the following:
+                - Express a thought
+                - Show an emotion
+                - Express a desire to speak
+                
+                You can and should include markdown in each section of the response.
+                
+                Remember, you don't need to respond to every ping. You can choose to ignore them, but if you want to express your thoughts or emotions, you should respond to the ping.
+            """).strip()
+        self.speak_prompt = self.spec.speak_prompt
+        if not self.speak_prompt:
+            self.speak_prompt = dedent("""
+                You have been pinged to speak. Respond with what you want to say or an empty string if you do not want to say anything.
+            """).strip()
 
     @register_program()
     async def start_conversation(
-        self, process_id, topic: Annotated[str, Body(description="The topic of the new conversation", embed=True)]
+            self, process_id
     ):
         """
         Called to start the conversation. Will return a new state dictating what the agent wants to do next.
         """
         t = await self.cpu.main_thread(process_id)
-        system_prompt_prelude = "You are an agent mimicking a human. You will be given a topic and you should respond to it as if you were a human. Your personality is:\n"
         await t.set_boot_messages(
             prompts=[
-                SystemCPUMessage(prompt=system_prompt_prelude + self.spec.system_prompt),
-                UserTextCPUMessage(
-                    prompt=f"Your name is {self.spec.agent_name}. "
-                    f"People will address you by that name and you should interpret comments related to that person as you.\n\n"
-                    f"moderator: {topic}\n\n"
-                ),
+                SystemCPUMessage(prompt=self.system_prompt),
+                SystemCPUMessage(prompt="Your personality is:\n" + self.spec.personality)
             ],
         )
-
-        return AgentState(name="idle", data="...conversation started...")
+        yield AgentStateEvent(state="idle")
 
     @register_action("idle")
-    async def record_statement(
-        self, process_id, statements: Annotated[StatementsForAgent, Body(embed=True)]
-    ) -> AgentState[ThoughtResult]:
+    async def add_thoughts(
+            self, process_id, thoughts: Annotated[List[Thought], Body(embed=True), "The thoughts to add to the agent's inner monologue."]
+    ):
         """
-        Called to record a statement from another agent. Will return a new state dictating what the agent wants to do next.
-        Also called to add to this agent's inner monologue.
+        Called to record a thought either from another agent or from the coordinator.
         """
         t = await self.cpu.main_thread(process_id)
+        messages = []
+        for thought in thoughts:
+            if thought.is_inner_voice:
+                messages.append(SystemMessage(content=f"I have a thought: {thought.thought}"))
+            else:
+                messages.append(UserMessage(content=[UserMessageText(text=f"{thought.agent_name} said: {thought.thought}")]))
+
         await self.cpu.memory_unit.storeMessages(
             call_context=t.call_context(),
-            messages=[UserMessage(content=[UserMessageText(text=statements.format(self.spec.agent_name))])],
+            messages=messages,
         )
-        return AgentState(name="idle", data=ThoughtResult(desire_to_speak=0.25))
+        yield AgentStateEvent(state="idle")
 
     @register_action("idle")
-    async def speak(self, process_id, message: Annotated[str, Body(embed=True)]):
+    async def think(self, process_id):
         """
-        Called to allow the agent to speak
+        Called to allow the agent to do one or all of the following:
+        - Express a thought
+        - Express a desire to speak
+        - Show an emotion
         """
+
+        prompt = UserTextCPUMessage(prompt=self.env.from_string(self.think_prompt).render())
         t = await self.cpu.main_thread(process_id)
-        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
+        async for event in t.stream_request(prompts=[prompt], output_format=AgentThought):
             yield event
         yield AgentStateEvent(state="idle")
 
     @register_action("idle")
-    async def speak_amongst_group(
-        self, process_id, message: Annotated[SpeakToGroup, Body(embed=True)]
-    ) -> AgentState[SpeakResult]:
-        """
-        Called to have an agent say a message ONLY to the group of agents specified.
-        """
-        t = await self.cpu.main_thread(process_id)
-        text_message = (
-            f"The following message will only be heard by the coordinator and {message.group}:\n\n{message.message}\n\n"
-        )
-        async for event in t.stream_request(
-            prompts=[UserTextCPUMessage(prompt=text_message)], output_format=SpeakResult
-        ):
-            yield event
-        yield AgentStateEvent(state="idle")
-
-    @register_action("idle")
-    async def describe_thoughts(
-        self, process_id, people: Annotated[List[str], Body(embed=True)]
-    ) -> AgentState[List[CharacterThought]]:
+    async def speak(self, process_id):
         """
         Called to allow the agent to speak
         """
-        instructions = ""
-        if len(people) == 0 or self.spec.agent_name in people:
-            instructions += (
-                f"{self.spec.agent_name}: You are thinking about your own thoughts. "
-                f"Respond with your inner thoughts about the conversation and record that as your name, {self.spec.agent_name}.\n"
-            )
-
-        for person in people:
-            if person != self.spec.agent_name:
-                instructions += f"{person}: You are thinking about {self.spec.agent_name}. Respond with your inner thoughts about {person}.\n"
-
-        message = UserTextCPUMessage(prompt=f"{self.spec.agent_name}: {instructions}\n")
+        prompt = UserTextCPUMessage(prompt=self.speak_prompt)
         t = await self.cpu.main_thread(process_id)
-        resp = await t.run_request(prompts=[message], output_format=List[CharacterThought])
-        return AgentState(name="idle", data=resp)
+        async for event in t.stream_request(prompts=[prompt], output_format=str):
+            yield event
+        yield AgentStateEvent(state="idle")

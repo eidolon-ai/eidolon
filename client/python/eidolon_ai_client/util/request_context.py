@@ -14,7 +14,7 @@ _request_context = ContextVar("request_context")
 
 class _Record(BaseModel):
     key: str
-    value: str
+    value: Any
     propagate: bool
 
 
@@ -39,7 +39,6 @@ class _RequestContextMeta(type):
     @staticmethod
     def set(key: str, value: str | Any, propagate=False):
         logger.debug(f"setting context {key}={value}, propagate={propagate}")
-
         if propagate and not isinstance(value, str):
             raise ValueError("can only propagate string values")
         if "," in key:

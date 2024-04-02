@@ -24,7 +24,7 @@ class AgentCallHistory(BaseModel):
         await AgentOS.symbolic_memory.upsert_one("agent_logic_unit", self.model_dump(), query)
 
     @classmethod
-    async def get_agent_state(cls, parent_process_id: str, parent_thread_id: str):
+    async def get_agent_state(cls, parent_process_id: str, parent_thread_id: Optional[str] = None):
         query = {
             "parent_process_id": parent_process_id,
             "parent_thread_id": parent_thread_id,

@@ -8,11 +8,22 @@ import {DateTime, Interval} from "luxon";
 
 const chatServerURL = process.env.EIDOLON_SERVER
 
-const getUserId = (async () => (await getServerSession(authOptions))?.user?.id)
+const getUser = (async () => (await getServerSession(authOptions))?.user)
+
+export const getAuthHeaders = async () : Promise<Record<string, string>> => {
+    const user = await getUser()
+    if (!user?.access_token) {
+        return {} as Record<string, string>
+    }
+    return {
+        "Authorization": `Bearer ${user?.access_token}`
+    }
+}
+
 export async function getChatEvents(agentName: string, processId: string) {
     revalidatePath(`${chatServerURL}/agents/${agentName}/processes/${processId}/events`)
-    const userId = await getUserId()
-    const results = await fetch(`${chatServerURL}/agents/${agentName}/processes/${processId}/events?userId=${userId}`)
+    const auth_headers = await getAuthHeaders()
+    const results = await fetch(`${chatServerURL}/agents/${agentName}/processes/${processId}/events`,{headers: auth_headers})
         .then(resp => resp.json())
 
     const ret = []
@@ -25,11 +36,12 @@ export async function getChatEvents(agentName: string, processId: string) {
 
 
 export async function getChat(id: string) {
-    const userId = await getUserId()
-    if (!userId || !id) {
+    const auth_headers = await getAuthHeaders()
+    const user = await getUser()
+    if (!user || !id) {
         return null
     }
-    const json = await fetch(`${chatServerURL}/system/processes/${id}?userId=${userId}`).then(resp => {
+    const json = await fetch(`${chatServerURL}/system/processes/${id}`,{headers: auth_headers}).then(resp => {
         if (resp.ok) {
             return resp.json()
         } else {
@@ -41,16 +53,17 @@ export async function getChat(id: string) {
     if (json) {
         json.id = json.process_id
         json.title = json.title || json.agent
-        json.userId = userId
+        json.userId = user.id
         json.path = `/chat/${json.id}`
     }
     return json as Chat
 }
 
 export async function deleteChat(agentName: string, process_id: string) {
-    const userId = await getUserId()
-    await fetch(`${chatServerURL}/agents/${agentName}/processes/${process_id}?userId=${userId}`, {
-        method: "DELETE"
+    const auth_headers = await getAuthHeaders()
+    await fetch(`${chatServerURL}/agents/${agentName}/processes/${process_id}`, {
+        method: "DELETE",
+        headers: auth_headers
     })
 }
 
@@ -150,16 +163,18 @@ export async function getChatsForUI() {
 }
 
 export async function getChats(): Promise<Chat[]> {
-    const userId = await getUserId()
-    const results = await fetch(`${chatServerURL}/system/processes?userId=${userId}`,
-        {next: {tags: ['chats']}}
+    const auth_headers = await getAuthHeaders()
+    const results = await fetch(`${chatServerURL}/system/processes`,
+        {
+            next: {tags: ['chats']},
+            headers: auth_headers
+        }
     ).then(resp => resp.json())
 
     const ret = []
     for (const json of results) {
         json.id = json.process_id
         json.title = json.title || json.agent
-        json.userId = userId
         json.path = `/chat/${json.id}`
         ret.push(json as Chat)
     }
@@ -168,13 +183,14 @@ export async function getChats(): Promise<Chat[]> {
 }
 
 export async function createPID(agentName: string, title: string) {
-    const userId = await getUserId()
+    const auth_headers = await getAuthHeaders()
     const body = {title: title}
     const results = await fetch(`${chatServerURL}/agents/${agentName}/processes`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            ...auth_headers
         }
     })
 
@@ -184,19 +200,11 @@ export async function createPID(agentName: string, title: string) {
 }
 
 export async function getPIDStatus(agentName: string, process_id: string) {
-    const userId = await getUserId()
-    return fetch(`${chatServerURL}/agents/${agentName}/processes/${process_id}/status?userId=${userId}`)
+    const auth_headers = await getAuthHeaders()
+    return fetch(`${chatServerURL}/agents/${agentName}/processes/${process_id}/status`,{headers: auth_headers})
         .then(resp => {
             if (resp.status === 404) {
                 return null
-            } else if (resp.status !== 200) {
-                return resp.text().then(text => {
-                    return {
-                        state: "http_error",
-                        error: text,
-                        available_actions: []
-                    } as ProcessState
-                })
             }
             return resp.json().then((json: Record<string, any>) => json as ProcessState)
         })
