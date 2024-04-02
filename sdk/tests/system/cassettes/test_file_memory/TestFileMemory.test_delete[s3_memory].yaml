@@ -1,0 +1,143 @@
+interactions:
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        Rk9P
+      - 0
+      - null
+    headers:
+      Content-Length:
+      - '3'
+      Content-MD5:
+      - !!binary |
+        a0JpUXFPbkl6MjFhR2xRcklwL3Ivdz09
+      Expect:
+      - !!binary |
+        MTAwLWNvbnRpbnVl
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4zNC43NCBtZC9Cb3RvY29yZSMxLjM0Ljc0IHVhLzIuMCBvcy9tYWNvcyMyMy4yLjAg
+        bWQvYXJjaCN4ODZfNjQgbGFuZy9weXRob24jMy4xMS43IG1kL3B5aW1wbCNDUHl0aG9uIGNmZy9y
+        ZXRyeS1tb2RlI2xlZ2FjeSBCb3RvY29yZS8xLjM0Ljc0IFJlc291cmNl
+      X-Amz-Content-SHA256:
+      - !!binary |
+        VU5TSUdORUQtUEFZTE9BRA==
+      amz-sdk-request:
+      - !!binary |
+        YXR0ZW1wdD0x
+      authorization:
+      - XXXXXX
+    method: PUT
+    uri: https://s3.amazonaws.com/eidolon.test.file.test-deletes3-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 01 Apr 2024 22:00:20 GMT
+      ETag:
+      - '"901890a8e9c8cf6d5a1a542b229febff"'
+      Server:
+      - AmazonS3
+      x-amz-id-2:
+      - mUuCnj02y3Aq7NuNcf4yX/zUyhQUDRqy5IqfC4kz9QGOEGKvEgknYcqlasLLDvxfOlLqHbFZeQk=
+      x-amz-request-id:
+      - DQRS820D0SBGH0F7
+      x-amz-server-side-encryption:
+      - AES256
+    status:
+      code: 200
+      message: OK
+- request:
+    body: <Delete xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Object><Key>foo</Key></Object></Delete>
+    headers:
+      Content-Length:
+      - '96'
+      Content-MD5:
+      - !!binary |
+        UzcxS0lyS3ptVXhQQ2FONERRTjkwZz09
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4zNC43NCBtZC9Cb3RvY29yZSMxLjM0Ljc0IHVhLzIuMCBvcy9tYWNvcyMyMy4yLjAg
+        bWQvYXJjaCN4ODZfNjQgbGFuZy9weXRob24jMy4xMS43IG1kL3B5aW1wbCNDUHl0aG9uIGNmZy9y
+        ZXRyeS1tb2RlI2xlZ2FjeSBCb3RvY29yZS8xLjM0Ljc0IFJlc291cmNl
+      X-Amz-Content-SHA256:
+      - !!binary |
+        NDJkYTI5N2ExNmYyMDhlNzVmZTIwMDQ4YjMwOGVlZTY1ZTkyY2E4NzY5NTQ4MTUxYzY5YjlmNDky
+        OGZkNzQyOQ==
+      amz-sdk-request:
+      - !!binary |
+        YXR0ZW1wdD0x
+      authorization:
+      - XXXXXX
+    method: POST
+    uri: https://s3.amazonaws.com/eidolon.test.file.test-deletes3-memory?delete
+  response:
+    body:
+      string: '<?xml version="1.0" encoding="UTF-8"?>
+
+        <DeleteResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Deleted><Key>foo</Key></Deleted></DeleteResult>'
+    headers:
+      Connection:
+      - close
+      Content-Type:
+      - application/xml
+      Date:
+      - Mon, 01 Apr 2024 22:00:20 GMT
+      Server:
+      - AmazonS3
+      Transfer-Encoding:
+      - chunked
+      x-amz-id-2:
+      - pEoEMd2NM8RFRz2BUGXL+1SPZ1u8tyQ+MByU30rwkUktVIZ1s65Ti8gXPiJ4mY3P8RWsmmkUby4=
+      x-amz-request-id:
+      - DQRKDAB384VPESPD
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4zNC43NCBtZC9Cb3RvY29yZSMxLjM0Ljc0IHVhLzIuMCBvcy9tYWNvcyMyMy4yLjAg
+        bWQvYXJjaCN4ODZfNjQgbGFuZy9weXRob24jMy4xMS43IG1kL3B5aW1wbCNDUHl0aG9uIGNmZy9y
+        ZXRyeS1tb2RlI2xlZ2FjeSBCb3RvY29yZS8xLjM0Ljc0IFJlc291cmNl
+      X-Amz-Content-SHA256:
+      - !!binary |
+        ZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3
+        ODUyYjg1NQ==
+      amz-sdk-request:
+      - !!binary |
+        YXR0ZW1wdD0x
+      authorization:
+      - XXXXXX
+    method: GET
+    uri: https://s3.amazonaws.com/eidolon.test.file.test-deletes3-memory?prefix=foo&encoding-type=url
+  response:
+    body:
+      string: '<?xml version="1.0" encoding="UTF-8"?>
+
+        <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>eidolon.test.file.test-deletes3-memory</Name><Prefix>foo</Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><EncodingType>url</EncodingType><IsTruncated>false</IsTruncated></ListBucketResult>'
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Mon, 01 Apr 2024 22:00:21 GMT
+      Server:
+      - AmazonS3
+      Transfer-Encoding:
+      - chunked
+      x-amz-bucket-region:
+      - us-east-1
+      x-amz-id-2:
+      - 1AdT8pmZ7jc8+WjXx/q1JCybnIit1iTh4kzpkdzIBwgb48+30y4/ZV4cX7THM9fC+N2+XC0hZMw=
+      x-amz-request-id:
+      - C13Z5FG8RNXDZCVC
+    status:
+      code: 200
+      message: OK
+version: 1
