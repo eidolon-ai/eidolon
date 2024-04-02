@@ -3,5 +3,7 @@
   "description": "A tool to explore the Github documentation using GPT-4-latest and RAG",
   "version": "0.1.0",
   "image": "image.webp",
-  "location": "http://localhost:8080"
+  "location": "http://localhost:8080",
+  "type": "copilot",
+  "agent": "repo_expert"
 }

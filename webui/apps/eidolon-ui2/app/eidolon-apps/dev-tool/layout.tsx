@@ -7,7 +7,7 @@ interface DevToolLayoutProps {
 
 export default function DevToolLayout({children}: DevToolLayoutProps) {
   return (
-    <ProcessWithListLayout>
+    <ProcessWithListLayout app_name={'dev-tool'}>
       {children}
     </ProcessWithListLayout>
   )

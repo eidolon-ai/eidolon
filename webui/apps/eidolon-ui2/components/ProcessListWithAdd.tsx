@@ -1,6 +1,6 @@
 'use client'
 
-import {createProcess, getAppPathFromPath, ProcessList} from "@eidolon/components";
+import {createProcess, ProcessList} from "@eidolon/components";
 import {usePathname, useRouter} from "next/navigation";
 import {ProcessStatus} from "@eidolon/client";
 import * as React from "react";
@@ -10,13 +10,15 @@ import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Tool
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
 import {useProcesses} from "@eidolon/components/src/hooks/process_context";
+import {EidolonApp} from "@/utils/eidolon-apps";
 
 export interface DevProcessListWithAddProps {
   machineURL: string
   agentName?: string
+  app: EidolonApp
 }
 
-export const DevProcessListWithAdd = ({machineURL, agentName}: DevProcessListWithAddProps) => {
+export const DevProcessListWithAdd = ({machineURL, agentName, app}: DevProcessListWithAddProps) => {
   const {updateProcesses} = useProcesses()
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
@@ -25,10 +27,7 @@ export const DevProcessListWithAdd = ({machineURL, agentName}: DevProcessListWit
   const addClicked = () => {
     if (agentName) {
       createProcess(machineURL, agentName, "New Chat").then((process) => {
-        const appPath = getAppPathFromPath(pathname)
-        if (appPath) {
-          router.push(appPath + `/${process!.process_id}`)
-        }
+        router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
       }).then(() => updateProcesses(machineURL))
     } else {
       setCreateProcessOpen(true)
@@ -53,10 +52,7 @@ export const DevProcessListWithAdd = ({machineURL, agentName}: DevProcessListWit
         machineURL={machineURL}
         isSelected={(process: ProcessStatus) => pathname.includes(process.process_id)}
         selectChat={(process: ProcessStatus) => {
-          const appPath = getAppPathFromPath(pathname)
-          if (appPath) {
-            router.push(appPath + `/${process.process_id}`)
-          }
+          router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
         }}
         goHome={() => {
         }}

@@ -26,9 +26,9 @@ const Home: NextPage = () => {
       }}
     >
       <Grid container justifyContent={"space-evenly"} spacing={4}>
-        {Object.entries(getAppRegistry()).map(([pathPart, app], index) => (
+        {Object.values(getAppRegistry()).map((app, index) => (
           <Grid key={index} xs={12} sm={6} md={4} lg={3} xl={2}>
-            <EidolonAppItem path={pathPart} app={app}/>
+            <EidolonAppItem path={app.path} app={app}/>
           </Grid>
         ))}
       </Grid>

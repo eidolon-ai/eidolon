@@ -3,5 +3,7 @@
   "description": "A basic chatbot using GPT-4-latest with conversational memory and no tools.",
   "version": "0.1.0",
   "image": "image.webp",
-  "location": "http://localhost:8080"
+  "location": "http://localhost:8080",
+  "type": "copilot",
+  "agent": "conversational_agent"
 }
