@@ -103,6 +103,16 @@ async def test_multiple_prompt_args():
     assert "paris" in resp.data.lower()
 
 
+async def test_generating_title():
+    process = await Agent.get("json_output").create_process()
+    resp = await process.action("generate_title", body="What is the capital of France?")
+    assert "paris" in resp.data.lower()
+    resp = await process.action("converse", body="What is the capital of France?")
+    assert "population" in resp.data
+    assert isinstance(resp.data["population"], int) and resp.data["population"] > 0
+    assert "paris" in resp.data["capital"].lower()
+
+
 async def test_json_output():
     process = await Agent.get("json_output").create_process()
     resp = await process.action("converse", body="What is the capital of France?")

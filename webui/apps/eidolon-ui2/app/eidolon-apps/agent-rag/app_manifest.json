@@ -5,5 +5,10 @@
   "image": "image.webp",
   "location": "http://localhost:8080",
   "type": "copilot",
-  "agent": "repo_expert"
+  "params": {
+    "agent": "repo_expert",
+    "operation": "converse",
+    "inputLabel": "How can I help you?",
+    "allowSpeech": false
+  }
 }

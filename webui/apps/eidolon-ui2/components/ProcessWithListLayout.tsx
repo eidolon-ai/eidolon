@@ -6,12 +6,11 @@ import {EidolonApp} from "@/utils/eidolon-apps";
 
 
 export interface DevTooLayoutProps {
-  agentName?: string
   app: EidolonApp
   children: JSX.Element
 }
 
-export function ProcessWithListLayout({agentName, children, app}: DevTooLayoutProps) {
+export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
   return (
     <ProcessesProvider>
       <Box sx={{
@@ -27,7 +26,6 @@ export function ProcessWithListLayout({agentName, children, app}: DevTooLayoutPr
         >
           <DevProcessListWithAdd
             machineURL={process.env.EIDOLON_SERVER!}
-            agentName={agentName}
             app={app}
           />
         </ResizableDrawer>

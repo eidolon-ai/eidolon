@@ -17,7 +17,7 @@ export interface MessagesWithActionProps {
   agent: string
   processId: string
   operationName: string
-  titleOperationName: string
+  titleOperationName?: string
   inputLabel: string
   allowSpeech?: boolean
   speechAgent?: string
@@ -69,7 +69,7 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
       payload['execute_on_cpu'] = selectedLLM
     }
 
-    if (processState?.state === "initialized") {
+    if (processState?.state === "initialized" && titleOperationName) {
       // generate a title
       await executeOperation(machineUrl, agent, titleOperationName, processId, {body: input})
       updateProcesses(machineUrl).then()

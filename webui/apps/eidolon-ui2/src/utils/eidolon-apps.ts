@@ -4,12 +4,25 @@ import appRegistry from 'eidolon-apps.json'
 export interface EidolonApp {
   name: string;
   description: string;
-  agent: string;
   version: string;
   image: string;
   location: string;
-  type: string;
+  type: "copilot" | "dev"
   path: string
+  params: CopilotParams | DevParams
+}
+
+export interface DevParams {
+}
+
+export interface CopilotParams {
+  "agent": string,
+  "operation": string,
+  "inputLabel": string,
+  "titleOperationName": string | undefined,
+  "allowSpeech": boolean,
+  "speechAgent": string | undefined,
+  "speechOperation": string | undefined
 }
 
 let apps: Record<string, EidolonApp> = {}

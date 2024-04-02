@@ -6,7 +6,12 @@
     "image": "image.webp",
     "location": "http://localhost:8080",
     "type": "copilot",
-    "agent": "repo_expert"
+    "params": {
+      "agent": "repo_expert",
+      "operation": "converse",
+      "inputLabel": "How can I help you?",
+      "allowSpeech": false
+    }
   },
   "chatbot": {
     "name": "Chatbot",
@@ -15,7 +20,15 @@
     "image": "image.webp",
     "location": "http://localhost:8080",
     "type": "copilot",
-    "agent": "conversational_agent"
+    "params": {
+      "agent": "conversational_agent",
+      "operation": "converse",
+      "inputLabel": "How can I help you?",
+      "titleOperationName": "generate_title",
+      "allowSpeech": true,
+      "speechAgent": "speech_agent",
+      "speechOperation": "speech_to_text"
+    }
   },
   "control-k8s": {
     "name": "Chat with kubernetes",
@@ -29,7 +42,9 @@
     "description": "The developer tools can be used to test and debug any Eidolon operation.",
     "version": "0.1.0",
     "image": "image.webp",
-    "location": "http://localhost:8080"
+    "location": "http://localhost:8080",
+    "type": "dev",
+    "params": {}
   },
   "minority-report": {
     "name": "SF Crime analytics",

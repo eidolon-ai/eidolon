@@ -10,6 +10,7 @@ from pydantic import field_validator, model_validator
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserTextCPUMessage
@@ -231,6 +232,8 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         yield AgentStateEvent(state=action.output_state)
 
     async def _gen_title(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
+        last_state = RequestContext.get("__last_state__")
+
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         execute_on_cpu = None
         request_body = to_jsonable_python(kwargs.get("body") or {})
@@ -259,4 +262,5 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
 
         yield StringOutputEvent(content=response)
         # return to the previous state
-        yield AgentStateEvent(state=process_obj.state)
+        print(process_obj.state)
+        yield AgentStateEvent(state=last_state)

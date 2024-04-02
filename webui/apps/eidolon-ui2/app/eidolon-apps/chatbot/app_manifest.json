@@ -5,5 +5,13 @@
   "image": "image.webp",
   "location": "http://localhost:8080",
   "type": "copilot",
-  "agent": "conversational_agent"
+  "params": {
+    "agent": "conversational_agent",
+    "operation": "converse",
+    "inputLabel": "How can I help you?",
+    "titleOperationName": "generate_title",
+    "allowSpeech": true,
+    "speechAgent": "speech_agent",
+    "speechOperation": "speech_to_text"
+  }
 }
