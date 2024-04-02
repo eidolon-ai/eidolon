@@ -9,7 +9,7 @@ from openai import BaseModel
 from pydantic import field_validator, model_validator
 from pydantic_core import to_jsonable_python
 
-from eidolon_ai_client.events import AgentStateEvent, StreamEvent
+from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserTextCPUMessage
@@ -51,7 +51,7 @@ class ActionDefinition(BaseModel):
         if self.input_schema is not None:
             properties["body"] = dict(type="object", properties=self.input_schema)
             required.append("body")
-        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus and not agent.spec.can_generate_title:
+        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus:
             properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
             required.append("body")
         elif user_vars:
@@ -66,8 +66,6 @@ class ActionDefinition(BaseModel):
             required.append("file")
         elif self.files == "multiple":
             properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
-        if agent.spec.can_generate_title:
-            properties["body"]["properties"]["generate_title"] = dict(type="boolean", default=False)
         if agent.spec.cpus:
             cpu_names = [cpu.title for cpu in agent.spec.cpus]
             default = agent.cpu.title
@@ -99,7 +97,7 @@ class SimpleAgentSpec(BaseModel):
     actions: List[ActionDefinition] = [ActionDefinition()]
     cpu: AnnotatedReference[AgentCPU] = None
     cpus: Optional[List[NamedCPU]] = []
-    can_generate_title: bool = False
+    title_generation_mode: Literal["none", "on_request"] = "on_request"
 
     @model_validator(mode="before")
     def validate_cpu(cls, value):
@@ -139,6 +137,30 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                 self._register_refs_logic_unit(cpu, self.spec.agent_refs)
                 self.cpus.append(cpu)
 
+        if self.spec.title_generation_mode == "on_request":
+            # add a title generation action
+            action = ActionDefinition(
+                name="generate_title",
+                description="Generate a title for the conversation",
+                user_prompt=self.generate_title_prompt + "{{ body }}",
+                output_schema="str",
+                files="disable",
+                allowed_states=["initialized", "idle"],
+                output_state="idle",
+            )
+
+            setattr(
+                self,
+                action.name,
+                register_action(
+                    *action.allowed_states,
+                    name=action.name,
+                    input_model=action.make_input_schema,
+                    output_model=action.make_output_schema,
+                    description=action.description,
+                )(self._act_wrapper(action, SimpleAgent._gen_title)),
+            )
+
         for action in self.spec.actions:
             setattr(
                 self,
@@ -149,7 +171,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                     input_model=action.make_input_schema,
                     output_model=action.make_output_schema,
                     description=action.description,
-                )(self._act_wrapper(action)),
+                )(self._act_wrapper(action, SimpleAgent._act)),
             )
 
     def _register_refs_logic_unit(self, cpu, agent_refs):
@@ -166,22 +188,18 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=self.spec.system_prompt)])
 
     @staticmethod
-    def _act_wrapper(action):
+    def _act_wrapper(action, action_fn):
         async def fn(self, process_id, **kwargs):
-            async for e in SimpleAgent._act(self, action, process_id, **kwargs):
+            async for e in action_fn(self, action, process_id, **kwargs):
                 yield e
 
         return fn
 
     async def _act(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
         execute_on_cpu = None
-        generate_title = False
         request_body = to_jsonable_python(kwargs.get("body") or {})
         if "execute_on_cpu" in request_body:
             execute_on_cpu = request_body.pop("execute_on_cpu")
-        if "generate_title" in request_body:
-            generate_title = request_body.pop("generate_title")
-            generate_title = generate_title == "true" or generate_title is True
 
         body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
         if isinstance(request_body, dict):
@@ -205,16 +223,39 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         else:
             cpu = self.cpu
 
-        if generate_title:
-            title_message = UserTextCPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
-            response = await (await cpu.new_thread(process_id)).run_request(prompts=[title_message])
-            process_obj = await ProcessDoc.find_one(query={"_id": process_id})
-            await process_obj.update(title=response)
-            yield AgentStateEvent(state=process_obj.state, title=response)
-
         thread = await cpu.main_thread(process_id)
         response = thread.stream_request(output_format=action.output_schema, prompts=[*image_messages, text_message])
 
         async for event in response:
             yield event
+        yield AgentStateEvent(state=action.output_state)
+
+    async def _gen_title(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
+        execute_on_cpu = None
+        request_body = to_jsonable_python(kwargs.get("body") or {})
+        if "execute_on_cpu" in request_body:
+            execute_on_cpu = request_body.pop("execute_on_cpu")
+
+        body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
+        if isinstance(request_body, dict):
+            body.update(request_body)
+
+        env = Environment(undefined=StrictUndefined)
+        text_message = UserTextCPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
+
+        if execute_on_cpu:
+            cpu = self.cpu
+            for named_cpu in self.cpus:
+                if named_cpu.title == execute_on_cpu:
+                    cpu = named_cpu
+                    break
+        else:
+            cpu = self.cpu
+
+        title_message = UserTextCPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
+        response = await (await cpu.new_thread(process_id)).run_request(prompts=[title_message])
+        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+        await process_obj.update(title=response)
+
+        yield StringOutputEvent(content=response)
         yield AgentStateEvent(state=action.output_state)

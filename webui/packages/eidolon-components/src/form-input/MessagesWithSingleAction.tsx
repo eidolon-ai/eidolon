@@ -9,19 +9,22 @@ import Recorder from "../audio/Recorder";
 import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
 import {ChooseLLMElement} from "../messages/choose-llm-element";
 import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
+import {executeOperation} from "../client-api-helpers/process-event-helper";
+import {useProcesses} from "../hooks/process_context";
 
 export interface MessagesWithActionProps {
   machineUrl: string
   agent: string
   processId: string
   operationName: string
+  titleOperationName: string
   inputLabel: string
   allowSpeech?: boolean
   speechAgent?: string
   speechOperation?: string
 }
 
-export function MessagesWithSingleAction({machineUrl, agent, processId, operationName, inputLabel, allowSpeech, speechAgent, speechOperation}: MessagesWithActionProps) {
+export function MessagesWithSingleAction({machineUrl, agent, processId, operationName, titleOperationName, inputLabel, allowSpeech, speechAgent, speechOperation}: MessagesWithActionProps) {
   const {supportedLLMs, selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, agent, operationName)
   const {
     processState,
@@ -30,6 +33,7 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
     handleCancel
   } = useProcessEvents(machineUrl, agent, processId)
   const [input, setInput] = useState("")
+  const {updateProcesses} = useProcesses()
 
   const handleKeyDown = async (
     event: React.KeyboardEvent
@@ -66,7 +70,9 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
     }
 
     if (processState?.state === "initialized") {
-      payload['generate_title'] = true
+      // generate a title
+      await executeOperation(machineUrl, agent, titleOperationName, processId, {body: input})
+      updateProcesses(machineUrl).then()
     }
     setInput("")
     await executeAction(machineUrl, agent, operationName, payload)

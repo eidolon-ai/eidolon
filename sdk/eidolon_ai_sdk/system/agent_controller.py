@@ -136,7 +136,7 @@ class AgentController:
             )
         last_state = process.state
         process = await process.update(
-            agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
+            check_update_time=True, agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
         )
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
@@ -251,8 +251,6 @@ class AgentController:
             logger.info(f"Process {process.record_id} was cancelled")
             if not ended:
                 if not transitioned:
-                    # update the process object as it might have been updated by the function
-                    process = await ProcessDoc.find_one(query={"_id": process.record_id})
                     await process.update(state=last_state)
                     actions = self.get_available_actions(last_state)
                     events_to_store.append(AgentStateEvent(state=last_state, available_actions=actions))
@@ -260,8 +258,6 @@ class AgentController:
 
             raise
         finally:
-            # update the process object as it might have been updated by the function
-            process = await ProcessDoc.find_one(query={"_id": process.record_id})
             await store_events(self.name, process.record_id, events_to_store)
             # get the latest state and if terminated, delete the process
             latest_record = await self.get_latest_process_event(process.record_id)
@@ -293,15 +289,11 @@ class AgentController:
                     if event.is_root_and_type(AgentStateEvent):
                         state_change = True
                         event.available_actions = self.get_available_actions(event.state)
-                        # update the process object as it might have been updated by the function
-                        process = await ProcessDoc.find_one(query={"_id": process.record_id})
                         await process.update(state=event.state)
                     yield event
                 else:
                     logger.warning(f"Received event after end event ({event.event_type}), ignoring")
             if not state_change:
-                # update the process object as it might have been updated by the function
-                process = await ProcessDoc.find_one(query={"_id": process.record_id})
                 await process.update(state="terminated")
                 yield AgentStateEvent(state="terminated", available_actions=self.get_available_actions("terminated"))
             if not seen_end:
@@ -309,16 +301,12 @@ class AgentController:
         except HTTPException as e:
             logger.warning(f"HTTP Error {e}", exc_info=logger.isEnabledFor(logging.DEBUG))
             if not seen_end:
-                # update the process object as it might have been updated by the function
-                process = await ProcessDoc.find_one(query={"_id": process.record_id})
                 await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
                 yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
                 yield ErrorEvent(reason=e.detail, details=dict(status_code=e.status_code))
         except Exception as e:
             logger.exception(f"Unhandled Error {e}")
             if not seen_end:
-                # update the process object as it might have been updated by the function
-                process = await ProcessDoc.find_one(query={"_id": process.record_id})
                 await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
                 yield AgentStateEvent(
                     state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")

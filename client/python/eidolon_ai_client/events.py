@@ -135,7 +135,6 @@ class AgentStateEvent(BaseStreamEvent):
     event_type: Literal["agent_state"] = "agent_state"
     state: str
     available_actions: List[str] = None  # this is filled in by the server, agents should leave the default
-    title: Optional[str] = None
 
 
 StreamEvent = (

@@ -2,17 +2,15 @@
 
 import {useEffect, useRef, useState} from "react";
 import {ProcessStatus} from "@eidolon/client";
-import {AgentStateElement, ElementsAndLookup} from "../lib/display-elements";
+import {ElementsAndLookup} from "../lib/display-elements";
 import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper";
 import {getProcessStatus} from "../client-api-helpers/process-helper";
-import {useProcesses} from "./process_context";
 
 export function useProcessEvents(machineUrl: string, agent: string, processId: string) {
   const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
   const [elementsAndLookup, setElementsAndLookup] =
     useState<ElementsAndLookup>({elements: [], lookup: {}})
-  const {updateProcesses} = useProcesses()
 
   function getChatEvents() {
     setElementsAndLookup({elements: [], lookup: {}})
@@ -46,17 +44,7 @@ export function useProcessEvents(machineUrl: string, agent: string, processId: s
 
     cancelFetchController.current = new AbortController();
     try {
-      let lastProcessEvent = elementsAndLookup.elements.length
-      const updateElements = (elements: ElementsAndLookup) => {
-        const titleElements = elements.elements.slice(lastProcessEvent).filter((element) => element.type === "agent-state").map((element) => element as AgentStateElement)
-          .filter((element) => element.title)
-        if (titleElements.length > 0) {
-          updateProcesses(machineUrl)
-        }
-        lastProcessEvent = elements.elements.length
-        setElementsAndLookup(elements)
-      }
-      await executeServerOperation(machine, agent, operation, processId, data, elementsAndLookup, updateElements, cancelFetchController.current)
+      await executeServerOperation(machine, agent, operation, processId, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)
       setAgentState();
       cancelFetchController.current = null;
     } catch (error) {

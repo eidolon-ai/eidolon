@@ -22,6 +22,7 @@ export default async function ({params}: ProcessPageProps) {
       agent={processStatus.agent}
       processId={processStatus.process_id}
       operationName={"converse"}
+      titleOperationName={"generate_title"}
       inputLabel={"Enter question about the documentation here..."}
       allowSpeech={true}
       speechAgent={"speech_agent"}
