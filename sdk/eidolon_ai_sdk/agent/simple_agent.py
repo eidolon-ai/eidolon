@@ -51,7 +51,7 @@ class ActionDefinition(BaseModel):
         if self.input_schema is not None:
             properties["body"] = dict(type="object", properties=self.input_schema)
             required.append("body")
-        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus:
+        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus and not agent.spec.can_generate_title:
             properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
             required.append("body")
         elif user_vars:
@@ -66,7 +66,8 @@ class ActionDefinition(BaseModel):
             required.append("file")
         elif self.files == "multiple":
             properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
-        properties["body"]["properties"]["generate_title"] = dict(type="boolean", default=False)
+        if agent.spec.can_generate_title:
+            properties["body"]["properties"]["generate_title"] = dict(type="boolean", default=False)
         if agent.spec.cpus:
             cpu_names = [cpu.title for cpu in agent.spec.cpus]
             default = agent.cpu.title
@@ -96,15 +97,21 @@ class SimpleAgentSpec(BaseModel):
     system_prompt: str = "You are a helpful assistant"
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
-    cpu: Optional[AnnotatedReference[AgentCPU]] = None
+    cpu: AnnotatedReference[AgentCPU] = None
     cpus: Optional[List[NamedCPU]] = []
+    can_generate_title: bool = False
 
-    @model_validator(mode="after")
-    def validate_cpu(self):
-        if self.cpu and self.cpus:
+    @model_validator(mode="before")
+    def validate_cpu(cls, value):
+        if "cpu" in value and "cpus" in value:
             raise ValueError("Cannot specify both cpu and cpus")
-        if not self.cpu and not self.cpus:
-            raise ValueError("Must specify either cpu or cpus")
+        return value
+
+    # noinspection PyTypeChecker
+    @model_validator(mode="after")
+    def validate_cpus(self):
+        if self.cpus:
+            self.cpu = None
         return self
 
 

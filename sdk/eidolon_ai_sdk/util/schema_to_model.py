@@ -120,7 +120,7 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
                     )
                     fields[property_name] = wrap_optional(List[nested_item_model], makeFieldOrDefaultValue())
                 else:
-                    python_type = get_python_type(items_schema, str)
+                    python_type = get_python_type(property_name, items_schema, str)
                     fields[property_name] = wrap_optional(List[python_type], makeFieldOrDefaultValue())
             else:
                 fields[property_name] = wrap_optional(get_python_type(property_name, property_schema), makeFieldOrDefaultValue())

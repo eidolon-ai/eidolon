@@ -4,6 +4,7 @@ metadata:
   name: conversational_agent
 spec:
   system_prompt: "You are a helpful assistant."
+  can_generate_title: true
   cpus:
     - cpu: MistralSmall
       title: Mistral Small
