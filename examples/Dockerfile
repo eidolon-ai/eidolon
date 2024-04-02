@@ -21,6 +21,5 @@ RUN adduser --system --uid 1001 eidolon
 USER eidolon
 EXPOSE 8080
 ENV PYTHONUNBUFFERED 1
-WORKDIR app
 ENTRYPOINT ["eidolon-server"]
 CMD ["resources"]
