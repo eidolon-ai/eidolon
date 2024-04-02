@@ -1,5 +1,4 @@
 import {ProcessWithListLayout} from "../../../components/ProcessWithListLayout"
-import {PropsWithChildren} from "react";
 
 interface ChatbotLayoutProps {
   children: JSX.Element

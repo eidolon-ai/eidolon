@@ -20,6 +20,7 @@ from eidolon_ai_sdk.agent.openai_whisper_agent import AutonomousSpeechAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
+from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
@@ -32,6 +33,7 @@ from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
 from eidolon_ai_sdk.cpu.conversation_memory_unit import RawMemoryUnit
 from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.llm.mistral_llm_unit import MistralGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
@@ -126,11 +128,13 @@ def named_builtins():
         IOUnit,
         (LLMUnit, OpenAIGPT),
         OpenAIGPT,
+        MistralGPT,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
         WebSearch,
         Search,
         Browser,
+        Retriever,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
         MongoSymbolicMemory,

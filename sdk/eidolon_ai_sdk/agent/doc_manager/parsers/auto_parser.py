@@ -43,7 +43,7 @@ class AutoParser(DocumentParser):
 
             yield from LanguageParser(LanguageParserSpec(language="cobol")).parse(blob)
         elif (
-            blob.mimetype.startswith("text/")
+            blob.mimetype and blob.mimetype.startswith("text/")
             or blob.mimetype == "application/json"
             or blob.mimetype == "application/xml"
             or blob.mimetype == "application/yaml"

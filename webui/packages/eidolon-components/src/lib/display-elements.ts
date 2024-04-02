@@ -56,6 +56,7 @@ export interface ToolCallEndElement extends DisplayElement {
 export interface AgentStateElement extends DisplayElement {
   type: "agent-state",
   state: string
+  title?: string
   availableActions: string[]
 }
 
@@ -125,12 +126,17 @@ export const makeElement = (event: ChatEvent) => {
         type: "tool-call-end",
         contextId: event.context_id
       } as ToolCallEndElement
-    case "agent_state":
-      return {
+    case "agent_state": {
+      const state = {
         type: "agent-state",
         state: event.state,
         availableActions: event.available_actions
-      } as AgentStateElement
+      } as AgentStateElement;
+      if (event.title) {
+        state.title = event.title
+      }
+      return state
+    }
   }
 
   return undefined

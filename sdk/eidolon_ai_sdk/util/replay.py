@@ -12,8 +12,9 @@ from pydantic import BaseModel
 from srsly.ruamel_yaml import YAML
 from srsly.ruamel_yaml.scalarstring import walk_tree
 
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.util.str_utils import log_stack_trace
 
 
 class ReplayConfig(BaseModel):
@@ -43,7 +44,7 @@ async def default_parser(resp):
 
 
 def replayable(
-    fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
+        fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
     config = AgentOS.get_instance(ReplayConfig)
 
@@ -69,7 +70,8 @@ def replayable(
                 await AgentOS.file_memory.write_file(loc + "/deserializer.dill", dill.dumps(deserializer))
                 await AgentOS.file_memory.write_file(loc + "/parser.dill", dill.dumps(parser))
             except Exception as e:
-                logger.exception(f"Error saving resume point: {e}")
+                log_stack_trace()
+                logger.exception(e)
 
     @wraps(fn)
     async def wrapper_async_gen(*args, **kwargs):

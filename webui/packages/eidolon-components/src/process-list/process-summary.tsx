@@ -1,6 +1,6 @@
 'use client'
 
-import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText} from "@mui/material";
+import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText, Typography} from "@mui/material";
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {Delete} from '@mui/icons-material';
 import {ProcessStatus} from "@eidolon/client";
@@ -27,14 +27,16 @@ export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: Pro
 
   return (
     <ListItem
+      dense
       disablePadding={true}
       sx={{"&:hover .MuiListItemSecondaryAction-root": {visibility: "inherit"}}}
     >
       <ListItemButton
         key={chat?.process_id}
         selected={isSelected(chat)}
+        sx={{paddingTop: 0, paddingBottom:0}}
       >
-        <ListItemIcon onClick={handleExpandClick}>
+        <ListItemIcon onClick={handleExpandClick} sx={{minWidth: "28px"}}>
           {chat.children?.length && (
             open ? <UnfoldLess sx={{width: 24}}/> : <UnfoldMore sx={{width: 24}}/>
           )}
@@ -43,7 +45,9 @@ export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: Pro
           onClick={() => {
             selectChat(chat)
           }}
-          primary={`${chat.title}`}/>
+          >
+          <Typography fontSize={"0.9em"}>{chat.title}</Typography>
+        </ListItemText>
         <ListItemSecondaryAction
           // only show on hover
           sx={{visibility: "hidden"}}

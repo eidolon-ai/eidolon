@@ -1,12 +1,14 @@
 'use client'
 
-import {Box, Button, Paper, Skeleton, TextField} from "@mui/material";
+import {Box, Button, Divider, Paper, Skeleton, TextField, Typography} from "@mui/material";
 import {ArrowCircleUpRounded, CancelRounded} from "@mui/icons-material";
 import {useState} from "react";
 import {useProcessEvents} from "../hooks/useProcessEvents";
 import {EidolonEvents} from "../messages/eidolon-events";
-import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 import Recorder from "../audio/Recorder";
+import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
+import {ChooseLLMElement} from "../messages/choose-llm-element";
+import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 
 export interface MessagesWithActionProps {
   machineUrl: string
@@ -20,6 +22,7 @@ export interface MessagesWithActionProps {
 }
 
 export function MessagesWithSingleAction({machineUrl, agent, processId, operationName, inputLabel, allowSpeech, speechAgent, speechOperation}: MessagesWithActionProps) {
+  const {supportedLLMs, selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, agent, operationName)
   const {
     processState,
     elementsAndLookup,
@@ -54,13 +57,24 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
   }
 
   async function doAction() {
-    const ipt = input
+    const payload: Record<string, any> = {
+      body: input
+    }
+
+    if (supportedLLMs && supportedLLMs.length > 0) {
+      payload['execute_on_cpu'] = selectedLLM
+    }
+
+    if (processState?.state === "initialized") {
+      payload['generate_title'] = true
+    }
     setInput("")
-    await executeAction(machineUrl, agent, operationName, ipt)
+    await executeAction(machineUrl, agent, operationName, payload)
   }
 
   let content = (
-    <div style={{display: "flex", flexDirection:"row", width:"100%"}}>
+    <div style={{display: "flex", flexDirection: "row", width: "100%"}}>
+      {/*<FileUpload machineUrl={machineUrl} process_id={processId}/>*/}
       <TextField
         multiline
         variant={"standard"}
@@ -150,11 +164,19 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
           borderStyle: "solid",
           borderColor: "lightblue",
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
         }}
       >
-        {content}
-        {button}
+        <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", marginLeft: "8px", marginRight: "8px"}}>
+          <ChooseLLMElement supportedLLMs={supportedLLMs} selectedLLM={selectedLLM} setSelectedLLM={setSelectedLLM}
+          />
+          <Typography sx={{marginBottom: "6px"}} alignSelf={"end"} variant={"caption"}>Press <b>Shift-Enter</b> to add a line</Typography>
+        </div>
+        <Divider sx={{marginTop: "-1px"}}/>
+        <div style={{width: "100%", display: "flex", flexDirection: "row"}}>
+          {content}
+          {button}
+        </div>
       </Paper>
     </Box>
   )

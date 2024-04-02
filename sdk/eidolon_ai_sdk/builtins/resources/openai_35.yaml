@@ -1,0 +1,11 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: GPT3.5-turbo
+  annotations:
+    - title: "OpenAI GPT 3.5 Turbo"
+spec:
+    implementation: AgentCPU
+    llm_unit:
+      implementation: OpenAIGPT
+      model: "gpt-3.5-turbo-0125"

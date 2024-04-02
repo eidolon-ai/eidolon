@@ -9,6 +9,7 @@ import {StartProgramDialog} from "../app/eidolon-apps/dev-tool/components/start-
 import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
+import {useProcesses} from "@eidolon/components/src/hooks/process_context";
 
 export interface DevProcessListWithAddProps {
   machineURL: string
@@ -16,6 +17,7 @@ export interface DevProcessListWithAddProps {
 }
 
 export const DevProcessListWithAdd = ({machineURL, agentName}: DevProcessListWithAddProps) => {
+  const {updateProcesses} = useProcesses()
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
@@ -27,7 +29,7 @@ export const DevProcessListWithAdd = ({machineURL, agentName}: DevProcessListWit
         if (appPath) {
           router.push(appPath + `/${process!.process_id}`)
         }
-      })
+      }).then(() => updateProcesses(machineURL))
     } else {
       setCreateProcessOpen(true)
     }

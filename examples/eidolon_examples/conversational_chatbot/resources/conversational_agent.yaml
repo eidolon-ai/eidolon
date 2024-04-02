@@ -4,3 +4,15 @@ metadata:
   name: conversational_agent
 spec:
   system_prompt: "You are a helpful assistant."
+  cpus:
+    - cpu: MistralSmall
+      title: Mistral Small
+    - cpu: MistralMedium
+      title: Mistral Medium
+    - cpu: MistralLarge
+      title: Mistral Large
+    - cpu: GPT3.5-turbo
+      title: GPT3.5 Turbo
+    - cpu: GPT4-turbo
+      title: GPT4 Turbo
+      default: true
