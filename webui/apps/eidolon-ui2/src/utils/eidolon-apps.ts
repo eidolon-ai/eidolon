@@ -25,6 +25,11 @@ export interface CopilotParams {
   "speechOperation": string | undefined
 }
 
+interface RawAgentLocation {
+  agent: string | undefined
+  machine: string
+}
+
 export interface AgentLocation {
   agent: string
   machine: string
@@ -32,9 +37,12 @@ export interface AgentLocation {
 
 const agentRegistry: Record<string, AgentLocation> = {}
 if (process.env.EIDOLON_AGENT_REGISTRY) {
-  const registry: Record<string, AgentLocation> = JSON.parse(process.env.EIDOLON_AGENT_REGISTRY)
+  const registry: Record<string, RawAgentLocation> = JSON.parse(process.env.EIDOLON_AGENT_REGISTRY)
   for (const [key, value] of Object.entries(registry)) {
-    agentRegistry[key] = value
+    if (!value.agent) {
+      value.agent = key
+    }
+    agentRegistry[key] = value as AgentLocation
   }
 }
 
