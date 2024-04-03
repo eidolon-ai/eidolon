@@ -25,6 +25,19 @@ export interface CopilotParams {
   "speechOperation": string | undefined
 }
 
+export interface AgentLocation {
+  agent: string
+  machine: string
+}
+
+const agentRegistry: Record<string, AgentLocation> = {}
+if (process.env.EIDOLON_AGENT_REGISTRY) {
+  const registry: Record<string, AgentLocation> = JSON.parse(process.env.EIDOLON_AGENT_REGISTRY)
+  for (const [key, value] of Object.entries(registry)) {
+    agentRegistry[key] = value
+  }
+}
+
 let apps: Record<string, EidolonApp> = {}
 
 for (const [key, value] of Object.entries(appRegistry)) {
@@ -33,6 +46,12 @@ for (const [key, value] of Object.entries(appRegistry)) {
   app.path = `${key}`
   if (app.type === 'copilot') {
     app.path = `sp/${key}`
+    const params = app.params as CopilotParams
+    if (params.agent in agentRegistry) {
+      const location = agentRegistry[params.agent]!
+      params.agent = location.agent
+      app.location = location.machine
+    }
   }
   app.image = image.default.src
   apps[key] = app
