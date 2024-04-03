@@ -1,8 +1,9 @@
 import {notFound} from "next/navigation";
 import * as React from "react";
-import {MessagesWithSingleAction} from "@eidolon/components/src/form-input/MessagesWithSingleAction";
-import {CopilotParams, getApp} from "@/utils/eidolon-apps";
+import {CopilotPanel} from "@eidolon/components/src/form-input/copilot_panel";
+import {getApp} from "@/utils/eidolon-apps";
 import {_processHandler} from "../../../../api/eidolon/eidolon_helpers";
+import {CopilotParams} from "@eidolon/components";
 
 export interface ProcessPageProps {
   params: {
@@ -22,16 +23,10 @@ export default async function ({params}: ProcessPageProps) {
   }
 
   return (
-    <MessagesWithSingleAction
+    <CopilotPanel
       machineUrl={processStatus.machine}
-      agent={processStatus.agent}
       processId={processStatus.process_id}
-      operationName={options.operation}
-      titleOperationName={options.titleOperationName}
-      inputLabel={options.inputLabel}
-      allowSpeech={options.allowSpeech}
-      speechAgent={options.speechAgent}
-      speechOperation={options.speechOperation}
+      copilotParams={options}
     />
   )
 }
