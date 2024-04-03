@@ -161,7 +161,6 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             fn=_llm_request(), name_override="anthropic_completion", parser=_raw_parser
         )
         complete_message = ""
-        tools_to_call = []
         try:
             async for message in llm_request(client_args=self.spec.client_args, **request):
                 # todo -- handle tool calls in some weird way...

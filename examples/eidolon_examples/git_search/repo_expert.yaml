@@ -14,10 +14,6 @@ spec:
     Use your code_search and/or example_search tools when more information would be helpful.
     Think carefully.
   cpus:
-    - cpu: MistralSmall
-      title: Mistral Small
-    - cpu: MistralMedium
-      title: Mistral Medium
     - cpu: MistralLarge
       title: Mistral Large
     - cpu: GPT3.5-turbo
