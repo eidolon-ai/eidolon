@@ -10,7 +10,10 @@
       "agent": "repo_expert",
       "operation": "converse",
       "inputLabel": "How can I help you?",
-      "allowSpeech": false
+      "titleOperationName": "generate_title",
+      "allowSpeech": true,
+      "speechAgent": "speech_agent",
+      "speechOperation": "speech_to_text"
     }
   },
   "chatbot": {

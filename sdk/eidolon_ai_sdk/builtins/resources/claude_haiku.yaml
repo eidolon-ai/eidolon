@@ -1,0 +1,11 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: ClaudeHaiku
+  annotations:
+    - title: "Claude Haiku"
+spec:
+    implementation: AgentCPU
+    llm_unit:
+      implementation: AnthropicLLMUnit
+      model: "claude-3-haiku-20240307"
