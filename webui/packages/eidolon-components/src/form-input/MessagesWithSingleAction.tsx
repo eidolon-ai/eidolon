@@ -24,7 +24,17 @@ export interface MessagesWithActionProps {
   speechOperation?: string
 }
 
-export function MessagesWithSingleAction({machineUrl, agent, processId, operationName, titleOperationName, inputLabel, allowSpeech, speechAgent, speechOperation}: MessagesWithActionProps) {
+export function MessagesWithSingleAction({
+                                           machineUrl,
+                                           agent,
+                                           processId,
+                                           operationName,
+                                           titleOperationName,
+                                           inputLabel,
+                                           allowSpeech,
+                                           speechAgent,
+                                           speechOperation
+                                         }: MessagesWithActionProps) {
   const {supportedLLMs, selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, agent, operationName)
   const {
     processState,
@@ -61,17 +71,18 @@ export function MessagesWithSingleAction({machineUrl, agent, processId, operatio
   }
 
   async function doAction() {
-    const payload: Record<string, any> = {
-      body: input
-    }
+    let payload: any = input
 
     if (supportedLLMs && supportedLLMs.length > 0) {
-      payload['execute_on_cpu'] = selectedLLM
+      payload = {
+        body: input,
+        execute_on_cpu: selectedLLM
+      }
     }
 
     if (processState?.state === "initialized" && titleOperationName) {
       // generate a title
-      await executeOperation(machineUrl, agent, titleOperationName, processId, {body: input})
+      await executeOperation(machineUrl, agent, titleOperationName, processId, payload)
       updateProcesses(machineUrl).then()
     }
     setInput("")

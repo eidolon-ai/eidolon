@@ -1,0 +1,11 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: ClaudeSonnet
+  annotations:
+    - title: "Claude Sonnet"
+spec:
+    implementation: AgentCPU
+    llm_unit:
+      implementation: AnthropicLLMUnit
+      model: "claude-3-sonnet-20240229"
