@@ -4,6 +4,10 @@ metadata:
   name: conversational_agent
 spec:
   system_prompt: "You are a helpful assistant."
+  actions:
+    - name: "converse"
+      description: "A copilot that engages with the user."
+      allow_file_upload: true
   cpus:
     - cpu: MistralSmall
       title: Mistral Small

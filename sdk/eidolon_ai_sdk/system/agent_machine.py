@@ -21,7 +21,7 @@ from ..memory.file_memory import FileMemory
 from ..memory.semantic_memory import SymbolicMemory
 from ..memory.similarity_memory import SimilarityMemory
 from ..security.permissions import PermissionException
-from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
+from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem, FileHandle
 from ..security.security_manager import SecurityManager
 
 
@@ -170,9 +170,9 @@ class AgentMachine(Specable[MachineSpec]):
         file_md = None
         if mime_type:
             file_md = {"mime_type": mime_type}
+        file_id = await self.process_file_system.write_file(process_id, file_bytes, file_md)
         return JSONResponse(
-            content={"file_id": await self.process_file_system.write_file(process_id, file_bytes, file_md)},
-            status_code=200,
+            content=FileHandle(machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id).model_dump(), status_code=200,
         )
 
     async def download_file(self, process_id: str, file_id: str):

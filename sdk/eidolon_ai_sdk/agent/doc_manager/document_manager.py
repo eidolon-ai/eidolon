@@ -1,21 +1,20 @@
 import asyncio
 import logging
-import time
-from pydantic import BaseModel, Field
 from typing import List
 
+import time
+from pydantic import BaseModel, Field
+
+from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     DocumentLoader,
-    FileInfo,
     RemovedFile,
     ModifiedFile,
     AddedFile,
 )
-from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
-from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
-from eidolon_ai_client.util.logger import logger
 
 
 class SearchResult(BaseModel):
@@ -40,8 +39,7 @@ class DocumentManagerSpec(BaseModel):
     name: str
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
     loader: AnnotatedReference[DocumentLoader]
-    parser: AnnotatedReference[DocumentParser]
-    splitter: AnnotatedReference[DocumentTransformer]
+    doc_processor: AnnotatedReference[DocumentProcessor]
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
@@ -52,42 +50,9 @@ class DocumentManager(Specable[DocumentManagerSpec]):
         Specable.__init__(self, **kwargs)
         self.loader = self.spec.loader.instantiate()
         self.loader.name = self.spec.name
-        self.parser = self.spec.parser.instantiate()
-        self.splitter = self.spec.splitter.instantiate()
         self.logger = logging.getLogger("eidolon")
+        self.processor = self.spec.doc_processor.instantiate()
         self.collection_name = f"doc_sync_{self.spec.name}"
-
-    async def _addFile(self, file_info: FileInfo):
-        try:
-            parsedDocs = list(self.parser.parse(file_info.data))
-            docs = list(self.splitter.transform_documents(parsedDocs))
-            await AgentOS.symbolic_memory.insert_one(
-                self.collection_name,
-                {
-                    "file_path": file_info.path,
-                    "data": file_info.metadata,
-                    "doc_ids": [doc.id for doc in docs],
-                },
-            )
-            if len(docs) == 0:
-                self.logger.warning(f"File contained no text {file_info.path}")
-                return
-            await AgentOS.similarity_memory.vector_store.add(f"doc_contents_{self.spec.name}", docs)
-            self.logger.info(f"Added file {file_info.path}")
-        except Exception:
-            self.logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
-
-    async def _removeFile(self, path: str):
-        # get the doc ids for the file
-        file_info = await AgentOS.symbolic_memory.find_one(self.collection_name, {"file_path": path})
-        if file_info is not None:
-            doc_ids = file_info["doc_ids"]
-            await AgentOS.similarity_memory.vector_store.delete(f"doc_contents_{self.spec.name}", doc_ids)
-            await AgentOS.symbolic_memory.delete(self.collection_name, {"file_path": path})
-
-    async def _replaceFile(self, file_info: FileInfo):
-        await self._removeFile(file_info.path)
-        await self._addFile(file_info)
 
     async def list_files(self):
         return self.loader.list_files()
@@ -106,11 +71,11 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             tasks = []
             async for change in self.loader.get_changes(data):
                 if isinstance(change, AddedFile):
-                    tasks.append(self._addFile(change.file_info))
+                    tasks.append(self.processor.addFile(self.collection_name, change.file_info))
                 elif isinstance(change, ModifiedFile):
-                    tasks.append(self._replaceFile(change.file_info))
+                    tasks.append(self.processor.replaceFile(self.collection_name, change.file_info))
                 elif isinstance(change, RemovedFile):
-                    tasks.append(self._removeFile(change.file_path))
+                    tasks.append(self.processor.removeFile(self.collection_name, change.file_path))
                 else:
                     logger.warning(f"Unknown change type {change}")
             await asyncio.gather(*tasks)

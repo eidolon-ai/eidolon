@@ -9,6 +9,7 @@ from opentelemetry.sdk.trace.sampling import Sampler
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
+from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
@@ -176,6 +177,7 @@ def named_builtins():
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
         (DocumentLoader, FilesystemLoader),
+        DocumentProcessor,
         DocumentManager,
         FilesystemLoader,
         GitHubLoader,

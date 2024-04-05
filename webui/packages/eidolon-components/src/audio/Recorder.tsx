@@ -53,7 +53,7 @@ export default function Recorder({machineUrl, agent, process_id, operation, setT
           if (blob.size > 0) {
             const process = await createProcess(machineUrl, agent, "audio");
             const fileId = await uploadFile(machineUrl, process?.process_id!, blob);
-            const result = await executeOperation(machineUrl, agent, operation, process?.process_id!, {audio: {machineURL: machineUrl, process_id: process_id, file_id: fileId}});
+            const result = await executeOperation(machineUrl, agent, operation, process?.process_id!, {audio: {machineURL: machineUrl, process_id: process_id, file_id: fileId?.fileId}});
             setText(result["response"])
           }
           setAudioChunks([]);

@@ -117,6 +117,8 @@ export class ProcessEventsHandler {
       const agent = reqBody["agent"]
       const operation = reqBody["operation"]
       const data = reqBody["data"] as Record<string, any>
+    console.log("*** data", data)
+
       const processId = params.processid;
       if (req.headers.get("Accept") === "text/event-stream") {
         let done = false;
@@ -177,8 +179,8 @@ export class FilesHandler {
       return new Response('machineUrl is required', {status: 400})
     }
     const mimeType = req.headers.get('mime-type')
-    let file_id = await this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType);
-    return Response.json({file_id});
+    let fileHandle = await this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType);
+    return Response.json(fileHandle);
   }
 
   async uploadFile(machineUrl: string, processId: string, file: Blob, mimeType: string | null) {

@@ -1,8 +1,10 @@
-import {Button, Skeleton, TextField} from "@mui/material";
+import {Badge, Button, IconButton, Skeleton, TextField} from "@mui/material";
 import Recorder from "../audio/Recorder";
 import {ArrowCircleUpRounded, CancelRounded} from "@mui/icons-material";
 import {CopilotParams} from "../lib/util";
 import {useState} from "react";
+import {FileUpload} from "../file-upload/FileUpload";
+import {FileHandle} from "@eidolon/client";
 
 export function ProcessTerminated() {
   return (
@@ -43,12 +45,12 @@ interface CopilotInputFormProps {
   processId: string
   isProcessing: boolean
   copilotParams: CopilotParams
+  addUploadedFiles: (files: FileHandle[]) => void
   doAction: (input: string) => Promise<void>
-
   doCancel(): void
 }
 
-export function CopilotInputForm({machineUrl, processId, isProcessing, copilotParams, doAction, doCancel}: CopilotInputFormProps) {
+export function CopilotInputForm({machineUrl, processId, isProcessing, copilotParams, addUploadedFiles, doAction, doCancel}: CopilotInputFormProps) {
   const [input, setInput] = useState("")
 
   const handleKeyDown = async (
@@ -77,13 +79,15 @@ export function CopilotInputForm({machineUrl, processId, isProcessing, copilotPa
   }
 
   const handleAction = () => {
-    doAction(input).then(() => setInput(""))
+    doAction(input).then(() => {
+      setInput("")
+    })
   }
 
   return (
     <div style={{width: "100%", display: "flex", flexDirection: "row"}}>
       <div style={{display: "flex", flexDirection: "row", width: "100%"}}>
-        {/*<FileUpload machineUrl={machineUrl} process_id={processId}/>*/}
+        <FileUpload machineUrl={machineUrl} process_id={processId} addUploadedFiles={addUploadedFiles}/>
         <TextField
           multiline
           variant={"standard"}

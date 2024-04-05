@@ -12,9 +12,11 @@ from pydantic_core import to_jsonable_python
 from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
+from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
 from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserTextCPUMessage
 from eidolon_ai_sdk.cpu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
+from eidolon_ai_sdk.system.process_file_system import FileHandle
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -27,6 +29,11 @@ class ActionDefinition(BaseModel):
     input_schema: dict = None
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
     files: Literal["disable", "single-optional", "single", "multiple"] = "disable"
+    allow_file_upload: bool = False
+    # allow all types for text, image, audio, word, pdf, json, etc
+    supported_mime_types: Literal[""] = ["application/json", "text/plain", "image/*", "audio/*", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/vnd.ms-powerpoint",
+                                         "application/vnd.openxmlformats-officedocument.presentationml.presentation"]
     allowed_states: List[str] = ["initialized", "idle", "http_error"]
     output_state: str = "idle"
 
@@ -52,7 +59,7 @@ class ActionDefinition(BaseModel):
         if self.input_schema is not None:
             properties["body"] = dict(type="object", properties=self.input_schema)
             required.append("body")
-        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus:
+        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus and not self.allow_file_upload:
             properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
             required.append("body")
         elif user_vars:
@@ -67,6 +74,10 @@ class ActionDefinition(BaseModel):
             required.append("file")
         elif self.files == "multiple":
             properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
+
+        if self.allow_file_upload:
+            properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandle.model_json_schema())
+
         if agent.spec.cpus:
             cpu_names = [cpu.title for cpu in agent.spec.cpus]
             default = agent.cpu.title
@@ -99,6 +110,7 @@ class SimpleAgentSpec(BaseModel):
     cpu: AnnotatedReference[AgentCPU] = None
     cpus: Optional[List[NamedCPU]] = []
     title_generation_mode: Literal["none", "on_request"] = "on_request"
+    doc_processor: AnnotatedReference[DocumentProcessor]
 
     @model_validator(mode="before")
     def validate_cpu(cls, value):
@@ -201,6 +213,12 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         request_body = to_jsonable_python(kwargs.get("body") or {})
         if "execute_on_cpu" in request_body:
             execute_on_cpu = request_body.pop("execute_on_cpu")
+
+        attached_files = []
+        if "attached_files" in request_body:
+            
+            # todo -- do something with file handles
+            attached_files = request_body.pop("attached_files")
 
         body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
         if isinstance(request_body, dict):

@@ -41,7 +41,6 @@ export function useProcessEvents(machineUrl: string, agent: string, processId: s
     if (cancelFetchController.current) {
       cancelFetchController.current.abort();
     }
-
     cancelFetchController.current = new AbortController();
     try {
       await executeServerOperation(machine, agent, operation, processId, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)

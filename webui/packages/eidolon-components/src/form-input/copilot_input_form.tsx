@@ -1,11 +1,13 @@
-import {Divider, Paper, Typography} from "@mui/material";
+import {Badge, Divider, IconButton, Paper, Typography} from "@mui/material";
 import {ChooseLLMElement} from "../messages/choose-llm-element";
 import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
 import {useProcesses} from "../hooks/process_context";
 import {executeOperation} from "../client-api-helpers/process-event-helper";
 import {CopilotParams} from "../lib/util";
 import {CopilotInputForm, ProcessError, ProcessLoading, ProcessTerminated} from "./input_form_components";
-import {ProcessStatus} from "@eidolon/client";
+import {FileHandle, ProcessStatus} from "@eidolon/client";
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import {useState} from "react";
 
 export interface CopilotInputPanelParams {
   machineUrl: string
@@ -26,6 +28,11 @@ export function CopilotInputPanel({
                                   }: CopilotInputPanelParams) {
   const {supportedLLMs, selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, copilotParams.agent, copilotParams.operation)
   const {updateProcesses} = useProcesses()
+  const [uploadedFiles, setUploadedFiles] = useState<FileHandle[]>([]);
+
+  const addUploadedFiles = (files: FileHandle[]) => {
+    setUploadedFiles([...uploadedFiles, ...files]);
+  }
 
   async function doAction(input: string) {
     const payload: Record<string, any> = {
@@ -36,12 +43,17 @@ export function CopilotInputPanel({
       payload['execute_on_cpu'] = selectedLLM
     }
 
+    if (uploadedFiles.length > 0) {
+      payload['attached_files'] = uploadedFiles
+    }
+
     if (processState?.state === "initialized" && copilotParams.titleOperationName) {
       // generate a title
       await executeOperation(machineUrl, copilotParams.agent, copilotParams.titleOperationName, processId, {body: input})
       updateProcesses(machineUrl).then()
     }
     await executeAction(machineUrl, copilotParams.agent, copilotParams.operation, payload)
+    setUploadedFiles([])
   }
 
   let content: JSX.Element
@@ -60,6 +72,7 @@ export function CopilotInputPanel({
   } else {
     content = (
       <CopilotInputForm machineUrl={machineUrl} processId={processId} isProcessing={processState?.state === "processing"}
+                        addUploadedFiles={addUploadedFiles}
                         copilotParams={copilotParams} doAction={doAction} doCancel={handleCancel}
       />
     )
@@ -81,6 +94,19 @@ export function CopilotInputPanel({
         flexDirection: "column",
       }}
     >
+      {uploadedFiles && uploadedFiles.length > 0 && (
+        <div style={{display: "flex", flexDirection: "row", height: "38px", alignItems: "center", justifyContent: "left", marginTop: "-38px", marginLeft: "-12px"}}>
+          <Badge badgeContent={uploadedFiles.length} color="primary" sx={{height: "24px", width: "24px"}}>
+            <IconButton sx={{height: "32px", width: "32px"}}
+                        onClick={() => {
+
+                        }}
+                        style={{}}>
+              <ArticleOutlinedIcon sx={{height: "32px", width: "32px"}}/>
+            </IconButton>
+          </Badge>
+        </div>
+      )}
       <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", marginLeft: "8px", marginRight: "8px"}}>
         <ChooseLLMElement supportedLLMs={supportedLLMs} selectedLLM={selectedLLM} setSelectedLLM={setSelectedLLM}/>
         <Typography sx={{marginBottom: "6px"}} alignSelf={"end"} variant={"caption"}>Press <b>Shift-Enter</b> to add a line</Typography>
