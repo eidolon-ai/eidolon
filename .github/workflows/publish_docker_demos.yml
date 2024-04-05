@@ -1,5 +1,9 @@
-name: Build and Push SDK Docker Image
+name: Build and Push Demo Docker Images
 on:
+  workflow_run:
+    workflows: [ "Bump Examples Version" ]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
