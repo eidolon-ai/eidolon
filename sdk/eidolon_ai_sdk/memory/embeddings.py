@@ -4,6 +4,7 @@ from typing import Sequence, Any, AsyncGenerator, Optional, List
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
+from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import ArgBuilder
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 
@@ -61,23 +62,29 @@ class OpenAIEmbeddingSpec(EmbeddingSpec):
     model: str = Field(default="text-embedding-ada-002", description="The name of the model to use.")
     client: AnnotatedReference[AsyncOpenAI]
     client_args: dict = {}
+    client_arg_builder: AnnotatedReference[ArgBuilder]
 
 
 class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
-    llm: Optional[AsyncOpenAI] = None
+    _llm: Optional[AsyncOpenAI] = None
 
     def __init__(self, spec: OpenAIEmbeddingSpec):
         super().__init__(spec)
         self.spec = spec
-
-    async def start(self):
-        await super().start()
-        self.llm = self.spec.client.instantiate(**self.spec.client_args)
+        self._llm = None
 
     async def stop(self):
         await super().stop()
         await self.llm.close()
-        self.llm = None
+        self._llm = None
+
+    @property
+    def llm(self) -> AsyncOpenAI:
+        if not self._llm:
+            client_args = self.spec.client_args
+            client_args.update(self.spec.client_arg_builder.instantiate().get_args())
+            self._llm = self.spec.client.instantiate(**client_args)
+        return self._llm
 
     async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
         response = await self.llm.embeddings.create(
