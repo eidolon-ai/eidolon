@@ -135,11 +135,12 @@ class ArgBuilder:
 
 
 class AzureTokenProvider(ArgBuilder, BaseModel):
+    token_credentials: AnnotatedReference[object, DefaultAzureCredential.__name__]
     token_provider_arg: str = "azure_ad_token_provider"
     scopes: List[str]
 
     def get_args(self) -> dict:
-        tp = get_bearer_token_provider(DefaultAzureCredential(), *self.scopes)
+        tp = get_bearer_token_provider(self.token_credentials.instantiate(), *self.scopes)
         return {self.token_provider_arg: tp}
 
 
