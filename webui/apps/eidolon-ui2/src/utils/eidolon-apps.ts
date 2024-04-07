@@ -1,4 +1,5 @@
 import appRegistry from 'eidolon-apps.json'
+import * as fs from "fs";
 
 
 export interface EidolonApp {
@@ -38,6 +39,16 @@ export interface AgentLocation {
 const agentRegistry: Record<string, AgentLocation> = {}
 if (process.env.EIDOLON_AGENT_REGISTRY) {
   const registry: Record<string, RawAgentLocation> = JSON.parse(process.env.EIDOLON_AGENT_REGISTRY)
+  for (const [key, value] of Object.entries(registry)) {
+    if (!value.agent) {
+      value.agent = key
+    }
+    agentRegistry[key] = value as AgentLocation
+  }
+}
+if (process.env.EIDOLON_AGENT_REGISTRY_LOC) {
+  const rawData = fs.readFileSync(process.env.EIDOLON_AGENT_REGISTRY_LOC, { encoding: 'utf8' });
+  const registry: Record<string, RawAgentLocation> = JSON.parse(rawData)
   for (const [key, value] of Object.entries(registry)) {
     if (!value.agent) {
       value.agent = key
