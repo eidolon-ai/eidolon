@@ -38,22 +38,30 @@ export interface AgentLocation {
 
 const agentRegistry: Record<string, AgentLocation> = {}
 if (process.env.EIDOLON_AGENT_REGISTRY) {
-  const registry: Record<string, RawAgentLocation> = JSON.parse(process.env.EIDOLON_AGENT_REGISTRY)
-  for (const [key, value] of Object.entries(registry)) {
-    if (!value.agent) {
-      value.agent = key
+  try {
+    const registry: Record<string, RawAgentLocation> = JSON.parse(process.env.EIDOLON_AGENT_REGISTRY)
+    for (const [key, value] of Object.entries(registry)) {
+      if (!value.agent) {
+        value.agent = key
+      }
+      agentRegistry[key] = value as AgentLocation
     }
-    agentRegistry[key] = value as AgentLocation
+  } catch (e) {
+    console.error("Failed to parse agent registry with error ", e)
   }
 }
 if (process.env.EIDOLON_AGENT_REGISTRY_LOC) {
-  const rawData = fs.readFileSync(process.env.EIDOLON_AGENT_REGISTRY_LOC, { encoding: 'utf8' });
-  const registry: Record<string, RawAgentLocation> = JSON.parse(rawData)
-  for (const [key, value] of Object.entries(registry)) {
-    if (!value.agent) {
-      value.agent = key
+  try {
+    const rawData = fs.readFileSync(process.env.EIDOLON_AGENT_REGISTRY_LOC, {encoding: 'utf8'});
+    const registry: Record<string, RawAgentLocation> = JSON.parse(rawData)
+    for (const [key, value] of Object.entries(registry)) {
+      if (!value.agent) {
+        value.agent = key
+      }
+      agentRegistry[key] = value as AgentLocation
     }
-    agentRegistry[key] = value as AgentLocation
+  } catch (e) {
+    console.error("Failed to parse agent registry from file with error ", e)
   }
 }
 
@@ -70,6 +78,7 @@ for (const [key, value] of Object.entries(appRegistry)) {
       const location = agentRegistry[params.agent]!
       params.agent = location.agent
       app.location = location.machine
+      console.log("setting ", params.agent, " machine ", location.machine)
     }
   }
   app.image = image.default.src
