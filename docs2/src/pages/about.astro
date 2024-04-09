@@ -1,0 +1,91 @@
+---
+import Features2 from '~/components/widgets/Features2.astro';
+import Features3 from '~/components/widgets/Features3.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import Steps2 from '~/components/widgets/Steps2.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import Content from "../components/widgets/Content.astro";
+import ItemGrid from "../components/ui/ItemGrid.astro";
+import Headline from "../components/ui/Headline.astro";
+import Button from "../components/ui/Button.astro";
+import Image from "../components/common/Image.astro";
+import WidgetWrapper from "../components/ui/WidgetWrapper.astro";
+
+const metadata = {
+  title: 'About us',
+};
+
+const items = [
+  {
+    title: 'Ravi Ramachandran',
+    description:
+      'Ravi is the adult keeping the team together and making sure we are all on the same page.',
+  },
+  {
+    title: 'Dave Brewster',
+    description:
+      'Dave is a developer with three decades of combined experience in building complex architectures and software for the data analytics and machine learning industries.',
+  },
+  {
+    title: 'Luke Lalor',
+    description:
+      'Luke is a developer who is passionate about making other developers lives easier.',
+  }
+]
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+
+  <Headline
+    title={"Who is Eidolon?"}
+    subtitle={"We are all Eidolonians. We started this project to make LLM agents simple, modular, and scalable for everyone.<br/><span class='text-primary text-4xl font-bold'>Come join us on the journey!</span>"}
+    tagline={""}
+    classes={{
+      container: 'max-w-xl sm:mx-auto lg:max-w-2xl',
+      title: 'text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading',
+      subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400',
+    }}
+  />
+  <WidgetWrapper
+    isDark={false}
+    containerClass={`max-w-7xl mx-auto`}
+  >
+    <div class="mx-auto max-w-7xl p-4 md:px-8">
+      <div class={`md:flex md:flex-row-reverse md:gap-16`}>
+        <div class="md:basis-1/2 self-center">
+        <div class="mb-8 text-4xl dark:text-slate-400 font-bold" >
+          Founding contributors
+        </div>
+          <ItemGrid
+            items={items}
+            classes={{
+              container: `gap-y-4 md:gap-y-8`,
+              panel: 'max-w-none',
+              title: 'text-lg font-bold leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
+              description: 'text-muted dark:text-slate-400 ml-2 rtl:ml-0 rtl:mr-2',
+              action: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
+            }}
+          />
+        </div>
+        <div aria-hidden="true" class="mt-10 md:mt-0 md:basis-1/2">
+          <div class="relative m-auto max-w-4xl">
+            <Image
+              class="mx-auto w-full rounded-lg p-8"
+              width={500}
+              height={520}
+              widths={[400, 768]}
+              sizes="(max-width: 768px) 100vw, 432px"
+              layout="responsive"
+              {...({
+                src: '~/assets/images/team.png',
+                alt: 'K8s Image',
+                } as any)}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </WidgetWrapper>
+  
