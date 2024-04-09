@@ -118,8 +118,9 @@ export const headerData = {
   actions: [
     
     { text: 'View on GitHub', href: 'https://github.com/eidolon-ai/eidolon', target: '_blank' },
-    { text: 'Docs', href: '/docs/introduction', target: '_blank' },
+    { text: 'Docs', href: '/docs/introduction'},
   ],
+  showRssFeed: false
 };
 
 export const footerData = {
@@ -134,7 +135,7 @@ export const footerData = {
     {
       title: 'Project',
       links: [
-        { text: 'About', href: '#' },
+        { text: 'About', href: '/about' },
       ],
     },
   ],

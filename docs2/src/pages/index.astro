@@ -35,16 +35,16 @@ const bg = await Astro.slots.render("bg")
     image={{src: '~/assets/images/k8s.webp', width: '600px', height: '600px', alt: 'Eidolon'}}
   >
     <Fragment slot="title">
-      Let’s build trusted GenAI together
+      Let’s build trusted genAI together
     </Fragment>
 
     <Fragment slot="subtitle">
+      <span class="sm:-ml-5 block mb-3 font-bold text-3xl">
+        Integrate generative AI into your application
+      </span>
       <span style="text-align: left" class="-left-2">
-        <span class="sm:-ml-5 block mb-3 font-bold">
-          Integrate Generative AI into your Application.
-        </span>
         <span class="sm:-ml-5 block">
-         We are developers building for the future. Our open source SDK empowers developers to rapidly build modular, pluggable and trusted agents for  GenAI apps.
+         We are developers building for the future. Our open source agent SDK empowers developers to rapidly build modular, pluggable and trusted agents for genAI apps.
         </span>
       </span>
     </Fragment>
@@ -60,12 +60,12 @@ const bg = await Astro.slots.render("bg")
     id="features"
     tagline=""
     title="What you get with Eidolon"
-    subtitle="Simple, modular, and scalable - Eidolon is the best choice for your next project."
+    subtitle="Simple, modular, and scalable: Eidolon is the best choice for your next project."
     items={[
       {
         title: 'Easy to deploy',
         description:
-          "With Eidolon, agents are services, so there is no extra work when it comes time to deploy; the HTTP server is built in",
+          "With Eidolon, agents are services, so there is no extra work when it comes time to deploy; the HTTP server is built in.",
         icon: 'tabler:list-check',
       },
       {
@@ -130,7 +130,7 @@ const bg = await Astro.slots.render("bg")
     }}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Copilot frontend</h3>
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Copilot interface</h3>
       Build copilot functionality into your application with ease.
     </Fragment>
 
@@ -146,7 +146,7 @@ const bg = await Astro.slots.render("bg")
     items={[
       {
         title: 'Add retrieval agents to any application',
-        description: `Easily integrate a retrieval agent into your application.  The Eidolon retrieval agent is a pluggable component that can be used with any LLM.`,
+        description: `Easily integrate a retrieval agent into your application.  The Eidolon retrieval agent is a pluggable component that can be used with any backend vector store.`,
       },
       {
         title: 'Customize with pluggable embeddings, chunking, and storage',
@@ -213,25 +213,24 @@ const bg = await Astro.slots.render("bg")
 
   <!-- Steps Widget ****************** -->
 
-  <Steps
-    title="Get your dream website up and running in no time with AstroWind."
+<Steps
+    title="Build genAI apps in no time with Eidolon."
     items={[
       {
-        title: 'Step 1: <span class="font-medium">Download</span>',
-        description:
-          "Kickstart with GitHub! Either fork the AstroWind template or simply click 'Use this template'. Your canvas awaits, ready for your digital masterpiece. In just a few clicks, you've already set the foundation.",
+        title: 'Step 1: <span class="font-medium">Install Eidolon SDK\n</span>',
+        description:"Download and install the Eidolon SDK from <a href='https://pypi.org/project/eidolon-ai-sdk/'><u>PYPI</u></a> or get started with a <a href='https://github.com/eidolon-ai/agent_machine'><u>Template Repository</u></a>.",
         icon: 'tabler:package',
       },
       {
-        title: 'Step 2: <span class="font-medium">Add content</em>',
+        title: 'Step 2: <span class="font-medium">Create your Agents</span>',
         description:
-          "Pour your vision into it. Add images, text, and all that jazz to breathe life into your digital space. Remember, it's the content that tells your story, so make it captivating.",
+          "Build agent using our out of the box components. Customize them or build new components as needed!",
         icon: 'tabler:letter-case',
       },
       {
-        title: 'Step 3: <span class="font-medium">Customize styles</span>',
+        title: 'Step 3: <span class="font-medium">Integrate your App</span>',
         description:
-          'Give it your personal touch. Tailor colors, fonts, and layouts until it feels just right. Your unique flair, amplified by AstroWind! Precision in design ensures a seamless user experience.',
+          "Agents are http services, so you can integrate them into your app with ease or leverage Eidolon's <a href='https://github.com/eidolon-ai/eidolon/tree/main/webui'><u>built-in webui</u></a> to deploy a chatbot interface.",
         icon: 'tabler:paint',
       },
       {
@@ -240,11 +239,11 @@ const bg = await Astro.slots.render("bg")
       },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1616198814651-e71f960c3180?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
+      src: '~/assets/images/clock.webp',
       alt: 'Steps image',
     }}
   />
-
+  
   <!-- Features2 Widget ************** -->
 
   <!--
@@ -349,7 +348,7 @@ const bg = await Astro.slots.render("bg")
       <Item post={{
         title: "Learn more about Eidolon",
         excerpt: "While easy to get started, Eidolon is quite powerful.  This page provides documentation on some of the more intricate parts.",
-        image: "https://images.unsplash.com/photo-1534307671554-9a6d81f4d629?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1651&q=80",
+        image: "~/assets/images/learn-more.webp",
         permalink: "/docs/introduction"
       }}/>
     </div>
