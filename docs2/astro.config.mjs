@@ -101,12 +101,12 @@ export default defineConfig({
         {
           label: 'Architecture',
           items: [
-            {label: 'Introduction', link: '/architecture/introduction/'},
-            {label: 'Fundamentals', link: '/architecture/fundamentals/'},
-            {label: 'Agent Program', link: '/architecture/agent_program/'},
-            {label: 'Agent CPU', link: '/architecture/agent_cpu/'},
-            {label: 'AgentOS', link: '/architecture/agent_os/'},
-            {label: 'Conclusion', link: '/architecture/conclusion/'},
+            {label: 'Introduction', link: '/docs/architecture/introduction/'},
+            {label: 'Fundamentals', link: '/docs/architecture/fundamentals/'},
+            {label: 'Agent Program', link: '/docs/architecture/agent_program/'},
+            {label: 'Agent CPU', link: '/docs/architecture/agent_cpu/'},
+            {label: 'AgentOS', link: '/docs/architecture/agent_os/'},
+            {label: 'Conclusion', link: '/docs/architecture/conclusion/'},
           ],
         },
       ]
