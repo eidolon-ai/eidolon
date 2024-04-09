@@ -115,7 +115,11 @@ export const headerData = {
       href: '#',
     },*/
   ],
-  actions: [{ text: 'Download', href: 'https://github.com/eidolon-ai/eidolon', target: '_blank' }],
+  actions: [
+    
+    { text: 'View on GitHub', href: 'https://github.com/eidolon-ai/eidolon', target: '_blank' },
+    { text: 'Docs', href: '/docs/introduction', target: '_blank' },
+  ],
 };
 
 export const footerData = {
