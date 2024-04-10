@@ -3,7 +3,7 @@ kind: Agent
 metadata:
   name: conversational_agent
 spec:
-  system_prompt: "You are a helpful assistant."
+  system_prompt: "You are a helpful assistant. Please respond using markdown unless told otherwise by the user."
   cpus:
     - cpu: MistralSmall
       title: Mistral Small
@@ -16,3 +16,9 @@ spec:
     - cpu: GPT4-turbo
       title: GPT4 Turbo
       default: true
+    - cpu: ClaudeOpus
+      title: Claude Opus
+    - cpu: ClaudeSonnet
+      title: Claude Sonnet
+    - cpu: ClaudeHaiku
+      title: Claude Haiku

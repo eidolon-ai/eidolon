@@ -1,0 +1,11 @@
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: ClaudeOpus
+  annotations:
+    - title: "Claude Opus"
+spec:
+    implementation: AgentCPU
+    llm_unit:
+      implementation: AnthropicLLMUnit
+      model: "claude-3-opus-20240229"

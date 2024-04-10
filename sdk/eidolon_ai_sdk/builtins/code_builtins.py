@@ -34,6 +34,7 @@ from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
 from eidolon_ai_sdk.cpu.conversation_memory_unit import RawMemoryUnit
 from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.llm.anthropic_llm_unit import AnthropicLLMUnit
 from eidolon_ai_sdk.cpu.llm.mistral_llm_unit import MistralGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
@@ -130,6 +131,7 @@ def named_builtins():
         (LLMUnit, OpenAIGPT),
         OpenAIGPT,
         MistralGPT,
+        AnthropicLLMUnit,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
         WebSearch,
