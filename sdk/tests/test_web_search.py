@@ -11,6 +11,7 @@ async def test_go_to_url():
 
 
 # note when recording the cse_id and cse_token need to be replaced with real values. They are placed in envar so cassette needs to be edited.
+# if we ever need to touch this again we can manually manipulate the url with the cassette context manager
 @pytest.mark.vcr
 async def test_search():
     search = Search(processing_unit_locator=None, spec=SearchSpec(cse_id="testcx", cse_token="testtoken"))
