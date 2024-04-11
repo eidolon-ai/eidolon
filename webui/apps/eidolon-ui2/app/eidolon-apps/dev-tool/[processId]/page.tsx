@@ -3,6 +3,7 @@ import {_processHandler} from "../../../api/eidolon/eidolon_helpers";
 import * as React from "react";
 import {MessagesWithAction} from "@eidolon/components";
 import {CopilotParams, getApp} from "@/utils/eidolon-apps";
+import {EidolonClient} from "@eidolon/client";
 
 export interface ProcessPageProps {
   params: {
@@ -16,8 +17,10 @@ export default async function ({params}: ProcessPageProps) {
   if (!processStatus) {
     notFound()
   }
-
+  // todo, use global client here so that openapi calls are cached
+  const client = new EidolonClient(app.location)
+  const operations = await client.getActionsForDisplay(processStatus.agent, processStatus?.available_actions)
   return (
-    <MessagesWithAction machineUrl={processStatus.machine} agent={processStatus.agent} processId={processStatus.process_id}/>
+    <MessagesWithAction operations={operations} machineUrl={processStatus.machine} agent={processStatus.agent} processId={processStatus.process_id}/>
   )
 }

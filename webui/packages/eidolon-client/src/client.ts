@@ -130,6 +130,11 @@ export class EidolonClient {
     return this.actions
   }
 
+  public async getAction(agentName: string, operationName: string) {
+    await this.initialize()
+    return this.actions[agentName + "-" + operationName]
+  }
+
   public async getAgents() {
     await this.initialize()
     return this.agents

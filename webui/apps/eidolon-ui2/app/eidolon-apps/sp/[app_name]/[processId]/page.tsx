@@ -3,6 +3,8 @@ import * as React from "react";
 import {MessagesWithSingleAction} from "@eidolon/components/src/form-input/MessagesWithSingleAction";
 import {CopilotParams, getApp} from "@/utils/eidolon-apps";
 import {_processHandler} from "../../../../api/eidolon/eidolon_helpers";
+import {useSupportedLLMsOnOperation} from "@eidolon/components/src/hooks/useSupportedLLMsOnOperation";
+import {EidolonClient, OperationInfo} from "@eidolon/client";
 
 export interface ProcessPageProps {
   params: {
@@ -23,8 +25,16 @@ export default async function ({params}: ProcessPageProps) {
     notFound()
   }
 
+  const client = new EidolonClient(machineUrl)
+  const action = await client.getAction(processStatus.agent, options.operation)
+  if(!action) {
+    throw new Error("No actions found")
+  }
+
   return (
     <MessagesWithSingleAction
+      supportedLLMs={[]}
+      operation={action}
       machineUrl={processStatus.machine}
       agent={processStatus.agent}
       processId={processStatus.process_id}
