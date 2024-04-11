@@ -1,9 +1,8 @@
 import {notFound} from "next/navigation";
 import * as React from "react";
-import {CopilotPanel} from "@eidolon/components/src/form-input/copilot_panel";
 import {getApp} from "@/utils/eidolon-apps";
 import {_processHandler} from "../../../../api/eidolon/eidolon_helpers";
-import {CopilotParams} from "@eidolon/components";
+import {CopilotPanel, CopilotParams} from "@eidolon/components";
 
 export interface ProcessPageProps {
   params: {

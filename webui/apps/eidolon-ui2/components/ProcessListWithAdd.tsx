@@ -1,6 +1,6 @@
 'use client'
 
-import {createProcess, ProcessList} from "@eidolon/components";
+import {CopilotParams, createProcess, ProcessList} from "@eidolon/components";
 import {usePathname, useRouter} from "next/navigation";
 import {ProcessStatus} from "@eidolon/client";
 import * as React from "react";
@@ -10,7 +10,7 @@ import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Tool
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
 import {useProcesses} from "@eidolon/components/src/hooks/process_context";
-import {CopilotParams, EidolonApp} from "@/utils/eidolon-apps";
+import {EidolonApp} from "@/utils/eidolon-apps";
 
 export interface DevProcessListWithAddProps {
   machineURL: string
