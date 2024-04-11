@@ -37,7 +37,7 @@ export interface AgentLocation {
   machine: string
 }
 
-// our cached functions cannot be async so we cannot use. We have the same issue when dynamically loading appRegistry
+// our cached functions cannot be async, so we cannot use. We have the same issue when dynamically loading appRegistry
 for (const [key, value] of Object.entries(appRegistry)) {
   const app = value as EidolonApp
   const image = await import(`../../app/eidolon-apps/${key}/${app.image}`)
