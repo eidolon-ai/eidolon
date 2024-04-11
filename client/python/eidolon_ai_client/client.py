@@ -86,6 +86,11 @@ class Process(BaseModel):
         json_ = await post_content(url, content=file_contents, headers={"Content-Type": "application/octet-stream"})
         return FileHandle.model_validate(json_)
 
+    async def set_metadata(self, file_id: str, metadata: dict):
+        url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}/metadata")
+        json_ = await post_content(url, json=metadata)
+        return FileHandle.model_validate(json_)
+
     async def download_file(self, file_id: str) -> bytes:
         url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}")
         return await get_raw(url)

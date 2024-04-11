@@ -75,6 +75,28 @@ class ProcessFileSystem(Specable[ProcessFileSystemSpec]):
         await self.file_memory().write_file(path, json.dumps(md_to_write).encode())
         return FileHandle(machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id, metadata=md_to_write)
 
+    async def set_metadata(self, process_id: str, file_id: str, metadata: Dict[str, any]):
+        """
+        Sets the metadata for the file specified by `file_id` within the context of the process_id.
+        :param process_id:
+        :param file_id:
+        :param metadata:
+        :return:
+        """
+        path = str(Path(self.root, process_id, file_id + ".md"))
+        # read the contents of the metadata file
+        # update the metadata
+        # write the metadata back to the file
+        exists = await self.file_memory().exists(path)
+        if not exists:
+            file_md = {}
+        else:
+            contents = await self.file_memory().read_file(path)
+            file_md = json.loads(contents)
+        file_md.update(metadata)
+        await self.file_memory().write_file(path, json.dumps(file_md).encode())
+        return FileHandle(machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id, metadata=file_md)
+
     async def delete_file(self, process_id: str, file_id: str):
         """
         Deletes the file specified by `file_id` within the context of the process_id.

@@ -7,6 +7,7 @@ from typing import List, Optional, Annotated, Literal, cast
 from starlette.responses import JSONResponse, Response
 
 from eidolon_ai_client.client import ProcessStatus
+from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
@@ -114,7 +115,7 @@ class AgentMachine(Specable[MachineSpec]):
             "/processes/{process_id}/files",
             endpoint=self.upload_file,
             methods=["POST"],
-            response_model=typing.Dict[str, str],
+            response_model=FileHandle,
             tags=["files"],
         )
 
@@ -123,6 +124,14 @@ class AgentMachine(Specable[MachineSpec]):
             endpoint=self.download_file,
             methods=["GET"],
             response_model=bytes,
+            tags=["files"],
+        )
+
+        app.add_api_route(
+            "/processes/{process_id}/files/{file_id}/metadata",
+            endpoint=self.set_metadata,
+            methods=["POST"],
+            response_model=FileHandle,
             tags=["files"],
         )
 
@@ -171,6 +180,17 @@ class AgentMachine(Specable[MachineSpec]):
         if mime_type:
             file_md = {"mime_type": mime_type}
         file_id = await self.process_file_system.write_file(process_id, file_bytes, file_md)
+        return JSONResponse(
+            content=file_id.model_dump(), status_code=200
+        )
+
+    async def set_metadata(self, process_id: str, file_id: str, file_md: dict):
+        """
+        Set metadata for a file
+        :param file_id:
+        :param process_id:
+        """
+        file_id = await self.process_file_system.set_metadata(process_id, file_id, file_md)
         return JSONResponse(
             content=file_id.model_dump(), status_code=200
         )
