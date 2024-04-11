@@ -1,4 +1,4 @@
-import {Badge, Button, IconButton, Skeleton, TextField} from "@mui/material";
+import {Button, Skeleton, TextField} from "@mui/material";
 import Recorder from "../audio/Recorder";
 import {ArrowCircleUpRounded, CancelRounded} from "@mui/icons-material";
 import {CopilotParams} from "../lib/util";
@@ -45,7 +45,9 @@ interface CopilotInputFormProps {
   processId: string
   isProcessing: boolean
   copilotParams: CopilotParams
+  // eslint-disable-next-line no-unused-vars
   addUploadedFiles: (files: FileHandle[]) => void
+  // eslint-disable-next-line no-unused-vars
   doAction: (input: string) => Promise<void>
   doCancel(): void
 }

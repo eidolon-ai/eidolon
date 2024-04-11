@@ -14,6 +14,7 @@ export interface CopilotInputPanelParams {
   processId: string
   copilotParams: CopilotParams
   processState?: ProcessStatus
+  // eslint-disable-next-line no-unused-vars
   executeAction: (machineUrl: string, agent: string, operation: string, payload: Record<string, any>) => Promise<void>
   handleCancel: () => void
 }

@@ -37,6 +37,7 @@ function CircularProgressWithLabel(
 interface FileUploadProps {
   machineUrl: string;
   process_id: string;
+  // eslint-disable-next-line no-unused-vars
   addUploadedFiles: (files: FileHandle[]) => void;
 }
 
