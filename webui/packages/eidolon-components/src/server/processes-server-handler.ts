@@ -37,7 +37,7 @@ export class ProcessesHandler {
   }
 
   async getProcesses(machineUrl: string) {
-    console.log('listing processes from machine', machineUrl)
+    console.debug('listing processes from machine', machineUrl)
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return await client.getProcesses(0, 100);
   }
@@ -74,7 +74,7 @@ export class ProcessHandler {
   }
 
   async getProcess(machineUrl: string, processId: string) {
-    console.log('getting process with id', processId, 'from machine', machineUrl)
+    console.debug('getting process with id', processId, 'from machine', machineUrl)
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return await client.process(processId).status();
   }

@@ -3,8 +3,7 @@ import * as React from "react";
 import {MessagesWithSingleAction} from "@eidolon/components/src/form-input/MessagesWithSingleAction";
 import {CopilotParams, getApp} from "@/utils/eidolon-apps";
 import {_processHandler} from "../../../../api/eidolon/eidolon_helpers";
-import {useSupportedLLMsOnOperation} from "@eidolon/components/src/hooks/useSupportedLLMsOnOperation";
-import {EidolonClient, OperationInfo} from "@eidolon/client";
+import {EidolonClient} from "@eidolon/client";
 
 export interface ProcessPageProps {
   params: {

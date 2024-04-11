@@ -23,6 +23,7 @@ export const DevProcessListWithAdd = ({agents, app}: DevProcessListWithAddProps)
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+
   const addClicked = () => {
     if (app.type === 'copilot') {
       const options = app.params as CopilotParams

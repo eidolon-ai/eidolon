@@ -27,8 +27,6 @@ export const useProcesses = () => {
 
 // Provider component
 export const ProcessesProvider = ({children}: {children: JSX.Element}) => {
-  console.log("debugging: rendering ProcessesProvider")
-
   const [processesByDate, setProcessesByDate] = useState<Record<string, ProcessStatus[]>>({})
 
   const value = {
