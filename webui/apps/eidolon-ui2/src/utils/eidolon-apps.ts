@@ -1,6 +1,5 @@
 import appRegistry from 'eidolon-apps.json'
 import * as fs from "fs";
-import { cache } from 'react'
 import {notFound} from "next/navigation";
 
 
@@ -107,9 +106,13 @@ function getAppsRaw() {
   return apps
 }
 
-export const getAppRegistry = cache(() => {
-  return getAppsRaw()
-})
+let apps: Record<string, EidolonApp> | undefined = undefined
+export function getAppRegistry(){
+  if (apps === undefined) {
+    apps = getAppsRaw()
+  }
+  return apps
+}
 
 
 export function getApp(path: string): EidolonApp {
