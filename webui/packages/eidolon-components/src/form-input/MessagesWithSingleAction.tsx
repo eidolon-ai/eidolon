@@ -6,13 +6,16 @@ import {useState} from "react";
 import {useProcessEvents} from "../hooks/useProcessEvents";
 import {EidolonEvents} from "../messages/eidolon-events";
 import Recorder from "../audio/Recorder";
-import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
 import {ChooseLLMElement} from "../messages/choose-llm-element";
 import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 import {executeOperation} from "../client-api-helpers/process-event-helper";
 import {useProcesses} from "../hooks/process_context";
+import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
+import {OperationInfo} from "@eidolon/client";
 
 export interface MessagesWithActionProps {
+  supportedLLMs: string[] | undefined,
+  operation: OperationInfo,
   machineUrl: string
   agent: string
   processId: string
@@ -25,6 +28,8 @@ export interface MessagesWithActionProps {
 }
 
 export function MessagesWithSingleAction({
+                                           supportedLLMs,
+                                           operation,
                                            machineUrl,
                                            agent,
                                            processId,
@@ -35,7 +40,7 @@ export function MessagesWithSingleAction({
                                            speechAgent,
                                            speechOperation
                                          }: MessagesWithActionProps) {
-  const {supportedLLMs, selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, agent, operationName)
+  const {selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(operation)
   const {
     processState,
     elementsAndLookup,
@@ -91,7 +96,6 @@ export function MessagesWithSingleAction({
 
   let content = (
     <div style={{display: "flex", flexDirection: "row", width: "100%"}}>
-      {/*<FileUpload machineUrl={machineUrl} process_id={processId}/>*/}
       <TextField
         multiline
         variant={"standard"}

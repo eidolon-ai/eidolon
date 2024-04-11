@@ -5,7 +5,7 @@ import * as React from "react";
 import {usePathname, useRouter} from "next/navigation";
 import {ChooseAgentForm, getAppPathFromPath} from "@eidolon/components";
 
-export function StartProgramDialog({open, onClose, machineUrl}: { machineUrl: string, open: boolean, onClose: (wasCanceled: boolean) => void }) {
+export function StartProgramDialog({agents, open, onClose, machineUrl}: { agents: string[], machineUrl: string, open: boolean, onClose: (wasCanceled: boolean) => void }) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -37,6 +37,7 @@ export function StartProgramDialog({open, onClose, machineUrl}: { machineUrl: st
       <Divider/>
       <DialogContent>
         <ChooseAgentForm
+          agents={agents}
           machineUrl={machineUrl}
           handleSubmit={handleSubmit}
           />

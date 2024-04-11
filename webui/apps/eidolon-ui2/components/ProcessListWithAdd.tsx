@@ -13,11 +13,12 @@ import {useProcesses} from "@eidolon/components/src/hooks/process_context";
 import {CopilotParams, EidolonApp} from "@/utils/eidolon-apps";
 
 export interface DevProcessListWithAddProps {
-  machineURL: string
+  agents: string[]
   app: EidolonApp
 }
 
-export const DevProcessListWithAdd = ({machineURL, app}: DevProcessListWithAddProps) => {
+export const DevProcessListWithAdd = ({agents, app}: DevProcessListWithAddProps) => {
+  const machineURL = app.location
   const {updateProcesses} = useProcesses()
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
@@ -57,7 +58,7 @@ export const DevProcessListWithAdd = ({machineURL, app}: DevProcessListWithAddPr
         goHome={() => {
         }}
       />
-      <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} onClose={() => {
+      <StartProgramDialog agents={agents} machineUrl={machineURL} open={createProcessOpen} onClose={() => {
         setCreateProcessOpen(false)
       }}/>
     </Box>
