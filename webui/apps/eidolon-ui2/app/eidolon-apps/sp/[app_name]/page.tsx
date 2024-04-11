@@ -1,5 +1,6 @@
 import {Box, Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/material";
 import {getApp} from "@/utils/eidolon-apps";
+import {notFound} from "next/navigation";
 
 export interface HomePageProps {
   params: {

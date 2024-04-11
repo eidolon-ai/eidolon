@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "npm run build-eidolon && next dev",
-    "build": "npm run build-eidolon && next build",
+    "build": "npm run build-eidolon && BUILD_MODE=build next build",
     "build:static": "npm run build-eidolon && next build && next export",
     "format": "prettier ./ --write",
     "lint": "next lint",

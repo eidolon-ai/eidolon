@@ -13,8 +13,10 @@ export interface ProcessPageProps {
 
 export default async function ({params}: ProcessPageProps) {
   let app = getApp(params.app_name)!
+  if (!app) {
+    notFound()
+  }
   const options = app.params as CopilotParams
-
   const machineUrl = app.location!
   const processStatus = await _processHandler.getProcess(machineUrl, params.processId)
   if (!processStatus) {

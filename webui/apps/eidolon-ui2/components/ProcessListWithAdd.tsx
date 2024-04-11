@@ -13,16 +13,15 @@ import {useProcesses} from "@eidolon/components/src/hooks/process_context";
 import {CopilotParams, EidolonApp} from "@/utils/eidolon-apps";
 
 export interface DevProcessListWithAddProps {
-  machineURL: string
   app: EidolonApp
 }
 
-export const DevProcessListWithAdd = ({machineURL, app}: DevProcessListWithAddProps) => {
+export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
+  const machineURL = app.location
   const {updateProcesses} = useProcesses()
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
-
   const addClicked = () => {
     if (app.type === 'copilot') {
       const options = app.params as CopilotParams

@@ -11,6 +11,8 @@ export interface DevTooLayoutProps {
 }
 
 export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
+  console.log("debugging: rendering ProcessWithListLayout")
+
   return (
     <ProcessesProvider>
       <Box sx={{
@@ -24,10 +26,7 @@ export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
             [`& .MuiDrawer-paper`]: {boxSizing: 'border-box'},
           }}
         >
-          <DevProcessListWithAdd
-            machineURL={process.env.EIDOLON_SERVER!}
-            app={app}
-          />
+          <DevProcessListWithAdd app={app} />
         </ResizableDrawer>
         <Box component="main" flexGrow={1}>
           <Box height={"calc(100vh - 64px)"} display={"flex"} justifyContent={"center"}>
