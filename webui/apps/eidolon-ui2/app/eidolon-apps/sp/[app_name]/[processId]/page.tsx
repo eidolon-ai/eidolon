@@ -30,9 +30,14 @@ export default async function ({params}: ProcessPageProps) {
     throw new Error("No actions found")
   }
 
+  let supportedLLMs: string[] = []
+  if (action.schema?.properties?.execute_on_cpu) {
+    const property = action.schema?.properties?.execute_on_cpu as Record<string, any>
+    supportedLLMs = property?.["enum"] as string[]
+  }
   return (
     <MessagesWithSingleAction
-      supportedLLMs={[]}
+      supportedLLMs={supportedLLMs}
       operation={action}
       machineUrl={processStatus.machine}
       agent={processStatus.agent}

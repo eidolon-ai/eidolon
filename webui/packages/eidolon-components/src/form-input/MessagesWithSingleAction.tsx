@@ -96,7 +96,6 @@ export function MessagesWithSingleAction({
 
   let content = (
     <div style={{display: "flex", flexDirection: "row", width: "100%"}}>
-      {/*<FileUpload machineUrl={machineUrl} process_id={processId}/>*/}
       <TextField
         multiline
         variant={"standard"}
