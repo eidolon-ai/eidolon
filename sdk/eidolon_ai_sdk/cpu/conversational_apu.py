@@ -247,7 +247,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         elif self.image_unit is not None:
             image_data, metadata = await AgentOS.process_file_system.read_file(call_context.process_id, message.file.file_id)
             path = metadata.get("path") or metadata.get("filename") or ""
-            text = await self.image_unit.image_to_text(prompt=f"Create a detailed text description of the following image. Be sure to include as much information as needed to describe the image.  Be very verbose.", image=image_data)
+            text = await self.image_unit.image_to_text(prompt="Create a detailed text description of the following image. Be sure to include as much information as needed to describe the image.  Be very verbose.", image=image_data)
             return [UserMessageText(text=f"The following text is a detailed description of an image {path}:\n{text}\n\n")]
         else:
             raise ValueError("Image processing not supported")

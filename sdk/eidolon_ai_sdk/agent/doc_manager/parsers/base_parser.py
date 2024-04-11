@@ -9,7 +9,6 @@ from typing import Union, Optional, Generator, Iterable
 
 from pydantic import BaseModel
 
-from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.memory.document import Document
 from eidolon_ai_sdk.system.reference_model import Specable
 

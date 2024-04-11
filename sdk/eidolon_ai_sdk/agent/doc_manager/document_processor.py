@@ -2,7 +2,6 @@ import logging
 
 from pydantic import BaseModel
 
-from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     FileInfo,
 )

@@ -1,7 +1,7 @@
 from typing import Optional, Literal
 
 from openai import AsyncOpenAI
-from pydantic import Field, BaseModel
+from pydantic import Field
 
 from eidolon_ai_sdk.cpu.audio_unit import AudioUnit, AudioUnitSpec
 from eidolon_ai_sdk.system.reference_model import Specable
