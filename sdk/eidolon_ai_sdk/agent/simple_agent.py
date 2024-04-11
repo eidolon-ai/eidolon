@@ -207,7 +207,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         attached_files_messages = []
         if "attached_files" in request_body:
             # add a new file handle message
-            attached_files = request_body.pop("attached_files")
+            attached_files = request_body.pop("attached_files") or []
             for file in attached_files:
                 attached_files_messages.append(AttachedFileMessage(file=file, include_directly=True))
 

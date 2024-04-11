@@ -88,7 +88,6 @@ async def convert_to_openai(message: LLMMessage):
                 if part.type == "text":
                     content.append({"type": "text", "text": part.text})
                 else:
-                    print("&&&&", part)
                     # retrieve the image from the file system
                     data = await AgentOS.file_memory.read_file(part.image_url)
                     # scale the image such that the max size of the shortest size is at most 768px

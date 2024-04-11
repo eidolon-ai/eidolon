@@ -3,7 +3,7 @@
 import {ChangeEvent, useRef, useState} from "react";
 import {Box, CircularProgress, CircularProgressProps, IconButton, Typography} from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import {uploadFile} from "../client-api-helpers/files-helper";
+import {setMetadata, uploadFile} from "../client-api-helpers/files-helper";
 import {FileHandle} from "@eidolon/client";
 
 function CircularProgressWithLabel(
@@ -52,9 +52,9 @@ export function FileUpload({machineUrl, process_id, addUploadedFiles}: FileUploa
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event?.target?.files) {
-      const blobs: Blob[] = [];
+      const blobs: File[] = [];
       for (let i = 0; i < event.target.files.length; i++) {
-        blobs.push(event.target.files[i] as Blob)
+        blobs.push(event.target.files[i] as File)
       }
 
       setUploadingFiles(true)
@@ -62,7 +62,9 @@ export function FileUpload({machineUrl, process_id, addUploadedFiles}: FileUploa
       try {
         const fileHandles: FileHandle[] = []
         for (const blob of blobs) {
-          fileHandles.push((await uploadFile(machineUrl, process_id, blob))!)
+          let fileHandle = (await uploadFile(machineUrl, process_id, blob))!
+          await setMetadata(machineUrl, process_id, fileHandle.fileId, {name: blob.name})
+          fileHandles.push(fileHandle!)
           setProgress((fileHandles.length / blobs.length) * 100)
         }
         addUploadedFiles(fileHandles)

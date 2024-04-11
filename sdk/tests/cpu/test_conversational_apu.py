@@ -44,6 +44,7 @@ async def test_pdf_file_include(test_dir):
     process = await Agent.get("simple").create_process()
     with open(docs_loc / "Brand New Love Affair - Part I & II.pdf", "rb") as f:
         file_handle = await process.upload_file(f.read())
-    file_handle = await process.set_metadata(file_handle.file_id, dict(mime_type="application/pdf", filename="Brand New Love Affair - Part I & II.pdf"))
+    file_handle2 = await process.set_metadata(file_handle.file_id, dict(mime_type="application/pdf", filename="Brand New Love Affair - Part I & II.pdf"))
+    assert file_handle2.file_id == file_handle.file_id
     resp = await process.action("converse", body=dict(body="What is in the attached file?", attached_files=[file_handle]))
     assert "Chicago" in resp.data

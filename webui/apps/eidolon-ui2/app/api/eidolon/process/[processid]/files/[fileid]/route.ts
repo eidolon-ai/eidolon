@@ -1,3 +1,3 @@
 import {fileHandler} from "../../../../eidolon_helpers";
 
-export const {GET, DELETE} = fileHandler
+export const {GET, POST, DELETE} = fileHandler

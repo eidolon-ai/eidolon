@@ -196,6 +196,16 @@ export class FileHandler {
     this.accessTokenFn = accessTokenFn
   }
 
+  async POST(req: Request, {params}: { params: { processid: string, fileid: string } }) {
+    const machineUrl = new URL(req.url).searchParams.get('machineURL')
+    if (!machineUrl) {
+      return new Response('machineUrl is required', {status: 400})
+    }
+    const reqBody = await req.json()
+    const fileHandle = await this.setMetadata(machineUrl, params.processid, params.fileid, reqBody);
+    return Response.json(fileHandle);
+  }
+
   // download file
   async GET(req: Request, {params}: { params: { processid: string, fileid: string } }) {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
@@ -228,5 +238,10 @@ export class FileHandler {
   async deleteFile(machineUrl: string, processId: string, fileId: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return await client.process(processId).delete_file(fileId);
+  }
+
+  async setMetadata(machineUrl: string, processId: string, fileId: string, metadata: Record<string, any>) {
+    const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
+    return await client.process(processId).set_metadata(fileId, metadata);
   }
 }

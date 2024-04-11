@@ -236,7 +236,6 @@ class AgentController:
             user_input_event_seen = False
             start_event_seen = False
             async for event in self.stream_agent_iterator(stream, process):
-                print(event.model_dump())
                 if event.is_root_and_type(UserInputEvent):
                     user_input_event_seen = True
                 elif not user_input_event_seen:
