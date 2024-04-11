@@ -2,10 +2,11 @@ import logging
 
 from pydantic import BaseModel
 
+from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     FileInfo,
 )
-from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
+from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DataBlob
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
@@ -25,6 +26,12 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
         self.parser = self.spec.parser.instantiate()
         self.splitter = self.spec.splitter.instantiate()
         self.logger = logging.getLogger("eidolon")
+
+    def parse(self, data: bytes, mimetype: str, path: str):
+        return self.parser.parse(DataBlob.from_bytes(data=data, mimetype=mimetype, path=path))
+
+    def split(self, docs):
+        return self.splitter.transform_documents(docs)
 
     async def addFile(self, collection_name: str, file_info: FileInfo):
         try:

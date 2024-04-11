@@ -6,6 +6,13 @@ from pydantic import BaseModel, TypeAdapter
 from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional
 
 
+class FileHandle(BaseModel):
+    machineURL: str
+    process_id: str
+    file_id: str
+    metadata: dict = {}
+
+
 class Category(Enum):
     START = "start"
     INPUT = "input"
@@ -21,6 +28,7 @@ class BaseStreamEvent(BaseModel, ABC):
     stream_context: Optional[str] = None
     category: Category
     event_type: str
+    metadata: dict = {}
 
     def is_root_event(self):
         return self.stream_context is None
@@ -46,7 +54,8 @@ class BaseStreamEvent(BaseModel, ABC):
 class UserInputEvent(BaseStreamEvent):
     category: Literal[Category.INPUT] = Category.INPUT
     event_type: Literal["user_input"] = "user_input"
-    input: Dict[str, Any]
+    input: str | Dict[str, Any]
+    files: List[FileHandle] = []
 
 
 class StartStreamContextEvent(BaseStreamEvent):

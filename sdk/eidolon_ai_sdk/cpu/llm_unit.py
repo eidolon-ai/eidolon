@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
-from pydantic import BaseModel, Field
 from typing import List, Any, Dict, Literal, Union, AsyncIterator
 
+from pydantic import BaseModel, Field
+
+from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_client.events import StreamEvent
+from eidolon_ai_sdk.system.reference_model import Specable
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,
@@ -28,6 +30,24 @@ LLM_MAX_TOKENS = {
 }
 
 
+class LLMModel(BaseModel):
+    human_name: str
+    model_name: str
+    input_context_limit: int
+    output_context_limit: int
+    supports_tools: bool
+    supports_image_input: bool
+    supports_audio_input: bool
+
+
+class LLMCapabilities(BaseModel):
+    input_context_limit: int
+    output_context_limit: int
+    supports_tools: bool
+    supports_image_input: bool
+    supports_audio_input: bool
+
+
 class CompletionUsage(BaseModel):
     completion_tokens: int
     """Number of tokens in the generated completion."""
@@ -45,9 +65,37 @@ class LLMCallFunction(BaseModel):
     parameters: Dict[str, object] = Field(..., description="The json schema for the function parameters.")
 
 
-class LLMUnit(ProcessingUnit, ABC):
+class LLMUnitSpec(BaseModel):
+    model: str = Field(description="The model to use for the LLM.")
+
+
+class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
+    model: LLMModel
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        Specable.__init__(self, **kwargs)
+
+        for model in self.get_models():
+            if model.model_name == self.spec.model:
+                self.model = model
+                break
+
+        if not hasattr(self, "model"):
+            raise ValueError(f"Model {self.spec.model} not found in {self.get_models()}")
+
+    def get_llm_capabilities(self) -> LLMCapabilities:
+        return LLMCapabilities(
+            input_context_limit=self.model.input_context_limit,
+            output_context_limit=self.model.output_context_limit,
+            supports_tools=self.model.supports_tools,
+            supports_image_input=self.model.supports_image_input,
+            supports_audio_input=self.model.supports_audio_input,
+        )
+
+    @abstractmethod
+    def get_models(self) -> List[LLMModel]:
+        pass
 
     @abstractmethod
     async def execute_llm(

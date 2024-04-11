@@ -4,13 +4,13 @@ from pydantic import Field
 from typing import List
 
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformerSpec, QuestionTransformer
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
+from eidolon_ai_sdk.cpu.agent_cpu import APU
 from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class HydeQuestionTransformerSpec(QuestionTransformerSpec):
-    cpu: AnnotatedReference[AgentCPU]
+    cpu: AnnotatedReference[APU]
     prompt: str = Field(
         default="Please write a passage to answer the question \nQuestion: {{question}}?\nPassage:",
         description="The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}",

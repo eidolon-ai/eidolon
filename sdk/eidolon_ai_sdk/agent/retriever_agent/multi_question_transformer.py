@@ -4,13 +4,13 @@ from pydantic import Field, BaseModel
 from typing import List
 
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformerSpec, QuestionTransformer
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
+from eidolon_ai_sdk.cpu.agent_cpu import APU
 from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class MultiQuestionTransformerSpec(QuestionTransformerSpec):
-    cpu: AnnotatedReference[AgentCPU]
+    cpu: AnnotatedReference[APU]
     keep_original: bool = Field(default=True, description="Whether to keep the original question in the output")
     number_to_generate: int = Field(default=3, description="The number of questions to generate")
     prompt: str = Field(

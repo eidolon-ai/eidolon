@@ -12,7 +12,7 @@ from eidolon_examples.group_conversation.base_conversation_coordinator import (
 )
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
 from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
-from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.conversational_apu import ConversationalAPU
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_client.events import AgentStateEvent
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
@@ -32,13 +32,13 @@ class RoleResponse(BaseModel):
 
 
 class GameMasterSpec(BaseConversationCoordinatorSpec):
-    cpu: AnnotatedReference[ConversationalAgentCPU]
+    cpu: AnnotatedReference[ConversationalAPU]
     system_prompt: str
     agent_name: str
 
 
 class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
-    cpu: ConversationalAgentCPU
+    cpu: ConversationalAPU
 
     def __init__(self, **kwargs):
         super().__init__("game", **kwargs)

@@ -6,15 +6,10 @@ from uuid import uuid4
 
 from pydantic import BaseModel
 
+from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.memory.file_memory import FileMemory
 from eidolon_ai_sdk.system.reference_model import Specable
-
-
-class FileHandle(BaseModel):
-    machineURL: str
-    process_id: str
-    file_id: str
 
 
 class ProcessFileSystemSpec(BaseModel):
@@ -59,7 +54,7 @@ class ProcessFileSystem(Specable[ProcessFileSystemSpec]):
             file_md = json.loads((await self.file_memory().read_file(path + ".md")).decode())
         return await self.file_memory().read_file(path), file_md
 
-    async def write_file(self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None) -> str:
+    async def write_file(self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None) -> FileHandle:
         """
         Writes the given `file_contents` to a new file within the context of the process_id.
         :param file_md:
@@ -78,7 +73,7 @@ class ProcessFileSystem(Specable[ProcessFileSystemSpec]):
             md_to_write.update(file_md)
         path = str(Path(self.root, process_id, file_id + ".md"))
         await self.file_memory().write_file(path, json.dumps(md_to_write).encode())
-        return file_id
+        return FileHandle(machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id, metadata=md_to_write)
 
     async def delete_file(self, process_id: str, file_id: str):
         """

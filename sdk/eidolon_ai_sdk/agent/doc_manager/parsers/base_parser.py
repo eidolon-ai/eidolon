@@ -9,6 +9,7 @@ from typing import Union, Optional, Generator, Iterable
 
 from pydantic import BaseModel
 
+from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.memory.document import Document
 from eidolon_ai_sdk.system.reference_model import Specable
 
@@ -116,7 +117,7 @@ class DataBlob:
             if mimetype is None and path is not None:
                 mimetype = mimetypes.guess_type(path)[0]
             if mimetype is None:
-                if path.endswith(".md"):
+                if path and path.endswith(".md"):
                     mimetype = "text/x-markdown"
                 else:
                     mimetype = "text/plain"

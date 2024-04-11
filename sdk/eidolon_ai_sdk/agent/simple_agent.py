@@ -9,14 +9,13 @@ from openai import BaseModel
 from pydantic import field_validator, model_validator
 from pydantic_core import to_jsonable_python
 
-from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent
+from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent, UserInputEvent, FileHandle
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.cpu.agent_cpu import APU
+from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage, AttachedFileMessage
 from eidolon_ai_sdk.cpu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
-from eidolon_ai_sdk.system.process_file_system import FileHandle
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -28,7 +27,6 @@ class ActionDefinition(BaseModel):
     user_prompt: str = "{{ body }}"
     input_schema: dict = None
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
-    files: Literal["disable", "single-optional", "single", "multiple"] = "disable"
     allow_file_upload: bool = False
     # allow all types for text, image, audio, word, pdf, json, etc
     supported_mime_types: Literal[""] = ["application/json", "text/plain", "image/*", "audio/*", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -45,7 +43,7 @@ class ActionDefinition(BaseModel):
             if isinstance(v, dict):
                 if v.get("format") == "binary":
                     raise ValueError(
-                        "prompt_properties cannot contain format = 'binary' fields. Use the files option instead"
+                        "prompt_properties cannot contain format = 'binary' fields."
                     )
         return input_dict
 
@@ -66,14 +64,6 @@ class ActionDefinition(BaseModel):
             props = {v: dict(type="string") for v in user_vars}
             properties["body"] = dict(type="object", properties=props)
             required.append("body")
-
-        if self.files == "single-optional":
-            properties["file"] = dict(type="string", format="binary")
-        elif self.files == "single":
-            properties["file"] = dict(type="string", format="binary")
-            required.append("file")
-        elif self.files == "multiple":
-            properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
 
         if self.allow_file_upload:
             properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandle.model_json_schema())
@@ -98,7 +88,7 @@ class ActionDefinition(BaseModel):
 
 class NamedCPU(BaseModel):
     title: Optional[str] = None
-    cpu: AnnotatedReference[AgentCPU]
+    cpu: AnnotatedReference[APU]
     default: bool = False
 
 
@@ -107,7 +97,7 @@ class SimpleAgentSpec(BaseModel):
     system_prompt: str = "You are a helpful assistant"
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
-    cpu: AnnotatedReference[AgentCPU] = None
+    cpu: AnnotatedReference[APU] = None
     cpus: Optional[List[NamedCPU]] = []
     title_generation_mode: Literal["none", "on_request"] = "on_request"
     doc_processor: AnnotatedReference[DocumentProcessor]
@@ -157,7 +147,6 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                 description="Generate a title for the conversation",
                 user_prompt=self.generate_title_prompt + "{{ body }}",
                 output_schema="str",
-                files="disable",
                 allowed_states=["initialized", "idle"],
                 output_state="idle",
             )
@@ -214,21 +203,17 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         if "execute_on_cpu" in request_body:
             execute_on_cpu = request_body.pop("execute_on_cpu")
 
-        attached_files = []
+        attached_files: List[FileHandle] = []
+        attached_files_messages = []
         if "attached_files" in request_body:
-            
-            # todo -- do something with file handles
+            # add a new file handle message
             attached_files = request_body.pop("attached_files")
+            for file in attached_files:
+                attached_files_messages.append(AttachedFileMessage(file=file, include_directly=True))
 
         body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
         if isinstance(request_body, dict):
             body.update(request_body)
-
-        files = kwargs.get("file", []) or []
-        if not isinstance(files, list):
-            files = [files]
-
-        image_messages = [ImageCPUMessage(image=file.file, prompt=file.filename) for file in files if file]
 
         env = Environment(undefined=StrictUndefined)
         text_message = UserTextCPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
@@ -242,8 +227,9 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         else:
             cpu = self.cpu
 
+        yield UserInputEvent(input=request_body, files=attached_files)
         thread = await cpu.main_thread(process_id)
-        response = thread.stream_request(output_format=action.output_schema, prompts=[*image_messages, text_message])
+        response = thread.stream_request(output_format=action.output_schema, prompts=[*attached_files_messages, text_message])
 
         async for event in response:
             yield event
@@ -280,5 +266,4 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
 
         yield StringOutputEvent(content=response)
         # return to the previous state
-        print(process_obj.state)
         yield AgentStateEvent(state=last_state)

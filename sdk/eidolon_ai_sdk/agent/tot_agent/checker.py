@@ -3,7 +3,7 @@ from typing import List
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
+from eidolon_ai_sdk.cpu.agent_cpu import APU
 from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
 from eidolon_ai_sdk.agent.tot_agent.prompts import CHECKER_PROMPT
 from eidolon_ai_sdk.agent.tot_agent.thought import ThoughtValidity
@@ -17,7 +17,7 @@ class TotCheckerConfig(BaseModel):
 
 class ToTChecker(Specable[TotCheckerConfig]):
     spec: TotCheckerConfig
-    cpu: AgentCPU
+    cpu: APU
 
     def __init__(self, cpu, spec):
         super().__init__(spec)

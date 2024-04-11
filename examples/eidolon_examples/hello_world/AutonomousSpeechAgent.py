@@ -5,7 +5,7 @@ from pydub import AudioSegment
 
 from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentState
 from eidolon_ai_sdk.agent.generic_agent import GenericAgentSpec
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
+from eidolon_ai_sdk.cpu.agent_cpu import APU
 from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
@@ -13,7 +13,7 @@ from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 class AutonomousSpeechAgentSpec(GenericAgentSpec):
     speech_llm: AnnotatedReference[OpenAiSpeech]
-    cpu: AnnotatedReference[AgentCPU]
+    cpu: AnnotatedReference[APU]
 
 
 class LlmResponse(BaseModel):
@@ -25,7 +25,7 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
 
     def __init__(self, spec: AutonomousSpeechAgentSpec):
         super().__init__(spec=spec)
-        self.speech_llm = self.spec.speech_llm.instantiate()
+        self.speech_llm = self.spec.speech_llm.instantiate(processing_unit_locator=None)
         self.cpu = self.spec.cpu.instantiate()
 
     async def call_llm(self, process_id, text: str):

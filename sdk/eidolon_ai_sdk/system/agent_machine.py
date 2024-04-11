@@ -11,6 +11,7 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
 from .agent_controller import AgentController
+from .process_file_system import ProcessFileSystem
 from .processes import ProcessDoc
 from .reference_model import AnnotatedReference, Specable
 from .resources.agent_resource import AgentResource
@@ -21,7 +22,6 @@ from ..memory.file_memory import FileMemory
 from ..memory.semantic_memory import SymbolicMemory
 from ..memory.similarity_memory import SimilarityMemory
 from ..security.permissions import PermissionException
-from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem, FileHandle
 from ..security.security_manager import SecurityManager
 
 
@@ -172,7 +172,7 @@ class AgentMachine(Specable[MachineSpec]):
             file_md = {"mime_type": mime_type}
         file_id = await self.process_file_system.write_file(process_id, file_bytes, file_md)
         return JSONResponse(
-            content=FileHandle(machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id).model_dump(), status_code=200,
+            content=file_id.model_dump(), status_code=200
         )
 
     async def download_file(self, process_id: str, file_id: str):

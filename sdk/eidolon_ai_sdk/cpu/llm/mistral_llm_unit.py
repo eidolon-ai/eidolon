@@ -1,6 +1,5 @@
 import json
 import logging
-from enum import Enum
 from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
@@ -27,7 +26,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessage,
     SystemMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.replay import replayable
 
@@ -117,15 +116,8 @@ async def convert_to_mistral(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-class MistralModelEnum(str, Enum):
-    MistralTiny = "mistral-tiny-latest"
-    MistralSmall = "mistral-small-latest"
-    MistralMedium = "mistral-medium-latest"
-    MistralLarge = "mistral-large-latest"
-
-
 class MistralGPTSpec(BaseModel):
-    model: MistralModelEnum = Field(default=MistralModelEnum.MistralMedium, description="The model to use for the LLM.")
+    model: str = Field(default="mistral-large-latest", description="The model to use for the LLM.")
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
@@ -134,8 +126,40 @@ class MistralGPTSpec(BaseModel):
 
 class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
+
+    def get_models(self) -> List[LLMModel]:
+        return [
+            LLMModel(
+                human_name="Mistral Large",
+                model_name="mistral-large-latest",
+                input_context_limit=32000,
+                output_context_limit=4096,
+                supports_tools=True,
+                supports_image_input=False,
+                supports_audio_input=False,
+            ),
+            LLMModel(
+                human_name="Mistral Medium",
+                model_name="mistral-medium-latest",
+                input_context_limit=32000,
+                output_context_limit=4096,
+                supports_tools=False,
+                supports_image_input=False,
+                supports_audio_input=False,
+            ),
+            LLMModel(
+                human_name="Mistral Small",
+                model_name="mistral-small-latest",
+                input_context_limit=32000,
+                output_context_limit=4096,
+                supports_tools=False,
+                supports_image_input=False,
+                supports_audio_input=False,
+            )
+        ]
 
     async def execute_llm(
             self,
@@ -213,7 +237,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         messages = [await convert_to_mistral(message) for message in inMessages]
         request = {
             "messages": messages,
-            "model": str(self.spec.model.value),
+            "model": str(self.model.model_name),
             "temperature": self.spec.temperature,
         }
         if output_format == "str" or output_format["type"] == "string":
