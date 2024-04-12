@@ -13,7 +13,7 @@ docker run -e "EIDOLON_SERVER=http://host.docker.internal:8080" -p 3000:3000 eid
 ```
 ### linux
 ```bash
-docker run --net=host eidolonai/webui:latest
+docker run -e "EIDOLON_SERVER=http://172.17.0.1:8080" -p 3000:3000 eidolonai/webui:latest
 ```
 
 🚨 Make sure you have an Eidolon machine running locally on port 8080. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/docs/introduction/)
