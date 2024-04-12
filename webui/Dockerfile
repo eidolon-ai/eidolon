@@ -37,5 +37,9 @@ COPY --from=installer /app/apps/eidolon-ui2/package.json .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/eidolon-ui2/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/eidolon-ui2/.next/static ./apps/eidolon-ui2/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/eidolon-ui2/public ./apps/eidolon-ui2/public
-
+# Throw default envars in the image so that we can run locally with less overrides
+ENV NEXTAUTH_URL=http://localhost:3000/api/auth
+ENV AUTH_TRUST_HOST=http://localhost:3000
+ENV NEXTAUTH_SECRET=secret
+ENV EIDOLON_AUTH_PROVIDERS=""
 CMD node apps/eidolon-ui2/server.js
