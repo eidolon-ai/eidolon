@@ -1,38 +1,22 @@
 'use client'
 
 import {AgentInputForm} from "./agent-input-form";
-import {useEffect, useState} from "react";
-import {EidolonClient, OperationInfo, ProcessStatus} from "@eidolon/client";
-import {ArrowCircleUpRounded} from '@mui/icons-material';
-import {AddCircleRounded} from '@mui/icons-material';
-import {RemoveCircleRounded} from '@mui/icons-material';
+import {useState} from "react";
+import {OperationInfo, ProcessStatus} from "@eidolon/client";
+import {AddCircleRounded, ArrowCircleUpRounded, CancelRounded, RemoveCircleRounded} from '@mui/icons-material';
 import {Button, Paper, Skeleton} from "@mui/material";
-import {CancelRounded} from '@mui/icons-material';
 import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 
 interface AgentProcessProps {
-  agent: string
+  operations: OperationInfo[]
   processState?: ProcessStatus
   // eslint-disable-next-line no-unused-vars
   handleAction: (machine: string, agent: string, operation: string, data: any) => void
   handleCancel: () => void
 }
 
-export function AgentProcess({agent, processState, handleAction, handleCancel}: AgentProcessProps) {
+export function AgentProcess({operations, processState, handleAction, handleCancel}: AgentProcessProps) {
   const [bigForm, setBigForm] = useState(false)
-
-  const [client] = useState(new EidolonClient("http://localhost:8080"))
-  const [operations, setOperations] = useState<OperationInfo[]>([])
-  useEffect(() => {
-    if (processState?.available_actions) {
-      client.getActionsForDisplay(agent, processState?.available_actions).then(programs => {
-        setOperations(programs)
-      })
-    }
-    return () => {
-    }
-  }, [client, agent, processState])
-
   const handleSubmit = (formJson: Record<string, any>) => {
     let operation = formJson.operation as OperationInfo;
     handleAction(operation.machine, operation.agent, operation.name, formJson.data)

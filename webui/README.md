@@ -3,9 +3,22 @@
 Eidolon Web UI is a powerful interface for interacting with the Eidolon project, designed to streamline your experience and enhance usability. Below you'll find concise
 instructions to get your development environment set up and the server running smoothly.
 
-## Prerequisites
+## Running With Docker
+If you are looking to get started quickly, we publish an image that you can use without needing to set a development environment.
 
-Before you start, ensure you have `pnpm` installed on your system. If not, follow the installation instructions below.
+We need to e
+### mac
+```bash
+docker run -e "EIDOLON_SERVER=http://host.docker.internal:8080" -p 3000:3000 eidolonai/webui:latest
+```
+### linux
+```bash
+docker run --net=host eidolonai/webui:latest
+```
+
+🚨 Make sure you have an Eidolon machine running locally on port 8080. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/docs/introduction/)
+
+## Development Environment
 
 ### Installing PNPM
 
@@ -29,9 +42,9 @@ Alternatively, you can check the [official Turbo Repo installation guide](https:
 
 ### Running Eidolon Machine
 
-You will also need a running Eidolon Machine. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/getting_started/quickstart/)
+You will also need a running Eidolon Machine. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/docs/introduction/)
 
-## Setting Up Your Environment
+### Setting Up Your Environment
 
 **Environment Configuration**:
 You need to create a `.env` file in the **webui/app/eidolon-ui2** directory of the project. Copy
@@ -41,7 +54,7 @@ The content are described in the template file.
 You will need to change the defaults if you would like to enable authentication or are running the eidos on
 a port other than 8080.
 
-## Running the Server
+### Running the Server
 
 To start the development server, run:
 

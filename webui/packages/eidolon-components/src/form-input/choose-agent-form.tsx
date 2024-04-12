@@ -1,31 +1,19 @@
 'use client'
 
 import {FormControl, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {createProcess} from "../client-api-helpers/process-helper";
-import {EidolonClient} from "@eidolon/client";
 
 export interface ChooseAgentFormProps {
+  agents: string[],
   machineUrl: string,
   // eslint-disable-next-line no-unused-vars
   handleSubmit: (proces_id: string) => void
 }
 
-export function ChooseAgentForm({handleSubmit, machineUrl}: ChooseAgentFormProps) {
+export function ChooseAgentForm({agents, handleSubmit, machineUrl}: ChooseAgentFormProps) {
   const [title, setTitle] = useState<string>("")
   const [agent, setAgent] = useState<string>("")
-
-  const [agents, setAgents] = useState<string[]>([])
-  useEffect(() => {
-    const client = new EidolonClient(machineUrl)
-    client.getAgents().then(agents => {
-      setAgents(agents)
-      setAgent(agents![0]!)
-    })
-    return () => {
-    }
-  }, [])
-
   const internalHandleSubmit = () => {
     createProcess(machineUrl, agent, title).then((process) => {
       handleSubmit(process?.process_id!)
