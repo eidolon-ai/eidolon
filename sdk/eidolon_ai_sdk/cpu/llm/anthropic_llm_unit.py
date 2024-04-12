@@ -146,7 +146,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         return [
             LLMModel(
                 human_name="Claude Opus",
-                model_name="claude-3-opus-20240229",
+                name="claude-3-opus-20240229",
                 input_context_limit=200000,
                 output_context_limit=4096,
                 supports_tools=False,
@@ -155,7 +155,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             ),
             LLMModel(
                 human_name="Claude Sonnet",
-                model_name="claude-3-sonnet-20240229",
+                name="claude-3-sonnet-20240229",
                 input_context_limit=200000,
                 output_context_limit=4096,
                 supports_tools=False,
@@ -164,7 +164,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             ),
             LLMModel(
                 human_name="Claude Haiku",
-                model_name="claude-3-haiku-20240307",
+                name="claude-3-haiku-20240307",
                 input_context_limit=200000,
                 output_context_limit=4096,
                 supports_tools=False,
@@ -223,7 +223,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         messages = [await convert_to_llm(message) for message in inMessages if not isinstance(message, SystemMessage)]
         request = {
             "messages": messages,
-            "model": self.model.model_name,
+            "model": self.model.name,
             "temperature": self.temperature,
         }
         if system_prompt:

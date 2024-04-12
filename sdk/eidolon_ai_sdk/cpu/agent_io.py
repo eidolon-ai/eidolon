@@ -13,10 +13,9 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     SystemMessage,
     UserMessage,
-    LLMMessage, UserMessageFile,
+    LLMMessage, UserMessageFileHandle,
 )
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_sdk.memory.file_memory import FileMemory
 
 
 class ResponseHandler(ABC):
@@ -61,7 +60,7 @@ class IOUnit(ProcessingUnit):
             elif prompt.type == "system":
                 conv_messages.append(SystemMessage(content=prompt.prompt))
             elif prompt.type == "file":
-                user_message_parts.append(UserMessageFile(file=prompt.file, include_directly=prompt.include_directly))
+                user_message_parts.append(await UserMessageFileHandle.create(file=prompt.file, process_id=call_context.process_id, include_directly=prompt.include_directly))
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
 
@@ -75,6 +74,5 @@ class IOUnit(ProcessingUnit):
 
     @classmethod
     async def delete_process(cls, process_id: str):
-        memory: FileMemory = AgentOS.file_memory
-        found = await memory.glob(f"uploaded_images/{process_id}/**/*")
-        await asyncio.gather(*[memory.delete_file(file) for file in found])
+        found = await AgentOS.file_memory.glob(f"uploaded_images/{process_id}/**/*")
+        await asyncio.gather(*[AgentOS.file_memory.delete_file(file) for file in found])

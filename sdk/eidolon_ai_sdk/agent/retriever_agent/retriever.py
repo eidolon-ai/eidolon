@@ -56,7 +56,7 @@ class Retriever(Specable[RetrieverSpec]):
         # now limit reranked_docs to max_num_results
         reranked_docs = reranked_docs[: self.spec.max_num_results]
 
-        docs = AgentOS.similarity_memory.vector_store.get_docs(
+        docs = AgentOS.similarity_memory.get_docs(
             vector_collection_name, [doc[0] for doc in reranked_docs]
         )
         summaries = []
@@ -69,8 +69,8 @@ class Retriever(Specable[RetrieverSpec]):
         return summaries
 
     async def _embed_question(self, vector_collection_name, question):
-        embedded_q = await AgentOS.similarity_memory.embedder.embed_text(question)
-        results_ = await AgentOS.similarity_memory.vector_store.raw_query(
+        embedded_q = await AgentOS.similarity_memory.embed_text(question)
+        results_ = await AgentOS.similarity_memory.raw_query(
             vector_collection_name, embedded_q, self.spec.max_num_results
         )
         return results_

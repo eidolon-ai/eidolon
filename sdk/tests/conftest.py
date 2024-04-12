@@ -18,12 +18,13 @@ from vcr.stubs import httpx_stubs
 
 import eidolon_ai_sdk.system.processes as processes
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory
 from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
-from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
+from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -242,10 +243,10 @@ def similarity_memory(tmp_path_factory):
     async def cm():
         tmp_dir = tmp_path_factory.mktemp(f"vector_store_{module_identifier}_{ObjectId()}")
         ref = Reference(
-            implementation=fqn(SimilarityMemory),
+            implementation=fqn(SimilarityMemoryImpl),
             vector_store=dict(url=f"file://{tmp_dir}"),
         )
-        memory: SimilarityMemory = ref.instantiate()
+        memory: SimilarityMemoryImpl = ref.instantiate()
         await memory.start()
         yield ref
         await memory.stop()

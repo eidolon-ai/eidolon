@@ -34,7 +34,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.security_manager import SecurityManagerImpl
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,
@@ -52,7 +52,7 @@ class AgentController:
     name: str
     agent: object
     actions: typing.Dict[str, FnHandler]
-    security: SecurityManager
+    security: SecurityManagerImpl
 
     def __init__(self, name, agent):
         self.name = name
@@ -393,7 +393,7 @@ class AgentController:
         """
         await self.security.check_permissions({"read", "create"}, self.name)
         process = await self._create_process(state="initialized", title=title)
-        await self.security.process_authorizer.record_process(self.name, process.record_id)
+        await self.security.record_process(self.name, process.record_id)
         return JSONResponse(
             StateSummary(
                 agent=self.name,

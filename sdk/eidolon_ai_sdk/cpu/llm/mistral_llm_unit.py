@@ -134,7 +134,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         return [
             LLMModel(
                 human_name="Mistral Large",
-                model_name="mistral-large-latest",
+                name="mistral-large-latest",
                 input_context_limit=32000,
                 output_context_limit=4096,
                 supports_tools=True,
@@ -143,7 +143,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
             ),
             LLMModel(
                 human_name="Mistral Medium",
-                model_name="mistral-medium-latest",
+                name="mistral-medium-latest",
                 input_context_limit=32000,
                 output_context_limit=4096,
                 supports_tools=False,
@@ -152,7 +152,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
             ),
             LLMModel(
                 human_name="Mistral Small",
-                model_name="mistral-small-latest",
+                name="mistral-small-latest",
                 input_context_limit=32000,
                 output_context_limit=4096,
                 supports_tools=False,
@@ -237,7 +237,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         messages = [await convert_to_mistral(message) for message in inMessages]
         request = {
             "messages": messages,
-            "model": str(self.model.model_name),
+            "model": str(self.model.name),
             "temperature": self.spec.temperature,
         }
         if output_format == "str" or output_format["type"] == "string":

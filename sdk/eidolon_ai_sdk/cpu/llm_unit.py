@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Any, Dict, Literal, Union, AsyncIterator
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.cpu.call_context import CallContext
@@ -32,7 +32,7 @@ LLM_MAX_TOKENS = {
 
 class LLMModel(BaseModel):
     human_name: str
-    model_name: str
+    name: str
     input_context_limit: int
     output_context_limit: int
     supports_tools: bool
@@ -77,7 +77,7 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
         Specable.__init__(self, **kwargs)
 
         for model in self.get_models():
-            if model.model_name == self.spec.model:
+            if model.name == self.spec.model:
                 self.model = model
                 break
 

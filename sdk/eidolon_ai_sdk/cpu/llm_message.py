@@ -43,16 +43,34 @@ class UserMessageFileHandle(BaseModel):
     type: Literal["image", "audio", "file"]
     file: FileHandle
 
+    @classmethod
+    async def create(cls, file: FileHandle, process_id: str, include_directly: bool):
+        mimetype = file.metadata.get("mimetype")
+        if not mimetype:
+            data, metadata = await AgentOS.process_file_system.read_file(process_id, file.file_id)
+            import filetype
+
+            mimetype = metadata.get("mimetype")
+            if not mimetype:
+                mimetype = filetype.guess_mime(data)
+
+        if mimetype.startswith("image/"):
+            return UserMessageImage(file=file)
+        elif mimetype.startswith("audio/"):
+            return UserMessageAudio(file=file)
+        else:
+            return UserMessageFile(file=file, include_directly=include_directly)
+
 
 class UserMessageImage(UserMessageFileHandle):
     type: Literal["image"] = "image"
 
-    def getBytes(self, process_id: str) -> bytes:
-        data, _metadata = AgentOS.process_file_system.read_file(process_id, self.file.file_id)
+    async def getBytes(self, process_id: str) -> bytes:
+        data, _metadata = await AgentOS.process_file_system.read_file(process_id, self.file.file_id)
         return data
 
-    def getB64(self, process_id: str):
-        data = self.getBytes(process_id)
+    async def getB64(self, process_id: str):
+        data = await self.getBytes(process_id)
         return base64.b64encode(data).decode("utf-8")
 
 

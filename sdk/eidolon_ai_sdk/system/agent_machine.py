@@ -1,14 +1,15 @@
 import typing
 from contextlib import contextmanager
-from fastapi import FastAPI, Request, Body, Header
-from pydantic import BaseModel, Field
 from typing import List, Optional, Annotated, Literal, cast
 
+from fastapi import FastAPI, Request, Body, Header
+from pydantic import BaseModel, Field
 from starlette.responses import JSONResponse, Response
 
 from eidolon_ai_client.client import ProcessStatus
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
 from .agent_controller import AgentController
@@ -19,11 +20,8 @@ from .resources.agent_resource import AgentResource
 from .resources.resources_base import Resource
 from ..agent_os import AgentOS
 from ..cpu.agent_call_history import AgentCallHistory
-from ..memory.file_memory import FileMemory
-from ..memory.semantic_memory import SymbolicMemory
-from ..memory.similarity_memory import SimilarityMemory
 from ..security.permissions import PermissionException
-from ..security.security_manager import SecurityManager
+from ..security.security_manager import SecurityManagerImpl
 
 
 class MachineSpec(BaseModel):

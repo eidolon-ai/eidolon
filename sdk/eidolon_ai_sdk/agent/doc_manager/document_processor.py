@@ -47,7 +47,7 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
             if len(docs) == 0:
                 self.logger.warning(f"File contained no text {file_info.path}")
                 return
-            await AgentOS.similarity_memory.vector_store.add(collection_name, docs)
+            await AgentOS.similarity_memory.add(collection_name, docs)
             self.logger.info(f"Added file {file_info.path}")
         except Exception:
             self.logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
@@ -57,7 +57,7 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
         file_info = await AgentOS.symbolic_memory.find_one(collection_name, {"file_path": path})
         if file_info is not None:
             doc_ids = file_info["doc_ids"]
-            await AgentOS.similarity_memory.vector_store.delete(collection_name, doc_ids)
+            await AgentOS.similarity_memory.delete(collection_name, doc_ids)
             await AgentOS.symbolic_memory.delete(collection_name, {"file_path": path})
 
     async def replaceFile(self, collection_name: str, file_info: FileInfo):
