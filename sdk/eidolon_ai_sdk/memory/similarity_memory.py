@@ -42,7 +42,7 @@ class SimilarityMemoryImpl(Specable[SimilarityMemorySpec], SimilarityMemory):
         """
         return await self.embedder.embed_text(text, **kwargs)
 
-    async def embed(self, documents: Sequence[Document], **kwargs: Any) -> AsyncGenerator[EmbeddedDocument, None]:
+    def embed(self, documents: Sequence[Document], **kwargs: Any) -> AsyncGenerator[EmbeddedDocument, None]:
         """
         Create embeddings for a list of documents.
         :param documents:
