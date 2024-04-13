@@ -43,12 +43,17 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
         async def _send_request_no_gen() -> ChatCompletion:
             return await open_ai_fn(**kwargs)
 
-        fn = _send_request_no_gen if kwargs.get("stream") else _send_request
+        if kwargs.get("stream"):
+            llm_request = replayable(
+                fn=_send_request, name_override="openai_completion", parser=_open_ai_replay_parser
+            )
 
-        llm_request = replayable(
-            fn=_send_request, name_override="openai_completion", parser=fn
-        )
-        return llm_request
+            return llm_request()
+        else:
+            llm_request = replayable(
+                fn=_send_request_no_gen, name_override="openai_completion", parser=_open_ai_replay_parser_no_stream
+            )
+            return await llm_request()
 
 
 class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
@@ -124,3 +129,24 @@ async def _open_ai_replay_parser(resp):
         if message.content:
             yield message.content
             prefix = "\n"
+
+
+async def _open_ai_replay_parser_no_stream(resp: ChatCompletion):
+    """
+    Parses responses from openai and yield strings to accumulate to a human-readable message.
+
+    Makes assumptions around tool calls. These are currently true, but may change as openai mutates their API
+    1. Tool call functions names are always in a complete message
+    2. Tool calls are ordered (No chunk for tool #2 until #1 is complete)
+    """
+    message = resp.choices[0].message
+
+    if message.tool_calls:
+        for i, tool_call in enumerate(message.tool_calls):
+            if tool_call.function.name:
+                yield f"Tool Call: {tool_call.function.name}\nArguments: "
+            if tool_call.function.arguments:
+                yield tool_call.function.arguments
+            yield "\n"
+    if message.content:
+        yield message.content

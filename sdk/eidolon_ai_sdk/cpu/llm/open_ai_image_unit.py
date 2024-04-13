@@ -1,6 +1,6 @@
 import base64
 from io import BytesIO
-from typing import List, Literal, Tuple
+from typing import List, Literal, Tuple, Optional
 
 from PIL import Image
 from openai.types.chat import ChatCompletion
@@ -63,7 +63,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         messages = [
             {"role": "system", "content": self.spec.image_to_text_system_prompt},
             {"role": "user", "content": [
-                {"type": "text", "content": prompt},
+                {"type": "text", "text": prompt},
                 {
                     "type": "image_url",
                     "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
@@ -77,10 +77,11 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         }
 
         result: ChatCompletion = await self.connection_handler.completion(request)
+        print(result)
         return result.choices[0].message.content
 
-    async def text_to_image(self, call_context: CallContext, text: str, quality: str, size: Tuple[int, int], style: str,
-                            image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"]) -> List[FileHandle]:
+    async def text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
+                            image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
         """
         Converts text to an image.
 
@@ -96,6 +97,11 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
             :param text:
             :param call_context:
         """
+        if quality is None:
+            quality = "standard"
+        if style is None:
+            style = "natural"
+
         size_to_request = self._choose_optimal_size(size, self.get_capabilities().sizes)
         request = {
             "prompt": text,
