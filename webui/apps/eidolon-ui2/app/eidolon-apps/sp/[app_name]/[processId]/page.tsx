@@ -24,21 +24,21 @@ export default async function ({params}: ProcessPageProps) {
     notFound()
   }
 
+  const optionFromFile = options.operation as unknown as string
   const client = new EidolonClient(machineUrl)
-  const action = await client.getAction(processStatus.agent, options.operation)
+  const action = await client.getAction(processStatus.agent, optionFromFile)
+  console.log(action, options)
   if(!action) {
     throw new Error("No actions found")
   }
 
-  let supportedLLMs: string[] = []
   if (action.schema?.properties?.execute_on_cpu) {
     const property = action.schema?.properties?.execute_on_cpu as Record<string, any>
-    supportedLLMs = property?.["enum"] as string[]
+    options.supportedLLMs = property?.["enum"] as string[]
+    options.defaultLLM = property?.default as string
   }
   return (
     <CopilotPanel
-      supportedLLMs={supportedLLMs}
-      operation={action}
       machineUrl={processStatus.machine}
       processId={processStatus.process_id}
       copilotParams={options}

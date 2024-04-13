@@ -21,7 +21,6 @@ from .resources.resources_base import Resource
 from ..agent_os import AgentOS
 from ..cpu.agent_call_history import AgentCallHistory
 from ..security.permissions import PermissionException
-from ..security.security_manager import SecurityManagerImpl
 
 
 class MachineSpec(BaseModel):

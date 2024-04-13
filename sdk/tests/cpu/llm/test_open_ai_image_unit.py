@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 
 import pytest
 
-from eidolon_ai_client.client import Machine
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm.open_ai_image_unit import OpenAIImageUnit

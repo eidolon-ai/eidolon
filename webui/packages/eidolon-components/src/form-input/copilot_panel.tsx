@@ -6,6 +6,7 @@ import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 import {CopilotInputPanel} from "./copilot_input_form";
 import {useProcessEvents} from "../hooks/useProcessEvents";
 import {CopilotParams} from "../lib/util";
+import {OperationInfo} from "@eidolon/client";
 
 export interface CopilotPanelParams {
   machineUrl: string

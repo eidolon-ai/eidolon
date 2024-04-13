@@ -18,7 +18,6 @@ from vcr.stubs import httpx_stubs
 
 import eidolon_ai_sdk.system.processes as processes
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory
 from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory

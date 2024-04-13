@@ -2,7 +2,7 @@ import {notFound} from "next/navigation";
 import {_processHandler} from "../../../api/eidolon/eidolon_helpers";
 import * as React from "react";
 import {MessagesWithAction} from "@eidolon/components";
-import {CopilotParams, getApp} from "@/utils/eidolon-apps";
+import {getApp} from "@/utils/eidolon-apps";
 import {EidolonClient} from "@eidolon/client";
 
 export interface ProcessPageProps {

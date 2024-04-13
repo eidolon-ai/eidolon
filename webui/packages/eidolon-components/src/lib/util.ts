@@ -1,6 +1,10 @@
+import {OperationInfo} from "@eidolon/client";
+
 export interface CopilotParams {
   "agent": string,
-  "operation": string,
+  supportedLLMs: string[] | undefined,
+  defaultLLM: string | undefined,
+  operation: OperationInfo,
   "inputLabel": string,
   "titleOperationName": string | undefined,
   "allowSpeech": boolean,

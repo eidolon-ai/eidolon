@@ -27,7 +27,7 @@ export function CopilotInputPanel({
                                     executeAction,
                                     handleCancel
                                   }: CopilotInputPanelParams) {
-  const {supportedLLMs, selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, copilotParams.agent, copilotParams.operation)
+  const {selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(copilotParams.operation, copilotParams.defaultLLM)
   const {updateProcesses} = useProcesses()
   const [uploadedFiles, setUploadedFiles] = useState<FileHandle[]>([]);
 
@@ -40,7 +40,7 @@ export function CopilotInputPanel({
       body: input
     }
 
-    if (supportedLLMs && supportedLLMs.length > 0) {
+    if (copilotParams.supportedLLMs && copilotParams.supportedLLMs.length > 0) {
       payload['execute_on_cpu'] = selectedLLM
     }
 
@@ -53,7 +53,7 @@ export function CopilotInputPanel({
       await executeOperation(machineUrl, copilotParams.agent, copilotParams.titleOperationName, processId, {body: input})
       updateProcesses(machineUrl).then()
     }
-    await executeAction(machineUrl, copilotParams.agent, copilotParams.operation, payload)
+    await executeAction(machineUrl, copilotParams.agent, copilotParams.operation.name, payload)
     setUploadedFiles([])
   }
 
@@ -109,7 +109,7 @@ export function CopilotInputPanel({
         </div>
       )}
       <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between", marginLeft: "8px", marginRight: "8px"}}>
-        <ChooseLLMElement supportedLLMs={supportedLLMs} selectedLLM={selectedLLM} setSelectedLLM={setSelectedLLM}/>
+        <ChooseLLMElement supportedLLMs={copilotParams.supportedLLMs} selectedLLM={selectedLLM} setSelectedLLM={setSelectedLLM}/>
         <Typography sx={{marginBottom: "6px"}} alignSelf={"end"} variant={"caption"}>Press <b>Shift-Enter</b> to add a line</Typography>
       </div>
       <Divider sx={{marginTop: "-1px"}}/>
