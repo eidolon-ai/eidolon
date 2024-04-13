@@ -1,6 +1,8 @@
 import {NextPage} from "next";
 import {Box, Typography} from "@mui/material";
 
+export const revalidate = 0
+
 const DevTools: NextPage = () => {
   return (
     <Box component="main" sx={{
