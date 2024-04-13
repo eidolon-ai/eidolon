@@ -10,6 +10,7 @@ from pydantic import field_validator, model_validator
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent, UserInputEvent, FileHandle
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
@@ -29,9 +30,7 @@ class ActionDefinition(BaseModel):
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
     allow_file_upload: bool = False
     # allow all types for text, image, audio, word, pdf, json, etc
-    supported_mime_types: Literal[""] = ["application/json", "text/plain", "image/*", "audio/*", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/vnd.ms-powerpoint",
-                                         "application/vnd.openxmlformats-officedocument.presentationml.presentation"]
+    supported_mime_types: List[""] = [] # an empty list means all types are supported
     allowed_states: List[str] = ["initialized", "idle", "http_error"]
     output_state: str = "idle"
 
@@ -47,6 +46,23 @@ class ActionDefinition(BaseModel):
                     )
         return input_dict
 
+    @field_validator("supported_mime_types")
+    def validate_prompt_properties(cls, supported_mime_types):
+        if not isinstance(supported_mime_types, list):
+            raise ValueError("supported_mime_types must be a List[str]")
+        if not supported_mime_types:
+            return supported_mime_types
+
+        all_mime_types = set(supported_mime_types)
+        bad_types = []
+        for mime_type in supported_mime_types:
+            if mime_type not in all_mime_types:
+                bad_types.append(mime_type)
+        if bad_types:
+            raise ValueError(f"supported_mime_types contains unsupported entries: {bad_types}")
+
+        return supported_mime_types
+
     def make_input_schema(self, agent, handler):
         properties: Dict[str, Any] = {}
         required = []
@@ -57,7 +73,7 @@ class ActionDefinition(BaseModel):
         if self.input_schema is not None:
             properties["body"] = dict(type="object", properties=self.input_schema)
             required.append("body")
-        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus and not self.allow_file_upload:
+        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.apus and not self.allow_file_upload:
             properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
             required.append("body")
         elif user_vars:
@@ -68,8 +84,8 @@ class ActionDefinition(BaseModel):
         if self.allow_file_upload:
             properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandle.model_json_schema())
 
-        if agent.spec.cpus:
-            cpu_names = [cpu.title for cpu in agent.spec.cpus]
+        if agent.spec.apus:
+            cpu_names = [cpu.title for cpu in agent.spec.apus]
             default = agent.cpu.title
             properties["body"]["properties"]["execute_on_cpu"] = dict(type="string", enum=cpu_names, default=default)
             if "required" not in properties["body"]:
@@ -88,7 +104,7 @@ class ActionDefinition(BaseModel):
 
 class NamedCPU(BaseModel):
     title: Optional[str] = None
-    cpu: AnnotatedReference[APU]
+    apu: AnnotatedReference[APU]
     default: bool = False
 
 
@@ -98,21 +114,25 @@ class SimpleAgentSpec(BaseModel):
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
     cpu: AnnotatedReference[APU] = None
-    cpus: Optional[List[NamedCPU]] = []
+    apu: AnnotatedReference[APU] = None
+    apus: Optional[List[NamedCPU]] = []
     title_generation_mode: Literal["none", "on_request"] = "on_request"
     doc_processor: AnnotatedReference[DocumentProcessor]
 
     @model_validator(mode="before")
     def validate_cpu(cls, value):
-        if "cpu" in value and "cpus" in value:
-            raise ValueError("Cannot specify both cpu and cpus")
+        if "cpu" in value:
+            logger.warning("cpu is deprecated, use apu instead")
+            value["apu"] = value.pop("cpu")
+        if "apu" in value and "apus" in value:
+            raise ValueError("Cannot specify both apu and apus")
         return value
 
     # noinspection PyTypeChecker
     @model_validator(mode="after")
     def validate_cpus(self):
-        if self.cpus:
-            self.cpu = None
+        if self.apus:
+            self.apu = None
         return self
 
 
@@ -124,21 +144,21 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
 
     def __init__(self, spec):
         super().__init__(spec=spec)
-        if self.spec.cpu:
-            self.cpu = self.spec.cpu.instantiate()
+        if self.spec.apu:
+            self.cpu = self.spec.apu.instantiate()
             self.cpu.title = self.cpu.__class__.__name__
             self._register_refs_logic_unit(self.cpu, self.spec.agent_refs)
         else:
             self.cpus = []
-            for cpu_spec in self.spec.cpus:
-                cpu = cpu_spec.cpu.instantiate()
+            for cpu_spec in self.spec.apus:
+                apu = cpu_spec.apu.instantiate()
                 # todo - add title from metadata
-                cpu.title = cpu_spec.title or cpu.__class__.__name__
+                apu.title = cpu_spec.title or apu.__class__.__name__
                 if cpu_spec.default:
-                    cpu.default = True
-                    self.cpu = cpu
-                self._register_refs_logic_unit(cpu, self.spec.agent_refs)
-                self.cpus.append(cpu)
+                    apu.default = True
+                    self.cpu = apu
+                self._register_refs_logic_unit(apu, self.spec.agent_refs)
+                self.cpus.append(apu)
 
         if self.spec.title_generation_mode == "on_request":
             # add a title generation action

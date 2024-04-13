@@ -9,7 +9,7 @@ from fastapi import HTTPException
 from mistralai.async_client import MistralAsyncClient
 from mistralai.exceptions import MistralConnectionException, MistralAPIStatusException, MistralAPIException
 from mistralai.models.chat_completion import ChatCompletionStreamResponse, ResponseFormat, ResponseFormats, Function
-from pydantic import Field, BaseModel
+from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -26,7 +26,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessage,
     SystemMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.replay import replayable
 
@@ -116,7 +116,7 @@ async def convert_to_mistral(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-class MistralGPTSpec(BaseModel):
+class MistralGPTSpec(LLMUnitSpec):
     model: str = Field(default="mistral-large-latest", description="The model to use for the LLM.")
     temperature: float = 0.3
     force_json: bool = True
@@ -131,6 +131,9 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         Specable.__init__(self, **kwargs)
 
     def get_models(self) -> List[LLMModel]:
+        if self.spec.supported_models:
+            return self.spec.supported_models
+
         return [
             LLMModel(
                 human_name="Mistral Large",

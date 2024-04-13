@@ -103,6 +103,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.connection_handler = self.spec.connection_handler.instantiate()
 
     def get_models(self) -> List[LLMModel]:
+        if self.spec.supported_models:
+            return self.spec.supported_models
+
         return [
             LLMModel(
                 human_name="GPT-4 Turbo Preview",

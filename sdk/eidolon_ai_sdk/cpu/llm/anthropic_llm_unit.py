@@ -8,7 +8,7 @@ import yaml
 from PIL import Image
 from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError
 from fastapi import HTTPException
-from pydantic import Field, BaseModel
+from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -25,7 +25,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessage,
     SystemMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.replay import replayable
 
@@ -125,7 +125,7 @@ async def convert_to_llm(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-class AnthropicLLMUnitSpec(BaseModel):
+class AnthropicLLMUnitSpec(LLMUnitSpec):
     model: str = Field(default="claude-3-opus-20240229", description="The model to use for the LLM.")
     temperature: float = 0.3
     max_tokens: Optional[int] = None
@@ -143,6 +143,9 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         self.temperature = self.spec.temperature
 
     def get_models(self) -> List[LLMModel]:
+        if self.spec.supported_models:
+            return self.spec.supported_models
+
         return [
             LLMModel(
                 human_name="Claude Opus",
