@@ -4,8 +4,7 @@ import logging
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 import yaml
-from fastapi import HTTPException
-from openai import APIConnectionError, RateLimitError, APIStatusError
+from openai import AsyncStream
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
 from pydantic import Field
@@ -141,7 +140,8 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
         complete_message = ""
         tools_to_call = []
-        async for m_chunk in self.connection_handler.completion(**request):
+        completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(request))
+        async for m_chunk in completion:
             chunk = cast(ChatCompletionChunk, m_chunk)
             if not chunk.choices:
                 logger.info("open ai llm chunk has no choices, skipping")

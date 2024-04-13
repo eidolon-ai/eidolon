@@ -54,9 +54,9 @@ class UserMessageFileHandle(BaseModel):
             if not mimetype:
                 mimetype = filetype.guess_mime(data)
 
-        if mimetype.startswith("image/"):
+        if mimetype and mimetype.startswith("image/"):
             return UserMessageImage(file=file)
-        elif mimetype.startswith("audio/"):
+        elif mimetype and mimetype.startswith("audio/"):
             return UserMessageAudio(file=file)
         else:
             return UserMessageFile(file=file, include_directly=include_directly)
