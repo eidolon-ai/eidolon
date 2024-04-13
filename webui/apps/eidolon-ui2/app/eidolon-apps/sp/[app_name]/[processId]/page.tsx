@@ -24,13 +24,12 @@ export default async function ({params}: ProcessPageProps) {
     notFound()
   }
 
-  const optionFromFile = options.operation as unknown as string
   const client = new EidolonClient(machineUrl)
-  const action = await client.getAction(processStatus.agent, optionFromFile)
-  console.log(action, options)
+  const action = await client.getAction(processStatus.agent, options.operation)
   if(!action) {
     throw new Error("No actions found")
   }
+  options.operationInfo = action!
 
   if (action.schema?.properties?.execute_on_cpu) {
     const property = action.schema?.properties?.execute_on_cpu as Record<string, any>

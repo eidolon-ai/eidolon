@@ -21,7 +21,6 @@ export function MessagesWithAction({operations, machineUrl, agent, processId}: M
     handleCancel
   } = useProcessEvents(machineUrl, agent, processId)
 
-  // todo -- move all of the stuff here into a hook that initializes this mess and returns the elementsAndLookup handle + execute action + handle cancel
   return (
     <Box sx={{
       height: '100%',

@@ -125,7 +125,6 @@ export class ProcessEventsHandler {
       const agent = reqBody["agent"]
       const operation = reqBody["operation"]
       const data = reqBody["data"] as Record<string, any>
-    console.log("*** data", data)
 
       const processId = params.processid;
       if (req.headers.get("Accept") === "text/event-stream") {
