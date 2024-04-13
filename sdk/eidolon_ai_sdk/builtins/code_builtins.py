@@ -38,7 +38,7 @@ from eidolon_ai_sdk.cpu.conversational_apu import ConversationalAPU
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.cpu.llm.anthropic_llm_unit import AnthropicLLMUnit
 from eidolon_ai_sdk.cpu.llm.mistral_llm_unit import MistralGPT
-from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHandler
+from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHandler, AzureOpenAIConnectionHandler
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
@@ -192,6 +192,7 @@ def named_builtins():
         AsyncAzureOpenAI,
         UsageClient,
         OpenAIConnectionHandler,
+        AzureOpenAIConnectionHandler,
         # config objects
         ReplayConfig,
     ]
