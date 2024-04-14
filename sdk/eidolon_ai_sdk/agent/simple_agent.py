@@ -30,7 +30,7 @@ class ActionDefinition(BaseModel):
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
     allow_file_upload: bool = False
     # allow all types for text, image, audio, word, pdf, json, etc
-    supported_mime_types: List[""] = [] # an empty list means all types are supported
+    supported_mime_types: List[str] = [] # an empty list means all types are supported
     allowed_states: List[str] = ["initialized", "idle", "http_error"]
     output_state: str = "idle"
 
@@ -47,7 +47,7 @@ class ActionDefinition(BaseModel):
         return input_dict
 
     @field_validator("supported_mime_types")
-    def validate_prompt_properties(cls, supported_mime_types):
+    def validate_supported_mime_types(cls, supported_mime_types):
         if not isinstance(supported_mime_types, list):
             raise ValueError("supported_mime_types must be a List[str]")
         if not supported_mime_types:
@@ -113,9 +113,8 @@ class SimpleAgentSpec(BaseModel):
     system_prompt: str = "You are a helpful assistant"
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
-    cpu: AnnotatedReference[APU] = None
     apu: AnnotatedReference[APU] = None
-    apus: Optional[List[NamedCPU]] = []
+    apus: List[NamedCPU] = []
     title_generation_mode: Literal["none", "on_request"] = "on_request"
     doc_processor: AnnotatedReference[DocumentProcessor]
 

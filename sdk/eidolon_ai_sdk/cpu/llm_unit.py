@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict, Literal, Union, AsyncIterator, Optional
+from typing import List, Any, Dict, Literal, Union, AsyncIterator
 
 from pydantic import BaseModel, Field
 
@@ -67,7 +67,7 @@ class LLMCallFunction(BaseModel):
 
 class LLMUnitSpec(BaseModel):
     model: str = Field(description="The model to use for the LLM.")
-    supported_models: Optional[List[LLMModel]] = Field(description="The list of supported models or leave empty for defaults.")
+    supported_models: List[LLMModel] = Field(default=[], description="The list of supported models or leave empty for defaults.")
 
 
 class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
