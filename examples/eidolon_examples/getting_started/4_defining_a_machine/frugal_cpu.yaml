@@ -5,7 +5,7 @@ metadata:
 
 spec:
   implementation: APU
-  cpu:
+  apu:
     spec:
       llm_unit:
         spec:

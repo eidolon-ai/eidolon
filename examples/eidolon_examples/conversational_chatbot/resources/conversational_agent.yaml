@@ -9,20 +9,20 @@ spec:
       description: "A copilot that engages with the user."
       allow_file_upload: true
   cpus:
-    - cpu: MistralSmall
+    - apu: MistralSmall
       title: Mistral Small
-    - cpu: MistralMedium
+    - apu: MistralMedium
       title: Mistral Medium
-    - cpu: MistralLarge
+    - apu: MistralLarge
       title: Mistral Large
-    - cpu: GPT3.5-turbo
+    - apu: GPT3.5-turbo
       title: GPT3.5 Turbo
-    - cpu: GPT4-turbo
+    - apu: GPT4-turbo
       title: GPT4 Turbo
       default: true
-    - cpu: ClaudeOpus
+    - apu: ClaudeOpus
       title: Claude Opus
-    - cpu: ClaudeSonnet
+    - apu: ClaudeSonnet
       title: Claude Sonnet
-    - cpu: ClaudeHaiku
+    - apu: ClaudeHaiku
       title: Claude Haiku

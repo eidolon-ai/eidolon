@@ -5,6 +5,6 @@ metadata:
 
 spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
-  cpu: ConversationalAgentCPU
+  apu: ConversationalAPU
   agent_name: Dennis
   personality: Narcissistic and manipulative, Dennis often uses his charm for personal gain. His emotional insecurity drives his need for attention and validation.

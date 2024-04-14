@@ -5,7 +5,7 @@ metadata:
 
 spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
-  cpu: ConversationalAgentCPU
+  apu: ConversationalAPU
   agent_name: Logic Lynx
   personality:
     Specialization - Resource aggregation and learning paths.

@@ -14,10 +14,10 @@ spec:
     Use your code_search and/or example_search tools when more information would be helpful.
     Think carefully.
   cpus:
-    - cpu: MistralLarge
+    - apu: MistralLarge
       title: Mistral Large
-    - cpu: GPT3.5-turbo
+    - apu: GPT3.5-turbo
       title: GPT3.5 Turbo
-    - cpu: GPT4-turbo
+    - apu: GPT4-turbo
       title: GPT4 Turbo
       default: true

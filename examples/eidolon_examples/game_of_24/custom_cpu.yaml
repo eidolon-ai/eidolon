@@ -3,7 +3,7 @@ kind: Reference
 metadata:
   name: custom_cpu
 spec:
-  cpu:
+  apu:
     llm_unit:
       model: "gpt-4-1106-preview"
       temperature: 0.4

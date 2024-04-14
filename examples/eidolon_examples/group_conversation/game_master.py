@@ -32,13 +32,13 @@ class RoleResponse(BaseModel):
 
 
 class GameMasterSpec(BaseConversationCoordinatorSpec):
-    cpu: AnnotatedReference[ConversationalAPU]
+    apu: AnnotatedReference[ConversationalAPU]
     system_prompt: str
     agent_name: str
 
 
 class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
-    cpu: ConversationalAPU
+    apu: ConversationalAPU
 
     def __init__(self, **kwargs):
         super().__init__("game", **kwargs)

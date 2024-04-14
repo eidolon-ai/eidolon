@@ -29,7 +29,7 @@ spec:
         request: {{ body }}
         
         Be concise
-  cpu:
+  apu:
     llm_unit:
       model: gpt-3.5-turbo
     logic_units:
