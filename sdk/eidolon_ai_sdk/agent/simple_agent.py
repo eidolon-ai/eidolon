@@ -15,7 +15,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
 from eidolon_ai_sdk.cpu.agent_cpu import APU
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage, AttachedFileMessage
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage
 from eidolon_ai_sdk.cpu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
@@ -206,7 +206,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
 
     async def create_process(self, process_id):
         t = await self.cpu.main_thread(process_id)
-        await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=self.spec.system_prompt)])
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self.spec.system_prompt)])
 
     @staticmethod
     def _act_wrapper(action, action_fn):
@@ -235,7 +235,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
             body.update(request_body)
 
         env = Environment(undefined=StrictUndefined)
-        text_message = UserTextCPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
+        text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
 
         if execute_on_cpu:
             cpu = self.cpu
@@ -268,7 +268,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
             body.update(request_body)
 
         env = Environment(undefined=StrictUndefined)
-        text_message = UserTextCPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
+        text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
 
         if execute_on_cpu:
             cpu = self.cpu
@@ -279,7 +279,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         else:
             cpu = self.cpu
 
-        title_message = UserTextCPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
+        title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
         response = await (await cpu.new_thread(process_id)).run_request(prompts=[title_message])
         await process_obj.update(title=response)
 

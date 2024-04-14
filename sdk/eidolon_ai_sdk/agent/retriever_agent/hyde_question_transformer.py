@@ -5,7 +5,7 @@ from typing import List
 
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformerSpec, QuestionTransformer
 from eidolon_ai_sdk.cpu.agent_cpu import APU
-from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
@@ -27,6 +27,6 @@ class HydeQuestionTransformer(QuestionTransformer, Specable[HydeQuestionTransfor
         thread = await self.cpu.main_thread(str(uuid.uuid4()))
         env = Environment(undefined=StrictUndefined)
         userPrompt = env.from_string(self.spec.prompt).render(question=question)
-        response = await thread.run_request(prompts=[UserTextCPUMessage(prompt=userPrompt)], output_format="str")
+        response = await thread.run_request(prompts=[UserTextAPUMessage(prompt=userPrompt)], output_format="str")
 
         return [response]

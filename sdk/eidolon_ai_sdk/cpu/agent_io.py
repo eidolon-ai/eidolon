@@ -24,29 +24,29 @@ class ResponseHandler(ABC):
         pass
 
 
-class CPUMessage(BaseModel):
+class APUMessage(BaseModel):
     type: str
 
 
-class UserTextCPUMessage(CPUMessage):
+class UserTextAPUMessage(APUMessage):
     type: Literal["user"] = "user"
     prompt: str
     is_boot_prompt: bool = False
 
 
-class SystemCPUMessage(CPUMessage):
+class SystemAPUMessage(APUMessage):
     type: Literal["system"] = "system"
     is_boot_prompt: bool = True
     prompt: str
 
 
-class AttachedFileMessage(CPUMessage):
+class AttachedFileMessage(APUMessage):
     type: Literal["image_url"] = "file"
     file: FileHandle
     include_directly: bool
 
 
-CPUMessageTypes = UserTextCPUMessage | SystemCPUMessage | AttachedFileMessage
+CPUMessageTypes = UserTextAPUMessage | SystemAPUMessage | AttachedFileMessage
 
 
 class IOUnit(ProcessingUnit):

@@ -10,7 +10,7 @@ from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import StartStreamContextEvent, OutputEvent
 from eidolon_ai_client.util.stream_collector import merge_streams
 from eidolon_ai_sdk.cpu.agent_cpu import APU, Thread
-from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes, SystemCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes, SystemAPUMessage
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable, Reference
@@ -93,7 +93,7 @@ class ValidatingCPU(APU, Specable[ValidatingCPUSpec]):
             yield e
         while changes_fn() and depth <= self.spec.max_response_regenerations:
             prompt = self.env.from_string(self.spec.regeneration_prompt).render(changes=changes_fn())
-            change_prompt = [SystemCPUMessage(prompt=prompt)]
+            change_prompt = [SystemAPUMessage(prompt=prompt)]
             resp_stream, resp_fn, changes_fn = self._generate_resp(
                 call_context, depth, output_format, change_prompt, prompts_str
             )

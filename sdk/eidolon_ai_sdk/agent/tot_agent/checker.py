@@ -4,7 +4,7 @@ from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.cpu.agent_cpu import APU
-from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.agent.tot_agent.prompts import CHECKER_PROMPT
 from eidolon_ai_sdk.agent.tot_agent.thought import ThoughtValidity
 from eidolon_ai_sdk.system.reference_model import Specable
@@ -54,7 +54,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
 
         thread = await self.cpu.new_thread(process_id)
         resp = await thread.run_request(
-            prompts=[UserTextCPUMessage(prompt=checker_prompt)],
+            prompts=[UserTextAPUMessage(prompt=checker_prompt)],
             output_format=ThoughtValidity.model_json_schema(),
         )
 

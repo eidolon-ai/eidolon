@@ -6,7 +6,7 @@ from pydub import AudioSegment
 from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentState
 from eidolon_ai_sdk.agent.generic_agent import GenericAgentSpec
 from eidolon_ai_sdk.cpu.agent_cpu import APU
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
@@ -33,9 +33,9 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         schema["type"] = "object"
 
         t = await self.cpu.main_thread(process_id)
-        await t.set_boot_messages(SystemCPUMessage(prompt=self.spec.system_prompt))
+        await t.set_boot_messages(SystemAPUMessage(prompt=self.spec.system_prompt))
 
-        response = await t.run_request([UserTextCPUMessage(prompt=text)], output_format=schema)
+        response = await t.run_request([UserTextAPUMessage(prompt=text)], output_format=schema)
         response = LlmResponse(**response)
         return AgentState(name="idle", data=response)
 

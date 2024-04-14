@@ -4,7 +4,7 @@ description: References - Pluggable Resources
 ---
 
 ### Including Pluggable References in Configuration
-Agents can include pluggable references to various components like CPUs. Let's use gpt 3.5 instead of 4 to save money and lower the temperature some for more repeatable results.
+Agents can include pluggable references to various components like APUs. Let's use gpt 3.5 instead of 4 to save money and lower the temperature some for more repeatable results.
 
 _qa_agent.yaml_
 ```yaml
@@ -16,7 +16,7 @@ metadata:
 spec:
   implementation: getting_started.qa.QualityAssurance
   agent_refs: ["hello_world"]
-  cpu:
+  apu:
     spec:
       llm_unit:
         spec:
@@ -28,18 +28,18 @@ spec:
 ```
 
 ### Named References
-This is pretty verbose in our qa_agent.yaml, and would be redundant if we wanted other agents to run with the same cpu. Let's create a named resource `cpu.frugal` which we can reuse for our agents.
+This is pretty verbose in our qa_agent.yaml, and would be redundant if we wanted other agents to run with the same apu. Let's create a named resource `apu.frugal` which we can reuse for our agents.
 
-_frugal_cpu.yaml_
+_frugal_apu.yaml_
 ```yaml
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: frugal_cpu
+  name: frugal_apu
 
 spec:
-  implementation: 'ConversationalAgentCPU'
-  cpu:
+  implementation: 'ConversationalAPU'
+  apu:
     spec:
       llm_unit:
         spec:
@@ -60,9 +60,9 @@ metadata:
 spec:
   implementation: getting_started.qa.QualityAssurance
   agent_refs: ["hello_world"]
-  cpu: frugal_cpu
+  apu: frugal_apu
 ```
 
-We refer to our named resource as `{kind}.{metadata.name}`, or in this case `CPU.default`. We can create named resources 
+We refer to our named resource as `{kind}.{metadata.name}`, or in this case `aPU.default`. We can create named resources 
 for any type of `Reference` within a spec. For example, we could have created a named reference for the llm_unit instead 
-(or in addition to) of the cpu.
+(or in addition to) of the apu.
