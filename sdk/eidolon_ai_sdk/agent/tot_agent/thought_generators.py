@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Callable, Awaitable
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage, CPUMessageTypes
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage, CPUMessageTypes
 from eidolon_ai_sdk.cpu.llm_message import UserMessage, LLMMessage
 from eidolon_ai_sdk.agent.tot_agent.prompts import (
     POST_AMBLE,
@@ -50,11 +50,11 @@ class ThoughtGenerationStrategy(Specable[TGSConfig]):
             thoughts=thoughts_tuple, n=self.spec.num_children
         )
         return (
-            [SystemCPUMessage(prompt=preamble_txt)],
+            [SystemAPUMessage(prompt=preamble_txt)],
             [
-                UserTextCPUMessage(prompt=user_message),
-                UserTextCPUMessage(prompt=thoughts_txt),
-                UserTextCPUMessage(prompt=post_amble_txt),
+                UserTextAPUMessage(prompt=user_message),
+                UserTextAPUMessage(prompt=thoughts_txt),
+                UserTextAPUMessage(prompt=post_amble_txt),
             ],
         )
 

@@ -16,6 +16,6 @@ structure is not required, we will reference the files in the following structur
 └── resources
     ├── hello_world_agent.yaml
     ├── qa_agent.yaml
-    ├── frugal_cpu.yaml
+    ├── frugal_apu.yaml
     └── machine.yaml
 ```

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import os
-
 import pathlib
 from typing import Dict, Tuple, TypeVar, Type
 
-from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent_os_interfaces import ProcessFileSystem, FileMemory, SymbolicMemory, SecurityManager, SimilarityMemory
+from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 
 T = TypeVar("T", bound="Resource")  # noqa: F821
 S = TypeVar("S", bound="BaseModel")  # noqa: F821
@@ -14,11 +14,11 @@ S = TypeVar("S", bound="BaseModel")  # noqa: F821
 
 class AgentOS:
     _resources: Dict[str, Dict[str, Tuple["Resource", str]]] = ...  # noqa: F821
-    file_memory: "FileMemory" = ...  # noqa: F821
-    symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
-    similarity_memory: "SimilarityMemory" = ...  # noqa: F821
-    security_manager: "SecurityManager" = ...  # noqa: F821
-    process_file_system: "ProcessFileSystem" = ...  # noqa: F821
+    file_memory: FileMemory = ...  # noqa: F821
+    symbolic_memory: SymbolicMemory = ...  # noqa: F821
+    similarity_memory: SimilarityMemory = ...  # noqa: F821
+    security_manager: SecurityManager = ...  # noqa: F821
+    process_file_system: ProcessFileSystem = ...  # noqa: F821
 
     @staticmethod
     def current_machine_url() -> str:

@@ -4,7 +4,7 @@ import typing
 from pydantic import BaseModel
 from typing import List, TypeVar, Generic
 
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
+from eidolon_ai_sdk.cpu.agent_cpu import APU
 from eidolon_ai_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec,
@@ -14,12 +14,12 @@ from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class AgentSpec(BaseModel):
-    cpu: AnnotatedReference[AgentCPU]
+    cpu: AnnotatedReference[APU]
     agent_refs: List[str] = []
 
 
 class Agent(Specable[AgentSpec]):
-    cpu: AgentCPU
+    cpu: APU
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

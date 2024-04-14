@@ -3,50 +3,79 @@ from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
 from fastapi import HTTPException
 from opentelemetry import trace
 
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread, CPUException
-from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_message import AssistantMessage, ToolResponseMessage, LLMMessage
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
-from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_client.events import (
     StreamEvent,
     LLMToolCallRequestEvent,
     ToolCallStartEvent,
 )
-from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 from eidolon_ai_client.util.stream_collector import merge_streams
-
+from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
+from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import FileInfo
+from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
+from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.cpu.agent_cpu import APU, APUSpec, Thread, CPUException, APUCapabilities
+from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
+from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.image_unit import ImageUnit
+from eidolon_ai_sdk.cpu.llm_message import AssistantMessage, ToolResponseMessage, LLMMessage, UserMessageFile, UserMessageAudio, UserMessageImage, \
+    UserMessageText, UserMessage
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
+from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
+from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
+from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
+from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 
 tracer = trace.get_tracer("cpu")
 
 
-class ConversationalAgentCPUSpec(AgentCPUSpec):
+class ConversationalAPUSpec(APUSpec):
     io_unit: AnnotatedReference[IOUnit]
     memory_unit: AnnotatedReference[MemoryUnit]
     llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
+    audio_unit: Reference[AudioUnit] = None
+    image_unit: Reference[ImageUnit] = None
     record_conversation: bool = True
     allow_tool_errors: bool = True
+    document_processor: AnnotatedReference[DocumentProcessor]
 
 
-class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], ProcessingUnitLocator):
+class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLocator):
     io_unit: IOUnit
     memory_unit: MemoryUnit
     logic_units: List[LogicUnit]
+    llm_unit: LLMUnit
+    audio_unit: AudioUnit
+    image_unit: ImageUnit
+    document_processor: DocumentProcessor
 
-    def __init__(self, spec: ConversationalAgentCPUSpec = None):
+    def __init__(self, spec: ConversationalAPUSpec = None):
         super().__init__(spec)
         kwargs = dict(processing_unit_locator=self)
         self.io_unit = self.spec.io_unit.instantiate(**kwargs)
         self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
+        self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None
+        self.image_unit = self.spec.image_unit.instantiate(**kwargs) if self.spec.image_unit else None
         self.record_memory = self.spec.record_conversation
+        self.document_processor = self.spec.document_processor.instantiate()
+
+    def get_capabilities(self) -> APUCapabilities:
+        llm_props = self.llm_unit.get_llm_capabilities()
+        return APUCapabilities(
+            input_context_limit=llm_props.input_context_limit,
+            output_context_limit=llm_props.output_context_limit,
+            supports_tools=llm_props.supports_tools,
+            supports_image_input=llm_props.supports_image_input or self.image_unit is not None,
+            supports_audio_input=llm_props.supports_audio_input or self.audio_unit is not None,
+            supports_file_search=llm_props.supports_tools and self.document_processor is not None,
+            supports_audio_generation=self.audio_unit is not None,
+            supports_image_generation=self.image_unit is not None,
+        )
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
         for unit in self.logic_units:
@@ -60,6 +89,12 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
 
         if isinstance(self.llm_unit, unit_type):
             return self.llm_unit
+
+        if isinstance(self.audio_unit, unit_type):
+            return self.audio_unit
+
+        if isinstance(self.image_unit, unit_type):
+            return self.image_unit
 
         raise ValueError(f"Could not locate {unit_type}")
 
@@ -86,6 +121,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         except CPUException as e:
             raise e
         except Exception as e:
+            logger.exception(e)
             raise CPUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
@@ -94,6 +130,24 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         output_format: Union[Literal["str"], Dict[str, Any]],
         conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
+        # first convert the conversation to fill in file data
+        converted_conversation = []
+        for event in conversation:
+            if isinstance(event, UserMessage):
+                converted_messages = []
+                for message in event.content:
+                    if isinstance(message, UserMessageFile) and message.include_directly:
+                        converted_messages.extend(await self.process_file_message(call_context.process_id, message))
+                    elif isinstance(message, UserMessageAudio):
+                        converted_messages.extend(await self.process_audio_message(call_context, message))
+                    elif isinstance(message, UserMessageImage):
+                        converted_messages.extend(await self.process_image_message(call_context, message))
+                    else:
+                        converted_messages.append(message)
+                converted_conversation.append(UserMessage(content=converted_messages))
+            else:
+                converted_conversation.append(event)
+
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             with tracer.start_as_current_span("building tools"):
@@ -101,7 +155,7 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
-                execute_llm_ = self.llm_unit.execute_llm(call_context, conversation, llm_facing_tools, output_format)
+                execute_llm_ = self.llm_unit.execute_llm(call_context, converted_conversation, llm_facing_tools, output_format)
                 # yield the events but capture the output, so it can be rolled into one event for memory.
                 stream_collector = StreamCollector(execute_llm_)
                 async for event in stream_collector:
@@ -118,11 +172,11 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
             )
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
-            conversation.append(assistant_message)
+            converted_conversation.append(assistant_message)
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
-                    streams = [self._call_tool(call_context, tce, tool_defs, conversation) for tce in tool_call_events]
+                    streams = [self._call_tool(call_context, tce, tool_defs, converted_conversation) for tce in tool_call_events]
                     async for e in merge_streams(streams):
                         yield e
             else:
@@ -177,6 +231,48 @@ class ConversationalAgentCPU(AgentCPU, Specable[ConversationalAgentCPUSpec], Pro
         if self.record_memory:
             await self.memory_unit.storeMessages(call_context, [message])
         conversation.append(message)
+
+    async def process_audio_message(self, call_context: CallContext, message: UserMessageAudio):
+        if self.audio_unit is None:
+            raise ValueError("No audio unit available")
+        audio_data, metadata = await AgentOS.process_file_system.read_file(call_context.process_id, message.file.file_id)
+        mimetype = metadata.get("mimetype")
+        path = metadata.get("path") or metadata.get("filename") or ""
+        text = await self.audio_unit.speech_to_text(audio=audio_data, mime_type=mimetype)
+        return [UserMessageText(text=f"The following text as converted from the audio file {path}:\n{text}\n\n")]
+
+    async def process_image_message(self, call_context: CallContext, message: UserMessageImage):
+        if self.get_capabilities().supports_image_input:
+            return [message]
+        elif self.image_unit is not None:
+            image_data, metadata = await AgentOS.process_file_system.read_file(call_context.process_id, message.file.file_id)
+            path = metadata.get("path") or metadata.get("filename") or ""
+            text = await self.image_unit.image_to_text(prompt="Create a detailed text description of the following image. Be sure to include as much information as needed to describe the image.  Be very verbose.", image=image_data)
+            return [UserMessageText(text=f"The following text is a detailed description of an image {path}:\n{text}\n\n")]
+        else:
+            raise ValueError("Image processing not supported")
+
+    async def process_file_message(self, process_id: str, message: UserMessageFile):
+        parts = []
+        if message.include_directly:
+            data, metadata = await AgentOS.process_file_system.read_file(process_id, message.file.file_id)
+            path = metadata.get("path") or metadata.get("filename") or None
+            mimetype = metadata.get("mimetype")
+            message = f"The file {path} was uploaded. The text of the file is:\n"
+            for docs in self.document_processor.parse(data, mimetype, path):
+                message += docs.page_content + "\n"
+
+            parts.append(UserMessageText(text=message))
+        else:
+            data, metadata = await AgentOS.process_file_system.read_file(process_id, message.file.file_id)
+            path = metadata.get("path") or metadata.get("filename") or None
+            mimetype = metadata.get("mimetype")
+            blob = DataBlob.from_bytes(data=data, mimetype=mimetype, path=path)
+            await self.document_processor.addFile(f"pf_pid_{process_id}", FileInfo(data=blob, path="", metadata=metadata))
+            message = f"The file {path} is available to search. Use the provided search tool to find information contained in the file\n"
+            parts.append(UserMessageText(text=message))
+
+        return parts
 
     async def clone_thread(self, call_context: CallContext) -> Thread:
         new_context = call_context.derive_call_context()

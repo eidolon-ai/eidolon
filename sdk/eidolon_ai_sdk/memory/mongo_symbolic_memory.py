@@ -7,7 +7,7 @@ from typing import Any, Optional, AsyncIterable, Union, Dict, List
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
+from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemoryBase
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -18,7 +18,7 @@ class MongoSymbolicMemoryConfig(BaseModel):
     mongo_database_name: str = Field(default=os.environ.get("MONGO_DATABASE_NAME", "eidolon"), description="The name of the MongoDB database to use.")
 
 
-class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
+class MongoSymbolicMemory(SymbolicMemoryBase, Specable[MongoSymbolicMemoryConfig]):
     mongo_connection_string: Optional[str]
     mongo_database_name: str
     _database: Optional[ContextVar]

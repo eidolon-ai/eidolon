@@ -1,18 +1,18 @@
-from eidolon_ai_sdk.memory.file_memory import FileMemory
-from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
-from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
+from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
+from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemoryBase
+from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
 
 
 class AgentMemory:
-    file_memory: FileMemory
-    symbolic_memory: SymbolicMemory
-    similarity_memory: SimilarityMemory
+    file_memory: FileMemoryBase
+    symbolic_memory: SymbolicMemoryBase
+    similarity_memory: SimilarityMemoryImpl
 
     def __init__(
         self,
-        file_memory: FileMemory = None,
-        symbolic_memory: SymbolicMemory = None,
-        similarity_memory: SimilarityMemory = None,
+        file_memory: FileMemoryBase = None,
+        symbolic_memory: SymbolicMemoryBase = None,
+        similarity_memory: SimilarityMemoryImpl = None,
     ):
         self.file_memory = file_memory
         self.symbolic_memory = symbolic_memory

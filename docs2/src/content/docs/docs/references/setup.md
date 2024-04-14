@@ -13,7 +13,7 @@ touch getting_started/qa.py
 mkdir resources
 touch resources/qa_agent.yaml
 touch resources/hello_world_agent.yaml
-touch resources/frugal_cpu.yaml
+touch resources/frugal_apu.yaml
 touch resources/machine.yaml
 poetry env use python3.11
 poetry add eidolon-ai-sdk

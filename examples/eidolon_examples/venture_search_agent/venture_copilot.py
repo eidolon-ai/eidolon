@@ -11,7 +11,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import register_program, Agent as AgentTemplate, register_action
-from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage, SystemAPUMessage
 
 
 class SummarizeWebsiteBody(BaseModel):
@@ -41,7 +41,7 @@ class VentureCopilot(AgentTemplate):
 
         t = await self.cpu.main_thread(process_id)
         system_prompt = f"You are a helpful agent helping investors find companies to invest in. After research your team has identified the following companies other investors are looking at:\n\n{yaml.dump(company_summaries)}"
-        await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=system_prompt)])
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
 
         yield AgentStateEvent(state="idle")
 
@@ -71,7 +71,7 @@ class VentureCopilot(AgentTemplate):
 
     @register_action("idle")
     async def converse(self, process_id, question: str = Body(..., media_type="text/plain")):
-        text_message = UserTextCPUMessage(prompt=question)
+        text_message = UserTextAPUMessage(prompt=question)
         thread = await self.cpu.main_thread(process_id)
         async for event in thread.stream_request(prompts=[text_message]):
             yield event

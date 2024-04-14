@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import {OperationInfo} from "@eidolon/client";
 
-export function useSupportedLLMsOnOperation(operation: OperationInfo) {
-  const [selectedLLM, setSelectedLLM] = useState<string>("")
+export function useSupportedLLMsOnOperation(operation: OperationInfo, defaultLLM?: string) {
+  const [selectedLLM, setSelectedLLM] = useState<string>(defaultLLM || "")
   useEffect(() => {
     const schema = operation.schema
     if (schema?.properties?.execute_on_cpu) {

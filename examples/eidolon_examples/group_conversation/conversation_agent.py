@@ -7,8 +7,8 @@ from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import AgentStateEvent
 from eidolon_ai_sdk.agent.agent import register_program, register_action
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
-from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage
+from eidolon_ai_sdk.cpu.conversational_apu import ConversationalAPU
 from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, SystemMessage
 from eidolon_ai_sdk.system.reference_model import Reference, Specable
 
@@ -36,7 +36,7 @@ class Thought(BaseModel):
 
 
 class ConversationAgentSpec(BaseModel):
-    cpu: Reference[ConversationalAgentCPU]
+    cpu: Reference[ConversationalAPU]
     agent_name: str
     system_prompt: Optional[str] = Field(
         default=None, description="The prompt to show the agent when the conversation starts."
@@ -49,7 +49,7 @@ class ConversationAgentSpec(BaseModel):
 
 
 class ConversationAgent(Specable[ConversationAgentSpec]):
-    cpu: ConversationalAgentCPU
+    cpu: ConversationalAPU
     system_prompt: str
 
     def __init__(self, **kwargs):
@@ -89,8 +89,8 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         t = await self.cpu.main_thread(process_id)
         await t.set_boot_messages(
             prompts=[
-                SystemCPUMessage(prompt=self.system_prompt),
-                SystemCPUMessage(prompt="Your personality is:\n" + self.spec.personality),
+                SystemAPUMessage(prompt=self.system_prompt),
+                SystemAPUMessage(prompt="Your personality is:\n" + self.spec.personality),
             ],
         )
         yield AgentStateEvent(state="idle")
@@ -129,7 +129,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         - Show an emotion
         """
 
-        prompt = UserTextCPUMessage(prompt=self.env.from_string(self.think_prompt).render())
+        prompt = UserTextAPUMessage(prompt=self.env.from_string(self.think_prompt).render())
         t = await self.cpu.main_thread(process_id)
         async for event in t.stream_request(prompts=[prompt], output_format=AgentThought):
             yield event
@@ -140,7 +140,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         Called to allow the agent to speak
         """
-        prompt = UserTextCPUMessage(prompt=self.speak_prompt)
+        prompt = UserTextAPUMessage(prompt=self.speak_prompt)
         t = await self.cpu.main_thread(process_id)
         async for event in t.stream_request(prompts=[prompt], output_format=str):
             yield event

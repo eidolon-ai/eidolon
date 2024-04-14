@@ -1,21 +1,21 @@
 ---
-title: AgentCPU
-description: An overview of the AgentCPU within Eidolon.
+title: Agent Processing Unit (APU)
+description: An overview of the APU
 ---
 
 ## Components
-The AgentCPU constitutes the nucleus of a software agent within the Eidolon framework. Functioning akin to the central processing unit of a computer, the AgentCPU is tasked with orchestrating the behavior of the agent by handling tasks that span computation, memory management, conversation handling, and interaction with language models.
+The Agent Processing Unit, or APU for short, constitutes the nucleus of a software agent within the Eidolon framework. Functioning akin to the central processing unit of a computer, the APU is tasked with orchestrating the behavior of the agent by handling tasks that span computation, memory management, conversation handling, and interaction with language models.
 
 ## Purpose and Use
-The primary purpose of the AgentCPU is to serve as the central co-ordinator for various processing units that form the agent's cognitive and operational capabilities. It is designed to integrate seamlessly with Language Learning Models (LLMs) like
+The primary purpose of the APU is to serve as the central co-ordinator for various processing units that form the agent's cognitive and operational capabilities. It is designed to integrate seamlessly with Language Learning Models (LLMs) like
 OpenAI's GPT models, facilitate interaction with the agent's memory systems, process input/output operations, and manage the logical functions assigned to the agent.
 
-In practical use, the AgentCPU is deployed within an AgentMachine — a virtual environment that runs one or more instances of an AgentProgram. The AgentMachine, bolstered by the AgentOS as its runtime environment, offers the necessary services such
+In practical use, the APU is deployed within an AgentMachine — a virtual environment that runs one or more instances of an AgentProgram. The AgentMachine, bolstered by the AgentOS as its runtime environment, offers the necessary services such
 as process management, memory management, and I/O communication interfaces.
 
 
 ## Components and Operations
-The AgentCPU consists of several key components, including:
+The APU consists of several key components, including:
 - **I/O Unit:** This component is the interface for the ingress and egress of data, interpreting and converting incoming and outgoing messages to and from formats that the agent and the external world can understand.
 - **MemoryUnit:** A memory management unit that archives and retrieves messages exchanged during agent interactions, playing a pivotal role in the agent's conversation history and context-aware responses.
 - **LogicUnits:** Modules hosting the essential logic for task execution, enabling the agent to perform computations and other agent-defined actions.
@@ -27,33 +27,33 @@ In the next sections, we will explore each of these components in detail, outlin
 
 ## I/O Unit
 
-The Input/Output Unit (IOUnit) is a core component of the AgentCPU, responsible for interfacing with external systems and the agent itself. It encapsulates the logic required to interpret incoming messages from users or other services and convert them into a structured format that can be processed by the agent. Conversely, it also formats the agent's responses for delivery to the external environment.
+The Input/Output Unit (IOUnit) is a core component of the APU, responsible for interfacing with external systems and the agent itself. It encapsulates the logic required to interpret incoming messages from users or other services and convert them into a structured format that can be processed by the agent. Conversely, it also formats the agent's responses for delivery to the external environment.
 
 ### Key Responsibilities
 
-- **Message Processing**: The IOUnit takes incoming instances of `CPUMessageTypes`, which can include user-provided text, system-generated messages, or image URLs, and converts them into a list of `LLMMessage` objects suitable for further processing by the agent's language model.
+- **Message Processing**: The IOUnit takes incoming instances of `APUMessageTypes`, which can include user-provided text, system-generated messages, or image URLs, and converts them into a list of `LLMMessage` objects suitable for further processing by the agent's language model.
 
 - **Message Formatting**: For user messages, the IOUnit aggregates text components and images. Images are handled by writing the data to a temporary location and creating a corresponding URL.
 
 - **File Handling**: When dealing with images, the IOUnit manages file operations, ensuring that images are properly stored and referenced using UUIDs, leveraging the file memory subsystem provided by AgentOS.
 
-- **Response Transmission**: After processing by other components of the AgentCPU, the IOUnit's `process_response` method is involved in returning the final output back to the source of the original request.
+- **Response Transmission**: After processing by other components of the APU, the IOUnit's `process_response` method is involved in returning the final output back to the source of the original request.
 
 ### Implementation Details
 
-- **Custom Message Types**: The IOUnit works with custom message classes such as `UserTextCPUMessage`, `SystemCPUMessage`, and `ImageCPUMessage`, relying on their inheritance from the base `CPUMessage` model. Each class has distinct characteristics for handling various message formats.
+- **Custom Message Types**: The IOUnit works with custom message classes such as `UserTextAPUMessage`, `SystemAPUMessage`, and `FileAPUMessage`, relying on their inheritance from the base `APUMessage` model. Each class has distinct characteristics for handling various message formats.
 
 - **AgentOS Integration**: The IOUnit collaborates with AgentOS, particularly with the file memory module when handling temporary storage of files, such as images uploaded by users.
 
 ### Error Handling
 
-The IOUnit includes error handling to manage unexpected message types, ensuring the robustness of message processing and enforcing the valid communication protocol expected by the AgentCPU.
+The IOUnit includes error handling to manage unexpected message types, ensuring the robustness of message processing and enforcing the valid communication protocol expected by the APU.
 
 By translating between raw input/output and structured representations used by agent's internal processes, the IOUnit plays a pivotal role in ensuring smooth communication and operation of the agent within its ecosystem.
 
 ## MemoryUnit
 
-The `MemoryUnit` in the Eidolon SDK serves as an abstract base class that specifies the interface for memory storage operations within the AgentCPU framework. The primary responsibility of the MemoryUnit is to manage the recording and retrieval of
+The `MemoryUnit` in the Eidolon SDK serves as an abstract base class that specifies the interface for memory storage operations within the APU framework. The primary responsibility of the MemoryUnit is to manage the recording and retrieval of
 messages exchanged during agent interactions.
 
 The `eidolon/cpu/memory_unit.py` source code provides a blueprint for the essential functions a MemoryUnit implementation must provide:
@@ -77,7 +77,7 @@ To facilitate these functions, the MemoryUnit also requires concrete implementat
 
 It is important for implementations to handle these operations efficiently to ensure they do not become bottlenecks in the performance of the agent system. Furthermore, specific implementation details such as data format standardization, error
 handling, and data integrity checks are expected to be defined in the concrete classes that extend this base `MemoryUnit`. The functions define the contract that all specialized memory units must adhere to, ensuring modularity and a standardized
-approach to memory handling within the AgentCPU architecture.
+approach to memory handling within the APU architecture.
 
 ## LogicUnits
 
@@ -143,21 +143,13 @@ To leverage an LLMUnit within an agent, integration with an actual LLM provider 
 text, answering questions, or any natural language generation task aligned with the agent's functions.
 
 In summary, the LLMUnit is a vital abstraction that enables the Eidolon SDK’s agents to tap into the capabilities of modern LLMs, thus opening pathways to rich interactive experiences and intelligent automated processes. The design of LLMUnit as a
-ProcessingUnit subclass ensures that it seamlessly fits into the larger operational framework of the AgentCPU, contributing to the system's overall strength in language-based tasks.
+ProcessingUnit subclass ensures that it seamlessly fits into the larger operational framework of the APU, contributing to the system's overall strength in language-based tasks.
 
-## Additional CPU Components
+## Additional APU Components
 
-Within the Eidolon SDK, the `eidolon/cpu` package includes a variety of additional CPU components vital to the operation of advanced software agent systems. These components fulfill specific roles within the agent architecture, enhancing the
+Within the Eidolon SDK, the `eidolon/cpu` package includes a variety of additional APU components vital to the operation of advanced software agent systems. These components fulfill specific roles within the agent architecture, enhancing the
 flexibility of agent capabilities.
 
-##### OpenAIAssistantsCPU
-The `OpenAIAssistantsCPU` is a specialized component designed to interact directly with OpenAI's suite of models. It contains functionalities like processing files for use, creating assistants based on the GPT model specified, and handling the
-bootstrapping of messages.
-
-This unit is notable for its comprehensive handling of an agent's interaction with OpenAI services, including creating and maintaining conversations, processing uploads (like images), and orchestrating the execution of tools through the assistant.
-It's designed to manage not only the generation of responses based on inputs but also to operate secondary logic when the LLM requires further actions—essentially acting as a bridge between the general-purpose agent CPU and the specific requirements
-of OpenAI's APIs【3†source】.
-
-These additional CPU components underscore the SDK's commitment to offering a robust and extendable framework for agent development. Each component—be it conversational logic, summarization, or integration with third-party services like
+These additional APU components underscore the SDK's commitment to offering a robust and extendable framework for agent development. Each component—be it conversational logic, summarization, or integration with third-party services like
 OpenAI—serves to enhance the agent's operation, making it more adaptable, intelligent, and responsive to the demands of complex interactive tasks. The separation of these concerns into dedicated units also aligns with the SDK's modular design
 philosophy, allowing developers to plug in the needed functionalities while maintaining a clean and maintainable codebase.

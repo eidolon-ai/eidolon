@@ -4,11 +4,11 @@ from io import BytesIO
 import boto3
 from pydantic import BaseModel
 
-from eidolon_ai_sdk.memory.file_memory import FileMemory
+from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.util.async_wrapper import make_async
 
 
-class S3FileMemory(BaseModel, FileMemory):
+class S3FileMemory(BaseModel, FileMemoryBase):
     bucket: str
     region: str = "us-east-1"
     kwargs: dict = {}

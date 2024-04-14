@@ -7,7 +7,7 @@ metadata:
   annotations:
     - title: "Mistral Medium"
 spec:
-    implementation: AgentCPU
+    implementation: APU
     llm_unit:
       implementation: MistralGPT
       model: "mistral-medium-latest"

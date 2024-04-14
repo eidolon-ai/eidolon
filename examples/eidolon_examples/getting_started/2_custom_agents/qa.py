@@ -4,7 +4,7 @@ from fastapi import Body, HTTPException
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentSpec
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.logger import logger
 
@@ -42,11 +42,11 @@ class QualityAssurance(Agent, Specable[QASpec]):
             )
 
         thread = await self.cpu.main_thread(process_id)
-        await thread.set_boot_messages([SystemCPUMessage(prompt=system_message)])
-        await thread.run_request(prompts=[UserTextCPUMessage(prompt=f"Please test all tools related to {agent}")])
+        await thread.set_boot_messages([SystemAPUMessage(prompt=system_message)])
+        await thread.run_request(prompts=[UserTextAPUMessage(prompt=f"Please test all tools related to {agent}")])
         logger.info(f"Tests Complete for {agent}")
         response: QAResponse = await thread.run_request(
-            prompts=[UserTextCPUMessage(prompt="Please summarize your test results")],
+            prompts=[UserTextAPUMessage(prompt="Please summarize your test results")],
             output_format=QAResponse,
         )
         if response.outcome != "success":

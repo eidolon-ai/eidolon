@@ -21,7 +21,7 @@ The construct of an agent is composed of the following elements:
 
 - **Agent Specification**: A structured definition that defines the agent's abilities. The specification is defined in a YAML file and is used to configure the agent's behavior and communication schemata.
 
-- **AgentCPU**: The computational heart of an agent, analogous to a CPU in a computer. It coordinates all interaction with an LLM and other agents, enabling the seamless flow of data and instructions within the agent.
+- **Agent Processing Unit (APU)**: The computational heart of an agent, analogous to a CPU in a computer. It coordinates all interaction with an LLM and other agents, enabling the seamless flow of data and instructions within the agent.
 
 - **AgentOS**: The operating system for agents, providing the foundational runtime environment, including process management and memory management. It supports the various agent programs running within it.
 
@@ -64,7 +64,7 @@ A great use case for states is a manger agent. A worker agent can use a manager 
 
 Subsequent calls to an agent are made to an **action** defined on the agent. Action methods are decorated with `@register_action()`. All calls to actions are made with the process_id of the conversation, allowing the agent to maintain state between calls to the action.
 
-Moving to the concept of a more self-reliant agent, the **AutonomousAgent** makes use of an `AgentCPU` to process inputs and engage in autonomous interactions:
+Moving to the concept of a more self-reliant agent, the **AutonomousAgent** makes use of an `APU` to process inputs and engage in autonomous interactions:
 
 ```python
 class AutonomousAgent(Agent):
@@ -73,14 +73,14 @@ class AutonomousAgent(Agent):
     async def converse(
         self, process_id, question: Annotated[str, Body(description="A question", embed=True)]
     ) -> AgentState[IdleStateRepresentation]:
-        thread = await self.cpu.main_thread(process_id)
+        thread = await self.apu.main_thread(process_id)
         response = await thread.schedule_request(
-            [UserTextCPUMessage(prompt=question)], IdleStateRepresentation.model_json_schema()
+            [UserTextAPUMessage(prompt=question)], IdleStateRepresentation.model_json_schema()
         )
         return AgentState(name="idle", data=IdleStateRepresentation(**response))
 ```
 
-Here, the **AutonomousAgent** leverages the computational capabilities of an AgentCPU to answer questions. The `AgentCPU` is responsible for interactions with an LLM, allowing the agent to perform complex language processing tasks.
+Here, the **AutonomousAgent** leverages the computational capabilities of an APU to answer questions. The `APU` is responsible for interactions with an LLM, allowing the agent to perform complex language processing tasks.
 Notice how
 
 As we ascend the complexity ladder, agents are built to handle more autonomy and computational tasks, ultimately enabling a wide span of potential applications within the Eidolon ecosystem. From the simplistic to the intricate, the agents authored
@@ -166,7 +166,7 @@ The AgentOS maps the specification for an agent to REST endpoints that can be us
 
 ## Conclusion
 The "Structure of an Agent" section effectively introduces the various components that make up an agent within the Eidolon platform by discussing the roles and functionalities of each part. We learn about the Agent Code, which contains the logic and
-behaviors necessary for the agent's operational functions, as well as the Agent Specification, which outlines the agent's abilities in a structured YAML file. The AgentCPU, acting as the computational heart, and AgentOS, serving as the foundational
+behaviors necessary for the agent's operational functions, as well as the Agent Specification, which outlines the agent's abilities in a structured YAML file. The APU, acting as the computational heart, and AgentOS, serving as the foundational
 runtime environment, highlight the technical aspects of how agents perform tasks and manage their states.
 
 Several examples illustrate the range of complexity possible within the agent framework, from simple greeting responses with HelloWorld agents to state machines managing different states and transitions. Furthermore, the section delves into the

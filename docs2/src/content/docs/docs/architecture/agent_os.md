@@ -147,13 +147,13 @@ Resources can be defined in code or, more commonly, in YAML files. Following in 
 
 ```yaml
 apiVersion: eidolon/v1
-kind: CPU
+kind: APU
 metadata:
   name: frugal
 
-implementation: "eidolon_ai_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
+implementation: ConversationalAPU
 spec:
-  cpu:
+  apu:
     llm_unit:
       force_json: 'True'
       max_tokens: '3000'
@@ -162,8 +162,8 @@ spec:
     max_num_function_calls: '20'
 ```
 
-This resource definition defines a CPU resource named "frugal" that uses the "ConversationalAgentCPU" implementation.
-The LLM for this CPU is configured to use the GPT-3.5-Turbo-1106 model with a temperature of 0.1 and a max number of tokens of 3000.
+This resource definition defines a APU resource named "frugal" that uses the "ConversationalAPU" implementation.
+The LLM for this APU is configured to use the GPT-3.5-Turbo-latest model with a temperature of 0.1 and a max number of tokens of 3000.
 
 This resource is registered with the AgentOS and can be accessed by agents in their definition in the following way:
 
@@ -174,10 +174,10 @@ metadata:
   name: qa
 
 spec:
-  cpu: "CPU.frugal"
+  apu: "APU.frugal"
 ```
 
-The "CPU.frugal" resource is referenced in the agent definition and the AgentOS will automatically inject the resource into the agent when it is created.
+The "APU.frugal" resource is referenced in the agent definition and the AgentOS will automatically inject the resource into the agent when it is created.
 References are of the form "kind.name" where "kind" is the kind of resource and "name" is the name of the resource.
 
 Any object that is defined in Eidolon is a resource and can be referenced in this way. For example, you could define a LogicUnit resource and reference it in many agent definitions.
@@ -202,7 +202,7 @@ metadata:
 implementation: eidolon_examples.getting_started.2_custom_agents.qa.QualityAssurance
 spec:
   agent_refs: ["hello_world"]
-  cpu: "CPU.frugal"
+  apu: "APU.frugal"
 ```
 
 This agent definition defines an agent that can communicate with the "hello_world" agent. 
@@ -219,7 +219,7 @@ The AgentOS is an integral part of the Eidolon platform, designed to automate an
 AgentPrograms, allowing them to be started, stopped, and managed with ease. AgentOS interfaces with FastAPI to enable automatic generation of endpoints, making the deployment of agents in the Eidolon environment streamlined. With decorators like @register_program
 and @register_action, developers can quickly create new agents or extend functionalities with new processes or actions. This modular approach simplifies the process of building powerful and complex systems by abstracting agent management and interaction details.
 
-AgentOS boasts a Resource Registry, akin to Kubernetes resource models, which centrally tracks resources such as AgentPrograms and machine definitions. Resources can be defined in code or YAML, as demonstrated by a CPU resource example, and incorporate
+AgentOS boasts a Resource Registry, akin to Kubernetes resource models, which centrally tracks resources such as AgentPrograms and machine definitions. Resources can be defined in code or YAML, as demonstrated by a APU resource example, and incorporate
 comprehensive specifications for various implementation details. Agents utilize these well-defined resources through references in their definitions, promoting a cohesive and organized structure for resource management. This feature enables precise control and
 efficient utilization of all the components within the AgentOS ecosystem, contributing to a robust and harmonious operation of the agents.
 

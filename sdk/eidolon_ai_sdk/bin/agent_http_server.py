@@ -210,21 +210,25 @@ def main():
 
 # noinspection PyTypeChecker
 def start_app(lifespan):
-    _app = FastAPI(lifespan=lifespan)
-    _app.add_middleware(DynamicMiddleware)
-    _app.add_middleware(ContextMiddleware)
-    _app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-    _app.add_middleware(SecurityMiddleware)
-    _app.add_middleware(LoggingMiddleware)
-    _app.add_exception_handler(PermissionException, permission_exception_handler)
-    FastAPIInstrumentor.instrument_app(_app)
-    return _app
+    try:
+        _app = FastAPI(lifespan=lifespan)
+        _app.add_middleware(DynamicMiddleware)
+        _app.add_middleware(ContextMiddleware)
+        _app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+        _app.add_middleware(SecurityMiddleware)
+        _app.add_middleware(LoggingMiddleware)
+        _app.add_exception_handler(PermissionException, permission_exception_handler)
+        FastAPIInstrumentor.instrument_app(_app)
+        return _app
+    except Exception as e:
+        logger.exception("Failed to start FastAPI", e)
+        raise
 
 
 if __name__ == "__main__":
