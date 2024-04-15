@@ -1,33 +1,13 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict, Literal, Union, AsyncIterator
+from typing import List, Any, Dict, Literal, Union, AsyncIterator, ClassVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_sdk.system.reference_model import Specable
-
-LLM_MAX_TOKENS = {
-    "DEFAULT": 8192,
-    # OpenAI models: https://platform.openai.com/docs/models/overview
-    # gpt-4
-    "gpt-4-1106-preview": 128000,
-    "gpt-4": 8192,
-    "gpt-4-32k": 32768,
-    "gpt-4-0613": 8192,
-    "gpt-4-32k-0613": 32768,
-    "gpt-4-0314": 8192,  # legacy
-    "gpt-4-32k-0314": 32768,  # legacy
-    # gpt-3.5
-    "gpt-3.5-turbo-1106": 16385,
-    "gpt-3.5-turbo": 4096,
-    "gpt-3.5-turbo-16k": 16385,
-    "gpt-3.5-turbo-0613": 4096,  # legacy
-    "gpt-3.5-turbo-16k-0613": 16385,  # legacy
-    "gpt-3.5-turbo-0301": 4096,  # legacy
-}
+from eidolon_ai_sdk.system.reference_model import Specable, Reference
 
 
 class LLMModel(BaseModel):
@@ -66,8 +46,7 @@ class LLMCallFunction(BaseModel):
 
 
 class LLMUnitSpec(BaseModel):
-    model: str = Field(description="The model to use for the LLM.")
-    supported_models: List[LLMModel] = Field(default=[], description="The list of supported models or leave empty for defaults.")
+    model: Reference[LLMModel]
 
 
 class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
@@ -76,14 +55,7 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
-
-        for model in self.get_models():
-            if model.name == self.spec.model:
-                self.model = model
-                break
-
-        if not hasattr(self, "model"):
-            raise ValueError(f"Model {self.spec.model} not found in {self.get_models()}")
+        self.model = self.spec.model.instantiate()
 
     def get_llm_capabilities(self) -> LLMCapabilities:
         return LLMCapabilities(

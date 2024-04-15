@@ -26,7 +26,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
@@ -126,7 +126,7 @@ async def convert_to_llm(message: LLMMessage):
 
 
 class AnthropicLLMUnitSpec(LLMUnitSpec):
-    model: str = Field(default="claude-3-opus-20240229", description="The model to use for the LLM.")
+    model: AnnotatedReference[LLMModel, "claude-3-opus-20240229"]
     temperature: float = 0.3
     max_tokens: Optional[int] = None
     client_args: dict = {}
@@ -141,40 +141,6 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         Specable.__init__(self, **kwargs)
 
         self.temperature = self.spec.temperature
-
-    def get_models(self) -> List[LLMModel]:
-        if self.spec.supported_models:
-            return self.spec.supported_models
-
-        return [
-            LLMModel(
-                human_name="Claude Opus",
-                name="claude-3-opus-20240229",
-                input_context_limit=200000,
-                output_context_limit=4096,
-                supports_tools=False,
-                supports_image_input=True,
-                supports_audio_input=False,
-            ),
-            LLMModel(
-                human_name="Claude Sonnet",
-                name="claude-3-sonnet-20240229",
-                input_context_limit=200000,
-                output_context_limit=4096,
-                supports_tools=False,
-                supports_image_input=True,
-                supports_audio_input=False,
-            ),
-            LLMModel(
-                human_name="Claude Haiku",
-                name="claude-3-haiku-20240307",
-                input_context_limit=200000,
-                output_context_limit=4096,
-                supports_tools=False,
-                supports_image_input=True,
-                supports_audio_input=False,
-            )
-        ]
 
     async def execute_llm(
             self,

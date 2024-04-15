@@ -85,7 +85,7 @@ async def convert_to_openai(message: LLMMessage, process_id: str):
 
 
 class OpenAiGPTSpec(LLMUnitSpec):
-    model: str = Field(default="gpt-4-turbo-preview", description="The model to use for the LLM.")
+    model: AnnotatedReference[LLMModel, "gpt-4-turbo-preview"]
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
@@ -101,31 +101,6 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         Specable.__init__(self, **kwargs)
         self.temperature = self.spec.temperature
         self.connection_handler = self.spec.connection_handler.instantiate()
-
-    def get_models(self) -> List[LLMModel]:
-        if self.spec.supported_models:
-            return self.spec.supported_models
-
-        return [
-            LLMModel(
-                human_name="GPT-4 Turbo Preview",
-                name="gpt-4-turbo-preview",
-                input_context_limit=128000,
-                output_context_limit=4096,
-                supports_tools=True,
-                supports_image_input=True,
-                supports_audio_input=False,
-            ),
-            LLMModel(
-                human_name="GPT-3.5 Turbo",
-                name="gpt-3.5-turbo",
-                input_context_limit=16385,
-                output_context_limit=4096,
-                supports_tools=True,
-                supports_image_input=False,
-                supports_audio_input=False,
-            )
-        ]
 
     async def execute_llm(
             self,

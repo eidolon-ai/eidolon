@@ -1,3 +1,4 @@
+---
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
@@ -9,3 +10,17 @@ spec:
     llm_unit:
       implementation: MistralGPT
       model: "mistral-large-latest"
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: "mistral-large-latest"
+spec:
+    implementation: LLMModel
+    human_name: Mistral Large
+    name: "mistral-large-latest"
+    input_context_limit: 32000
+    output_context_limit: 4096
+    supports_tools: True
+    supports_image_input: False
+    supports_audio_input: False

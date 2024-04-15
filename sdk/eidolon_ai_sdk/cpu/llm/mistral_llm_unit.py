@@ -27,7 +27,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     SystemMessage,
 )
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
@@ -117,7 +117,7 @@ async def convert_to_mistral(message: LLMMessage):
 
 
 class MistralGPTSpec(LLMUnitSpec):
-    model: str = Field(default="mistral-large-latest", description="The model to use for the LLM.")
+    model: AnnotatedReference[LLMModel, "mistral-large-latest"]
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
@@ -129,40 +129,6 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         super().__init__(**kwargs)
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
-
-    def get_models(self) -> List[LLMModel]:
-        if self.spec.supported_models:
-            return self.spec.supported_models
-
-        return [
-            LLMModel(
-                human_name="Mistral Large",
-                name="mistral-large-latest",
-                input_context_limit=32000,
-                output_context_limit=4096,
-                supports_tools=True,
-                supports_image_input=False,
-                supports_audio_input=False,
-            ),
-            LLMModel(
-                human_name="Mistral Medium",
-                name="mistral-medium-latest",
-                input_context_limit=32000,
-                output_context_limit=4096,
-                supports_tools=False,
-                supports_image_input=False,
-                supports_audio_input=False,
-            ),
-            LLMModel(
-                human_name="Mistral Small",
-                name="mistral-small-latest",
-                input_context_limit=32000,
-                output_context_limit=4096,
-                supports_tools=False,
-                supports_image_input=False,
-                supports_audio_input=False,
-            )
-        ]
 
     async def execute_llm(
             self,

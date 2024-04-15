@@ -4,7 +4,8 @@ kind: Reference
 metadata:
   name: LLMUnit
 spec:
-  model: testeidolon
+  model:
+    name: testeidolon
   client: AsyncAzureOpenAI
   client_args:
     azure_endpoint: https://testingeidolon.openai.azure.com/
