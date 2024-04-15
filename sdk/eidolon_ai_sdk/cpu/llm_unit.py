@@ -67,10 +67,6 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
         )
 
     @abstractmethod
-    def get_models(self) -> List[LLMModel]:
-        pass
-
-    @abstractmethod
     async def execute_llm(
         self,
         call_context: CallContext,
