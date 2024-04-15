@@ -9,7 +9,6 @@ from fastapi import HTTPException
 from mistralai.async_client import MistralAsyncClient
 from mistralai.exceptions import MistralConnectionException, MistralAPIStatusException, MistralAPIException
 from mistralai.models.chat_completion import ChatCompletionStreamResponse, ResponseFormat, ResponseFormats, Function
-from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -116,8 +115,11 @@ async def convert_to_mistral(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
+mistral_large = "mistral-large-latest"
+
+
 class MistralGPTSpec(LLMUnitSpec):
-    model: AnnotatedReference[LLMModel, "mistral-large-latest"]
+    model: AnnotatedReference[LLMModel, mistral_large]
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None

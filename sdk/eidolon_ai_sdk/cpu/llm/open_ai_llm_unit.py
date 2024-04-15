@@ -7,7 +7,6 @@ import yaml
 from openai import AsyncStream
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
-from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -84,8 +83,11 @@ async def convert_to_openai(message: LLMMessage, process_id: str):
         raise ValueError(f"Unknown message type {message.type}")
 
 
+gpt_4 = "gpt-4-turbo-preview"
+
+
 class OpenAiGPTSpec(LLMUnitSpec):
-    model: AnnotatedReference[LLMModel, "gpt-4-turbo-preview"]
+    model: AnnotatedReference[LLMModel, gpt_4]
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None

@@ -8,7 +8,6 @@ import yaml
 from PIL import Image
 from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError
 from fastapi import HTTPException
-from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -125,8 +124,11 @@ async def convert_to_llm(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
+claude_opus = "claude-3-opus-20240229"
+
+
 class AnthropicLLMUnitSpec(LLMUnitSpec):
-    model: AnnotatedReference[LLMModel, "claude-3-opus-20240229"]
+    model: AnnotatedReference[LLMModel, claude_opus]
     temperature: float = 0.3
     max_tokens: Optional[int] = None
     client_args: dict = {}

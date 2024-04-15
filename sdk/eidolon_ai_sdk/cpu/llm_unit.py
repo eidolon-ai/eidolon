@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict, Literal, Union, AsyncIterator, ClassVar
+from typing import List, Any, Dict, Literal, Union, AsyncIterator
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.cpu.call_context import CallContext
