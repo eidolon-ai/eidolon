@@ -19,7 +19,7 @@ spec:
   implementation: LLMModel
   human_name: "GPT-3.5 Turbo"
   name: "gpt-3.5-turbo"
-  input_context_length: 16385
+  input_context_limit: 16385
   output_context_limit: 4096
   supports_tools: True
   supports_image_input: False

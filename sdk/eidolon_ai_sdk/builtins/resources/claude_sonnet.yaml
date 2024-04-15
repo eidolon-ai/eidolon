@@ -6,10 +6,10 @@ metadata:
   annotations:
     - title: "Claude Sonnet"
 spec:
-    implementation: APU
-    llm_unit:
-      implementation: AnthropicLLMUnit
-      model: "claude-3-sonnet-20240229"
+  implementation: APU
+  llm_unit:
+    implementation: AnthropicLLMUnit
+    model: "claude-3-sonnet-20240229"
 ---
 apiVersion: eidolon/v1
 kind: Reference

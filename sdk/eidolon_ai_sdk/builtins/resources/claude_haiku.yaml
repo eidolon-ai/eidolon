@@ -6,10 +6,10 @@ metadata:
   annotations:
     - title: "Claude Haiku"
 spec:
-    implementation: APU
-    llm_unit:
-      implementation: AnthropicLLMUnit
-      model: "claude-3-haiku-20240307"
+  implementation: APU
+  llm_unit:
+    implementation: AnthropicLLMUnit
+    model: "claude-3-haiku-20240307"
 ---
 apiVersion: eidolon/v1
 kind: Reference

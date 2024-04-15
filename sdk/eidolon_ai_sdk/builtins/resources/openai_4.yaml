@@ -19,7 +19,7 @@ spec:
   implementation: LLMModel
   human_name: "GPT-4 Turbo Preview"
   name: "gpt-4-turbo-preview"
-  input_context_length: 128000
+  input_context_limit: 128000
   output_context_limit: 4096
   supports_tools: True
   supports_image_input: True

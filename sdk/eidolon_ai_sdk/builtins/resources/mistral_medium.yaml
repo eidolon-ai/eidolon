@@ -6,10 +6,10 @@ metadata:
   annotations:
     - title: "Mistral Medium"
 spec:
-    implementation: APU
-    llm_unit:
-      implementation: MistralGPT
-      model: "mistral-medium-latest"
+  implementation: APU
+  llm_unit:
+    implementation: MistralGPT
+    model: "mistral-medium-latest"
 ---
 apiVersion: eidolon/v1
 kind: Reference
