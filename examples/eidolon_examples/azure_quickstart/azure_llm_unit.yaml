@@ -5,9 +5,8 @@ metadata:
   name: LLMUnit
 spec:
   model:
-    name: testeidolon
-  client: AsyncAzureOpenAI
-  client_args:
-    azure_endpoint: https://testingeidolon.openai.azure.com/
+    name: 35turbo
+  connection_handler:
+    implementation: AzureOpenAIConnectionHandler
+    azure_endpoint: https://testinstancename.openai.azure.com/
     api_version: 2023-03-15-preview
-#    api_key: TOKEN or envar set at AZURE_OPENAI_API_KEY

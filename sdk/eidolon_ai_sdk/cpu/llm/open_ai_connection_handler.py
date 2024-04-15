@@ -1,4 +1,4 @@
-from typing import Optional, cast
+from typing import Optional, cast, List
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from fastapi import HTTPException
@@ -8,19 +8,17 @@ from openai.types import ImagesResponse
 from openai.types.chat import ChatCompletionChunk, ChatCompletion
 from pydantic import BaseModel
 
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.reference_model import Specable, Reference
 from eidolon_ai_sdk.util.replay import replayable
 
 
-class OpenAIConnectionHandlerSpec(BaseModel):
-    api_key: Optional[str] = None
+class OpenAIConnectionHandlerSpec(BaseModel, extra='allow'):
+    pass
 
 
 class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
     def makeClient(self) -> AsyncOpenAI:
-        if self.spec.api_key:
-            return AsyncOpenAI(api_key=self.spec.api_key)
-        return AsyncOpenAI()
+        return AsyncOpenAI(**self.spec.model_extra)
 
     async def completion(self, kwargs: dict) -> ChatCompletion | AsyncStream[ChatCompletionChunk]:
         return await self._do_request(self.makeClient().chat.completions.create, kwargs)
@@ -66,38 +64,17 @@ class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
         - `api_version` from `OPENAI_API_VERSION`
         - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
         """
-    api_key: Optional[str] = None
-    use_default_token_provider: Optional[bool] = False
-    organization: Optional[str] = None
-    azure_ad_token: Optional[str] = None
-    api_version: str
-    azure_endpoint: Optional[str] = None
+    token_provider: Optional[Reference[DefaultAzureCredential]] = None
+    token_provider_scopes: List[str] = ["https://cognitiveservices.azure.com/.default"]
 
 
 class AzureOpenAIConnectionHandler(OpenAIConnectionHandler, Specable[AzureOpenAIConnectionHandlerSpec]):
-    def __init__(self, spec: AzureOpenAIConnectionHandlerSpec):
-        super().__init__(spec=spec)
-        Specable.__init__(self, spec=spec)
-
     def makeClient(self):
-        params = {}
-        if self.spec.api_key:
-            params["api_key"] = self.spec.api_key
-        if self.spec.use_default_token_provider:
-            # noinspection PyTypeChecker
-            token_provider = get_bearer_token_provider(
-                DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
-            )
+        params = self.spec.model_extra
+        if self.spec.token_provider:
+            provider = self.spec.token_provider.instantiate()
+            token_provider = get_bearer_token_provider(provider, *self.spec.token_provider_scopes)
             params["token_provider"] = token_provider
-        if self.spec.organization:
-            params["organization"] = self.spec.organization
-        if self.spec.azure_ad_token:
-            params["azure_ad_token"] = self.spec.azure_ad_token
-        if self.spec.api_version:
-            params["api_version"] = self.spec.api_version
-        if self.spec.azure_endpoint:
-            params["endpoint"] = self.spec.azure_endpoint
-
         return AsyncAzureOpenAI(**params)
 
 
