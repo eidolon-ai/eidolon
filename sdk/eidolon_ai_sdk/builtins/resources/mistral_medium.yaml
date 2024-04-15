@@ -16,11 +16,11 @@ kind: Reference
 metadata:
   name: "mistral-medium-latest"
 spec:
-    implementation: LLMModel
-    human_name: Mistral Medium
-    name: "mistral-medium-latest"
-    input_context_limit: 32000
-    output_context_limit: 4096
-    supports_tools: False
-    supports_image_input: False
-    supports_audio_input: False
+  implementation: LLMModel
+  human_name: Mistral Medium
+  name: "mistral-medium-latest"
+  input_context_limit: 32000
+  output_context_limit: 4096
+  supports_tools: False
+  supports_image_input: False
+  supports_audio_input: False
