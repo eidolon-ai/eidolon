@@ -22,6 +22,9 @@ jobs:
           poetry version patch
           echo "SDK_VERSION=$(poetry version -s)" >> $GITHUB_ENV
         working-directory: sdk
+      - run: |
+          poetry update eidolon-ai-client
+        working-directory: sdk
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump patch version"

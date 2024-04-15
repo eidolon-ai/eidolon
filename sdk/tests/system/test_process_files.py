@@ -48,7 +48,7 @@ class TestProcessFiles:
         process_status = await agent.create_process()
         process = agent.process(process_status.process_id)
         file_id = await process.upload_file(bts)
-        id_ = await process.download_file(file_id)
+        id_ = await process.download_file(file_id.file_id)
         assert bts == id_
 
     async def test_can_delete(self, agent):
@@ -56,8 +56,8 @@ class TestProcessFiles:
         process_status = await agent.create_process()
         process = agent.process(process_status.process_id)
         file_id = await process.upload_file(bts)
-        await process.delete_file(file_id)
+        await process.delete_file(file_id.file_id)
 
         # now try again and expect a 404
         with pytest.raises(AgentError):
-            await process.delete_file(file_id)
+            await process.delete_file(file_id.file_id)

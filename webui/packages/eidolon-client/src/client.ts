@@ -41,6 +41,12 @@ export interface ProcessesResponse {
   next?: string
 }
 
+export interface FileHandle {
+  machineUrl: string
+  processId: string
+  fileId: string
+}
+
 function addMachineIfMissing(machineURL: string, process: ProcessStatus) {
   // @ts-ignore
   if (process['error_info'] == null) {
@@ -242,6 +248,7 @@ class Agent {
   public async* stream_action(action: string, body: Record<string, any>): AsyncGenerator<ChatEvent> {
     const decoder = new TextDecoder();
     const path = `${this.machineUrl}/processes/${this.process_id}/agent/${this.agent}/actions/${action}`
+
     const response = await fetch(path, {
       method: "POST",
       body: JSON.stringify(body),
@@ -341,7 +348,21 @@ class Process {
       console.error("Failed to upload file", results.statusText, results.status)
       throw new Error(`Failed to upload file: ${results.statusText}`)
     }
-    return (await results.json())["file_id"] as string
+    return (await results.json()) as FileHandle
+  }
+
+  public async set_metadata(file_id: string, metadata: Record<string, any>) {
+    const headers: Record<string, any> = {...this.headers, "Content-Type": "application/json", "Accept": "application/json"}
+    const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/files/${file_id}/metadata`, {
+      headers: headers,
+      method: 'POST',
+      body: JSON.stringify(metadata)
+    })
+    if (results.status !== 200) {
+      console.error("Failed to update metadata", results.statusText, results.status)
+      throw new Error(`Failed to update metadata: ${results.statusText}`)
+    }
+    return (await results.json()) as FileHandle
   }
 
   public async download_file(file_id: string) {

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.memory.file_memory import FileMemory
+from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -10,7 +10,7 @@ class InMemoryFileMemoryConfig(BaseModel):
     pass
 
 
-class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
+class InMemoryFileMemory(FileMemoryBase, Specable[InMemoryFileMemoryConfig]):
     def __init__(self, spec: InMemoryFileMemoryConfig):
         super().__init__(spec)
         self.root_dir = Path("/").resolve()
@@ -106,6 +106,9 @@ class InMemoryFileMemory(FileMemory, Specable[InMemoryFileMemoryConfig]):
         print(f"Files: {self.files}")
         # Check if the file exists
         return self.files.get(safe_file_path) is not None
+
+    async def glob(self, pattern: str):
+        pass
 
     async def start(self):
         """

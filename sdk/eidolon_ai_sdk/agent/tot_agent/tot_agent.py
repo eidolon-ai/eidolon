@@ -16,7 +16,7 @@ from eidolon_ai_sdk.agent.tot_agent.thought import Thought
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import (
     ThoughtGenerationStrategy,
 )
-from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_client.util.logger import logger
@@ -144,8 +144,8 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
                 mainThread = await self.cpu.main_thread(process_id)
                 # go back to llm now with the tree of thoughts and the requested output format
                 conversation = [
-                    UserTextCPUMessage(prompt=question),
-                    UserTextCPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text]))),
+                    UserTextAPUMessage(prompt=question),
+                    UserTextAPUMessage(prompt="THOUGHTS\n\n" + ("\n".join(thoughts_path + [thought_text]))),
                 ]
                 resp = await mainThread.run_request(conversation, self.spec.output_schema)
                 return TotResponse(answer=resp, thoughts=thoughts_path)
@@ -162,8 +162,8 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             )
         elif self.spec.fallback == "LLM":
             conversation = [
-                UserTextCPUMessage(prompt=question),
-                UserTextCPUMessage(
+                UserTextAPUMessage(prompt=question),
+                UserTextAPUMessage(
                     prompt="You have had some helpful thoughts on the question. Please use them to provide an answer\n\n"
                     + str(synopsis)
                 ),

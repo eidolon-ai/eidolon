@@ -125,6 +125,7 @@ export class ProcessEventsHandler {
       const agent = reqBody["agent"]
       const operation = reqBody["operation"]
       const data = reqBody["data"] as Record<string, any>
+
       const processId = params.processid;
       if (req.headers.get("Accept") === "text/event-stream") {
         let done = false;
@@ -185,8 +186,8 @@ export class FilesHandler {
       return new Response('machineUrl is required', {status: 422})
     }
     const mimeType = req.headers.get('mime-type')
-    let file_id = await this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType);
-    return Response.json({file_id});
+    let fileHandle = await this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType);
+    return Response.json(fileHandle);
   }
 
   async uploadFile(machineUrl: string, processId: string, file: Blob, mimeType: string | null) {
@@ -200,6 +201,16 @@ export class FileHandler {
 
   constructor(accessTokenFn: () => Promise<string | undefined>) {
     this.accessTokenFn = accessTokenFn
+  }
+
+  async POST(req: Request, {params}: { params: { processid: string, fileid: string } }) {
+    const machineUrl = new URL(req.url).searchParams.get('machineURL')
+    if (!machineUrl) {
+      return new Response('machineUrl is required', {status: 400})
+    }
+    const reqBody = await req.json()
+    const fileHandle = await this.setMetadata(machineUrl, params.processid, params.fileid, reqBody);
+    return Response.json(fileHandle);
   }
 
   // download file
@@ -234,5 +245,10 @@ export class FileHandler {
   async deleteFile(machineUrl: string, processId: string, fileId: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return await client.process(processId).delete_file(fileId);
+  }
+
+  async setMetadata(machineUrl: string, processId: string, fileId: string, metadata: Record<string, any>) {
+    const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
+    return await client.process(processId).set_metadata(fileId, metadata);
   }
 }

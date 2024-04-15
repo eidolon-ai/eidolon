@@ -8,7 +8,7 @@ blueprint for building software agents.
 
 ## AgentMachine
 
-The **AgentMachine** serves as the operational environment where **AgentPrograms** are executed. It also defines the **AgentMemory** which serves as the underlying persistent storage accessible to anything running on the machine (agents, cpu, etc). It provides the necessary infrastructure such as process management, memory allocation, and input/output handling required for agents to perform their
+The **AgentMachine** serves as the operational environment where **AgentPrograms** are executed. It also defines the **AgentMemory** which serves as the underlying persistent storage accessible to anything running on the machine (agents, APU, etc). It provides the necessary infrastructure such as process management, memory allocation, and input/output handling required for agents to perform their
 tasks. In essence, the AgentMachine is akin to an operating system specifically tailored for agents, allowing them to run in isolation or collaboratively within a distributed network.
 
 ## AgentPrograms
@@ -19,10 +19,10 @@ At the core of the AgentMachine's task execution lies the **AgentProgram**, whic
 - **The Specification**: A structured definition that outlines the agent's capacities, communication schemata, and interaction protocols. It acts as a blueprint, providing the necessary information to the AgentMachine for effective execution and
   collaboration with other agents.
 
-## AgentCPU
+## APU
 
-The **AgentCPU** is the organizational nucleus of an individual AgentProgram, analogous to the central processing unit in traditional computing architecture. It coordinates all internal processing units, enabling the seamless flow of data and
-instructions within the agent. The AgentCPU is composed of several key units:
+The **APU** is the organizational nucleus of an individual AgentProgram, analogous to the central processing unit in traditional computing architecture. It coordinates all internal processing units, enabling the seamless flow of data and
+instructions within the agent. The APU is composed of several key units:
 
 - **I/O Unit**: It interfaces with the external environment, allowing the agent to send and receive messages. The I/O Unit is responsible for encoding and decoding data, ensuring that the agent can communicate with other systems and agents
   effectively.
@@ -34,7 +34,7 @@ The architecture's modularity allows developers to customize each unit, creating
 
 ## Modular Design and Pluggability
 
-One of the eidolon framework's central tenets is its modular design and the pluggability of its components. Developers can easily swap out or upgrade individual units within the AgentCPU, such as replacing a basic MemoryUnit with one that has more
+One of the eidolon framework's central tenets is its modular design and the pluggability of its components. Developers can easily swap out or upgrade individual units within the APU, such as replacing a basic MemoryUnit with one that has more
 sophisticated retrieval algorithms or integrating a new LogicUnit specialized for particular calculations or data processing tasks.
 
 This modularity facilitates extensibility, allowing the agent architecture to scale and adapt as the complexity of tasks and the overall system requirements evolve. It also promotes reusability, where standardized units can be shared across multiple

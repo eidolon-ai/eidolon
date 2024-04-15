@@ -1,7 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from eidolon_ai_sdk.agent_os_interfaces import FileMemory
 
 
-class FileMemory(ABC):
+class FileMemoryBase(FileMemory):
     """
     Abstract base class representing the file memory interface for an agent.
 
@@ -26,50 +28,4 @@ class FileMemory(ABC):
         """
         Stops the memory implementation.
         """
-        pass
-
-    @abstractmethod
-    async def read_file(self, file_path: str) -> bytes:
-        """
-            Reads the contents of a file specified by `file_path` within the context
-            of an agent call. The context of the call provides additional information
-            that may influence how the file is read.
-        :param file_path: The path to the file to be read.
-        :return: bytes: The contents of the file as a bytes object.
-        """
-        pass
-
-    @abstractmethod
-    async def write_file(self, file_path: str, file_contents: bytes) -> None:
-        """
-            Writes the given `file_contents` to the file specified by `file_path`
-            within the context of an agent call. This method ensures that the file is
-            written in the appropriate location and manner as dictated by the call context.
-
-        :param file_path: The path to the file where the contents should be written.
-        :param file_contents: The contents to write to the file.
-        """
-        pass
-
-    @abstractmethod
-    async def delete_file(self, file_path: str) -> None:
-        """
-            Deletes the file specified by `file_path` within the context of an agent call.
-            This method ensures that the file is deleted in the appropriate location and
-            manner as dictated by the call context.
-
-        :param file_path: The path to the file to be deleted.
-        """
-        pass
-
-    @abstractmethod
-    async def mkdir(self, directory: str, exist_ok: bool = False):
-        pass
-
-    @abstractmethod
-    async def exists(self, file_name: str):
-        pass
-
-    @abstractmethod
-    async def glob(self, pattern: str):
         pass

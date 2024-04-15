@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 import jsonref
 from pydantic import BaseModel, Field, Extra
 
-from eidolon_ai_client.events import StreamEvent, StartAgentCallEvent, AgentStateEvent
+from eidolon_ai_client.events import StreamEvent, StartAgentCallEvent, AgentStateEvent, FileHandle
 from eidolon_ai_client.util.aiohttp import stream_content, get_content, post_content, delete, get_raw
 
 
@@ -81,10 +81,15 @@ class Process(BaseModel):
     agent: str
     process_id: str
 
-    async def upload_file(self, file_contents: bytes) -> str:
+    async def upload_file(self, file_contents: bytes) -> FileHandle:
         url = urljoin(self.machine, f"processes/{self.process_id}/files")
         json_ = await post_content(url, content=file_contents, headers={"Content-Type": "application/octet-stream"})
-        return json_['file_id']
+        return FileHandle.model_validate(json_)
+
+    async def set_metadata(self, file_id: str, metadata: dict):
+        url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}/metadata")
+        json_ = await post_content(url, json=metadata)
+        return FileHandle.model_validate(json_)
 
     async def download_file(self, file_id: str) -> bytes:
         url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}")

@@ -6,6 +6,7 @@ from jinja2 import Environment, StrictUndefined, meta
 from pydantic import BaseModel, field_validator, Field, model_validator
 from pydantic_core import to_jsonable_python
 
+from eidolon_ai_client.events import AgentStateEvent
 from eidolon_ai_sdk.agent.agent import (
     Agent,
     register_action,
@@ -13,8 +14,7 @@ from eidolon_ai_sdk.agent.agent import (
     AgentSpec,
     register_program,
 )
-from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage, ImageCPUMessage
-from eidolon_ai_client.events import AgentStateEvent
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage, SystemAPUMessage
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -72,15 +72,6 @@ def make_input_schema(agent: object, handler: FnHandler) -> Type[BaseModel]:
             properties=spec.input_schema,
         )
     required = ["body"]
-    if spec.files == "single" or spec.files == "single-optional":
-        properties["file"] = dict(type="string", format="binary")
-        if spec.files == "single":
-            required.append("file")
-    elif spec.files == "multiple":
-        properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
-        required.append("file")
-    elif "files" in properties:
-        del properties["file"]
     schema = {"type": "object", "properties": properties, "required": required}
     return schema_to_model(schema, f"{handler.name.capitalize()}InputModel")
 
@@ -106,25 +97,19 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         body = dict(datetime_iso=datetime.now().isoformat())
         body.update(kwargs.get("body") or {})
         body = to_jsonable_python(body)
-        files = kwargs.get("file", [])
-        if not isinstance(files, list):
-            files = [files]
 
         env = Environment(undefined=StrictUndefined)
         t = await self.cpu.main_thread(process_id)
         await t.set_boot_messages(
-            prompts=[SystemCPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**body)))],
+            prompts=[SystemAPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**body)))],
         )
 
         # pull out any kwargs that are UploadFile and put them in a list of UserImageCPUMessage
         image_messages = []
-        for file in files:
-            if file:
-                image_messages.append(ImageCPUMessage(image=file.file, prompt=file.filename))
 
         response = t.stream_request(
             prompts=[
-                UserTextCPUMessage(prompt=(env.from_string(self.spec.user_prompt).render(**body))),
+                UserTextAPUMessage(prompt=(env.from_string(self.spec.user_prompt).render(**body))),
                 *image_messages,
             ],
             output_format=self.spec.output_schema,
@@ -136,5 +121,5 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
     @register_action("idle", "http_error")
     async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[Any]:
         t = await self.cpu.main_thread(process_id)
-        response = await t.run_request([UserTextCPUMessage(prompt=statement)], self.spec.output_schema)
+        response = await t.run_request([UserTextAPUMessage(prompt=statement)], self.spec.output_schema)
         return AgentState(name="idle", data=response)

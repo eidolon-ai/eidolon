@@ -26,14 +26,6 @@ def r(name, **kwargs):
     )
 
 
-image_compatible_cpu = dict(
-    llm_unit=dict(
-        model="gpt-4-vision-preview",
-        force_json=False,
-        max_tokens=4096,
-    )
-)
-
 resources = [
     r("default"),
     r("test_no_vars", actions=[dict(user_prompt="What is the capital of France?")]),
@@ -58,24 +50,6 @@ resources = [
     r("system_prompt", system_prompt="You are a helpful assistant, and your favorite country is France"),
     r("refs", agent_refs=["system_prompt"]),
     r("with_tools", cpu=dict(logic_units=[fqn(MeaningOfLife)])),
-    r("optional_file", actions=[dict(files="single-optional")], cpu=image_compatible_cpu),
-    r(
-        "optional_file_no_body",
-        actions=[dict(files="single-optional", user_prompt="How many legs does the animal have?")],
-        cpu=image_compatible_cpu,
-    ),
-    r("single_file", actions=[dict(files="single")], cpu=image_compatible_cpu),
-    r(
-        "single_file_no_body",
-        actions=[dict(files="single", user_prompt="How many legs does the animal have?")],
-        cpu=image_compatible_cpu,
-    ),
-    r("multiple_files", actions=[dict(files="multiple")], cpu=image_compatible_cpu),
-    r(
-        "multiple_files_no_body",
-        actions=[dict(files="multiple", user_prompt="what do these images have in common?")],
-        cpu=image_compatible_cpu,
-    ),
 ]
 
 
@@ -162,74 +136,3 @@ async def test_with_tools():
     resp = await process.action("converse", body="What is the meaning of life?")
     assert "42" in resp.data.lower()
 
-
-async def test_optional_file_with_no_file():
-    process = await Agent.get("optional_file").create_process()
-    resp = await process.action("converse", data=dict(body="What is the capital of France?"))
-    assert "paris" in resp.data.lower()
-
-
-async def test_optional_file_with_file(dog):
-    process = await Agent.get("optional_file").create_process()
-    resp = await process.action(
-        "converse",
-        data=dict(body="How many legs does the animal have?"),
-        files=dict(file=dog),
-    )
-    assert "four" in resp.data.lower()
-
-
-async def test_optional_file_no_body_with_no_file():
-    process = await Agent.get("optional_file_no_body").create_process()
-    resp = await process.action("converse")
-    assert resp.data  # no error, llm will complain about lack of file but that is irrelevant
-
-
-async def test_optional_file_no_body_with_file(dog):
-    process = await Agent.get("optional_file_no_body").create_process()
-    resp = await process.action("converse", files=dict(file=dog))
-    assert "four" in resp.data.lower()
-
-
-async def test_single_file_with_no_file():
-    with pytest.raises(AgentError) as e:
-        process = await Agent.get("single_file").create_process()
-        await process.action("converse", body="What is the capital of France?")
-    assert e.value.status_code == 422
-
-
-async def test_single_file_with_file(dog):
-    process = await Agent.get("single_file").create_process()
-    resp = await process.action(
-        "converse",
-        data=dict(body="How many legs does the animal have?"),
-        files=dict(file=dog),
-    )
-    assert "four" in resp.data.lower()
-
-
-async def test_single_file_no_body_with_no_file():
-    with pytest.raises(AgentError) as e:
-        process = await Agent.get("single_file_no_body").create_process()
-        await process.action("converse", None)
-    assert e.value.status_code == 422
-
-
-async def test_single_file_no_body_with_file(dog):
-    process = await Agent.get("single_file_no_body").create_process()
-    resp = await process.action("converse", files=dict(file=dog))
-    assert "four" in resp.data.lower()
-
-
-async def test_multiple_files(cat, dog):
-    process = await Agent.get("multiple_files").create_process()
-    resp = await process.action(
-        "converse", data=dict(body="what do these images have in common?"), files=[("file", dog), ("file", cat)]
-    )
-    assert "animals" in resp.data.lower()
-
-
-async def test_multiple_files_no_body(cat, dog):
-    process = await Agent.get("multiple_files_no_body").create_process()
-    resp = await process.action("converse", files=[("file", dog), ("file", cat)])
-    assert "animals" in resp.data.lower()

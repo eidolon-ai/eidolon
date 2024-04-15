@@ -5,7 +5,7 @@ metadata:
   annotations:
     - title: "Claude Sonnet"
 spec:
-    implementation: AgentCPU
+    implementation: APU
     llm_unit:
       implementation: AnthropicLLMUnit
       model: "claude-3-sonnet-20240229"

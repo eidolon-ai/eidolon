@@ -5,7 +5,7 @@ metadata:
   annotations:
     - title: "OpenAI GPT 4.0 Turbo"
 spec:
-    implementation: AgentCPU
+    implementation: APU
     llm_unit:
       implementation: OpenAIGPT
       model: "gpt-4-turbo-preview"

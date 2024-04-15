@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from typing import Set, List
 
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.security.permissions import Permission, PermissionException
+from eidolon_ai_sdk.security.permissions import PermissionException
+from eidolon_ai_sdk.agent_os_interfaces import Permission
 from eidolon_ai_sdk.security.user import User
 from eidolon_ai_sdk.system.processes import MongoDoc
 

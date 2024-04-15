@@ -5,7 +5,7 @@ metadata:
   annotations:
     - title: "Claude Haiku"
 spec:
-    implementation: AgentCPU
+    implementation: APU
     llm_unit:
       implementation: AnthropicLLMUnit
       model: "claude-3-haiku-20240307"

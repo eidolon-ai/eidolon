@@ -7,6 +7,7 @@ export {ChooseAgentForm} from "./src/form-input/choose-agent-form"
 export {executeServerOperation, getChatEventInUI} from "./src/client-api-helpers/process-event-helper";
 export {type ElementsAndLookup} from "./src/lib/display-elements";
 export * from './src/hooks/useProcessEvents'
-export {MessagesWithSingleAction} from './src/form-input/MessagesWithSingleAction'
+export {CopilotPanel} from './src/form-input/copilot_panel'
 export {MessagesWithAction} from './src/form-input/MessagesWithAction'
 export {useProcessEvents} from './src/hooks/useProcessEvents'
+export * from "./src/lib/util"

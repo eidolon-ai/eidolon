@@ -1,6 +1,7 @@
 from abc import abstractmethod
-from pydantic import Field, BaseModel
 from typing import List, Dict, Optional, Sequence, Any, Iterable
+
+from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
@@ -53,7 +54,7 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         await AgentOS.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
         # Asynchronously collect embedded documents
         embeddedDocs = []
-        async for embeddedDoc in AgentOS.similarity_memory.embedder.embed(docs):
+        async for embeddedDoc in AgentOS.similarity_memory.embed(docs):
             embeddedDocs.append(embeddedDoc)
         await self.add_embedding(collection, embeddedDocs)
         for doc in docs:
@@ -74,7 +75,7 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         num_results: int,
         metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:
-        text = await AgentOS.similarity_memory.embedder.embed_text(query)
+        text = await AgentOS.similarity_memory.embed_text(query)
         results = await self.query_embedding(collection, text, num_results, metadata_where, False)
         returnDocuments = []
         for result in results:

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Set, Optional, Literal
+from typing import Set, Optional
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent_os_interfaces import Permission
 
 
 class PermissionException(Exception):
@@ -17,9 +18,6 @@ class PermissionException(Exception):
         self.process = process
         reason = "Missing Resource Permission: " if process else "Missing Permission: "
         super().__init__(reason + ", ".join(self.missing))
-
-
-Permission = Literal["create", "read", "update", "delete"]  # probably expands to include concept of know
 
 
 def permission_exception_handler(request: Request, exc: PermissionException):

@@ -1,8 +1,8 @@
 import {notFound} from "next/navigation";
 import * as React from "react";
-import {MessagesWithSingleAction} from "@eidolon/components/src/form-input/MessagesWithSingleAction";
-import {CopilotParams, getApp} from "@/utils/eidolon-apps";
+import {getApp} from "@/utils/eidolon-apps";
 import {_processHandler} from "../../../../api/eidolon/eidolon_helpers";
+import {CopilotPanel, CopilotParams} from "@eidolon/components";
 import {EidolonClient} from "@eidolon/client";
 
 export interface ProcessPageProps {
@@ -29,25 +29,18 @@ export default async function ({params}: ProcessPageProps) {
   if(!action) {
     throw new Error("No actions found")
   }
+  options.operationInfo = action!
 
-  let supportedLLMs: string[] = []
   if (action.schema?.properties?.execute_on_cpu) {
     const property = action.schema?.properties?.execute_on_cpu as Record<string, any>
-    supportedLLMs = property?.["enum"] as string[]
+    options.supportedLLMs = property?.["enum"] as string[]
+    options.defaultLLM = property?.default as string
   }
   return (
-    <MessagesWithSingleAction
-      supportedLLMs={supportedLLMs}
-      operation={action}
+    <CopilotPanel
       machineUrl={processStatus.machine}
-      agent={processStatus.agent}
       processId={processStatus.process_id}
-      operationName={options.operation}
-      titleOperationName={options.titleOperationName}
-      inputLabel={options.inputLabel}
-      allowSpeech={options.allowSpeech}
-      speechAgent={options.speechAgent}
-      speechOperation={options.speechOperation}
+      copilotParams={options}
     />
   )
 }

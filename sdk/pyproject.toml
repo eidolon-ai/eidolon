@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eidolon-ai-sdk"
-version = "0.1.24"
+version = "0.1.25"
 description = "An Open Source Agent Services Framework"
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
@@ -56,6 +56,7 @@ eidolon-ai-client = "^0.1.5"
 eidolon-ai-usage-client =  "^0.1.0"
 boto3 = "^1.34.74"
 boto3-stubs = {extras = ["essential"], version = "^1.34.74"}
+azure-identity = "^1.16.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"

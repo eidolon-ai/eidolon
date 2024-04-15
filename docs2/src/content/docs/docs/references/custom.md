@@ -66,8 +66,8 @@ Now if you hit the `enter` endpoint, you will notice that the returned state is 
 
 ### Agent Programs
 The previous example was a pure code program without access to a LLM. That is great for hello_world, but if we want to 
-customize our qa_agent we will need access to our **AgentCPU**. There is a builtin objec Agent which gives you easy 
-access to the AgentCPU, as well as some other niceties (like hooking up `agent_refs`). Let's reimplement our qa_agent 
+customize our qa_agent we will need access to our **APU**. There is a builtin objec Agent which gives you easy 
+access to the APU, as well as some other niceties (like hooking up `agent_refs`). Let's reimplement our qa_agent 
 with some custom logging and nicer response formatting.
 
 _qa.py_
@@ -77,7 +77,7 @@ from typing import Annotated, Literal, List
 from fastapi import Body
 from pydantic import BaseModel
 from eidolon_ai_sdk.agent.agent import register_program, Agent
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_client.util.logger import logger
 
 
@@ -103,11 +103,11 @@ class QualityAssurance(Agent):
     @register_program()
     async def test(self, process_id, agent: Annotated[str, Body()]) -> QAResponse:
         thread = await self.cpu.main_thread(process_id)
-        await thread.set_boot_messages([SystemCPUMessage(prompt=system_message)])
-        await thread.schedule_request(prompts=[UserTextCPUMessage(prompt=f"Please test all tools related to {agent}")])
+        await thread.set_boot_messages([SystemAPUMessage(prompt=system_message)])
+        await thread.schedule_request(prompts=[UserTextAPUMessage(prompt=f"Please test all tools related to {agent}")])
         logger.info(f"Tests Complete for {agent}")
         response: QAResponse = await thread.schedule_request(
-            prompts=[UserTextCPUMessage(prompt="Please summarize your test results")],
+            prompts=[UserTextAPUMessage(prompt="Please summarize your test results")],
             output_format=QAResponse,
         )
         if response.outcome != "success":
