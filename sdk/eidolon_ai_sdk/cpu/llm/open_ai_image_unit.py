@@ -44,7 +44,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
             max_prompt_size=4000
         )
 
-    async def image_to_text(self, prompt: str, image: bytes) -> str:
+    async def _image_to_text(self, prompt: str, image: bytes) -> str:
         """
         Converts an image to text.
 
@@ -80,7 +80,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         print(result)
         return result.choices[0].message.content
 
-    async def text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
+    async def _text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
                             image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
         """
         Converts text to an image.
