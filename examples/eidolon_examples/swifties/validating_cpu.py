@@ -39,7 +39,7 @@ class OutputValidationResponse(BaseModel):
 
 
 class ValidatingCPUSpec(BaseModel):
-    cpu: AnnotatedReference[APU]
+    apu: AnnotatedReference[APU]
     logic_units: List[Reference[LogicUnit]] = []
     input_validators: List[str] = []
     output_validators: List[str] = []

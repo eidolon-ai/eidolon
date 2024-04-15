@@ -43,7 +43,6 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
         async def _send_request_no_gen() -> ChatCompletion:
             return await open_ai_fn(**kwargs)
 
-        print("*****", kwargs)
         if kwargs.get("stream"):
             print("here")
             llm_request = replayable(

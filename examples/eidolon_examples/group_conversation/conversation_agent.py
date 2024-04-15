@@ -36,7 +36,7 @@ class Thought(BaseModel):
 
 
 class ConversationAgentSpec(BaseModel):
-    cpu: Reference[ConversationalAPU]
+    apu: Reference[ConversationalAPU]
     agent_name: str
     system_prompt: Optional[str] = Field(
         default=None, description="The prompt to show the agent when the conversation starts."
@@ -49,7 +49,7 @@ class ConversationAgentSpec(BaseModel):
 
 
 class ConversationAgent(Specable[ConversationAgentSpec]):
-    cpu: ConversationalAPU
+    apu: ConversationalAPU
     system_prompt: str
 
     def __init__(self, **kwargs):

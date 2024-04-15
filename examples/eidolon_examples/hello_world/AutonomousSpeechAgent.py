@@ -13,7 +13,7 @@ from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 class AutonomousSpeechAgentSpec(GenericAgentSpec):
     speech_llm: AnnotatedReference[OpenAiSpeech]
-    cpu: AnnotatedReference[APU]
+    apu: AnnotatedReference[APU]
 
 
 class LlmResponse(BaseModel):

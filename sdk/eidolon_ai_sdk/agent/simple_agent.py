@@ -30,7 +30,7 @@ class ActionDefinition(BaseModel):
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
     allow_file_upload: bool = False
     # allow all types for text, image, audio, word, pdf, json, etc
-    supported_mime_types: List[str] = [] # an empty list means all types are supported
+    supported_mime_types: List[str] = []  # an empty list means all types are supported
     allowed_states: List[str] = ["initialized", "idle", "http_error"]
     output_state: str = "idle"
 
@@ -53,7 +53,9 @@ class ActionDefinition(BaseModel):
         if not supported_mime_types:
             return supported_mime_types
 
-        all_mime_types = set(supported_mime_types)
+        all_mime_types = {"application/json", "text/plain", "image/*", "audio/*", "application/pdf", "application/msword",
+                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                          "application/vnd.ms-excel", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
         bad_types = []
         for mime_type in supported_mime_types:
             if mime_type not in all_mime_types:

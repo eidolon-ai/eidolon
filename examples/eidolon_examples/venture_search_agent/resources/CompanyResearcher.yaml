@@ -3,7 +3,7 @@ kind: Agent
 metadata:
   name: CompanyResearcher
 spec:
-  cpu:
+  apu:
     logic_units: [Browser, Search]
   description: "Creates company summaries"
   system_prompt: |-
