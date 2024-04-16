@@ -73,7 +73,7 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
 
     @register_program(description=make_description)
     async def search(
-            self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
     ) -> List[DocSummary]:
         """
         Process the question by searching the document store.

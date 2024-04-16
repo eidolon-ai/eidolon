@@ -41,8 +41,15 @@ class ImageUnit(ProcessingUnit, Specable[ImageUnitSpec]):
         """
         raise NotImplementedError("image_to_text not implemented")
 
-    async def text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
-                            image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
+    async def text_to_image(
+        self,
+        call_context: CallContext,
+        text: str,
+        quality: Optional[str] = None,
+        size: Tuple[int, int] = (1024, 1024),
+        style: Optional[str] = None,
+        image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp",
+    ) -> List[FileHandle]:
         """
         Converts text to an image.
 

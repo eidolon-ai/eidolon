@@ -12,7 +12,7 @@ from eidolon_ai_sdk.system.reference_model import Specable, Reference
 from eidolon_ai_sdk.util.replay import replayable
 
 
-class OpenAIConnectionHandlerSpec(BaseModel, extra='allow'):
+class OpenAIConnectionHandlerSpec(BaseModel, extra="allow"):
     pass
 
 
@@ -43,9 +43,7 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
 
         if kwargs.get("stream"):
             print("here")
-            llm_request = replayable(
-                fn=_send_request, name_override="openai_completion", parser=_open_ai_replay_parser
-            )
+            llm_request = replayable(fn=_send_request, name_override="openai_completion", parser=_open_ai_replay_parser)
 
             return llm_request()
         else:
@@ -63,7 +61,8 @@ class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
         - `azure_ad_token` from `AZURE_OPENAI_AD_TOKEN`
         - `api_version` from `OPENAI_API_VERSION`
         - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
-        """
+    """
+
     token_provider: Optional[Reference[DefaultAzureCredential]] = None
     token_provider_scopes: List[str] = ["https://cognitiveservices.azure.com/.default"]
 

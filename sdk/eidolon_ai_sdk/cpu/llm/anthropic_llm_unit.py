@@ -145,11 +145,11 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         self.temperature = self.spec.temperature
 
     async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         if len(tools) > 0:
             logger.warn("Anthropic does not support tool calls, ignoring")
@@ -158,17 +158,13 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(
-            fn=_llm_request(), name_override="anthropic_completion", parser=_raw_parser
-        )
+        llm_request = replayable(fn=_llm_request(), name_override="anthropic_completion", parser=_raw_parser)
         complete_message = ""
         try:
             async for message in llm_request(client_args=self.spec.client_args, **request):
                 # todo -- handle tool calls in some weird way...
                 if can_stream_message:
-                    logger.debug(
-                        f"anthropic llm stream response: {message}", extra=dict(content=message)
-                    )
+                    logger.debug(f"anthropic llm stream response: {message}", extra=dict(content=message))
                     yield StringOutputEvent(content=message)
                 else:
                     complete_message += message
@@ -176,7 +172,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             if not can_stream_message:
                 logger.debug(f"anthropic llm object response: {complete_message}", extra=dict(content=complete_message))
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)

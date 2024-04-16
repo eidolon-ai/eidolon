@@ -133,20 +133,18 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         Specable.__init__(self, **kwargs)
 
     async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing mistral llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(
-            fn=_mistral_client(), name_override="mistral_completion", parser=_raw_parser
-        )
+        llm_request = replayable(fn=_mistral_client(), name_override="mistral_completion", parser=_raw_parser)
         complete_message = ""
         tools_to_call = []
         try:
@@ -192,7 +190,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json:
                     # message format looks like json```{...}```, parse content and pull out the json
-                    complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                    complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
@@ -241,12 +239,15 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
             tools.append(
                 {
                     "type": "function",
-                    "function": Function(**{
-                        "name": tool.name,
-                        "description": tool.description,
-                        "parameters": tool.parameters,
-                    }).model_dump()
-                })
+                    "function": Function(
+                        **{
+                            "name": tool.name,
+                            "description": tool.description,
+                            "parameters": tool.parameters,
+                        }
+                    ).model_dump(),
+                }
+            )
         return tools
 
 

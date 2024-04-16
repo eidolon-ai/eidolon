@@ -5,7 +5,13 @@ import pathlib
 from typing import Dict, Tuple, TypeVar, Type
 
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.agent_os_interfaces import ProcessFileSystem, FileMemory, SymbolicMemory, SecurityManager, SimilarityMemory
+from eidolon_ai_sdk.agent_os_interfaces import (
+    ProcessFileSystem,
+    FileMemory,
+    SymbolicMemory,
+    SecurityManager,
+    SimilarityMemory,
+)
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 
 T = TypeVar("T", bound="Resource")  # noqa: F821
