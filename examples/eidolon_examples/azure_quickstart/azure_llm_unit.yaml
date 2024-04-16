@@ -6,6 +6,7 @@ metadata:
   name: OpenAIConnectionHandler
 spec:
   implementation: AzureOpenAIConnectionHandler
+#  azure_ad_token_provider: DefaultAzureCredential  # If using a Token Provider
   azure_endpoint: https://testinstancename.openai.azure.com/  # This is the endpoint of the Azure OpenAI service
   api_version: 2023-03-15-preview
 ---

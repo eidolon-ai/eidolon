@@ -41,17 +41,17 @@ class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
         - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
     """
 
-    token_provider: Optional[Reference[DefaultAzureCredential]] = None
+    azure_ad_token_provider: Optional[Reference[DefaultAzureCredential]] = None
     token_provider_scopes: List[str] = ["https://cognitiveservices.azure.com/.default"]
 
 
 class AzureOpenAIConnectionHandler(OpenAIConnectionHandler, Specable[AzureOpenAIConnectionHandlerSpec]):
     def makeClient(self):
         params = self.spec.model_extra
-        if self.spec.token_provider:
-            provider = self.spec.token_provider.instantiate()
+        if self.spec.azure_ad_token_provider:
+            provider = self.spec.azure_ad_token_provider.instantiate()
             token_provider = get_bearer_token_provider(provider, *self.spec.token_provider_scopes)
-            params["token_provider"] = token_provider
+            params["azure_ad_token_provider"] = token_provider
         return AsyncAzureOpenAI(**params)
 
 
