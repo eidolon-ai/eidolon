@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, EnvironmentCredential
 from openai import AsyncOpenAI
 from openai.lib.azure import AsyncAzureOpenAI
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -196,6 +196,7 @@ def named_builtins():
         OpenAIConnectionHandler,
         AzureOpenAIConnectionHandler,
         DefaultAzureCredential,
+        EnvironmentCredential,
         # config objects
         ReplayConfig,
     ]

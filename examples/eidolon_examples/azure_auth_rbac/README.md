@@ -41,7 +41,7 @@ Create `appRoles` for your `app registration` for various permissions by definin
 
 Ensure these roles are assigned to the relevant users or groups. These roles will be reflected in the roles claim of the JWT.
 
-### Step 4: Configuring RBAC in Eidolon
+## Step 4: Configuring RBAC in Eidolon
 
 To apply RBAC settings within Eidolon, utilize the following configuration snippet:
 
@@ -54,5 +54,5 @@ metadata:
 spec: GlobPatternFunctionalAuthorizer
 ```
 
-### Step 5: Access from external applications
+## Step 5: Access from external applications
 If you need to access the machine from an external application, add the relevant eidolon permissions in the api permissions of the application registration.
