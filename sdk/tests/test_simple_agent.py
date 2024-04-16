@@ -3,9 +3,12 @@ import pytest
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
+from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
 
 class MeaningOfLife(LogicUnit):
@@ -135,3 +138,26 @@ async def test_with_tools():
     process = await Agent.get("with_tools").create_process()
     resp = await process.action("converse", body="What is the meaning of life?")
     assert "42" in resp.data.lower()
+
+
+@pytest.fixture
+def record(test_name):
+    save_loc = f"resume_points_{test_name}"
+    AgentOS.register_resource(
+        ReferenceResource(
+            apiVersion="eidolon/v1",
+            metadata=Metadata(name=ReplayConfig.__name__),
+            spec=dict(save_loc=save_loc),
+        )
+    )
+    return save_loc
+
+
+async def test_with_replay_points(file_memory_loc, record):
+    process = await Agent.get("with_tools").create_process()
+    await process.action("converse", body="What is the meaning of life?")
+    stream = replay(file_memory_loc / record / "001_openai_completion")
+    assert "42" in [s async for s in stream]
+
+    with open(file_memory_loc / record / "001_openai_completion" / "data.yaml", "r") as f:
+        assert "You are a helpful assistant" in f.read()
