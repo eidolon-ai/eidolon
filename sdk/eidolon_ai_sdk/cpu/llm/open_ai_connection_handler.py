@@ -1,11 +1,12 @@
+import os
 from typing import Optional, cast, List
 
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.identity import get_bearer_token_provider, EnvironmentCredential
 from openai import AsyncOpenAI, AsyncStream
 from openai.lib.azure import AsyncAzureOpenAI
 from openai.types import ImagesResponse
 from openai.types.chat import ChatCompletionChunk, ChatCompletion
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.system.reference_model import Specable, Reference
 from eidolon_ai_sdk.util.replay import replayable
@@ -31,6 +32,12 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
         return await self.makeClient().images.generate(**kwargs)
 
 
+def get_default_token_provider():
+    if os.environ.get("AZURE_CLIENT_ID") and os.environ.get("AZURE_CLIENT_SECRET") and os.environ.get("AZURE_TENANT_ID"):
+        return Reference[EnvironmentCredential]()
+    return None
+
+
 class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
     """
     Automatically infers the values from environment variables for:
@@ -41,17 +48,19 @@ class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
         - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
     """
 
-    token_provider: Optional[Reference[DefaultAzureCredential]] = None
+    azure_ad_token_provider: Optional[Reference] = Field(default_factory=get_default_token_provider)
     token_provider_scopes: List[str] = ["https://cognitiveservices.azure.com/.default"]
+    api_version: str = os.environ.get("OPENAI_API_VERSION") or "2024-02-01"
 
 
 class AzureOpenAIConnectionHandler(OpenAIConnectionHandler, Specable[AzureOpenAIConnectionHandlerSpec]):
     def makeClient(self):
         params = self.spec.model_extra
-        if self.spec.token_provider:
-            provider = self.spec.token_provider.instantiate()
+        if self.spec.azure_ad_token_provider:
+            provider = self.spec.azure_ad_token_provider.instantiate()
             token_provider = get_bearer_token_provider(provider, *self.spec.token_provider_scopes)
-            params["token_provider"] = token_provider
+            params["azure_ad_token_provider"] = token_provider
+        params["api_version"] = self.spec.api_version
         return AsyncAzureOpenAI(**params)
 
 
