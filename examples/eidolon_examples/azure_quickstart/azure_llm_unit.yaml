@@ -1,12 +1,19 @@
-# We need to configure the default LLMUnit to use an Azure client
+---
+# First We need to configure our openai connection handler to use the Azure
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: LLMUnit
+  name: OpenAIConnectionHandler
+spec:
+  implementation: AzureOpenAIConnectionHandler
+  azure_endpoint: https://testinstancename.openai.azure.com/  # This is the endpoint of the Azure OpenAI service
+  api_version: 2023-03-15-preview
+---
+# Next we need to override the OpenAI LLM Unit to point to our azure model
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: OpenAIGPT
 spec:
   model:
-    name: 35turbo
-  connection_handler:
-    implementation: AzureOpenAIConnectionHandler
-    azure_endpoint: https://testinstancename.openai.azure.com/
-    api_version: 2023-03-15-preview
+    name: "35turbo"
