@@ -1,0 +1,19 @@
+---
+# First We need to configure our openai connection handler to use the Azure
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: OpenAIConnectionHandler
+spec:
+  implementation: AzureOpenAIConnectionHandler
+  azure_endpoint: https://testinstancename.openai.azure.com/  # This is the endpoint of the Azure OpenAI service
+  api_version: 2023-03-15-preview
+---
+# Next we need to override the OpenAI LLM Unit to point to our azure model
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: OpenAIGPT
+spec:
+  model:
+    name: "35turbo"

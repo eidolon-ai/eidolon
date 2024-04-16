@@ -313,6 +313,7 @@ class AgentMachine(Specable[MachineSpec]):
         """
         controller = self._get_agent_controller(args.agent)
         if not controller:
+            logger.info(f"Agent {args.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.create_process(args.title)
 
@@ -327,6 +328,7 @@ class AgentMachine(Specable[MachineSpec]):
 
         controller = self._get_agent_controller(process_doc.agent)
         if not controller:
+            logger.info(f"Agent {process_doc.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.delete_process(process_id)
 
@@ -341,6 +343,7 @@ class AgentMachine(Specable[MachineSpec]):
 
         controller = self._get_agent_controller(process_doc.agent)
         if not controller:
+            logger.info(f"Agent {process_doc.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.get_process_events(process_id)
 
