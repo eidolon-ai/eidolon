@@ -177,9 +177,7 @@ class AgentMachine(Specable[MachineSpec]):
         if mime_type:
             file_md = {"mime_type": mime_type}
         file_id = await self.process_file_system.write_file(process_id, file_bytes, file_md)
-        return JSONResponse(
-            content=file_id.model_dump(), status_code=200
-        )
+        return JSONResponse(content=file_id.model_dump(), status_code=200)
 
     async def set_metadata(self, process_id: str, file_id: str, file_md: dict):
         """
@@ -188,9 +186,7 @@ class AgentMachine(Specable[MachineSpec]):
         :param process_id:
         """
         file_id = await self.process_file_system.set_metadata(process_id, file_id, file_md)
-        return JSONResponse(
-            content=file_id.model_dump(), status_code=200
-        )
+        return JSONResponse(content=file_id.model_dump(), status_code=200)
 
     async def download_file(self, process_id: str, file_id: str):
         """

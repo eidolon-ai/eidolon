@@ -41,9 +41,7 @@ class ActionDefinition(BaseModel):
         for k, v in input_dict.items():
             if isinstance(v, dict):
                 if v.get("format") == "binary":
-                    raise ValueError(
-                        "prompt_properties cannot contain format = 'binary' fields."
-                    )
+                    raise ValueError("prompt_properties cannot contain format = 'binary' fields.")
         return input_dict
 
     @field_validator("supported_mime_types")
@@ -53,9 +51,19 @@ class ActionDefinition(BaseModel):
         if not supported_mime_types:
             return supported_mime_types
 
-        all_mime_types = {"application/json", "text/plain", "image/*", "audio/*", "application/pdf", "application/msword",
-                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                          "application/vnd.ms-excel", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
+        all_mime_types = {
+            "application/json",
+            "text/plain",
+            "image/*",
+            "audio/*",
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        }
         bad_types = []
         for mime_type in supported_mime_types:
             if mime_type not in all_mime_types:
@@ -138,10 +146,12 @@ class SimpleAgentSpec(BaseModel):
 
 
 class SimpleAgent(Specable[SimpleAgentSpec]):
-    generate_title_prompt = ("You are generating a title for a conversation. Consider the context and content of the discussion or text. "
-                             "Create a concise, relevant, and accurate representation of the main topic or theme in the content."
-                             "Create a title that draws insiration from key phrases or ideas in the content. "
-                             "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title. The prompt for the conversation is:\n")
+    generate_title_prompt = (
+        "You are generating a title for a conversation. Consider the context and content of the discussion or text. "
+        "Create a concise, relevant, and accurate representation of the main topic or theme in the content."
+        "Create a title that draws insiration from key phrases or ideas in the content. "
+        "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title. The prompt for the conversation is:\n"
+    )
 
     def __init__(self, spec):
         super().__init__(spec=spec)
@@ -250,7 +260,9 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
 
         yield UserInputEvent(input=request_body, files=attached_files)
         thread = await cpu.main_thread(process_id)
-        response = thread.stream_request(output_format=action.output_schema, prompts=[*attached_files_messages, text_message])
+        response = thread.stream_request(
+            output_format=action.output_schema, prompts=[*attached_files_messages, text_message]
+        )
 
         async for event in response:
             yield event
