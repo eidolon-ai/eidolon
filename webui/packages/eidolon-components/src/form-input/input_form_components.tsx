@@ -103,7 +103,7 @@ export function CopilotInputForm({machineUrl, processId, isProcessing, copilotPa
           inputProps={{"x-webkit-speech": "x-webkit-speech"}}
         />
         {copilotParams.allowSpeech && (
-          <Recorder machineUrl={machineUrl} agent={copilotParams.speechAgent!} operation={copilotParams.speechOperation!} process_id={processId} setText={(text) => {
+          <Recorder machineUrl={machineUrl} agent={copilotParams.speechAgent!} operation={copilotParams.speechOperation!} setText={(text) => {
             setInput(text)
           }}/>)}
       </div>

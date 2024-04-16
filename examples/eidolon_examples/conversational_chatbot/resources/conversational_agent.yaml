@@ -8,7 +8,7 @@ spec:
     - name: "converse"
       description: "A copilot that engages with the user."
       allow_file_upload: true
-  cpus:
+  apus:
     - apu: MistralSmall
       title: Mistral Small
     - apu: MistralMedium
