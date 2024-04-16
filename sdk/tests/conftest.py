@@ -17,6 +17,7 @@ from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
 import eidolon_ai_sdk.system.processes as processes
+import eidolon_ai_sdk.system.process_file_system as process_file_system
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
@@ -328,4 +329,20 @@ def deterministic_process_ids(test_name):
         return next(id_generator)
 
     with patch.object(processes.bson, "ObjectId", new=patched_ObjectId):
+        yield
+
+
+@pytest.fixture()
+def deterministic_file_ids(test_name):
+    """
+    Tool call responses contain the process id, which means it does name make cache hits for vcr.
+    This method patches object id for processes so that it returns a deterministic id based on the test name.
+    """
+
+    id_generator = deterministic_id_generator(test_name)
+
+    def patched_ObjectId(*args, **kwargs):
+        return next(id_generator)
+
+    with patch.object(process_file_system.bson, "ObjectId", new=patched_ObjectId):
         yield

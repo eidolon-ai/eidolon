@@ -240,15 +240,15 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
     async def process_audio_message(self, message: UserMessageAudio):
         if self.audio_unit is None:
             raise ValueError("No audio unit available")
-        message = f"The user uploaded an audio clip with the file handle of {message.file}. Use the text_to_speech tool to process this audio file. Always process the audio file!"
+        message = f"The user uploaded an audio clip with the file handle of {message.file.model_dump()}. Use the text_to_speech tool to process this audio file. Always process the audio file!"
         return [UserMessageText(text=message)]
 
     async def process_image_message(self, message: UserMessageImage):
-        if self.get_capabilities().supports_image_input:
-            return [message]
-        elif self.image_unit is not None:
-            message = f"The user uploaded an image with the file handle of {message.file}. Use the image_to_text tool to process this image file. Always process the image file!"
+        if self.image_unit is not None:
+            message = f"The user uploaded an image with the file handle of {message.file.model_dump()}. Use the image_to_text tool to process this image file. Always process the image file!"
             return [UserMessageText(text=message)]
+        elif self.get_capabilities().supports_image_input:
+            return [message]
         else:
             raise ValueError("Image processing not supported")
 

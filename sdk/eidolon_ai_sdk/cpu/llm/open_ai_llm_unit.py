@@ -113,7 +113,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 input_context_limit=128000,
                 output_context_limit=4096,
                 supports_tools=True,
-                supports_image_input=True,
+                supports_image_input=False,
                 supports_audio_input=False,
             ),
             LLMModel(

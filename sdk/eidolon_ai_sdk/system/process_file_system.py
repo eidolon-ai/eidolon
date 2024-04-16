@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional, Dict, Tuple
 from uuid import uuid4
 
+import bson
 from pydantic import BaseModel
 
 from eidolon_ai_client.events import FileHandle
@@ -59,7 +60,7 @@ class ProcessFileSystemImpl(Specable[ProcessFileSystemSpec], ProcessFileSystem):
         :param file_contents:
         :return:
         """
-        file_id = uuid4().hex
+        file_id = str(bson.ObjectId())
         await AgentOS.file_memory.mkdir(str(Path(self.root, process_id)), exist_ok=True)
         await AgentOS.file_memory.write_file(str(Path(self.root, process_id, file_id)), file_contents)
         md_to_write = {

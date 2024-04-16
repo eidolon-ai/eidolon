@@ -8,9 +8,10 @@ from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 def r(name, **kwargs):
     spec = dict(
         implementation=SimpleAgent.__name__, **kwargs,
-        cpu=dict(
+        apu=dict(
             implementation="APU",
-            audio_unit="OpenAiSpeech"
+            audio_unit="OpenAiSpeech",
+            image_unit="OpenAIImageUnit"
         )
     )
     return Resource(
@@ -48,3 +49,14 @@ async def test_pdf_file_include(test_dir):
     assert file_handle2.file_id == file_handle.file_id
     resp = await process.action("converse", body=dict(body="What is in the attached file?", attached_files=[file_handle]))
     assert "Chicago" in resp.data
+
+
+async def test_image_file_include(test_dir):
+    process = await Agent.get("simple").create_process()
+    docs_loc = test_dir / "cpu" / "llm" / "files"
+    with open(docs_loc / "logo.png", "rb") as f:
+        file_handle = await process.upload_file(f.read())
+        print("file_handle", file_handle)
+        result = await process.action("converse", body=dict(body="What is in the image?", attached_files=[file_handle]))
+        print(result)
+        assert "logo" in result.data

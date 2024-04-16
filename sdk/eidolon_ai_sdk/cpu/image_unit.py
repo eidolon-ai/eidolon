@@ -32,7 +32,7 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
         raise NotImplementedError("get_capabilities not implemented")
 
     @llm_function()
-    async def image_to_text(self, image: FileHandle, prompt: str = None) -> str:
+    async def image_to_text(self, image: FileHandle, prompt: str) -> str:
         """
         Converts an image to text. The result of the call is the text that describes the image.
         :param image: A file handle to the image data.
@@ -58,20 +58,21 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
         raise NotImplementedError("image_to_text not implemented")
 
     @llm_function()
-    async def text_to_image(self, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
+    async def text_to_image(self, text: str, quality: Optional[str] = None, width: int = 1024, height: int = 1024, style: Optional[str] = None,
                             image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
         """
         Converts text to one or more images. The result of the call is a list of file handles that should be returned to the user unchanged.
+        :param width: The width of the image. Defaults to 1024.
+        :param height: The height of the image. Defaults to 1024.
         :param text: The text to convert to an image. The text should be very verbose and detailed. The text CANNOT exceed 4000 characters
         :param quality: An optional quality level for the image. Legal values are ["standard", "hd"]. Defaults to "standard".
-        :param size: The size of the image. Defaults to (1024, 1024).
         :param style: An optional style for the image. Legal values are ["vivid", "natural"]. Defaults to None.
         :param image_format: The image format. Legal values are ["jpeg", "png", "tiff", "bmp", "webp"]. Defaults to "webp".
         :return:
         """
         message = self.spec.text_to_image_prompt + "\n" + text
         call_context = CallContext(process_id=RequestContext.get("process_id"))
-        return await self._text_to_image(call_context, text, quality, size, style, image_format)
+        return await self._text_to_image(call_context, text, quality, (width, height), style, image_format)
 
     async def _text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
                              image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
