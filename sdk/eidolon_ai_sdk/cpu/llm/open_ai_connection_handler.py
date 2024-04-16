@@ -30,12 +30,6 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
         # todo, image generation should be repayable, but needs custom parser
         return await self.makeClient().images.generate(**kwargs)
 
-    async def _do_request(self, **kwargs):
-        if kwargs.get("stream"):
-            return await self.makeClient().chat.completions.create(**kwargs)
-        else:
-            return await self.makeClient().chat.completions.create(**kwargs)
-
 
 class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
     """
