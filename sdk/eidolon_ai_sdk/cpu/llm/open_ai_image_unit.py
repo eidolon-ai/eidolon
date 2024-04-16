@@ -84,7 +84,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
             "temperature": self.spec.temperature,
         }
 
-        result: ChatCompletion = await self.connection_handler.completion(request)
+        result: ChatCompletion = await self.connection_handler.completion(**request)
         print(result)
         return result.choices[0].message.content
 
@@ -126,7 +126,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
             "size": f"{size_to_request[0]}x{size_to_request[1]}",
             "style": style,
         }
-        result = await self.connection_handler.generate_image(request)
+        result = await self.connection_handler.generate_image(**request)
         file_handles = []
         for i in result.data:
             image_data = base64.b64decode(i.b64_json)

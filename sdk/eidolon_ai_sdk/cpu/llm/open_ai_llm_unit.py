@@ -122,7 +122,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
         complete_message = ""
         tools_to_call = []
-        completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(request))
+        completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
         async for m_chunk in completion:
             chunk = cast(ChatCompletionChunk, m_chunk)
             if not chunk.choices:
