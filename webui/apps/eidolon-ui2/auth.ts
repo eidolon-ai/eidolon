@@ -38,9 +38,9 @@ if (providerTypes.includes('google')) {
 if (providerTypes.includes('azure')) {
   providers.push(
     AzureADProvider({
-      clientId: process.env.AZURE_AD_CLIENT_ID!,
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID,
+      clientId: process.env.AZURE_CLIENT_ID || process.env.AZURE_AD_CLIENT_ID!,
+      clientSecret: process.env.AZURE_CLIENT_SECRET || process.env.AZURE_AD_CLIENT_SECRET!,
+      tenantId: process.env.AZURE_TENANT_ID || process.env.AZURE_AD_TENANT_ID,
       authorization: {
         params: {
           scope: "openid profile email " + process.env.AZURE_AD_PROFILE_EMAIL,

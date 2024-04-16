@@ -32,9 +32,9 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           EIDOLON_DATA_DIR: /tmp/eidolon
-          AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-          AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
           AZURE_AD_TEST_CLIENT_ID: ${{ secrets.AZURE_AD_TEST_CLIENT_ID }}
           AZURE_AD_TEST_CLIENT_SECRET: ${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}
         working-directory: examples
