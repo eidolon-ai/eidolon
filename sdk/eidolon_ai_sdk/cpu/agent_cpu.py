@@ -144,6 +144,6 @@ class Thread:
         return await self._cpu.clone_thread(self._call_context)
 
 
-class CPUException(Exception):
+class APUException(Exception):
     def __init__(self, description):
         super().__init__("CPU Error: " + description)
