@@ -1,6 +1,6 @@
 from typing import List, Tuple, Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.request_context import RequestContext
@@ -18,8 +18,8 @@ class ImageCreationCapabilities(BaseModel):
 
 
 class ImageUnitSpec(BaseModel):
-    image_to_text_prompt: str = "Use the following prompt to describe the image:"
-    text_to_image_prompt: str = "Use the provided text to create an image:"
+    image_to_text_prompt: str = Field(default="Use the following prompt to describe the image:", description="The prompt to use for the conversion. The text should be very verbose and detailed.")
+    text_to_image_prompt: str = Field(default="Use the provided text to create an image:", description="The prompt to use for the conversion. The text should be very verbose and detailed.")
 
 
 class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
@@ -31,14 +31,16 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
         raise NotImplementedError("get_capabilities not implemented")
 
     @llm_function()
-    async def image_to_text(self, image: FileHandle, prompt: str) -> str:
+    async def image_to_text(self, prompt: str, image: FileHandle) -> str:
         """
         Converts an image to text. The result of the call is the text that describes the image.
         :param image: A file handle to the image data.
         :param prompt: The prompt to use for the conversion. The text should be very verbose and detailed.
         :return:
         """
-        message = self.spec.image_to_text_prompt + "\n" + prompt
+        message = self.spec.image_to_text_prompt
+        if prompt:
+            message += "\n" + prompt
         data, metadata = await AgentOS.process_file_system.read_file(RequestContext.get("process_id"), image.file_id)
         return await self._image_to_text(message, data)
 
