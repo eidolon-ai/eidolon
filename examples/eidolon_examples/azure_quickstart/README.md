@@ -6,7 +6,7 @@ This guide provides detailed steps on how to use Azure OpenAI deployments for yo
 
 To get started you will need an Azure OpenAI deployment, the deployment endpoint, and a deployed Azure OpenAI model.
 
-## Step 1: Configure Eidolon
+## Step 1: Configure Eidolon AzureOpenAIConnectionHandler
 
 The first thing we need to do is create a resource in Eidolon to configure our openai client to use Azure OpenAI by default.
 
@@ -20,46 +20,33 @@ spec:
   azure_endpoint: https://testinstancename.openai.azure.com/
 ```
 
-### Static Token Authentication
+### Authentication
+You have two approaches for authentication, static tokens or using a token provider. Eidolon supports both. All you 
+need to do is set the respective environment variables and Eidolon will automatically configure the client.
+
+#### Static Token Authentication
 
 If you are using a token, you can set it as an environment variable ```AZURE_OPENAI_API_KEY```
 
-Alternatively you can set the key within the AzureOpenAIConnectionHandler resource.
-```yaml
-spec:
-  implementation: AzureOpenAIConnectionHandler
-  api_key: $YOUR_API_KEY
-```
+#### Token Provider Authentication
 
-### Token Provider Authentication
+Eidolon will automatically use the EnvironmentCredential if the environment variables 
+`AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, and `AZURE_TENANT_ID` are set.
 
-If you use a token provider, Eidolon supports the EnvironmentCredential out of the box, and will automatically use it if 
-`AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, and `AZURE_TENANT_ID` are set as environment variables.
 
-Alternatively you can manually configure your azure_ad_token_provider within your AzureOpenAIConnectionHandler resource:
+## Step 2: Configure Eidolon Model(s) 
 
-```yaml
-spec:
-  implementation: AzureOpenAIConnectionHandler
-  azure_ad_token_provider: EnvironmentCredential
-```
+We still need to override our model to point to the Azure OpenAI deployment. We can do this by overriding the default 
+gpt-4 model.
 
-## Step 2: Configure your Agent
-
-Unless you named your model directly after it's openai equivalent, you will need to specify the model name in your 
-agent's apu configuration. 
+Since this is the model used by default, your agents will automatically use it. You will need to similarly customize any 
+additional models used by your Eidolon Machine.
 
 ```yaml
 apiVersion: eidolon/v1
-kind: Agent
+kind: Reference
 metadata:
-  name: hello_world
-
+  name: "gpt-4-turbo-preview"
 spec:
-  description: "This is an example of a generic agent which greets people by name."
-  system_prompt: "You are a friendly greeter who greets people by name while using emojis"
-  apu:
-    llm_unit:
-      model:
-        name: YOUR_MODEL_NAME
+  name: YOUR_MODEL_NAME
 ```

@@ -1,14 +1,4 @@
----
-# First We need to configure our openai connection handler to use the Azure
-apiVersion: eidolon/v1
-kind: Reference
-metadata:
-  name: OpenAIConnectionHandler
-spec:
-  implementation: AzureOpenAIConnectionHandler
-  azure_endpoint: https://testinstancename.openai.azure.com/  # This is the endpoint of the Azure OpenAI service
----
-# We can now use our agent while replacing the model name with the name of our azure model deployment
+# We can now use our agent like normal. Note that we only overrode the gpt 4 model
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
@@ -17,8 +7,3 @@ metadata:
 spec:
   description: "This is an example of a generic agent which greets people by name."
   system_prompt: "You are a friendly greeter who greets people by name while using emojis"
-  apu:
-    llm_unit:
-      model:
-        implementation: "gpt-3.5-turbo"  # gpt-4.0-turbo if using gpt 4.0
-        name: "35turbo"
