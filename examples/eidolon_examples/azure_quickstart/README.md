@@ -34,7 +34,7 @@ Eidolon will automatically use the EnvironmentCredential if the environment vari
 `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, and `AZURE_TENANT_ID` are set.
 
 
-## Step 3: Configure Eidolon 
+## Step 2: Configure Eidolon Model(s) 
 
 We still need to override our model to point to the Azure OpenAI deployment. We can do this by overriding the default 
 gpt-4 model.
