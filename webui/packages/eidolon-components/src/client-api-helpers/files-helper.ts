@@ -40,7 +40,7 @@ export async function downloadFile(machineUrl: string, process_id: string, file_
     if (resp.status === 404) {
       return null
     }
-    return resp.blob()
+    return {data: resp.blob(), mimetype: resp.headers.get("Content-Type")}
   })
 }
 

@@ -1,6 +1,5 @@
 import os
 import pathlib
-import socket
 import threading
 from contextlib import asynccontextmanager
 from typing import Iterable
@@ -61,10 +60,12 @@ def app_builder(machine_manager):
 
 @pytest.fixture(scope="module")
 def port():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("", 0))
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        return s.getsockname()[1]
+    # fixing the port. Do we need to be so cool to have a random port?
+    return 9080
+    # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    #     s.bind(("", 0))
+    #     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    #     return s.getsockname()[1]
 
 
 @pytest.fixture(autouse=True)

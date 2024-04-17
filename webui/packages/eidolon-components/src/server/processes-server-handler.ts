@@ -219,11 +219,11 @@ export class FileHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 400})
     }
-    let data = await this.downloadFile(machineUrl, params.processid, params.fileid);
+    let {data, mimetype} = await this.downloadFile(machineUrl, params.processid, params.fileid);
     return new Response(data, {
         status: 200,
         headers: {
-          'Content-Type': 'application/octet-stream',
+          'Content-Type': mimetype || 'application/octet-stream',
         },
       });
   }

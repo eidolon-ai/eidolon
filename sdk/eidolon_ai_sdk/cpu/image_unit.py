@@ -7,7 +7,6 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
-from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -59,7 +58,7 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
 
     @llm_function()
     async def text_to_image(self, text: str, quality: Optional[str] = None, width: int = 1024, height: int = 1024, style: Optional[str] = None,
-                            image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
+                            image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[str]:
         """
         Converts text to one or more images. The result of the call is a list of file handles that should be returned to the user unchanged.
         :param width: The width of the image. Defaults to 1024.
@@ -72,7 +71,10 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
         """
         message = self.spec.text_to_image_prompt + "\n" + text
         call_context = CallContext(process_id=RequestContext.get("process_id"))
-        return await self._text_to_image(call_context, text, quality, (width, height), style, image_format)
+        image_links = []
+        for file_handle in await self._text_to_image(call_context, message, quality, (width, height), style, image_format):
+            image_links.append(f"{file_handle.machineURL}/processes/{file_handle.process_id}/files/{file_handle.file_id}")
+        return image_links
 
     async def _text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
                              image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp",

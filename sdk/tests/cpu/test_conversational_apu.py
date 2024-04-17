@@ -1,6 +1,9 @@
+import re
+
 import pytest
 
 from eidolon_ai_client.client import Agent
+from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
@@ -62,8 +65,28 @@ async def test_image_file_include(test_dir):
     docs_loc = test_dir / "cpu" / "llm" / "files"
     with open(docs_loc / "logo.png", "rb") as f:
         file_handle = await process.upload_file(f.read())
-        # set the machine url so that the port doesn't change.
-        file_handle.machineURL = "http://testme"
         result = await process.action("converse", body=dict(body="What is in the image?", attached_files=[file_handle]))
         print(result)
         assert "logo" in result.data
+
+
+async def test_produce_image_from_text(test_dir):
+    process = await Agent.get("simple").create_process()
+    result = await process.action("converse", body=dict(body="Create an image of a logo for a new startup called AugustData. The logo should be simple and elegant."))
+    print(result)
+
+
+async def test_audio_file_include_and_produce(test_dir):
+    process = await Agent.get("simple").create_process()
+    result = await process.action("converse", body=dict(body="Create an audio file of the text 'Hello world, how are you today?'"))
+    pattern = r'(https?://[^/]+)/processes/([^/]+)/files/([^/\)\s]+)'
+    match = re.search(pattern, result.data)
+    assert match is not None
+    machine_url, process_id, file_id = match.groups()
+    print(machine_url, process_id, file_id)
+    assert machine_url == process.machine
+    assert process_id == process.process_id
+    file = await process.download_file(file_id)
+    assert file is not None
+    result = await process.action("converse", body=dict(body="What is in the audio clip?", attached_files=[FileHandle(machineURL=machine_url, process_id=process_id, file_id=file_id)]))
+    assert "Hello world, how are you today?" in result.data

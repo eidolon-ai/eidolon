@@ -7,6 +7,8 @@ metadata:
     - title: "Mistral Large"
 spec:
   implementation: APU
+  audio_unit: OpenAiSpeech
+  image_unit: OpenAIImageUnit
   llm_unit:
     implementation: MistralGPT
     model: "mistral-large-latest"

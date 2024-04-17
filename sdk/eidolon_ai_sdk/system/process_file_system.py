@@ -2,7 +2,6 @@ import asyncio
 import json
 from pathlib import Path
 from typing import Optional, Dict, Tuple
-from uuid import uuid4
 
 import bson
 from pydantic import BaseModel

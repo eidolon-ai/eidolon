@@ -7,6 +7,8 @@ metadata:
     - title: "OpenAI GPT 3.5 Turbo"
 spec:
     implementation: APU
+    audio_unit: OpenAiSpeech
+    image_unit: OpenAIImageUnit
     llm_unit:
       implementation: OpenAIGPT
       model: "gpt-3.5-turbo"
