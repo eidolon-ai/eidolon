@@ -195,14 +195,16 @@ class AgentMachine(Specable[MachineSpec]):
         :param file_id:
         :return: The file bytes
         """
-        contents, metadata = await self.process_file_system.read_file(process_id, file_id)
-        if not contents:
+        file = await self.process_file_system.read_file(process_id, file_id)
+        if not file:
             return JSONResponse(content={"detail": "File Not Found"}, status_code=404)
         headers = {
             "Content-Type": "application/octet-stream",
         }
-        if metadata and "mime_type" in metadata:
-            headers["mime-type"] = metadata["mime_type"]
+        contents, metadata = file
+        if metadata and "mimetype" in metadata:
+            headers["mime-type"] = metadata["mimetype"]
+            headers["Content-Type"] = metadata["mimetype"]
         return Response(content=contents, headers=headers, status_code=200)
 
     async def _delete_file(self, process_id: str, file_id: str):

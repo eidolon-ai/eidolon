@@ -71,6 +71,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.image_unit = self.spec.image_unit.instantiate(**kwargs) if self.spec.image_unit else None
         self.record_memory = self.spec.record_conversation
         self.document_processor = self.spec.document_processor.instantiate()
+        if self.audio_unit:
+            self.logic_units.append(self.audio_unit)
+        if self.image_unit:
+            self.logic_units.append(self.image_unit)
 
     def get_capabilities(self) -> APUCapabilities:
         llm_props = self.llm_unit.get_llm_capabilities()
@@ -78,11 +82,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             input_context_limit=llm_props.input_context_limit,
             output_context_limit=llm_props.output_context_limit,
             supports_tools=llm_props.supports_tools,
-            supports_image_input=llm_props.supports_image_input or self.image_unit is not None,
-            supports_audio_input=llm_props.supports_audio_input or self.audio_unit is not None,
+            supports_image_input=llm_props.supports_image_input or self.spec.image_unit is not None,
+            supports_audio_input=llm_props.supports_audio_input or self.spec.audio_unit is not None,
             supports_file_search=llm_props.supports_tools and self.document_processor is not None,
-            supports_audio_generation=self.audio_unit is not None,
-            supports_image_generation=self.image_unit is not None,
+            supports_audio_generation=self.spec.audio_unit is not None,
+            supports_image_generation=self.spec.image_unit is not None,
         )
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:
@@ -147,9 +151,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                     if isinstance(message, UserMessageFile) and message.include_directly:
                         converted_messages.extend(await self.process_file_message(call_context.process_id, message))
                     elif isinstance(message, UserMessageAudio):
-                        converted_messages.extend(await self.process_audio_message(call_context, message))
+                        converted_messages.extend(await self.process_audio_message(message))
                     elif isinstance(message, UserMessageImage):
-                        converted_messages.extend(await self.process_image_message(call_context, message))
+                        converted_messages.extend(await self.process_image_message(message))
                     else:
                         converted_messages.append(message)
                 converted_conversation.append(UserMessage(content=converted_messages))
@@ -167,6 +171,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                     call_context, converted_conversation, llm_facing_tools, output_format
                 )
                 # yield the events but capture the output, so it can be rolled into one event for memory.
+                # noinspection PyTypeChecker
                 stream_collector = StreamCollector(execute_llm_)
                 async for event in stream_collector:
                     if event.is_root_and_type(LLMToolCallRequestEvent):
@@ -244,30 +249,18 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             await self.memory_unit.storeMessages(call_context, [message])
         conversation.append(message)
 
-    async def process_audio_message(self, call_context: CallContext, message: UserMessageAudio):
+    async def process_audio_message(self, message: UserMessageAudio):
         if self.audio_unit is None:
             raise ValueError("No audio unit available")
-        audio_data, metadata = await AgentOS.process_file_system.read_file(call_context.process_id, message.file.file_id)
-        mimetype = metadata.get("mimetype")
-        path = metadata.get("path") or metadata.get("filename") or ""
-        text = await self.audio_unit.speech_to_text(audio=audio_data, mime_type=mimetype)
-        return [UserMessageText(text=f"The following text as converted from the audio file {path}:\n{text}\n\n")]
+        message = f"The user uploaded an audio clip with the file handle of {message.file.model_dump()}. Use the text_to_speech tool to process this audio file. Always process the audio file!"
+        return [UserMessageText(text=message)]
 
-    async def process_image_message(self, call_context: CallContext, message: UserMessageImage):
-        if self.get_capabilities().supports_image_input:
+    async def process_image_message(self, message: UserMessageImage):
+        if self.image_unit is not None:
+            message = f"The user uploaded an image with the file handle of {message.file.model_dump()}. Use the image_to_text tool to process this image file. Always process the image file!"
+            return [UserMessageText(text=message)]
+        elif self.get_capabilities().supports_image_input:
             return [message]
-        elif self.image_unit is not None:
-            image_data, metadata = await AgentOS.process_file_system.read_file(
-                call_context.process_id, message.file.file_id
-            )
-            path = metadata.get("path") or metadata.get("filename") or ""
-            text = await self.image_unit.image_to_text(
-                prompt="Create a detailed text description of the following image. Be sure to include as much information as needed to describe the image.  Be very verbose.",
-                image=image_data,
-            )
-            return [
-                UserMessageText(text=f"The following text is a detailed description of an image {path}:\n{text}\n\n")
-            ]
         else:
             raise ValueError("Image processing not supported")
 

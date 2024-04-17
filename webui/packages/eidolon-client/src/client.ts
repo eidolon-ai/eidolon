@@ -371,7 +371,7 @@ class Process {
     if (results.status !== 200) {
       throw new Error(`Failed to download file: ${results.statusText}`)
     }
-    return await results.blob()
+    return {data: await results.blob(), "mimetype": results.headers.get("Content-Type")}
   }
 
   public async delete_file(file_id: string) {
