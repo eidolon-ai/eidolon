@@ -9,11 +9,13 @@ from openai import BaseModel
 from pydantic import field_validator, model_validator
 from pydantic_core import to_jsonable_python
 
-from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent
+from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent, UserInputEvent, FileHandle
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
-from eidolon_ai_sdk.cpu.agent_io import SystemCPUMessage, ImageCPUMessage, UserTextCPUMessage
+from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
+from eidolon_ai_sdk.cpu.agent_cpu import APU
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage
 from eidolon_ai_sdk.cpu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
@@ -26,7 +28,9 @@ class ActionDefinition(BaseModel):
     user_prompt: str = "{{ body }}"
     input_schema: dict = None
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
-    files: Literal["disable", "single-optional", "single", "multiple"] = "disable"
+    allow_file_upload: bool = False
+    # allow all types for text, image, audio, word, pdf, json, etc
+    supported_mime_types: List[str] = []  # an empty list means all types are supported
     allowed_states: List[str] = ["initialized", "idle", "http_error"]
     output_state: str = "idle"
 
@@ -37,10 +41,37 @@ class ActionDefinition(BaseModel):
         for k, v in input_dict.items():
             if isinstance(v, dict):
                 if v.get("format") == "binary":
-                    raise ValueError(
-                        "prompt_properties cannot contain format = 'binary' fields. Use the files option instead"
-                    )
+                    raise ValueError("prompt_properties cannot contain format = 'binary' fields.")
         return input_dict
+
+    @field_validator("supported_mime_types")
+    def validate_supported_mime_types(cls, supported_mime_types):
+        if not isinstance(supported_mime_types, list):
+            raise ValueError("supported_mime_types must be a List[str]")
+        if not supported_mime_types:
+            return supported_mime_types
+
+        all_mime_types = {
+            "application/json",
+            "text/plain",
+            "image/*",
+            "audio/*",
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        }
+        bad_types = []
+        for mime_type in supported_mime_types:
+            if mime_type not in all_mime_types:
+                bad_types.append(mime_type)
+        if bad_types:
+            raise ValueError(f"supported_mime_types contains unsupported entries: {bad_types}")
+
+        return supported_mime_types
 
     def make_input_schema(self, agent, handler):
         properties: Dict[str, Any] = {}
@@ -52,7 +83,7 @@ class ActionDefinition(BaseModel):
         if self.input_schema is not None:
             properties["body"] = dict(type="object", properties=self.input_schema)
             required.append("body")
-        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.cpus:
+        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.apus and not self.allow_file_upload:
             properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
             required.append("body")
         elif user_vars:
@@ -60,15 +91,11 @@ class ActionDefinition(BaseModel):
             properties["body"] = dict(type="object", properties=props)
             required.append("body")
 
-        if self.files == "single-optional":
-            properties["file"] = dict(type="string", format="binary")
-        elif self.files == "single":
-            properties["file"] = dict(type="string", format="binary")
-            required.append("file")
-        elif self.files == "multiple":
-            properties["file"] = dict(type="array", items=dict(type="string", format="binary"))
-        if agent.spec.cpus:
-            cpu_names = [cpu.title for cpu in agent.spec.cpus]
+        if self.allow_file_upload:
+            properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandle.model_json_schema())
+
+        if agent.spec.apus:
+            cpu_names = [cpu.title for cpu in agent.spec.apus]
             default = agent.cpu.title
             properties["body"]["properties"]["execute_on_cpu"] = dict(type="string", enum=cpu_names, default=default)
             if "required" not in properties["body"]:
@@ -87,7 +114,7 @@ class ActionDefinition(BaseModel):
 
 class NamedCPU(BaseModel):
     title: Optional[str] = None
-    cpu: AnnotatedReference[AgentCPU]
+    apu: AnnotatedReference[APU]
     default: bool = False
 
 
@@ -96,47 +123,53 @@ class SimpleAgentSpec(BaseModel):
     system_prompt: str = "You are a helpful assistant"
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
-    cpu: AnnotatedReference[AgentCPU] = None
-    cpus: Optional[List[NamedCPU]] = []
+    apu: AnnotatedReference[APU] = None
+    apus: List[NamedCPU] = []
     title_generation_mode: Literal["none", "on_request"] = "on_request"
+    doc_processor: AnnotatedReference[DocumentProcessor]
 
     @model_validator(mode="before")
     def validate_cpu(cls, value):
-        if "cpu" in value and "cpus" in value:
-            raise ValueError("Cannot specify both cpu and cpus")
+        if "cpu" in value:
+            logger.warning("cpu is deprecated, use apu instead")
+            value["apu"] = value.pop("cpu")
+        if "apu" in value and "apus" in value:
+            raise ValueError("Cannot specify both apu and apus")
         return value
 
     # noinspection PyTypeChecker
     @model_validator(mode="after")
     def validate_cpus(self):
-        if self.cpus:
-            self.cpu = None
+        if self.apus:
+            self.apu = None
         return self
 
 
 class SimpleAgent(Specable[SimpleAgentSpec]):
-    generate_title_prompt = ("You are generating a title for a conversation. Consider the context and content of the discussion or text. "
-                             "Create a concise, relevant, and accurate representation of the main topic or theme in the content."
-                             "Create a title that draws insiration from key phrases or ideas in the content. "
-                             "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title. The prompt for the conversation is:\n")
+    generate_title_prompt = (
+        "You are generating a title for a conversation. Consider the context and content of the discussion or text. "
+        "Create a concise, relevant, and accurate representation of the main topic or theme in the content."
+        "Create a title that draws insiration from key phrases or ideas in the content. "
+        "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title. The prompt for the conversation is:\n"
+    )
 
     def __init__(self, spec):
         super().__init__(spec=spec)
-        if self.spec.cpu:
-            self.cpu = self.spec.cpu.instantiate()
+        if self.spec.apu:
+            self.cpu = self.spec.apu.instantiate()
             self.cpu.title = self.cpu.__class__.__name__
             self._register_refs_logic_unit(self.cpu, self.spec.agent_refs)
         else:
             self.cpus = []
-            for cpu_spec in self.spec.cpus:
-                cpu = cpu_spec.cpu.instantiate()
+            for cpu_spec in self.spec.apus:
+                apu = cpu_spec.apu.instantiate()
                 # todo - add title from metadata
-                cpu.title = cpu_spec.title or cpu.__class__.__name__
+                apu.title = cpu_spec.title or apu.__class__.__name__
                 if cpu_spec.default:
-                    cpu.default = True
-                    self.cpu = cpu
-                self._register_refs_logic_unit(cpu, self.spec.agent_refs)
-                self.cpus.append(cpu)
+                    apu.default = True
+                    self.cpu = apu
+                self._register_refs_logic_unit(apu, self.spec.agent_refs)
+                self.cpus.append(apu)
 
         if self.spec.title_generation_mode == "on_request":
             # add a title generation action
@@ -145,7 +178,6 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                 description="Generate a title for the conversation",
                 user_prompt=self.generate_title_prompt + "{{ body }}",
                 output_schema="str",
-                files="disable",
                 allowed_states=["initialized", "idle"],
                 output_state="idle",
             )
@@ -186,7 +218,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
 
     async def create_process(self, process_id):
         t = await self.cpu.main_thread(process_id)
-        await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=self.spec.system_prompt)])
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self.spec.system_prompt)])
 
     @staticmethod
     def _act_wrapper(action, action_fn):
@@ -202,18 +234,20 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         if "execute_on_cpu" in request_body:
             execute_on_cpu = request_body.pop("execute_on_cpu")
 
+        attached_files: List[FileHandle] = []
+        attached_files_messages = []
+        if "attached_files" in request_body:
+            # add a new file handle message
+            attached_files = request_body.pop("attached_files") or []
+            for file in attached_files:
+                attached_files_messages.append(AttachedFileMessage(file=file, include_directly=True))
+
         body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
         if isinstance(request_body, dict):
             body.update(request_body)
 
-        files = kwargs.get("file", []) or []
-        if not isinstance(files, list):
-            files = [files]
-
-        image_messages = [ImageCPUMessage(image=file.file, prompt=file.filename) for file in files if file]
-
         env = Environment(undefined=StrictUndefined)
-        text_message = UserTextCPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
+        text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
 
         if execute_on_cpu:
             cpu = self.cpu
@@ -224,8 +258,11 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         else:
             cpu = self.cpu
 
+        yield UserInputEvent(input=request_body, files=attached_files)
         thread = await cpu.main_thread(process_id)
-        response = thread.stream_request(output_format=action.output_schema, prompts=[*image_messages, text_message])
+        response = thread.stream_request(
+            output_format=action.output_schema, prompts=[*attached_files_messages, text_message]
+        )
 
         async for event in response:
             yield event
@@ -245,7 +282,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
             body.update(request_body)
 
         env = Environment(undefined=StrictUndefined)
-        text_message = UserTextCPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
+        text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
 
         if execute_on_cpu:
             cpu = self.cpu
@@ -256,11 +293,10 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         else:
             cpu = self.cpu
 
-        title_message = UserTextCPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
+        title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
         response = await (await cpu.new_thread(process_id)).run_request(prompts=[title_message])
         await process_obj.update(title=response)
 
         yield StringOutputEvent(content=response)
         # return to the previous state
-        print(process_obj.state)
         yield AgentStateEvent(state=last_state)

@@ -11,19 +11,34 @@ from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectO
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class AgentCPUSpec(BaseModel):
+class APUCapabilities(BaseModel):
+    input_context_limit: int
+    output_context_limit: int
+    supports_tools: bool
+    supports_image_input: bool
+    supports_audio_input: bool
+    supports_file_search: bool
+    supports_image_generation: bool
+    supports_audio_generation: bool
+
+
+class APUSpec(BaseModel):
     max_num_function_calls: int = Field(
         10,
         description="The maximum number of function calls to make in a single request.",
     )
 
 
-class AgentCPU(Specable[AgentCPUSpec], ABC):
+class APU(Specable[APUSpec], ABC):
     title: str
 
     def __init__(self, spec: T, **kwargs: object):
         super().__init__(spec, **kwargs)
         self.title = "default"
+
+    @abstractmethod
+    def get_capabilities(self) -> APUCapabilities:
+        pass
 
     @abstractmethod
     async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
@@ -64,9 +79,9 @@ T = TypeVar("T")
 
 class Thread:
     _call_context: CallContext
-    _cpu: AgentCPU
+    _cpu: APU
 
-    def __init__(self, call_context: CallContext, cpu: AgentCPU):
+    def __init__(self, call_context: CallContext, cpu: APU):
         self._call_context = call_context
         self._cpu = cpu
 
@@ -129,6 +144,6 @@ class Thread:
         return await self._cpu.clone_thread(self._call_context)
 
 
-class CPUException(Exception):
+class APUException(Exception):
     def __init__(self, description):
         super().__init__("CPU Error: " + description)

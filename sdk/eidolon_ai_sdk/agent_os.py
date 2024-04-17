@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import os
-
 import pathlib
 from typing import Dict, Tuple, TypeVar, Type
 
-from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent_os_interfaces import (
+    ProcessFileSystem,
+    FileMemory,
+    SymbolicMemory,
+    SecurityManager,
+    SimilarityMemory,
+)
+from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 
 T = TypeVar("T", bound="Resource")  # noqa: F821
 S = TypeVar("S", bound="BaseModel")  # noqa: F821
@@ -14,11 +20,11 @@ S = TypeVar("S", bound="BaseModel")  # noqa: F821
 
 class AgentOS:
     _resources: Dict[str, Dict[str, Tuple["Resource", str]]] = ...  # noqa: F821
-    file_memory: "FileMemory" = ...  # noqa: F821
-    symbolic_memory: "SymbolicMemory" = ...  # noqa: F821
-    similarity_memory: "SimilarityMemory" = ...  # noqa: F821
-    security_manager: "SecurityManager" = ...  # noqa: F821
-    process_file_system: "ProcessFileSystem" = ...  # noqa: F821
+    file_memory: FileMemory = ...  # noqa: F821
+    symbolic_memory: SymbolicMemory = ...  # noqa: F821
+    similarity_memory: SimilarityMemory = ...  # noqa: F821
+    security_manager: SecurityManager = ...  # noqa: F821
+    process_file_system: ProcessFileSystem = ...  # noqa: F821
 
     @staticmethod
     def current_machine_url() -> str:
@@ -54,13 +60,12 @@ class AgentOS:
         if resource.metadata.name in bucket:
             if bucket[resource.metadata.name][1] == "builtin":
                 logger.info(f"Overriding builtin resource '{resource.kind}.{resource.metadata.name}'")
-
-                old_impl = getattr(bucket[resource.metadata.name][0], "spec", {}).get("implementation")
-                if old_impl:
-                    new_spec = getattr(resource, "spec")
-                    new_impl = new_spec.get("implementation") if isinstance(new_spec, dict) else new_spec
-                    if not new_impl or resource.metadata.name == new_impl:
-                        new_spec["implementation"] = old_impl
+                old_spec = getattr(bucket[resource.metadata.name][0], "spec", {})
+                old_spec = dict(implementation=old_spec) if isinstance(old_spec, str) else old_spec
+                new_spec = getattr(resource, "spec")
+                new_spec = dict(implementation=new_spec) if isinstance(new_spec, str) else new_spec
+                old_spec.update(new_spec)
+                resource.spec = old_spec
             else:
                 raise ValueError(
                     f"Resource {resource.metadata.name} already registered by {bucket[resource.metadata.name][1]}"

@@ -1,3 +1,4 @@
+---
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
@@ -5,7 +6,21 @@ metadata:
   annotations:
     - title: "Mistral Small"
 spec:
-    implementation: AgentCPU
-    llm_unit:
-      implementation: MistralGPT
-      model: "mistral-small-latest"
+  implementation: APU
+  llm_unit:
+    implementation: MistralGPT
+    model: "mistral-small-latest"
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: "mistral-small-latest"
+spec:
+  implementation: LLMModel
+  human_name: Mistral Small
+  name: "mistral-small-latest"
+  input_context_limit: 32000
+  output_context_limit: 4096
+  supports_tools: False
+  supports_image_input: False
+  supports_audio_input: False

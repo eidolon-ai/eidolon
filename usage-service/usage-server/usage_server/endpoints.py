@@ -6,6 +6,11 @@ from usage_server.usage import UsageService
 usage = APIRouter()
 
 
+@usage.get(path="/health")
+async def health():
+    return {"status": "ok"}
+
+
 @usage.delete(path="/subjects/{subject_id}")
 async def delete_subject(subject_id: str) -> dict:
     s = await UsageService.singleton()

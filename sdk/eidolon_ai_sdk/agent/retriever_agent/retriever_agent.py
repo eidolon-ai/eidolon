@@ -60,6 +60,7 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.document_manager = self.spec.document_manager.instantiate()
+        self.document_manager.collection_name = f"doc_contents_{self.spec.name}"
 
     @register_program()
     async def list_files(self) -> AgentState[List[str]]:
@@ -72,7 +73,7 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
 
     @register_program(description=make_description)
     async def search(
-            self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
     ) -> List[DocSummary]:
         """
         Process the question by searching the document store.

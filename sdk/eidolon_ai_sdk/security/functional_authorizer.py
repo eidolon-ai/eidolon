@@ -4,7 +4,8 @@ import fnmatch
 from abc import abstractmethod
 from typing import Set
 
-from eidolon_ai_sdk.security.permissions import Permission, PermissionException
+from eidolon_ai_sdk.security.permissions import PermissionException
+from eidolon_ai_sdk.agent_os_interfaces import Permission
 from eidolon_ai_sdk.security.user import User
 
 

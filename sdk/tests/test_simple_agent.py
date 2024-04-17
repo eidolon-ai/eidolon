@@ -3,9 +3,12 @@ import pytest
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
+from eidolon_ai_sdk.util.replay import ReplayConfig, replay
 
 
 class MeaningOfLife(LogicUnit):
@@ -25,14 +28,6 @@ def r(name, **kwargs):
         spec=dict(implementation=SimpleAgent.__name__, **kwargs),
     )
 
-
-image_compatible_cpu = dict(
-    llm_unit=dict(
-        model="gpt-4-vision-preview",
-        force_json=False,
-        max_tokens=4096,
-    )
-)
 
 resources = [
     r("default"),
@@ -58,24 +53,6 @@ resources = [
     r("system_prompt", system_prompt="You are a helpful assistant, and your favorite country is France"),
     r("refs", agent_refs=["system_prompt"]),
     r("with_tools", cpu=dict(logic_units=[fqn(MeaningOfLife)])),
-    r("optional_file", actions=[dict(files="single-optional")], cpu=image_compatible_cpu),
-    r(
-        "optional_file_no_body",
-        actions=[dict(files="single-optional", user_prompt="How many legs does the animal have?")],
-        cpu=image_compatible_cpu,
-    ),
-    r("single_file", actions=[dict(files="single")], cpu=image_compatible_cpu),
-    r(
-        "single_file_no_body",
-        actions=[dict(files="single", user_prompt="How many legs does the animal have?")],
-        cpu=image_compatible_cpu,
-    ),
-    r("multiple_files", actions=[dict(files="multiple")], cpu=image_compatible_cpu),
-    r(
-        "multiple_files_no_body",
-        actions=[dict(files="multiple", user_prompt="what do these images have in common?")],
-        cpu=image_compatible_cpu,
-    ),
 ]
 
 
@@ -163,73 +140,24 @@ async def test_with_tools():
     assert "42" in resp.data.lower()
 
 
-async def test_optional_file_with_no_file():
-    process = await Agent.get("optional_file").create_process()
-    resp = await process.action("converse", data=dict(body="What is the capital of France?"))
-    assert "paris" in resp.data.lower()
-
-
-async def test_optional_file_with_file(dog):
-    process = await Agent.get("optional_file").create_process()
-    resp = await process.action(
-        "converse",
-        data=dict(body="How many legs does the animal have?"),
-        files=dict(file=dog),
+@pytest.fixture
+def record(test_name):
+    save_loc = f"resume_points_{test_name}"
+    AgentOS.register_resource(
+        ReferenceResource(
+            apiVersion="eidolon/v1",
+            metadata=Metadata(name=ReplayConfig.__name__),
+            spec=dict(save_loc=save_loc),
+        )
     )
-    assert "four" in resp.data.lower()
+    return save_loc
 
 
-async def test_optional_file_no_body_with_no_file():
-    process = await Agent.get("optional_file_no_body").create_process()
-    resp = await process.action("converse")
-    assert resp.data  # no error, llm will complain about lack of file but that is irrelevant
+async def test_with_replay_points(file_memory_loc, record):
+    process = await Agent.get("with_tools").create_process()
+    await process.action("converse", body="What is the meaning of life?")
+    stream = replay(file_memory_loc / record / "001_openai_completion")
+    assert "42" in [s async for s in stream]
 
-
-async def test_optional_file_no_body_with_file(dog):
-    process = await Agent.get("optional_file_no_body").create_process()
-    resp = await process.action("converse", files=dict(file=dog))
-    assert "four" in resp.data.lower()
-
-
-async def test_single_file_with_no_file():
-    with pytest.raises(AgentError) as e:
-        process = await Agent.get("single_file").create_process()
-        await process.action("converse", body="What is the capital of France?")
-    assert e.value.status_code == 422
-
-
-async def test_single_file_with_file(dog):
-    process = await Agent.get("single_file").create_process()
-    resp = await process.action(
-        "converse",
-        data=dict(body="How many legs does the animal have?"),
-        files=dict(file=dog),
-    )
-    assert "four" in resp.data.lower()
-
-
-async def test_single_file_no_body_with_no_file():
-    with pytest.raises(AgentError) as e:
-        process = await Agent.get("single_file_no_body").create_process()
-        await process.action("converse", None)
-    assert e.value.status_code == 422
-
-
-async def test_single_file_no_body_with_file(dog):
-    process = await Agent.get("single_file_no_body").create_process()
-    resp = await process.action("converse", files=dict(file=dog))
-    assert "four" in resp.data.lower()
-
-
-async def test_multiple_files(cat, dog):
-    process = await Agent.get("multiple_files").create_process()
-    resp = await process.action(
-        "converse", data=dict(body="what do these images have in common?"), files=[("file", dog), ("file", cat)]
-    )
-    assert "animals" in resp.data.lower()
-
-
-async def test_multiple_files_no_body(cat, dog):
-    process = await Agent.get("multiple_files_no_body").create_process()
-    resp = await process.action("converse", files=[("file", dog), ("file", cat)])
-    assert "animals" in resp.data.lower()
+    with open(file_memory_loc / record / "001_openai_completion" / "data.yaml", "r") as f:
+        assert "You are a helpful assistant" in f.read()

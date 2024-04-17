@@ -1,31 +1,31 @@
 from abc import ABC, abstractmethod
-from pydantic import BaseModel, Field
 from typing import List, Any, Dict, Literal, Union, AsyncIterator
 
+from pydantic import BaseModel, Field
+
+from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import LLMMessage
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_client.events import StreamEvent
+from eidolon_ai_sdk.system.reference_model import Specable, Reference
 
-LLM_MAX_TOKENS = {
-    "DEFAULT": 8192,
-    # OpenAI models: https://platform.openai.com/docs/models/overview
-    # gpt-4
-    "gpt-4-1106-preview": 128000,
-    "gpt-4": 8192,
-    "gpt-4-32k": 32768,
-    "gpt-4-0613": 8192,
-    "gpt-4-32k-0613": 32768,
-    "gpt-4-0314": 8192,  # legacy
-    "gpt-4-32k-0314": 32768,  # legacy
-    # gpt-3.5
-    "gpt-3.5-turbo-1106": 16385,
-    "gpt-3.5-turbo": 4096,
-    "gpt-3.5-turbo-16k": 16385,
-    "gpt-3.5-turbo-0613": 4096,  # legacy
-    "gpt-3.5-turbo-16k-0613": 16385,  # legacy
-    "gpt-3.5-turbo-0301": 4096,  # legacy
-}
+
+class LLMModel(BaseModel):
+    human_name: str
+    name: str
+    input_context_limit: int
+    output_context_limit: int
+    supports_tools: bool
+    supports_image_input: bool
+    supports_audio_input: bool
+
+
+class LLMCapabilities(BaseModel):
+    input_context_limit: int
+    output_context_limit: int
+    supports_tools: bool
+    supports_image_input: bool
+    supports_audio_input: bool
 
 
 class CompletionUsage(BaseModel):
@@ -45,9 +45,26 @@ class LLMCallFunction(BaseModel):
     parameters: Dict[str, object] = Field(..., description="The json schema for the function parameters.")
 
 
-class LLMUnit(ProcessingUnit, ABC):
+class LLMUnitSpec(BaseModel):
+    model: Reference[LLMModel]
+
+
+class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
+    model: LLMModel
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        Specable.__init__(self, **kwargs)
+        self.model = self.spec.model.instantiate()
+
+    def get_llm_capabilities(self) -> LLMCapabilities:
+        return LLMCapabilities(
+            input_context_limit=self.model.input_context_limit,
+            output_context_limit=self.model.output_context_limit,
+            supports_tools=self.model.supports_tools,
+            supports_image_input=self.model.supports_image_input,
+            supports_audio_input=self.model.supports_audio_input,
+        )
 
     @abstractmethod
     async def execute_llm(

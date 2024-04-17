@@ -19,7 +19,8 @@ export class ProcessesHandler {
   async GET(req: Request): Promise<Response> {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      return new Response('machineUrl is required', {status: 400})
+      console.log('non existent machine url')
+      return new Response('machineUrl is required', {status: 422})
     }
     const resp = await this.getProcesses(machineUrl);
     return Response.json(resp)
@@ -36,6 +37,7 @@ export class ProcessesHandler {
   }
 
   async getProcesses(machineUrl: string) {
+    console.debug('listing processes from machine', machineUrl)
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return await client.getProcesses(0, 100);
   }
@@ -58,15 +60,21 @@ export class ProcessHandler {
   async GET(req: Request, {params}: { params: { processid: string } }): Promise<Response> {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      return new Response('machineUrl is required', {status: 400})
+      console.error('machineUrl is required')
+      return new Response('machineUrl is required', {status: 422})
     }
     let processId = params.processid;
+    if (!processId) {
+      console.error('params.processid is required')
+      return new Response('params.processid is required', {status: 422})
+    }
     const resp = await this.getProcess(machineUrl, processId);
 
     return Response.json(resp)
   }
 
   async getProcess(machineUrl: string, processId: string) {
+    console.debug('getting process with id', processId, 'from machine', machineUrl)
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return await client.process(processId).status();
   }
@@ -74,7 +82,7 @@ export class ProcessHandler {
   async DELETE(req: Request, {params}: { params: { processid: string } }): Promise<Response> {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      return new Response('machineUrl is required', {status: 400})
+      return new Response('machineUrl is required', {status: 422})
     }
     await this.deleteProcess(machineUrl, params.processid);
 
@@ -97,7 +105,7 @@ export class ProcessEventsHandler {
   async GET(req: Request, {params}: { params: { processid: string } }): Promise<Response> {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      return new Response('machineUrl is required', {status: 400})
+      return new Response('machineUrl is required', {status: 422})
     }
     const resp = await this.getEvents(machineUrl, params.processid);
 
@@ -117,6 +125,7 @@ export class ProcessEventsHandler {
       const agent = reqBody["agent"]
       const operation = reqBody["operation"]
       const data = reqBody["data"] as Record<string, any>
+
       const processId = params.processid;
       if (req.headers.get("Accept") === "text/event-stream") {
         let done = false;
@@ -174,11 +183,11 @@ export class FilesHandler {
   async POST(req: Request, {params}: { params: { processid: string } }) {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      return new Response('machineUrl is required', {status: 400})
+      return new Response('machineUrl is required', {status: 422})
     }
     const mimeType = req.headers.get('mime-type')
-    let file_id = await this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType);
-    return Response.json({file_id});
+    let fileHandle = await this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType);
+    return Response.json(fileHandle);
   }
 
   async uploadFile(machineUrl: string, processId: string, file: Blob, mimeType: string | null) {
@@ -194,17 +203,27 @@ export class FileHandler {
     this.accessTokenFn = accessTokenFn
   }
 
+  async POST(req: Request, {params}: { params: { processid: string, fileid: string } }) {
+    const machineUrl = new URL(req.url).searchParams.get('machineURL')
+    if (!machineUrl) {
+      return new Response('machineUrl is required', {status: 400})
+    }
+    const reqBody = await req.json()
+    const fileHandle = await this.setMetadata(machineUrl, params.processid, params.fileid, reqBody);
+    return Response.json(fileHandle);
+  }
+
   // download file
   async GET(req: Request, {params}: { params: { processid: string, fileid: string } }) {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 400})
     }
-    let data = await this.downloadFile(machineUrl, params.processid, params.fileid);
+    let {data, mimetype} = await this.downloadFile(machineUrl, params.processid, params.fileid);
     return new Response(data, {
         status: 200,
         headers: {
-          'Content-Type': 'application/octet-stream',
+          'Content-Type': mimetype || 'application/octet-stream',
         },
       });
   }
@@ -226,5 +245,10 @@ export class FileHandler {
   async deleteFile(machineUrl: string, processId: string, fileId: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return await client.process(processId).delete_file(fileId);
+  }
+
+  async setMetadata(machineUrl: string, processId: string, fileId: string, metadata: Record<string, any>) {
+    const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
+    return await client.process(processId).set_metadata(fileId, metadata);
   }
 }

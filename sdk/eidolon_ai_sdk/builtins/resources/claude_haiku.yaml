@@ -1,3 +1,4 @@
+---
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
@@ -5,7 +6,21 @@ metadata:
   annotations:
     - title: "Claude Haiku"
 spec:
-    implementation: AgentCPU
-    llm_unit:
-      implementation: AnthropicLLMUnit
-      model: "claude-3-haiku-20240307"
+  implementation: APU
+  llm_unit:
+    implementation: AnthropicLLMUnit
+    model: "claude-3-haiku-20240307"
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: claude-3-haiku-20240307
+spec:
+  implementation: LLMModel
+  human_name: Claude Haiku
+  name: "claude-3-haiku-20240307"
+  input_context_limit: 200000
+  output_context_limit: 4096
+  supports_tools: False
+  supports_image_input: True
+  supports_audio_input: False

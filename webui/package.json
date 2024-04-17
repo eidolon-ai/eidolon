@@ -1,6 +1,6 @@
 {
   "name": "eidolon-monorepo",
-  "version": "1.0.3",
+  "version": "1.0.7",
   "scripts": {
     "build": "turbo build",
     "start": "npm --prefix apps/eidolon-ui2 run start",
@@ -13,7 +13,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "prettier": "^3.2.5",
-    "turbo": "^1.13.0"
+    "turbo": "^1.13.2"
   },
   "packageManager": "pnpm@8.9.0",
   "engines": {

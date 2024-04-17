@@ -1,6 +1,5 @@
 import json
 import logging
-from enum import Enum
 from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
@@ -10,7 +9,6 @@ from fastapi import HTTPException
 from mistralai.async_client import MistralAsyncClient
 from mistralai.exceptions import MistralConnectionException, MistralAPIStatusException, MistralAPIException
 from mistralai.models.chat_completion import ChatCompletionStreamResponse, ResponseFormat, ResponseFormats, Function
-from pydantic import Field, BaseModel
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -27,8 +25,8 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessage,
     SystemMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
@@ -117,15 +115,11 @@ async def convert_to_mistral(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-class MistralModelEnum(str, Enum):
-    MistralTiny = "mistral-tiny-latest"
-    MistralSmall = "mistral-small-latest"
-    MistralMedium = "mistral-medium-latest"
-    MistralLarge = "mistral-large-latest"
+mistral_large = "mistral-large-latest"
 
 
-class MistralGPTSpec(BaseModel):
-    model: MistralModelEnum = Field(default=MistralModelEnum.MistralMedium, description="The model to use for the LLM.")
+class MistralGPTSpec(LLMUnitSpec):
+    model: AnnotatedReference[LLMModel, mistral_large]
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
@@ -134,24 +128,23 @@ class MistralGPTSpec(BaseModel):
 
 class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
 
     async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing mistral llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(
-            fn=_mistral_client(), name_override="mistral_completion", parser=_raw_parser
-        )
+        llm_request = replayable(fn=_mistral_client(), name_override="mistral_completion", parser=_raw_parser)
         complete_message = ""
         tools_to_call = []
         try:
@@ -197,7 +190,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json:
                     # message format looks like json```{...}```, parse content and pull out the json
-                    complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                    complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
@@ -213,7 +206,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         messages = [await convert_to_mistral(message) for message in inMessages]
         request = {
             "messages": messages,
-            "model": str(self.spec.model.value),
+            "model": str(self.model.name),
             "temperature": self.spec.temperature,
         }
         if output_format == "str" or output_format["type"] == "string":
@@ -246,12 +239,15 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
             tools.append(
                 {
                     "type": "function",
-                    "function": Function(**{
-                        "name": tool.name,
-                        "description": tool.description,
-                        "parameters": tool.parameters,
-                    }).model_dump()
-                })
+                    "function": Function(
+                        **{
+                            "name": tool.name,
+                            "description": tool.description,
+                            "parameters": tool.parameters,
+                        }
+                    ).model_dump(),
+                }
+            )
         return tools
 
 

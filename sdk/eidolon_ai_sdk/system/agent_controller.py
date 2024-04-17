@@ -34,7 +34,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.security_manager import SecurityManagerImpl
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,
@@ -52,7 +52,7 @@ class AgentController:
     name: str
     agent: object
     actions: typing.Dict[str, FnHandler]
-    security: SecurityManager
+    security: SecurityManagerImpl
 
     def __init__(self, name, agent):
         self.name = name
@@ -137,7 +137,11 @@ class AgentController:
         last_state = process.state
         RequestContext.set("__last_state__", last_state)
         process = await process.update(
-            check_update_time=True, agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
+            check_update_time=True,
+            agent=self.name,
+            record_id=process_id,
+            state="processing",
+            data=dict(action=handler.name),
         )
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
@@ -232,7 +236,29 @@ class AgentController:
         ended = False
         transitioned = False
         try:
-            async for event in self.stream_agent_iterator(stream, process, handler.name, kwargs):
+            # allow the agent send a custom user input event or a custom start event
+            user_input_event_seen = False
+            start_event_seen = False
+            async for event in self.stream_agent_iterator(stream, process):
+                if event.is_root_and_type(UserInputEvent):
+                    user_input_event_seen = True
+                elif not user_input_event_seen:
+                    user_input_event_seen = True
+                    output_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))
+                    events_to_store.append(output_event)
+                    yield output_event
+                if event.is_root_and_type(StartAgentCallEvent):
+                    start_event_seen = True
+                elif not start_event_seen and not event.is_root_and_type(UserInputEvent):
+                    start_event_seen = True
+                    output_event = StartAgentCallEvent(
+                        machine=AgentOS.current_machine_url(),
+                        agent_name=self.name,
+                        call_name=handler.name,
+                        process_id=process.record_id,
+                    )
+                    events_to_store.append(output_event)
+                    yield output_event
                 if not ended:
                     ended = event.is_root_end_event()
                     transitioned = event.is_root_and_type(AgentStateEvent)
@@ -266,22 +292,11 @@ class AgentController:
                 await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
-        self,
-        stream: AsyncIterator[StreamEvent],
-        process: ProcessDoc,
-        call_name,
-        user_input: typing.Dict[str, typing.Any],
+        self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         seen_end = False
         try:
-            yield UserInputEvent(input=to_jsonable_python(user_input, fallback=str))
-            yield StartAgentCallEvent(
-                machine=AgentOS.current_machine_url(),
-                agent_name=self.name,
-                call_name=call_name,
-                process_id=process.record_id,
-            )
             async for event in stream:
                 if event.is_root_and_type(ErrorEvent):
                     logger.warning("Error event received")
@@ -380,7 +395,7 @@ class AgentController:
         """
         await self.security.check_permissions({"read", "create"}, self.name)
         process = await self._create_process(state="initialized", title=title)
-        await self.security.process_authorizer.record_process(self.name, process.record_id)
+        await self.security.record_process(self.name, process.record_id)
         return JSONResponse(
             StateSummary(
                 agent=self.name,

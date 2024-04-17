@@ -1,5 +1,6 @@
 from typing import Tuple
 
+from azure.identity import DefaultAzureCredential, EnvironmentCredential
 from openai import AsyncOpenAI
 from openai.lib.azure import AsyncAzureOpenAI
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -9,6 +10,7 @@ from opentelemetry.sdk.trace.sampling import Sampler
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
+from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
@@ -30,21 +32,24 @@ from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU
+from eidolon_ai_sdk.cpu.agent_cpu import APU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
 from eidolon_ai_sdk.cpu.conversation_memory_unit import RawMemoryUnit
-from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.conversational_apu import ConversationalAPU
+from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.cpu.llm.anthropic_llm_unit import AnthropicLLMUnit
 from eidolon_ai_sdk.cpu.llm.mistral_llm_unit import MistralGPT
+from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHandler, AzureOpenAIConnectionHandler
+from eidolon_ai_sdk.cpu.llm.open_ai_image_unit import OpenAIImageUnit
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
 from eidolon_ai_sdk.system.dynamic_middleware import Middleware, MultiMiddleware
-from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
+from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem, ProcessFileSystemImpl
 from eidolon_ai_usage_client.client import UsageClient
 
 try:
@@ -54,15 +59,13 @@ except ImportError:
     ChromaVectorStore = None
 
 from eidolon_ai_sdk.memory.embeddings import NoopEmbedding, Embedding, OpenAIEmbedding
-from eidolon_ai_sdk.memory.file_memory import FileMemory
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidolon_ai_sdk.memory.noop_memory import NoopVectorStore
-from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
-from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemory
+from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
 from eidolon_ai_sdk.memory.vector_store import VectorStore
-from eidolon_ai_sdk.security.security_manager import SecurityManager
+from eidolon_ai_sdk.security.security_manager import SecurityManagerImpl
 from eidolon_ai_sdk.security.functional_authorizer import (
     FunctionalAuthorizer,
     NoopFunctionalAuth,
@@ -106,7 +109,8 @@ def named_builtins():
     builtin_list = [
         AgentMachine,
         # security manager
-        SecurityManager,
+        (SecurityManager, SecurityManagerImpl),
+        SecurityManagerImpl,
         (AuthenticationProcessor, NoopAuthProcessor),
         NoopAuthProcessor,
         GoogleJWTProcessor,
@@ -124,14 +128,15 @@ def named_builtins():
         RetrieverAgent,
         AutonomousSpeechAgent,
         # cpu
-        (AgentCPU, ConversationalAgentCPU),
-        ConversationalAgentCPU,
+        (APU, ConversationalAPU),
+        ConversationalAPU,
         # cpu components
         IOUnit,
         (LLMUnit, OpenAIGPT),
         OpenAIGPT,
         MistralGPT,
         AnthropicLLMUnit,
+        LLMModel,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
         WebSearch,
@@ -145,7 +150,8 @@ def named_builtins():
         (FileMemory, LocalFileMemory),
         LocalFileMemory,
         S3FileMemory,
-        SimilarityMemory,
+        (SimilarityMemory, SimilarityMemoryImpl),
+        SimilarityMemoryImpl,
         (Embedding, OpenAIEmbedding),
         NoopEmbedding,
         OpenAIEmbedding,
@@ -165,7 +171,8 @@ def named_builtins():
         CustomSampler,
         (SpanProcessor, BatchSpanProcessor),
         BatchSpanProcessor,
-        ProcessFileSystem,
+        (ProcessFileSystem, ProcessFileSystemImpl),
+        ProcessFileSystemImpl,
         # sub components
         (DocumentParser, AutoParser),
         AutoParser,
@@ -178,6 +185,7 @@ def named_builtins():
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
         (DocumentLoader, FilesystemLoader),
+        DocumentProcessor,
         DocumentManager,
         FilesystemLoader,
         GitHubLoader,
@@ -186,6 +194,11 @@ def named_builtins():
         AsyncOpenAI,
         AsyncAzureOpenAI,
         UsageClient,
+        OpenAIConnectionHandler,
+        AzureOpenAIConnectionHandler,
+        OpenAIImageUnit,
+        DefaultAzureCredential,
+        EnvironmentCredential,
         # config objects
         ReplayConfig,
     ]

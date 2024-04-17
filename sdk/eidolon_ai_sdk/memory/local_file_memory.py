@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pydantic import Field, field_validator, BaseModel
 
-from eidolon_ai_sdk.memory.file_memory import FileMemory
+from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.async_wrapper import make_async
 from eidolon_ai_client.util.logger import logger
@@ -34,7 +34,7 @@ class LocalFileMemoryConfig(BaseModel):
         return inValue
 
 
-class LocalFileMemory(FileMemory, Specable[LocalFileMemoryConfig]):
+class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
     def __init__(self, spec: LocalFileMemoryConfig):
         super().__init__(spec)
         self.root_dir = Path(replace_env_var_in_string(spec.root_dir)).resolve()

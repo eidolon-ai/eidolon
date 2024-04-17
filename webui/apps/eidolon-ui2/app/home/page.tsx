@@ -4,6 +4,8 @@ import Grid from "@mui/material/Unstable_Grid2";
 import {getAppRegistry} from "@/utils/eidolon-apps";
 import {EidolonAppItem} from "./EidolonAppItem";
 
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Eidolon',
   description: 'Eidolon Home',

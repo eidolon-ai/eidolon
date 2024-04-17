@@ -4,8 +4,8 @@ metadata:
   name: frugal
 
 spec:
-  implementation: "eidolon_ai_sdk.cpu.conversational_agent_cpu.ConversationalAgentCPU"
-  cpu:
+  implementation: APU
+  apu:
     spec:
       llm_unit:
         spec:

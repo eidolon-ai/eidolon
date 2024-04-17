@@ -11,8 +11,8 @@ from eidolon_examples.group_conversation.base_conversation_coordinator import (
     StartConversation,
 )
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
-from eidolon_ai_sdk.cpu.agent_io import UserTextCPUMessage, SystemCPUMessage
-from eidolon_ai_sdk.cpu.conversational_agent_cpu import ConversationalAgentCPU
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage, SystemAPUMessage
+from eidolon_ai_sdk.cpu.conversational_apu import ConversationalAPU
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_client.events import AgentStateEvent
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
@@ -32,13 +32,13 @@ class RoleResponse(BaseModel):
 
 
 class GameMasterSpec(BaseConversationCoordinatorSpec):
-    cpu: AnnotatedReference[ConversationalAgentCPU]
+    apu: AnnotatedReference[ConversationalAPU]
     system_prompt: str
     agent_name: str
 
 
 class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
-    cpu: ConversationalAgentCPU
+    apu: ConversationalAPU
 
     def __init__(self, **kwargs):
         super().__init__("game", **kwargs)
@@ -54,10 +54,10 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         """
         t = await self.cpu.main_thread(process_id)
         system_prompt = f"{self.spec.system_prompt}\n\nYou are playing the game {game}\n You must always remember the rules of the game and follow them"
-        await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=system_prompt)])
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
         message = f"Find the rules of {game} and summarize them. Make sure to include all the rules in detail.\n"
         collector = StringStreamCollector()
-        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
+        async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             collector.process_event(event)
             yield event
 
@@ -72,13 +72,13 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
             f"{self.spec.system_prompt}\n\nYou are playing the game {game}\n You must always remember the rules of the game and follow them\n"
             f"You are playing a game with {self.spec.agents}"
         )
-        await t.set_boot_messages(prompts=[SystemCPUMessage(prompt=system_prompt)])
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
         message = "Tell all agents the rules of the game\n"
-        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
+        async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
 
         message = "Have the agents introduce themselves and let's start the game!"
-        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
+        async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
 
         yield AgentStateEvent(state="take_turn")
@@ -90,7 +90,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         """
         message = "Play the next turn of the game.\n"
         t = await self.cpu.main_thread(process_id)
-        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
+        async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
         yield AgentStateEvent(state="take_turn")
 
@@ -102,7 +102,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         Called to allow the agent to speak
         """
         t = await self.cpu.main_thread(process_id)
-        async for event in t.stream_request(prompts=[UserTextCPUMessage(prompt=message)], output_format=str):
+        async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
         yield AgentStateEvent(state="take_turn")
 

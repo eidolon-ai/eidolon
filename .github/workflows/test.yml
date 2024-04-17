@@ -32,9 +32,9 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           EIDOLON_DATA_DIR: /tmp/eidolon
-          AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-          AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
           AZURE_AD_TEST_CLIENT_ID: ${{ secrets.AZURE_AD_TEST_CLIENT_ID }}
           AZURE_AD_TEST_CLIENT_SECRET: ${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}
         working-directory: examples
@@ -138,7 +138,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 21.x
       - uses: pnpm/action-setup@v3
@@ -150,7 +150,7 @@ jobs:
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
           path: ${{ env.STORE_PATH }}

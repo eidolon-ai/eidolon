@@ -4,10 +4,10 @@ from typing import Any, Union, List, Dict, AsyncIterable, Optional
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
+from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemoryBase
 
 
-class LocalSymbolicMemory(SymbolicMemory):
+class LocalSymbolicMemory(SymbolicMemoryBase):
     db = {}
 
     async def start(self):

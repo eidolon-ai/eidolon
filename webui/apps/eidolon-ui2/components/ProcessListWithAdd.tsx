@@ -1,6 +1,6 @@
 'use client'
 
-import {createProcess, ProcessList} from "@eidolon/components";
+import {CopilotParams, createProcess, ProcessList} from "@eidolon/components";
 import {usePathname, useRouter} from "next/navigation";
 import {ProcessStatus} from "@eidolon/client";
 import * as React from "react";
@@ -10,14 +10,15 @@ import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Tool
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
 import {useProcesses} from "@eidolon/components/src/hooks/process_context";
-import {CopilotParams, EidolonApp} from "@/utils/eidolon-apps";
+import {EidolonApp} from "@/utils/eidolon-apps";
 
 export interface DevProcessListWithAddProps {
-  machineURL: string
+  agents: string[]
   app: EidolonApp
 }
 
-export const DevProcessListWithAdd = ({machineURL, app}: DevProcessListWithAddProps) => {
+export const DevProcessListWithAdd = ({agents, app}: DevProcessListWithAddProps) => {
+  const machineURL = app.location
   const {updateProcesses} = useProcesses()
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
@@ -57,7 +58,7 @@ export const DevProcessListWithAdd = ({machineURL, app}: DevProcessListWithAddPr
         goHome={() => {
         }}
       />
-      <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} onClose={() => {
+      <StartProgramDialog agents={agents} machineUrl={machineURL} open={createProcessOpen} onClose={() => {
         setCreateProcessOpen(false)
       }}/>
     </Box>

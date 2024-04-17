@@ -1,8 +1,0 @@
-apiVersion: eidolon/v1
-kind: Agent
-metadata:
-  name: hello_world
-
-spec:
-  description: "This is an example of a generic agent which greets people by name."
-  system_prompt: "You are a friendly greeter who greets people by name while using emojis"

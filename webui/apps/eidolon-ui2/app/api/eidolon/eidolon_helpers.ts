@@ -34,5 +34,6 @@ export const filesHandler= {
 
 export const fileHandler= {
   GET: _fileEventHandler.GET.bind(_fileEventHandler),
+  POST: _fileEventHandler.POST.bind(_fileEventHandler),
   DELETE: _fileEventHandler.DELETE.bind(_fileEventHandler),
 }

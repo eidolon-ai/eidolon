@@ -1,24 +1,22 @@
 from __future__ import annotations
 
 import asyncio
-import uuid
 from abc import abstractmethod, ABC
-from io import IOBase
 from typing import List, Any, Dict, Literal
 
 from pydantic import BaseModel
 
+from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     SystemMessage,
-    UserMessageImageURL,
     UserMessage,
     LLMMessage,
+    UserMessageFileHandle,
 )
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
-from eidolon_ai_sdk.memory.file_memory import FileMemory
 
 
 class ResponseHandler(ABC):
@@ -27,30 +25,29 @@ class ResponseHandler(ABC):
         pass
 
 
-class CPUMessage(BaseModel):
+class APUMessage(BaseModel):
     type: str
+
+
+class UserTextAPUMessage(APUMessage):
+    type: Literal["user"] = "user"
     prompt: str
     is_boot_prompt: bool = False
 
 
-class UserTextCPUMessage(CPUMessage):
-    type: Literal["user"] = "user"
-
-
-class SystemCPUMessage(CPUMessage):
+class SystemAPUMessage(APUMessage):
     type: Literal["system"] = "system"
     is_boot_prompt: bool = True
+    prompt: str
 
 
-class ImageCPUMessage(CPUMessage):
-    type: Literal["image_url"] = "image"
-    image: IOBase
-
-    class Config:
-        arbitrary_types_allowed = True
+class AttachedFileMessage(APUMessage):
+    type: Literal["image_url"] = "file"
+    file: FileHandle
+    include_directly: bool
 
 
-CPUMessageTypes = UserTextCPUMessage | SystemCPUMessage | ImageCPUMessage
+CPUMessageTypes = UserTextAPUMessage | SystemAPUMessage | AttachedFileMessage
 
 
 class IOUnit(ProcessingUnit):
@@ -63,16 +60,12 @@ class IOUnit(ProcessingUnit):
                 user_message_parts.append(UserMessageText(text=prompt.prompt))
             elif prompt.type == "system":
                 conv_messages.append(SystemMessage(content=prompt.prompt))
-            elif prompt.type == "image":
-                file_memory = AgentOS.file_memory
-                image_file: IOBase = prompt.image
-                # read the prompt.image file into memory
-                image_data = image_file.read()
-                base_loc = f"uploaded_images/{call_context.process_id}/{call_context.thread_id or 'main'}"
-                tmp_path = f"{base_loc}/{uuid.uuid4()}"
-                await file_memory.mkdir(base_loc, exist_ok=True)
-                await file_memory.write_file(tmp_path, image_data)
-                user_message_parts.append(UserMessageImageURL(image_url=tmp_path))
+            elif prompt.type == "file":
+                user_message_parts.append(
+                    await UserMessageFileHandle.create(
+                        file=prompt.file, process_id=call_context.process_id, include_directly=prompt.include_directly
+                    )
+                )
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
 
@@ -86,6 +79,5 @@ class IOUnit(ProcessingUnit):
 
     @classmethod
     async def delete_process(cls, process_id: str):
-        memory: FileMemory = AgentOS.file_memory
-        found = await memory.glob(f"uploaded_images/{process_id}/**/*")
-        await asyncio.gather(*[memory.delete_file(file) for file in found])
+        found = await AgentOS.file_memory.glob(f"uploaded_images/{process_id}/**/*")
+        await asyncio.gather(*[AgentOS.file_memory.delete_file(file) for file in found])

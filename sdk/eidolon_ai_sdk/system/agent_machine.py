@@ -1,28 +1,26 @@
 import typing
 from contextlib import contextmanager
-from fastapi import FastAPI, Request, Body, Header
-from pydantic import BaseModel, Field
 from typing import List, Optional, Annotated, Literal, cast
 
+from fastapi import FastAPI, Request, Body, Header
+from pydantic import BaseModel, Field
 from starlette.responses import JSONResponse, Response
 
 from eidolon_ai_client.client import ProcessStatus
+from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
 from .agent_controller import AgentController
+from .process_file_system import ProcessFileSystem
 from .processes import ProcessDoc
 from .reference_model import AnnotatedReference, Specable
 from .resources.agent_resource import AgentResource
 from .resources.resources_base import Resource
 from ..agent_os import AgentOS
 from ..cpu.agent_call_history import AgentCallHistory
-from ..memory.file_memory import FileMemory
-from ..memory.semantic_memory import SymbolicMemory
-from ..memory.similarity_memory import SimilarityMemory
 from ..security.permissions import PermissionException
-from eidolon_ai_sdk.system.process_file_system import ProcessFileSystem
-from ..security.security_manager import SecurityManager
 
 
 class MachineSpec(BaseModel):
@@ -114,7 +112,7 @@ class AgentMachine(Specable[MachineSpec]):
             "/processes/{process_id}/files",
             endpoint=self.upload_file,
             methods=["POST"],
-            response_model=typing.Dict[str, str],
+            response_model=FileHandle,
             tags=["files"],
         )
 
@@ -123,6 +121,14 @@ class AgentMachine(Specable[MachineSpec]):
             endpoint=self.download_file,
             methods=["GET"],
             response_model=bytes,
+            tags=["files"],
+        )
+
+        app.add_api_route(
+            "/processes/{process_id}/files/{file_id}/metadata",
+            endpoint=self.set_metadata,
+            methods=["POST"],
+            response_model=FileHandle,
             tags=["files"],
         )
 
@@ -170,10 +176,17 @@ class AgentMachine(Specable[MachineSpec]):
         file_md = None
         if mime_type:
             file_md = {"mime_type": mime_type}
-        return JSONResponse(
-            content={"file_id": await self.process_file_system.write_file(process_id, file_bytes, file_md)},
-            status_code=200,
-        )
+        file_id = await self.process_file_system.write_file(process_id, file_bytes, file_md)
+        return JSONResponse(content=file_id.model_dump(), status_code=200)
+
+    async def set_metadata(self, process_id: str, file_id: str, file_md: dict):
+        """
+        Set metadata for a file
+        :param file_id:
+        :param process_id:
+        """
+        file_id = await self.process_file_system.set_metadata(process_id, file_id, file_md)
+        return JSONResponse(content=file_id.model_dump(), status_code=200)
 
     async def download_file(self, process_id: str, file_id: str):
         """
@@ -182,14 +195,16 @@ class AgentMachine(Specable[MachineSpec]):
         :param file_id:
         :return: The file bytes
         """
-        contents, metadata = await self.process_file_system.read_file(process_id, file_id)
-        if not contents:
+        file = await self.process_file_system.read_file(process_id, file_id)
+        if not file:
             return JSONResponse(content={"detail": "File Not Found"}, status_code=404)
         headers = {
             "Content-Type": "application/octet-stream",
         }
-        if metadata and "mime_type" in metadata:
-            headers["mime-type"] = metadata["mime_type"]
+        contents, metadata = file
+        if metadata and "mimetype" in metadata:
+            headers["mime-type"] = metadata["mimetype"]
+            headers["Content-Type"] = metadata["mimetype"]
         return Response(content=contents, headers=headers, status_code=200)
 
     async def _delete_file(self, process_id: str, file_id: str):
@@ -296,6 +311,7 @@ class AgentMachine(Specable[MachineSpec]):
         """
         controller = self._get_agent_controller(args.agent)
         if not controller:
+            logger.info(f"Agent {args.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.create_process(args.title)
 
@@ -310,6 +326,7 @@ class AgentMachine(Specable[MachineSpec]):
 
         controller = self._get_agent_controller(process_doc.agent)
         if not controller:
+            logger.info(f"Agent {process_doc.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.delete_process(process_id)
 
@@ -324,6 +341,7 @@ class AgentMachine(Specable[MachineSpec]):
 
         controller = self._get_agent_controller(process_doc.agent)
         if not controller:
+            logger.info(f"Agent {process_doc.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.get_process_events(process_id)
 

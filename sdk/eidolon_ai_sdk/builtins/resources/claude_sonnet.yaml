@@ -1,3 +1,4 @@
+---
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
@@ -5,7 +6,23 @@ metadata:
   annotations:
     - title: "Claude Sonnet"
 spec:
-    implementation: AgentCPU
-    llm_unit:
-      implementation: AnthropicLLMUnit
-      model: "claude-3-sonnet-20240229"
+  implementation: APU
+  audio_unit: OpenAiSpeech
+  image_unit: OpenAIImageUnit
+  llm_unit:
+    implementation: AnthropicLLMUnit
+    model: "claude-3-sonnet-20240229"
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: claude-3-sonnet-20240229
+spec:
+  implementation: LLMModel
+  human_name: Claude Sonnet
+  name: "claude-3-sonnet-20240229"
+  input_context_limit: 200000
+  output_context_limit: 4096
+  supports_tools: False
+  supports_image_input: True
+  supports_audio_input: False

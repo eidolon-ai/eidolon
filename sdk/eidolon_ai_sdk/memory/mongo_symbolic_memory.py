@@ -7,18 +7,21 @@ from typing import Any, Optional, AsyncIterable, Union, Dict, List
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemory
+from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemoryBase
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class MongoSymbolicMemoryConfig(BaseModel):
-    mongo_connection_string: Optional[str] = Field(
-        default=None, description="The connection string to the MongoDB instance."
+    mongo_connection_string: str = Field(
+        default=os.environ.get("MONGO_CONNECTION_STR", "mongodb://localhost:27017/?directConnection=true"),
+        description="The connection string to the MongoDB instance.",
     )
-    mongo_database_name: str = Field(default="eidolon", description="The name of the MongoDB database to use.")
+    mongo_database_name: str = Field(
+        default=os.environ.get("MONGO_DATABASE_NAME", "eidolon"), description="The name of the MongoDB database to use."
+    )
 
 
-class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
+class MongoSymbolicMemory(SymbolicMemoryBase, Specable[MongoSymbolicMemoryConfig]):
     mongo_connection_string: Optional[str]
     mongo_database_name: str
     _database: Optional[ContextVar]
@@ -82,16 +85,6 @@ class MongoSymbolicMemory(SymbolicMemory, Specable[MongoSymbolicMemoryConfig]):
 
     async def delete(self, symbol_collection, query):
         return await self.database[symbol_collection].delete_many(query)
-
-    async def start(self):
-        """
-        Starts the memory implementation. Noop for this implementation.
-        """
-        if self.database is None:
-            if self.mongo_connection_string is None:
-                self.mongo_connection_string = os.getenv("MONGO_CONNECTION_STRING")
-            if self.mongo_database_name is None:
-                self.mongo_database_name = os.getenv("MONGO_DATABASE_NAME")
 
     async def stop(self):
         """

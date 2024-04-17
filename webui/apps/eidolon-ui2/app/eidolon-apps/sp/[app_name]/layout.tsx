@@ -1,5 +1,5 @@
 import {ProcessWithListLayout} from "../../../../components/ProcessWithListLayout";
-import {CopilotParams, getApp} from "@/utils/eidolon-apps";
+import {getApp} from "@/utils/eidolon-apps";
 
 interface ChatbotLayoutProps {
   params: {

@@ -8,7 +8,6 @@ import yaml
 from PIL import Image
 from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError
 from fastapi import HTTPException
-from pydantic import Field, BaseModel
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -25,8 +24,8 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessage,
     SystemMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
@@ -125,30 +124,32 @@ async def convert_to_llm(message: LLMMessage):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-class AnthropicLLMUnitSpec(BaseModel):
-    model: str = Field(default="claude-3-opus-20240229", description="The model to use for the LLM.")
+claude_opus = "claude-3-opus-20240229"
+
+
+class AnthropicLLMUnitSpec(LLMUnitSpec):
+    model: AnnotatedReference[LLMModel, claude_opus]
     temperature: float = 0.3
     max_tokens: Optional[int] = None
     client_args: dict = {}
 
 
 class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
-    model: str
     temperature: float
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
 
-        self.model = self.spec.model
         self.temperature = self.spec.temperature
 
     async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         if len(tools) > 0:
             logger.warn("Anthropic does not support tool calls, ignoring")
@@ -157,17 +158,13 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(
-            fn=_llm_request(), name_override="anthropic_completion", parser=_raw_parser
-        )
+        llm_request = replayable(fn=_llm_request(), name_override="anthropic_completion", parser=_raw_parser)
         complete_message = ""
         try:
             async for message in llm_request(client_args=self.spec.client_args, **request):
                 # todo -- handle tool calls in some weird way...
                 if can_stream_message:
-                    logger.debug(
-                        f"anthropic llm stream response: {message}", extra=dict(content=message)
-                    )
+                    logger.debug(f"anthropic llm stream response: {message}", extra=dict(content=message))
                     yield StringOutputEvent(content=message)
                 else:
                     complete_message += message
@@ -175,7 +172,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             if not can_stream_message:
                 logger.debug(f"anthropic llm object response: {complete_message}", extra=dict(content=complete_message))
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
@@ -193,7 +190,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         messages = [await convert_to_llm(message) for message in inMessages if not isinstance(message, SystemMessage)]
         request = {
             "messages": messages,
-            "model": self.model,
+            "model": self.model.name,
             "temperature": self.temperature,
         }
         if system_prompt:
