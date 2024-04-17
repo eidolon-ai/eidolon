@@ -137,7 +137,11 @@ class AgentController:
         last_state = process.state
         RequestContext.set("__last_state__", last_state)
         process = await process.update(
-            check_update_time=True, agent=self.name, record_id=process_id, state="processing", data=dict(action=handler.name)
+            check_update_time=True,
+            agent=self.name,
+            record_id=process_id,
+            state="processing",
+            data=dict(action=handler.name),
         )
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
@@ -288,9 +292,7 @@ class AgentController:
                 await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
-        self,
-        stream: AsyncIterator[StreamEvent],
-        process: ProcessDoc
+        self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         seen_end = False

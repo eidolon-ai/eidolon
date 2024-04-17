@@ -123,7 +123,9 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
                     python_type = get_python_type(property_name, items_schema, str)
                     fields[property_name] = wrap_optional(List[python_type], makeFieldOrDefaultValue())
             else:
-                fields[property_name] = wrap_optional(get_python_type(property_name, property_schema), makeFieldOrDefaultValue())
+                fields[property_name] = wrap_optional(
+                    get_python_type(property_name, property_schema), makeFieldOrDefaultValue()
+                )
         except Exception as e:
             raise ValueError(f"Error creating field '{property_name}': {e}")
 

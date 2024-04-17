@@ -5,6 +5,6 @@ metadata:
 
 spec:
   implementation: eidolon_examples.group_conversation.conversation_agent.ConversationAgent
-  cpu: ConversationalAgentCPU
+  apu: ConversationalAPU
   agent_name: Charlie
   personality: Eccentric and childlike, Charlie is known for his bizarre behavior and lack of basic knowledge. His emotional naiveté and a troubled childhood contribute to his unique worldview and simple pleasures.

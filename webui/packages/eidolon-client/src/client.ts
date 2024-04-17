@@ -45,6 +45,7 @@ export interface FileHandle {
   machineUrl: string
   processId: string
   fileId: string
+  metadata?: Record<string, any>
 }
 
 function addMachineIfMissing(machineURL: string, process: ProcessStatus) {

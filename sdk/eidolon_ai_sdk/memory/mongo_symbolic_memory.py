@@ -13,9 +13,12 @@ from eidolon_ai_sdk.system.reference_model import Specable
 
 class MongoSymbolicMemoryConfig(BaseModel):
     mongo_connection_string: str = Field(
-        default=os.environ.get("MONGO_CONNECTION_STR", "mongodb://localhost:27017/?directConnection=true"), description="The connection string to the MongoDB instance."
+        default=os.environ.get("MONGO_CONNECTION_STR", "mongodb://localhost:27017/?directConnection=true"),
+        description="The connection string to the MongoDB instance.",
     )
-    mongo_database_name: str = Field(default=os.environ.get("MONGO_DATABASE_NAME", "eidolon"), description="The name of the MongoDB database to use.")
+    mongo_database_name: str = Field(
+        default=os.environ.get("MONGO_DATABASE_NAME", "eidolon"), description="The name of the MongoDB database to use."
+    )
 
 
 class MongoSymbolicMemory(SymbolicMemoryBase, Specable[MongoSymbolicMemoryConfig]):

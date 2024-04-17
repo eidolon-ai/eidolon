@@ -13,7 +13,8 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     SystemMessage,
     UserMessage,
-    LLMMessage, UserMessageFileHandle,
+    LLMMessage,
+    UserMessageFileHandle,
 )
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
 
@@ -60,7 +61,11 @@ class IOUnit(ProcessingUnit):
             elif prompt.type == "system":
                 conv_messages.append(SystemMessage(content=prompt.prompt))
             elif prompt.type == "file":
-                user_message_parts.append(await UserMessageFileHandle.create(file=prompt.file, process_id=call_context.process_id, include_directly=prompt.include_directly))
+                user_message_parts.append(
+                    await UserMessageFileHandle.create(
+                        file=prompt.file, process_id=call_context.process_id, include_directly=prompt.include_directly
+                    )
+                )
             else:
                 raise ValueError(f"Unknown prompt type {prompt.type}")
 

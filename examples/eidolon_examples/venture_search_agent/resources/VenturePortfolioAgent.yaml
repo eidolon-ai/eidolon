@@ -5,7 +5,7 @@ metadata:
 
 spec:
   description: An agent that searches for information on various sites
-  cpu:
+  apu:
     logic_units: 
       - implementation: Browser
         summarizer: noop

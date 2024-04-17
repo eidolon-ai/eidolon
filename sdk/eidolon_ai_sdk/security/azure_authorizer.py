@@ -11,12 +11,12 @@ from eidolon_ai_sdk.system.reference_model import Specable
 
 class AzureJWTProcessorSpec(BaseModel):
     client_id: str = Field(
-        os.environ.get("AZURE_AD_CLIENT_ID"),
-        description="Your azure client or application ID. Defaults to the environment variable AZURE_AD_CLIENT_ID",
+        os.environ.get("AZURE_CLIENT_ID") or os.environ.get("AZURE_AD_CLIENT_ID"),
+        description="Your azure client or application ID. Defaults to the environment variable AZURE_CLIENT_ID",
     )
     tenant_id: str = Field(
-        default=os.environ.get("AZURE_AD_TENANT_ID"),
-        description="The tenant id of the JWT. Defaults to the environment variable AZURE_AD_TENANT_ID",
+        default=os.environ.get("AZURE_TENANT_ID") or os.environ.get("AZURE_AD_TENANT_ID"),
+        description="The tenant id of the JWT. Defaults to the environment variable AZURE_TENANT_ID",
     )
     issuer_prefix: str = Field(
         default="https://sts.windows.net",

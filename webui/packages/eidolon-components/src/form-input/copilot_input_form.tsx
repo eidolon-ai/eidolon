@@ -54,8 +54,6 @@ export function CopilotInputPanel({
       updateProcesses(machineUrl).then()
     }
 
-    console.log(copilotParams)
-
     await executeAction(machineUrl, copilotParams.agent, copilotParams.operation, payload)
     setUploadedFiles([])
   }

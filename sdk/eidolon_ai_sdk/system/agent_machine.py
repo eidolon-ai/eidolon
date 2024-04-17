@@ -177,9 +177,7 @@ class AgentMachine(Specable[MachineSpec]):
         if mime_type:
             file_md = {"mime_type": mime_type}
         file_id = await self.process_file_system.write_file(process_id, file_bytes, file_md)
-        return JSONResponse(
-            content=file_id.model_dump(), status_code=200
-        )
+        return JSONResponse(content=file_id.model_dump(), status_code=200)
 
     async def set_metadata(self, process_id: str, file_id: str, file_md: dict):
         """
@@ -188,9 +186,7 @@ class AgentMachine(Specable[MachineSpec]):
         :param process_id:
         """
         file_id = await self.process_file_system.set_metadata(process_id, file_id, file_md)
-        return JSONResponse(
-            content=file_id.model_dump(), status_code=200
-        )
+        return JSONResponse(content=file_id.model_dump(), status_code=200)
 
     async def download_file(self, process_id: str, file_id: str):
         """
@@ -313,6 +309,7 @@ class AgentMachine(Specable[MachineSpec]):
         """
         controller = self._get_agent_controller(args.agent)
         if not controller:
+            logger.info(f"Agent {args.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.create_process(args.title)
 
@@ -327,6 +324,7 @@ class AgentMachine(Specable[MachineSpec]):
 
         controller = self._get_agent_controller(process_doc.agent)
         if not controller:
+            logger.info(f"Agent {process_doc.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.delete_process(process_id)
 
@@ -341,6 +339,7 @@ class AgentMachine(Specable[MachineSpec]):
 
         controller = self._get_agent_controller(process_doc.agent)
         if not controller:
+            logger.info(f"Agent {process_doc.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
         return await controller.get_process_events(process_id)
 

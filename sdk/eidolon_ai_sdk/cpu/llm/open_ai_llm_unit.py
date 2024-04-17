@@ -7,7 +7,6 @@ import yaml
 from openai import AsyncStream
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
 from openai.types.chat.completion_create_params import ResponseFormat
-from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -23,7 +22,9 @@ from eidolon_ai_sdk.cpu.llm_message import (
     AssistantMessage,
     ToolResponseMessage,
     UserMessage,
-    SystemMessage, UserMessageText, UserMessageImage,
+    SystemMessage,
+    UserMessageText,
+    UserMessageImage,
 )
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
@@ -84,8 +85,11 @@ async def convert_to_openai(message: LLMMessage, process_id: str):
         raise ValueError(f"Unknown message type {message.type}")
 
 
+gpt_4 = "gpt-4-turbo-preview"
+
+
 class OpenAiGPTSpec(LLMUnitSpec):
-    model: str = Field(default="gpt-4-turbo-preview", description="The model to use for the LLM.")
+    model: AnnotatedReference[LLMModel, gpt_4]
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
@@ -102,37 +106,12 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.temperature = self.spec.temperature
         self.connection_handler = self.spec.connection_handler.instantiate()
 
-    def get_models(self) -> List[LLMModel]:
-        if self.spec.supported_models:
-            return self.spec.supported_models
-
-        return [
-            LLMModel(
-                human_name="GPT-4 Turbo Preview",
-                name="gpt-4-turbo-preview",
-                input_context_limit=128000,
-                output_context_limit=4096,
-                supports_tools=True,
-                supports_image_input=True,
-                supports_audio_input=False,
-            ),
-            LLMModel(
-                human_name="GPT-3.5 Turbo",
-                name="gpt-3.5-turbo",
-                input_context_limit=16385,
-                output_context_limit=4096,
-                supports_tools=True,
-                supports_image_input=False,
-                supports_audio_input=False,
-            )
-        ]
-
     async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        call_context: CallContext,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(call_context, messages, tools, output_format)
         request["stream"] = True
@@ -143,7 +122,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
         complete_message = ""
         tools_to_call = []
-        completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(request))
+        completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
         async for m_chunk in completion:
             chunk = cast(ChatCompletionChunk, m_chunk)
             if not chunk.choices:
@@ -170,9 +149,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
             if message.content:
                 if can_stream_message:
-                    logger.debug(
-                        f"open ai llm stream response: {message.content}", extra=dict(content=message.content)
-                    )
+                    logger.debug(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
                     yield StringOutputEvent(content=message.content)
                 else:
                     complete_message += message.content
@@ -186,7 +163,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
             if not self.spec.force_json:
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
             content = json.loads(complete_message) if complete_message else {}
             yield ObjectOutputEvent(content=content)

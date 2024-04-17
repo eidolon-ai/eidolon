@@ -19,8 +19,16 @@ from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.image_unit import ImageUnit
-from eidolon_ai_sdk.cpu.llm_message import AssistantMessage, ToolResponseMessage, LLMMessage, UserMessageFile, UserMessageAudio, UserMessageImage, \
-    UserMessageText, UserMessage
+from eidolon_ai_sdk.cpu.llm_message import (
+    AssistantMessage,
+    ToolResponseMessage,
+    LLMMessage,
+    UserMessageFile,
+    UserMessageAudio,
+    UserMessageImage,
+    UserMessageText,
+    UserMessage,
+)
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
@@ -155,7 +163,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
-                execute_llm_ = self.llm_unit.execute_llm(call_context, converted_conversation, llm_facing_tools, output_format)
+                execute_llm_ = self.llm_unit.execute_llm(
+                    call_context, converted_conversation, llm_facing_tools, output_format
+                )
                 # yield the events but capture the output, so it can be rolled into one event for memory.
                 stream_collector = StreamCollector(execute_llm_)
                 async for event in stream_collector:
@@ -176,7 +186,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
-                    streams = [self._call_tool(call_context, tce, tool_defs, converted_conversation) for tce in tool_call_events]
+                    streams = [
+                        self._call_tool(call_context, tce, tool_defs, converted_conversation) for tce in tool_call_events
+                    ]
                     async for e in merge_streams(streams):
                         yield e
             else:
@@ -245,10 +257,17 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         if self.get_capabilities().supports_image_input:
             return [message]
         elif self.image_unit is not None:
-            image_data, metadata = await AgentOS.process_file_system.read_file(call_context.process_id, message.file.file_id)
+            image_data, metadata = await AgentOS.process_file_system.read_file(
+                call_context.process_id, message.file.file_id
+            )
             path = metadata.get("path") or metadata.get("filename") or ""
-            text = await self.image_unit.image_to_text(prompt="Create a detailed text description of the following image. Be sure to include as much information as needed to describe the image.  Be very verbose.", image=image_data)
-            return [UserMessageText(text=f"The following text is a detailed description of an image {path}:\n{text}\n\n")]
+            text = await self.image_unit.image_to_text(
+                prompt="Create a detailed text description of the following image. Be sure to include as much information as needed to describe the image.  Be very verbose.",
+                image=image_data,
+            )
+            return [
+                UserMessageText(text=f"The following text is a detailed description of an image {path}:\n{text}\n\n")
+            ]
         else:
             raise ValueError("Image processing not supported")
 
@@ -268,7 +287,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             path = metadata.get("path") or metadata.get("filename") or None
             mimetype = metadata.get("mimetype")
             blob = DataBlob.from_bytes(data=data, mimetype=mimetype, path=path)
-            await self.document_processor.addFile(f"pf_pid_{process_id}", FileInfo(data=blob, path="", metadata=metadata))
+            await self.document_processor.addFile(
+                f"pf_pid_{process_id}", FileInfo(data=blob, path="", metadata=metadata)
+            )
             message = f"The file {path} is available to search. Use the provided search tool to find information contained in the file\n"
             parts.append(UserMessageText(text=message))
 
