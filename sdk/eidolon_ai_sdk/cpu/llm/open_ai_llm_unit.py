@@ -24,7 +24,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessage,
     SystemMessage,
     UserMessageText,
-    UserMessageFileHandle, UserMessageImage,
+    UserMessageImage,
 )
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
