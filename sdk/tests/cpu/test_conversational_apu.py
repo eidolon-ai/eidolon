@@ -45,6 +45,14 @@ async def test_text_file_include():
     assert "This is a sample text file" in resp.data
 
 
+async def test_text_file_include_and_follow_up_messages():
+    process = await Agent.get("simple").create_process()
+    file_handle = await process.upload_file("This is a sample text file".encode("utf-8"))
+    await process.action("converse", body=dict(body="What is in the attached file?", attached_files=[file_handle]))
+    resp = await process.action("converse", body=dict(body="how many words are in the file?"))
+    assert "6" in resp.data
+
+
 async def test_pdf_file_include(test_dir):
     docs_loc = test_dir / "cpu" / "apu_docs"
     process = await Agent.get("simple").create_process()

@@ -35,8 +35,8 @@ class SystemMessage(LLMMessage):
 
 # Derived classes for different types of message content parts
 class UserMessageText(BaseModel):
-    text: str
     type: Literal["text"] = "text"
+    text: str
 
 
 class UserMessageFileHandle(BaseModel):
@@ -104,7 +104,7 @@ class UserMessageFile(UserMessageFileHandle):
 # Derived UserMessage class
 class UserMessage(LLMMessage):
     type: str = "user"
-    content: List[UserMessageText | UserMessageFileHandle]
+    content: List[UserMessageText | UserMessageFile | UserMessageImage | UserMessageAudio]
 
 
 # ToolCall class

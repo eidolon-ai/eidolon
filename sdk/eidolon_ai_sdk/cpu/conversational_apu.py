@@ -14,7 +14,7 @@ from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcesso
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import FileInfo
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.agent_cpu import APU, APUSpec, Thread, CPUException, APUCapabilities
+from eidolon_ai_sdk.cpu.agent_cpu import APU, APUSpec, Thread, APUException, APUCapabilities
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.cpu.call_context import CallContext
@@ -130,11 +130,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 yield event
         except HTTPException as e:
             raise e
-        except CPUException as e:
+        except APUException as e:
             raise e
         except Exception as e:
             logger.exception(e)
-            raise CPUException(f"{e.__class__.__name__} while processing request") from e
+            raise APUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
         self,
@@ -199,7 +199,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             else:
                 return
 
-        raise CPUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
+        raise APUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
         self,
