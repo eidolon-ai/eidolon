@@ -1,4 +1,4 @@
-name: Bump Examples Version
+name: Bump Usage Service Version
 on:
   - workflow_dispatch
 jobs:
@@ -20,13 +20,9 @@ jobs:
           cache: 'poetry'
       - run: |
           poetry version patch
-          echo "EXAMPLE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
-        working-directory: examples
-      - run: |
-          poetry update eidolon-ai-client
-          poetry update eidolon-ai-sdk
-        working-directory: examples
+          echo "USAGE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+        working-directory: usage-service/usage-server
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump patch version"
-          tagging_message: examples/${{ env.EXAMPLE_VERSION }}
+          tagging_message: usage/${{ env.USAGE_VERSION }}

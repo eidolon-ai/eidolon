@@ -41,7 +41,7 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main():
     args = parse_args()
     log_level_str = "debug" if args.debug else "info"
     logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
@@ -52,3 +52,7 @@ if __name__ == "__main__":
         log_level=log_level_str,
         reload=args.reload,
     )
+
+
+if __name__ == "__main__":
+    main()
