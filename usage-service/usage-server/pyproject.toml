@@ -5,6 +5,9 @@ description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+usage-service = "usage_server.server:main"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 pydantic = "^2.6.4"
