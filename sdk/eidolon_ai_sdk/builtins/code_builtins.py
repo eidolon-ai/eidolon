@@ -1,5 +1,6 @@
 from typing import Tuple
 
+from azure.identity import DefaultAzureCredential, EnvironmentCredential
 from openai import AsyncOpenAI
 from openai.lib.azure import AsyncAzureOpenAI
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -42,7 +43,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHa
 from eidolon_ai_sdk.cpu.llm.open_ai_image_unit import OpenAIImageUnit
 from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
@@ -135,6 +136,7 @@ def named_builtins():
         OpenAIGPT,
         MistralGPT,
         AnthropicLLMUnit,
+        LLMModel,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
         WebSearch,
@@ -195,6 +197,8 @@ def named_builtins():
         OpenAIConnectionHandler,
         AzureOpenAIConnectionHandler,
         OpenAIImageUnit,
+        DefaultAzureCredential,
+        EnvironmentCredential,
         # config objects
         ReplayConfig,
     ]

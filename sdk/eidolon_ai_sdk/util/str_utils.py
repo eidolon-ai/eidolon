@@ -14,7 +14,7 @@ def replace_env_var_in_string(s, **defaults):
 
 
 def format_frame_info(frame_info):
-    return f"File \"{frame_info.filename}\", line {frame_info.lineno}, in {frame_info.function}\n    {frame_info.code_context[0].strip()}"
+    return f'File "{frame_info.filename}", line {frame_info.lineno}, in {frame_info.function}\n    {frame_info.code_context[0].strip()}'
 
 
 def log_stack_trace():

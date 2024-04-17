@@ -20,7 +20,7 @@ jobs:
           cache: 'poetry'
       - run: |
           poetry version patch
-          echo "SDK_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+          echo "EXAMPLE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
         working-directory: examples
       - run: |
           poetry update eidolon-ai-client
@@ -29,4 +29,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Bump patch version"
-          tagging_message: examples/${{ env.SDK_VERSION }}
+          tagging_message: examples/${{ env.EXAMPLE_VERSION }}

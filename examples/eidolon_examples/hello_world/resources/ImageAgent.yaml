@@ -7,7 +7,7 @@ metadata:
 spec:
   implementation: GenericAgent
   description: "This is an example of a generic agent which can be used to create a conversational agent."
-  cpu:
+  apu:
     implementation: APU
     spec:
       llm_unit:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from enum import Enum
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel, TypeAdapter, Field
 from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional
 
 
@@ -10,7 +10,7 @@ class FileHandle(BaseModel):
     machineURL: str
     process_id: str
     file_id: str
-    metadata: dict = {}
+    metadata: dict = Field(default={}, description="Metadata about the file")
 
 
 class Category(Enum):

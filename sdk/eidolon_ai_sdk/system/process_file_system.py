@@ -52,7 +52,9 @@ class ProcessFileSystemImpl(Specable[ProcessFileSystemSpec], ProcessFileSystem):
             file_md = json.loads((await AgentOS.file_memory.read_file(path + ".md")).decode())
         return await AgentOS.file_memory.read_file(path), file_md
 
-    async def write_file(self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None) -> FileHandle:
+    async def write_file(
+        self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None
+    ) -> FileHandle:
         """
         Writes the given `file_contents` to a new file within the context of the process_id.
         :param file_md:
@@ -63,15 +65,14 @@ class ProcessFileSystemImpl(Specable[ProcessFileSystemSpec], ProcessFileSystem):
         file_id = str(bson.ObjectId())
         await AgentOS.file_memory.mkdir(str(Path(self.root, process_id)), exist_ok=True)
         await AgentOS.file_memory.write_file(str(Path(self.root, process_id, file_id)), file_contents)
-        md_to_write = {
-            "process_id": process_id,
-            "file_id": file_id
-        }
+        md_to_write = {"process_id": process_id, "file_id": file_id}
         if file_md:
             md_to_write.update(file_md)
         path = str(Path(self.root, process_id, file_id + ".md"))
         await AgentOS.file_memory.write_file(path, json.dumps(md_to_write).encode())
-        return FileHandle(machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id, metadata=md_to_write)
+        return FileHandle(
+            machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id, metadata=md_to_write
+        )
 
     async def set_metadata(self, process_id: str, file_id: str, metadata: Dict[str, any]):
         """
@@ -93,7 +94,9 @@ class ProcessFileSystemImpl(Specable[ProcessFileSystemSpec], ProcessFileSystem):
             file_md = json.loads(contents)
         file_md.update(metadata)
         await AgentOS.file_memory.write_file(path, json.dumps(file_md).encode())
-        return FileHandle(machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id, metadata=file_md)
+        return FileHandle(
+            machineURL=AgentOS.current_machine_url(), process_id=process_id, file_id=file_id, metadata=file_md
+        )
 
     async def delete_file(self, process_id: str, file_id: str):
         """

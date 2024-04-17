@@ -1,0 +1,28 @@
+name: Bump Usage Service Version
+on:
+  - workflow_dispatch
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: |
+          poetry version patch
+          echo "USAGE_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+        working-directory: usage-service/usage-server
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Bump patch version"
+          tagging_message: usage/${{ env.USAGE_VERSION }}

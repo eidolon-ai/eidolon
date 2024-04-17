@@ -75,7 +75,8 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
         return await self._text_to_image(call_context, text, quality, (width, height), style, image_format)
 
     async def _text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
-                             image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
+                             image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp",
+    ) -> List[FileHandle]:
         """
         Converts text to an image.
 

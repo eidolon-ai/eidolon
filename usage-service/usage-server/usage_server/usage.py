@@ -54,7 +54,9 @@ class UsageService:
         self.default_allowed = default_allowed
         self.max_insertion_attempts = max_insertion_attempts
 
-    async def ensure_unique_index(self):
+    async def setup(self):
+        if self.collection.name not in await self.collection.database.list_collection_names():
+            await self.collection.database.create_collection(self.collection.name)
         index_info = await self.collection.index_information()
         for index in index_info.values():
             if (
@@ -121,5 +123,5 @@ class UsageService:
     async def singleton() -> UsageService:
         if not UsageService._singleton:
             UsageService._singleton = UsageService()
-            await UsageService._singleton.ensure_unique_index()
+            await UsageService._singleton.setup()
         return UsageService._singleton

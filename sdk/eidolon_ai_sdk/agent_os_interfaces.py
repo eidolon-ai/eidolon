@@ -22,7 +22,9 @@ class ProcessFileSystem(ABC):
         raise NotImplementedError("not implemented")
 
     @abstractmethod
-    async def write_file(self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None) -> FileHandle:
+    async def write_file(
+        self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None
+    ) -> FileHandle:
         """
         Writes the given `file_contents` to a new file within the context of the process_id.
         :param file_md:

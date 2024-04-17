@@ -23,9 +23,11 @@ class OpenAIImageUnitSpec(ImageUnitSpec):
     image_to_text_model: str = Field(default="gpt-4-vision-preview", description="The model to use for the vision LLM.")
     text_to_image_model: str = Field(default="dall-e-3", description="The model to use for the vision LLM.")
     temperature: float = 0.3
-    image_to_text_system_prompt: str = Field("You are an expert at answering questions about images. "
-                                             "You are presented with an image and a question and must answer the question based on the information in the image.",
-                                             description="The system prompt to use for text to image.")
+    image_to_text_system_prompt: str = Field(
+        "You are an expert at answering questions about images. "
+        "You are presented with an image and a question and must answer the question based on the information in the image.",
+        description="The system prompt to use for text to image.",
+    )
 
 
 class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
@@ -40,8 +42,11 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         return ImageCreationCapabilities(
             qualities=["standard", "hd"],
             sizes=[(1024, 1024), (1792, 1024), (1024, 1792)],
-            styles=["vivid", "natural", ],
-            max_prompt_size=4000
+            styles=[
+                "vivid",
+                "natural",
+            ],
+            max_prompt_size=4000,
         )
 
     async def _image_to_text(self, prompt: str, image: bytes) -> str:
@@ -62,13 +67,16 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         base64_image = base64.b64encode(data).decode("utf-8")
         messages = [
             {"role": "system", "content": self.spec.image_to_text_system_prompt},
-            {"role": "user", "content": [
-                {"type": "text", "text": prompt},
-                {
-                    "type": "image_url",
-                    "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
-                },
-            ]},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+                    },
+                ],
+            },
         ]
         request = {
             "messages": messages,
@@ -76,12 +84,19 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
             "temperature": self.spec.temperature,
         }
 
-        result: ChatCompletion = await self.connection_handler.completion(request)
+        result: ChatCompletion = await self.connection_handler.completion(**request)
         print(result)
         return result.choices[0].message.content
 
-    async def _text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
-                            image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[FileHandle]:
+    async def _text_to_image(
+        self,
+        call_context: CallContext,
+        text: str,
+        quality: Optional[str] = None,
+        size: Tuple[int, int] = (1024, 1024),
+        style: Optional[str] = None,
+        image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp",
+    ) -> List[FileHandle]:
         """
         Converts text to an image.
 
@@ -111,7 +126,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
             "size": f"{size_to_request[0]}x{size_to_request[1]}",
             "style": style,
         }
-        result = await self.connection_handler.generate_image(request)
+        result = await self.connection_handler.generate_image(**request)
         file_handles = []
         for i in result.data:
             image_data = base64.b64decode(i.b64_json)
@@ -119,8 +134,13 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
             image_fp = BytesIO()
             image.resize(size)
             image.save(image_fp, format=image_format)
-            file_handles.append(await AgentOS.process_file_system.write_file(call_context.process_id, image_fp.getvalue(),
-                                                                             file_md={"prompt_rewrite": i.revised_prompt, "mimetype": f"image/{image_format}"}))
+            file_handles.append(
+                await AgentOS.process_file_system.write_file(
+                    call_context.process_id,
+                    image_fp.getvalue(),
+                    file_md={"prompt_rewrite": i.revised_prompt, "mimetype": f"image/{image_format}"},
+                )
+            )
 
         return file_handles
 
@@ -128,7 +148,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         desired_width, desired_height = size
         aspect_ratio = desired_width / desired_height
 
-        min_diff = float('inf')
+        min_diff = float("inf")
         optimal_size = None
 
         for width, height in sizes:

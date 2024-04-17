@@ -19,8 +19,16 @@ from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.image_unit import ImageUnit
-from eidolon_ai_sdk.cpu.llm_message import AssistantMessage, ToolResponseMessage, LLMMessage, UserMessageFile, UserMessageAudio, UserMessageImage, \
-    UserMessageText, UserMessage
+from eidolon_ai_sdk.cpu.llm_message import (
+    AssistantMessage,
+    ToolResponseMessage,
+    LLMMessage,
+    UserMessageFile,
+    UserMessageAudio,
+    UserMessageImage,
+    UserMessageText,
+    UserMessage,
+)
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
@@ -159,7 +167,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
-                execute_llm_ = self.llm_unit.execute_llm(call_context, converted_conversation, llm_facing_tools, output_format)
+                execute_llm_ = self.llm_unit.execute_llm(
+                    call_context, converted_conversation, llm_facing_tools, output_format
+                )
                 # yield the events but capture the output, so it can be rolled into one event for memory.
                 # noinspection PyTypeChecker
                 stream_collector = StreamCollector(execute_llm_)
@@ -181,7 +191,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
-                    streams = [self._call_tool(call_context, tce, tool_defs, converted_conversation) for tce in tool_call_events]
+                    streams = [
+                        self._call_tool(call_context, tce, tool_defs, converted_conversation) for tce in tool_call_events
+                    ]
                     async for e in merge_streams(streams):
                         yield e
             else:
@@ -268,7 +280,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             path = metadata.get("path") or metadata.get("filename") or None
             mimetype = metadata.get("mimetype")
             blob = DataBlob.from_bytes(data=data, mimetype=mimetype, path=path)
-            await self.document_processor.addFile(f"pf_pid_{process_id}", FileInfo(data=blob, path="", metadata=metadata))
+            await self.document_processor.addFile(
+                f"pf_pid_{process_id}", FileInfo(data=blob, path="", metadata=metadata)
+            )
             message = f"The file {path} is available to search. Use the provided search tool to find information contained in the file\n"
             parts.append(UserMessageText(text=message))
 

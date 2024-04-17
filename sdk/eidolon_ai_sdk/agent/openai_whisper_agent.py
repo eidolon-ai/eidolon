@@ -24,8 +24,9 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
 
     @register_program()
     async def speech_to_text(
-        self, process_id, audio: Annotated[FileHandle, Body(description="The audio file", embed=True)]
+        self, audio: Annotated[FileHandle, Body(description="The audio file", embed=True)]
     ):
+        process_id = audio.process_id
         await ProcessDoc.set_delete_on_terminate(process_id, True)
         file, metadata = await AgentOS.process_file_system.read_file(process_id, audio.file_id)
         mimetype = "audio/wav"

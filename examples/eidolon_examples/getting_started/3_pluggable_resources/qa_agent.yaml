@@ -6,4 +6,4 @@ metadata:
 spec:
   implementation: eidolon_examples.getting_started.2_custom_agents.qa.QualityAssurance
   agent_refs: ["hello_world"]
-  cpu: frugal_cpu
+  apu: frugal_cpu

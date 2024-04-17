@@ -4,6 +4,7 @@ from typing import Sequence, Any, AsyncGenerator, Optional, List
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
+from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 
@@ -59,8 +60,7 @@ class NoopEmbedding(Embedding, Specable[EmbeddingSpec]):
 
 class OpenAIEmbeddingSpec(EmbeddingSpec):
     model: str = Field(default="text-embedding-ada-002", description="The name of the model to use.")
-    client: AnnotatedReference[AsyncOpenAI]
-    client_args: dict = {}
+    connection_handler: AnnotatedReference[OpenAIConnectionHandler]
 
 
 class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
@@ -72,7 +72,8 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
 
     async def start(self):
         await super().start()
-        self.llm = self.spec.client.instantiate(**self.spec.client_args)
+        conn_handler: OpenAIConnectionHandler = self.spec.connection_handler.instantiate()
+        self.llm = conn_handler.makeClient()
 
     async def stop(self):
         await super().stop()
