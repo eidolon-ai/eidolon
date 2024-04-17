@@ -62,7 +62,8 @@ async def test_image_file_include(test_dir):
     docs_loc = test_dir / "cpu" / "llm" / "files"
     with open(docs_loc / "logo.png", "rb") as f:
         file_handle = await process.upload_file(f.read())
-        print("file_handle", file_handle)
+        # set the machine url so that the port doesn't change.
+        file_handle.machineURL = "http://testme"
         result = await process.action("converse", body=dict(body="What is in the image?", attached_files=[file_handle]))
         print(result)
         assert "logo" in result.data
