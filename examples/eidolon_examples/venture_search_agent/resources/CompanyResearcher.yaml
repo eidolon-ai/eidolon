@@ -3,11 +3,12 @@ kind: Agent
 metadata:
   name: CompanyResearcher
 spec:
-  apu:
+  cpu:
     logic_units: [Browser, Search]
   description: "Creates company summaries"
   system_prompt: |-
-    You are a helpful assistant who goes to the url of a given company, and provides a 2 sentence summary. 
+    You are a helpful assistant who goes to the url of a given company, and provides a 2 sentence summary.
+    Continue using your tools to research until you know everything all the required fields for your output.
   actions:
     - name: "search_company"
       user_prompt: |-
@@ -17,8 +18,17 @@ spec:
       output_schema:
         type: object
         properties:
-          company_description:
+          description:
             type: string
             description: "A 2 sentence summary of the company"
+          stage:
+            type: string
+            description: "Series A, B, C, D, E, F or Publicly Traded"
+          market_size:
+            type: string
+            description: "Total addressable market for the industry the company is apart of"
+          business_model:
+            type: string
+            description: "How does the company make money?"
 
       

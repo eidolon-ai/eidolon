@@ -3,6 +3,8 @@ kind: Agent
 metadata:
   name: RelevancyRanker
 spec:
+  cpu:
+    exponential_backoff: 2
   description: "takes the summaries and adds a relevancy score to them and product category to them"
   system_prompt: |-
     You are a helpful assistant who takes the summaries and adds a relevancy score to them and product category to them based on {{ company_description }} and {{ investment_thesis }}.

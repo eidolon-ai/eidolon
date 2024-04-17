@@ -1,4 +1,6 @@
 import asyncio
+import json
+from typing import Optional
 
 import yaml
 from fastapi import Body
@@ -17,6 +19,7 @@ from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage, SystemAPUMessage
 class SummarizeWebsiteBody(BaseModel):
     venture_sites: str = Field(..., description="URL to scrape and summarize")
     investment_thesis: str = Field(..., description="Investment thesis to match against company summaries")
+    company_limit: Optional[int] = None
 
 
 # todo: Streaming output
@@ -30,6 +33,10 @@ class VentureCopilot(AgentTemplate):
 
         # Prepare coroutines for both researching the company and analyzing relevancy
         coroutines = [self.research_and_rank_company(company, input.investment_thesis) for company in companies.data['companies']]
+        if input.company_limit:
+            logger.info(f"Dropping extra companies: found {len(coroutines)} | limit {input.company_limit}")
+            coroutines = coroutines[:input.company_limit]
+
         tasks = [asyncio.create_task(coro) for coro in coroutines]
 
         # Gather results from all tasks
@@ -52,7 +59,7 @@ class VentureCopilot(AgentTemplate):
                 "search_company",
                 {"url": company["url"], "company_name": company["name"]},
             )
-            rtn["description"] = response.data["company_description"]
+            rtn['company_summary'] = response.data
         except Exception as e:
             logger.exception(f"Error researching company {company['name']}")
             rtn["error"] = str(e)
@@ -64,7 +71,7 @@ class VentureCopilot(AgentTemplate):
         if 'error' not in company_info:
             # Send information to RelevancyRanker for analysis
             analysis_result = await Agent.get("RelevancyRanker").run_program("analyze", {
-                "company_description": company_info["description"], "investment_thesis": investment_thesis})
+                "company_description": json.dumps(company_info["company_summary"]), "investment_thesis": investment_thesis})
             # Combine original company info with analysis results
             company_info['relevance'] = analysis_result.data['relevancy_score']
         return company_info
