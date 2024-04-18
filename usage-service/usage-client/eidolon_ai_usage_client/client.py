@@ -8,7 +8,7 @@ from eidolon_ai_usage_client.models import UsageSummary, UsageReset, UsageDelta
 class UsageClient:
     kwargs: dict
 
-    def __init__(self, location: str = os.environ.get('USAGE_SERVICE_LOC', "http://localhost:8527"), **kwargs):
+    def __init__(self, location: str = os.environ.get('EIDOLON_USAGE_SERVER', "http://localhost:8527"), **kwargs):
         self.kwargs = dict(base_url=location, **kwargs)
 
     @property
