@@ -67,7 +67,7 @@ class AudioUnit(LogicUnit, Specable[AudioUnitSpec]):
             :param language: The language of the input audio. Supplying the input language in ISO-639-1 format will improve accuracy and latency. This parameter is optional.
         """
         audio_data, metadata = await AgentOS.process_file_system.read_file(RequestContext.get("process_id"), audio.file_id)
-        return await self._speech_to_text(audio_data, metadata["mimetype"], prompt, language)
+        return await self._speech_to_text(audio_data, metadata.get("mimetype", "audio/wav"), prompt, language)
 
     async def _speech_to_text(
         self, audio: bytes, mime_type: str, prompt: Optional[str] = None, language: Optional[str] = None
