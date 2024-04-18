@@ -8,9 +8,9 @@ from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 
 class AudioUnit(LogicUnit):
     @llm_function()
-    async def text_to_speech(self, text: str, response_format: Literal["mp3", "opus", "aac", "flac", "wav", "pcm"] = "mp3") -> FileHandle:
+    async def text_to_speech(self, text: str, response_format: Literal["mp3", "opus", "aac", "flac", "wav", "pcm"] = "mp3") -> str:
         """
-        Converts text to speech. The result of the call is a file handle.
+        Converts text to speech. The result of the call is a file handle that should be returned to the user unchanged.
 
         Args:
             text (str): The text to convert to speech.
@@ -21,7 +21,8 @@ class AudioUnit(LogicUnit):
             :param response_format: Response audio format. Legal values are ["mp3", "opus", "aac", "flac", "wav", "pcm"].  Defaults to "mp3".
         """
         audio = await self._text_to_speech(text, response_format)
-        return await AgentOS.process_file_system.write_file(RequestContext.get("process_id"), audio, {"mimetype": f"audio/{response_format}"})
+        handle = await AgentOS.process_file_system.write_file(RequestContext.get("process_id"), audio, {"mimetype": f"audio/{response_format}"})
+        return handle.get_url()
 
     async def _text_to_speech(self, text: str, response_format: Literal["mp3", "opus", "aac", "flac", "wav", "pcm"] = "mp3") -> bytes:
         """
