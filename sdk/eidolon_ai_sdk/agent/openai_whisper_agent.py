@@ -4,9 +4,7 @@ from fastapi import Body
 
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.agent import AgentSpec, Agent, register_program
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
-from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
 
 
@@ -29,9 +27,6 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
 
     @register_program()
     async def text_to_speech(
-        self, process_id: str, text: Annotated[str, Body(description="The text to speak", embed=True)]
+        self, text: Annotated[str, Body(description="The text to speak", embed=True)]
     ) -> FileHandle:
-        audio_result = await self.speech_llm.text_to_speech(text)
-        file_id = await AgentOS.process_file_system.write_file(process_id, audio_result, {"mimetype": "audio/mpeg"})
-
-        return file_id
+        return await self.speech_llm.text_to_speech(text)

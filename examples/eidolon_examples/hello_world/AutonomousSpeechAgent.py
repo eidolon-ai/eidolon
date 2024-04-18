@@ -40,7 +40,7 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         return AgentState(name="idle", data=response)
 
     @register_program()
-    async def speech_question(self, process_id, file: UploadFile = File(...)) -> bytes:
+    async def speech_question(self, process_id, file: UploadFile = File(...)) -> str:
         audio = AudioSegment.from_file(file.file.read())
         # Convert to mp3
         audio_mp3 = audio.export("audio.mp3", format="mp3")
@@ -48,5 +48,5 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         text = await self.speech_llm.speech_to_text(audio_mp3)
         result = await self.call_llm(process_id, text)
         text_result = result.data.response
-        audio_result = await self.speech_llm.text_to_speech(text_result)
-        return Response(content=audio_result, media_type=audio.content_type)
+        file_handle = await self.speech_llm.text_to_speech(text_result)
+        return file_handle.get_url()
