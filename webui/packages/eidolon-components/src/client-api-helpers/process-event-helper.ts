@@ -83,7 +83,6 @@ export async function executeServerOperation(machineUrl: string, agent: string, 
     const chunk = decoder.decode(value, {stream: true});
     processChunk(chunk);
   }
-
 }
 
 export async function getChatEventInUI(machineUrl: string, processId: string) {

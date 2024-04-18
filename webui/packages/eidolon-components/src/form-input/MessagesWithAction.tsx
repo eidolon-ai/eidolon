@@ -5,6 +5,7 @@ import {useProcessEvents} from "../hooks/useProcessEvents";
 import {EidolonEvents} from "../messages/eidolon-events";
 import {AgentProcess} from "./agent-process";
 import {OperationInfo} from "@eidolon/client";
+import {useEidolonContext} from "../provider/eidolon_provider";
 
 export interface MessagesWithActionProps {
   operations: OperationInfo[]
@@ -14,12 +15,14 @@ export interface MessagesWithActionProps {
 }
 
 export function MessagesWithAction({operations, machineUrl, agent, processId}: MessagesWithActionProps) {
+  const [_, dispatch] = useEidolonContext()
+
   const {
     processState,
     elementsAndLookup,
     executeAction,
     handleCancel
-  } = useProcessEvents(machineUrl, agent, processId)
+  } = useProcessEvents(machineUrl, agent, processId, dispatch)
 
   return (
     <Box sx={{

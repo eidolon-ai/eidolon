@@ -1,0 +1,13 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: AuthenticationProcessor
+spec:
+  implementation: GoogleJWTProcessor
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: FunctionalAuthorizer
+spec: NoopFunctionalAuth

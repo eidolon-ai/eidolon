@@ -54,4 +54,4 @@ class BaseJWTProcessor(AuthenticationProcessor, ABC, Specable[BaseJWTProcessorSp
         RequestContext.set("Authorization", auth_header, propagate=True)
         RequestContext.set("jwt", user_info)
         perms = [p for r in user_info.get("roles", []) for p in r.split(",")]
-        return User(id=user_info["oid"], name=user_info.get("name"), extra={"permissions": perms})
+        return User(id=user_info["sub"], name=user_info.get("name"), extra={"permissions": perms})

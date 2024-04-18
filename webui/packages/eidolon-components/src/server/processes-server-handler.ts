@@ -1,4 +1,5 @@
 import {EidolonClient} from "@eidolon/client";
+import {clearUsageCache} from "../usage-summary/usage_summary";
 
 export const getAuthHeaders = (access_token: string | undefined): Record<string, string> => {
   if (!access_token) {
@@ -132,11 +133,13 @@ export class ProcessEventsHandler {
         let textEncoder = new TextEncoder();
         const retStream = new ReadableStream({
           start: async (controller) => {
-            const resp = await this.execOperation(machineUrl, processId, agent, operation, data);
+            const resp = this.execOperation(machineUrl, processId, agent, operation, data);
             for await (const event of resp) {
+              await clearUsageCache()
               if (done) break;
               controller.enqueue(textEncoder.encode(`data: ${JSON.stringify(event)}\n\n`));
             }
+            await clearUsageCache()
             controller.close()
           },
           cancel: () => {
@@ -158,17 +161,23 @@ export class ProcessEventsHandler {
         });
       } else {
         const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-        return Response.json((await client.process(processId).agent(agent).action(operation, data))["data"], {status: 200});
+        let response = Response.json((await client.process(processId).agent(agent).action(operation, data))["data"], {status: 200});
+        await clearUsageCache()
+        return response;
       }
     } catch (error) {
       console.error('Error fetching information:', error);
+      await clearUsageCache()
       return new Response('Failed to obtain stream', {status: 500})
     }
   }
 
-  async execOperation(machineUrl: string, processId: string, agent: string, operation: string, reqBody: Record<string, any>) {
+  async *execOperation(machineUrl: string, processId: string, agent: string, operation: string, reqBody: Record<string, any>) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return client.process(processId).agent(agent).stream_action(operation, reqBody);
+    for await (const e of client.process(processId).agent(agent).stream_action(operation, reqBody)) {
+      await clearUsageCache()
+      yield e
+    }
   }
 }
 

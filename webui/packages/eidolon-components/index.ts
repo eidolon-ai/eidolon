@@ -11,3 +11,5 @@ export {CopilotPanel} from './src/form-input/copilot_panel'
 export {MessagesWithAction} from './src/form-input/MessagesWithAction'
 export {useProcessEvents} from './src/hooks/useProcessEvents'
 export * from "./src/lib/util"
+export {usageForSession} from "./src/usage-summary/usage_summary"
+export {EidolonProvider, useEidolonContext} from "./src/provider/eidolon_provider"
