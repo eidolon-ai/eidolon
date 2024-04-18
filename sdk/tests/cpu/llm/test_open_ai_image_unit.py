@@ -48,14 +48,14 @@ async def test_image_to_text(server, open_ai_image_unit, test_dir):
     async with open_ai_image_unit() as iu:
         docs_loc = test_dir / "cpu" / "llm" / "files"
         with open(docs_loc / "logo.png", "rb") as f:
-            result = await iu.image_to_text("What is in the image?", f.read())
+            result = await iu._image_to_text("What is in the image?", f.read())
             assert "logo" in result
 
 
 async def test_text_to_image(server, open_ai_image_unit, test_dir):
     call_context = CallContext(process_id="test")
     async with open_ai_image_unit() as iu:
-        result = await iu.text_to_image(call_context, "Generate an image of a whale", size=(256, 256))
+        result = await iu._text_to_image(call_context, "Generate an image of a whale", size=(256, 256))
         assert len(result) == 1
         assert result[0].metadata["mimetype"] == "image/webp"
         assert result[0].file_id is not None
