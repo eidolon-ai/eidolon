@@ -1378,7 +1378,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-usage-client"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -5836,4 +5836,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "4f6ba98faec261914fc51e076503e34ba470813672a760b1b17ae5e84fc74262"
+content-hash = "8cb775c46b4f4d7dfd10464cfcac2d966f8dbe5fb80de8e2c4906de387125fb5"
