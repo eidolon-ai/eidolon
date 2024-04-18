@@ -1367,7 +1367,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.30"
+version = "0.1.31"
 description = "An Open Source Agent Services Framework"
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1384,7 +1384,7 @@ chromadb = "^0.4.18"
 dill = "^0.3.8"
 eidolon-ai-client = "^0.1.6"
 eidolon-ai-mistralai = "^0.1.6a"
-eidolon-ai-usage-client = "^0.1.1"
+eidolon-ai-usage-client = "^0.1.2"
 esprima = "^4.0.1"
 fastapi = "^0.109.0"
 filetype = "^1.2.0"
@@ -1422,13 +1422,13 @@ url = "../sdk"
 
 [[package]]
 name = "eidolon-ai-usage-client"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.11"
 files = [
-    {file = "eidolon_ai_usage_client-0.1.1-py3-none-any.whl", hash = "sha256:873d79b193a59c6ecaf09d4f4cf85b4676ccb24aca46d4ee4144b5dd6d5e2631"},
-    {file = "eidolon_ai_usage_client-0.1.1.tar.gz", hash = "sha256:c9ae13a19a80e49077e80a275ff3cec81a2c6fd051087035e538f555530a7faf"},
+    {file = "eidolon_ai_usage_client-0.1.2-py3-none-any.whl", hash = "sha256:561b7d57f0abefa0eb6d73110e11ed2a0b4491f5b93bc4b701f45babae9ff413"},
+    {file = "eidolon_ai_usage_client-0.1.2.tar.gz", hash = "sha256:85acfdc3c9e3a7775d9c90e82fda489ef9fdab251ad138a7ba4e473cef59a106"},
 ]
 
 [package.dependencies]
@@ -5832,4 +5832,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "c7fefc71279c68d8eee27139b3567a7cda5b5392f9b4aac14c4b914607272a60"
+content-hash = "b2a8a7efe2d50ecc476c27447325a886e8d287accba84ad431433467b58ca907"
