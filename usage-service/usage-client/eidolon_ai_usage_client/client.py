@@ -1,3 +1,5 @@
+import os
+
 from httpx import AsyncClient
 
 from eidolon_ai_usage_client.models import UsageSummary, UsageReset, UsageDelta
@@ -6,7 +8,7 @@ from eidolon_ai_usage_client.models import UsageSummary, UsageReset, UsageDelta
 class UsageClient:
     kwargs: dict
 
-    def __init__(self, location: str = "http://localhost:8527", **kwargs):
+    def __init__(self, location: str = os.environ.get('USAGE_SERVICE_LOC', "http://localhost:8527"), **kwargs):
         self.kwargs = dict(base_url=location, **kwargs)
 
     @property
@@ -23,7 +25,7 @@ class UsageClient:
             return summary
 
     async def record_transaction(
-        self, subject: str, transaction: UsageDelta | UsageReset
+            self, subject: str, transaction: UsageDelta | UsageReset
     ):
         transaction_dict = transaction.model_dump(exclude_defaults=True)
         transaction_dict["type"] = transaction.type

@@ -13,3 +13,6 @@ chatbot:
 chatbot_push: chatbot
 	docker push ${PROJECT}/chatbot
 	docker push ${PROJECT}/chatbot:${VERSION}
+
+chatbot_bash: chatbot
+	docker run --rm -it --entrypoint bash eidolonai/chatbot:latest
