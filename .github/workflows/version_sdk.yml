@@ -24,6 +24,7 @@ jobs:
         working-directory: sdk
       - run: |
           poetry add eidolon-ai-client@latest
+          poetry add eidolon-ai-usage-client@latest
           poetry update eidolon-ai-client
         working-directory: sdk
       - uses: stefanzweifel/git-auto-commit-action@v5

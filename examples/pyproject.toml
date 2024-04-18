@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eidolon_examples"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
@@ -9,7 +9,7 @@ readme = "README.md"
 python = ">=3.11,<3.12"
 setuptools = "^69.0.2"
 transformers = "^4.35.2"
-eidolon-ai-sdk = "^0.1.0"
+eidolon-ai-sdk = "^0.1.29"
 eidolon-ai-client = "^0.1.0"
 pydub = "^0.25.1"
 ruamel-yaml = "^0.18.6"
