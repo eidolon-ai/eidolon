@@ -80,10 +80,9 @@ export function CopilotInputForm({machineUrl, processId, isProcessing, copilotPa
     }
   }
 
-  const handleAction = () => {
-    doAction(input).then(() => {
-      setInput("")
-    })
+  const handleAction = async () => {
+    setInput("")
+    await doAction(input)
   }
 
   return (

@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["EIDOLON_USAGE_SERVER"],
   "pipeline": {
     "build": {
       // A package's `build` script depends on that package's
