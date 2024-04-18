@@ -4,16 +4,16 @@ from fastapi import Body
 
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.agent import AgentSpec, Agent, register_program
-from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
+from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
 
 
 class AutonomousSpeechAgentSpec(AgentSpec):
-    speech_llm: AnnotatedReference[OpenAiSpeech]
+    speech_llm: AnnotatedReference[AudioUnit]
 
 
 class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
-    speech_llm: OpenAiSpeech
+    speech_llm: AudioUnit
 
     def __init__(self, spec: AutonomousSpeechAgentSpec):
         super().__init__(spec=spec)
