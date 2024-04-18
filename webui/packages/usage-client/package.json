@@ -5,8 +5,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "openapi-ts": "openapi-ts",
-    "test": "jest --ci"
+    "openapi-ts": "openapi-ts"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.0",
