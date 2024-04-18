@@ -5,9 +5,12 @@ import {ProcessStatus} from "@eidolon/client";
 import {ElementsAndLookup} from "../lib/display-elements";
 import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper";
 import {getProcessStatus} from "../client-api-helpers/process-helper";
-import {EidolonEvent, RecordUsage, useEidolonContext} from "../provider/eidolon_provider";
+import {EidolonEvent, RecordUsage} from "../provider/eidolon_provider";
 
-export function useProcessEvents(machineUrl: string, agent: string, processId: string, usageUpdateEvent: (event: EidolonEvent) => void) {
+export function useProcessEvents(machineUrl: string, agent: string, processId: string,
+                                 // eslint-disable-next-line no-unused-vars
+                                 usageUpdateEvent: (event: EidolonEvent) => void
+) {
   const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
   const [elementsAndLookup, setElementsAndLookup] =
