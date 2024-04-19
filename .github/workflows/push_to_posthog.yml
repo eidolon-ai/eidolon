@@ -46,4 +46,4 @@ jobs:
         )
 
         # Send the payload to PostHog
-        curl -X POST -H "Authorization: Bearer ${{ POSTHOG_API_KEY }}" -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture"
+        curl -X POST -H "Authorization: Bearer ${{ secrets.POSTHOG_API_KEY }}" -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture"
