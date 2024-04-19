@@ -46,4 +46,4 @@ jobs:
         )
 
         # Send the payload to PostHog
-        curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture?api_key=${{secret.POSTHOG_API_KEY}}"
+        curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture?api_key=${{ secret.POSTHOG_API_KEY }}"
