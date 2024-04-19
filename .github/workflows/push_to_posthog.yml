@@ -35,6 +35,7 @@ jobs:
         {
           "event": "repository_traffic",
           "api_key": "$POSTHOG_API_KEY",
+          'distinct_id': 'github_repository_traffic',
           "properties": {
             "clones": $CLONES,
             "unique_clones": $UNIQUE_CLONES,
