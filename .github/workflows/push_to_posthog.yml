@@ -34,6 +34,7 @@ jobs:
         PAYLOAD=$(cat <<EOF
         {
           "event": "repository_traffic",
+          "api_key": "$POSTHOG_API_KEY",
           "properties": {
             "clones": $CLONES,
             "unique_clones": $UNIQUE_CLONES,
@@ -46,4 +47,4 @@ jobs:
         )
 
         # Send the payload to PostHog
-        curl -X POST -H "Authorization: Bearer ${{ secrets.POSTHOG_API_KEY }}" -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture?api_key=${{ secrets.POSTHOG_API_KEY }}"
+        curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture"
