@@ -37,7 +37,7 @@ jobs:
         echo "::set-output name=unique_views::$UNIQUE_VIEWS"
 
     - name: Send traffic data to PostHog
-      uses: actions/posthog-github-action@v1
+      uses: actions/posthog-github-action
       with:
         api_key: ${{ secrets.POSTHOG_API_KEY }}
         event: repository_traffic
