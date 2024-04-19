@@ -13,10 +13,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Get repository traffic data
-      id: traffic_data
+    - name: Get repository traffic data and send to PostHog
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
       run: |
         # Get the repository owner and name
         OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
@@ -30,22 +30,20 @@ jobs:
         VIEWS=$(gh api -H "Accept: application/vnd.github+json" /repos/$OWNER/$REPO/traffic/views | jq '.count')
         UNIQUE_VIEWS=$(gh api -H "Accept: application/vnd.github+json" /repos/$OWNER/$REPO/traffic/views | jq '.uniques')
 
-        # Set the traffic data as output variables
-        echo "::set-output name=clones::$CLONES"
-        echo "::set-output name=unique_clones::$UNIQUE_CLONES"
-        echo "::set-output name=views::$VIEWS"
-        echo "::set-output name=unique_views::$UNIQUE_VIEWS"
-
-    - name: Send traffic data to PostHog
-      uses: actions/posthog-github-action
-      with:
-        api_key: ${{ secrets.POSTHOG_API_KEY }}
-        event: repository_traffic
-        properties: |
-          {
-            "clones": "${{ steps.traffic_data.outputs.clones }}",
-            "unique_clones": "${{ steps.traffic_data.outputs.unique_clones }}",
-            "views": "${{ steps.traffic_data.outputs.views }}",
-            "unique_views": "${{ steps.traffic_data.outputs.unique_views }}",
+        # Prepare the payload for PostHog
+        PAYLOAD=$(cat <<EOF
+        {
+          "event": "repository_traffic",
+          "properties": {
+            "clones": $CLONES,
+            "unique_clones": $UNIQUE_CLONES,
+            "views": $VIEWS,
+            "unique_views": $UNIQUE_VIEWS,
             "repository": "${{ github.repository }}"
           }
+        }
+        EOF
+        )
+
+        # Send the payload to PostHog
+        curl -X POST -H "Authorization: Bearer ${{ secrets.POSTHOG_API_KEY }}" -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture"
