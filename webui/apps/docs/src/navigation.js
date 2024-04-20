@@ -119,6 +119,7 @@ export const headerData = {
     
     { text: 'View on GitHub', href: 'https://github.com/eidolon-ai/eidolon', target: '_blank' },
     { text: 'Docs', href: '/docs/introduction'},
+    { text: 'Events', href: '#events'},
   ],
   showRssFeed: false
 };

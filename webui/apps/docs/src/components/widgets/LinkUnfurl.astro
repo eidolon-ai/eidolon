@@ -1,0 +1,51 @@
+---
+import {Icon} from 'astro-icon/components';
+import {unfurl} from 'unfurl.js';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import {twMerge} from "tailwind-merge";
+
+const {
+  url = '',
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+
+const result = await unfurl(url);
+const image = result?.open_graph?.images?.[0]?.url || result?.twitter_card?.images?.[0]?.url;
+const {
+  container: containerClass = "max-w-3xl",
+  title: titleClass = "text-l md:text-xl href-link hover:underline",
+  subtitle: subtitleClass = "text-sm",
+} = classes;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto py-1 md:py-1 lg:py-1`} bg={bg}>
+  <a
+    href={result.canonical_url}
+    class={twMerge("md:mx-auto", classes?.container ?? '')}
+  >
+    <div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24 w-full">
+      {image && (
+        <div class="flex justify-center col-span-1 my-2 rounded-md dark:bg-gray-200">
+          <img src={image} alt={''} width="100%" object-fit="cover"/>
+        </div>
+      )
+      }
+    </div>
+    <div
+      class={twMerge(
+        "font-bold leading-tighter tracking-tighter font-heading",
+        titleClass
+      )}
+      set:html={result.title}
+    />
+
+    <p
+      class={twMerge("mt-2 mb-2 text-muted", subtitleClass)}
+      set:html={result.description}
+    />
+  </a>
+</WidgetWrapper>
