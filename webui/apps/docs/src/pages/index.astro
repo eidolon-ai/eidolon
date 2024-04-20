@@ -9,6 +9,7 @@ import Content from '~/components/widgets/Content.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import WidgetWrapper from "../components/ui/WidgetWrapper.astro";
 import Item from "../components/blog/GridItem.astro";
+import LinkUnfurl from "../components/widgets/LinkUnfurl.astro";
 
 const metadata = {
   title: 'Eidolon -- Build LLM Agents as Services',
@@ -311,6 +312,29 @@ const bg = await Astro.slots.render("bg")
   -->
 
   <!-- HighlightedPosts Widget ******* -->
+  <WidgetWrapper isDark={false} bg={bg} id="events">
+    <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
+      <div class="md:max-w-sm">
+        <h2
+          class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
+          set:html={"Events"}
+        />
+        <!--
+                    {APP_BLOG.list.isEnabled && linkText && linkUrl && (
+                      <Button variant="link" href={linkUrl}> {linkText} »</Button>
+                    )}
+        -->
+      </div>
+    </div>
+
+    <div class="grid gap-6 row-gap-5 md:grid-cols-2 lg:grid-cols-3 -mb-6">
+      <LinkUnfurl url="https://lu.ma/2qud1jh1"/>
+      <LinkUnfurl url="https://lu.ma/z2kghncv"/>
+      <LinkUnfurl url="https://lu.ma/127rux39"/>
+    </div>
+    <!--<Grid posts={posts}/>-->
+  </WidgetWrapper>
+  
   <WidgetWrapper isDark={false} bg={bg}>
     <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
       <div class="md:max-w-sm">
