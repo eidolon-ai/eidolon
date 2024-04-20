@@ -15,6 +15,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const hasExternalScripts = false;
 const whenExternalScripts = (items = []) => hasExternalScripts ? Array.isArray(items) ? items.map(item => item()) : [items()] : [];
 
+/// <reference path="../node_modules/@astrojs/starlight/virtual.d.ts"/>
+
 // https://astro.build/config
 export default defineConfig({
   output: 'static',
@@ -45,7 +47,10 @@ export default defineConfig({
     starlight({
       title: "Introduction",
       disable404Route: true,
-      components: {},
+      components: {
+        "PageFrame": "~/components/StarlightPageFame.astro",
+        "Header": "~/components/DocsHeader.astro",
+      },
       social: {
         github: 'https://github.com/eidolon-ai/eidolon',
         youtube: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
