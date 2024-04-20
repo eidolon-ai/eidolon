@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "push_github_stats"
+version = "0.1.0"
+description = ""
+authors = ["Luke Lalor <lukehlalor@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+setuptools = "^69.0.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 121
