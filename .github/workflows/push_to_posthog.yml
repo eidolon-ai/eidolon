@@ -6,47 +6,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  send_traffic_data:
+  push_to_posthog:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Get repository traffic data and send to PostHog
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-      run: |
-        # Get the repository owner and name
-        OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
-        REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-
-        # Get the clone traffic data
-        CLONES=$(gh api -H "Accept: application/vnd.github+json" /repos/$OWNER/$REPO/traffic/clones | jq '.count')
-        UNIQUE_CLONES=$(gh api -H "Accept: application/vnd.github+json" /repos/$OWNER/$REPO/traffic/clones | jq '.uniques')
-
-        # Get the view traffic data
-        VIEWS=$(gh api -H "Accept: application/vnd.github+json" /repos/$OWNER/$REPO/traffic/views | jq '.count')
-        UNIQUE_VIEWS=$(gh api -H "Accept: application/vnd.github+json" /repos/$OWNER/$REPO/traffic/views | jq '.uniques')
-
-        # Prepare the payload for PostHog
-        PAYLOAD=$(cat <<EOF
-        {
-          "event": "repository_traffic",
-          "api_key": "$POSTHOG_API_KEY",
-          "distinct_id": "github_repository_traffic",
-          "properties": {
-            "clones": $CLONES,
-            "unique_clones": $UNIQUE_CLONES,
-            "views": $VIEWS,
-            "unique_views": $UNIQUE_VIEWS,
-            "repository": "${{ github.repository }}"
-          }
-        }
-        EOF
-        )
-
-        # Send the payload to PostHog
-        curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "https://app.posthog.com/capture"
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: scripts
+      - run: poetry run push_stats  --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
+        working-directory: scripts
