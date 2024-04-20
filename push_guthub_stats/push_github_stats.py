@@ -141,13 +141,13 @@ def main():
     if clones:
         clones_per_day = [(clone["timestamp"], clone["count"]) for clone in clones]
         unique_clones_per_day = [(clone["timestamp"], clone["uniques"]) for clone in clones]
-        insert_into_posthog("github_clones", clones_per_day, args.api_key, args.project_key)
-        insert_into_posthog("github_unique_clones", unique_clones_per_day, args.api_key, args.project_key)
+        insert_into_posthog("gh_clones", clones_per_day, args.api_key, args.project_key)
+        insert_into_posthog("gh_unique_clones", unique_clones_per_day, args.api_key, args.project_key)
     if views:
         views_per_day = [(view["timestamp"], view["count"]) for view in views]
         unique_views_per_day = [(view["timestamp"], view["uniques"]) for view in views]
-        insert_into_posthog("github_views", views_per_day, args.api_key, args.project_key)
-        insert_into_posthog("github_unique_views", unique_views_per_day, args.api_key, args.project_key)
+        insert_into_posthog("gh_views", views_per_day, args.api_key, args.project_key)
+        insert_into_posthog("gh_unique_views", unique_views_per_day, args.api_key, args.project_key)
 
 
 if __name__ == "__main__":
