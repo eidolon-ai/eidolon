@@ -6,7 +6,6 @@ instructions to get your development environment set up and the server running s
 ## Running With Docker
 If you are looking to get started quickly, we publish an image that you can use without needing to set a development environment.
 
-We need to e
 ### mac
 ```bash
 docker run -e "EIDOLON_SERVER=http://host.docker.internal:8080" -p 3000:3000 eidolonai/webui:latest
