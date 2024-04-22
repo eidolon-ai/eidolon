@@ -22,11 +22,6 @@ from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
-class ArgumentDefinitions(BaseModel):
-    name: str
-    json_schema: dict
-
-
 class ActionDefinition(BaseModel):
     name: str = "converse"
     description: Optional[str] = None
