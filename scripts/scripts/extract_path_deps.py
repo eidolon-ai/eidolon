@@ -12,6 +12,6 @@ def extract_path_deps(loc, suffix):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get path dependencies from a poetry project")
-    parser.add_argument("loc", help="project location")
+    parser.add_argument("--loc", required=False, help="project location", default=".")
     parser.add_argument("--suffix", required=False, help="suffix to add to the path", default=None)
     extract_path_deps(**vars(parser.parse_args()))
