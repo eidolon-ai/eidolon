@@ -191,7 +191,7 @@ def named_builtins():
         FilesystemLoader,
         GitHubLoader,
         ToTChecker,
-        [AudioUnit, OpenAiSpeech],
+        (AudioUnit, OpenAiSpeech),
         OpenAiSpeech,
         AsyncOpenAI,
         AsyncAzureOpenAI,
