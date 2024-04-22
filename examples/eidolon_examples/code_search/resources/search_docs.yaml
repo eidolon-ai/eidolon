@@ -7,4 +7,4 @@ spec:
   implementation: RetrieverAgent
   name: "search_docs"
   description: "Searches for snippets in the documentation"
-  loader_root_location: "file://../docs2/src/content/docs"
+  loader_root_location: "file://../webui/apps/docs/src/content/docs"
