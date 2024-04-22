@@ -1,17 +1,8 @@
 'use client';
-import {
-  createContext,
-  useReducer,
-  useContext,
-  FunctionComponent,
-  PropsWithChildren,
-  Dispatch,
-  ComponentType,
-} from 'react';
+import {ComponentType, createContext, Dispatch, FunctionComponent, PropsWithChildren, useContext, useReducer,} from 'react';
 // import useMediaQuery from '@mui/material/useMediaQuery';
 import AppReducer from './AppReducer';
-import {localStorageGet, localStorageSet} from '../utils';
-import { IS_SERVER } from '../utils';
+import {IS_SERVER, localStorageGet} from '../utils';
 
 /**
  * AppState data structure and initial values
@@ -21,11 +12,13 @@ export interface AppStoreState {
   themeMode: string
   isAuthenticated: boolean;
   currentUser?: object | undefined;
+  userUsageSeed: number
 }
 const INITIAL_APP_STATE: AppStoreState = {
   darkMode: false, // Overridden by useMediaQuery('(prefers-color-scheme: dark)') in AppStore
   themeMode: "system",
   isAuthenticated: false, // Overridden in AppStore by checking auth token
+  userUsageSeed: 0
 };
 
 /**
@@ -52,7 +45,8 @@ const AppStoreProvider: FunctionComponent<PropsWithChildren> = ({ children }) =>
   const initialState: AppStoreState = {
     ...INITIAL_APP_STATE,
     darkMode: previousDarkMode === "system" ? prefersDarkMode : previousDarkMode === "dark",
-    themeMode: previousDarkMode
+    themeMode: previousDarkMode,
+    userUsageSeed: 0
     // isAuthenticated: tokenExists,
   };
   const value: AppContextReturningType = useReducer(AppReducer, initialState);

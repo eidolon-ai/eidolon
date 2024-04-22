@@ -6,6 +6,7 @@ import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
 import {CopilotInputPanel} from "./copilot_input_form";
 import {useProcessEvents} from "../hooks/useProcessEvents";
 import {CopilotParams} from "../lib/util";
+import {useEidolonContext} from "../provider/eidolon_provider";
 
 export interface CopilotPanelParams {
   machineUrl: string
@@ -14,12 +15,13 @@ export interface CopilotPanelParams {
 }
 
 export function CopilotPanel({machineUrl, processId, copilotParams}: CopilotPanelParams) {
+  const [_, dispatch] = useEidolonContext()
   const {
     elementsAndLookup,
     processState,
     executeAction,
     handleCancel
-  } = useProcessEvents(machineUrl, copilotParams.agent, processId)
+  } = useProcessEvents(machineUrl, copilotParams.agent, processId, dispatch)
 
   return (
     <Box sx={{

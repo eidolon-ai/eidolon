@@ -2,7 +2,6 @@ import {useCallback} from 'react';
 import {sessionStorageDelete} from '@/utils/sessionStorage';
 import {useAppStore} from '../store';
 import {useSession} from "next-auth/react";
-import {auth} from "../../auth";
 
 /**
  * Hook to detect is current user authenticated or not

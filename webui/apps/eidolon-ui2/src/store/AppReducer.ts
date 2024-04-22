@@ -1,7 +1,6 @@
 import {Reducer} from 'react';
-import {localStorageSet} from '../utils/index';
+import {IS_SERVER, localStorageSet} from '../utils/index';
 import {AppStoreState} from './AppStore';
-import {IS_SERVER} from "../utils/index";
 
 /**
  * Reducer for global AppStore using "Redux styled" actions
@@ -42,6 +41,11 @@ const AppReducer: Reducer<AppStoreState, any> = (state, action) => {
         darkMode: newDarkMode,
       };
     }
+    case 'USER_USAGE':
+      return {
+        ...state,
+        userUsageSeed: state.userUsageSeed+1,
+      };
     default:
       return state;
   }

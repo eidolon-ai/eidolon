@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "scripts"
+version = "0.1.0"
+description = ""
+authors = []
+
+[tool.poetry.scripts]
+push_stats = "scripts.push_github_stats:main"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+setuptools = "^69.0.2"
+requests = "^2.31.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 121
