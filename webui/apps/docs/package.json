@@ -9,8 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "format": "prettier -w .",
-    "lint:eslint": "eslint . --ext .js,.ts,.astro"
+    "format": "prettier -w ."
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.5",
@@ -23,6 +22,7 @@
     "astro-icon": "^1.1.0",
     "limax": "4.1.0",
     "lodash.merge": "^4.6.2",
+    "unfurl.js": "^6.4.0",
     "unpic": "^3.18.0"
   },
   "devDependencies": {
