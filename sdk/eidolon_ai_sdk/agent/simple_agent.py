@@ -22,11 +22,16 @@ from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
+class ArgumentDefinitions(BaseModel):
+    name: str
+    json_schema: dict
+
+
 class ActionDefinition(BaseModel):
     name: str = "converse"
     description: Optional[str] = None
     user_prompt: str = "{{ body }}"
-    input_schema: dict = None
+    input_schema: Dict[str, dict] = {}
     output_schema: Union[Literal["str"], Dict[str, Any]] = "str"
     allow_file_upload: bool = False
     # allow all types for text, image, audio, word, pdf, json, etc
@@ -37,11 +42,11 @@ class ActionDefinition(BaseModel):
     @field_validator("input_schema")
     def validate_prompt_properties(cls, input_dict):
         if not isinstance(input_dict, dict):
-            raise ValueError("prompt_properties must be a dict")
+            raise ValueError("input_schema must be a dict")
         for k, v in input_dict.items():
             if isinstance(v, dict):
                 if v.get("format") == "binary":
-                    raise ValueError("prompt_properties cannot contain format = 'binary' fields.")
+                    raise ValueError("input_schema cannot contain format = 'binary' fields.")
         return input_dict
 
     @field_validator("supported_mime_types")
@@ -80,14 +85,11 @@ class ActionDefinition(BaseModel):
         # pop out any reserved keywords we will inject
         if "datetime_iso" in user_vars:
             user_vars.remove("datetime_iso")
-        if self.input_schema is not None:
-            properties["body"] = dict(type="object", properties=self.input_schema)
-            required.append("body")
-        elif len(user_vars) == 1 and "body" in user_vars and not agent.spec.apus and not self.allow_file_upload:
+        if len(user_vars) == 1 and "body" in user_vars and not agent.spec.apus and not self.allow_file_upload:
             properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
             required.append("body")
         elif user_vars:
-            props = {v: dict(type="string") for v in user_vars}
+            props = {v: self.input_schema.get(v, dict(type="string")) for v in user_vars}
             properties["body"] = dict(type="object", properties=props)
             required.append("body")
 
