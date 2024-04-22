@@ -11,6 +11,7 @@ push_stats = "scripts.push_github_stats:main"
 python = ">=3.11,<3.12"
 setuptools = "^69.0.2"
 requests = "^2.31.0"
+toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
