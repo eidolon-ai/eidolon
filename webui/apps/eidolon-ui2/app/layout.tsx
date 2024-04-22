@@ -6,6 +6,7 @@ import defaultTheme, {ThemeProvider} from '@/theme';
 import CurrentLayout from '@/layout';
 import './globals.css';
 import {SessionProvider} from "next-auth/react";
+import {EidolonProvider} from "@eidolon/components";
 
 const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)?.main || '#FFFFFF';
 
@@ -25,9 +26,11 @@ const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
     <body>
     <SessionProvider>
       <AppStoreProvider>
-        <ThemeProvider>
-          <CurrentLayout>{children}</CurrentLayout>
-        </ThemeProvider>
+        <EidolonProvider>
+          <ThemeProvider>
+            <CurrentLayout>{children}</CurrentLayout>
+          </ThemeProvider>
+        </EidolonProvider>
       </AppStoreProvider>
     </SessionProvider>
     </body>

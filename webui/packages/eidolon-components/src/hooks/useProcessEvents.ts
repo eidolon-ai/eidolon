@@ -5,19 +5,28 @@ import {ProcessStatus} from "@eidolon/client";
 import {ElementsAndLookup} from "../lib/display-elements";
 import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper";
 import {getProcessStatus} from "../client-api-helpers/process-helper";
+import {EidolonEvent, RecordUsage} from "../provider/eidolon_provider";
 
-export function useProcessEvents(machineUrl: string, agent: string, processId: string) {
+export function useProcessEvents(machineUrl: string, agent: string, processId: string,
+                                 // eslint-disable-next-line no-unused-vars
+                                 usageUpdateEvent: (event: EidolonEvent) => void
+) {
   const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)
   const cancelFetchController = useRef<AbortController | null>();
   const [elementsAndLookup, setElementsAndLookup] =
     useState<ElementsAndLookup>({elements: [], lookup: {}})
 
+  const updateElements = (elements: ElementsAndLookup) => {
+    usageUpdateEvent(RecordUsage)
+    setElementsAndLookup(elements)
+  }
+
   function getChatEvents() {
-    setElementsAndLookup({elements: [], lookup: {}})
+    updateElements({elements: [], lookup: {}})
     setProcessState(undefined)
     getChatEventInUI(machineUrl, processId).then((elements) => {
       if (elements) {
-        setElementsAndLookup(elements)
+        updateElements(elements)
       }
       setAgentState()
     })
@@ -43,7 +52,7 @@ export function useProcessEvents(machineUrl: string, agent: string, processId: s
     }
     cancelFetchController.current = new AbortController();
     try {
-      await executeServerOperation(machine, agent, operation, processId, data, elementsAndLookup, setElementsAndLookup, cancelFetchController.current)
+      await executeServerOperation(machine, agent, operation, processId, data, elementsAndLookup, updateElements, cancelFetchController.current)
       setAgentState();
       cancelFetchController.current = null;
     } catch (error) {

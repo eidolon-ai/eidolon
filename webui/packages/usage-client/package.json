@@ -1,0 +1,21 @@
+{
+  "name": "@eidolon/usage-client",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "openapi-ts": "openapi-ts"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-typescript": "^7.23.3",
+    "@hey-api/openapi-ts": "^0.40.0",
+    "@jest/globals": "^29.7.0",
+    "@repo/typescript-config": "workspace:*",
+    "@turbo/gen": "^1.12.5",
+    "@types/node": "^20.11.28",
+    "jest": "^29.7.0",
+    "typescript": "^5.4.2"
+  }
+}
