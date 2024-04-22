@@ -1,5 +1,6 @@
 import argparse
 import json
+from datetime import datetime
 from typing import List, Tuple
 
 import requests
@@ -48,9 +49,26 @@ def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_
 
     # Iterate over each day's traffic data
     for timestamp, count in counts:
+        date = timestamp.split("T")[0]
+        # check if the date is more than 10 days old
+        if (datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > 10:
+            print(f"Skipping data for date {date} as it is more than 10 days old.")
+            continue
 
         # Check if data for the current day already exists in PostHog
-        if not is_data_duplicated(event_name, timestamp, posthog_api_key, posthog_project_key):
+        events = get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key)
+        should_insert = False
+        if events:
+            existing_count = 0
+            for event in events:
+                existing_count += event["properties"]["count"]
+
+            if existing_count != count:
+                should_insert = True
+                print(f"Updating existing data for date {timestamp} existing_count: {existing_count}, need: {count}, with new count {count - existing_count}")
+                count = count - existing_count
+
+        if should_insert:
             # Prepare the data payload
             data = {
                 "event": event_name,
@@ -65,6 +83,7 @@ def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_
 
             try:
                 # Send a POST request to the PostHog API endpoint
+                print("Going to insert data...", data)
                 response = requests.post(posthog_url, headers=headers, json=data)
 
                 # Check if the request was successful
@@ -78,7 +97,7 @@ def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_
             print(f"Data already exists for event {event_name}, timestamp: {timestamp}. Skipping insertion.")
 
 
-def is_data_duplicated(event_name, timestamp, posthog_api_key, posthog_project_key):
+def get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key):
     # Set the PostHog API endpoint URL for querying events
     posthog_url = "https://app.posthog.com/api/event/"
 
@@ -108,19 +127,13 @@ def is_data_duplicated(event_name, timestamp, posthog_api_key, posthog_project_k
         if response.status_code == 200:
             # Extract the events from the response
             events = response.json()["results"]
-
-            print("Got events ", len(events))
-            # Check if any events exist for the given timestamp
-            if len(events) > 0:
-                return True
-            else:
-                return False
+            return events
         else:
             print(f"Failed to retrieve events from PostHog. Status code: {response.status_code}, {response.text}")
-            return True
+            return None
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while checking for duplicates. Error: {e}")
-        return True
+        return None
 
 
 def main():
