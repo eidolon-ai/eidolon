@@ -14,15 +14,15 @@ publish_pypi: $(PYPI_PUBLISH_TARGETS)
 # Our pyproject.toml files depend on everything in the project directory except and upstream pyproject.toml files
 $(VERSIONED_TOML_FILES): %/pyproject.toml: \
 $$(filter-out %/pyproject.toml %/poetry.lock %/pypi_publish_version, $$(shell find % -type f -not -path "*/tests/*" -not -path "*/dist/*" | sed 's/ /\\ /g')) \
-$$(shell cd scripts && poetry run get_deps --loc % --workdir .. --suffix pyproject.toml)
+$$(shell make -C scripts "run get_deps --loc $(%) --workdir .. --suffix pyproject.toml")
 	@echo "Updating $*";
-	@cd scripts; poetry run update_deps ../$*;
+	@make -C scripts run "update_deps ../${*}";
 	@cd $*; poetry version patch;
 	@cd $*; poetry lock --no-update;
 
 # Our publish targets (.pypi_published) depend on their the pyproject.toml file and upstream publish targets
 # These files represent the last version of the package published to PyPI
 $(PYPI_PUBLISH_TARGETS): %/.pypi_published: %/pyproject.toml \
-$$(shell cd scripts && poetry run get_deps --loc % --workdir .. --suffix .pypi_published)
+$$(shell make -C scripts "run get_deps --loc $(%) --workdir .. --suffix .pypi_published")
 	@#cd $*; poetry publish --build;
 	@echo $(shell grep -m 1 '^version = ' $*/pyproject.toml | awk -F '"' '{print $$2}') > $*/pypi_publish_version
