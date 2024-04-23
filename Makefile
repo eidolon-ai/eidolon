@@ -28,14 +28,14 @@ $$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix pyproject
 	@cd $*; poetry lock --no-update;
 
 
-# Our publish targets (.pypi_published) depend on their the pyproject.toml file and upstream publish targets
-# These files represent the last version of the package published to PyPI
+# Our publish targets (.pypi_published) depend on their the pyproject.toml file and upstream publish targets (to make sure we publish in proper order)
 $(PYPI_PUBLISH_TARGETS): %/.pypi_phony: %/pyproject.toml \
 $$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix .pypi_phony");
 	@PACKAGE_NAME=$(shell grep -m 1 '^name = ' $*/pyproject.toml | awk -F '"' '{print $$2}'); \
 	CURRENT_VERSION=$(shell grep -m 1 '^version = ' $*/pyproject.toml | awk -F '"' '{print $$2}'); \
 	if ! pip index versions $$PACKAGE_NAME 2>/dev/null | grep -q $$CURRENT_VERSION; then \
 		echo "Version $$CURRENT_VERSION of $$PACKAGE_NAME is not published on PyPI. Publishing now..."; \
+		cd $*; poetry publish --build; \
 	else \
 		echo "Version $$CURRENT_VERSION of $$PACKAGE_NAME is already published on PyPI."; \
 	fi;
