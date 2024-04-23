@@ -29,6 +29,7 @@ $$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix pyproject
 
 
 # Our publish targets (.pypi_published) depend on their the pyproject.toml file and upstream publish targets (to make sure we publish in proper order)
+# Targets are phony, so there is no caching. Since we publish limited projects, we can check every time for simplicity.
 $(PYPI_PUBLISH_TARGETS): %/.pypi_phony: %/pyproject.toml \
 $$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix .pypi_phony");
 	@PACKAGE_NAME=$(shell grep -m 1 '^name = ' $*/pyproject.toml | awk -F '"' '{print $$2}'); \

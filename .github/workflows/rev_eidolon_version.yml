@@ -1,0 +1,42 @@
+name: Rev and Publish Python Projects
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+
+      - name: "Update Eidolon Dependency Versions"
+        run: |
+          make update_deps
+          echo "TAGGING_MESSAGE=$(make -C scripts run get_tags >> $GITHUB_ENV)" >> $GITHUB_ENV
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "bumping versions"
+          tagging_message: ${{ env.TAGGING_MESSAGE }}
+
+      - name: "Publish to PyPI"
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          make publish_pypi
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        id: pyp-publish-commit
+        with:
+          commit_message: "changes occurred while publishing"
+      - name: "ERROR: Publish to PyPI should not cause changes"
+        if: steps.pyp-publish-commit.outputs.changes_detected == 'true'
+        run: exit 1
