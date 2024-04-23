@@ -29,7 +29,7 @@ jobs:
       - name: "Update Eidolon Dependency Versions"
         run: |
           make update_deps
-          echo "TAGGING_MESSAGE=$(make -C scripts run get_tags >> $GITHUB_ENV)" >> $GITHUB_ENV
+          echo "TAGGING_MESSAGE=$(make -C scripts run get_tags)" >> $GITHUB_ENV
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "bumping versions"
