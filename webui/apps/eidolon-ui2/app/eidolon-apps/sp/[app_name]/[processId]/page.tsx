@@ -2,9 +2,8 @@
 
 import * as React from "react";
 import {useEffect} from "react";
-import {CopilotPanel, CopilotParams, EidolonApp, getProcessStatus} from "@eidolon/components";
+import {CopilotPanel, CopilotParams, EidolonApp, getOperations, getProcessStatus} from "@eidolon/components";
 import {getApps} from "@/utils/app-registry-helper";
-import {getOperations} from "@eidolon/components/src/client-api-helpers/machine-helper";
 
 export interface ProcessPageProps {
   params: {
@@ -18,7 +17,7 @@ export default function ({params}: ProcessPageProps) {
   const [error, setError] = React.useState<string | undefined>(undefined)
   useEffect(() => {
     getApps().then((apps) => {
-      const app = apps.find((a: EidolonApp) => a.name.toLowerCase() === params.app_name.toLowerCase())
+      const app = apps[params.app_name]
       if (!app) {
         setError("App not found")
       } else {
@@ -40,7 +39,6 @@ export default function ({params}: ProcessPageProps) {
       })
       .then((res) => {
         const {operations, app} = res!
-        console.log(operations, app)
         const options = app.params as CopilotParams
         const operation = operations.find((o) => o.name === options.operation)
         if (!operation) {
@@ -58,7 +56,7 @@ export default function ({params}: ProcessPageProps) {
       .catch((e) => {
         setError(e.message)
       })
-  }, [params]);
+  }, [params.app_name, params.processId]);
 
   if (!error && !app) {
     return <div>Loading...</div>

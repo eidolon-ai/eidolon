@@ -9,6 +9,6 @@ export async function getApps() {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
-      return resp.json().then((json: Record<string, any>) => json as EidolonApp[])
+      return resp.json().then((json: Record<string, any>) => json as Record<string, EidolonApp>)
     })
 }

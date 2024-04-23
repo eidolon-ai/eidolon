@@ -1,9 +1,12 @@
+'use client'
+
 import {Box} from "@mui/material";
 import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
 import {ProcessesProvider} from "@eidolon/components/src/hooks/process_context";
-import {EidolonApp} from "@/utils/eidolon-apps";
-import {EidolonClient} from "@eidolon/client";
+import {EidolonApp} from "@eidolon/components";
+import {useEffect, useState} from "react";
+import {getAgents} from "@eidolon/components/src/client-api-helpers/machine-helper";
 
 
 export interface DevTooLayoutProps {
@@ -11,15 +14,7 @@ export interface DevTooLayoutProps {
   children: JSX.Element
 }
 
-export async function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
-  let agents: string[] = []
-  try {
-    const client = new EidolonClient(app.location)
-    agents = await client.getAgents()
-  } catch {
-    // do noting
-  }
-
+export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
   return (
     <ProcessesProvider>
       <Box sx={{
@@ -33,7 +28,7 @@ export async function ProcessWithListLayout({children, app}: DevTooLayoutProps) 
             [`& .MuiDrawer-paper`]: {boxSizing: 'border-box'},
           }}
         >
-          <DevProcessListWithAdd agents={agents} app={app} />
+          <DevProcessListWithAdd app={app} />
         </ResizableDrawer>
         <Box component="main" flexGrow={1}>
           <Box height={"calc(100vh - 64px)"} display={"flex"} justifyContent={"center"}>
@@ -43,5 +38,4 @@ export async function ProcessWithListLayout({children, app}: DevTooLayoutProps) 
       </Box>
     </ProcessesProvider>
   );
-
 }

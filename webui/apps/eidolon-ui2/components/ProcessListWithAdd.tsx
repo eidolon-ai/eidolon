@@ -1,6 +1,6 @@
 'use client'
 
-import {CopilotParams, createProcess, ProcessList} from "@eidolon/components";
+import {CopilotParams, createProcess, EidolonApp, ProcessList} from "@eidolon/components";
 import {usePathname, useRouter} from "next/navigation";
 import {ProcessStatus} from "@eidolon/client";
 import * as React from "react";
@@ -10,14 +10,12 @@ import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Tool
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
 import {useProcesses} from "@eidolon/components/src/hooks/process_context";
-import {EidolonApp} from "@/utils/eidolon-apps";
 
 export interface DevProcessListWithAddProps {
-  agents: string[]
   app: EidolonApp
 }
 
-export const DevProcessListWithAdd = ({agents, app}: DevProcessListWithAddProps) => {
+export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
   const machineURL = app.location
   const {updateProcesses} = useProcesses()
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
@@ -28,7 +26,9 @@ export const DevProcessListWithAdd = ({agents, app}: DevProcessListWithAddProps)
     if (app.type === 'copilot') {
       const options = app.params as CopilotParams
       createProcess(machineURL, options.agent, "New Chat").then((process) => {
-        router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
+        if (process) {
+          router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
+        }
       }).then(() => updateProcesses(machineURL))
     } else {
       setCreateProcessOpen(true)
@@ -58,7 +58,7 @@ export const DevProcessListWithAdd = ({agents, app}: DevProcessListWithAddProps)
         goHome={() => {
         }}
       />
-      <StartProgramDialog agents={agents} machineUrl={machineURL} open={createProcessOpen} onClose={() => {
+      <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} onClose={() => {
         setCreateProcessOpen(false)
       }}/>
     </Box>

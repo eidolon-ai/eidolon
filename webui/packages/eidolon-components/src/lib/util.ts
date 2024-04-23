@@ -25,6 +25,8 @@ export interface CopilotParams {
 }
 
 export interface DevParams {
+  agent: string,
+  operations: OperationInfo[],
 }
 
 
