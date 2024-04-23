@@ -1,4 +1,13 @@
+PYPROJECT_FILES := $(shell find . -name 'pyproject.toml')
+
 .SECONDEXPANSION:
-$(wildcard **/pyproject.toml): %/pyproject.toml : $$(filter-out $$@, $$(wildcard %/*)) $$(wildcard %/**/*) $$(shell cd scripts && poetry run get_deps --loc % --workdir .. --suffix pyproject.toml)
-	@#echo "Dependencies: $^"
-	cd $*; poetry version patch;
+$(PYPROJECT_FILES): %/pyproject.toml: \
+$$(filter-out %/pyproject.toml %/poetry.lock, $$(shell find % -type f | sed 's/ /\\ /g')) \
+$$(shell cd scripts && poetry run get_deps --loc % --workdir .. --suffix pyproject.toml)
+	@echo "Updating $*";
+	@cd $*; poetry version patch;
+
+
+.PHONY: update_deps
+update_deps: $(PYPROJECT_FILES)
+	@echo "Updated dependencies"
