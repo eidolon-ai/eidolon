@@ -6,6 +6,7 @@ authors = []
 
 [tool.poetry.scripts]
 push_stats = "scripts.push_github_stats:main"
+get_deps = "scripts.extract_path_deps:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
