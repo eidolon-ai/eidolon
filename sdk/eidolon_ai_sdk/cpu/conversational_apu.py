@@ -31,7 +31,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     UserMessage,
 )
-from eidolon_ai_sdk.cpu.agent_cpu import AgentCPU, AgentCPUSpec, Thread, CPUException
+from eidolon_ai_sdk.cpu.agent_cpu import APU, APUSpec, Thread, APUException
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import AssistantMessage, ToolResponseMessage, LLMMessage

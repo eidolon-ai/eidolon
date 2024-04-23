@@ -3,8 +3,9 @@ kind: Agent
 metadata:
   name: CompanyResearcher
 spec:
-  cpu:
-    logic_units: [Browser, Search]
+  implementation: eidolon.examples.eidolon_examples.venture_search_agent.harmonic_api_logic_unit.ApiLogicUnit
+  apu:
+    logic_units: [Browser, Search, ApiLogicUnit]
   description: "Creates company summaries"
   system_prompt: |-
     You are a helpful assistant who goes to the url of a given company, and provides a 2 sentence summary.
@@ -14,7 +15,7 @@ spec:
       user_prompt: |-
         Give me a summary of {{ company_name }}.
         Company website {{url}}
-        Company Category {{category}} 
+        Company Category {{category}}
       output_schema:
         type: object
         properties:
@@ -31,4 +32,3 @@ spec:
             type: string
             description: "How does the company make money?"
 
-      
