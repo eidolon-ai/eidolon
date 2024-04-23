@@ -1,9 +1,9 @@
-VERSION ?= prepatch
+VERSION ?= patch
 PYPROJECT_FILES := $(shell find . -name 'pyproject.toml')
 
 .SECONDEXPANSION:
 $(PYPROJECT_FILES): %/pyproject.toml: \
-$$(filter-out %/pyproject.toml %/poetry.lock, $$(shell find % -type f | sed 's/ /\\ /g')) \
+$$(filter-out %/pyproject.toml %/poetry.lock, $$(shell find % -type f -not -path "*/tests/*" | sed 's/ /\\ /g')) \
 $$(shell cd scripts && poetry run get_deps --loc % --workdir .. --suffix pyproject.toml)
 	@echo "Updating $*";
 	@cd scripts; poetry run update_deps ../$*;
@@ -13,4 +13,4 @@ $$(shell cd scripts && poetry run get_deps --loc % --workdir .. --suffix pyproje
 
 .PHONY: update_deps
 update_deps: $(PYPROJECT_FILES)
-	@echo "Updated dependencies"
+	@echo "Done!"
