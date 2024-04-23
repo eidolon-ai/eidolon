@@ -17,6 +17,7 @@ from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resou
 T = TypeVar("T", bound="Resource")  # noqa: F821
 S = TypeVar("S", bound="BaseModel")  # noqa: F821
 
+
 class AgentOS:
     _resources: Dict[str, Dict[str, Tuple["Resource", str]]] = ...  # noqa: F821
     file_memory: FileMemory = ...  # noqa: F821

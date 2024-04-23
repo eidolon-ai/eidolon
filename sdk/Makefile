@@ -12,10 +12,3 @@ push_image: docker
 	docker push ${PROJECT}/sdk_base:${VERSION}
 	docker push ${PROJECT}/sdk
 	docker push ${PROJECT}/sdk:${VERSION}
-
-pyproject.toml: $(wildcard eidolon_ai_sdk/*)
-	poetry add eidolon-ai-client@latest
-	poetry add eidolon-ai-usage-client@latest
-	poetry add eidolon-ai-client@latest
-	poetry version patch
-
