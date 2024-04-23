@@ -1,16 +1,21 @@
 [tool.poetry]
 name = "scripts"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = []
 
 [tool.poetry.scripts]
 push_stats = "scripts.push_github_stats:main"
+get_deps = "scripts.extract_path_deps:main"
+update_deps = "scripts.update_path_deps:main"
+get_tags = "scripts.get_commit_tags:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
 setuptools = "^69.0.2"
 requests = "^2.31.0"
+toml = "^0.10.2"
+gitpython = "^3.1.43"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
