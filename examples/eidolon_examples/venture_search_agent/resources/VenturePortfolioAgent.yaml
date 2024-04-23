@@ -42,3 +42,5 @@ spec:
     For example, if you are searching for articles only use agents that search for articles.
     
     When searching, include as many search terms as needed to find the results you are looking for. Be very specific in the query parameters to get the best results.
+  
+    Only call the tools once for each page.  Do not call the tools multiple times for the same page. If you can't find any results say so in the response.

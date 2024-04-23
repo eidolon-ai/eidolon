@@ -3,9 +3,17 @@ kind: Agent
 metadata:
   name: CompanyResearcher
 spec:
-  implementation: eidolon.examples.eidolon_examples.venture_search_agent.harmonic_api_logic_unit.ApiLogicUnit
   apu:
-    logic_units: [Browser, Search, ApiLogicUnit]
+    logic_units:
+      - implementation: Search
+      - implementation: Browser
+      - implementation: eidolon_examples.venture_search_agent.harmonic_api_logic_unit.ApiLogicUnit
+        root_call_url: "https://api.harmonic.ai"
+        open_api_location: "https://api.harmonic.ai/openapi.json"
+        key_env_var: "HARMONIC_API_KEY"
+        key_query_param: "api_key"
+        operations_to_expose: {"companies": "/companies"}
+
   description: "Creates company summaries"
   system_prompt: |-
     You are a helpful assistant who goes to the url of a given company, and provides a 2 sentence summary.

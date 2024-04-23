@@ -30,7 +30,7 @@ class VentureCopilot(AgentTemplate):
     async def summarize_websites(self, process_id, input: SummarizeWebsiteBody):
         portfolio_agent = Agent.get("VenturePortfolioAgent")
         companies: ProcessStatus = await portfolio_agent.run_program("search_portfolio", dict(url=input.venture_sites))
-
+        print(companies)
         # Prepare coroutines for both researching the company and analyzing relevancy
         coroutines = [self.research_and_rank_company(company, input.investment_thesis) for company in companies.data['companies']]
         if input.company_limit:

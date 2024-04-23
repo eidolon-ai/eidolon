@@ -1,27 +1,24 @@
 import os
-from contextlib import asynccontextmanager
-from typing import List, Optional, Literal, Any, Dict
+from typing import List, Optional, Any, Dict
 from urllib.parse import urljoin
 
-# from aiohttp import ClientSession
-from bs4 import BeautifulSoup
+import jsonref
 from httpx import AsyncClient, Timeout
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
-import jsonref
 
 
 class ApiLogicUnitSpec(BaseModel):
     root_call_url: str
     open_api_location: str
-    operations_to_expose: Dict[str, str] # map of tool name to openapi path
+    operations_to_expose: Dict[str, str]  # map of tool name to openapi path
     key_env_var: str
     key_query_param: Optional[str]
     put_key_as_bearer_token: bool = Field(default=False)
@@ -79,13 +76,14 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                     if "request_body" in method:
                         params["__body__"] = self._body_model(method, name + "_Body")
                         required.append("__body__")
+                    model = schema_to_model(dict(type="object", properties=params, required=required), name + "_Input")
                     description = self._description(method, name)
                     tools.append(FnHandler(
                         name=name,
                         description=lambda a, b: description,
                         input_model_fn=lambda a, b: model,
                         output_model_fn=lambda a, b: Any,
-                        fn=self._call_endpoint(operation, method_name),
+                        fn=self._call_endpoint(operation, method_name, method["parameters"]),
                         extra={
                             "title": method["summary"] or name,
                             "sub_title": operation,
@@ -94,20 +92,42 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                     ))
             return tools
 
-    def _call_endpoint(self, path, method):
+    def _call_endpoint(self, path: str, method, method_params):
+        api_key = os.environ.get(self.spec.key_env_var, None) if self.spec.key_env_var else None
+        headers = {
+            "Content-Type": "application/json"
+        }
+        if self.spec.put_key_as_bearer_token:
+            headers["Authorization"] = f"Bearer {api_key}"
+
         async def _fn(_self, **kwargs):
-            # todo -- need to convert params to query params
-            # todo -- need to add security key
-            
-            url = urljoin(self.spec.root_call_url, path)
+            path_to_call = path
+            query_params = {}
+            if api_key and self.spec.key_query_param:
+                query_params[self.spec.key_query_param] = api_key
+
+            if method_params:
+                for param in method_params:
+                    if param["in"] == "query":
+                        if param["name"] in kwargs:
+                            query_params[param["name"]] = kwargs[param["name"]]
+                    elif param["in"] == "path":
+                        path_to_call = path_to_call.replace(f"{{{param['name']}}}", kwargs[param["name"]])
+                    else:
+                        logger.error(f"Unsupported parameter location {param['in']}")
+
+            if query_params and len(query_params) > 0:
+                path_to_call += "?" + "&".join([f"{k}={v}" for k, v in query_params.items()])
+            body = kwargs.pop("__body__", {})
+            url = urljoin(self.spec.root_call_url, path_to_call)
             if method == "get":
-                return await self.get_content(url, **kwargs)
+                return await self.get_content(url, headers=headers, **body)
             elif method == "post":
-                return await self.post_content(url, **kwargs)
+                return await self.post_content(url, headers=headers, **body)
             else:
                 logger.error(f"Unsupported method {method}")
-        return _fn
 
+        return _fn
 
     @staticmethod
     def _body_model(endpoint_schema, name):

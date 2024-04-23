@@ -147,11 +147,3 @@ class Thread:
 class APUException(Exception):
     def __init__(self, description):
         super().__init__("CPU Error: " + description)
-
-
-class AgentCPU:
-    pass
-
-
-class CPUException:
-    pass

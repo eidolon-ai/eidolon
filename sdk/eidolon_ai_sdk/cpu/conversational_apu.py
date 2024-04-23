@@ -1,6 +1,4 @@
-import asyncio
-from time import time
-from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional
+from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
 
 from fastapi import HTTPException
 from opentelemetry import trace
@@ -31,10 +29,6 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     UserMessage,
 )
-from eidolon_ai_sdk.cpu.agent_cpu import APU, APUSpec, Thread, APUException
-from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_message import AssistantMessage, ToolResponseMessage, LLMMessage
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
@@ -55,8 +49,6 @@ class ConversationalAPUSpec(APUSpec):
     record_conversation: bool = True
     allow_tool_errors: bool = True
     document_processor: AnnotatedReference[DocumentProcessor]
-    exponential_backoff: Optional[float] = None
-    max_time_backing_off: int = 60
 
 
 class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLocator):
@@ -178,21 +170,6 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 execute_llm_ = self.llm_unit.execute_llm(
                     call_context, converted_conversation, llm_facing_tools, output_format
                 )
-                backoff_time = 1
-                t0 = time()
-                while True:
-                    try:
-                        execute_llm_ = self.llm_unit.execute_llm(call_context, conversation, llm_facing_tools, output_format)
-                        break
-                    except HTTPException as e:
-                        if e.status_code == 429 and self.spec.exponential_backoff:
-                            if time() - t0 > self.spec.max_time_backing_off:
-                                raise
-                            # todo log here, maybe output optional output to stream
-                            await asyncio.sleep(backoff_time)
-                            backoff_time = backoff_time*(self.spec.exponential_backoff**2)
-                        else:
-                            raise
                 # yield the events but capture the output, so it can be rolled into one event for memory.
                 # noinspection PyTypeChecker
                 stream_collector = StreamCollector(execute_llm_)
