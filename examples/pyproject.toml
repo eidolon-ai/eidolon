@@ -31,3 +31,6 @@ replay = "eidolon_ai_sdk.bin.replay:app"
 
 [tool.ruff]
 line-length = 121
+
+[tool.eidolon]
+update-tag = "examples"

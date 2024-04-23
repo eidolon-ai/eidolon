@@ -87,3 +87,6 @@ develop = true
 [tool.poetry.group.dev.dependencies.eidolon-ai-usage-client]
 path = "../usage-service/usage-client"
 develop = true
+
+[tool.eidolon]
+update-tag = "sdk"
