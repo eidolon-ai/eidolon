@@ -53,14 +53,14 @@ describe('server-handler', () => {
       expect(response.status).toBe(422)
     })
 
-    test('GET returns 404 if server is down', async () => {
+    test('GET returns 503 if server is down', async () => {
       const {req} = createMocks({
         method: 'GET',
         url: 'http://localhost/processes?machineURL=http://localhost:8080'
       })
       // @ts-ignore
       const response = await processesHandler.GET(req)
-      expect(response.status).toBe(404)
+      expect(response.status).toBe(503)
     })
 
     test('GET returns error when auth fails', async () => {
@@ -112,14 +112,14 @@ describe('server-handler', () => {
       expect(response.status).toBe(422)
     })
 
-    test('GET returns 404 if server is down', async () => {
+    test('GET returns 503 if server is down', async () => {
       const {req} = createMocks({
         method: 'GET',
         url: 'http://localhost/processes?machineURL=http://localhost:8080'
       })
       // @ts-ignore
       const response = await processHandler.GET(req, {params: {processid: '66267f160c3a347cff5dc9db'}})
-      expect(response.status).toBe(404)
+      expect(response.status).toBe(503)
     })
 
     test('GET returns error when auth fails', async () => {

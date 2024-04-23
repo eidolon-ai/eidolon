@@ -24,7 +24,7 @@ export function ChooseAgentForm({handleSubmit, machineUrl}: ChooseAgentFormProps
   useEffect(() => {
     getAgents(machineUrl).then((agents) => {
       setAgents(agents)
-    }).catch((e) => {
+    }).catch(() => {
       // ignore
     })
   }, [machineUrl]);

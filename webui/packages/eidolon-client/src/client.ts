@@ -169,6 +169,7 @@ export class EidolonClient {
 
   public async getOperations(agent: string): Promise<OperationInfo[]> {
     const ret = Object.values(await this.getActions())
+      .filter(op => op.agent === agent)
       .sort((a, b) => a.label.localeCompare(b.label))
     for (const op of ret) {
       this.convertBinary(op.schema)

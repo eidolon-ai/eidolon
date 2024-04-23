@@ -39,12 +39,12 @@ describe('process client helper', () => {
       ])
     })
 
-    test("returns 404 if eidolon server is down", async () => {
+    test("returns 503 if eidolon server is down", async () => {
       try {
         await getRootProcesses('http://localhost:8080')
         fail('should have thrown')
       } catch (e) {
-        expect(e.status).toBe(404)
+        expect(e.status).toBe(503)
       }
     })
   })
@@ -70,11 +70,11 @@ describe('process client helper', () => {
       )
     })
 
-    test("returns 404 if eidolon server is down", async () => {
+    test("returns 503 if eidolon server is down", async () => {
       try {
         await getProcessStatus('http://localhost:8080', "66267f160c3a347cff5dc9db")
       } catch (e) {
-        expect(e.status).toBe(404)
+        expect(e.status).toBe(503)
         return
       }
       fail('should have thrown')

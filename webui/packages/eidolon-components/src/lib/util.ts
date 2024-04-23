@@ -41,13 +41,13 @@ export function convertException(promise: Promise<any>) {
     } else if (e instanceof Error) {
       // @ts-ignore
       if (e?.cause?.code === 'ECONNREFUSED') {
-        return new Response('Connection refused', {status: 404})
+        return new Response('Server Down', {status: 503})
       }
 
       return new Response(e.message, {status: 500})
     } else {
       if (e?.cause?.code === 'ECONNREFUSED') {
-        return new Response('Connection refused', {status: 404})
+        return new Response('Server Down', {status: 503})
       }
 
       return new Response('Unknown error', {status: 500})
