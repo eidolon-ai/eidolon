@@ -1,7 +1,7 @@
 .PHONY: chatbot, chatbot_push
 
 PROJECT ?= docker.io/eidolonai
-VERSION := $(shell grep '^version = ' pyproject.toml | awk -F '"' '{print $$2}')
+VERSION := $(shell grep -m 1 '^version = ' pyproject.toml | awk -F '"' '{print $$2}')
 SDK_VERSION := $(shell grep '^version = ' ../sdk/pyproject.toml | awk -F '"' '{print $$2}')
 
 # Define the directories

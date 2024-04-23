@@ -1,7 +1,16 @@
-import appRegistry from 'eidolon-apps.json'
-import {CopilotParams, EidolonApp} from "@eidolon/components";
+import _appRegistry from 'eidolon-apps.json'
+import {EidolonApp, CopilotParams, DevParams} from "@eidolon/components";
 import * as fs from "fs";
 import {notFound} from "next/navigation";
+
+let appRegistry = _appRegistry
+if (process.env.EIDOLON_APP_REGISTRY_OVERRIDE) {
+  appRegistry = JSON.parse(process.env.EIDOLON_APP_REGISTRY_OVERRIDE)
+} else if (process.env.EIDOLON_APP_REGISTRY_LOC) {
+  const rawData = fs.readFileSync(process.env.EIDOLON_APP_REGISTRY_LOC, {encoding: 'utf8'});
+  appRegistry = JSON.parse(rawData)
+}
+
 
 
 interface RawAgentLocation {
