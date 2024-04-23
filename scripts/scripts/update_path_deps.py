@@ -16,7 +16,7 @@ def update_path_deps(loc):
 
             desired_version = "^" + version
             if data['tool']['poetry']['dependencies'][dep] != desired_version:
-                print(f"Updating {dep} to {desired_version}")
+                print(f"Dependency {dep} updated to {desired_version}")
                 data['tool']['poetry']['dependencies'][dep] = desired_version
                 changed = True
 
