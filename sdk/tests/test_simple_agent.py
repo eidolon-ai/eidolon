@@ -33,6 +33,13 @@ resources = [
     r("default"),
     r("test_no_vars", actions=[dict(user_prompt="What is the capital of France?")]),
     r("multiple_prompt_args", actions=[dict(user_prompt="{{ a1 }} {{ a2 }}")]),
+    r("json_input", actions=[dict(
+        user_prompt="Repeat the following text: {{ one_int }}, {{ two_optional }}, {{ three_default }}",
+        input_schema=dict(
+            one_int=dict(type="integer"),
+            two_optional=dict(type="string", default="default"),
+        )
+    )]),
     r(
         "json_output",
         actions=[
@@ -89,6 +96,11 @@ async def test_generating_title():
     assert isinstance(resp.data["population"], int) and resp.data["population"] > 0
     assert "paris" in resp.data["capital"].lower()
 
+
+async def test_json_input():
+    process = await Agent.get("json_input").create_process()
+    resp = await process.action("converse", body=dict(one_int=1, three_default="three"))
+    assert "1, default, three" in resp.data
 
 async def test_json_output():
     process = await Agent.get("json_output").create_process()
