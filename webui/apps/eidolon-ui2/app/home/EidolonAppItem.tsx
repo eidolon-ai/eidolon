@@ -1,8 +1,8 @@
 'use client'
 
-import {EidolonApp} from "@/utils/eidolon-apps";
 import {Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/material";
 import {useRouter} from "next/navigation";
+import {EidolonApp} from "@eidolon/components";
 
 export interface EidolonAppItemProps {
   path: string;

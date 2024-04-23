@@ -1,5 +1,6 @@
 import {EidolonClient} from "@eidolon/client";
 import {clearUsageCache} from "../usage-summary/usage_summary";
+import {convertException, processResponse} from "../lib/util";
 
 export const getAuthHeaders = (access_token: string | undefined): Record<string, string> => {
   if (!access_token) {
@@ -7,6 +8,48 @@ export const getAuthHeaders = (access_token: string | undefined): Record<string,
   }
   return {
     "Authorization": `Bearer ${access_token}`
+  }
+}
+
+export class MachineHandler {
+  private readonly accessTokenFn: () => Promise<string | undefined>
+
+  constructor(accessTokenFn: () => Promise<string | undefined>) {
+    this.accessTokenFn = accessTokenFn
+  }
+
+  async GET(req: Request): Promise<Response> {
+    const machineUrl = new URL(req.url).searchParams.get('machineURL')
+    if (!machineUrl) {
+      return new Response('machineUrl is required', {status: 422})
+    }
+    return processResponse(this.getAgents(machineUrl))
+  }
+
+  async getAgents(machineUrl: string) {
+    const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
+    return client.getAgents()
+  }
+}
+
+export class AgentHandler {
+  private readonly accessTokenFn: () => Promise<string | undefined>
+
+  constructor(accessTokenFn: () => Promise<string | undefined>) {
+    this.accessTokenFn = accessTokenFn
+  }
+
+  async GET(req: Request, {params}: { params: { agent: string } }): Promise<Response> {
+    const machineUrl = new URL(req.url).searchParams.get('machineURL')
+    if (!machineUrl) {
+      return new Response('machineUrl is required', {status: 422})
+    }
+    return processResponse(this.getOperations(machineUrl, params.agent))
+  }
+
+  async getOperations(machineUrl: string, agent: string) {
+    const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
+    return client.getOperations(agent)
   }
 }
 
@@ -20,11 +63,9 @@ export class ProcessesHandler {
   async GET(req: Request): Promise<Response> {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      console.log('non existent machine url')
       return new Response('machineUrl is required', {status: 422})
     }
-    const resp = await this.getProcesses(machineUrl);
-    return Response.json(resp)
+    return processResponse(this.getProcesses(machineUrl))
   }
 
   async POST(req: Request): Promise<Response> {
@@ -32,21 +73,17 @@ export class ProcessesHandler {
     const machineUrl = reqBody["machineUrl"]
     const agent = reqBody["agent"]
     const title = reqBody["title"]
-    const resp = await this.createProcess(machineUrl, agent, title);
-
-    return Response.json(resp)
+    return processResponse(this.createProcess(machineUrl, agent, title))
   }
 
   async getProcesses(machineUrl: string) {
-    console.debug('listing processes from machine', machineUrl)
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.getProcesses(0, 100);
+    return client.getProcesses(0, 100)
   }
 
   async createProcess(machineUrl: string, agent: string, title: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    const {status: resp} = await client.createProcess(agent, title)
-    return resp;
+    return client.createProcess(agent, title).then((resp) => resp.status)
   }
 }
 
@@ -69,15 +106,15 @@ export class ProcessHandler {
       console.error('params.processid is required')
       return new Response('params.processid is required', {status: 422})
     }
-    const resp = await this.getProcess(machineUrl, processId);
+    const resp = this.getProcess(machineUrl, processId);
 
-    return Response.json(resp)
+    return processResponse(resp)
   }
 
   async getProcess(machineUrl: string, processId: string) {
     console.debug('getting process with id', processId, 'from machine', machineUrl)
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.process(processId).status();
+    return client.process(processId).status()
   }
 
   async DELETE(req: Request, {params}: { params: { processid: string } }): Promise<Response> {
@@ -85,14 +122,12 @@ export class ProcessHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 422})
     }
-    await this.deleteProcess(machineUrl, params.processid);
-
-    return Response.json({status: "ok"})
+    return processResponse(this.deleteProcess(machineUrl, params.processid))
   }
 
   async deleteProcess(machineUrl: string, processid: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.process(processid).delete();
+    return client.process(processid).delete()
   }
 }
 
@@ -108,14 +143,12 @@ export class ProcessEventsHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 422})
     }
-    const resp = await this.getEvents(machineUrl, params.processid);
-
-    return Response.json(resp)
+    return processResponse(this.getEvents(machineUrl, params.processid))
   }
 
   async getEvents(machineUrl: string, processid: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.process(processid).events();
+    return client.process(processid).events()
   }
 
   async POST(req: Request, {params}: { params: { processid: string } }) {
@@ -172,7 +205,7 @@ export class ProcessEventsHandler {
     }
   }
 
-  async *execOperation(machineUrl: string, processId: string, agent: string, operation: string, reqBody: Record<string, any>) {
+  async* execOperation(machineUrl: string, processId: string, agent: string, operation: string, reqBody: Record<string, any>) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     for await (const e of client.process(processId).agent(agent).stream_action(operation, reqBody)) {
       await clearUsageCache()
@@ -195,13 +228,12 @@ export class FilesHandler {
       return new Response('machineUrl is required', {status: 422})
     }
     const mimeType = req.headers.get('mime-type')
-    let fileHandle = await this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType);
-    return Response.json(fileHandle);
+    return processResponse(this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType))
   }
 
   async uploadFile(machineUrl: string, processId: string, file: Blob, mimeType: string | null) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.process(processId).upload_file(file, mimeType);
+    return client.process(processId).upload_file(file, mimeType)
   }
 }
 
@@ -218,8 +250,7 @@ export class FileHandler {
       return new Response('machineUrl is required', {status: 400})
     }
     const reqBody = await req.json()
-    const fileHandle = await this.setMetadata(machineUrl, params.processid, params.fileid, reqBody);
-    return Response.json(fileHandle);
+    return processResponse(this.setMetadata(machineUrl, params.processid, params.fileid, reqBody))
   }
 
   // download file
@@ -228,13 +259,15 @@ export class FileHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 400})
     }
-    let {data, mimetype} = await this.downloadFile(machineUrl, params.processid, params.fileid);
-    return new Response(data, {
+    return convertException(this.downloadFile(machineUrl, params.processid, params.fileid).then(resp => {
+      const {data, mimetype} = resp
+      return new Response(data, {
         status: 200,
         headers: {
           'Content-Type': mimetype || 'application/octet-stream',
         },
       });
+    }))
   }
 
   async DELETE(req: Request, {params}: { params: { processid: string, fileid: string } }) {
@@ -242,22 +275,21 @@ export class FileHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 400})
     }
-    await this.deleteFile(machineUrl, params.processid, params.fileid);
-    return Response.json({status: "ok"});
+    return processResponse(this.deleteFile(machineUrl, params.processid, params.fileid).then(() => "ok"))
   }
 
   async downloadFile(machineUrl: string, processId: string, fileId: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.process(processId).download_file(fileId);
+    return client.process(processId).download_file(fileId)
   }
 
   async deleteFile(machineUrl: string, processId: string, fileId: string) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.process(processId).delete_file(fileId);
+    return client.process(processId).delete_file(fileId)
   }
 
   async setMetadata(machineUrl: string, processId: string, fileId: string, metadata: Record<string, any>) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-    return await client.process(processId).set_metadata(fileId, metadata);
+    return client.process(processId).set_metadata(fileId, metadata)
   }
 }

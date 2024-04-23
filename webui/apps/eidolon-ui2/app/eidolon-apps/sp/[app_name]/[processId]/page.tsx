@@ -1,9 +1,9 @@
-import {notFound} from "next/navigation";
+'use client'
+
 import * as React from "react";
-import {getApp} from "@/utils/eidolon-apps";
-import {_processHandler} from "../../../../api/eidolon/eidolon_helpers";
-import {CopilotPanel, CopilotParams} from "@eidolon/components";
-import {EidolonClient} from "@eidolon/client";
+import {useEffect} from "react";
+import {CopilotPanel, CopilotParams, EidolonApp, getOperations, getProcessStatus} from "@eidolon/components";
+import {getApps} from "@/utils/app-registry-helper";
 
 export interface ProcessPageProps {
   params: {
@@ -12,35 +12,63 @@ export interface ProcessPageProps {
   }
 }
 
-export default async function ({params}: ProcessPageProps) {
-  let app = getApp(params.app_name)!
-  if (!app) {
-    notFound()
-  }
-  const options = app.params as CopilotParams
-  const machineUrl = app.location!
-  const processStatus = await _processHandler.getProcess(machineUrl, params.processId)
-  if (!processStatus) {
-    notFound()
-  }
+export default function ({params}: ProcessPageProps) {
+  const [app, setApp] = React.useState<EidolonApp | undefined>(undefined)
+  const [error, setError] = React.useState<string | undefined>(undefined)
+  useEffect(() => {
+    getApps().then((apps) => {
+      const app = apps[params.app_name]
+      if (!app) {
+        setError("App not found")
+      } else {
+        const machineUrl = app.location!
+        return getProcessStatus(machineUrl, params.processId).then((processStatus) => {
+          return {processStatus, app}
+        })
+      }
+    })
+      .then((resp) => {
+        const {processStatus, app} = resp!
+        if (!processStatus) {
+          setError("Process not found")
+        } else {
+          return getOperations(processStatus.machine, processStatus.agent).then((operations) => {
+            return {operations, app}
+          })
+        }
+      })
+      .then((res) => {
+        const {operations, app} = res!
+        const options = app.params as CopilotParams
+        const operation = operations.find((o) => o.name === options.operation)
+        if (!operation) {
+          setError("Operation not found")
+        } else {
+          options.operationInfo = operation
+          if (operation.schema?.properties?.execute_on_cpu) {
+            const property = operation.schema?.properties?.execute_on_cpu as Record<string, any>
+            options.supportedLLMs = property?.["enum"] as string[]
+            options.defaultLLM = property?.default as string
+          }
+          setApp(app)
+        }
+      })
+      .catch((e) => {
+        setError(e.message)
+      })
+  }, [params.app_name, params.processId]);
 
-  const client = new EidolonClient(machineUrl)
-  const action = await client.getAction(processStatus.agent, options.operation)
-  if(!action) {
-    throw new Error("No actions found")
+  if (!error && !app) {
+    return <div>Loading...</div>
   }
-  options.operationInfo = action!
-
-  if (action.schema?.properties?.execute_on_cpu) {
-    const property = action.schema?.properties?.execute_on_cpu as Record<string, any>
-    options.supportedLLMs = property?.["enum"] as string[]
-    options.defaultLLM = property?.default as string
+  if (error) {
+    return <div>{error}</div>
   }
   return (
     <CopilotPanel
-      machineUrl={processStatus.machine}
-      processId={processStatus.process_id}
-      copilotParams={options}
+      machineUrl={app!.location}
+      processId={params.processId}
+      copilotParams={app!.params as CopilotParams}
     />
   )
 }
