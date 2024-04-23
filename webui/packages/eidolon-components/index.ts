@@ -5,10 +5,11 @@ export {EidolonEvents, type EidolonEventProps} from './src/messages/eidolon-even
 export {AgentProcess} from './src/form-input/agent-process'
 export {ChooseAgentForm} from "./src/form-input/choose-agent-form"
 export {executeServerOperation, getChatEventInUI} from "./src/client-api-helpers/process-event-helper";
+export {getOperations, getAgents} from "./src/client-api-helpers/machine-helper";
 export {type ElementsAndLookup} from "./src/lib/display-elements";
 export * from './src/hooks/useProcessEvents'
 export {CopilotPanel} from './src/form-input/copilot_panel'
-export {MessagesWithAction} from './src/form-input/MessagesWithAction'
+export {DevPanel} from './src/form-input/DevPanel'
 export {useProcessEvents} from './src/hooks/useProcessEvents'
 export * from "./src/lib/util"
 export {usageForSession} from "./src/usage-summary/usage_summary"

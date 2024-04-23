@@ -1,24 +1,33 @@
 'use client'
 
 import {FormControl, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {createProcess} from "../client-api-helpers/process-helper";
+import {getAgents} from "../client-api-helpers/machine-helper";
 
 export interface ChooseAgentFormProps {
-  agents: string[],
   machineUrl: string,
   // eslint-disable-next-line no-unused-vars
   handleSubmit: (proces_id: string) => void
 }
 
-export function ChooseAgentForm({agents, handleSubmit, machineUrl}: ChooseAgentFormProps) {
+export function ChooseAgentForm({handleSubmit, machineUrl}: ChooseAgentFormProps) {
   const [title, setTitle] = useState<string>("")
   const [agent, setAgent] = useState<string>("")
+  const [agents, setAgents] = useState<string[]>([])
+
   const internalHandleSubmit = () => {
     createProcess(machineUrl, agent, title).then((process) => {
       handleSubmit(process?.process_id!)
     })
   }
+  useEffect(() => {
+    getAgents(machineUrl).then((agents) => {
+      setAgents(agents)
+    }).catch(() => {
+      // ignore
+    })
+  }, [machineUrl]);
 
   return (
     <form

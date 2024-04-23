@@ -1,23 +1,12 @@
 from typing import Optional, Literal
 
-from pydantic import BaseModel
-
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class AudioUnitSpec(BaseModel):
-    pass
-
-
-class AudioUnit(LogicUnit, Specable[AudioUnitSpec]):
-    def __init__(self, spec: AudioUnitSpec = None, **kwargs):
-        super().__init__(**kwargs)
-        self.spec = spec
-
+class AudioUnit(LogicUnit):
     @llm_function()
     async def text_to_speech(self, text: str, response_format: Literal["mp3", "opus", "aac", "flac", "wav", "pcm"] = "mp3") -> str:
         """
@@ -32,8 +21,8 @@ class AudioUnit(LogicUnit, Specable[AudioUnitSpec]):
             :param response_format: Response audio format. Legal values are ["mp3", "opus", "aac", "flac", "wav", "pcm"].  Defaults to "mp3".
         """
         audio = await self._text_to_speech(text, response_format)
-        file_handle = await AgentOS.process_file_system.write_file(RequestContext.get("process_id"), audio, {"mimetype": f"audio/{response_format}"})
-        return f"{file_handle.machineURL}/processes/{file_handle.process_id}/files/{file_handle.file_id}"
+        handle = await AgentOS.process_file_system.write_file(RequestContext.get("process_id"), audio, {"mimetype": f"audio/{response_format}"})
+        return handle.get_url()
 
     async def _text_to_speech(self, text: str, response_format: Literal["mp3", "opus", "aac", "flac", "wav", "pcm"] = "mp3") -> bytes:
         """
@@ -67,7 +56,7 @@ class AudioUnit(LogicUnit, Specable[AudioUnitSpec]):
             :param language: The language of the input audio. Supplying the input language in ISO-639-1 format will improve accuracy and latency. This parameter is optional.
         """
         audio_data, metadata = await AgentOS.process_file_system.read_file(RequestContext.get("process_id"), audio.file_id)
-        return await self._speech_to_text(audio_data, metadata["mimetype"], prompt, language)
+        return await self._speech_to_text(audio_data, metadata.get("mimetype", "audio/wav"), prompt, language)
 
     async def _speech_to_text(
         self, audio: bytes, mime_type: str, prompt: Optional[str] = None, language: Optional[str] = None

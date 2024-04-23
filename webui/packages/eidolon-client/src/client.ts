@@ -1,6 +1,7 @@
 import OpenAPIParser from "@readme/openapi-parser";
 import {OpenAPIV3_1} from "openapi-types";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
+import {HttpException} from "./exceptions";
 
 export interface ChatEvent extends Record<string, any> {
   event_type: string,
@@ -106,7 +107,7 @@ export class EidolonClient {
     if (!this.isLoaded) {
       const results = await fetch(`${this.machineUrl}/openapi.json`, {headers: this.headers})
       if (results.status !== 200) {
-        throw new Error(`Failed to fetch openapi.json: ${results.statusText}`)
+        throw new HttpException(`Failed to fetch openapi.json: ${results.statusText}`, results.status)
       }
       const response = await results.json()
       const api = await OpenAPIParser.validate(response) as OpenAPIV3_1.Document
@@ -166,9 +167,9 @@ export class EidolonClient {
     }
   }
 
-  public async getActionsForDisplay(agent: string, availableActions: string[]): Promise<OperationInfo[]> {
+  public async getOperations(agent: string): Promise<OperationInfo[]> {
     const ret = Object.values(await this.getActions())
-      .filter(op => op.agent === agent && availableActions.includes(op.name))
+      .filter(op => op.agent === agent)
       .sort((a, b) => a.label.localeCompare(b.label))
     for (const op of ret) {
       this.convertBinary(op.schema)
@@ -179,7 +180,7 @@ export class EidolonClient {
   public async getProcesses(skip: number = 0, limit: number = 10) {
     const results = await fetch(`${this.machineUrl}/processes?skip=${skip}&limit=${limit}`, {headers: this.headers})
     if (results.status !== 200) {
-      throw new Error(`Failed to fetch processes: ${results.statusText}`)
+      throw new HttpException(`Failed to fetch processes: ${results.statusText}`, results.status)
     }
 
     const response = await results.json() as ProcessesResponse
@@ -198,7 +199,7 @@ export class EidolonClient {
       body: JSON.stringify({agent: agent, title: title})
     })
     if (results.status !== 200) {
-      throw new Error(`Failed to create process: ${results.statusText}`)
+      throw new HttpException(`Failed to create process: ${results.statusText}`, results.status)
     }
     let status = await results.json() as ProcessStatus;
     addMachineIfMissing(this.machineUrl, status)
@@ -226,7 +227,7 @@ class Agent {
   public async programs() {
     const results = await fetch(`${this.machineUrl}/agents/${this.agent}/programs`, {headers: this.headers})
     if (results.status !== 200) {
-      throw new Error(`Failed to fetch programs: ${results.statusText}`)
+      throw new HttpException(`Failed to fetch programs: ${results.statusText}`, results.status)
     }
     return await results.json() as string[]
   }
@@ -241,7 +242,7 @@ class Agent {
       body: JSON.stringify(body)
     })
     if (results.status !== 200) {
-      throw new Error(`Failed to perform action: (${results.status}) ${results.statusText}`)
+      throw new HttpException(`Failed to execute action: ${results.statusText}`, results.status)
     }
     return (await results.json()) as ProcessStatusWithData
   }
@@ -302,7 +303,7 @@ class Agent {
         yield value
       }
     } else {
-      throw new Error('Failed to obtain stream')
+      throw new HttpException(`Failed to obtain stream: ${response.statusText}`, response.status)
     }
   }
 }
@@ -321,7 +322,7 @@ class Process {
   public async status() {
     const results = await fetch(`${this.machineUrl}/processes/${this.process_id}`, {headers: this.headers})
     if (results.status !== 200) {
-      throw new Error(`Failed to fetch process status: ${results.statusText}`)
+      throw new HttpException(`Failed to fetch process status: ${results.statusText}`, results.status)
     }
     let process = await results.json() as ProcessStatus;
     addMachineIfMissing(this.machineUrl, process)
@@ -331,7 +332,7 @@ class Process {
   public async delete() {
     const results = await fetch(`${this.machineUrl}/processes/${this.process_id}`, {headers: this.headers, method: 'DELETE'})
     if (results.status !== 200) {
-      throw new Error(`Failed to delete process: ${results.statusText}`)
+      throw new HttpException(`Failed to delete process: ${results.statusText}`, results.status)
     }
   }
 
@@ -347,7 +348,7 @@ class Process {
     })
     if (results.status !== 200) {
       console.error("Failed to upload file", results.statusText, results.status)
-      throw new Error(`Failed to upload file: ${results.statusText}`)
+      throw new HttpException(`Failed to upload file: ${results.statusText}`, results.status)
     }
     return (await results.json()) as FileHandle
   }
@@ -361,7 +362,7 @@ class Process {
     })
     if (results.status !== 200) {
       console.error("Failed to update metadata", results.statusText, results.status)
-      throw new Error(`Failed to update metadata: ${results.statusText}`)
+      throw new HttpException(`Failed to update metadata: ${results.statusText}`, results.status)
     }
     return (await results.json()) as FileHandle
   }
@@ -369,7 +370,7 @@ class Process {
   public async download_file(file_id: string) {
     const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/files/${file_id}`, {headers: this.headers})
     if (results.status !== 200) {
-      throw new Error(`Failed to download file: ${results.statusText}`)
+      throw new HttpException(`Failed to download file: ${results.statusText}`, results.status)
     }
     return {data: await results.blob(), "mimetype": results.headers.get("Content-Type")}
   }
@@ -377,14 +378,14 @@ class Process {
   public async delete_file(file_id: string) {
     const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/files/${file_id}`, {headers: this.headers, method: 'DELETE'})
     if (results.status !== 200) {
-      throw new Error(`Failed to delete file: ${results.statusText}`)
+      throw new HttpException(`Failed to delete file: ${results.statusText}`, results.status)
     }
   }
 
   public async events() {
     const results = await fetch(`${this.machineUrl}/processes/${this.process_id}/events`, {headers: this.headers})
     if (results.status !== 200) {
-      throw new Error(`Failed to fetch process events: ${results.statusText}`)
+      throw new HttpException(`Failed to fetch process events: ${results.statusText}`, results.status)
     }
     return await results.json() as ChatEvent[]
   }

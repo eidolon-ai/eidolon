@@ -1,26 +1,63 @@
-import {notFound} from "next/navigation";
-import {_processHandler} from "../../../api/eidolon/eidolon_helpers";
+'use client'
+
 import * as React from "react";
-import {MessagesWithAction} from "@eidolon/components";
-import {getApp} from "@/utils/eidolon-apps";
-import {EidolonClient} from "@eidolon/client";
+import {useEffect} from "react";
+import {DevPanel, DevParams, EidolonApp, getOperations, getProcessStatus} from "@eidolon/components";
+import {getApps} from "@/utils/app-registry-helper";
 
 export interface ProcessPageProps {
   params: {
-    processId: string
+    process_id: string
   }
 }
 
-export default async function ({params}: ProcessPageProps) {
-  let app = getApp("dev-tool")
-  const processStatus = await _processHandler.getProcess(app.location, params.processId)
-  if (!processStatus) {
-    notFound()
+export default function ({params}: ProcessPageProps) {
+  const app_name = "dev-tool"
+  const [app, setApp] = React.useState<EidolonApp | undefined>(undefined)
+  const [error, setError] = React.useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    getApps().then((apps) => {
+      const app = apps[app_name]
+      if (!app) {
+        throw new Error("App not found")
+      } else {
+        const machineUrl = app.location!
+        return getProcessStatus(machineUrl, params.process_id).then((processStatus) => {
+          return {processStatus, app}
+        })
+      }
+    })
+      .then((resp) => {
+        const {processStatus, app} = resp!
+        if (!processStatus) {
+          throw new Error("Process not found")
+        } else {
+          app.params.agent = processStatus.agent
+          return getOperations(processStatus.machine, processStatus.agent).then((operations) => {
+            return {operations, app}
+          })
+        }
+      })
+      .then((res) => {
+        const {operations, app} = res!
+        const options = app.params as DevParams
+        options.operations = operations
+        setApp(app)
+      })
+      .catch((e) => {
+        setError(e.message)
+      })
+  }, [params.process_id]);
+
+
+  if (error) {
+    return <div>{error}</div>
   }
-  // todo, use global client here so that openapi calls are cached
-  const client = new EidolonClient(app.location)
-  const operations = await client.getActionsForDisplay(processStatus.agent, processStatus?.available_actions)
+  if (!app) {
+    return <div>Loading...</div>
+  }
   return (
-    <MessagesWithAction operations={operations} machineUrl={processStatus.machine} agent={processStatus.agent} processId={processStatus.process_id}/>
+    <DevPanel machineUrl={app?.location!} devParams={app?.params as DevParams} processId={params.process_id}/>
   )
 }

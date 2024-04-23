@@ -18,7 +18,7 @@ export interface ProcessListProps {
 }
 
 export function ProcessList({machineURL, isSelected, selectChat, goHome}: ProcessListProps) {
-  const {processes, updateProcesses} = useProcesses()
+  const {processes, updateProcesses, fetchError} = useProcesses()
 
   useEffect(() => {
     updateProcesses(machineURL).then(() => {})
@@ -61,7 +61,15 @@ export function ProcessList({machineURL, isSelected, selectChat, goHome}: Proces
 
   )
 
-  if (Object.keys(processes).length) {
+  if (fetchError) {
+    listComponents = (
+      <List>
+        <ListItem>
+          <ListItemText primary="Failed to fetch chat history"/>
+        </ListItem>
+      </List>
+    )
+  } else if (Object.keys(processes).length) {
     listComponents = (
       <List>
         {Object.entries(processes).map(([date, chats]) => {

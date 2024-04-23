@@ -1,19 +1,16 @@
-import appRegistry from 'eidolon-apps.json'
-import {CopilotParams, DevParams} from "@eidolon/components";
+import _appRegistry from 'eidolon-apps.json'
+import {CopilotParams, EidolonApp} from "@eidolon/components";
 import * as fs from "fs";
 import {notFound} from "next/navigation";
 
-
-export interface EidolonApp {
-  name: string;
-  description: string;
-  version: string;
-  image: string;
-  location: string;
-  type: "copilot" | "dev"
-  path: string
-  params: CopilotParams | DevParams
+let appRegistry = _appRegistry
+if (process.env.EIDOLON_APP_REGISTRY_OVERRIDE) {
+  appRegistry = JSON.parse(process.env.EIDOLON_APP_REGISTRY_OVERRIDE)
+} else if (process.env.EIDOLON_APP_REGISTRY_LOC) {
+  const rawData = fs.readFileSync(process.env.EIDOLON_APP_REGISTRY_LOC, {encoding: 'utf8'});
+  appRegistry = JSON.parse(rawData)
 }
+
 
 interface RawAgentLocation {
   agent: string | undefined
@@ -95,7 +92,8 @@ function getAppsRaw() {
 }
 
 let apps: Record<string, EidolonApp> | undefined = undefined
-export function getAppRegistry(){
+
+export function getAppRegistry() {
   if (apps === undefined) {
     apps = getAppsRaw()
   }

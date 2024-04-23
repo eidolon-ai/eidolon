@@ -4,17 +4,16 @@ import {Box} from "@mui/material";
 import {useProcessEvents} from "../hooks/useProcessEvents";
 import {EidolonEvents} from "../messages/eidolon-events";
 import {AgentProcess} from "./agent-process";
-import {OperationInfo} from "@eidolon/client";
 import {useEidolonContext} from "../provider/eidolon_provider";
+import {DevParams} from "../lib/util";
 
 export interface MessagesWithActionProps {
-  operations: OperationInfo[]
   machineUrl: string
-  agent: string
+  devParams: DevParams
   processId: string
 }
 
-export function MessagesWithAction({operations, machineUrl, agent, processId}: MessagesWithActionProps) {
+export function DevPanel({machineUrl, devParams, processId}: MessagesWithActionProps) {
   const [_, dispatch] = useEidolonContext()
 
   const {
@@ -22,7 +21,7 @@ export function MessagesWithAction({operations, machineUrl, agent, processId}: M
     elementsAndLookup,
     executeAction,
     handleCancel
-  } = useProcessEvents(machineUrl, agent, processId, dispatch)
+  } = useProcessEvents(machineUrl, devParams.agent, processId, dispatch)
 
   return (
     <Box sx={{
@@ -33,8 +32,8 @@ export function MessagesWithAction({operations, machineUrl, agent, processId}: M
       justifyContent: 'space-between',
       alignItems: 'center'
     }}>
-      <EidolonEvents agentName={agent} elementsAndLookup={elementsAndLookup}/>
-      <AgentProcess operations={operations} processState={processState} handleAction={executeAction}
+      <EidolonEvents agentName={devParams.agent} elementsAndLookup={elementsAndLookup}/>
+      <AgentProcess operations={devParams.operations} processState={processState} handleAction={executeAction}
                     handleCancel={handleCancel}/>
     </Box>
   )

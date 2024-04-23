@@ -76,3 +76,6 @@ pythonpath = "project"
 
 [tool.ruff]
 line-length = 121
+
+[tool.eidolon]
+update-tag = "sdk"
