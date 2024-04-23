@@ -1,7 +1,14 @@
-VERSIONED_POETRY_PROJECTS := $(filter-out ./scripts/,$(dir $(shell find . -name 'pyproject.toml')))
+ALL_POETRY_PROJECTS := $(dir $(shell find . -name 'pyproject.toml'))
+UNVERSIONED_PROJECTS := ./scripts/ ./usage-service/usage-server/
+
+VERSIONED_POETRY_PROJECTS := $(filter-out $(UNVERSIONED_PROJECTS),$(ALL_POETRY_PROJECTS))
 VERSIONED_TOML_FILES := $(addsuffix pyproject.toml, $(VERSIONED_POETRY_PROJECTS))
-PYPI_PUBLISH_TARGETS := $(addsuffix .pypi_published, $(filter-out ./examples/,$(VERSIONED_POETRY_PROJECTS)))
-.PHONY: update_deps publish_pypi
+
+UPUBLISHED_PROJECTS := $(UNVERSIONED_PROJECTS) ./examples/
+PUBLISHED_POETRY_PROJECTS := $(filter-out UPUBLISHED_PROJECTS,$(ALL_POETRY_PROJECTS))
+PYPI_PUBLISH_TARGETS := $(addsuffix .pypi_phony, $(PUBLISHED_POETRY_PROJECTS))
+
+.PHONY: update_deps publish_pypi $(PYPI_PUBLISH_TARGETS)
 
 update_deps: $(VERSIONED_TOML_FILES)
 	@echo "Done!"
@@ -20,9 +27,14 @@ $$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix pyproject
 	@cd $*; poetry version patch;
 	@cd $*; poetry lock --no-update;
 
+
 # Our publish targets (.pypi_published) depend on their the pyproject.toml file and upstream publish targets
 # These files represent the last version of the package published to PyPI
-$(PYPI_PUBLISH_TARGETS): %/.pypi_published: %/pyproject.toml \
-$$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix p.pypi_published")
-	@#cd $*; poetry publish --build;
-	@echo $(shell grep -m 1 '^version = ' $*/pyproject.toml | awk -F '"' '{print $$2}') > $*/pypi_publish_version
+$(PYPI_PUBLISH_TARGETS): %/.pypi_phony: %/pyproject.toml \
+$$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix .pypi_phony");
+	@echo $(shell bash scripts/bash/maybe_publish.sh $*);
+
+
+
+
+
