@@ -6,17 +6,23 @@ import os
 def update_path_deps(loc):
     data = toml.load(os.path.join(loc, 'pyproject.toml'))
     deps = data.get('tool', {}).get('poetry', {}).get('group', {}).get("dev", {}).get("dependencies", {})
+    changed = False
 
     for dep, dep_info in deps.items():
         if isinstance(dep_info, dict) and 'path' in dep_info:
             path = dep_info['path']
             dep_data = toml.load(os.path.join(loc, path, 'pyproject.toml'))
             version = dep_data['tool']['poetry']['version']
-            data['tool']['poetry']['dependencies'][dep] = "^" + version
 
-    # Save the updated data back to the pyproject.toml file
-    with open(os.path.join(loc, 'pyproject.toml'), 'w') as f:
-        toml.dump(data, f)
+            desired_version = "^" + version
+            if data['tool']['poetry']['dependencies'][dep] != desired_version:
+                print(f"Updating {dep} to {desired_version}")
+                data['tool']['poetry']['dependencies'][dep] = desired_version
+                changed = True
+
+    if changed:
+        with open(os.path.join(loc, 'pyproject.toml'), 'w') as f:
+            toml.dump(data, f)
 
 
 def main():
