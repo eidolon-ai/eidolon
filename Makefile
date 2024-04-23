@@ -5,7 +5,7 @@ VERSIONED_POETRY_PROJECTS := $(filter-out $(UNVERSIONED_PROJECTS),$(ALL_POETRY_P
 VERSIONED_TOML_FILES := $(addsuffix pyproject.toml, $(VERSIONED_POETRY_PROJECTS))
 
 UPUBLISHED_PROJECTS := $(UNVERSIONED_PROJECTS) ./examples/
-PUBLISHED_POETRY_PROJECTS := $(filter-out UPUBLISHED_PROJECTS,$(ALL_POETRY_PROJECTS))
+PUBLISHED_POETRY_PROJECTS := $(filter-out $(UPUBLISHED_PROJECTS),$(ALL_POETRY_PROJECTS))
 PYPI_PUBLISH_TARGETS := $(addsuffix .pypi_phony, $(PUBLISHED_POETRY_PROJECTS))
 
 .PHONY: update_deps publish_pypi $(PYPI_PUBLISH_TARGETS)
@@ -32,9 +32,10 @@ $$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix pyproject
 # These files represent the last version of the package published to PyPI
 $(PYPI_PUBLISH_TARGETS): %/.pypi_phony: %/pyproject.toml \
 $$(shell make -C scripts run "get_deps --loc $$* --workdir .. --suffix .pypi_phony");
-	@echo $(shell bash scripts/bash/maybe_publish.sh $*);
-
-
-
-
-
+	@PACKAGE_NAME=$(shell grep -m 1 '^name = ' $*/pyproject.toml | awk -F '"' '{print $$2}'); \
+	CURRENT_VERSION=$(shell grep -m 1 '^version = ' $*/pyproject.toml | awk -F '"' '{print $$2}'); \
+	if ! pip index versions $$PACKAGE_NAME 2>/dev/null | grep -q $$CURRENT_VERSION; then \
+		echo "Version $$CURRENT_VERSION of $$PACKAGE_NAME is not published on PyPI. Publishing now..."; \
+	else \
+		echo "Version $$CURRENT_VERSION of $$PACKAGE_NAME is already published on PyPI."; \
+	fi;
