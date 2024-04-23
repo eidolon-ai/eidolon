@@ -1,13 +1,13 @@
 from typing import Optional, Literal
 
 from openai import AsyncOpenAI
-from pydantic import Field
+from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.cpu.audio_unit import AudioUnit, AudioUnitSpec
+from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class OpenAiSpeechSpec(AudioUnitSpec):
+class OpenAiSpeechSpec(BaseModel):
     text_to_speech_model: Literal["tts-1", "tts-1-hd"] = Field(
         default="tts-1-hd", description="The model to use for text to speech."
     )
@@ -29,8 +29,8 @@ class OpenAiSpeech(AudioUnit, Specable[OpenAiSpeechSpec]):
     llm: AsyncOpenAI = None
 
     def __init__(self, spec: OpenAiSpeechSpec, **kwargs):
-        super().__init__(spec, **kwargs)
-        Specable.__init__(self, spec, **kwargs)
+        super().__init__(**kwargs)
+        Specable.__init__(self, spec)
 
     async def _text_to_speech(self, text: str, response_format: str = "mp3") -> bytes:
         """

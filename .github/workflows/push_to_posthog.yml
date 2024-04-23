@@ -2,7 +2,7 @@ name: Repository Traffic to PostHog
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Run daily at midnight
+    - cron: '0 * * * *'  # Run daily at midnight
   workflow_dispatch:
 
 jobs:

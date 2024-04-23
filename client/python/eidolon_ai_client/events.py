@@ -12,6 +12,9 @@ class FileHandle(BaseModel):
     file_id: str
     metadata: dict = Field(default={}, description="Metadata about the file")
 
+    def get_url(self):
+        return f"{self.machineURL}/processes/{self.process_id}/files/{self.file_id}"
+
 
 class Category(Enum):
     START = "start"
