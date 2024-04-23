@@ -1,5 +1,16 @@
 import {HttpException, OperationInfo} from "@eidolon/client";
 
+export interface EidolonApp {
+  name: string;
+  description: string;
+  version: string;
+  image: string;
+  location: string;
+  type: "copilot" | "dev"
+  path: string
+  params: CopilotParams | DevParams
+}
+
 export interface CopilotParams {
   "agent": string,
   supportedLLMs: string[] | undefined,
@@ -26,6 +37,11 @@ export function convertException(promise: Promise<any>) {
     if (e instanceof HttpException) {
       return new Response(e.statusText, {status: e.status, statusText: e.statusText})
     } else if (e instanceof Error) {
+      // @ts-ignore
+      if (e?.cause?.code === 'ECONNREFUSED') {
+        return new Response('Connection refused', {status: 404})
+      }
+
       return new Response(e.message, {status: 500})
     } else {
       if (e?.cause?.code === 'ECONNREFUSED') {

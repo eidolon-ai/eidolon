@@ -1,19 +1,8 @@
 import appRegistry from 'eidolon-apps.json'
-import {CopilotParams, DevParams} from "@eidolon/components";
+import {CopilotParams, EidolonApp} from "@eidolon/components";
 import * as fs from "fs";
 import {notFound} from "next/navigation";
 
-
-export interface EidolonApp {
-  name: string;
-  description: string;
-  version: string;
-  image: string;
-  location: string;
-  type: "copilot" | "dev"
-  path: string
-  params: CopilotParams | DevParams
-}
 
 interface RawAgentLocation {
   agent: string | undefined

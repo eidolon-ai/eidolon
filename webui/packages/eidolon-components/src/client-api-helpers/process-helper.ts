@@ -1,5 +1,5 @@
 import {DateTime} from "luxon";
-import {ProcessStatus} from "@eidolon/client";
+import {HttpException, ProcessStatus} from "@eidolon/client";
 
 export interface ProcessStatusWithChildren extends ProcessStatus {
   children?: ProcessStatus[]
@@ -10,8 +10,8 @@ export async function getProcessStatus(machineUrl: string, process_id: string) {
     method: "GET"
   })
     .then(resp => {
-      if (resp.status === 404) {
-        return null
+      if (resp.status !== 200) {
+        throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
       return resp.json().then((json: Record<string, any>) => json as ProcessStatus)
     })
@@ -36,10 +36,9 @@ export async function deleteProcess(machineUrl: string, process_id: string) {
 }
 
 export async function getRootProcesses(machineUrl: string): Promise<ProcessStatusWithChildren[]> {
-  let data = (await getProcessesFromServer(machineUrl)).sort((a, b) => {
+  return getProcessesFromServer(machineUrl).then(processes => processes.sort((a, b) => {
     return DateTime.fromISO(b.updated).toMillis() - DateTime.fromISO(a.updated).toMillis()
-  })
-  return Object.values(data.reduce((collector: Record<string, ProcessStatusWithChildren>, item) => {
+  })).then(data => Object.values(data.reduce((collector: Record<string, ProcessStatusWithChildren>, item) => {
     if (!item.parent_process_id) {
       collector[item.process_id] = {...collector[item.process_id], ...item}
     } else {
@@ -62,31 +61,32 @@ export async function getRootProcesses(machineUrl: string): Promise<ProcessStatu
       collector[item.parent_process_id]!.children!.push(item)
     }
     return collector
-  }, {} as Record<string, ProcessStatus>))
+  }, {} as Record<string, ProcessStatus>)))
 
 }
 
 async function getProcessesFromServer(machineUrl: string): Promise<ProcessStatus[]> {
-  const results = await fetch(`/api/eidolon/process?machineURL=${machineUrl}`
+  return fetch(`/api/eidolon/process?machineURL=${machineUrl}`
   ).then(resp => {
-    if (resp.status === 401) {
-      console.log('Unauthenticated! Status: 401');
-      return [];
-    } else if (!resp.ok) {
+    if (resp.status !== 200) {
+      throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
+    }
+    if (!resp.ok) {
       throw new Error(`HTTP error! status: ${resp.status}, status test: ${resp.statusText}`);
     }
     return resp.json();
+  }).then(results => {
+    const ret = []
+    for (const json of results.processes) {
+      json.id = json.process_id
+      json.title = json.title || json.agent
+      json.path = `/chat/${json.id}`
+      ret.push(json as ProcessStatus)
+    }
+
+    return ret
   })
 
-  const ret = []
-  for (const json of results.processes) {
-    json.id = json.process_id
-    json.title = json.title || json.agent
-    json.path = `/chat/${json.id}`
-    ret.push(json as ProcessStatus)
-  }
-
-  return ret
 }
 
 export function getAppPathFromPath(pathname: string): string | undefined {

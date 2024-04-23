@@ -11,6 +11,48 @@ export const getAuthHeaders = (access_token: string | undefined): Record<string,
   }
 }
 
+export class MachineHandler {
+  private readonly accessTokenFn: () => Promise<string | undefined>
+
+  constructor(accessTokenFn: () => Promise<string | undefined>) {
+    this.accessTokenFn = accessTokenFn
+  }
+
+  async GET(req: Request): Promise<Response> {
+    const machineUrl = new URL(req.url).searchParams.get('machineURL')
+    if (!machineUrl) {
+      return new Response('machineUrl is required', {status: 422})
+    }
+    return processResponse(this.getAgents(machineUrl))
+  }
+
+  async getAgents(machineUrl: string) {
+    const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
+    return client.getAgents()
+  }
+}
+
+export class AgentHandler {
+  private readonly accessTokenFn: () => Promise<string | undefined>
+
+  constructor(accessTokenFn: () => Promise<string | undefined>) {
+    this.accessTokenFn = accessTokenFn
+  }
+
+  async GET(req: Request, {params}: { params: { agent: string } }): Promise<Response> {
+    const machineUrl = new URL(req.url).searchParams.get('machineURL')
+    if (!machineUrl) {
+      return new Response('machineUrl is required', {status: 422})
+    }
+    return processResponse(this.getOperations(machineUrl, params.agent))
+  }
+
+  async getOperations(machineUrl: string, agent: string) {
+    const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
+    return client.getOperations(agent)
+  }
+}
+
 export class ProcessesHandler {
   private readonly accessTokenFn: () => Promise<string | undefined>
 

@@ -12,9 +12,13 @@ export interface DevTooLayoutProps {
 }
 
 export async function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
-  // todo, there is a global client that will not need to make this request, we should use that instead
-  const client = new EidolonClient(app.location)
-  const agents = await client.getAgents()
+  let agents: string[] = []
+  try {
+    const client = new EidolonClient(app.location)
+    agents = await client.getAgents()
+  } catch {
+    // do noting
+  }
 
   return (
     <ProcessesProvider>

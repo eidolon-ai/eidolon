@@ -6,7 +6,8 @@
   "main": "./index",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "generate:component": "turbo gen react-component"
+    "generate:component": "turbo gen react-component",
+    "test": "jest --ci"
   },
   "dependencies": {
     "@eidolon/client": "workspace:*",
