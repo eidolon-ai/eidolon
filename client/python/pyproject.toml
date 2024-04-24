@@ -1,9 +1,20 @@
+[build-system]
+requires = [ "poetry-core",]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "eidolon_ai_client"
-version = "0.1.6"
+version = "0.1.7"
 description = ""
-authors = ["Luke Lalor <lukehlalor@gmail.com>"]
+authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
+
+[tool.ruff]
+line-length = 121
+
+[tool.eidolon]
+update-tag = "client"
+last-update-hash = "4843133d1400a712699fa384421a44b2f95c098f"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
@@ -18,13 +29,3 @@ aiostream = "^0.5.2"
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
 pytest-asyncio = "^0.23.4"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.ruff]
-line-length = 121
-
-[tool.eidolon]
-update-tag = "client"

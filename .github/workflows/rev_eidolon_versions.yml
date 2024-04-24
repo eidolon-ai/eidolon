@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v5
@@ -26,19 +27,19 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
 
-      - name: "Update Eidolon Dependency Versions"
+      - name: "Versioning Eidolon Dependencies"
         run: |
-          make update_deps
-          echo "TAGGING_MESSAGE=$(make -C scripts run get_tags >> $GITHUB_ENV)" >> $GITHUB_ENV
+          make version
+          echo "TAGGING_MESSAGE=$(make -C scripts -s run get_tags)" >> $GITHUB_ENV
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "bumping versions"
           tagging_message: ${{ env.TAGGING_MESSAGE }}
 
-      - name: "Publish to PyPI"
+      - name: "Publishing changes to PyPI"
         run: |
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-          make publish_pypi
+          make publish
       - uses: stefanzweifel/git-auto-commit-action@v5
         id: pyp-publish-commit
         with:

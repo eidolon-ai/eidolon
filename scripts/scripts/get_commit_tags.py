@@ -48,7 +48,9 @@ def main():
 
     # Check if there are changes in the pyproject.toml file
     for file in git_diff(repo):
-        if file.endswith('pyproject.toml'):
+        # suffix = 'pyproject.toml'
+        suffix = 'sdk/pyproject.toml'  # only single tag supported for now
+        if file.endswith(suffix):
             tag = get_project_tag(file)
             if tag:
                 tags.append(tag)
