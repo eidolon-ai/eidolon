@@ -1367,7 +1367,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.32"
+version = "0.1.35"
 description = "An Open Source Agent Services Framework"
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1425,16 +1425,18 @@ name = "eidolon-ai-usage-client"
 version = "0.1.2"
 description = ""
 optional = false
-python-versions = "<4.0,>=3.11"
-files = [
-    {file = "eidolon_ai_usage_client-0.1.2-py3-none-any.whl", hash = "sha256:561b7d57f0abefa0eb6d73110e11ed2a0b4491f5b93bc4b701f45babae9ff413"},
-    {file = "eidolon_ai_usage_client-0.1.2.tar.gz", hash = "sha256:85acfdc3c9e3a7775d9c90e82fda489ef9fdab251ad138a7ba4e473cef59a106"},
-]
+python-versions = "^3.11"
+files = []
+develop = true
 
 [package.dependencies]
-httpx = ">=0.27.0,<0.28.0"
-pydantic = ">=2.6.4,<3.0.0"
-setuptools = ">=69.2.0,<70.0.0"
+httpx = "^0.27.0"
+pydantic = "^2.6.4"
+setuptools = "^69.2.0"
+
+[package.source]
+type = "directory"
+url = "../usage-service/usage-client"
 
 [[package]]
 name = "emoji"
@@ -5832,4 +5834,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "99f38e413f3ab8987dace0db7b47400d6ccc232085fec6bcd1c6aba03a1fa9ec"
+content-hash = "a6fe5634d55581c267b30f149cd568e1ec6dbb367ecfa620bcbb853e8c46d45d"
