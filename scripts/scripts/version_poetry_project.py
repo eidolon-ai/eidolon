@@ -29,25 +29,12 @@ def update_path_deps(loc: str, version: Literal['major', 'minor', 'patch']):
                 data['tool']['poetry']['dependencies'][dep] = desired_version
                 changed = True
 
-    repo = Repo(".")
     eidolon_tool = data.setdefault('tool', {}).setdefault('eidolon', {})
     last_update_hash = eidolon_tool.get('last-update-hash')
-    last_relevant_hash = get_next_commit(repo, last_update_hash) if last_update_hash else None
-    if not last_relevant_hash:
-        print("...last-update-hash found")
-        changed = True
-    else:
-        # check diff between last relevant hash and current hash
-        commit = repo.commit(last_relevant_hash)
-        diff = commit.diff('HEAD', paths=loc)
-        for item in diff:
-            print(f"...file {item.a_path} changed")
-            changed = True
-            break
 
-    if changed:
-        eidolon_tool['last-update-hash'] = repo.head.commit.hexsha
-        updated_version = method_name(data['tool']['poetry']['version'], version)
+    if changed or changed_since_commit(last_update_hash, loc):
+        eidolon_tool['last-update-hash'] = Repo(".").head.commit.hexsha
+        updated_version = rev_version(data['tool']['poetry']['version'], version)
         data['tool']['poetry']['version'] = updated_version
         with open(os.path.join(loc, 'pyproject.toml'), 'w') as f:
             toml.dump(data, f)
@@ -56,7 +43,23 @@ def update_path_deps(loc: str, version: Literal['major', 'minor', 'patch']):
         print("No changes detected")
 
 
-def method_name(current_version, rev_type):
+def changed_since_commit(last_update_hash, loc, offset=True):
+    repo = Repo(".")
+    last_relevant_hash = get_next_commit(repo, last_update_hash) if last_update_hash else None if offset else last_update_hash
+    if not last_relevant_hash:
+        print("...last-update-hash found")
+        return True
+    else:
+        # check diff between last relevant hash and current hash
+        commit = repo.commit(last_relevant_hash)
+        diff = commit.diff('HEAD', paths=loc)
+        for item in diff:
+            print(f"...file {item.a_path} changed")
+            return True
+    return False
+
+
+def rev_version(current_version, rev_type):
     major, minor, patch = current_version.split('.')
     if rev_type == 'major':
         updated_version = f"{int(major) + 1}.0.0"

@@ -7,7 +7,8 @@ authors = []
 [tool.poetry.scripts]
 push_stats = "scripts.push_github_stats:main"
 get_deps = "scripts.extract_path_deps:main"
-update_deps = "scripts.update_path_deps:main"
+update_poetry = "scripts.update_poetry_project:main"
+update_next = "scripts.update_next_project:main"
 get_tags = "scripts.get_commit_tags:main"
 
 [tool.poetry.dependencies]
