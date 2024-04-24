@@ -24,7 +24,7 @@ def update_path_deps(loc: str, version: Literal['major', 'minor', 'patch']):
             existing_version = dep_data['tool']['poetry']['version']
 
             desired_version = "^" + existing_version
-            if data['tool']['poetry']['dependencies'][dep] != desired_version:
+            if data['tool']['poetry']['dependencies'].get(dep, desired_version) != desired_version:
                 print(f"...dependency {dep} updated to {desired_version}")
                 data['tool']['poetry']['dependencies'][dep] = desired_version
                 changed = True

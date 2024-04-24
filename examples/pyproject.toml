@@ -18,6 +18,7 @@ kubernetes = "^29.0.0"
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
 pytest-asyncio = "^0.23.4"
+eidolon-ai-usage-client = { path = "../usage-service/usage-client", develop = true }
 eidolon-ai-client = { path = "../client/python", develop = true }
 eidolon-ai-sdk = { path = "../sdk", develop = true }
 
