@@ -33,7 +33,7 @@ export function CopilotPanel({machineUrl, processId, copilotParams}: CopilotPane
       alignItems: 'center',
       overflow: "hidden"
     }}>
-      <EidolonEvents agentName={copilotParams.agent} elementsAndLookup={elementsAndLookup}
+      <EidolonEvents machineUrl={machineUrl} agentName={copilotParams.agent} elementsAndLookup={elementsAndLookup}
       />
       <div style={{textAlign: "right", width: "100%", height: "32px", marginRight: "35px"}}>
         <ButtonScrollToBottom/>

@@ -5,13 +5,14 @@ import {ToolCall} from "./tool-call-element";
 import {EidolonMarkdown} from "./eidolon-markdown";
 
 export interface ChatDisplayElementProps {
+  machineUrl: string
   rawElement: DisplayElement
   agentName: string
   topLevel: boolean
   userImage?: string
 }
 
-export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage}: ChatDisplayElementProps) => {
+export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage}: ChatDisplayElementProps) => {
   const getUserInput = (element: UserRequestElement) => {
     // todo, make sure this renders file inputs correctly
     let content = {...element.content}
@@ -44,7 +45,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage}:
             <Avatar sx={{height: "36px", width: "36px"}} src="/img/eidolon_with_gradient.png"/>}
             <span style={{marginLeft: '8px'}}>{topLevel ? "User" : "Agent Input"}</span></div>
           <div className={"chat-indent"}>
-            <EidolonMarkdown>{getUserInput(element)}</EidolonMarkdown>
+            <EidolonMarkdown machineUrl={machineUrl}>{getUserInput(element)}</EidolonMarkdown>
           </div>
         </div>
       )
@@ -53,7 +54,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage}:
       const element = rawElement as MarkdownElement
       return (
         <div className={"chat-indent"}>
-          <EidolonMarkdown>{element.content}</EidolonMarkdown>
+          <EidolonMarkdown machineUrl={machineUrl}>{element.content}</EidolonMarkdown>
         </div>
       )
     }
@@ -61,7 +62,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage}:
       const element = rawElement as JsonElement
       return (
         <div className={"chat-indent"}>
-          <EidolonMarkdown>{'```json\n' + JSON.stringify(element.content, undefined,
+          <EidolonMarkdown machineUrl={machineUrl}>{'```json\n' + JSON.stringify(element.content, undefined,
             "  ") + "\n```"}</EidolonMarkdown>
         </div>
       )
@@ -70,7 +71,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage}:
       const element = rawElement as ToolCallElement
       return (
         <div className={"chat-indent"}>
-          <ToolCall element={element} agentName={agentName}/>
+          <ToolCall machineUrl={machineUrl} element={element} agentName={agentName}/>
         </div>
       )
     }
@@ -85,7 +86,7 @@ export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage}:
         <div>
           <span className={"chat-title"}>Error</span>
           <div className={"chat-indent"}>
-            <EidolonMarkdown>{element.reason}</EidolonMarkdown>
+            <EidolonMarkdown machineUrl={machineUrl}>{element.reason}</EidolonMarkdown>
           </div>
         </div>
       )
