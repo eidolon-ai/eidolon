@@ -1,9 +1,10 @@
 import os
-from typing import List, Optional, Any, Dict
-from urllib.parse import urljoin
+from typing import List, Optional, Any
+from urllib.parse import urljoin, quote_plus
 
 import jsonref
 from httpx import AsyncClient, Timeout
+from jsonpath_ng import parse
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.util.aiohttp import AgentError
@@ -15,10 +16,15 @@ from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
+class Operation(BaseModel):
+    path: str
+    result_filters: List[str]
+
+
 class ApiLogicUnitSpec(BaseModel):
     root_call_url: str
     open_api_location: str
-    operations_to_expose: Dict[str, str]  # map of tool name to openapi path
+    operations_to_expose: List[Operation]  # map of tool name to openapi path
     key_env_var: str
     key_query_param: Optional[str]
     put_key_as_bearer_token: bool = Field(default=False)
@@ -29,20 +35,16 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         LogicUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
 
-    def _headers(self):
-        return {
-            "Content-Type": "application/json",
-        }
-
     async def get_content(self, url: str, **kwargs):
-        params = {"url": url, "headers": self._headers()}
+        params = {"url": url}
         async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
             response = await client.get(**params, **kwargs)
             await AgentError.check(response)
             return response.json()
 
     async def post_content(self, url: str, **kwargs):
-        params = {"url": url, "headers": self._headers()}
+        params = {"url": url}
+        print("sending post request to", url, kwargs)
         async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
             response = await client.post(**params, **kwargs)
             await AgentError.check(response)
@@ -58,19 +60,18 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
 
         tools = []
         for operation in self.spec.operations_to_expose:
-            op = schema["paths"][operation]
+            op = schema["paths"][operation.path]
             if not op:
-                logger.error(f"No path found for operation {operation}")
+                logger.error(f"No path found for operation {operation.path}")
             else:
-                for method_name, method in op:
+                for method_name, method in op.items():
                     name = method["operationId"]
                     required = []
                     params = {}
                     if "parameters" in method:
                         for param in method["parameters"]:
                             if param["in"] == "query":
-                                model = schema_to_model(param["schema"], param["name"] + "_query")
-                                params[param["name"]] = model
+                                params[param["name"]] = param["schema"]
                                 if param["required"]:
                                     required.append(param["name"])
                     if "request_body" in method:
@@ -86,13 +87,14 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                         fn=self._call_endpoint(operation, method_name, method["parameters"]),
                         extra={
                             "title": method["summary"] or name,
-                            "sub_title": operation,
+                            "sub_title": operation.path,
                             "agent_call": True,
                         },
                     ))
             return tools
 
-    def _call_endpoint(self, path: str, method, method_params):
+    def _call_endpoint(self, operation: Operation, method, method_params):
+        path = operation.path
         api_key = os.environ.get(self.spec.key_env_var, None) if self.spec.key_env_var else None
         headers = {
             "Content-Type": "application/json"
@@ -109,7 +111,7 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
             if method_params:
                 for param in method_params:
                     if param["in"] == "query":
-                        if param["name"] in kwargs:
+                        if param["name"] in kwargs and kwargs[param["name"]] is not None:
                             query_params[param["name"]] = kwargs[param["name"]]
                     elif param["in"] == "path":
                         path_to_call = path_to_call.replace(f"{{{param['name']}}}", kwargs[param["name"]])
@@ -117,15 +119,29 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                         logger.error(f"Unsupported parameter location {param['in']}")
 
             if query_params and len(query_params) > 0:
-                path_to_call += "?" + "&".join([f"{k}={v}" for k, v in query_params.items()])
+                path_to_call += "?" + "&".join([f"{quote_plus(k)}={quote_plus(str(v))}" for k, v in query_params.items() if v])
             body = kwargs.pop("__body__", {})
             url = urljoin(self.spec.root_call_url, path_to_call)
+            if "headers" in body:
+                body["headers"].update(headers)
+            else:
+                body["headers"] = headers
+            retValue = {}
             if method == "get":
-                return await self.get_content(url, headers=headers, **body)
+                retValue = await self.get_content(url, **body)
             elif method == "post":
-                return await self.post_content(url, headers=headers, **body)
+                retValue = await self.post_content(url, **body)
             else:
                 logger.error(f"Unsupported method {method}")
+            if operation.result_filters:
+                filteredValue = {}
+                for result_filter in operation.result_filters:
+                    filter = parse(result_filter)
+                    filteredValue.update({str(match.full_path): match.value for match in filter.find(retValue)})
+                retValue = filteredValue
+
+            print("retValue", retValue)
+            return retValue
 
         return _fn
 

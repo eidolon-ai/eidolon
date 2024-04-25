@@ -1,6 +1,6 @@
 import json
 from datetime import date, datetime, time
-from typing import Dict, Any, Type, Literal
+from typing import Dict, Any, Type, Literal, Optional, Union
 from typing import List
 from uuid import UUID
 
@@ -145,6 +145,17 @@ class JsonProofModel(BaseModel):
 
 
 def get_python_type(property_name, property_schema, default=None):
+    if property_schema.get("anyOf") is not None:
+        pTypes = []
+        for schema in property_schema["anyOf"]:
+            try:
+                pTypes.append(get_python_type(property_name, schema, default))
+            except ValueError:
+                pass
+        if len(pTypes) == 1:
+            return pTypes[0]
+        _optional = Union[tuple(pTypes)]
+        return _optional
     field_type = property_schema.get("type")
     if field_type == "string" and "format" in property_schema and property_schema["format"] == "binary":
         return UploadFile

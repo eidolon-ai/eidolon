@@ -21,7 +21,7 @@
     "url": "https://github.com/eidolon-ai/eidolon"
   },
   "scripts": {
-    "dev": "npm run build-eidolon && next dev",
+    "dev": "npm run build-eidolon && next dev --turbo",
     "build": "npm run build-eidolon && next build",
     "build:static": "npm run build-eidolon && next build && next export",
     "format": "prettier ./ --write",
@@ -43,12 +43,13 @@
     "@mui/material": "latest",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@jsdevtools/ono": "latest",
     "clsx": "latest",
     "copy-to-clipboard": "latest",
-    "next": "14.1.3",
+    "next": "14.2.2",
     "next-auth": "beta",
-    "react": "latest",
-    "react-dom": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sharp": "^0.33.2"
   },
   "devDependencies": {
@@ -59,7 +60,7 @@
     "@types/react": "latest",
     "babel-jest": "latest",
     "eslint": "8.57.0",
-    "eslint-config-next": "latest",
+    "eslint-config-next": "^14.2.2",
     "eslint-plugin-testing-library": "latest",
     "jest": "latest",
     "jest-environment-jsdom": "latest",

@@ -7,12 +7,22 @@ spec:
     logic_units:
       - implementation: Search
       - implementation: Browser
-      - implementation: eidolon_examples.venture_search_agent.harmonic_api_logic_unit.ApiLogicUnit
+      - implementation: eidolon_examples.venture_search_agent.api_logic_unit.ApiLogicUnit
         root_call_url: "https://api.harmonic.ai"
         open_api_location: "https://api.harmonic.ai/openapi.json"
         key_env_var: "HARMONIC_API_KEY"
-        key_query_param: "api_key"
-        operations_to_expose: {"companies": "/companies"}
+        key_query_param: "apikey"
+        operations_to_expose:
+          - path: "/companies"
+            result_filters:
+              - "$.entity_urn"
+              - "$.name"
+              - "$.website"
+              - "$.logo_url"
+              - "$.legal_name"
+              - "$.description"
+              - "$.stage"
+              - "$.funding"
 
   description: "Creates company summaries"
   system_prompt: |-
@@ -39,4 +49,8 @@ spec:
           business_model:
             type: string
             description: "How does the company make money?"
+          logo_url:
+            type: string
+            description: "URL to the company logo"
+
 

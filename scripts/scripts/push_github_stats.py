@@ -49,6 +49,7 @@ def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_
 
     # Iterate over each day's traffic data
     for timestamp, count in counts:
+        print(f"Processing data for date {timestamp}, count: {count}")
         date = timestamp.split("T")[0]
         # check if the date is more than 10 days old
         if (datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > 10:

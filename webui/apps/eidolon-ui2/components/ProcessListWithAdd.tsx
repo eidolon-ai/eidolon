@@ -9,7 +9,7 @@ import {StartProgramDialog} from "../app/eidolon-apps/dev-tool/components/start-
 import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
-import {useProcesses} from "@eidolon/components/src/hooks/process_context";
+import {useProcesses} from "../../../packages/eidolon-components/src/hooks/processes_context";
 
 export interface DevProcessListWithAddProps {
   app: EidolonApp

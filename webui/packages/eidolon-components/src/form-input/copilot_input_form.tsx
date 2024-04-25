@@ -1,7 +1,7 @@
 import {Badge, Divider, IconButton, Paper, Typography} from "@mui/material";
 import {ChooseLLMElement} from "../messages/choose-llm-element";
 import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
-import {useProcesses} from "../hooks/process_context";
+import {useProcesses} from "../hooks/processes_context";
 import {executeOperation} from "../client-api-helpers/process-event-helper";
 import {CopilotParams} from "../lib/util";
 import {CopilotInputForm, ProcessError, ProcessLoading, ProcessTerminated} from "./input_form_components";

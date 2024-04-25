@@ -14,3 +14,5 @@ export {useProcessEvents} from './src/hooks/useProcessEvents'
 export * from "./src/lib/util"
 export {usageForSession} from "./src/usage-summary/usage_summary"
 export {EidolonProvider, useEidolonContext} from "./src/provider/eidolon_provider"
+export {useProcesses, ProcessesProvider} from "./src/hooks/processes_context"
+export {useProcess, ProcessProvider} from "./src/hooks/process_context"

@@ -13,6 +13,7 @@ export interface EidolonApp {
 
 export interface CopilotParams {
   "agent": string,
+  custom_page: string | undefined,
   supportedLLMs: string[] | undefined,
   defaultLLM: string | undefined,
   operation: string,
