@@ -73,12 +73,12 @@ great news: because recordings capture HTTP requests, they work here just as wel
 
 There's no free lunch, and recordings are no exception. Here are some things to keep in mind when using recordings.
 
-### Ensure Stable Input Data
+### Ensure Stable LLM Requests
 
-Any random data that might make it into a LLM request must be identical between test runs, otherwise the test will fail 
-because the recording is not valid for the new input. Many applications have this issue. For example, in Eidolon we 
-generate random ids per-conversation that enter the LLM context when agents are talking to each other. To work around 
-this we need to use stable ids that increment per-test when testing.
+LLM request must be identical between test runs to replay recordings. If a test's llm request mutates between runs, the 
+test will fail because the recording is not valid for the new input. Many applications will run into this issue. For example, 
+in Eidolon we generate random ids per-conversation that enter the LLM context when agents are talking to each other. 
+To work around this we need to use stable ids that increment per-test when testing.
 
 ### Maintain Test Reliability
 
