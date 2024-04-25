@@ -1340,7 +1340,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.7"
+version = "0.1.10"
 description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1378,7 +1378,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-usage-client"
-version = "0.1.3"
+version = "0.1.6"
 description = ""
 optional = false
 python-versions = "^3.11"
@@ -5836,4 +5836,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "82118cbb21f66a2b367422e0a2a1f992a4bc775ced8cd44e45615e365417c018"
+content-hash = "ff50cb07e6c5ec7fb31810ea49d3e37e3a9a10696926a05435ccb0fe65aa841a"

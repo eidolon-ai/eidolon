@@ -1,6 +1,6 @@
 {
   "name": "eidolon-monorepo",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "scripts": {
     "build": "turbo build",
     "start": "npm --prefix apps/eidolon-ui2 run start",
@@ -21,5 +21,8 @@
   },
   "dependencies": {
     "next": "14.1.3"
+  },
+  "eidolon": {
+    "last-update-hash": "52f220d7da7ba94ff0c96c96ee3abb2cfe95140e"
   }
 }
