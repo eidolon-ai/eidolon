@@ -48,7 +48,7 @@ strategy that quickly spirals out of control. Let’s take a step back and think
 As a developer, that’s it. This is all I really care about. After all, I’m not on the hook for testing the LLM, just how 
 my application interacts with it. As a developer, my prompts need to behave in a way that fits my application and this 
 all needs to come together without any portion of the app falling over. The integration with a LLM is important, but the 
-actual call to the LLM is not. This starts to smell a lot like a recording.
+actual call to the LLM is not. This starts to smell a lot like a __recording__.
 
 ### The Power of Recordings in Testing
 
