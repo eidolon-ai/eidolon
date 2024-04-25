@@ -169,6 +169,11 @@ jobs:
       - name: test
         run: pnpm test --if-present
         working-directory: webui
+  test-webui-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: test docker build
         run: docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '"') .
         working-directory: webui

@@ -19,11 +19,12 @@ const ExpandMoreDiv = styled((props: ExpandMoreDivProps) => {
 }));
 
 export interface ToolCallElementProps {
+  machineUrl: string
   element: ToolCallElement
   agentName: string
 }
 
-export const ToolCall = ({element, agentName}: ToolCallElementProps) => {
+export const ToolCall = ({machineUrl, element, agentName}: ToolCallElementProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
@@ -61,7 +62,7 @@ export const ToolCall = ({element, agentName}: ToolCallElementProps) => {
           <Divider/>
           {element.children.map((child, index) => {
               if (index < element.children.length - 1 || child.type != "success") {
-                return <ChatDisplayElement key={index} rawElement={child} topLevel={false} agentName={agentName}/>
+                return <ChatDisplayElement machineUrl={machineUrl} key={index} rawElement={child} topLevel={false} agentName={agentName}/>
               }
             }
           )}
