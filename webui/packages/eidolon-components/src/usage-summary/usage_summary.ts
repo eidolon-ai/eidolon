@@ -7,14 +7,19 @@ let usageCacheSeed = -1
 
 export async function usageForSession(sub: string, seed: number) {
   // eslint-disable-next-line no-undef
-  OpenAPI.BASE = process.env.EIDOLON_USAGE_SERVER || "http://localhost:8527"
-  if (seed != usageCacheSeed) {
-    if (!usageSummaryCache) {
-      usageSummaryCache = await UsageService.getUsageSummarySubjectsSubjectIdGet({subjectId: sub})
+  const usageServerLoc = process.env.EIDOLON_USAGE_SERVER;
+  if (usageServerLoc) {
+    OpenAPI.BASE = usageServerLoc
+    if (seed != usageCacheSeed) {
+      if (!usageSummaryCache) {
+        usageSummaryCache = await UsageService.getUsageSummarySubjectsSubjectIdGet({subjectId: sub})
+      }
+      usageCacheSeed = seed
     }
-    usageCacheSeed = seed
+    return usageSummaryCache
+  } else {
+    return Promise.resolve(null)
   }
-  return usageSummaryCache
 }
 
 export async function clearUsageCache() {
