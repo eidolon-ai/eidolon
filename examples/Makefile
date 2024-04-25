@@ -2,7 +2,7 @@
 
 PROJECT ?= docker.io/eidolonai
 VERSION := $(shell grep -m 1 '^version = ' pyproject.toml | awk -F '"' '{print $$2}')
-SDK_VERSION := $(shell grep '^version = ' ../sdk/pyproject.toml | awk -F '"' '{print $$2}')
+SDK_VERSION := $(shell grep -m 1 '^version = ' ../sdk/pyproject.toml | awk -F '"' '{print $$2}')
 
 # Define the directories
 EIDOLON_SDK_DIR := ../sdk/eidolon_ai_sdk
