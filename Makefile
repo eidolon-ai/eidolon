@@ -20,12 +20,12 @@ $(addsuffix .version, $(ALL_POETRY_PROJECTS)): %.version: force $$(shell make -C
 	@make -s -C scripts run "update_poetry ${*}";
 	@cd $*; poetry lock --no-update;
 
-$(addsuffix .publish, $(ALL_POETRY_PROJECTS)): %.publish: force %.version $$(shell make -C scripts -s run "get_deps $$* --suffix .publish");
+$(addsuffix .publish, $(ALL_POETRY_PROJECTS)): %.publish: force $$(shell make -C scripts -s run "get_deps $$* --suffix .publish");
 	@PACKAGE_NAME=$(shell grep -m 1 '^name = ' $*/pyproject.toml | awk -F '"' '{print $$2}'); \
 	CURRENT_VERSION=$(shell grep -m 1 '^version = ' $*/pyproject.toml | awk -F '"' '{print $$2}'); \
 	if ! pip index versions $$PACKAGE_NAME 2>/dev/null | grep -q $$CURRENT_VERSION; then \
 		echo "Version $$CURRENT_VERSION of $$PACKAGE_NAME is not published on PyPI. Publishing now..."; \
-		cd $*; poetry publish --build; \
+		cd $*; poetry install; poetry publish --build; \
 	else \
 		echo "Version $$CURRENT_VERSION of $$PACKAGE_NAME is already published on PyPI."; \
 	fi;

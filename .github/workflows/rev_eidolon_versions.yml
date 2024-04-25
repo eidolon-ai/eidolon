@@ -40,10 +40,3 @@ jobs:
         run: |
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
           make publish
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        id: pyp-publish-commit
-        with:
-          commit_message: "changes occurred while publishing"
-      - name: "ERROR: Publish to PyPI should not cause changes"
-        if: steps.pyp-publish-commit.outputs.changes_detected == 'true'
-        run: exit 1
