@@ -7,7 +7,10 @@
     "test": "turbo test",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "predocker_push": "docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') .",
+    "docker_push": "docker push docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') &&  docker push docker.io/eidolonai/webui:latest",
+    "maybe_docker_push": "npm pkg get version | tr -d '\"' | grep -q $(docker images docker.io/eidolonai/webui --format '{{.Tag}}') && echo 'Image exists' || npm run docker_push"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
