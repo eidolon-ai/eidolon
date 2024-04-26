@@ -58,16 +58,17 @@ def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_
         # Check if data for the current day already exists in PostHog
         events = get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key)
         print("Exising events: ", events)
-        should_insert = False
+        should_insert = True
         if events:
             existing_count = 0
             for event in events:
                 existing_count += event["properties"]["count"]
 
             if existing_count != count:
-                should_insert = True
                 print(f"Updating existing data for date {timestamp} existing_count: {existing_count}, need: {count}, with new count {count - existing_count}")
                 count = count - existing_count
+            else:
+                should_insert = False
 
         if should_insert:
             # Prepare the data payload
