@@ -1,7 +1,7 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 
-import Hero from '~/components/widgets/Hero.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
 import Note from '~/components/widgets/Note.astro';
 import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
@@ -22,7 +22,7 @@ const bg = await Astro.slots.render("bg")
 <Layout metadata={metadata}>
   <!-- Hero Widget ******************* -->
 
-  <Hero
+  <Hero2
     actions={[
       {
         variant: 'primary',
@@ -35,21 +35,24 @@ const bg = await Astro.slots.render("bg")
     ]}
     image={{src: '~/assets/images/k8s.webp', width: '600px', height: '600px', alt: 'Eidolon'}}
   >
+    <Fragment slot="tagline">
+      Let's build trusted genAI together
+    </Fragment>
     <Fragment slot="title">
-      Let’s build trusted genAI together
+      Eidolon
     </Fragment>
 
     <Fragment slot="subtitle">
-      <span class="sm:-ml-5 block mb-3 font-bold text-3xl">
-        Integrate generative AI into your application
+      <span class="block mb-3 font-bold text-3xl">
+        An open source SDK for genAI agents
       </span>
       <span style="text-align: left" class="-left-2">
-        <span class="sm:-ml-5 block">
-         We are developers building for the future. Our open source agent SDK empowers developers to rapidly build modular, pluggable and trusted agents for genAI apps.
+        <span class="block">
+          Infrastructure that empowers developers to rapidly build modular and trusted multi-modal agents for genAI apps.
         </span>
       </span>
     </Fragment>
-  </Hero>
+  </Hero2>
 
   <!-- Note Widget ******************* -->
 
