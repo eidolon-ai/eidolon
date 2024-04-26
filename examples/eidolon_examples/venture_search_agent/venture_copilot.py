@@ -140,7 +140,7 @@ class VentureCopilot(AgentTemplate):
     async def research_and_rank_company(self, company: Company, ):
         # Fetch company information
         company_info = await self._research_company(company)
-        if type(company_info) != str:
+        if isinstance(company_info, str):
             # Send information to RelevancyRanker for analysis
             company.researched_details = company_info
         else:
