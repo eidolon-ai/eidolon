@@ -19,10 +19,14 @@ const EidolonProcessesContext = createContext<{
 });
 
 // Custom hook to consume the context
-export const useProcesses = () => {
+export const useProcesses = (machineURL: string) => {
   const context = useContext(EidolonProcessesContext);
   if (!context) {
     throw new Error("useProcessesContext must be used within a ProcessesProvider");
+  }
+  if (!context.fetchError && !context.processes) {
+    // noinspection JSIgnoredPromiseFromCall
+    context.updateProcesses(machineURL)
   }
   return context;
 };
@@ -31,24 +35,30 @@ export const useProcesses = () => {
 export const ProcessesProvider = ({children}: {children: JSX.Element}) => {
   const [processesByDate, setProcessesByDate] = useState<Record<string, ProcessStatus[]>>({})
   const [fetchError, setFetchError] = useState<HttpException | undefined>(undefined)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const value = {
     processes: processesByDate,
     fetchError: fetchError,
     updateProcesses: async (machineURL: string) => {
-      getRootProcesses(machineURL)
-        .then(groupProcessesByUpdateDate)
-        .then((chats) => {
-          setProcessesByDate({...chats});
-          setFetchError(undefined)
-        }).catch((e) => {
-          setProcessesByDate({chats:[]})
+      if (!loading) {
+        setLoading(true)
+        getRootProcesses(machineURL)
+          .then(groupProcessesByUpdateDate)
+          .then((chats) => {
+            setProcessesByDate({...chats});
+            setFetchError(undefined)
+            setLoading(false)
+          }).catch((e) => {
+          setProcessesByDate({chats: []})
           if (e instanceof HttpException) {
             setFetchError(e)
           } else {
             setFetchError(new HttpException(e.message || "unknown error", 500))
           }
-      })
+          setLoading(false)
+        })
+      }
     }
   };
 

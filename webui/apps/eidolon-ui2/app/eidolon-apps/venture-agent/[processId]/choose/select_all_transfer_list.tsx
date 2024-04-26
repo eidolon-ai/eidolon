@@ -58,7 +58,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
+  const {onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} =
     props;
   const createSortHandler =
     (property: keyof Company) => (event: React.MouseEvent<unknown>) => {
@@ -106,13 +106,13 @@ interface EnhancedTableToolbarProps {
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, selectItems } = props;
+  const {numSelected, selectItems} = props;
 
   return (
     <Toolbar
       sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
+        pl: {sm: 2},
+        pr: {xs: 1, sm: 1},
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
@@ -121,7 +121,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     >
       {numSelected > 0 ? (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{flex: '1 1 100%'}}
           color="inherit"
           variant="subtitle1"
           component="div"
@@ -130,7 +130,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Typography>
       ) : (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{flex: '1 1 100%'}}
           variant="h6"
           id="tableTitle"
           component="div"
@@ -145,23 +145,62 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             onClick={() => {
               selectItems()
             }}
-            sx={{ ml: 2 }}
-            >Research Companies</Button>
+            sx={{ml: 2}}
+          >Research Companies</Button>
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
-            <FilterListIcon />
+            <FilterListIcon/>
           </IconButton>
         </Tooltip>
       )}
     </Toolbar>
   );
 }
-export default function EnhancedTable({companies, selectItems}: {companies: Company[], selectItems: (items: readonly string[]) => void}) {
+
+function EnhancedTableRow({row, labelId, selected, setSelected}: {row: Company, labelId: string, selected: boolean, setSelected: (selected: boolean) => void}) {
+  return (
+    <TableRow
+      hover
+      onClick={() => {
+        setSelected(!selected)
+      }}
+      role="checkbox"
+      aria-checked={selected}
+      tabIndex={-1}
+      key={row.name}
+      selected={selected}
+      sx={{cursor: 'pointer'}}
+    >
+      <TableCell padding="checkbox">
+        <Checkbox
+          color="primary"
+          checked={selected}
+          inputProps={{
+            'aria-labelledby': labelId,
+          }}
+        />
+      </TableCell>
+      <TableCell
+        component="th"
+        id={labelId}
+        scope="row"
+        padding="none"
+      >
+        {row.name}
+      </TableCell>
+      <TableCell align="right">{row.category}</TableCell>
+      <TableCell align="right">{row.url}</TableCell>
+    </TableRow>
+
+  )
+}
+
+export default function EnhancedTable({companies, selectItems}: { companies: Company[], selectItems: (items: readonly string[]) => void }) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Company>('name');
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const [numSelected, setNumSelected] = React.useState(companies.filter((company) => company.should_research).length)
 
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
@@ -170,52 +209,40 @@ export default function EnhancedTable({companies, selectItems}: {companies: Comp
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-    companies.sort((a, b) => (isAsc ? 1 : -1) * (a[property] as any).localeCompare(b[property]) )
+    companies.sort((a, b) => (isAsc ? 1 : -1) * (a[property] as any).localeCompare(b[property]))
   };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    for (let i = 0; i < companies.length; i++) {
+      companies[i]!.should_research = event.target.checked
+    }
     if (event.target.checked) {
-      const newSelected = companies.map((n) => n.name);
-      setSelected(newSelected);
-      return;
+      setNumSelected(companies.length)
+    } else {
+      setNumSelected(0)
     }
-    setSelected([]);
   };
 
-  const handleClick = (_event: React.MouseEvent<unknown>, id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-    setSelected(newSelected);
-  };
-
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const setSelected = (index: number, selected: boolean) => {
+    companies[index]!.should_research = selected
+    setNumSelected(selected ? numSelected + 1 : numSelected - 1)
+  }
 
   return (
-    <Box sx={{ width: '100%'}}>
-      <Paper sx={{ width: '100%', mb: 2, overflow: "hidden"}}>
-        <EnhancedTableToolbar numSelected={selected.length} selectItems={() => selectItems(selected)}/>
-        <TableContainer sx={{ height: "calc(100vh - 350px)" }}>
+    <Box sx={{width: '100%'}}>
+      <Paper sx={{width: '100%', mb: 2, overflow: "hidden"}}>
+        <EnhancedTableToolbar numSelected={numSelected} selectItems={() => selectItems(companies
+          .filter((company) => company.should_research)
+          .map((company) => company.name))}/>
+        <TableContainer sx={{height: "calc(100vh - 300px)"}}>
           <Table
             stickyHeader
-            sx={{ minWidth: 750 }}
+            sx={{minWidth: 750}}
             aria-labelledby="tableTitle"
             size={'medium'}
           >
             <EnhancedTableHead
-              numSelected={selected.length}
+              numSelected={numSelected}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
@@ -224,41 +251,16 @@ export default function EnhancedTable({companies, selectItems}: {companies: Comp
             />
             <TableBody>
               {companies.map((row, index) => {
-                const isItemSelected = isSelected(row.name);
-                const labelId = `enhanced-table-checkbox-${index}`;
+                const labelId = `enhanced-table-checkbox-${index}`
 
                 return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.name)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.name}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.category}</TableCell>
-                    <TableCell align="right">{row.url}</TableCell>
-                  </TableRow>
-                );
+                  <EnhancedTableRow key={row.name} row={row} labelId={labelId}
+                                    selected={row.should_research}
+                                    setSelected={(selected) => {
+                                      setSelected(index, selected)
+                                    }}
+                  />
+                )
               })}
             </TableBody>
           </Table>

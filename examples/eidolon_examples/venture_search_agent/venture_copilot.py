@@ -1,8 +1,5 @@
-import asyncio
-import json
 from typing import Optional, List, cast, Annotated
 
-import yaml
 from fastapi import Body
 from pydantic import BaseModel, Field
 
@@ -13,9 +10,9 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.stream_collector import merge_streams
-from eidolon_ai_sdk.agent.agent import register_program, Agent as AgentTemplate, register_action, AgentState
+from eidolon_ai_sdk.agent.agent import register_program, Agent as AgentTemplate, register_action
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage, SystemAPUMessage
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
 
 
 class SummarizeWebsiteBody(BaseModel):
@@ -29,6 +26,7 @@ class CompanyDetails(BaseModel):
     business_model: str
     logo_url: str
     relevance: Optional[float] = None
+    other_information: Optional[str] = None
 
 
 class Company(BaseModel):

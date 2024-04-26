@@ -13,7 +13,10 @@ spec:
         key_env_var: "HARMONIC_API_KEY"
         key_query_param: "apikey"
         operations_to_expose:
-          - path: "/companies"
+          - name: "enrich_company"
+            description: "Enriches a company with information from the Harmonic API"
+            path: "/companies"
+            method: "post"
             result_filters:
               - "$.entity_urn"
               - "$.name"
@@ -26,8 +29,10 @@ spec:
 
   description: "Creates company summaries"
   system_prompt: |-
-    You are a helpful assistant who goes to the url of a given company, and provides a 2 sentence summary.
-    Continue using your tools to research until you know everything all the required fields for your output.
+    You are a helpful venture fund research assistant. Use the tools at your disposal to find information about companies.
+    First try to use the tool 'enrich_company' to get as much information as you can about the company.
+    Next, use the browser tool to find the company's website and scrape off as much information as you can.
+    Continue using your tools to research until you know as many fields for your output. You may follow links on any webpage you find.
   actions:
     - name: "search_company"
       user_prompt: |-
@@ -42,15 +47,16 @@ spec:
             description: "A 2 sentence summary of the company"
           stage:
             type: string
-            description: "Series A, B, C, D, E, F or Publicly Traded"
+            description: "The stage of the company. Legal values are Pre-Seed, Seed, a letter (like A, B, C, ...), Publicly Traded, or 'unknown'"
           market_size:
             type: string
-            description: "Total addressable market for the industry the company is apart of"
+            description: "The market size or market cap of the company. This value can be a number or a range and should be followed by the currency"
           business_model:
             type: string
             description: "How does the company make money?"
           logo_url:
             type: string
-            description: "URL to the company logo"
-
-
+            description: "URL of the company logo. Can be found in the company's website. Use the logo to identify the company or the favicon if available"
+          other_information:
+            type: string
+            description: "Any other information you found that is relevant for a venture fund"

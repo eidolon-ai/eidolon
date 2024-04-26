@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import {useEffect} from "react";
-import {useOperation} from "@/hooks/page_helper";
 import {Box} from "@mui/material";
 import {executeOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
-import {CopilotParams} from "@eidolon/components";
+import {CopilotParams, useProcess} from "@eidolon/components";
 import EnhancedTable from "./select_all_transfer_list";
 import {useRouter} from "next/navigation";
 import {Company} from "../../types";
@@ -18,18 +17,15 @@ export interface ProcessPageProps {
 
 export default function ({params}: ProcessPageProps) {
   const app_name = 'venture-agent'
-  const {app, error, processStatus} = useOperation(app_name, params.processId)
+  const {app, processStatus, updateProcessStatus} = useProcess()
   const [companies, setCompanies] = React.useState<Company[] | undefined>(undefined)
   const router = useRouter()
-
   const appOptions = app?.params as CopilotParams
+
   useEffect(() => {
-    if (!app) {
+    if (!app || !processStatus) {
       return
     }
-
-    console.log(processStatus.state)
-
     if (processStatus.state === 'idle') {
       executeOperation(app!.location, appOptions.agent, "get_companies", processStatus.process_id, {}).then((companies) => {
         (companies as Company[]).sort((a, b) => a.name.localeCompare(b.name))
@@ -41,11 +37,11 @@ export default function ({params}: ProcessPageProps) {
   }, [app?.location, appOptions?.agent, processStatus?.process_id]);
 
   if (!app || !companies) {
-    return <div>Loading...</div>
+    return
   }
 
   const markCompanies = (companies: readonly string[]) => {
-    executeOperation(app!.location, appOptions.agent, "mark_companies_for_research", processStatus.process_id, {companies}).then(() => {
+    executeOperation(app!.location, appOptions.agent, "mark_companies_for_research", processStatus!.process_id, {companies}).then(() => {
       router.push('thesis')
     })
   }

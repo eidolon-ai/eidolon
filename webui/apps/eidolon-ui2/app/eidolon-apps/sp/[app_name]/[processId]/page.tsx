@@ -1,8 +1,7 @@
 'use client'
 
 import * as React from "react";
-import {CopilotPanel, CopilotParams} from "@eidolon/components";
-import {useOperation} from "@/hooks/page_helper";
+import {CopilotPanel, CopilotParams, useProcess} from "@eidolon/components";
 
 export interface ProcessPageProps {
   params: {
@@ -12,13 +11,13 @@ export interface ProcessPageProps {
 }
 
 export default function ({params}: ProcessPageProps) {
-  const {app, error} = useOperation(params.app_name, params.processId)
+  const {app, fetchError} = useProcess()
 
-  if (!error && !app) {
+  if (!fetchError && !app) {
     return <div>Loading...</div>
   }
-  if (error) {
-    return <div>{error}</div>
+  if (fetchError) {
+    return <div>{fetchError.message}</div>
   }
   return (
     <CopilotPanel

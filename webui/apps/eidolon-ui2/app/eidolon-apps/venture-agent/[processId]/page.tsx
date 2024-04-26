@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import {useEffect} from "react";
-import {useOperation} from "@/hooks/page_helper";
 import {useRouter} from "next/navigation";
 import {Company} from "../types";
 import {executeOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
-import {CopilotParams} from "@eidolon/components";
+import {CopilotParams, useProcess} from "@eidolon/components";
 
 export interface ProcessPageProps {
   params: {
@@ -16,13 +15,13 @@ export interface ProcessPageProps {
 
 export default function ({params}: ProcessPageProps) {
   const app_name = 'venture-agent'
-  const {app, error, processStatus} = useOperation(app_name, params.processId)
+  const {app, fetchError, processStatus} = useProcess()
   const router = useRouter()
   const [companies, setCompanies] = React.useState<Company[] | undefined>(undefined)
   const appOptions = app?.params as CopilotParams
 
   useEffect(() => {
-    if (!app) {
+    if (!app || !processStatus) {
       return
     }
     executeOperation(app!.location, appOptions.agent, "get_companies", processStatus.process_id, {}).then((companies: Company[]) => {
@@ -38,11 +37,11 @@ export default function ({params}: ProcessPageProps) {
       setCompanies(companies)
     })
   }, []);
-  if (!error && !app) {
-    return <div>Loading...</div>
+  if (!fetchError && !app) {
+    return
   }
-  if (error) {
-    return <div>{error}</div>
+  if (fetchError) {
+    return <div>{fetchError.message}</div>
   }
 
   if (processStatus?.state === 'initialized') {

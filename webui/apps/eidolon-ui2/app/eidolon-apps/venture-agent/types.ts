@@ -16,4 +16,5 @@ export interface CompanyDetails {
   business_model: string
   logo_url: string
   relevance: number
+  other_information?: string
 }

@@ -7,7 +7,7 @@ import CompanyDetailsLayout from "./company_details";
 
 export interface CompanyListProps {
   companies: Company[]
-  reload: (item: Company) => void
+  reload: (item: Company) => Promise<Company>
 }
 
 export function CompanyList({companies, reload}: CompanyListProps) {
@@ -50,7 +50,11 @@ export function CompanyList({companies, reload}: CompanyListProps) {
         <Box
           sx={{height: '40%', borderTop: '2px solid #ccc', width: '100%', marginTop: '16px'}}
         >
-          <CompanyDetailsLayout refreshResearch={reload} company={selectedCompany}/>
+          <CompanyDetailsLayout refreshResearch={(company) => {
+            reload(company).then((company) => {
+              setSelectedCompany(company)
+            })
+          }} company={selectedCompany}/>
         </Box>
       )}
     </Box>

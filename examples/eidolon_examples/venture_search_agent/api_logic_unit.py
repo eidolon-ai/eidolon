@@ -17,7 +17,10 @@ from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
 class Operation(BaseModel):
+    name: str
+    description: Optional[str]
     path: str
+    method: str
     result_filters: List[str]
 
 
@@ -34,6 +37,7 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
     def __init__(self, **kwargs):
         LogicUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
+        self.open_api_schema = None
 
     async def get_content(self, url: str, **kwargs):
         params = {"url": url}
@@ -44,15 +48,17 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
 
     async def post_content(self, url: str, **kwargs):
         params = {"url": url}
-        print("sending post request to", url, kwargs)
         async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
             response = await client.post(**params, **kwargs)
             await AgentError.check(response)
             return response.json()
 
     async def get_schema(self) -> dict:
-        json_ = await self.get_content(self.spec.open_api_location)
-        return jsonref.replace_refs(json_)
+        if not self.open_api_schema:
+            json_ = await self.get_content(self.spec.open_api_location)
+            self.open_api_schema = jsonref.replace_refs(json_)
+
+        return self.open_api_schema
 
     async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
         # first fetch the openapi schema located at self.spec.open_api_location
@@ -65,32 +71,33 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                 logger.error(f"No path found for operation {operation.path}")
             else:
                 for method_name, method in op.items():
-                    name = method["operationId"]
-                    required = []
-                    params = {}
-                    if "parameters" in method:
-                        for param in method["parameters"]:
-                            if param["in"] == "query":
-                                params[param["name"]] = param["schema"]
-                                if param["required"]:
-                                    required.append(param["name"])
-                    if "request_body" in method:
-                        params["__body__"] = self._body_model(method, name + "_Body")
-                        required.append("__body__")
-                    model = schema_to_model(dict(type="object", properties=params, required=required), name + "_Input")
-                    description = self._description(method, name)
-                    tools.append(FnHandler(
-                        name=name,
-                        description=lambda a, b: description,
-                        input_model_fn=lambda a, b: model,
-                        output_model_fn=lambda a, b: Any,
-                        fn=self._call_endpoint(operation, method_name, method["parameters"]),
-                        extra={
-                            "title": method["summary"] or name,
-                            "sub_title": operation.path,
-                            "agent_call": True,
-                        },
-                    ))
+                    if method_name == operation.method:
+                        name = operation.name
+                        required = []
+                        params = {}
+                        if "parameters" in method:
+                            for param in method["parameters"]:
+                                if param["in"] == "query":
+                                    params[param["name"]] = param["schema"]
+                                    if param["required"]:
+                                        required.append(param["name"])
+                        if "request_body" in method:
+                            params["__body__"] = self._body_model(method, name + "_Body")
+                            required.append("__body__")
+                        model = schema_to_model(dict(type="object", properties=params, required=required), name + "_Input")
+                        description = operation.description or self._description(method, name)
+                        tools.append(FnHandler(
+                            name=name,
+                            description=lambda a, b: description,
+                            input_model_fn=lambda a, b: model,
+                            output_model_fn=lambda a, b: Any,
+                            fn=self._call_endpoint(operation, method_name, method["parameters"]),
+                            extra={
+                                "title": method["summary"] or name,
+                                "sub_title": operation.path,
+                                "agent_call": True,
+                            },
+                        ))
             return tools
 
     def _call_endpoint(self, operation: Operation, method, method_params):
@@ -140,7 +147,6 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                     filteredValue.update({str(match.full_path): match.value for match in filter.find(retValue)})
                 retValue = filteredValue
 
-            print("retValue", retValue)
             return retValue
 
         return _fn

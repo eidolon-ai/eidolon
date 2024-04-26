@@ -2,29 +2,19 @@
 
 import * as React from "react";
 import {useEffect} from "react";
-import {useOperation} from "@/hooks/page_helper";
 import {Box} from "@mui/material";
 import {executeOperation, streamOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
-import {CopilotParams} from "@eidolon/components";
-import {useRouter} from "next/navigation";
+import {CopilotParams, useProcess} from "@eidolon/components";
 import {CompanyList} from "./CompanyList";
 import {Company} from "../../types";
 
-export interface ProcessPageProps {
-  params: {
-    processId: string
-  }
-}
-
-export default function ({params}: ProcessPageProps) {
-  const app_name = 'venture-agent'
-  const {app, error, processStatus} = useOperation(app_name, params.processId)
+export default function () {
+  const {app, processStatus} = useProcess()
   const [companies, setCompanies] = React.useState<Company[] | undefined>(undefined)
-
   const appOptions = app?.params as CopilotParams
 
   useEffect(() => {
-    if (!app) {
+    if (!app || !processStatus) {
       return
     }
 
@@ -43,6 +33,7 @@ export default function ({params}: ProcessPageProps) {
 
         const companiesToResearch = companies.filter((company) => !company.researched_details).map((company) => company.name)
 
+        // noinspection JSIgnoredPromiseFromCall
         streamOperation(app.location, appOptions.agent, "research_more_companies", processStatus.process_id, {companyNames: companiesToResearch}, (event) => {
           if (event.category === "output") {
             const newCompany = event.content as Company
@@ -62,24 +53,28 @@ export default function ({params}: ProcessPageProps) {
     if (inCompanies) {
       const index = inCompanies.findIndex((c) => c.name === company.name)
       const foundCompany = inCompanies[index]!
-      inCompanies[index] = {...foundCompany, ...company}
+      let new_comp: Company = {...foundCompany, ...company};
+      inCompanies[index] = new_comp
       const companiesCopy = [...inCompanies]
       setCompanies(companiesCopy)
+      return new_comp
+    } else {
+      return company
     }
   }
 
-  const reload = (item: Company) => {
+  const reload = (item: Company): Promise<Company> => {
     item.loading = true
     updateCompany(item)
-    const newCompanyInfo = executeOperation(app!.location, appOptions.agent, "research_company", processStatus.process_id, {companyName: item.name})
-    newCompanyInfo.then((newItem) => {
+    const newCompanyInfo = executeOperation(app!.location, appOptions.agent, "research_company", processStatus!.process_id, {companyName: item.name})
+    return newCompanyInfo.then((newItem) => {
       newItem.loading = false
-      updateCompany(newItem)
+      return updateCompany(newItem)
     })
   }
 
   if (!app || !companies) {
-    return <div>Loading...</div>
+    return
   }
 
   return (

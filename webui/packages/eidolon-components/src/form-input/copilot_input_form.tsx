@@ -28,7 +28,7 @@ export function CopilotInputPanel({
                                     handleCancel
                                   }: CopilotInputPanelParams) {
   const {selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(copilotParams.operationInfo, copilotParams.defaultLLM)
-  const {updateProcesses} = useProcesses()
+  const {updateProcesses} = useProcesses(machineUrl)
   const [uploadedFiles, setUploadedFiles] = useState<FileHandle[]>([]);
 
   const addUploadedFiles = (files: FileHandle[]) => {
