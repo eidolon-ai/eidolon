@@ -8,6 +8,7 @@ import Button from "~/components/ui/Button.astro"
 import {getHomePermalink} from "~/utils/permalinks";
 import {trimSlash, getAsset} from "~/utils/permalinks";
 import type {CallToAction} from "~/types";
+import Image from "../common/Image.astro";
 
 interface Link {
   text?: string;
@@ -50,6 +51,11 @@ const {
 } = Astro.props;
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
+
+let numStars = " "
+const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
+
+numStars = data.stargazers_count
 ---
 
 <header
@@ -75,11 +81,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
           <ToggleMenu/>
         </div>
       )}
-    </div>
-    <nav
-      class="items-center w-full md:w-auto hidden md:flex text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:mx-5"
-      aria-label="Main navigation"
-    >
+      <nav class="items-center w-full md:w-auto hidden md:flex text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:mx-5">
       <ul
         class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium"
       >
@@ -124,6 +126,12 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
           ))
         }
       </ul>
+        </nav>
+    </div>
+    <nav
+      class="items-center w-full md:w-auto hidden md:flex text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:mx-5"
+      aria-label="Main navigation"
+    >
     </nav>
     <div
       class:list={[
@@ -143,6 +151,18 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
             ""
           )
         }
+        <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
+          {
+            <Button href="https://github.com/eidolon-ai/eidolon" variant="secondary" class="py-2.5 px-2.0 font-semibold shadow-none hover:underline text-sm w-auto"
+            >Star on GitHub {numStars} ⭐</Button>
+          }
+        </div>
+        <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
+          <Button href="https://discord.gg/6kVQrHpeqG" variant="link" class="ml-2 py-2.5 px-1 md:px-1 font-semibold shadow-none hover:underline text-sm w-auto">Join us on
+            Discord
+          </Button>
+          <Image height="16" width="16" src='~/assets/images/discord.png' alt="Discord" class="w-6 h-6 md"/>
+        </div>
         <div class="flex">
           {showToggleTheme &&
             <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5 md:inline-block"/>}

@@ -57,6 +57,7 @@ def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_
 
         # Check if data for the current day already exists in PostHog
         events = get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key)
+        print("Exising events: ", events)
         should_insert = False
         if events:
             existing_count = 0
