@@ -1,9 +1,8 @@
 'use server'
 
-import {OpenAPI, UsageService} from "@eidolon/usage-client";
+import {OpenAPI, UsageService, UsageSummary} from "@eidolon/usage-client";
 
-export async function usageForSession(sub: string) {
-  // eslint-disable-next-line no-undef
+export async function usageForSession(sub: string): Promise<UsageSummary | null> {
   const usageServerLoc = process.env.EIDOLON_USAGE_SERVER;
   if (usageServerLoc) {
     OpenAPI.BASE = usageServerLoc
