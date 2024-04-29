@@ -15,7 +15,7 @@ export function UsageIndicator({...restOfProps}) {
   const {data: session} = useSession()
   useEffect(() => {
     if (session?.user?.id) {
-      usageForSession(session.user.id, eidolonContext.usageSeed).then((data) => {
+      usageForSession(session.user.id).then((data) => {
         setUsageData(data)
       })
     }
