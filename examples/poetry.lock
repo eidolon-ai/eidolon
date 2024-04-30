@@ -1367,7 +1367,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.40"
+version = "0.1.41"
 description = "An Open Source Agent Services Framework"
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -5833,4 +5833,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "7ba18233ad52c35c0b9c11d0540fdfb3682bcb01b43aca29785af21d22c8276b"
+content-hash = "c26c5b0e9ec4dbc9926d6c0a410ec7567dbbb806ecf72d01c23f83574f474f3e"
