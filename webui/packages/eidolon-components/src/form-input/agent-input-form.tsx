@@ -31,8 +31,6 @@ export function AgentInputForm({handleSubmit, operations, isProgram, processStat
   const [schema, setSchema] = useState<any>({})
   const [title, setTitle] = useState<string>("")
   const [formData, setFormData] = useState<any>({})
-
-  // the next line filters operations that are not usable as defined by processState.available_actions
   const [usableOperations, setUsableOperations] = useState<OperationInfo[]>(getAvailableOperations(operations, processState))
 
   useEffect(() => {
