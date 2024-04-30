@@ -2,26 +2,13 @@
 
 import {OpenAPI, UsageService, UsageSummary} from "@eidolon/usage-client";
 
-let usageSummaryCache: UsageSummary | null = null
-let usageCacheSeed = -1
-
-export async function usageForSession(sub: string, seed: number) {
+export async function usageForSession(sub: string): Promise<UsageSummary | null> {
   // eslint-disable-next-line no-undef
   const usageServerLoc = process.env.EIDOLON_USAGE_SERVER;
   if (usageServerLoc) {
     OpenAPI.BASE = usageServerLoc
-    if (seed != usageCacheSeed) {
-      if (!usageSummaryCache) {
-        usageSummaryCache = await UsageService.getUsageSummarySubjectsSubjectIdGet({subjectId: sub})
-      }
-      usageCacheSeed = seed
-    }
-    return usageSummaryCache
+    return UsageService.getUsageSummarySubjectsSubjectIdGet({subjectId: sub})
   } else {
-    return Promise.resolve(null)
+    return null
   }
-}
-
-export async function clearUsageCache() {
-  usageSummaryCache = null
 }

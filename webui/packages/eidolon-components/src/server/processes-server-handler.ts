@@ -1,5 +1,4 @@
 import {EidolonClient} from "@eidolon/client";
-import {clearUsageCache} from "../usage-summary/usage_summary";
 import {convertException, processResponse} from "../lib/util";
 
 export const getAuthHeaders = (access_token: string | undefined): Record<string, string> => {
@@ -168,11 +167,9 @@ export class ProcessEventsHandler {
           start: async (controller) => {
             const resp = this.execOperation(machineUrl, processId, agent, operation, data);
             for await (const event of resp) {
-              await clearUsageCache()
               if (done) break;
               controller.enqueue(textEncoder.encode(`data: ${JSON.stringify(event)}\n\n`));
             }
-            await clearUsageCache()
             controller.close()
           },
           cancel: () => {
@@ -195,12 +192,10 @@ export class ProcessEventsHandler {
       } else {
         const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
         let response = Response.json((await client.process(processId).agent(agent).action(operation, data))["data"], {status: 200});
-        await clearUsageCache()
         return response;
       }
     } catch (error) {
       console.error('Error fetching information:', error);
-      await clearUsageCache()
       return new Response('Failed to obtain stream', {status: 500})
     }
   }
@@ -208,7 +203,6 @@ export class ProcessEventsHandler {
   async* execOperation(machineUrl: string, processId: string, agent: string, operation: string, reqBody: Record<string, any>) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     for await (const e of client.process(processId).agent(agent).stream_action(operation, reqBody)) {
-      await clearUsageCache()
       yield e
     }
   }
