@@ -14,9 +14,6 @@ export interface ChatDisplayElementProps {
 
 export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage}: ChatDisplayElementProps) => {
   const getUserInput = (element: UserRequestElement) => {
-    if (typeof element.content === "string") {
-      return element.content ? element.content : "*No Input*"
-    }
     let content = typeof element.content === "string" ? {body: element.content} : {...element.content}
     delete content["process_id"]
     if (Object.keys(content).length === 0) {
