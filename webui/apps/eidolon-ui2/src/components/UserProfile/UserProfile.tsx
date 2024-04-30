@@ -83,26 +83,22 @@ export const UserProfile = () => {
             </ListItem>
           </List>
           <Divider/>
-          {process.env.EIDOLON_USAGE_SERVER && (
-            <>
-              <List>
-                <ListItem>
-                  <Typography variant="subtitle1">Eidolon Time</Typography>
-                </ListItem>
-                <ListItem>
-                  <UsageIndicator />
-                </ListItem>
-                <ListItem>
-                  <Box>
-                    <Button variant={"outlined"} color={"secondary"}>
-                      Request more Time
-                    </Button>
-                  </Box>
-                </ListItem>
-              </List>
-              <Divider/>
-            </>
-          )}
+            <List>
+              <ListItem>
+                <Typography variant="subtitle1">Eidolon Time</Typography>
+              </ListItem>
+              <ListItem>
+                <UsageIndicator />
+              </ListItem>
+              <ListItem>
+                <Box>
+                  <Button variant={"outlined"} color={"secondary"}>
+                    Request more Time
+                  </Button>
+                </Box>
+              </ListItem>
+            </List>
+            <Divider/>
         </div>
         <Button variant={"outlined"} color={"primary"}
                 sx={{margin: "0px 8px 16px 8px"}}
