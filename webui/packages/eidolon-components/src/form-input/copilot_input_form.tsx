@@ -15,7 +15,7 @@ export interface CopilotInputPanelParams {
   copilotParams: CopilotParams
   processState?: ProcessStatus
   // eslint-disable-next-line no-unused-vars
-  executeAction: (machineUrl: string, agent: string, operation: string, payload: Record<string, any>) => Promise<void>
+  executeAction: (machineUrl: string, agent: string, operation: string, payload: string | Record<string, any>) => Promise<void>
   handleCancel: () => void
 }
 
@@ -27,8 +27,8 @@ export function CopilotInputPanel({
                                     executeAction,
                                     handleCancel
                                   }: CopilotInputPanelParams) {
-  const {selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(copilotParams.operationInfo, copilotParams.defaultLLM)
-  const {updateProcesses} = useProcesses(machineUrl)
+  const {selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, copilotParams)
+  const {updateProcesses} = useProcesses()
   const [uploadedFiles, setUploadedFiles] = useState<FileHandle[]>([]);
 
   const addUploadedFiles = (files: FileHandle[]) => {
@@ -36,7 +36,7 @@ export function CopilotInputPanel({
   }
 
   async function doAction(input: string) {
-    const payload: Record<string, any> = {
+    let payload: string | Record<string, any> = {
       body: input
     }
 
@@ -46,6 +46,10 @@ export function CopilotInputPanel({
 
     if (uploadedFiles.length > 0) {
       payload['attached_files'] = uploadedFiles
+    }
+
+    if (!copilotParams.allowSpeech && Object.keys(payload).length === 1) {
+      payload = payload['body']
     }
 
     if (processState?.state === "initialized" && copilotParams.titleOperationName) {

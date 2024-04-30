@@ -5,6 +5,7 @@ import {CopilotParams} from "../lib/util";
 import {useState} from "react";
 import {FileUpload} from "../file-upload/FileUpload";
 import {FileHandle} from "@eidolon/client";
+import {CircularProgressWithContent} from "../lib/circular-progress-with-content";
 
 export function ProcessTerminated() {
   return (
@@ -49,6 +50,7 @@ interface CopilotInputFormProps {
   addUploadedFiles: (files: FileHandle[]) => void
   // eslint-disable-next-line no-unused-vars
   doAction: (input: string) => Promise<void>
+
   doCancel(): void
 }
 
@@ -107,7 +109,9 @@ export function CopilotInputForm({machineUrl, processId, isProcessing, copilotPa
           }}/>)}
       </div>
       {isProcessing && (
-        <Button variant={'text'} onClick={doCancel}><CancelRounded style={{fontSize: 36}}/></Button>
+        <CircularProgressWithContent>
+          <Button variant={'text'} onClick={doCancel}><CancelRounded style={{fontSize: 36}}/></Button>
+        </CircularProgressWithContent>
       )}
       {!isProcessing && (
         <Button

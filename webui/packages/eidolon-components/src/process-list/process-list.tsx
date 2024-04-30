@@ -18,7 +18,7 @@ export interface ProcessListProps {
 }
 
 export function ProcessList({machineURL, isSelected, selectChat, goHome}: ProcessListProps) {
-  const {processes, updateProcesses, fetchError} = useProcesses(machineURL)
+  const {processes, updateProcesses, fetchError} = useProcesses()
 
   useEffect(() => {
     updateProcesses(machineURL).then(() => {})

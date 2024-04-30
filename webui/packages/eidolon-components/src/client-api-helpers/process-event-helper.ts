@@ -45,6 +45,7 @@ export async function executeOperation(machineUrl: string, agent: string, operat
 }
 
 export async function streamOperation(machineUrl: string, agent: string, operation: string, processId: string, data: Record<string, any>,
+                                      // eslint-disable-next-line no-unused-vars
                                       handleEvent: (data: Record<string, any>) => void,
 ) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {

@@ -17,7 +17,7 @@ export interface DevProcessListWithAddProps {
 
 export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
   const machineURL = app.location
-  const {updateProcesses} = useProcesses(machineURL)
+  const {updateProcesses} = useProcesses()
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()

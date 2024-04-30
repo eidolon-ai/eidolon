@@ -59,7 +59,6 @@ export const ProcessProvider = ({children}: { children: JSX.Element }) => {
         fetchError: undefined
       }
       if (!loading) {
-        console.log("fetching")
         setLoading(true)
         const app = (await getApps())[appName]
         if (!app) {

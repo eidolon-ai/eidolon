@@ -45,14 +45,9 @@ export default function ({params}: ProcessPageProps) {
   }
 
   if (processStatus?.state === 'initialized') {
-    router.replace(`/eidolon-apps/venture-agent/${params.processId}/portfolio`)
-  } else if (processStatus && companies) {
-    console.log("here")
-    if (companies.filter((company) => company.should_research).length === 0) {
-      router.replace(`/eidolon-apps/venture-agent/${params.processId}/choose`)
-    } else {
-      router.replace(`/eidolon-apps/venture-agent/${params.processId}/thesis`)
-    }
+    router.replace(`/eidolon-apps/venture-agent/${params.processId}/choose`)
+  } else {
+    router.replace(`/eidolon-apps/venture-agent/${params.processId}/thesis`)
   }
 
   return (

@@ -5,7 +5,7 @@ import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
 import {ProcessesProvider} from "../../../packages/eidolon-components/src/hooks/processes_context";
 import {EidolonApp} from "@eidolon/components";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getAgents} from "@eidolon/components/src/client-api-helpers/machine-helper";
 
 
@@ -15,22 +15,29 @@ export interface DevTooLayoutProps {
 }
 
 export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  function updateContainerWidth(newWidth: number) {
+    if (containerRef.current) {
+      containerRef.current.style.width = `${newWidth}px`
+    }
+  }
+
   return (
     <ProcessesProvider>
       <Box sx={{
         display: 'flex'
       }}>
         <ResizableDrawer
+          updateRemainderWidth={updateContainerWidth}
           variant="persistent"
           sx={{
-            flexShrink: 0,
             display: 'block',
-            [`& .MuiDrawer-paper`]: {boxSizing: 'border-box'},
           }}
         >
           <DevProcessListWithAdd app={app} />
         </ResizableDrawer>
-        <Box component="main" flexGrow={1}>
+        <Box component="main" maxWidth={"100%"} ref={containerRef}>
           <Box height={"calc(100vh - 64px)"} display={"flex"} justifyContent={"center"}>
             {children}
           </Box>

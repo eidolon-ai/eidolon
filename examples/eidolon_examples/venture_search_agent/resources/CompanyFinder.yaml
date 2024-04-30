@@ -1,0 +1,15 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: CompanyFinder
+spec:
+  system_prompt: "You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio."
+  actions:
+    - name: "converse"
+      description: "A copilot that engages with the user."
+      allow_file_upload: true
+  apu:
+    logic_units:
+      - implementation: Search
+      - implementation: Browser
+      - implementation: eidolon_examples.venture_search_agent.save_company.AddCompany

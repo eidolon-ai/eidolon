@@ -1,6 +1,6 @@
 'use client'
 
-import {Box, Step, StepButton, Stepper, Typography} from "@mui/material";
+import {Box, Step, StepButton, Stepper} from "@mui/material";
 import * as React from "react";
 import {Fragment, useEffect} from "react";
 import {CopilotParams, useProcess} from "@eidolon/components";
@@ -15,7 +15,7 @@ interface ChatbotLayoutProps {
   }
 }
 
-const steps = ['Load Venture Portfolio', 'Explore Companies', 'Create Thesis'];
+const steps = ['Explore Companies', 'Research'];
 
 export default function PageWithStepper({children, params}: ChatbotLayoutProps) {
   const app_name = 'venture-agent'
@@ -28,15 +28,17 @@ export default function PageWithStepper({children, params}: ChatbotLayoutProps) 
     updateProcessStatus(app_name, params.processId).then((status) => {
       if (app && processStatus && processStatus.state === 'idle') {
         executeOperation(app.location, appOptions.agent, "get_companies", processStatus!.process_id, {}).then((comps: Company[]) => {
-          comps.sort((a, b) => a.name.localeCompare(b.name))
-          const states = [true, false, false]
-          if (processStatus?.state === 'idle') {
-            states[1] = true
-            if (comps.filter((company) => company.should_research).length > 0) {
-              states[2] = true
+          if (comps) {
+            comps.sort((a, b) => a.name.localeCompare(b.name))
+            const states = [true, false, false]
+            if (processStatus?.state === 'idle') {
+              states[1] = true
+              if (comps.filter((company) => company.should_research).length > 0) {
+                states[2] = true
+              }
             }
+            setAllowedStates(states)
           }
-          setAllowedStates(states)
         }).catch((e) => {
           console.error(e)
         })
@@ -46,26 +48,20 @@ export default function PageWithStepper({children, params}: ChatbotLayoutProps) 
 
   let activeStep = -1
   switch (pathName.slice(pathName.lastIndexOf('/') + 1)) {
-    case 'portfolio':
+    case 'choose':
       activeStep = 0
       break
-    case 'choose':
-      activeStep = 1
-      break
     case 'thesis':
-      activeStep = 2
+      activeStep = 1
       break
   }
 
   const goToIndex = (index: number) => {
     switch (index) {
       case 0:
-        window.location.href = 'portfolio'
-        break
-      case 1:
         window.location.href = 'choose'
         break
-      case 2:
+      case 1:
         window.location.href = 'thesis'
         break
     }
@@ -73,7 +69,6 @@ export default function PageWithStepper({children, params}: ChatbotLayoutProps) 
 
   return (
     <Box sx={{width: '100%', padding: "16px", overflow: "hidden"}}>
-      <Typography textAlign={"center"} sx={{margin: "16px"}} variant={"h4"}>Venture Research Tool</Typography>
       <Stepper nonLinear activeStep={activeStep} sx={{paddingBottom: '32px'}}>
         {steps.map((label, index) => {
           return (
@@ -92,7 +87,7 @@ export default function PageWithStepper({children, params}: ChatbotLayoutProps) 
         })}
       </Stepper>
       <Fragment>
-        <Box sx={{height: 'calc(100vh - 210px)', width: '100%'}}>
+        <Box sx={{height: 'calc(100% - 58px)', width: '100%'}}>
           {children}
         </Box>
       </Fragment>

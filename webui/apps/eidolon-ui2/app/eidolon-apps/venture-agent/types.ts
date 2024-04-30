@@ -1,4 +1,3 @@
-
 export interface Company {
   name: string
   url: string
@@ -10,6 +9,7 @@ export interface Company {
 }
 
 export interface CompanyDetails {
+  process_id: string
   description: string
   stage: string
   market_size: string
@@ -17,4 +17,9 @@ export interface CompanyDetails {
   logo_url: string
   relevance: number
   other_information?: string
+}
+
+export interface Thesis {
+  parent_process_id: string
+  companyFinderPID: string
 }

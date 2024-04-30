@@ -5,46 +5,65 @@ import {useEffect} from "react";
 import {Box} from "@mui/material";
 import {executeOperation, streamOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
 import {CopilotParams, useProcess} from "@eidolon/components";
-import {CompanyList} from "./CompanyList";
+import {CompanyImageList} from "./CompanyImageList";
 import {Company} from "../../types";
+import CompanyDetailChat from "./company-detail-chat";
+
 
 export default function () {
   const {app, processStatus} = useProcess()
   const [companies, setCompanies] = React.useState<Company[] | undefined>(undefined)
   const appOptions = app?.params as CopilotParams
+  const [selectedCompany, setSelectedCompany] = React.useState<Company | undefined>(undefined)
+  const [loading, setLoading] = React.useState<boolean>(false)
+
+  const loadCompanies = async () => {
+    return executeOperation(app!.location, appOptions.agent, "get_companies", processStatus!.process_id, {}).then((companies: Company[]) => {
+      if (!companies) {
+        companies = []
+      }
+      companies = companies
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .filter((company) => company.should_research)
+        .map((company) => {
+          if (!company.researched_details) {
+            company.loading = true
+          }
+          return company
+        })
+      setCompanies(companies)
+      if (selectedCompany) {
+        setSelectedCompany(companies.find((c) => c.name === selectedCompany.name))
+      }
+      return companies
+    })
+  }
 
   useEffect(() => {
     if (!app || !processStatus) {
       return
     }
 
-    if (processStatus.state === 'idle') {
-      executeOperation(app!.location, appOptions.agent, "get_companies", processStatus.process_id, {}).then((companies: Company[]) => {
-        companies = companies
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .filter((company) => company.should_research)
-          .map((company) => {
-            if (!company.researched_details) {
-              company.loading = true
+    if (!loading) {
+      setLoading(true)
+      if (processStatus.state === 'idle') {
+        loadCompanies().then((companies: Company[]) => {
+          const companiesToResearch = companies.filter((company) => !company.researched_details).map((company) => company.name)
+
+          // noinspection JSIgnoredPromiseFromCall
+          streamOperation(app.location, appOptions.agent, "research_more_companies", processStatus.process_id, {companyNames: companiesToResearch}, (event) => {
+            if (event.category === "output") {
+              const newCompany = event.content as Company
+              const index = companies.findIndex((c) => c.name === newCompany.name)
+              const company = companies[index]!
+              company.researched_details = (newCompany as Company).researched_details
+              company.loading = false
+              updateCompany(company, companies)
             }
-            return company
           })
-        setCompanies(companies)
-
-        const companiesToResearch = companies.filter((company) => !company.researched_details).map((company) => company.name)
-
-        // noinspection JSIgnoredPromiseFromCall
-        streamOperation(app.location, appOptions.agent, "research_more_companies", processStatus.process_id, {companyNames: companiesToResearch}, (event) => {
-          if (event.category === "output") {
-            const newCompany = event.content as Company
-            const index = companies.findIndex((c) => c.name === newCompany.name)
-            const company = companies[index]!
-            company.researched_details = (newCompany as Company).researched_details
-            company.loading = false
-            updateCompany(company, companies)
-          }
         })
-      })
+      }
+      setLoading(false)
     }
   }, [app?.location, appOptions?.agent, processStatus?.process_id]);
 
@@ -63,14 +82,12 @@ export default function () {
     }
   }
 
-  const reload = (item: Company): Promise<Company> => {
-    item.loading = true
-    updateCompany(item)
-    const newCompanyInfo = executeOperation(app!.location, appOptions.agent, "research_company", processStatus!.process_id, {companyName: item.name})
-    return newCompanyInfo.then((newItem) => {
-      newItem.loading = false
-      return updateCompany(newItem)
-    })
+  const toggleCompany = (company: Company) => {
+    if (selectedCompany?.name === company.name) {
+      setSelectedCompany(undefined)
+    } else {
+      setSelectedCompany(company)
+    }
   }
 
   if (!app || !companies) {
@@ -79,9 +96,15 @@ export default function () {
 
   return (
     <Box
-      sx={{height: "100%"}}
+      sx={{height: "100%", display: "flex", flexDirection: "row", maxWidth: "100%"}}
     >
-      <CompanyList companies={companies} reload={reload}/>
+      {!selectedCompany && (
+        <CompanyImageList companies={companies} selectedCompany={selectedCompany} toggleCompany={toggleCompany}/>
+      )}
+      {selectedCompany && (
+        <CompanyDetailChat company={selectedCompany} reloadCompanies={loadCompanies} machineURL={app.location} setSelectedCompany={setSelectedCompany}/>
+      )}
+
     </Box>
   )
 }

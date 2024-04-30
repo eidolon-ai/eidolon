@@ -6,7 +6,7 @@ import {Company} from "../../types";
 export interface CompanyListItemProps {
   item: Company
   selectedCompany?: Company
-  selectCompany: (company: Company) => void
+  selectCompany?: (company: Company) => void
 }
 
 export function CompanyListItem({item, selectCompany, selectedCompany}: CompanyListItemProps) {
@@ -39,6 +39,7 @@ export function CompanyListItem({item, selectCompany, selectedCompany}: CompanyL
       >
         <Avatar
           variant="square"
+          slotProps={{img: {sx: {objectFit: 'contain'}}}}
           src={item.researched_details?.logo_url}
           {...stringAvatar(item.name)}
         />
@@ -46,15 +47,15 @@ export function CompanyListItem({item, selectCompany, selectedCompany}: CompanyL
           sx={itemBarOptions}
           title={item.name}
           subtitle={item.category}
-          actionIcon={
+          actionIcon={selectCompany && (
             <IconButton
-              sx={{color: selectedCompany?.name === item.name ? 'rgba(50, 50, 255, 0.54)' : 'rgba(255, 255, 255, 0.54)'}}
+              sx={{color: 'rgba(255, 255, 255, 0.54)'}}
               aria-label={`info about ${item.name}`}
-              onClick={() => selectCompany(item)}
+              onClick={() => selectCompany!(item)}
             >
               <InfoIcon/>
             </IconButton>
-          }
+          )}
         >
         </ImageListItemBar>
       </ImageListItem>

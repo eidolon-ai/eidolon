@@ -229,12 +229,11 @@ export default function EnhancedTable({companies, selectItems}: { companies: Com
   }
 
   return (
-    <Box sx={{width: '100%'}}>
-      <Paper sx={{width: '100%', mb: 2, overflow: "hidden"}}>
+      <Paper sx={{width: '100%', height: '100%', mb: 2, overflow: "hidden"}}>
         <EnhancedTableToolbar numSelected={numSelected} selectItems={() => selectItems(companies
           .filter((company) => company.should_research)
           .map((company) => company.name))}/>
-        <TableContainer sx={{height: "calc(100vh - 300px)"}}>
+        <TableContainer sx={{height: "calc(100% - 64px)"}}>
           <Table
             stickyHeader
             sx={{minWidth: 750}}
@@ -266,6 +265,5 @@ export default function EnhancedTable({companies, selectItems}: { companies: Com
           </Table>
         </TableContainer>
       </Paper>
-    </Box>
   );
 }

@@ -28,7 +28,9 @@ const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
       <AppStoreProvider>
         <EidolonProvider>
           <ThemeProvider>
-            <CurrentLayout>{children}</CurrentLayout>
+            <CurrentLayout>
+              {children}
+            </CurrentLayout>
           </ThemeProvider>
         </EidolonProvider>
       </AppStoreProvider>

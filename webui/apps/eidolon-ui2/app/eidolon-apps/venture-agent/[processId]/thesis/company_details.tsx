@@ -1,6 +1,7 @@
 import React from 'react';
-import {Box, Button, Grid, Typography} from '@mui/material';
+import {Box, Button, Typography} from '@mui/material';
 import {Company} from "../../types";
+import {CompanyListItem} from "./CompanyListItem";
 
 interface CompanyDetailsProps {
   company: Company;
@@ -11,51 +12,45 @@ const CompanyDetailsLayout: React.FC<CompanyDetailsProps> = ({company, refreshRe
   const {name, category, researched_details: details} = company;
 
   return (
-    <Box sx={{padding: '16px 32px 16px 32px', height: 'calc(100% - 32px)', overflowY: "auto"}}>
+    <Box sx={{padding: '16px 32px 16px 32px', overflow: "auto"}}>
       <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography variant="h5" component="div">
-              <Box
-                sx={{display: 'flex', justifyContent: 'space-between'}}
+        <Box sx={{float: "right"}}>
+          <CompanyListItem item={company}/>
+        </Box>
+        <Typography variant="h5" component="div" paragraph>
+          <Box sx={{display: "flex", flexDirection: "flow"}}>
+            <Box>
+              <Typography
+                variant="h4"
               >
-                {name} <Button onClick={() => refreshResearch(company)}>Refresh Information</Button>
-              </Box>
-            </Typography>
-            <Typography
-              sx={{marginLeft: '12px'}}
-              variant="subtitle1" color="textSecondary">
-              {details?.description}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>Category:</strong> {category}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>Stage:</strong> {details?.stage}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>Market Size:</strong> {details?.market_size}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>Business Model:</strong> {details?.business_model}
-            </Typography>
-          </Grid>
-          {details?.other_information && (
-            <Grid item xs={12}>
-              <Typography variant="body1">
-                <strong>Other Information:</strong> {details?.other_information}
+                {name}
               </Typography>
-            </Grid>
-          )}
-        </Grid>
+              <Typography
+                sx={{marginLeft: '12px'}}
+                variant="subtitle1" color="textSecondary"
+              >
+                {details?.description}
+              </Typography>
+            </Box>
+          </Box>
+        </Typography>
+        <Typography variant="body1" paragraph>
+          <strong>Category:</strong> {category}
+        </Typography>
+        <Typography variant="body1" paragraph>
+          <strong>Stage:</strong> {details?.stage}
+        </Typography>
+        <Typography variant="body1" paragraph>
+          <strong>Market Size:</strong> {details?.market_size}
+        </Typography>
+        <Typography variant="body1" paragraph>
+          <strong>Business Model:</strong> {details?.business_model}
+        </Typography>
+        {details?.other_information && (
+          <Typography variant="body1" paragraph>
+            <strong>Other Information:</strong> {details?.other_information}
+          </Typography>
+        )}
       </Box>
     </Box>
   );

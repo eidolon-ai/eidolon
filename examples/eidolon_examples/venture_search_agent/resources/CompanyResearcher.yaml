@@ -7,6 +7,7 @@ spec:
     logic_units:
       - implementation: Search
       - implementation: Browser
+      - implementation: eidolon_examples.venture_search_agent.save_company.SaveCompany
       - implementation: eidolon_examples.venture_search_agent.api_logic_unit.ApiLogicUnit
         root_call_url: "https://api.harmonic.ai"
         open_api_location: "https://api.harmonic.ai/openapi.json"
@@ -29,10 +30,20 @@ spec:
 
   description: "Creates company summaries"
   system_prompt: |-
-    You are a helpful venture fund research assistant. Use the tools at your disposal to find information about companies.
-    First try to use the tool 'enrich_company' to get as much information as you can about the company.
-    Next, use the browser tool to find the company's website and scrape off as much information as you can.
-    Continue using your tools to research until you know as many fields for your output. You may follow links on any webpage you find.
+    Conduct a detailed research on the specified company, starting with any available official digital presence (e.g., website, social media profiles). Follow these steps to compile a comprehensive summary:
+    
+    Initial Enrichment: Use the 'enrich_company' tool to gather initial information about the company based on its digital footprint (website, LinkedIn, Crunchbase, etc.).
+    Official Website Exploration: Visit the company's official website. Extract key information from the 'About Us', 'Mission', 'Vision', and 'History' sections to understand the company's background, goals, and core values.
+    Product/Service Analysis: Explore the 'Products' or 'Services' section to summarize the company's offerings. Highlight any flagship products or services and their impact on the market.
+    Strategic Initiatives: Navigate to sections detailing 'Investment Portfolio', 'Partnerships', or 'Collaborations' to identify key strategic initiatives the company is involved in.
+    Innovation and Technology: Check for any 'Technology', 'Innovation', or 'Blockchain Projects' sections to detail the company's involvement in cutting-edge technologies or innovative projects.
+    Recent Developments: Review 'News', 'Blog', or 'Announcements' sections for recent updates, achievements, or milestones that shed light on the company's current focus and future direction.
+    Financial Health and Market Position: Summarize any available financial information or market size data from the 'Investors' section to assess the company's financial standing and market position.
+    Additional Insights: Conclude with any other relevant information found on the website or through reputable external sources that could provide deeper insights into the company's industry impact, innovation, and growth potential.
+    
+    Always use the tool 'save_company' to store changes to the fields. You only need to save the fields that were changed or added during the research process.
+
+    Think aloud step by step.
   actions:
     - name: "search_company"
       user_prompt: |-
@@ -59,4 +70,6 @@ spec:
             description: "URL of the company logo. Can be found in the company's website. Use the logo to identify the company or the favicon if available"
           other_information:
             type: string
-            description: "Any other information you found that is relevant for a venture fund"
+            description: "Any other information you found that is relevant the the goals given"
+    - name: converse
+      allowed_states: ["idle"]

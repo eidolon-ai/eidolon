@@ -19,14 +19,10 @@ const EidolonProcessesContext = createContext<{
 });
 
 // Custom hook to consume the context
-export const useProcesses = (machineURL: string) => {
+export const useProcesses = () => {
   const context = useContext(EidolonProcessesContext);
   if (!context) {
     throw new Error("useProcessesContext must be used within a ProcessesProvider");
-  }
-  if (!context.fetchError && !context.processes) {
-    // noinspection JSIgnoredPromiseFromCall
-    context.updateProcesses(machineURL)
   }
   return context;
 };

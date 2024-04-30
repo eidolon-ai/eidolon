@@ -29,12 +29,12 @@ export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: Pro
     <ListItem
       dense
       disablePadding={true}
-      sx={{"&:hover .MuiListItemSecondaryAction-root": {visibility: "inherit"}}}
+      sx={{"&:hover .MuiListItemSecondaryAction-root": {visibility: "inherit"}, "flexDirection": "column", alignItems: "baseline"}}
     >
       <ListItemButton
         key={chat?.process_id}
         selected={isSelected(chat)}
-        sx={{paddingTop: 0, paddingBottom:0}}
+        sx={{paddingTop: 0, paddingBottom:0, width: "100%"}}
       >
         <ListItemIcon onClick={handleExpandClick} sx={{minWidth: "28px"}}>
           {chat.children?.length && (
@@ -60,8 +60,8 @@ export function ProcessSummary({chat, handleDelete, isSelected, selectChat}: Pro
         </ListItemSecondaryAction>
       </ListItemButton>
       {chat.children?.length && (
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+        <Collapse in={open} timeout="auto" unmountOnExit sx={{width: "100%"}}>
+          <List component="ul" disablePadding>
             {chat.children!.map(
               child => (
                 <ProcessSummary
