@@ -45,9 +45,9 @@ if (process.env.NEXT_PUBLIC_DEBUG) {
 
 const RightSideBarItems = () => {
   return (
-    <Stack direction="row" spacing={"16px"} alignItems={"center"} width={'240px'} minWidth={'240px'}>
-      <UsageIndicator></UsageIndicator>
-      <UserProfile/>
+    <Stack direction="row" spacing={"16px"} alignItems={"center"} justifyContent={"flex-end"} width={'240px'} minWidth={'240px'}>
+      <UsageIndicator />
+      <UserProfile />
     </Stack>
   )
 }
