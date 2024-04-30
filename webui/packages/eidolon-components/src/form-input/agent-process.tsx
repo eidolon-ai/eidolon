@@ -23,7 +23,7 @@ export function AgentProcess({operations, processState, handleAction, handleCanc
   }
 
   let content = (
-    <AgentInputForm handleSubmit={handleSubmit} operations={operations} isProgram={false}/>
+    <AgentInputForm handleSubmit={handleSubmit} operations={operations} isProgram={false} processState={processState}/>
   )
 
   let button = (

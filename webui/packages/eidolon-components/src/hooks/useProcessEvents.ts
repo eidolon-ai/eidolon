@@ -38,6 +38,7 @@ export function useProcessEvents(machineUrl: string, agent: string, processId: s
   }, [agent, processId]);
 
   function setAgentState() {
+    // todo, this can be driven prom parsing events without needing another server call
     getProcessStatus(machineUrl, processId).then((status) => {
       if (status) {
         setProcessState(status)
