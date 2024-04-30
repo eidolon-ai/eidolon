@@ -7,7 +7,7 @@ import {getApps} from "@/utils/app-registry-helper";
 
 export interface ProcessPageProps {
   params: {
-    process_id: string
+    processId: string
   }
 }
 
@@ -23,7 +23,7 @@ export default function ({params}: ProcessPageProps) {
         throw new Error("App not found")
       } else {
         const machineUrl = app.location!
-        return getProcessStatus(machineUrl, params.process_id).then((processStatus) => {
+        return getProcessStatus(machineUrl, params.processId).then((processStatus) => {
           return {processStatus, app}
         })
       }
@@ -48,7 +48,7 @@ export default function ({params}: ProcessPageProps) {
       .catch((e) => {
         setError(e.message)
       })
-  }, [params.process_id]);
+  }, [params.processId]);
 
 
   if (error) {
@@ -58,6 +58,6 @@ export default function ({params}: ProcessPageProps) {
     return <div>Loading...</div>
   }
   return (
-    <DevPanel machineUrl={app?.location!} devParams={app?.params as DevParams} processId={params.process_id}/>
+    <DevPanel machineUrl={app?.location!} devParams={app?.params as DevParams} processId={params.processId}/>
   )
 }
