@@ -14,16 +14,19 @@ export interface ChatDisplayElementProps {
 
 export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage}: ChatDisplayElementProps) => {
   const getUserInput = (element: UserRequestElement) => {
-    // todo, make sure this renders file inputs correctly
-    let content = {...element.content}
+    if (typeof element.content === "string") {
+      return element.content ? element.content : "*No Input*"
+    }
+    let content = typeof element.content === "string" ? {body: element.content} : {...element.content}
     delete content["process_id"]
     if (Object.keys(content).length === 0) {
       return "*No Input*"
-    } else if (Object.keys(content).length === 1) {
-      content = content[Object.keys(content)[0]!]
+    } else if (Object.keys(content).length === 1 && Object.keys(content)[0] === "body") {
+      return content[Object.keys(content)[0]!]
+    } else {
+      content = JSON.stringify(content, undefined, "  ")
+      return '```json\n' + content + "\n```"
     }
-    content = JSON.stringify(content, undefined, "  ")
-    return '```json\n' + content + "\n```"
   }
 
   switch (rawElement.type) {
