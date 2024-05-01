@@ -1,7 +1,9 @@
 import React from 'react';
-import {Box, Button, Typography} from '@mui/material';
+import {Box, Button, IconButton, Typography} from '@mui/material';
 import {Company} from "../../types";
 import {CompanyListItem} from "./CompanyListItem";
+import {Image, ImageRounded} from "@mui/icons-material";
+import harmonicStamp from "./harmonic_stamp.svg"
 
 interface CompanyDetailsProps {
   company: Company;
@@ -14,7 +16,7 @@ const CompanyDetailsLayout: React.FC<CompanyDetailsProps> = ({company, refreshRe
   return (
     <Box sx={{padding: '16px 32px 16px 32px', overflow: "auto"}}>
       <Box>
-        <Box sx={{float: "right"}}>
+        <Box sx={{float: "right", display: "flex", alignItems: "start"}}>
           <CompanyListItem item={company}/>
         </Box>
         <Typography variant="h5" component="div" paragraph>
@@ -24,6 +26,11 @@ const CompanyDetailsLayout: React.FC<CompanyDetailsProps> = ({company, refreshRe
                 variant="h4"
               >
                 {name}
+                {company.researched_details?.enriched_with_harmonic &&
+                    <IconButton href="https://www.harmonic.ai" style={{marginTop: "-24px", marginLeft: "-16px", opacity: "0.9", zIndex: 99}}>
+                        <img src={harmonicStamp.src} style={{height: "64px", width: "64px"}}/>
+                    </IconButton>
+                }
               </Typography>
               <Typography
                 sx={{marginLeft: '12px'}}

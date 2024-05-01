@@ -8,6 +8,8 @@ export interface AgentStartElement extends DisplayElement {
   type: "agent-start",
   agentName: string
   callName: string
+  title: string
+  sub_title: string
 }
 
 export interface SuccessElement extends DisplayElement {
@@ -70,7 +72,9 @@ export const makeElement = (event: ChatEvent) => {
       return {
         type: "agent-start",
         agentName: event.agent_name,
-        callName: event.call_name
+        callName: event.call_name,
+        title: event.title,
+        sub_title: event.sub_title
       } as AgentStartElement
     case "success":
       return {
@@ -96,10 +100,14 @@ export const makeElement = (event: ChatEvent) => {
         content: event.content
       } as MarkdownElement
     case "object":
-      return {
-        type: "json",
-        content: event.content
-      } as JsonElement
+      if (event.content) {
+        return {
+          type: "json",
+          content: event.content
+        } as JsonElement
+      } else {
+        return undefined
+      }
     case "tool_call_start":
       return {
         type: "tool-call",

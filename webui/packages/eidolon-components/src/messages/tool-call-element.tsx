@@ -1,8 +1,9 @@
 import {ToolCallElement} from "../lib/display-elements";
 import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
-import {CodeOffRounded, ExpandMore} from "@mui/icons-material";
+import {ExpandMore} from "@mui/icons-material";
 import {ChatDisplayElement} from "./chat-display-element";
 import {useState} from "react";
+import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 
 interface ExpandMoreDivProps extends IconButtonProps {
   expand: boolean;
@@ -38,7 +39,7 @@ export const ToolCall = ({machineUrl, element, agentName}: ToolCallElementProps)
         avatar={
           element.is_agent
             ? <Avatar sx={{height: "24px", width: "24px"}} src="/img/eidolon_with_gradient.png"/>
-            : <Avatar sx={{height: "24px", width: "24px"}}><CodeOffRounded/></Avatar>
+            : <Avatar sx={{height: "24px", width: "24px"}}><BuildCircleIcon/></Avatar>
         }
         onClick={handleExpandClick}
         action={
