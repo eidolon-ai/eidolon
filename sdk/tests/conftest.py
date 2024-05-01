@@ -24,6 +24,7 @@ from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
+from eidolon_ai_sdk.system import agent_controller
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -329,7 +330,7 @@ def deterministic_process_ids(test_name):
     def patched_ObjectId(*args, **kwargs):
         return next(id_generator)
 
-    with patch.object(processes.bson, "ObjectId", new=patched_ObjectId):
+    with patch.object(agent_controller, "ObjectId", new=patched_ObjectId):
         yield
 
 
