@@ -10,6 +10,7 @@ import FAQs from '~/components/widgets/FAQs.astro';
 import WidgetWrapper from "../components/ui/WidgetWrapper.astro";
 import Item from "../components/blog/GridItem.astro";
 import LinkUnfurl from "../components/widgets/LinkUnfurl.astro";
+import Button from "../components/ui/Button.astro";
 
 const metadata = {
   title: 'Eidolon -- Build LLM Agents as Services',
@@ -17,6 +18,12 @@ const metadata = {
 };
 
 const bg = await Astro.slots.render("bg")
+
+let numStars = " "
+const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
+
+numStars = data.stargazers_count
+const githubText = `Star on GitHub &nbsp;${numStars} &nbsp;⭐`
 ---
 
 <Layout metadata={metadata}>
@@ -25,11 +32,10 @@ const bg = await Astro.slots.render("bg")
   <Hero2
     actions={[
       {
-        variant: 'primary',
-        text: 'View on GitHub',
+        variant: 'secondary',
+        text: githubText,
         href: 'https://github.com/eidolon-ai/eidolon',
         target: '_blank',
-        icon: 'tabler:brand-github',
       },
       {text: 'Learn more', href: '#features'},
     ]}
@@ -44,7 +50,7 @@ const bg = await Astro.slots.render("bg")
       <span class="block">
       <span class="mb-3 font-bold text-3xl text-blue-500">Eidolon</span>
       <span class="mb-3 font-bold text-3xl">
-        An open source SDK for AI agents
+        is an open source SDK for AI agents
       </span>
         </span>
     </Fragment>
@@ -52,7 +58,7 @@ const bg = await Astro.slots.render("bg")
     <Fragment slot="subtitle">
       <span style="text-align: left" class="-left-2">
         <span class="block">
-          Infrastructure that empowers developers to rapidly build modular and trusted multi-modal agents for genAI apps.
+          Infrastructure empowering developers to reapidly build trusted, modular mult-modal agents for genAI apps.
         </span>
       </span>
     </Fragment>
