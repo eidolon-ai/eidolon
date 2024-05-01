@@ -1,4 +1,4 @@
-.PHONY: chatbot, chatbot_push
+.PHONY: chatbot, chatbot_push, maybe_docker_push
 
 PROJECT ?= docker.io/eidolonai
 VERSION := $(shell grep -m 1 '^version = ' pyproject.toml | awk -F '"' '{print $$2}')
@@ -17,3 +17,6 @@ chatbot_push: chatbot
 
 chatbot_bash: chatbot
 	docker run --rm -it --entrypoint bash eidolonai/chatbot:latest
+
+maybe_docker_push:
+	@docker manifest inspect $(PROJECT)/chatbot:$(VERSION) >/dev/null && echo "Image exists" || $(MAKE) chatbot_push

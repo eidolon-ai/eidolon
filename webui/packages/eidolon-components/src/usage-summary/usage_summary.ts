@@ -2,26 +2,18 @@
 
 import {OpenAPI, UsageService, UsageSummary} from "@eidolon/usage-client";
 
-let usageSummaryCache: UsageSummary | null = null
-let usageCacheSeed = -1
-
-export async function usageForSession(sub: string, seed: number) {
+export async function usageForSession(sub: string): Promise<UsageSummary | null> {
   // eslint-disable-next-line no-undef
-  const usageServerLoc = process.env.EIDOLON_USAGE_SERVER;
-  if (usageServerLoc) {
-    OpenAPI.BASE = usageServerLoc
-    if (seed != usageCacheSeed) {
-      if (!usageSummaryCache) {
-        usageSummaryCache = await UsageService.getUsageSummarySubjectsSubjectIdGet({subjectId: sub})
-      }
-      usageCacheSeed = seed
+  const envUsageLoc = process.env.EIDOLON_USAGE_SERVER;
+  OpenAPI.BASE = envUsageLoc || "http://localhost:8527"
+  return UsageService.getUsageSummarySubjectsSubjectIdGet({subjectId: sub}).catch((e: any) => {
+    if (!envUsageLoc) {
+      console.info("Usage server is not available")
+    } else if ('cause' in e && e.cause.code === "ECONNREFUSED") {
+      console.error("Usage server is not available:", envUsageLoc)
+    } else {
+      console.error(e)
     }
-    return usageSummaryCache
-  } else {
-    return Promise.resolve(null)
-  }
-}
-
-export async function clearUsageCache() {
-  usageSummaryCache = null
+    return null
+  })
 }

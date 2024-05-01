@@ -36,16 +36,20 @@ const bg = await Astro.slots.render("bg")
     image={{src: '~/assets/images/k8s.webp', width: '600px', height: '600px', alt: 'Eidolon'}}
   >
     <Fragment slot="tagline">
+      <span class="text-center flex">
       Let's build trusted genAI together
+        </span>
     </Fragment>
     <Fragment slot="title">
-      Eidolon
+      <span class="block">
+      <span class="mb-3 font-bold text-3xl text-blue-500">Eidolon</span>
+      <span class="mb-3 font-bold text-3xl">
+        An open source SDK for AI agents
+      </span>
+        </span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      <span class="block mb-3 font-bold text-3xl">
-        An open source SDK for genAI agents
-      </span>
       <span style="text-align: left" class="-left-2">
         <span class="block">
           Infrastructure that empowers developers to rapidly build modular and trusted multi-modal agents for genAI apps.
@@ -217,12 +221,12 @@ const bg = await Astro.slots.render("bg")
 
   <!-- Steps Widget ****************** -->
 
-<Steps
+  <Steps
     title="Build genAI apps in no time with Eidolon."
     items={[
       {
         title: 'Step 1: <span class="font-medium">Install Eidolon SDK\n</span>',
-        description:"Download and install the Eidolon SDK from <a href='https://pypi.org/project/eidolon-ai-sdk/'><u>PYPI</u></a> or get started with a <a href='https://github.com/eidolon-ai/agent_machine'><u>Template Repository</u></a>.",
+        description: "Download and install the Eidolon SDK from <a href='https://pypi.org/project/eidolon-ai-sdk/'><u>PYPI</u></a> or get started with a <a href='https://github.com/eidolon-ai/agent_machine'><u>Template Repository</u></a>.",
         icon: 'tabler:package',
       },
       {
@@ -247,7 +251,7 @@ const bg = await Astro.slots.render("bg")
       alt: 'Steps image',
     }}
   />
-  
+
   <!-- Features2 Widget ************** -->
 
   <!--
@@ -337,7 +341,7 @@ const bg = await Astro.slots.render("bg")
     </div>
     <!--<Grid posts={posts}/>-->
   </WidgetWrapper>
-  
+
   <WidgetWrapper isDark={false} bg={bg}>
     <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
       <div class="md:max-w-sm">
