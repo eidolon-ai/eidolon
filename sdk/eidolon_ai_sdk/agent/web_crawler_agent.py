@@ -42,10 +42,9 @@ class CrawlResponse(BaseModel):
 class CrawlerSpec(BaseModel):
     description: str = "General Purpose Web Crawler"
     system_prompt: str = """You are a research assistant helping a user do research on a topic.
-    The user will come to you with the content of a website and you are responsible for extracting any content that 
-    may be relevant. You are also responsible for finding links in the website are worth researching further. 
+    The user will come to you with the content of a website and you are responsible for deciding if the content is 
+    relevant to the topic at hand. You are also responsible for finding links in the website are worth researching further. 
     Only return relevant urls and ignore irrelevant ones.
-    Only return content if there is relevant content to extract.
     
     Topic:
     {{ topic }}"""
@@ -127,16 +126,19 @@ class WebCrawler(Specable[CrawlerSpec]):
             user_message = UserTextAPUMessage(prompt=self.env.from_string(self.spec.user_prompt).render(**kwargs))
             if self.spec.json_schema_override:
                 resp = await thread.run_request(prompts=[system_message, user_message], output_format=self.spec.json_schema_override)
-                response = CrawlResponse(**resp)
+                response = _LLMOutputSchema(**resp)
             else:
-                response = await thread.run_request(prompts=[system_message, user_message], output_format=CrawlResponse)
-            if not response.content:
-                logger.info(f"No relevant content found for url: {body.url}")
-            return response
+                response = await thread.run_request(prompts=[system_message, user_message], output_format=_LLMOutputSchema)
+            content = kwargs["content"] if response.content_is_relevant else None
+            return CrawlResponse(content=content, relevant_urls=response.relevant_urls)
         except DuplicateKeyError:
             logger.info(f"Skipping duplicate url: {body.url}")
             return CrawlResponse()
 
+
+class _LLMOutputSchema(BaseModel):
+    content_is_relevant: bool
+    relevant_urls: list[str] = []
 
 class CrawlRecord(MongoDoc):
     collection = "web_crawl_records"
