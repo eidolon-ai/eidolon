@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from pymongo.errors import DuplicateKeyError
 
 from eidolon_ai_client.client import Agent
-from eidolon_ai_client.events import ObjectOutputEvent, AgentStateEvent
+from eidolon_ai_client.events import ObjectOutputEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_client.util.stream_collector import merge_streams
