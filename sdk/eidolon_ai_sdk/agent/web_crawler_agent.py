@@ -77,7 +77,7 @@ class WebCrawler(Specable[CrawlerSpec]):
         self.env = Environment(undefined=StrictUndefined)
         self.semaphore = self.spec.throttle.instantiate(self.spec.parallelism)
 
-    @register_action("initialized", "idle", description=make_description)
+    @register_action("initialized", description=make_description)
     async def crawl(self, body: CrawlBody):
         pages = 0
         if isinstance(body.url, list):
@@ -105,7 +105,6 @@ class WebCrawler(Specable[CrawlerSpec]):
                         break
                 else:
                     logger.debug(f"Skipping event: {event}")
-        yield AgentStateEvent(state="idle")
 
     async def _crawl(self, body: CrawlBody) -> CrawlResponse:
         pid = RequestContext.get('process_id')
