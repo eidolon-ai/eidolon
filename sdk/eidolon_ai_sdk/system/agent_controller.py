@@ -193,7 +193,7 @@ class AgentController:
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
-        process = await ProcessDoc.create(agent=self.name, **kwargs, _id=ObjectId())
+        process = await ProcessDoc.create(agent=self.name, **kwargs, _id=str(ObjectId()))
         if hasattr(self.agent, "create_process"):
             await self.agent.create_process(process.record_id)
         return process
