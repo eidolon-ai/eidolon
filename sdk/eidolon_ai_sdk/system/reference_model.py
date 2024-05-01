@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 import logging
 from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 
@@ -154,6 +155,9 @@ class Reference(BaseModel):
                 kwargs[k] = v
 
         return self._get_reference_class()(*args, **kwargs)
+
+    def signature(self):
+        return inspect.signature(self._get_reference_class())
 
 
 class AnnotatedReference(Reference):

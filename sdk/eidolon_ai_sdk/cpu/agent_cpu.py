@@ -5,6 +5,7 @@ from abc import abstractmethod, ABC
 from pydantic import BaseModel, Field, TypeAdapter
 from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator
 
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
@@ -63,10 +64,12 @@ class APU(Specable[APUSpec], ABC):
         else:
             return json.dumps(obj)
 
-    async def main_thread(self, process_id: str) -> Thread:
+    async def main_thread(self, process_id: str = None) -> Thread:
+        process_id = process_id or RequestContext.get("process_id")
         return Thread(CallContext(process_id=process_id), self)
 
-    async def new_thread(self, process_id) -> Thread:
+    async def new_thread(self, process_id=None) -> Thread:
+        process_id = process_id or RequestContext.get("process_id")
         return Thread(CallContext(process_id=process_id).derive_call_context(), self)
 
     @abstractmethod

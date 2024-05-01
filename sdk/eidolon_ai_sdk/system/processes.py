@@ -33,6 +33,10 @@ class MongoDoc(BaseModel, extra="allow"):
             yield cls.model_validate(doc) if convert else doc
 
     @classmethod
+    async def count(cls, **query) -> int:
+        return await AgentOS.symbolic_memory.count(cls.collection, query=query)
+
+    @classmethod
     async def create(cls, **data):
         t = datetime.now().isoformat()
         if "created" not in data:

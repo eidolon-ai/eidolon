@@ -15,6 +15,7 @@ from pydantic import TypeAdapter
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
+from starlette.responses import Response
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
@@ -174,8 +175,13 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
         except Exception as e:
-            logger.exception("Unhandled exception")
-            raise e
+            # todo, we can check if no response returned due to connection being closed
+            if isinstance(e, RuntimeError) and "No response returned" in str(e) and await request.is_disconnected():
+                logger.info("Connection closed before response returned")
+                return Response(status_code=499, content="Client Closed Connection")
+            else:
+                logger.exception("Unhandled exception")
+                return Response(status_code=500, content="Internal Server Error")
         if response.status_code >= 500:
             logger.error(f"Response: {response.status_code}")
         else:

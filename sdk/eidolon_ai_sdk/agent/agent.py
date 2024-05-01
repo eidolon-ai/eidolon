@@ -51,7 +51,7 @@ def register_program(
 def register_action(
     *allowed_states: str,
     name: str = None,
-    description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
+    description: typing.Optional[typing.Callable[[object, FnHandler], str]] | str = None,
     input_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Type[BaseModel]]] = None,
     output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
 ):

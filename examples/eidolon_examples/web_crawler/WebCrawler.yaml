@@ -1,0 +1,9 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: WebCrawler
+spec:
+  implementation: WebCrawler
+  description: "General Purpose Web Crawler"
+  prompt_args:
+    topic: "AI Agent Research"

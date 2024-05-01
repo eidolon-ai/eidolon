@@ -1,3 +1,4 @@
+import inspect
 import typing
 from contextlib import contextmanager
 from typing import List, Optional, Annotated, Literal, cast
@@ -56,7 +57,11 @@ class AgentMachine(Specable[MachineSpec]):
         agents = {}
         for name, r in AgentOS.get_resources(AgentResource).items():
             with _error_wrapper(r):
-                agents[name] = r.spec.instantiate()
+                kwargs = {}
+                if "metadata" in r.spec.signature().parameters:
+                    kwargs["metadata"] = r.metadata
+                agents[name] = r.spec.instantiate(**kwargs)
+
         self.memory = self.spec.get_agent_memory()
         self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
         self.app = None

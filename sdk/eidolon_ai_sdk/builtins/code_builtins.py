@@ -29,6 +29,7 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
+from eidolon_ai_sdk.agent.web_crawler_agent import WebCrawler
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
@@ -124,6 +125,7 @@ def named_builtins():
         # agents
         ("Agent", SimpleAgent),
         SimpleAgent,
+        WebCrawler,
         GenericAgent,  # deprecated
         TreeOfThoughtsAgent,
         RetrieverAgent,
