@@ -1,5 +1,6 @@
 import {ProcessWithListLayout} from "../../../../components/ProcessWithListLayout";
 import {getApp} from "@/utils/eidolon-apps";
+import {ProcessProvider} from "@eidolon/components";
 
 interface ChatbotLayoutProps {
   params: {
@@ -14,7 +15,9 @@ export default function ChatbotLayout({children, params}: ChatbotLayoutProps) {
     <ProcessWithListLayout
       app={app}
     >
-      {children}
+      <ProcessProvider>
+        {children}
+      </ProcessProvider>
     </ProcessWithListLayout>
   )
 }

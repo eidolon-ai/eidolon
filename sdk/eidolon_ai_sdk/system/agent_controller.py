@@ -128,21 +128,32 @@ class AgentController:
             raise HTTPException(status_code=404, detail="Process not found")
         if process.state not in handler.extra["allowed_states"]:
             logger.warning(
-                f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}"
+                f"Action {handler.name} cannot process state. Current state: '{process.state}'. Allowed states: {handler.extra['allowed_states']}"
             )
+            headers = {}
+            if process.state == "processing":
+                headers["Retry-After"] = "1"
+
             raise HTTPException(
                 status_code=409,
                 detail=f'Action "{handler.name}" cannot process state "{process.state}"',
+                headers=headers
             )
         last_state = process.state
         RequestContext.set("__last_state__", last_state)
-        process = await process.update(
-            check_update_time=True,
-            agent=self.name,
-            record_id=process_id,
-            state="processing",
-            data=dict(action=handler.name),
-        )
+
+        try:
+            process = await process.update(
+                check_update_time=True,
+                agent=self.name,
+                record_id=process_id,
+                state="processing",
+                data=dict(action=handler.name),
+            )
+        except ValueError as e:
+            logger.warning(f"Action '{handler.name} failed. Process {process_id} has been updated since last read.")
+            raise HTTPException(status_code=409, detail=str(e), headers={"Retry-After": "1"})
+
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
             kwargs["process_id"] = process_id
@@ -387,15 +398,27 @@ class AgentController:
         await self.security.check_permissions("read", self.name, process_id)
         return await load_events(self.name, process_id)
 
-    async def create_process(self, title: typing.Optional[str]):
+    async def create_process(self, title: typing.Optional[str], parent_process_id: typing.Optional[str] = None):
         """
         Create a new process. Use this method first to get a process id before calling any other action
+        :param parent_process_id:
         :param title: An optional title for the process
         :return:
         """
         await self.security.check_permissions({"read", "create"}, self.name)
         process = await self._create_process(state="initialized", title=title)
         await self.security.record_process(self.name, process.record_id)
+        if parent_process_id:
+            history = AgentCallHistory(
+                parent_process_id=parent_process_id,
+                parent_thread_id=None,
+                machine=AgentOS.current_machine_url(),
+                agent=self.name,
+                remote_process_id=process.record_id,
+                state="initialized",
+                available_actions=[],
+            )
+            await history.upsert()
         return JSONResponse(
             StateSummary(
                 agent=self.name,

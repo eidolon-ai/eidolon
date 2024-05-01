@@ -259,6 +259,10 @@ class Agent {
         ...this.headers
       }
     })
+    if (response.status !== 202) {
+      console.error("Failed to execute action", response.statusText, response.status)
+      throw new HttpException(`Failed to execute action: ${response.statusText}`, response.status)
+    }
     if (response.body) {
       const reader = response.body.getReader();
       const retStream = new ReadableStream({

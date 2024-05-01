@@ -25,6 +25,7 @@ eidolon-ai-client = "^0.1.10"
 pydub = "^0.25.1"
 ruamel-yaml = "^0.18.6"
 kubernetes = "^29.0.0"
+jsonpath-ng = "^1.6.1"
 
 [tool.poetry.scripts]
 eidolon-server = "eidolon_ai_sdk.bin.agent_http_server:main"

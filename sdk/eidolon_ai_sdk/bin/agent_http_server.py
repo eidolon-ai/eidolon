@@ -9,13 +9,16 @@ import dotenv
 import uvicorn
 import yaml
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from pydantic import TypeAdapter
+from starlette import status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
@@ -175,7 +178,6 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
         except Exception as e:
-            # todo, we can check if no response returned due to connection being closed
             if isinstance(e, RuntimeError) and "No response returned" in str(e) and await request.is_disconnected():
                 logger.info("Connection closed before response returned")
                 return Response(status_code=499, content="Client Closed Connection")
@@ -214,10 +216,21 @@ def main():
     )
 
 
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+    logging.error(f"{await request.body()}: {exc_str}")
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+    )
+
+
 # noinspection PyTypeChecker
 def start_app(lifespan):
     try:
         _app = FastAPI(lifespan=lifespan)
+        _app.add_exception_handler(RequestValidationError, validation_exception_handler)
         _app.add_middleware(DynamicMiddleware)
         _app.add_middleware(ContextMiddleware)
         _app.add_middleware(

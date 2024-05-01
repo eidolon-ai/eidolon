@@ -1,5 +1,4 @@
 import {ProcessWithListLayout} from "../../../components/ProcessWithListLayout"
-import {PropsWithChildren} from "react";
 import {getApp} from "@/utils/eidolon-apps";
 
 interface DevToolLayoutProps {
