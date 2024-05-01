@@ -6,8 +6,12 @@ import {SxProps} from "@mui/material/styles";
 export function CircularProgressWithContent(
   props: CircularProgressProps & { sx?: SxProps, children: JSX.Element }
 ) {
+  let sx = {position: 'relative', display: 'inline-flex', alignItems: 'center'}
+  if (props.sx) {
+    sx = {...sx, ...props.sx}
+  }
   return (
-    <Box sx={{position: 'relative', display: 'inline-flex', alignItems: 'center', ...(props.sx || {})}}>
+    <Box sx={sx}>
       <CircularProgress {...props} />
       <Box
         sx={{
