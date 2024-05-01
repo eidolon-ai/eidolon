@@ -9,7 +9,7 @@ import {StartProgramDialog} from "../app/eidolon-apps/dev-tool/components/start-
 import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
-import {useProcesses} from "@eidolon/components/src/hooks/process_context";
+import {useProcesses} from "../../../packages/eidolon-components/src/hooks/processes_context";
 
 export interface DevProcessListWithAddProps {
   app: EidolonApp
@@ -25,7 +25,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
   const addClicked = () => {
     if (app.type === 'copilot') {
       const options = app.params as CopilotParams
-      createProcess(machineURL, options.agent, "New Chat").then((process) => {
+      createProcess(machineURL, options.agent, options.newItemText || "New Chat").then((process) => {
         if (process) {
           router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
         }
@@ -44,7 +44,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
             <ListItemIcon>
               <AddCircleOutline/>
             </ListItemIcon>
-            <ListItemText primary={"Add Chat"}/>
+            <ListItemText primary={app.params.addBtnText || "Add Chat"}/>
           </ListItemButton>
         </ListItem>
       </List>

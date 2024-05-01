@@ -356,7 +356,7 @@ interactions:
         ZTRBNEJEaERnQU9FZTRBNEJEaERnQU9FZTRBNEJEaERnQU9FZTRBNEJEaERnQU9FZTRBNEJEaERn
         QU9FZTRBNEJEaERnQU9FZTRBNEJEaERnQU9FZTRBNEJEaERnQU9FZTRBNEJEaERnQU9FZTRBNEJE
         aERnQU9FZTRBNEJEaERnQU8vUy95UG5POER4OGNrZ0FBQUFCSlJVNUVya0pnZ2c9PSJ9fV19XSwg
-        Im1vZGVsIjogImdwdC00LXZpc2lvbi1wcmV2aWV3IiwgInRlbXBlcmF0dXJlIjogMC4zfQ==
+        Im1vZGVsIjogImdwdC00LXR1cmJvIiwgInRlbXBlcmF0dXJlIjogMC4zfQ==
       - 0
       - null
     headers:
@@ -369,13 +369,13 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '20173'
+      - '20164'
       content-type:
       - application/json
       host:
       - api.openai.com
       user-agent:
-      - AsyncOpenAI/Python 1.17.0
+      - AsyncOpenAI/Python 1.19.0
       x-stainless-arch:
       - arm64
       x-stainless-async:
@@ -385,7 +385,7 @@ interactions:
       x-stainless-os:
       - MacOS
       x-stainless-package-version:
-      - 1.17.0
+      - 1.19.0
       x-stainless-runtime:
       - CPython
       x-stainless-runtime-version:
@@ -395,20 +395,19 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA1RSQW4bMQy8+xWDvfRiG3ETOLDPRYu2QU6+BEURcLX0LhOtKIh0HDfI3ws5Ttxe
-        JIDDGY04fJkAjXTNGk0YyMOY42z15ebHcr8rt8Nt/qZ3d336uXnYDFc3Xzf7m2ZaGdo+cPB31jzo
-        mCO7aHqDQ2FyrqqL68Xn1fJ6sVoegVE7jpXWZ59dzRaLi+XsSUw0zXLhJ+H9SWBQCWzNGr8mAPBy
-        PKvV1PFzs8bF9L0yshn13Kw/moCmaKyVhszEnJI30zMYNDmno/vNwJCReoYNujcQzA9R/nCHqL0i
-        aKoCknroFvtBnBElsWGrZaxlgg2UGdSTJHMQOiqPaCk89kV3qZujPtKxSZ9AOTMVgytaBiVQa14o
-        OLTADmOrUQIK58LGyamOdIqsZtLGAwiR3blMkXZjW28tIAQdW0nH5mqzVR+maHeOvfigOwd1nVSU
-        Io6ff/YpxD8ZkjpCZCrYD+QQh2UOspVAMR7ORmyO77WfYFKjnqImWdL7v+pDIIySZKRYJxZAbD6w
-        S5g3p9m/foQWtc9F2xpw2sX4Ud9KEhvuC5NpqgGZa36jv06A38fl2P2Xd5OLjtnvXR85VcHLi6s3
-        vea8lmd0uTqBrk7xH9b15eTksLGDOY/3W0k9l1zkuCvV5+R18hcAAP//AwD7K70LMQMAAA==
+        H4sIAAAAAAAAA1RSy27bMBC86ysWPFuG7MoO7GtPbVKgBxdFURTGilpJjCkuS66cKIH/vaD8Si88
+        7Dw4nOV7BqBMrbagdIeie2/zzVepcP2l2f38/mM57D7r+O34q3x8fTyOT3/VLCm4eiYtV9Vcc+8t
+        iWF3hnUgFEqui4dFuVpuimI9AT3XZJOs9ZKXuQyh4nxZLMu8KPNic1F3bDRFtYXfGQDA+3SmnK6m
+        V7WFYnad9BQjtqS2NxKACmzTRGGMJgo6UbM7qNkJuSn6riMwPbYEtYne4hgBIcpozRvV8NIZIbDc
+        MrADhBrDASo7EFSoD23gwdVzSB4TB70nDBGEoSJIhXCkGrgBeWE4UhCj0YI1jiJodo60UA0oIB2B
+        sIdqnKgdB/PGTq7kGTQceuPaFK5DTyAdCmgebJ2uMk4o+ECTWwR0gFWUgFrAkggF4ABx7Cu2c3Xp
+        4XQr0HLrA1epbDdYe5s3xpnY7QNhZJfKisL+LD9lAH+mRQ3/da984N7LXvhALhl+Ksqzn7r/jzta
+        PlxAYUH7QbVaZJeEKo5RqN83xrXpjea8t8bvV/ViWazWm02hslP2DwAA//8DAArHFZvFAgAA
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 87373fcdac8213f2-ORD
+      - 87cc31ebcf86e180-ORD
       Connection:
       - keep-alive
       Content-Encoding:
@@ -416,14 +415,14 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 13 Apr 2024 00:13:18 GMT
+      - Wed, 01 May 2024 02:03:28 GMT
       Server:
       - cloudflare
       Set-Cookie:
-      - __cf_bm=oF_GKewUDmfd1Wz4gwxotbMWjyXW_2eJ41qbmqJ2UFw-1712967198-1.0.1.1-lBX29PXWrWdX2RcQVzYrhsvHiq1ClSmP0dH_ExzA720OKYGPuMVjHrQ2.AwxEL9HtWidbVEZ44PG_Aye6KUEig;
-        path=/; expires=Sat, 13-Apr-24 00:43:18 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=o_mpYxdEzG5_fJUPAN2weBMyOLNSP67vSgLVH4cPlwA-1714529008-1.0.1.1-QxYUHPMBNWd_jWHmTLUdrnOiD3bZfgFo8b70jPpuzYTjJlHhWq_9J7hr4OpPU9R_Z23xkQHS5b.quyZ346r3kA;
+        path=/; expires=Wed, 01-May-24 02:33:28 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=SXCn5pPAcBCUkZabOmUCSm2aP1Yr3hRnyBS85iM_DHo-1712967198327-0.0.1.1-604800000;
+      - _cfuvid=9H9nuZ2KAteWwg_EsZJhI9Kk2en.fKh_jYV.Vc1.SRE-1714529008039-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Transfer-Encoding:
       - chunked
@@ -432,25 +431,31 @@ interactions:
       openai-organization:
       - august-data
       openai-processing-ms:
-      - '2422'
+      - '2513'
       openai-version:
       - '2020-10-01'
       strict-transport-security:
       - max-age=15724800; includeSubDomains
+      x-ratelimit-limit-input-images:
+      - '10000'
       x-ratelimit-limit-requests:
-      - '300000'
+      - '10000'
       x-ratelimit-limit-tokens:
-      - '150000'
+      - '800000'
+      x-ratelimit-remaining-input-images:
+      - '9999'
       x-ratelimit-remaining-requests:
-      - '299999'
+      - '9999'
       x-ratelimit-remaining-tokens:
-      - '149169'
+      - '799169'
+      x-ratelimit-reset-input-images:
+      - 6ms
       x-ratelimit-reset-requests:
-      - 0s
+      - 6ms
       x-ratelimit-reset-tokens:
-      - 332ms
+      - 62ms
       x-request-id:
-      - req_4fad71f324b3dacc0b0baab599036b7f
+      - req_69466c9ad6eafaecb1c671180b1af18a
     status:
       code: 200
       message: OK

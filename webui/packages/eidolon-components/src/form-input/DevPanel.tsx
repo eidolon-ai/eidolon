@@ -11,9 +11,11 @@ export interface MessagesWithActionProps {
   machineUrl: string
   devParams: DevParams
   processId: string
+  userImage?: string
+  userName?: string
 }
 
-export function DevPanel({machineUrl, devParams, processId}: MessagesWithActionProps) {
+export function DevPanel({machineUrl, devParams, processId, userName, userImage}: MessagesWithActionProps) {
   const [_, dispatch] = useEidolonContext()
 
   const {
@@ -32,7 +34,9 @@ export function DevPanel({machineUrl, devParams, processId}: MessagesWithActionP
       justifyContent: 'space-between',
       alignItems: 'center'
     }}>
-      <EidolonEvents machineUrl={machineUrl} agentName={devParams.agent} elementsAndLookup={elementsAndLookup}/>
+      <EidolonEvents machineUrl={machineUrl} agentName={devParams.agent} elementsAndLookup={elementsAndLookup}
+                      userImage={userImage} userName={userName}
+      />
       <AgentProcess operations={devParams.operations} processState={processState} handleAction={executeAction}
                     handleCancel={handleCancel}/>
     </Box>

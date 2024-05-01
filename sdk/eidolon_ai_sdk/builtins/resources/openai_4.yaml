@@ -11,16 +11,16 @@ spec:
     image_unit: OpenAIImageUnit
     llm_unit:
       implementation: OpenAIGPT
-      model: "gpt-4-turbo-preview"
+      model: "gpt-4-turbo"
 ---
 apiVersion: eidolon/v1
 kind: Reference
 metadata:
-  name: "gpt-4-turbo-preview"
+  name: "gpt-4-turbo"
 spec:
   implementation: LLMModel
-  human_name: "GPT-4 Turbo Preview"
-  name: "gpt-4-turbo-preview"
+  human_name: "GPT-4 Turbo"
+  name: "gpt-4-turbo"
   input_context_limit: 128000
   output_context_limit: 4096
   supports_tools: True

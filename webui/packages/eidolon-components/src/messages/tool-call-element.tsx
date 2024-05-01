@@ -62,7 +62,7 @@ export const ToolCall = ({machineUrl, element, agentName}: ToolCallElementProps)
           <Divider/>
           {element.children.map((child, index) => {
               if (index < element.children.length - 1 || child.type != "success") {
-                return <ChatDisplayElement machineUrl={machineUrl} key={index} rawElement={child} topLevel={false} agentName={agentName}/>
+                return <ChatDisplayElement userImage={undefined} userName={undefined} machineUrl={machineUrl} key={index} rawElement={child} topLevel={false} agentName={agentName}/>
               }
             }
           )}

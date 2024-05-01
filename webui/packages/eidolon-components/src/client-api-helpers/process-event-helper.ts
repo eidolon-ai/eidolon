@@ -32,7 +32,7 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
 }
 
 export async function executeOperation(machineUrl: string, agent: string, operation: string, processId: string,
-                                       data: Record<string, any>) {
+                                       data: string | Record<string, any>) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     method: "POST",
     headers: {
@@ -42,6 +42,44 @@ export async function executeOperation(machineUrl: string, agent: string, operat
     body: JSON.stringify({machineUrl, agent, operation, data: data}),
   })
   return await response.json()
+}
+
+export async function streamOperation(machineUrl: string, agent: string, operation: string, processId: string, data: Record<string, any>,
+                                      // eslint-disable-next-line no-unused-vars
+                                      handleEvent: (data: Record<string, any>) => void,
+) {
+  const response = await fetch(`/api/eidolon/process/${processId}/events`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "text/event-stream"
+    },
+    body: JSON.stringify({machineUrl, agent, operation, data: data}),
+  })
+
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+
+  const processChunk = (chunk: string) => {
+    try {
+      const eventSourceParser = createParser((inEvent: ParseEvent) => {
+        const event = inEvent as ParsedEvent
+        const data = JSON.parse(event.data)
+        handleEvent(data)
+      })
+      eventSourceParser.feed(chunk)
+    } catch (error) {
+      console.error('Error parsing data:', error);
+    }
+  };
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, {stream: true});
+    processChunk(chunk);
+  }
 }
 
 export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
