@@ -58,7 +58,7 @@ export const ProcessProvider = ({children}: { children: JSX.Element }) => {
         fetchError: fetchError
       }
 
-      return navigator.locks.request("process_status", async (lock) => {
+      return navigator.locks.request("process_status", async () => {
         const innerApp = (await getApps())[appName]
 
         if (!innerApp) {

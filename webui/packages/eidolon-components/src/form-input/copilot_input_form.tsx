@@ -5,7 +5,7 @@ import {useProcesses} from "../hooks/processes_context";
 import {executeOperation} from "../client-api-helpers/process-event-helper";
 import {CopilotParams} from "../lib/util";
 import {CopilotInputForm, ProcessError, ProcessLoading, ProcessTerminated} from "./input_form_components";
-import {FileHandle, HttpException, ProcessStatus} from "@eidolon/client";
+import {FileHandle, ProcessStatus} from "@eidolon/client";
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import {useEffect, useState} from "react";
 import {getOperations} from "../client-api-helpers/machine-helper";
