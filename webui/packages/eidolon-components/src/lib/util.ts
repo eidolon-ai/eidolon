@@ -14,6 +14,8 @@ export interface EidolonApp {
 export interface CopilotParams {
   "agent": string,
   custom_page: string | undefined,
+  addBtnText: string | undefined,
+  newItemText: string | undefined,
   supportedLLMs: string[] | undefined,
   defaultLLM: string | undefined,
   operation: string,
@@ -28,6 +30,8 @@ export interface CopilotParams {
 export interface DevParams {
   agent: string,
   operations: OperationInfo[],
+  addBtnText: string | undefined,
+  newItemText: string | undefined,
 }
 
 

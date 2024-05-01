@@ -4,10 +4,10 @@ import {Box, CircularProgress, CircularProgressProps} from "@mui/material";
 import {SxProps} from "@mui/material/styles";
 
 export function CircularProgressWithContent(
-  props: CircularProgressProps & { sx: SxProps, children: JSX.Element }
+  props: CircularProgressProps & { sx?: SxProps, children: JSX.Element }
 ) {
   return (
-    <Box sx={{position: 'relative', display: 'inline-flex', alignItems: 'center', ...props.sx}}>
+    <Box sx={{position: 'relative', display: 'inline-flex', alignItems: 'center', ...(props.sx || {})}}>
       <CircularProgress {...props} />
       <Box
         sx={{

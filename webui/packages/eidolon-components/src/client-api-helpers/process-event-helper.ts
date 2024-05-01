@@ -32,7 +32,7 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
 }
 
 export async function executeOperation(machineUrl: string, agent: string, operation: string, processId: string,
-                                       data: Record<string, any>) {
+                                       data: string | Record<string, any>) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     method: "POST",
     headers: {

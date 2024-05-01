@@ -2,11 +2,9 @@
 
 import {Box, Step, StepButton, Stepper} from "@mui/material";
 import * as React from "react";
-import {Fragment, useEffect} from "react";
-import {CopilotParams, useProcess} from "@eidolon/components";
+import {Fragment, useEffect, useRef} from "react";
 import {usePathname} from "next/navigation";
-import {Company} from "../types";
-import {executeOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
+import {useProcess} from "@eidolon/components";
 
 interface ChatbotLayoutProps {
   children: JSX.Element
@@ -20,31 +18,17 @@ const steps = ['Explore Companies', 'Research'];
 export default function PageWithStepper({children, params}: ChatbotLayoutProps) {
   const app_name = 'venture-agent'
   const pathName = usePathname()
-  const {app, processStatus, updateProcessStatus} = useProcess()
-  const [allowedStates, setAllowedStates] = React.useState<boolean[]>([true, false, false])
-  const appOptions = app?.params as CopilotParams
+  const {processStatus, updateProcessStatus} = useProcess()
+  const running = useRef(false)
 
   useEffect(() => {
-    updateProcessStatus(app_name, params.processId).then((status) => {
-      if (app && processStatus && processStatus.state === 'idle') {
-        executeOperation(app.location, appOptions.agent, "get_companies", processStatus!.process_id, {}).then((comps: Company[]) => {
-          if (comps) {
-            comps.sort((a, b) => a.name.localeCompare(b.name))
-            const states = [true, false, false]
-            if (processStatus?.state === 'idle') {
-              states[1] = true
-              if (comps.filter((company) => company.should_research).length > 0) {
-                states[2] = true
-              }
-            }
-            setAllowedStates(states)
-          }
-        }).catch((e) => {
-          console.error(e)
-        })
-      }
-    })
-  }, [app?.location, appOptions?.agent, processStatus?.process_id, processStatus?.state]);
+    if (!running.current && !processStatus && params?.processId) {
+      running.current = true
+      updateProcessStatus(app_name, params.processId).finally(() => {
+        // running.current = false
+      })
+    }
+  }, [processStatus?.state]);
 
   let activeStep = -1
   switch (pathName.slice(pathName.lastIndexOf('/') + 1)) {
@@ -67,6 +51,10 @@ export default function PageWithStepper({children, params}: ChatbotLayoutProps) 
     }
   }
 
+  if (!processStatus) {
+    return <Box>Loading...</Box>
+  }
+
   return (
     <Box sx={{width: '100%', padding: "16px", overflow: "hidden"}}>
       <Stepper nonLinear activeStep={activeStep} sx={{paddingBottom: '32px'}}>
@@ -74,7 +62,7 @@ export default function PageWithStepper({children, params}: ChatbotLayoutProps) 
           return (
             <Step
               key={index}
-              disabled={!allowedStates[index]}
+              disabled={false}
               completed={index < activeStep}
             >
               <StepButton color="inherit" onClick={() => {

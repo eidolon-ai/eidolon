@@ -10,6 +10,7 @@ import {useRouter} from "next/navigation";
 import {Company, Thesis} from "../../types";
 import FloatingColumns from "@/components/floating-columns";
 import {useSession} from "next-auth/react";
+import {sleep} from "@/utils/index";
 
 const findCompanyChat = {
   "agent": "CompanyFinder",
@@ -21,7 +22,9 @@ const findCompanyChat = {
 } as CopilotParams
 
 export default function () {
-  const {app, processStatus} = useProcess()
+  const app_name = 'venture-agent'
+
+  const {app, processStatus, updateProcessStatus} = useProcess()
   const [thesis, setThesis] = React.useState<Thesis | undefined>(undefined)
   const [companies, setCompanies] = React.useState<Company[] | undefined>(undefined)
   const [loading, setLoading] = React.useState<boolean>(false)
@@ -45,8 +48,9 @@ export default function () {
     if (processStatus.state === "initialized" && !loading) {
       setLoading(true)
       executeOperation(app!.location, app!.params.agent, "start_thesis", processStatus!.process_id, {}).then((response) => {
-        setThesis(response.data)
+        setThesis(response)
         setCompanies([])
+        return updateProcessStatus(app_name, processStatus.process_id)
       }).finally(() => {
         setLoading(false)
       })
@@ -54,7 +58,6 @@ export default function () {
       setLoading(true)
       executeOperation(app!.location, appOptions.agent, "get_thesis", processStatus.process_id, {}).then((thesis) => {
         setThesis(thesis as Thesis)
-        console.log(thesis)
         return updateCompanies()
       }).catch((e) => {
         console.error(e)
@@ -69,12 +72,9 @@ export default function () {
   }
 
   const afterExecute = (payload: string | Record<string, any>) => {
-    updateCompanies()
-    if (!processStatus?.title) {
-      executeOperation(app.location, app.params.agent, "generateTitle", processStatus.process_id, {body: payload}).then(() => {
-        updateProcesses(app.location).then()
-      })
-    }
+    updateCompanies().then(() => {
+      return updateProcesses(app.location)
+    })
   }
 
   const markCompanies = (companies: readonly string[]) => {
@@ -90,8 +90,15 @@ export default function () {
       >
         <EnhancedTable companies={companies} selectItems={markCompanies}/>
       </Box>
-    )} right={(
+    )} right={(matches) => (
       <CopilotPanel
+        sx={matches ? {
+          borderLeft: "1px solid black",
+          paddingLeft: "16px"
+        } : {
+          borderTop: "1px solid black",
+          paddingTop: "16px"
+        }}
         machineUrl={app.location}
         processId={thesis!.companyFinderPID}
         copilotParams={findCompanyChat}

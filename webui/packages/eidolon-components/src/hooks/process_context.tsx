@@ -3,8 +3,8 @@
 import {createContext, useContext, useState} from "react";
 import {getProcessStatus} from "../client-api-helpers/process-helper";
 import {HttpException, ProcessStatus} from "@eidolon/client";
-import {getApps} from "../client-api-helpers/machine-helper";
-import {EidolonApp} from "../lib/util";
+import {getApps, getOperations} from "../client-api-helpers/machine-helper";
+import {CopilotParams, EidolonApp} from "../lib/util";
 
 export interface ContextObject {
   processStatus?: ProcessStatus
@@ -42,7 +42,6 @@ export const ProcessProvider = ({children}: { children: JSX.Element }) => {
   const [processStatus, setProcessStatus] = useState<ProcessStatus | undefined>(undefined)
   const [app, setApp] = useState<EidolonApp | undefined>(undefined)
   const [fetchError, setFetchError] = useState<HttpException | undefined>(undefined)
-  const [loading, setLoading] = useState<boolean>(false)
 
   const value = {
     app: app,
@@ -54,26 +53,41 @@ export const ProcessProvider = ({children}: { children: JSX.Element }) => {
         app?: EidolonApp,
         fetchError?: HttpException
       } = {
-        processStatus: undefined,
-        app: undefined,
-        fetchError: undefined
+        processStatus: processStatus,
+        app: app,
+        fetchError: fetchError
       }
-      if (!loading) {
-        setLoading(true)
-        const app = (await getApps())[appName]
-        if (!app) {
+
+      return navigator.locks.request("process_status", async (lock) => {
+        const innerApp = (await getApps())[appName]
+
+        if (!innerApp) {
           ret.fetchError = new HttpException(`App ${appName} not found`, 404)
         } else {
-          ret.app = app
-          ret.processStatus = await getProcessStatus(app.location, processId)
+          ret.app = innerApp
+          ret.processStatus = await getProcessStatus(innerApp.location, processId)
+          if (innerApp.type === "copilot") {
+            const operations = await getOperations(ret.processStatus!.machine, ret.processStatus!.agent)
+            const options = innerApp.params as CopilotParams
+            const operation = operations.find((o) => o.name === options.operation)
+            if (!operation) {
+              ret.fetchError = new HttpException(`Operation ${options.operation} not found`, 404)
+            } else {
+              options.operationInfo = operation
+              if (operation.schema?.properties?.execute_on_cpu) {
+                const property = operation.schema?.properties?.execute_on_cpu as Record<string, any>
+                options.supportedLLMs = property?.["enum"] as string[]
+                options.defaultLLM = property?.default as string
+              }
+            }
+          }
         }
+
         setProcessStatus(ret.processStatus)
         setApp(ret.app)
         setFetchError(ret.fetchError)
-        setLoading(false)
-      }
-
-      return ret
+        return ret
+      })
     }
   }
 

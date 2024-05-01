@@ -5,9 +5,11 @@ import {useProcesses} from "../hooks/processes_context";
 import {executeOperation} from "../client-api-helpers/process-event-helper";
 import {CopilotParams} from "../lib/util";
 import {CopilotInputForm, ProcessError, ProcessLoading, ProcessTerminated} from "./input_form_components";
-import {FileHandle, ProcessStatus} from "@eidolon/client";
+import {FileHandle, HttpException, ProcessStatus} from "@eidolon/client";
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {getOperations} from "../client-api-helpers/machine-helper";
+import {useProcess} from "../hooks/process_context";
 
 export interface CopilotInputPanelParams {
   machineUrl: string
@@ -30,6 +32,24 @@ export function CopilotInputPanel({
   const {selectedLLM, setSelectedLLM} = useSupportedLLMsOnOperation(machineUrl, copilotParams)
   const {updateProcesses} = useProcesses()
   const [uploadedFiles, setUploadedFiles] = useState<FileHandle[]>([]);
+  const {app, processStatus} = useProcess()
+
+  useEffect(() => {
+    if (app && processStatus) {
+      getOperations(processStatus!.machine, copilotParams.agent).then(operations => {
+        const options = copilotParams
+        const operation = operations.find((o) => o.name === options.operation)
+        if (operation) {
+          options.operationInfo = operation
+          if (operation.schema?.properties?.execute_on_cpu) {
+            const property = operation.schema?.properties?.execute_on_cpu as Record<string, any>
+            options.supportedLLMs = property?.["enum"] as string[]
+            options.defaultLLM = property?.default as string
+          }
+        }
+      })
+    }
+  }, [app, processStatus]);
 
   const addUploadedFiles = (files: FileHandle[]) => {
     setUploadedFiles([...uploadedFiles, ...files]);

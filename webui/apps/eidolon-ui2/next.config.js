@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
  modularizeImports: {
   'react-icons/ai': {
     transform: 'react-icons/ai/{{member}}',

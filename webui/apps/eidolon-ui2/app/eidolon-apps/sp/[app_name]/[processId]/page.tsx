@@ -4,6 +4,7 @@ import * as React from "react";
 import {CopilotPanel, CopilotParams, useProcess} from "@eidolon/components";
 import {Box} from "@mui/material";
 import {useSession} from "next-auth/react";
+import {useEffect} from "react";
 
 export interface ProcessPageProps {
   params: {
@@ -13,8 +14,12 @@ export interface ProcessPageProps {
 }
 
 export default function ({params}: ProcessPageProps) {
-  const {app, fetchError} = useProcess()
+  const {app, fetchError, processStatus, updateProcessStatus} = useProcess()
   const {data: session} = useSession()
+
+  useEffect(() => {
+    updateProcessStatus(params.app_name, params.processId)
+  }, [processStatus?.state]);
 
   if (!fetchError && !app) {
     return <div>Loading...</div>

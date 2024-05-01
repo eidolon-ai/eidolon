@@ -3,13 +3,56 @@ kind: Agent
 metadata:
   name: CompanyFinder
 spec:
-  system_prompt: "You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio."
+  system_prompt: |-
+    You are a venture capitalist looking for promising companies to invest in. 
+    You have been tasked with finding information about a specific company. 
+    Use the search tool to gather details about the company's background, products, services, market position, and strategic initiatives. 
+    The search tool may return links. You MUST follow the relevant links to gather additional information. 
+    Provide a comprehensive summary of the company's profile, financial health, and growth potential based on the information gathered. 
+    
+    Please respond using markdown unless told otherwise by the user. 
+    Output all multi-media content as embedded content including image, video, and audio.
+
+    You MUST update the title during your first interaction with the user. Call the tool to do that with an appropriate title after you have gathered some information.
+    You have tools to search, browse a web page, save company information, and generate a title.
+    
+    First generate a plan. Your plan should include:
+      1) do the the research
+      2) update the title
+      3) then respond to the user. 
+    
+    Think aloud step by step.
+    
   actions:
     - name: "converse"
       description: "A copilot that engages with the user."
       allow_file_upload: true
-  apu:
-    logic_units:
-      - implementation: Search
-      - implementation: Browser
-      - implementation: eidolon_examples.venture_search_agent.save_company.AddCompany
+      user_prompt: |-
+        The user question is:
+        {{ body }}
+
+  apus:
+    - apu: MistralLarge
+      title: Mistral Large
+      logic_units:
+        - implementation: Search
+        - implementation: Browser
+        - implementation: eidolon_examples.venture_search_agent.save_company.AddCompany
+        - implementation: eidolon_examples.venture_search_agent.generate_title.GenerateTitle
+    - apu: GPT3.5-turbo
+      title: GPT3.5 Turbo
+      logic_units:
+        - implementation: Search
+        - implementation: Browser
+        - implementation: eidolon_examples.venture_search_agent.save_company.AddCompany
+        - implementation: eidolon_examples.venture_search_agent.generate_title.GenerateTitle
+    - apu: GPT4-turbo
+      title: GPT4 Turbo
+      default: true
+      logic_units:
+        - implementation: Search
+        - implementation: Browser
+        - implementation: eidolon_examples.venture_search_agent.save_company.AddCompany
+        - implementation: eidolon_examples.venture_search_agent.generate_title.GenerateTitle
+#    - apu: ClaudeOpus
+#      title: Claude Opus

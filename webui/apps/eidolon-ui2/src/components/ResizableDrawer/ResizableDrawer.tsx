@@ -64,7 +64,6 @@ export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, min
       const parentContainer = children.parentElement
       const parentWidth = parentContainer!.offsetWidth;
       const remainingWidth = parentWidth - Math.max(newWidth, minDrawerWidth!);
-      console.log(remainingWidth)
       updateRemainderWidth(remainingWidth)
     }
   }
@@ -101,7 +100,6 @@ export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, min
 
   const handleDrawerOpen = () => {
     const lastOpenWidth = Math.max(minDrawerWidth!, parseInt(localStorage.getItem('lastOpenedDrawerWidth') || defaultDrawerWidth!.toString()));
-    console.log(lastOpenWidth)
     updateDrawerWidth(lastOpenWidth, false)
   };
 

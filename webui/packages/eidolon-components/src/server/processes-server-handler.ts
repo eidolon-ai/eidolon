@@ -194,9 +194,10 @@ export class ProcessEventsHandler {
         });
       } else {
         const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-        let response = Response.json((await client.process(processId).agent(agent).action(operation, data))["data"], {status: 200});
-        await clearUsageCache()
-        return response;
+        return processResponse(client.process(processId).agent(agent).action(operation, data).then((resp) => {
+          clearUsageCache()
+          return resp.data
+        }));
       }
     } catch (error) {
       console.error('Error fetching information:', error);

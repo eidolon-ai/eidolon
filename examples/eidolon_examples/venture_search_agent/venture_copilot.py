@@ -13,6 +13,7 @@ from eidolon_ai_client.util.stream_collector import merge_streams
 from eidolon_ai_sdk.agent.agent import register_program, Agent as AgentTemplate, register_action
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
+from eidolon_ai_sdk.system.processes import ProcessDoc
 
 
 class SummarizeWebsiteBody(BaseModel):
@@ -51,6 +52,16 @@ class VentureCopilot(AgentTemplate):
         thesis = Thesis(parent_process_id=process_id, companyFinderPID=process.process_id)
         await AgentOS.symbolic_memory.insert_one("venture_agent_thesis", thesis.model_dump())
         yield ObjectOutputEvent(content=thesis)
+        yield AgentStateEvent(state="idle")
+
+    @register_action("idle")
+    async def generate_title(self, process_id, body: Annotated[str, Body(description="Your name", embed=True)]):
+        thesis = await self._loadThesis(process_id)
+        agent = Agent.get("CompanyFinder")
+        title = (await agent.process(thesis.companyFinderPID).action("generate_title", body)).data
+        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+        await process_obj.update(title=title)
+        yield ObjectOutputEvent(content=title)
         yield AgentStateEvent(state="idle")
 
     @register_action("idle")

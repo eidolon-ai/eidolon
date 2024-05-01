@@ -33,8 +33,8 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.agent_os_interfaces import SecurityManager
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import SecurityManagerImpl
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,
@@ -52,7 +52,7 @@ class AgentController:
     name: str
     agent: object
     actions: typing.Dict[str, FnHandler]
-    security: SecurityManagerImpl
+    security: SecurityManager
 
     def __init__(self, name, agent):
         self.name = name
@@ -128,21 +128,32 @@ class AgentController:
             raise HTTPException(status_code=404, detail="Process not found")
         if process.state not in handler.extra["allowed_states"]:
             logger.warning(
-                f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}"
+                f"Action {handler.name} cannot process state. Current state: '{process.state}'. Allowed states: {handler.extra['allowed_states']}"
             )
+            headers = {}
+            if process.state == "processing":
+                headers["Retry-After"] = "1"
+
             raise HTTPException(
                 status_code=409,
                 detail=f'Action "{handler.name}" cannot process state "{process.state}"',
+                headers=headers
             )
         last_state = process.state
         RequestContext.set("__last_state__", last_state)
-        process = await process.update(
-            check_update_time=True,
-            agent=self.name,
-            record_id=process_id,
-            state="processing",
-            data=dict(action=handler.name),
-        )
+
+        try:
+            process = await process.update(
+                check_update_time=True,
+                agent=self.name,
+                record_id=process_id,
+                state="processing",
+                data=dict(action=handler.name),
+            )
+        except ValueError as e:
+            logger.warning(f"Action '{handler.name} failed. Process {process_id} has been updated since last read.")
+            raise HTTPException(status_code=409, detail=str(e), headers={"Retry-After": "1"})
+
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
             kwargs["process_id"] = process_id

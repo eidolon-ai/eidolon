@@ -25,7 +25,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
   const addClicked = () => {
     if (app.type === 'copilot') {
       const options = app.params as CopilotParams
-      createProcess(machineURL, options.agent, "New Chat").then((process) => {
+      createProcess(machineURL, options.agent, options.newItemText || "New Chat").then((process) => {
         if (process) {
           router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
         }
@@ -44,7 +44,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
             <ListItemIcon>
               <AddCircleOutline/>
             </ListItemIcon>
-            <ListItemText primary={"Add Chat"}/>
+            <ListItemText primary={app.params.addBtnText || "Add Chat"}/>
           </ListItemButton>
         </ListItem>
       </List>
