@@ -1,3 +1,4 @@
+import copy
 from collections import defaultdict
 
 from pydantic import BaseModel
@@ -59,7 +60,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     async def _get_schema(self, machine: str) -> dict:
         if machine not in self._machine_schemas:
             self._machine_schemas[machine] = await Machine(machine=machine).get_schema()
-        return self._machine_schemas[machine]
+        return copy.deepcopy(self._machine_schemas[machine])
 
     async def build_action_tool(
         self, machine: str, agent: str, action: str, allowed_pids: Set[str], call_context: CallContext
@@ -71,19 +72,17 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         try:
             name = self._name(agent, action=action)
             description = self._description(endpoint_schema, name)
-            schema_with_conversation_id = {
-                'type': 'object',
-                'properties': {
-                    'conversation_id': {'type': 'string'},
-                    'body': self._body_model(endpoint_schema, name)
-                },
-                'required': ['conversation_id', 'body'],
-            }
+            body_schema: dict = self._body_schema(endpoint_schema, name)
+            body_schema['properties']['conversation_id'] = {'type': 'string'}
+            if 'required' in body_schema:
+                body_schema['required'].append('conversation_id')
+            else:
+                body_schema['required'] = ['conversation_id']
             tool = self._build_tool_def(
                 agent,
                 action,
                 name,
-                schema_with_conversation_id,
+                body_schema,
                 description,
                 self._process_tool(agent_client, action, allowed_pids, call_context),
             )
@@ -106,7 +105,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                         agent,
                         action,
                         name,
-                        self._body_model(schema, name),
+                        self._body_schema(schema, name),
                         description,
                         self._program_tool(agent_client, action, call_context),
                     )
@@ -131,7 +130,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         )
 
     @staticmethod
-    def _body_model(endpoint_schema, name):
+    def _body_schema(endpoint_schema, name):
         body = endpoint_schema.get("requestBody")
         if not body:
             json_schema = dict(type="object", properties={})
