@@ -324,12 +324,16 @@ def deterministic_process_ids(test_name):
     This method patches object id for processes so that it returns a deterministic id based on the test name.
     """
 
-    id_generator = deterministic_id_generator(test_name)
+    pid_generator = deterministic_id_generator(test_name)
+    fid_generator = deterministic_id_generator(test_name + "_file")
 
-    def patched_ObjectId(*args, **kwargs):
-        return next(id_generator)
+    def patched_pid(*args, **kwargs):
+        return next(pid_generator)
 
-    with patch.object(agent_controller, "ObjectId", new=patched_ObjectId):
+    def patched_fid(*args, **kwargs):
+        return next(fid_generator)
+
+    with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(process_file_system, "ObjectId", new=patched_fid):
         yield
 
 
