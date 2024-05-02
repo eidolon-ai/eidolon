@@ -5,10 +5,7 @@ import pytest
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
-from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
-from eidolon_ai_sdk.util.replay import ReplayConfig
 
 
 def r(name, **kwargs):
