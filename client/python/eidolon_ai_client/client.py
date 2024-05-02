@@ -26,6 +26,13 @@ class Machine(BaseModel):
     def agent(self, agent_name: str) -> Agent:
         return Agent(machine=self.machine, agent=agent_name)
 
+    async def process(self, process_id: str) -> ProcessStatus:
+        url = urljoin(self.machine, f"processes/{process_id}")
+        json_ = await get_content(url)
+        if 'machine' not in json_:
+            json_['machine'] = self.machine
+        return ProcessStatus(**json_)
+
     async def processes(self) -> ProcessesResponse:
         url = urljoin(self.machine, "/processes")
         json_ = await get_content(url)
