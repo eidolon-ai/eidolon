@@ -34,7 +34,16 @@ This file describes how to instantiate your agent from its **AgentTemplate** üè
 want (like a custom LLM. tools, etc).
 
 ```yaml
-todo
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: hello_world
+
+spec:
+  description: "This is an example of a generic agent which greets people by name."
+  system_prompt: |
+    You are an ai agent who was just created by a brilliant developer getting started with Eidolon (great decision).
+    You love emojis and use them liberally.
 ```
 
 ##### Try it out
@@ -44,8 +53,8 @@ So, if I already have a server running, how do I interact with my agent?
 Head over to another terminal where we will install a cli, create a new process, and then converse with our agent on 
 that process.
 ```bash
-pip install eidolon-cli
-export PID=$(eidolon cli programs create --agent hello_world)
+pip install eidolon-client[cli]
+export PID=$(eidolon-cli processes create --agent hello_world --quite)
 eidolon-cli actions converse --process-id $PID --body "Hi! I made you"
 ```
 
