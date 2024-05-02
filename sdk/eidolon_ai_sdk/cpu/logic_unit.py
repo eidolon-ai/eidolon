@@ -83,19 +83,28 @@ class LLMToolWrapper:
 
 def llm_function(
     name: str = None,
+    title: str = None,
+    sub_title: str = None,
     description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
     input_model: typing.Optional[typing.Callable[[object, FnHandler], BaseModel]] = None,
     output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
 ):
-    return register_handler(name=name, description=description, input_model=input_model, output_model=output_model)
+    extra = {}
+    if title:
+        extra["title"] = title
+    if sub_title:
+        extra["sub_title"] = sub_title
+    return register_handler(name=name, description=description, input_model=input_model, output_model=output_model, **extra)
 
 
 class LogicUnit(ProcessingUnit, ABC):
     async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
         handlers = get_handlers(self)
         for handler in handlers:
-            handler.extra["title"] = self.__class__.__name__
-            handler.extra["sub_title"] = handler.fn.__name__
+            if "title" not in handler.extra:
+                handler.extra["title"] = self.__class__.__name__
+            if "sub_title" not in handler.extra:
+                handler.extra["sub_title"] = handler.fn.__name__
             handler.extra["agent_call"] = False
 
             return handlers

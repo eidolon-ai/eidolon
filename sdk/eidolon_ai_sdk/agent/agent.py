@@ -54,6 +54,7 @@ def register_action(
     description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
     input_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Type[BaseModel]]] = None,
     output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
+    **extra
 ):
     if not allowed_states:
         raise ValueError("Must specify at least one valid state")
@@ -66,6 +67,7 @@ def register_action(
         input_model=input_model,
         output_model=output_model,
         allowed_states=allowed_states,
+        **extra,
     )
 
 

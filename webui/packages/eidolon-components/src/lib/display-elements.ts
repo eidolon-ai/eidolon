@@ -8,6 +8,8 @@ export interface AgentStartElement extends DisplayElement {
   type: "agent-start",
   agentName: string
   callName: string
+  title: string
+  sub_title: string
 }
 
 export interface SuccessElement extends DisplayElement {
@@ -46,6 +48,7 @@ export interface ToolCallElement extends DisplayElement {
   is_agent: boolean,
   contextId: string,
   children: DisplayElement[]
+  arguments: Record<string, any>
 }
 
 export interface ToolCallEndElement extends DisplayElement {
@@ -70,7 +73,9 @@ export const makeElement = (event: ChatEvent) => {
       return {
         type: "agent-start",
         agentName: event.agent_name,
-        callName: event.call_name
+        callName: event.call_name,
+        title: event.title,
+        sub_title: event.sub_title
       } as AgentStartElement
     case "success":
       return {
@@ -96,6 +101,7 @@ export const makeElement = (event: ChatEvent) => {
         content: event.content
       } as MarkdownElement
     case "object":
+      console.log(event)
       return {
         type: "json",
         content: event.content
@@ -108,6 +114,7 @@ export const makeElement = (event: ChatEvent) => {
         is_active: true,
         is_agent: event.is_agent_call || false,
         contextId: event.context_id,
+        arguments: event.tool_call.arguments,
         children: []
       } as ToolCallElement
     case "context_start":
@@ -118,7 +125,8 @@ export const makeElement = (event: ChatEvent) => {
         is_active: true,
         is_agent: event.is_agent_call || false,
         contextId: event.context_id,
-        children: []
+        children: [],
+        arguments: {}
       } as ToolCallElement
     case "context_end":
       return {

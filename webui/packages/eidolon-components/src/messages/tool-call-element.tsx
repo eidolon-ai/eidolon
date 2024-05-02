@@ -1,8 +1,10 @@
 import {ToolCallElement} from "../lib/display-elements";
-import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled} from "@mui/material";
-import {CodeOffRounded, ExpandMore} from "@mui/icons-material";
+import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled, Typography} from "@mui/material";
+import {ExpandMore} from "@mui/icons-material";
 import {ChatDisplayElement} from "./chat-display-element";
 import {useState} from "react";
+import BuildCircleIcon from '@mui/icons-material/BuildCircle';
+import {EidolonMarkdown} from "./eidolon-markdown";
 
 interface ExpandMoreDivProps extends IconButtonProps {
   expand: boolean;
@@ -32,13 +34,13 @@ export const ToolCall = ({machineUrl, element, agentName}: ToolCallElementProps)
   };
 
   return (
-    <Card variant={"outlined"} sx={{marginTop: "12px"}}>
+    <Card variant={"outlined"} sx={{marginTop: "8px", marginBottom: "8px", borderRadius: "4px"}}>
       <CardHeader
         sx={{padding: "4px 8px 4px 8px"}}
         avatar={
           element.is_agent
             ? <Avatar sx={{height: "24px", width: "24px"}} src="/img/eidolon_with_gradient.png"/>
-            : <Avatar sx={{height: "24px", width: "24px"}}><CodeOffRounded/></Avatar>
+            : <Avatar sx={{height: "24px", width: "24px"}}><BuildCircleIcon/></Avatar>
         }
         onClick={handleExpandClick}
         action={
@@ -59,7 +61,13 @@ export const ToolCall = ({machineUrl, element, agentName}: ToolCallElementProps)
       </CardHeader>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
+          <Typography variant={"h6"}>Input:</Typography>
+          <div className={"chat-indent"}>
+            <EidolonMarkdown machineUrl={machineUrl}>{'```json\n' + JSON.stringify(element.arguments, undefined,
+            "  ") + "\n```"}</EidolonMarkdown>
+          </div>
           <Divider/>
+          <Typography variant={"h6"}>Output:</Typography>
           {element.children.map((child, index) => {
               if (index < element.children.length - 1 || child.type != "success") {
                 return <ChatDisplayElement userImage={undefined} userName={undefined} machineUrl={machineUrl} key={index} rawElement={child} topLevel={false} agentName={agentName}/>

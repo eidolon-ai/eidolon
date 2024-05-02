@@ -84,20 +84,20 @@ export default function () {
   }
 
   return (
-    <FloatingColumns rightVisible={true} left={(
+    <FloatingColumns rightVisible={true} right={(
       <Box
         sx={{display: "flex", alignItems: "center", justifyContent: "center", height: "100%", width: "100%", overflow: "hidden"}}
       >
         <EnhancedTable companies={companies} selectItems={markCompanies}/>
       </Box>
-    )} right={(matches) => (
+    )} left={(matches) => (
       <CopilotPanel
         sx={matches ? {
-          borderLeft: "1px solid black",
-          paddingLeft: "16px"
+          borderRight: "1px solid black",
+          paddingRight: "16px"
         } : {
-          borderTop: "1px solid black",
-          paddingTop: "16px"
+          borderBottom: "1px solid black",
+          paddingBottom: "16px"
         }}
         machineUrl={app.location}
         processId={thesis!.companyFinderPID}

@@ -25,6 +25,7 @@ class Operation(BaseModel):
 
 
 class ApiLogicUnitSpec(BaseModel):
+    title: str
     root_call_url: str
     open_api_location: str
     operations_to_expose: List[Operation]  # map of tool name to openapi path
@@ -93,8 +94,8 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                             output_model_fn=lambda a, b: Any,
                             fn=self._call_endpoint(operation, method_name, method["parameters"]),
                             extra={
-                                "title": method["summary"] or name,
-                                "sub_title": operation.path,
+                                "title": self.spec.title,
+                                "sub_title": method["summary"] or name,
                                 "agent_call": True,
                             },
                         ))

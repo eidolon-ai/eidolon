@@ -52,3 +52,14 @@
 .markdown tbody tr:last-child td:last-child {
     border-bottom-right-radius: .375rem
 }
+
+.markdown ul > li {
+    margin-left: 24px;
+}
+.markdown ol > li {
+    margin-left: 24px;
+}
+
+.markdown pre {
+    font-size: .9em;
+}
