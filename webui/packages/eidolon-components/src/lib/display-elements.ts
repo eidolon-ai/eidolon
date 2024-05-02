@@ -48,6 +48,7 @@ export interface ToolCallElement extends DisplayElement {
   is_agent: boolean,
   contextId: string,
   children: DisplayElement[]
+  arguments: Record<string, any>
 }
 
 export interface ToolCallEndElement extends DisplayElement {
@@ -100,14 +101,11 @@ export const makeElement = (event: ChatEvent) => {
         content: event.content
       } as MarkdownElement
     case "object":
-      if (event.content) {
-        return {
-          type: "json",
-          content: event.content
-        } as JsonElement
-      } else {
-        return undefined
-      }
+      console.log(event)
+      return {
+        type: "json",
+        content: event.content
+      } as JsonElement
     case "tool_call_start":
       return {
         type: "tool-call",
@@ -116,6 +114,7 @@ export const makeElement = (event: ChatEvent) => {
         is_active: true,
         is_agent: event.is_agent_call || false,
         contextId: event.context_id,
+        arguments: event.tool_call.arguments,
         children: []
       } as ToolCallElement
     case "context_start":
@@ -126,7 +125,8 @@ export const makeElement = (event: ChatEvent) => {
         is_active: true,
         is_agent: event.is_agent_call || false,
         contextId: event.context_id,
-        children: []
+        children: [],
+        arguments: {}
       } as ToolCallElement
     case "context_end":
       return {
