@@ -1,11 +1,14 @@
+import copy
+from collections import defaultdict
+
 from pydantic import BaseModel
-from typing import List, Any, Dict, AsyncIterator
+from typing import List, Any, Dict, AsyncIterator, Set
 
 from eidolon_ai_client.client import Machine, Agent, AgentResponseIterator
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
-from eidolon_ai_client.events import StreamEvent
+from eidolon_ai_client.events import StreamEvent, ObjectOutputEvent
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.logger import logger
@@ -25,15 +28,19 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         self._machine_schemas = {}
 
     async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
+        agent_actions = defaultdict(set)
         tools = await self.build_program_tools(call_context)
         call_history = await AgentCallHistory.get_agent_state(call_context.process_id, call_context.thread_id)
         for call in call_history:
             for action in call.available_actions:
-                context_ = await self.build_action_tool(
-                    call.machine, call.agent, action, call.remote_process_id, call_context
-                )
-                if context_:
-                    tools.append(context_)
+                agent_actions[(call.machine, call.agent, action)].add(call.remote_process_id)
+        for key, allowed_pids in agent_actions.items():
+            machine, agent, action = key
+            context_ = await self.build_action_tool(
+                machine, agent, action, allowed_pids, call_context
+            )
+            if context_:
+                tools.append(context_)
 
         return tools
 
@@ -53,10 +60,10 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     async def _get_schema(self, machine: str) -> dict:
         if machine not in self._machine_schemas:
             self._machine_schemas[machine] = await Machine(machine=machine).get_schema()
-        return self._machine_schemas[machine]
+        return copy.deepcopy(self._machine_schemas[machine])
 
     async def build_action_tool(
-        self, machine: str, agent: str, action: str, remote_process_id: str, call_context: CallContext
+        self, machine: str, agent: str, action: str, allowed_pids: Set[str], call_context: CallContext
     ):
         agent_client = Agent.get(agent)
         path = f"/processes/{{process_id}}/agent/{agent}/actions/{action}"
@@ -64,12 +71,20 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         endpoint_schema = machine_schema["paths"][path]["post"]
         try:
             name = self._name(agent, action=action)
+            description = self._description(endpoint_schema, name)
+            body_schema: dict = self._body_schema(endpoint_schema, name)
+            body_schema['properties']['conversation_id'] = {'type': 'string'}
+            if 'required' in body_schema:
+                body_schema['required'].append('conversation_id')
+            else:
+                body_schema['required'] = ['conversation_id']
             tool = self._build_tool_def(
                 agent,
                 action,
                 name,
-                endpoint_schema,
-                self._process_tool(agent_client, action, remote_process_id, call_context),
+                body_schema,
+                description,
+                self._process_tool(agent_client, action, allowed_pids, call_context),
             )
             return tool
         except ValueError:
@@ -84,11 +99,14 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 path = f"/processes/{{process_id}}/agent/{agent}/actions/{action}"
                 try:
                     name = self._name(agent, action=action)
+                    schema = machine_schema["paths"][path]["post"]
+                    description = self._description(schema, name)
                     tool = self._build_tool_def(
                         agent,
                         action,
                         name,
-                        machine_schema["paths"][path]["post"],
+                        self._body_schema(schema, name),
+                        description,
                         self._program_tool(agent_client, action, call_context),
                     )
                     tools.append(tool)
@@ -96,9 +114,8 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     logger.warning(f"unable to build tool {path}", exc_info=True)
         return tools
 
-    def _build_tool_def(self, agent, operation, name, endpoint_schema, tool_call):
-        description = self._description(endpoint_schema, name)
-        model = self._body_model(endpoint_schema, name)
+    def _build_tool_def(self, agent, operation, name, schema, description, tool_call):
+        model = schema_to_model(schema, "InputModel")
         return FnHandler(
             name=name,
             description=lambda a, b: description,
@@ -113,16 +130,16 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         )
 
     @staticmethod
-    def _body_model(endpoint_schema, name):
+    def _body_schema(endpoint_schema, name):
         body = endpoint_schema.get("requestBody")
         if not body:
             json_schema = dict(type="object", properties={})
-            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+            return dict(type="object", properties=dict(body=json_schema))
         elif "application/json" in body["content"]:
             json_schema = body["content"]["application/json"]["schema"]
-            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+            return dict(type="object", properties=dict(body=json_schema))
         elif "text/plain" in body["content"]:
-            return schema_to_model(dict(type="object", properties=dict(body=dict(type="string"))), "Input")
+            return dict(type="object", properties=dict(body=dict(type="string")))
         else:
             raise ValueError(f"Agent action at {name} does not support text/plain or application/json")
 
@@ -145,8 +162,13 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     # todo, this needs to create history record before iterating
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
         async def fn(_self, body):
+            process = await agent.create_process()
+            yield ObjectOutputEvent(content=dict(
+                action="created new conversation",
+                conversation_id=process.process_id,
+            ))
             async for event in RecordAgentResponseIterator(
-                (await agent.create_process()).stream_action(program, body),
+                process.stream_action(program, body),
                 call_context.process_id,
                 call_context.thread_id,
             ):
@@ -155,10 +177,12 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return fn
 
     # todo, this needs to create history record before iterating
-    def _process_tool(self, agent: Agent, action: str, process_id: str, call_context: CallContext):
-        def fn(_self, body):
+    def _process_tool(self, agent: Agent, action: str, allowed_pids: Set[str], call_context: CallContext):
+        def fn(_self, conversation_id: str, body):
+            if conversation_id not in allowed_pids:
+                raise ValueError(f"Conversation id {conversation_id} not allowed for action {action}")
             return RecordAgentResponseIterator(
-                agent.process(process_id).stream_action(action, body), call_context.process_id, call_context.thread_id
+                agent.process(conversation_id).stream_action(action, body), call_context.process_id, call_context.thread_id
             )
 
         return fn
