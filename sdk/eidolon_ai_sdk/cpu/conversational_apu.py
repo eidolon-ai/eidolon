@@ -211,40 +211,49 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         tc = tool_call_event.tool_call
         logic_unit_wrapper = ["NaN"]
 
-        tool_def = tool_defs[tc.name]
+        if tc.name not in tool_defs:
+            message = ToolResponseMessage(
+                logic_unit_name=logic_unit_wrapper[0],
+                tool_call_id=tc.tool_call_id,
+                result=f"Invalid tool call {tc.name}. Check the name and try again.",
+                name=tc.name,
+            )
+        else:
+            tool_def = tool_defs[tc.name]
 
-        def tool_event_stream():
+            def tool_event_stream():
+                try:
+                    logic_unit_wrapper[0] = tool_def.logic_unit.__class__.__name__
+                    return tool_def.execute(tool_call=tc)
+                except KeyError:
+                    raise ValueError(f"Tool {tool_call_event.tool_call.name} not found. Available tools: {tool_defs.keys()}")
+
+            tool_stream = stream_manager(
+                tool_event_stream,
+                ToolCallStartEvent(
+                    tool_call=tc,
+                    context_id=tc.tool_call_id,
+                    title=tool_def.eidolon_handler.extra.get("title", tool_def.eidolon_handler.name),
+                    sub_title=tool_def.eidolon_handler.extra.get("sub_title", ""),
+                    is_agent_call=tool_def.eidolon_handler.extra.get("agent_call", False),
+                ),
+            )
             try:
-                logic_unit_wrapper[0] = tool_def.logic_unit.__class__.__name__
-                return tool_def.execute(tool_call=tc)
-            except KeyError:
-                raise ValueError(f"Tool {tool_call_event.tool_call.name} not found. Available tools: {tool_defs.keys()}")
+                async for event in tool_stream:
+                    yield event
+            except ManagedContextError:
+                if self.spec.allow_tool_errors:
+                    logger.warning("Error calling tool " + tool_call_event.tool_call.name, exc_info=True)
+                else:
+                    raise
 
-        tool_stream = stream_manager(
-            tool_event_stream,
-            ToolCallStartEvent(
-                tool_call=tc,
-                context_id=tc.tool_call_id,
-                title=tool_def.eidolon_handler.extra.get("title", tool_def.eidolon_handler.name),
-                sub_title=tool_def.eidolon_handler.extra.get("sub_title", ""),
-                is_agent_call=tool_def.eidolon_handler.extra.get("agent_call", False),
-            ),
-        )
-        try:
-            async for event in tool_stream:
-                yield event
-        except ManagedContextError:
-            if self.spec.allow_tool_errors:
-                logger.warning("Error calling tool " + tool_call_event.tool_call.name, exc_info=True)
-            else:
-                raise
+            message = ToolResponseMessage(
+                logic_unit_name=logic_unit_wrapper[0],
+                tool_call_id=tc.tool_call_id,
+                result=tool_stream.get_content() or "",
+                name=tc.name,
+            )
 
-        message = ToolResponseMessage(
-            logic_unit_name=logic_unit_wrapper[0],
-            tool_call_id=tc.tool_call_id,
-            result=tool_stream.get_content() or "",
-            name=tc.name,
-        )
         if self.record_memory:
             await self.memory_unit.storeMessages(call_context, [message])
         conversation.append(message)

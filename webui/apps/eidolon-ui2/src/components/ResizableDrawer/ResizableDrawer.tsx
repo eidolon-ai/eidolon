@@ -1,6 +1,6 @@
 'use client'
 
-import React, {MouseEvent, useCallback} from "react";
+import React, {MouseEvent, useCallback, useEffect, useRef} from "react";
 import {Drawer, IconButton, styled} from "@mui/material";
 import {DrawerProps} from "@mui/material/Drawer/Drawer";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -10,20 +10,63 @@ export interface ResizableDrawerProps extends DrawerProps {
   defaultDrawerWidth?: number
   minDrawerWidth?: number
   maxDrawerWidth?: number
+  updateRemainderWidth: (remainderWidth: number) => void
 }
 
-export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, minDrawerWidth, children, ...props}: ResizableDrawerProps) {
-  if (!defaultDrawerWidth) {
-    defaultDrawerWidth = 240
-  }
+export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, minDrawerWidth, children, updateRemainderWidth, ...props}: ResizableDrawerProps) {
   if (!minDrawerWidth) {
-    minDrawerWidth = 58
+    minDrawerWidth = 40
   }
   if (!maxDrawerWidth) {
     maxDrawerWidth = 1000
   }
-  const [drawerWidth, setDrawerWidth] = React.useState(defaultDrawerWidth);
-  const [lastOpenWidth, setLastOpenWidth] = React.useState(defaultDrawerWidth);
+  const [drawerWidth, setDrawerWidth] = React.useState(0);
+  const childrenDivRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  useEffect(() => {
+    // load the previous width from local storage
+    const previousWidthStr = localStorage.getItem('drawerWidth');
+    if (!previousWidthStr) {
+      updateDrawerWidth(defaultDrawerWidth || 240)
+    } else {
+      let previousWidth = parseInt(previousWidthStr);
+      setDrawerWidth(previousWidth)
+      reportRemainingWidth(previousWidth)
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    setLoading(false)
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
+  }, [childrenDivRef.current]);
+
+  const handleResize = () => {
+    reportRemainingWidth(drawerWidth)
+  };
+
+  function updateDrawerWidth(width: number, setLastOpened: boolean = true) {
+    setDrawerWidth(width)
+    localStorage.setItem('drawerWidth', `${width}`)
+    if (setLastOpened) {
+      localStorage.setItem('lastOpenedDrawerWidth', `${Math.max(width, minDrawerWidth!)}`)
+    }
+    reportRemainingWidth(width)
+  }
+
+  function reportRemainingWidth(newWidth: number) {
+    const children = childrenDivRef.current;
+    if (children) {
+      const parentContainer = children.parentElement
+      const parentWidth = parentContainer!.offsetWidth;
+      const remainingWidth = parentWidth - Math.max(newWidth, minDrawerWidth!);
+      updateRemainderWidth(remainingWidth)
+    }
+  }
 
   const handleMouseDown = () => {
     document.addEventListener("mouseup", handleMouseUp, true);
@@ -40,45 +83,45 @@ export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, min
   const handleMouseMove = useCallback((ev: MouseEvent): any => {
     const newWidth = ev.clientX - document.body.offsetLeft;
     if (newWidth >= minDrawerWidth! && newWidth < maxDrawerWidth!) {
-      setDrawerWidth(newWidth);
-      setLastOpenWidth(newWidth)
+      reportRemainingWidth(newWidth)
+      updateDrawerWidth(newWidth);
     }
+    ev.stopPropagation()
+    ev.preventDefault()
   }, []);
 
   const DrawerFooter = styled('div')(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
   }));
 
   const handleDrawerOpen = () => {
-    if (lastOpenWidth <= minDrawerWidth!) {
-      setLastOpenWidth(defaultDrawerWidth!)
-    }
-    setDrawerWidth(lastOpenWidth)
+    const lastOpenWidth = Math.max(minDrawerWidth!, parseInt(localStorage.getItem('lastOpenedDrawerWidth') || defaultDrawerWidth!.toString()));
+    updateDrawerWidth(lastOpenWidth, false)
   };
 
   const handleDrawerClose = () => {
-    setDrawerWidth(minDrawerWidth!)
+    updateDrawerWidth(0, false)
   };
 
   return (
     <Drawer
+      ref={childrenDivRef}
       {...props}
-      sx={{width: drawerWidth}}
       open={true}
-      PaperProps={{...props.PaperProps, style: {width: drawerWidth, display: 'flex', justifyContent: 'space-between'}}}
+      sx={{width: drawerWidth, minWidth: minDrawerWidth}}
+      PaperProps={{...props.PaperProps, elevation: 0, variant: "elevation", style: {display: 'flex', justifyContent: 'space-between', borderRight: '0px'}}}
     >
-      <div>
+      <div style={{width: drawerWidth, minWidth: minDrawerWidth}}>
         <div
           onMouseDown={() => handleMouseDown()}
           style={{
+            display: drawerWidth > 0 ? 'block' : 'none',
             width: "5px",
             cursor: "ew-resize",
-            padding: "4px 0 0",
             borderTop: "1px solid #ddd",
             position: "absolute",
             top: 0,
@@ -88,7 +131,7 @@ export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, min
             backgroundColor: "#f4f7f9"
           }}
         />
-        {children}
+        {drawerWidth >= minDrawerWidth && (children)}
       </div>
       <DrawerFooter>
         <IconButton

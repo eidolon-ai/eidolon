@@ -6,7 +6,7 @@ import {notFound} from "next/navigation";
 let appRegistry = _appRegistry
 if (process.env.EIDOLON_APP_REGISTRY_OVERRIDE) {
   appRegistry = JSON.parse(process.env.EIDOLON_APP_REGISTRY_OVERRIDE)
-} else if (process.env.EIDOLON_APP_REGISTRY_LOC) {
+} else if (process.env.EIDOLON_APP_REGISTRY_LOC && process.env.EIDOLON_APP_REGISTRY_LOC.trim().length) {
   const rawData = fs.readFileSync(process.env.EIDOLON_APP_REGISTRY_LOC, {encoding: 'utf8'});
   appRegistry = JSON.parse(rawData)
 }
@@ -74,8 +74,12 @@ function getAppsRaw() {
     const app = value as EidolonApp
     app.path = `${key}`
     if (app.type === 'copilot') {
-      app.path = `sp/${key}`
       const params = app.params as CopilotParams
+      if (params.custom_page) {
+        app.path = `${params.custom_page}`
+      } else {
+        app.path = `sp/${key}`
+      }
       if (params.agent in agentRegistry) {
         const location = agentRegistry[params.agent]!
         params.agent = location.agent

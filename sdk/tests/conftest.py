@@ -15,7 +15,6 @@ from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
-import eidolon_ai_sdk.system.processes as processes
 import eidolon_ai_sdk.system.process_file_system as process_file_system
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
@@ -24,6 +23,7 @@ from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
+from eidolon_ai_sdk.system import agent_controller
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -324,12 +324,16 @@ def deterministic_process_ids(test_name):
     This method patches object id for processes so that it returns a deterministic id based on the test name.
     """
 
-    id_generator = deterministic_id_generator(test_name)
+    pid_generator = deterministic_id_generator(test_name)
+    fid_generator = deterministic_id_generator(test_name + "_file")
 
-    def patched_ObjectId(*args, **kwargs):
-        return next(id_generator)
+    def patched_pid(*args, **kwargs):
+        return next(pid_generator)
 
-    with patch.object(processes.bson, "ObjectId", new=patched_ObjectId):
+    def patched_fid(*args, **kwargs):
+        return next(fid_generator)
+
+    with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(process_file_system, "ObjectId", new=patched_fid):
         yield
 
 

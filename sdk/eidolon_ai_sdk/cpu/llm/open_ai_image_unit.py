@@ -20,7 +20,7 @@ logger = eidolon_logger.getChild("llm_unit")
 
 class OpenAIImageUnitSpec(ImageUnitSpec):
     connection_handler: AnnotatedReference[OpenAIConnectionHandler]
-    image_to_text_model: str = Field(default="gpt-4-vision-preview", description="The model to use for the vision LLM.")
+    image_to_text_model: str = Field(default="gpt-4-turbo", description="The model to use for the vision LLM.")
     text_to_image_model: str = Field(default="dall-e-3", description="The model to use for the vision LLM.")
     temperature: float = 0.3
     image_to_text_system_prompt: str = Field(

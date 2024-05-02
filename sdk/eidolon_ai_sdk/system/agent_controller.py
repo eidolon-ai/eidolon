@@ -8,6 +8,7 @@ import uuid
 from collections.abc import AsyncIterator
 from inspect import Parameter
 
+from bson import ObjectId
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.params import Body, Param
 from pydantic import BaseModel, Field, create_model
@@ -33,8 +34,8 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.agent_os_interfaces import SecurityManager
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.security.security_manager import SecurityManagerImpl
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,
@@ -52,7 +53,7 @@ class AgentController:
     name: str
     agent: object
     actions: typing.Dict[str, FnHandler]
-    security: SecurityManagerImpl
+    security: SecurityManager
 
     def __init__(self, name, agent):
         self.name = name
@@ -128,21 +129,32 @@ class AgentController:
             raise HTTPException(status_code=404, detail="Process not found")
         if process.state not in handler.extra["allowed_states"]:
             logger.warning(
-                f"Action {handler.name} cannot process state {process.state}. Allowed states: {handler.extra['allowed_states']}"
+                f"Action {handler.name} cannot process state. Current state: '{process.state}'. Allowed states: {handler.extra['allowed_states']}"
             )
+            headers = {}
+            if process.state == "processing":
+                headers["Retry-After"] = "1"
+
             raise HTTPException(
                 status_code=409,
                 detail=f'Action "{handler.name}" cannot process state "{process.state}"',
+                headers=headers
             )
         last_state = process.state
         RequestContext.set("__last_state__", last_state)
-        process = await process.update(
-            check_update_time=True,
-            agent=self.name,
-            record_id=process_id,
-            state="processing",
-            data=dict(action=handler.name),
-        )
+
+        try:
+            process = await process.update(
+                check_update_time=True,
+                agent=self.name,
+                record_id=process_id,
+                state="processing",
+                data=dict(action=handler.name),
+            )
+        except ValueError as e:
+            logger.warning(f"Action '{handler.name} failed. Process {process_id} has been updated since last read.")
+            raise HTTPException(status_code=409, detail=str(e), headers={"Retry-After": "1"})
+
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
             kwargs["process_id"] = process_id
@@ -181,7 +193,7 @@ class AgentController:
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
-        process = await ProcessDoc.create(agent=self.name, **kwargs)
+        process = await ProcessDoc.create(agent=self.name, **kwargs, _id=str(ObjectId()))
         if hasattr(self.agent, "create_process"):
             await self.agent.create_process(process.record_id)
         return process
@@ -387,15 +399,27 @@ class AgentController:
         await self.security.check_permissions("read", self.name, process_id)
         return await load_events(self.name, process_id)
 
-    async def create_process(self, title: typing.Optional[str]):
+    async def create_process(self, title: typing.Optional[str], parent_process_id: typing.Optional[str] = None):
         """
         Create a new process. Use this method first to get a process id before calling any other action
+        :param parent_process_id:
         :param title: An optional title for the process
         :return:
         """
         await self.security.check_permissions({"read", "create"}, self.name)
         process = await self._create_process(state="initialized", title=title)
         await self.security.record_process(self.name, process.record_id)
+        if parent_process_id:
+            history = AgentCallHistory(
+                parent_process_id=parent_process_id,
+                parent_thread_id=None,
+                machine=AgentOS.current_machine_url(),
+                agent=self.name,
+                remote_process_id=process.record_id,
+                state="initialized",
+                available_actions=[],
+            )
+            await history.upsert()
         return JSONResponse(
             StateSummary(
                 agent=self.name,

@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import {useEffect} from "react";
-import {DevPanel, DevParams, EidolonApp, getOperations, getProcessStatus} from "@eidolon/components";
-import {getApps} from "@/utils/app-registry-helper";
+import {DevPanel, DevParams, EidolonApp, getApps, getOperations, getProcessStatus} from "@eidolon/components";
 
 export interface ProcessPageProps {
   params: {

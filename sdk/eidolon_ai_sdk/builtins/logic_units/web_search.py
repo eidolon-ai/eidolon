@@ -43,8 +43,25 @@ class Browser(LogicUnit, Specable[BrowseSpec]):
                 return text
             if self.spec.summarizer == "BeautifulSoup":
                 soup = BeautifulSoup(text, "lxml")
-                for a in soup.findAll("a"):
-                    a.replace_with(a.text + f" {a.get('href')}")
+                for anchor in soup.findAll("a"):
+                    # Get the text inside the anchor tag
+                    anchor_text = anchor.get_text(strip=True)
+
+                    # Find the image tag nested within the anchor tag
+                    img_tag = anchor.find('img')
+
+                    if img_tag:
+                        # Extract the src attribute of the image tag
+                        img_src = img_tag.get('src')
+
+                        # Append the anchor text and image URL to the text output
+                        anchor_text += f"\nImage URL: {img_src}\n\n"
+                    else:
+                        # If no image tag is found, just append the anchor text
+                        anchor_text += "\n\n"
+
+                    anchor.replace_with(anchor_text)
+
                 return soup.get_text(separator="\n", strip=True)
             elif self.spec.summarizer == "noop":
                 return text

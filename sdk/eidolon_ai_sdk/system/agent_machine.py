@@ -313,7 +313,7 @@ class AgentMachine(Specable[MachineSpec]):
         if not controller:
             logger.info(f"Agent {args.agent} does not exist")
             return JSONResponse(content={"detail": "Agent not found"}, status_code=404)
-        return await controller.create_process(args.title)
+        return await controller.create_process(args.title, args.parent_process_id)
 
     async def _delete_process(self, process_id: str):
         """

@@ -9,10 +9,11 @@ export interface ChatDisplayElementProps {
   rawElement: DisplayElement
   agentName: string
   topLevel: boolean
-  userImage?: string
+  userImage: string | null | undefined
+  userName: string | null | undefined
 }
 
-export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage}: ChatDisplayElementProps) => {
+export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage, userName}: ChatDisplayElementProps) => {
   const getUserInput = (element: UserRequestElement) => {
     let content = typeof element.content === "string" ? {body: element.content} : {...element.content}
     delete content["process_id"]
@@ -38,12 +39,28 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
     }
     case "user-request": {
       const element = rawElement as UserRequestElement
+      let userAvatar: JSX.Element
+      let agentName = "Agent Input"
+      if (topLevel) {
+        if (userName) {
+          agentName = userName
+        } else {
+          agentName = "User"
+        }
+      }
+      if (topLevel) {
+        if (userImage) {
+          userAvatar = <Avatar sx={{height: "32px", width: "32px"}} src={userImage!}/>
+        } else {
+          userAvatar = <Avatar sx={{height: "32px", width: "32px"}}>{userName?.charAt(0)}</Avatar>
+        }
+      } else {
+        userAvatar = <Avatar sx={{height: "24px", width: "24px"}} src="/img/eidolon_with_gradient.png"/>
+      }
       return (
         <div>
-          <div className={"chat-title"}>{topLevel ?
-            <Avatar sx={{height: "32px", width: "32px"}} src={userImage!}/> :
-            <Avatar sx={{height: "36px", width: "36px"}} src="/img/eidolon_with_gradient.png"/>}
-            <span style={{marginLeft: '8px'}}>{topLevel ? "User" : "Agent Input"}</span></div>
+          <div className={"chat-title"}>{userAvatar}
+            <span style={{marginLeft: '8px'}}>{agentName}</span></div>
           <div className={"chat-indent"}>
             <EidolonMarkdown machineUrl={machineUrl}>{getUserInput(element)}</EidolonMarkdown>
           </div>

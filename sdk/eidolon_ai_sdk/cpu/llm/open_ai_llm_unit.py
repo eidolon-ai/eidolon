@@ -85,7 +85,7 @@ async def convert_to_openai(message: LLMMessage, process_id: str):
         raise ValueError(f"Unknown message type {message.type}")
 
 
-gpt_4 = "gpt-4-turbo-preview"
+gpt_4 = "gpt-4-turbo"
 
 
 class OpenAiGPTSpec(LLMUnitSpec):

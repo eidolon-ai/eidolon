@@ -5,7 +5,7 @@ import {Box, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
 import {ProcessSummary} from "./process-summary";
 import {deleteProcess} from "../client-api-helpers/process-helper";
 import {ProcessStatus} from "@eidolon/client";
-import {useProcesses} from "../hooks/process_context";
+import {useProcesses} from "../hooks/processes_context";
 import {useEffect} from "react";
 
 export interface ProcessListProps {

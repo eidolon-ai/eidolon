@@ -8,6 +8,7 @@ from pydantic import Field, BaseModel
 class CreateProcessArgs(BaseModel):
     agent: str = Field(description="The executable agent for the process.")
     title: typing.Optional[str] = Field(None, description="The title of the process")
+    parent_process_id: typing.Optional[str] = Field(None, description="The parent process ID.")
 
 
 class DeleteProcessResponse(BaseModel):
