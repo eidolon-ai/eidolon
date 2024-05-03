@@ -54,7 +54,7 @@ Head over to another terminal where we will install a cli, create a new process,
 that process.
 ```bash
 pip install eidolon-client[cli]
-export PID=$(eidolon-cli processes create --agent hello_world --quite)
+export PID=$(eidolon-cli processes create --agent hello_world)
 eidolon-cli actions converse --process-id $PID --body "Hi! I made you"
 ```
 
