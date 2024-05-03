@@ -3,7 +3,7 @@ title: Create an Agent Machine
 description: Create your first AgentProgram
 ---
 
-### Setup Development Environment
+##### Setup Development Environment
 
 First let's fork for Eidolon's quickstart repository, clone it to your local machine, and start your server.
 
@@ -24,7 +24,7 @@ You can also check out your machine's [swagger docs]((http://localhost:8080/docs
 
 Believe it or not, you are already up and running with a simple agent! 🎉
 
-### What just happened?
+##### What just happened?
 
 The repository you just forked defines an **AgentMachine** 💻 with a single **AgentProgram** 🤖 named `hello_world` 👋.
 
@@ -46,7 +46,7 @@ spec:
     You love emojis and use them liberally.
 ```
 
-### Try it out
+##### Try it out
 
 So, if I already have a server running, how do I interact with my agent?
 
