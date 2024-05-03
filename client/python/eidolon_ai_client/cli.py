@@ -13,6 +13,8 @@ try:
     from rich.style import Style
     from rich.console import Console
     from rich.prompt import Prompt
+    from rich.panel import Panel
+    from simple_term_menu import TerminalMenu
 except ImportError:
     print("The CLI dependencies are not installed. Please install with 'pip install eidolon_ai_client[cli]'.")
     exit(1)
@@ -42,14 +44,27 @@ def coro(f):
 
 @processes.command("create")
 @coro
-async def create(agent: Annotated[str, typer.Option()], quite: Optional[bool] = False):
+async def create(agent: Optional[str] = None, verbose: Optional[bool] = False):
+    if not agent:
+        agents = await Machine(machine=server_loc).list_agents()
+        if len(agents) == 0:
+            err_console.print("No agents found.")
+            exit(1)
+        elif len(agents) > 1:
+            terminal_menu = TerminalMenu(agents, title="Select an agent")
+            choice = terminal_menu.show()
+            if choice is None:
+                err_console.print("No agent selected.")
+                exit(1)
+            agent = agents[choice]
+        else:
+            agent = agents[0]
     with console.status("Creating processes..."):
-        # todo list available agents and provide it via prompt
         process = await Agent(machine=server_loc, agent=agent).create_process()
-    if quite:
-        console.print(process.process_id)
-    else:
+    if verbose:
         console.print(process)
+    else:
+        console.print(process.process_id)
 
 
 @processes.command("delete")
@@ -74,13 +89,17 @@ async def run(
     if not process_id:
         with console.status("Fetching processes..."):
             processes_resp = await Machine(machine=server_loc).processes()
-        stati = processes_resp.processes
+        stati: list[ProcessStatus] = processes_resp.processes
         if len(stati) == 0:
             err_console.print("No processes found.")
             exit(1)
         elif len(stati) > 1:
-            err_console.print("Multiple processes found. Please specify a process_id.")
-            exit(1)
+            terminal_menu = TerminalMenu([_status_display(status) for status in stati], title="Select a process")
+            choice = terminal_menu.show()
+            if choice is None:
+                err_console.print("No process selected.")
+                exit(1)
+            process_status = stati[choice]
         else:
             process_status = stati[0]
         process_id = process_status.process_id
@@ -98,7 +117,12 @@ async def run(
             err_console.print("No actions available.")
             exit(1)
         elif len(actions) > 1:
-            action = Prompt.ask("Select an action", choices=actions, default=actions[0])
+            terminal_menu = TerminalMenu(actions, title="Select an action")
+            choice = terminal_menu.show()
+            if choice is None:
+                err_console.print("No action selected.")
+                exit(1)
+            action = actions[choice]
         else:
             action = process_status.available_actions[0]
 
@@ -135,6 +159,13 @@ async def run(
         with console.status("Running AgentProgram..."):
             resp = await process.action(agent, action, body)
         console.print(resp)
+
+
+def _status_display(status: ProcessStatus):
+    display = [status.process_id, f"agent: {status.agent}", f"state: {status.state}"]
+    if status.title:
+        display.append(f"title: {status.title}")
+    return ", ".join(display)
 
 
 if __name__ == "__main__":

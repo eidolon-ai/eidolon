@@ -39,6 +39,14 @@ class Machine(BaseModel):
         json_['processes'] = [{"machine":self.machine, **kwargs} for kwargs in json_['processes']]
         return ProcessesResponse(**json_)
 
+    async def openapi(self) -> dict:
+        url = urljoin(self.machine, "/openapi.json")
+        return await get_content(url)
+
+    async def list_agents(self) -> List[str]:
+        schema = await self.openapi()
+        return [p.split("/")[2] for p in schema["paths"] if p.startswith("/agents/")]
+
 
 class Agent(BaseModel):
     machine: str = Field(default_factory=current_machine_url)
@@ -155,6 +163,7 @@ class ProcessesResponse(BaseModel):
 class ProcessStatus(Process, extra=Extra.allow):
     agent: str
     state: str
+    title: Optional[str]
     available_actions: List[str]
 
     async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
