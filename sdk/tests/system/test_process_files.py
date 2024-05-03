@@ -45,16 +45,14 @@ class TestProcessFiles:
 
     async def test_can_upload(self, agent):
         bts = "Hello, World!".encode("utf-8")
-        process_status = await agent.create_process()
-        process = agent.process(process_status.process_id)
+        process = await agent.create_process()
         file_id = await process.upload_file(bts)
         id_ = await process.download_file(file_id.file_id)
         assert bts == id_
 
     async def test_can_delete(self, agent):
         bts = "Hello, World!".encode("utf-8")
-        process_status = await agent.create_process()
-        process = agent.process(process_status.process_id)
+        process = await agent.create_process()
         file_id = await process.upload_file(bts)
         await process.delete_file(file_id.file_id)
 

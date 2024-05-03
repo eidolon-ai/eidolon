@@ -56,7 +56,7 @@ async def create(agent: Annotated[str, typer.Option()], quite: Optional[bool] = 
 @coro
 async def delete(process_id: str):
     with console.status("Deleting processes..."):
-        process = await Machine(machine=server_loc).process(process_id)
+        process = Process(machine=server_loc, process_id=process_id)
         await process.delete()
     console.print("Done")
 
@@ -102,11 +102,11 @@ async def run(
         else:
             action = process_status.available_actions[0]
 
-    process = Process(machine=server_loc, agent=agent, process_id=process_id)
+    process: Process = Process(machine=server_loc, process_id=process_id)
 
     if stream:
         has_newline = True
-        async for event in process.stream_action(action, body):
+        async for event in process.stream_action(agent, action, body):
             if event.is_root_and_type(StringOutputEvent):
                 agent_console.print(event.content, end="")
                 has_newline = False
@@ -133,7 +133,7 @@ async def run(
             console.print("")
     else:
         with console.status("Running AgentProgram..."):
-            resp = await process.action(action, body)
+            resp = await process.action(agent, action, body)
         console.print(resp)
 
 
