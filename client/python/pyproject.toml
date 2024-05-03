@@ -30,9 +30,10 @@ sse-starlette = "^2.0.0"
 aiostream = "^0.5.2"
 typer = {version = "^0.12.3", optional = true}
 rich = {version = "^13.7.1", optional = true}
+simple-term-menu = {version = "^1.6.4", optional = true}
 
 [tool.poetry.extras]
-cli = ["typer", "rich"]
+cli = ["typer", "rich", "simple-term-menu"]
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
