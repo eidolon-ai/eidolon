@@ -4,7 +4,7 @@ from collections import defaultdict
 from pydantic import BaseModel
 from typing import List, Any, Dict, AsyncIterator, Set
 
-from eidolon_ai_client.client import Machine, Agent, AgentResponseIterator
+from eidolon_ai_client.client import Machine, Agent, AgentResponseIterator, Process
 from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
@@ -182,7 +182,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             if conversation_id not in allowed_pids:
                 raise ValueError(f"Conversation id {conversation_id} not allowed for action {action}")
             return RecordAgentResponseIterator(
-                agent.process(conversation_id).stream_action(action, body), call_context.process_id, call_context.thread_id
+                Process(machine=agent.machine, process_id=conversation_id).stream_action(agent.agent, action, body), call_context.process_id, call_context.thread_id
             )
 
         return fn
