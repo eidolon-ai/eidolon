@@ -9,6 +9,7 @@ spec:
       - implementation: Browser
       - implementation: eidolon_examples.venture_search_agent.save_company.SaveCompany
       - implementation: eidolon_examples.venture_search_agent.api_logic_unit.ApiLogicUnit
+        title: "Harmonic API"
         root_call_url: "https://api.harmonic.ai"
         open_api_location: "https://api.harmonic.ai/openapi.json"
         key_env_var: "HARMONIC_API_KEY"
@@ -46,6 +47,8 @@ spec:
     Think aloud step by step.
   actions:
     - name: "search_company"
+      title: "Company Researcher"
+      sub_title: "Initial Enrichment"
       user_prompt: |-
         Give me a summary of {{ company_name }}.
         Company website {{url}}
@@ -72,4 +75,6 @@ spec:
             type: string
             description: "Any other information you found that is relevant the the goals given"
     - name: converse
+      title: "Company Researcher"
+      sub_title: "Engage with the user"
       allowed_states: ["idle"]

@@ -45,7 +45,10 @@ export const EidolonMarkdown = ({machineUrl, children}: EidolonMarkdownProps) =>
             {...rest}
             PreTag="div"
             language={match[1]}
-            style={materialLight}
+            style={{...materialLight,
+              "pre[class*=\"language-\"]": {...materialLight["pre[class*=\"language-\"]"], padding: "8px", "lineHeight": "1.25em"},
+              "code[class*=\"language-\"]": {...materialLight["code[class*=\"language-\"]"], "lineHeight": "1.25em"}
+          }}
           >
             {String(children).replace(/\n$/, '')}
           </SyntaxHighlighter>

@@ -145,7 +145,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             onClick={() => {
               selectItems()
             }}
-            sx={{ml: 2}}
+            size={"small"}
+            sx={{margin: "4px", padding: "1px", marginTop: "12px"}}
           >Research Companies</Button>
         </Tooltip>
       ) : (

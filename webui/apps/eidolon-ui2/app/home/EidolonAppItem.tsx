@@ -9,7 +9,7 @@ export interface EidolonAppItemProps {
   app: EidolonApp;
 }
 
-export const EidolonAppItem: ({path, app, ...rest}: EidolonAppItemProps) => JSX.Element = ({path, app, ...rest}: EidolonAppItemProps) => {
+export function EidolonAppItem({path, app}: EidolonAppItemProps) {
   const router = useRouter()
   return (
     <Card onClick={() => router.push(`/eidolon-apps/${path}`)}>

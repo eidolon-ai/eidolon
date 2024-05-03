@@ -1,0 +1,5 @@
+7,10d6
+< // CommonJS default export hack
+< if (typeof module === "object" && typeof module.exports === "object") {
+<     module.exports = Object.assign(module.exports.default, module.exports);
+< }

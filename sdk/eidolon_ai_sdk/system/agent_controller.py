@@ -263,11 +263,18 @@ class AgentController:
                     start_event_seen = True
                 elif not start_event_seen and not event.is_root_and_type(UserInputEvent):
                     start_event_seen = True
+                    extra = {}
+                    if "title" in handler.extra:
+                        extra["title"] = handler.extra["title"]
+                    if "sub_title" in handler.extra:
+                        extra["sub_title"] = handler.extra["sub_title"]
+
                     output_event = StartAgentCallEvent(
                         machine=AgentOS.current_machine_url(),
                         agent_name=self.name,
                         call_name=handler.name,
                         process_id=process.record_id,
+                        **extra
                     )
                     events_to_store.append(output_event)
                     yield output_event

@@ -88,6 +88,8 @@ class ToolCallStartEvent(StartStreamContextEvent):
 class StartAgentCallEvent(BaseStreamEvent):
     category: Literal[Category.START] = Category.START
     event_type: Literal["agent_call"] = "agent_call"
+    title: Optional[str] = None
+    sub_title: Optional[str] = None
     machine: str
     agent_name: str
     call_name: str

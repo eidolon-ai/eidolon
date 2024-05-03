@@ -165,8 +165,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 # message format looks like json```{...}```, parse content and pull out the json
                 complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
-            content = json.loads(complete_message) if complete_message else {}
-            yield ObjectOutputEvent(content=content)
+            if complete_message or len(tools_to_call) == 0:
+                content = json.loads(complete_message) if complete_message else {}
+                yield ObjectOutputEvent(content=content)
 
     async def _build_request(self, call_context: CallContext, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)

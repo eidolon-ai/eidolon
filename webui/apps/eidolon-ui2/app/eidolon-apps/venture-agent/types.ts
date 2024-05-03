@@ -17,6 +17,7 @@ export interface CompanyDetails {
   logo_url: string
   relevance: number
   other_information?: string
+  enriched_with_harmonic?: string
 }
 
 export interface Thesis {

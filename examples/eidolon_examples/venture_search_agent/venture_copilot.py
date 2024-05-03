@@ -1,3 +1,4 @@
+import os
 from typing import Optional, List, Annotated
 
 from fastapi import Body
@@ -28,6 +29,7 @@ class CompanyDetails(BaseModel):
     business_model: str
     logo_url: str
     other_information: Optional[str] = None
+    enriched_with_harmonic: Optional[bool] = False
 
 
 class Company(BaseModel):
@@ -58,6 +60,7 @@ class VentureCopilot(AgentTemplate):
     async def generate_title(self, process_id, body: Annotated[str, Body(description="Your name", embed=True)]):
         thesis = await self._loadThesis(process_id)
         agent = Agent.get("CompanyFinder")
+        # noinspection Pydantic
         title = (await agent.process(thesis.companyFinderPID).action("generate_title", body)).data
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         await process_obj.update(title=title)
@@ -153,6 +156,7 @@ class VentureCopilot(AgentTemplate):
             return Company.model_validate(company)
         return None
 
+    # noinspection Pydantic
     async def _research_company(self, process_id: str, company: Company):
         try:
             agent = Agent.get("CompanyResearcher")
@@ -173,8 +177,9 @@ class VentureCopilot(AgentTemplate):
         # Fetch company information
         company_info = await self._research_company(process_id, company)
         if isinstance(company_info, object):
-            # Send information to RelevancyRanker for analysis
             company.researched_details = company_info
+            if os.environ.get("HARMONIC_API_KEY"):
+                company.researched_details.enriched_with_harmonic = True
         else:
             company.error = company_info
 

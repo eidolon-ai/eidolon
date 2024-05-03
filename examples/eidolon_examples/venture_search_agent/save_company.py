@@ -6,7 +6,7 @@ from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
 
 
 class SaveCompany(LogicUnit):
-    @llm_function()
+    @llm_function(title="Save company information", sub_title="")
     async def save_company_detail_field(self, companyName: str, field: Literal['description', 'stage', 'market_size', 'business_model', 'logo_url', 'other_information'],
                                         value: str) -> None:
         """
@@ -28,7 +28,7 @@ class SaveCompany(LogicUnit):
 
 
 class AddCompany(LogicUnit):
-    @llm_function()
+    @llm_function(title="Add a company for research", sub_title="")
     async def add_company(self, companyName: str, companyURL: str, category: Optional[str]) -> None:
         """
         Adds a company to the research database

@@ -29,7 +29,7 @@ class Browser(LogicUnit, Specable[BrowseSpec]):
         LogicUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
 
-    @llm_function()
+    @llm_function(title="Web Browser", sub_title="Visit URL")
     async def go_to_url(self, url: str) -> str:
         """
         Retrieve the html document from a given webpage
@@ -101,7 +101,7 @@ class Search(LogicUnit, Specable[SearchSpec]):
     def __init__(self, **kwargs):
         LogicUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
-        setattr(self, "search", llm_function(name=self.spec.name, description=self.spec.description)(self._search()))
+        setattr(self, "search", llm_function(name=self.spec.name, description=self.spec.description, title="Google Search", sub_title="search")(self._search()))
 
     def _search(self):
         if "dateRestrict" in self.spec.params:

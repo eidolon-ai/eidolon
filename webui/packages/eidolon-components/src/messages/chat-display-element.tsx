@@ -1,5 +1,5 @@
 // @ts-ignore
-import {Avatar, Divider} from "@mui/material";
+import {Avatar, Box, Divider, Typography} from "@mui/material";
 import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements";
 import {ToolCall} from "./tool-call-element";
 import {EidolonMarkdown} from "./eidolon-markdown";
@@ -30,10 +30,25 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
   switch (rawElement.type) {
     case "agent-start": {
       const element = rawElement as AgentStartElement
+      console.log(element.agentName, element.callName, element.title, element.sub_title)
+      let title: string
+      let subTitle: string
+      if (element.title) {
+        title = element.title
+        subTitle = element.callName
+      } else {
+        title = element.agentName
+        subTitle = element.callName
+      }
       return (
-        <div>
-          <div className={"chat-title"}><Avatar sx={{height: "36px", width: "36px"}} src="/img/eidolon_with_gradient.png"/>
-            <span style={{marginLeft: '8px'}}>{element.agentName} started action {element.callName}</span></div>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+          <div style={{display: 'flex', padding: "8px", marginBottom: "16px", background: "#f8f8f8", borderRadius: "8px", marginTop: "8px"}}>
+            <Avatar sx={{height: "36px", width: "36px"}} src="/img/eidolon_with_gradient.png"/>
+            <Box>
+              <Typography variant={"h6"} style={{marginLeft: '8px'}}>{title}</Typography>
+              <Typography lineHeight={1} variant={"subtitle1"} style={{marginLeft: '24px', color: '#777'}}>{subTitle}</Typography>
+            </Box>
+          </div>
         </div>
       )
     }
@@ -59,8 +74,14 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
       }
       return (
         <div>
-          <div className={"chat-title"}>{userAvatar}
-            <span style={{marginLeft: '8px'}}>{agentName}</span></div>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            <div style={{display: 'flex', padding: "8px", marginBottom: "16px", background: "#f8f8f8", borderRadius: "8px", marginTop: "8px"}}>
+              {userAvatar}
+              <Box>
+                <Typography variant={"h6"} style={{marginLeft: '8px'}}>{agentName}</Typography>
+              </Box>
+            </div>
+          </div>
           <div className={"chat-indent"}>
             <EidolonMarkdown machineUrl={machineUrl}>{getUserInput(element)}</EidolonMarkdown>
           </div>

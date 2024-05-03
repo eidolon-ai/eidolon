@@ -24,6 +24,8 @@ from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 class ActionDefinition(BaseModel):
     name: str = "converse"
+    title: Optional[str] = None
+    sub_title: Optional[str] = None
     description: Optional[str] = None
     user_prompt: str = "{{ body }}"
     input_schema: Dict[str, dict] = {}
@@ -160,7 +162,6 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
             self.cpus = []
             for cpu_spec in self.spec.apus:
                 apu = cpu_spec.apu.instantiate()
-                # todo - add title from metadata
                 apu.title = cpu_spec.title or apu.__class__.__name__
                 if cpu_spec.default:
                     apu.default = True
@@ -192,6 +193,11 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
             )
 
         for action in self.spec.actions:
+            extra = {}
+            if action.title:
+                extra["title"] = action.title
+            if action.sub_title:
+                extra["sub_title"] = action.sub_title
             setattr(
                 self,
                 action.name,
@@ -201,6 +207,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                     input_model=action.make_input_schema,
                     output_model=action.make_output_schema,
                     description=action.description,
+                    **extra,
                 )(self._act_wrapper(action, SimpleAgent._act)),
             )
 
