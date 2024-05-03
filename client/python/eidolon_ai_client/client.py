@@ -90,7 +90,6 @@ class Agent(BaseModel):
 
 class Process(BaseModel):
     machine: str = Field(default_factory=current_machine_url)
-    agent: str
     process_id: str
 
     async def upload_file(self, file_contents: bytes) -> FileHandle:
@@ -111,8 +110,8 @@ class Process(BaseModel):
         url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}")
         await delete(url)
 
-    async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
-        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{self.agent}/actions/{action_name}")
+    async def action(self, agent: str, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
+        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{agent}/actions/{action_name}")
         args = {
             "url": url, **kwargs
         }
@@ -121,8 +120,8 @@ class Process(BaseModel):
         json_ = await post_content(**args)
         return ProcessStatus(**{"machine":self.machine, **json_})
 
-    def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
-        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{self.agent}/actions/{action_name}")
+    def stream_action(self, agent: str, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
+        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{agent}/actions/{action_name}")
         return AgentResponseIterator(stream_content(url, body, **kwargs))
 
     async def status(self) -> ProcessStatus:
@@ -154,8 +153,19 @@ class ProcessesResponse(BaseModel):
 
 
 class ProcessStatus(Process, extra=Extra.allow):
+    agent: str
     state: str
     available_actions: List[str]
+
+    async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
+        if "agent" in kwargs:
+            del kwargs["agent"]
+        return await super().action(self.agent, action_name, body, **kwargs)
+
+    def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
+        if "agent" in kwargs:
+            del kwargs["agent"]
+        return super().stream_action(self.agent, action_name, body, **kwargs)
 
 
 class AgentResponseIterator(AsyncIterator[StreamEvent]):
