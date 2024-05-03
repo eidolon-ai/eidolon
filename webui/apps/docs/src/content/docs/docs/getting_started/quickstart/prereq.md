@@ -1,5 +1,5 @@
 ---
-title: Prerequisites and Install
+title: Prerequisites
 description: Walk through prequisites for Mac and Linux
 ---
 

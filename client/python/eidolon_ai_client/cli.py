@@ -3,8 +3,6 @@ import os
 from functools import wraps
 from typing import Optional, Annotated
 
-from rich.style import Style
-
 from eidolon_ai_client.client import Agent, Process, Machine, ProcessStatus
 from eidolon_ai_client.events import StringOutputEvent, ObjectOutputEvent, LLMToolCallRequestEvent, \
     AgentStateEvent
@@ -12,7 +10,9 @@ from eidolon_ai_client.util.aiohttp import AgentError
 
 try:
     import typer
+    from rich.style import Style
     from rich.console import Console
+    from rich.prompt import Prompt
 except ImportError:
     print("The CLI dependencies are not installed. Please install with 'pip install eidolon_ai_client[cli]'.")
     exit(1)
@@ -43,11 +43,22 @@ def coro(f):
 @processes.command("create")
 @coro
 async def create(agent: Annotated[str, typer.Option()], quite: Optional[bool] = False):
-    process = await Agent(machine=server_loc, agent=agent).create_process()
+    with console.status("Creating processes..."):
+        # todo list available agents and provide it via prompt
+        process = await Agent(machine=server_loc, agent=agent).create_process()
     if quite:
         console.print(process.process_id)
     else:
         console.print(process)
+
+
+@processes.command("delete")
+@coro
+async def delete(process_id: str):
+    with console.status("Deleting processes..."):
+        process = await Machine(machine=server_loc).process(process_id)
+        await process.delete()
+    console.print("Done")
 
 
 @app.command("actions")
@@ -61,25 +72,33 @@ async def run(
 ):
     process_status: Optional[ProcessStatus] = None
     if not process_id:
-        processes = await Machine(machine=server_loc).processes()
-        process_status = processes.processes[0]
-        process_id = process_status.process_id
-        if not process_id:
+        with console.status("Fetching processes..."):
+            processes_resp = await Machine(machine=server_loc).processes()
+        stati = processes_resp.processes
+        if len(stati) == 0:
             err_console.print("No processes found.")
             exit(1)
+        elif len(stati) > 1:
+            err_console.print("Multiple processes found. Please specify a process_id.")
+            exit(1)
+        else:
+            process_status = stati[0]
+        process_id = process_status.process_id
     if not agent:
         if not process_status:
-            process_status = await Machine(machine=server_loc).process(process_id)
+            with console.status("Fetching agent reference..."):
+                process_status = await Machine(machine=server_loc).process(process_id)
         agent = process_status.agent
     if not action:
         if not process_status:
-            process_status = await Machine(machine=server_loc).process(process_id)
-        if len(process_status.available_actions) == 0:
+            with console.status("Fetching available actions..."):
+                process_status = await Machine(machine=server_loc).process(process_id)
+        actions = process_status.available_actions
+        if len(actions) == 0:
             err_console.print("No actions available.")
             exit(1)
-        elif len(process_status.available_actions) > 1:
-            err_console.print(f"Multiple actions available. Please specify an action: {process_status.available_actions}")
-            exit(1)
+        elif len(actions) > 1:
+            action = Prompt.ask("Select an action", choices=actions, default=actions[0])
         else:
             action = process_status.available_actions[0]
 
@@ -113,7 +132,8 @@ async def run(
         if not has_newline:
             console.print("")
     else:
-        resp = await process.action(action, body)
+        with console.status("Running AgentProgram..."):
+            resp = await process.action(action, body)
         console.print(resp)
 
 

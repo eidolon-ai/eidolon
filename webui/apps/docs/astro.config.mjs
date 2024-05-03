@@ -68,10 +68,8 @@ export default defineConfig({
             {
               label: 'Quickstart',
               items: [
-                {label: 'Introduction', link: '/docs/getting_started/quickstart/introduction'},
                 {label: 'Prerequisites', link: '/docs/getting_started/quickstart/prereq'},
                 {label: 'Create an Agent', link: '/docs/getting_started/quickstart/create'},
-                {label: 'Run and Try', link: '/docs/getting_started/quickstart/run'},
               ]
             },
             {

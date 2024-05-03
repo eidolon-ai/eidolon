@@ -570,9 +570,9 @@ h11 = ">=0.8"
 standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "watchfiles (>=0.13)", "websockets (>=10.4)"]
 
 [extras]
-cli = ["typer"]
+cli = ["rich", "typer"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "6905c66a1071a1c4a79b42d1d0ebb6e6ddb1b4abd3085d5948de3b00acc6efba"
+content-hash = "74415954f8cb42ad780a094a3c6864c9af4254df20f887403434063fa89fd4ac"

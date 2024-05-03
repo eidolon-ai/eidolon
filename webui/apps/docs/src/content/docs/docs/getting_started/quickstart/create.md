@@ -73,4 +73,4 @@ Now that you have a running agent machine with a simple agent. Let's start custo
 - [ ] Swap out components (like the underlying llm)
 - [ ] Use structured inputs for prompt templating
 - [ ] Leverage your agent's state machine
-- [ ] Talk to your agent using the UI
+- [ ] Launch Eidolon's UI
