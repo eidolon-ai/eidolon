@@ -305,7 +305,7 @@ class TestStateMachine:
         assert {p.process_id for p in processes.processes} == {first, second, third}
 
         # update the first process: it should be at end of list now
-        assert first == (await Agent.get("StateMachine").process(first).action("terminate")).process_id
+        assert first == (await Process(process_id=first).action("StateMachine", "terminate")).process_id
 
         processes = await Machine().processes()
         assert processes.total == 3
@@ -371,5 +371,5 @@ class TestStateMachine:
         assert init.state == "church"
 
         with pytest.raises(AgentError) as exc:
-            await Agent.get("StateMachine2").process(process.process_id).action("terminate")
+            await Process(process_id=process.process_id).action("StateMachine2", "terminate")
         assert exc.value.response.status_code == 404

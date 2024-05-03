@@ -32,9 +32,10 @@ class GroupConversation:
     async def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
         async def run_one(agent_name: str, agent_pid: str):
             yield StartStreamContextEvent(context_id=agent_name, title=agent_name)
+            agent = Agent.get(agent_name)
             try:
                 async for a_event in (
-                        Agent.get(agent_name).process(agent_pid).stream_action(action_name, body, **kwargs)
+                        Process(machine=agent.machine, process_id=agent_pid).stream_action(agent.agent, action_name, body, **kwargs)
                 ):
                     a_event.stream_context = agent_name
                     yield a_event
