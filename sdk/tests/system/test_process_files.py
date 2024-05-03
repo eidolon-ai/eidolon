@@ -4,7 +4,7 @@ import pytest
 import pytest_asyncio
 from fastapi import Body, HTTPException
 
-from eidolon_ai_client.client import Agent, ProcessStatus, Process
+from eidolon_ai_client.client import Agent, ProcessStatus
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
 
