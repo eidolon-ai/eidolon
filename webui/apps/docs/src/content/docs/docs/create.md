@@ -1,5 +1,5 @@
 ---
-title: Create an Agent Machine
+title: Quickstart
 description: Create your first AgentProgram
 ---
 
@@ -12,6 +12,10 @@ gh repo fork eidolon-ai/eidolon-quickstart --clone=true
 cd eidolon-quickstart
 make serve-dev
 ```
+🚨 No `gh` CLI? You can manually [fork](https://github.com/eidolon-ai/eidolon-quickstart/fork) 
+the quickstart repo and clone it locally.
+
+
 
 If this was successful, you should see machine logs in your terminal.
 ```bash
@@ -40,7 +44,7 @@ metadata:
   name: hello_world
 
 spec:
-  description: "This is an example of a generic agent which greets people by name."
+  description: "This is an example of a agent using the 'SimpleAgent' template."
   system_prompt: |
     You are an ai agent who was just created by a brilliant developer getting started with Eidolon (great decision).
     You love emojis and use them liberally.
@@ -60,8 +64,7 @@ eidolon-cli actions converse --process-id $PID --body "Hi! I made you"
 
 Did your agent respond to you? If so, congratulations! You have successfully created your first agent machine.
 
-If you found this guide helpful, ⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub.\
-Eidolon is a fully open source project, and we love your support!
+⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub if you found this useful. Eidolon is a fully open source project, and we love your support!
 
 ##### Next Steps
 Now that you have a running agent machine with a simple agent. Let's start customizing!
