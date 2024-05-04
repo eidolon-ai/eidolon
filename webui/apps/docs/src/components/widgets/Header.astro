@@ -52,10 +52,8 @@ const {
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
 
-let numStars = " "
 const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
-
-numStars = data.stargazers_count
+const numStars = data.stargazers_count || ""
 ---
 
 <header
@@ -154,7 +152,7 @@ numStars = data.stargazers_count
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
           {
             <Button href="https://github.com/eidolon-ai/eidolon" variant="secondary" class="py-2.5 px-2.0 font-semibold shadow-none hover:underline text-sm w-auto"
-            >Star on GitHub {numStars} &nbsp⭐</Button>
+            >Star on GitHub&nbsp;{numStars}&nbsp;⭐</Button>
           }
         </div>
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
