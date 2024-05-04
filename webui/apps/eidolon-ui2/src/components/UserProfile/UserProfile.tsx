@@ -30,7 +30,7 @@ export const UserProfile = () => {
 
   const handleSignout = async () => {
     setAnchorEl(null);
-    await signOut()
+    await signOut({callbackUrl: "/"})
   };
 
   const getIcon = () => {

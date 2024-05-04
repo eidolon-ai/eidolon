@@ -44,10 +44,12 @@
     "@mui/material": "latest",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/qs": "^6.9.15",
     "clsx": "latest",
     "copy-to-clipboard": "latest",
-    "next": "14.2.2",
+    "next": "14.2.3",
     "next-auth": "beta",
+    "qs": "^6.12.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sharp": "^0.33.3"
