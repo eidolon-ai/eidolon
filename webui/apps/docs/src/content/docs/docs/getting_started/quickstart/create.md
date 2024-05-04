@@ -53,7 +53,7 @@ So, if I already have a server running, how do I interact with my agent?
 Head over to another terminal where we will install a cli, create a new process, and then converse with our agent on 
 that process.
 ```bash
-pip install eidolon-client[cli]
+pip install 'eidolon-ai-client[cli]'
 export PID=$(eidolon-cli processes create --agent hello_world)
 eidolon-cli actions converse --process-id $PID --body "Hi! I made you"
 ```
@@ -62,9 +62,7 @@ Did your agent respond to you? If so, congratulations! You have successfully cre
 
 If you found this guide helpful, ⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub.\
 Eidolon is a fully open source project, and we love your support!
-```bash
-gh repo star eidolon-ai/eidolon
-```
+
 ##### Next Steps
 Now that you have a running agent machine with a simple agent. Let's start customizing!
 

@@ -3,8 +3,8 @@ requires = [ "poetry-core",]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "eidolon_ai_client"
-version = "0.1.13"
+name = "eidolon-ai-client"
+version = "0.1.14"
 description = ""
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
