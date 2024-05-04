@@ -182,7 +182,8 @@ export interface EidolonProvider {
   credentials?: Record<string, any>,
 }
 
-export const providerMap = providers.map((provider) => {
+export const providerMap = providers.map((inProvider) => {
+  const provider = inProvider as any
   return {
     id: provider.id,
     type: provider.type,
