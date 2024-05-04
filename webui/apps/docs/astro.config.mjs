@@ -62,19 +62,17 @@ export default defineConfig({
         {
           label: 'Introduction', link: '/docs/introduction'
         },
-        {
-          label: 'Quickstart',
-          autogenerate: { directory: '/docs/quickstart' },
-        },
+        {label: 'Prerequisites', link: '/docs/prereq/'},
+        {label: 'Quickstart', link: '/docs/create/'},
         {
           label: 'Recipes',
           items: [
-            {label: 'Chatbot', link: 'todo'},
-            {label: 'Github Repo Expert', link: 'todo'},
-            {label: 'K8 Assistant', link: 'todo'},
-            {label: 'Venture Search', link: 'todo'},
-            {label: 'Github Repo Expert', link: 'todo'},
-            {label: 'Local File Rag', link: 'todo'},
+            {label: 'Chatbot', link: '/docs/recipes/chatbot/'},
+            {label: 'Github Repo Expert', link: '/docs/recipes/repo-expert/'},
+            // {label: 'K8 Assistant', link: '/docs/recipes/under-construction/'},
+            // {label: 'Venture Search', link: '/docs/recipes/under-construction/'},
+            // {label: 'Github Repo Expert', link: '/docs/recipes/under-construction/'},
+            // {label: 'Local File Rag', link: '/docs/recipes/under-construction/'},
           ],
         },
         {
