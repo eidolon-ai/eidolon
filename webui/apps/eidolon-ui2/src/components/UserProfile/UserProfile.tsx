@@ -57,7 +57,7 @@ export const UserProfile = () => {
   const list = () => (
     <Paper
       square={false}
-      sx={{width: 250, height: '100%', display: "flex", flexDirection: "column", justifyContent: "space-between"}}
+      sx={{width: 250, height: '100%', display: "flex", flexDirection: "column", justifyContent: "space-between", marginTop: "77px"}}
       role="presentation"
       onKeyDown={toggleDrawer(false)}
     >

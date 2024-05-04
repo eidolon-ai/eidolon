@@ -10,6 +10,8 @@ import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Tool
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
 import {useProcesses} from "../../../packages/eidolon-components/src/hooks/processes_context";
+import {TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT} from "@/layout/config";
+import {useOnMobile} from "@/hooks/index";
 
 export interface DevProcessListWithAddProps {
   app: EidolonApp
@@ -21,6 +23,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
   const [createProcessOpen, setCreateProcessOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+  const onMobile = useOnMobile();
 
   const addClicked = () => {
     if (app.type === 'copilot') {
@@ -36,31 +39,33 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
   }
 
   return (
-    <Box sx={{overflow: 'auto'}}>
-      <Toolbar/>
-      <List>
-        <ListItem disablePadding onClick={addClicked}>
-          <ListItemButton>
-            <ListItemIcon>
-              <AddCircleOutline/>
-            </ListItemIcon>
-            <ListItemText primary={app.params.addBtnText || "Add Chat"}/>
-          </ListItemButton>
-        </ListItem>
-      </List>
-      <Divider/>
-      <ProcessList
-        machineURL={machineURL}
-        isSelected={(process: ProcessStatus) => pathname.includes(process.process_id)}
-        selectChat={(process: ProcessStatus) => {
-          router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
-        }}
-        goHome={() => {
-        }}
-      />
-      <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} onClose={() => {
-        setCreateProcessOpen(false)
-      }}/>
+    <Box sx={{overflow: 'auto', height: '100%'}}>
+      <Toolbar sx={{height: onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT}}/>
+      <Box height={`calc(100% - ${onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT})`}>
+        <List>
+          <ListItem disablePadding onClick={addClicked}>
+            <ListItemButton>
+              <ListItemIcon>
+                <AddCircleOutline/>
+              </ListItemIcon>
+              <ListItemText primary={app.params.addBtnText || "Add Chat"}/>
+            </ListItemButton>
+          </ListItem>
+        </List>
+        <Divider/>
+        <ProcessList
+          machineURL={machineURL}
+          isSelected={(process: ProcessStatus) => pathname.includes(process.process_id)}
+          selectChat={(process: ProcessStatus) => {
+            router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
+          }}
+          goHome={() => {
+          }}
+        />
+        <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} onClose={() => {
+          setCreateProcessOpen(false)
+        }}/>
+      </Box>
     </Box>
   )
 }

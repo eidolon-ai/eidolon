@@ -112,10 +112,10 @@ export default function ResizableDrawer({defaultDrawerWidth, maxDrawerWidth, min
       ref={childrenDivRef}
       {...props}
       open={true}
-      sx={{width: drawerWidth, minWidth: minDrawerWidth}}
+      sx={{width: drawerWidth, minWidth: minDrawerWidth, height: '100%'}}
       PaperProps={{...props.PaperProps, elevation: 0, variant: "elevation", style: {display: 'flex', justifyContent: 'space-between', borderRight: '0px'}}}
     >
-      <div style={{width: drawerWidth, minWidth: minDrawerWidth}}>
+      <div style={{width: drawerWidth, minWidth: minDrawerWidth, height: '100%'}}>
         <div
           onMouseDown={() => handleMouseDown()}
           style={{

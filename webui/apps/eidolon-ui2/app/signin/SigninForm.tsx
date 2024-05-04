@@ -1,6 +1,7 @@
 'use client'
 
 import {Box, Button, TextField} from "@mui/material";
+import BlackButton from "@/components/BlackButton";
 
 export interface SigninFormData {
   doSignin: (providerId: string, formData: FormData) => Promise<void>
@@ -40,10 +41,10 @@ export default function SigninForm({provider, doSignin}: SigninFormData) {
     <form onSubmit={(e) => handleSubmit(provider.id, e)} method="POST" style={{width: "100%"}}>
       <Box key={provider.id} sx={{display: "flex", alignContent: "center", justifyContent: "center", margin: "8px", width: "100%"}}>
         {provider.type === "oauth" || provider.type === "oidc" ? (
-          <Button
+          <BlackButton
             type="submit"
             color={"primary"}
-            sx={{borderColor: "#555", color: color + " !important"}}
+            sx={{borderColor: "#555"}}
             variant={"outlined"}
             autoCapitalize={"false"}
             startIcon={(
@@ -58,7 +59,7 @@ export default function SigninForm({provider, doSignin}: SigninFormData) {
             )}
           >
             <span style={{textTransform: "none"}}>Sign in with {provider.name}</span>
-          </Button>
+          </BlackButton>
         ) : null}
 
         {(provider.type === "credentials" || provider.type == "email") && (

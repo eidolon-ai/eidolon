@@ -39,7 +39,9 @@ const TopBar: FunctionComponent<Props> = ({goToApp, endNode, startNode, title = 
         paddingX: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
-      }}>
+        height: "77px"
+      }}
+      >
         {startNode}
         {endNode}
       </Toolbar>
