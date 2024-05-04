@@ -26,7 +26,8 @@ export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
   return (
     <ProcessesProvider>
       <Box sx={{
-        display: 'flex'
+        display: 'flex',
+        height: '100%',
       }}>
         <ResizableDrawer
           updateRemainderWidth={updateContainerWidth}
@@ -38,7 +39,7 @@ export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
           <DevProcessListWithAdd app={app} />
         </ResizableDrawer>
         <Box component="main" maxWidth={"100%"} ref={containerRef}>
-          <Box height={"calc(100vh - 64px)"} display={"flex"} justifyContent={"center"}>
+          <Box height={"100%"} display={"flex"} justifyContent={"center"}>
             {children}
           </Box>
         </Box>
