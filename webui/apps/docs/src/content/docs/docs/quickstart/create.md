@@ -60,8 +60,7 @@ eidolon-cli actions converse --process-id $PID --body "Hi! I made you"
 
 Did your agent respond to you? If so, congratulations! You have successfully created your first agent machine.
 
-If you found this guide helpful, ⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub.\
-Eidolon is a fully open source project, and we love your support!
+⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub if you found this useful. Eidolon is a fully open source project, and we love your support!
 
 ##### Next Steps
 Now that you have a running agent machine with a simple agent. Let's start customizing!

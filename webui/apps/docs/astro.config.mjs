@@ -63,32 +63,19 @@ export default defineConfig({
           label: 'Introduction', link: '/docs/introduction'
         },
         {
-          label: 'Getting Started',
+          label: 'Quickstart',
+          autogenerate: { directory: '/docs/quickstart' },
+        },
+        {
+          label: 'Recipes',
           items: [
-            {
-              label: 'Quickstart',
-              items: [
-                {label: 'Prerequisites', link: '/docs/getting_started/quickstart/prereq'},
-                {label: 'Create an Agent', link: '/docs/getting_started/quickstart/create'},
-              ]
-            },
-            {
-              label: 'Demos',
-              items: [
-                {label: 'Introduction', link: '/docs/getting_started/demos/introduction'},
-                {label: 'Chatbot Demo', link: '/docs/getting_started/demos/swifties'}
-              ]
-            },
-            {
-              label: 'Tutorials',
-              items: [
-                {label: 'Introduction', link: '/docs/getting_started/tutorials/introduction'},
-                {label: 'EidolonGPT', link: '/docs/getting_started/tutorials/gpt'},
-                {label: 'Code Search', link: '/docs/getting_started/tutorials/docs'}
-              ]
-            }
+            {label: 'Chatbot', link: 'todo'},
+            {label: 'Github Repo Expert', link: 'todo'},
+            {label: 'K8 Assistant', link: 'todo'},
+            {label: 'Venture Search', link: 'todo'},
+            {label: 'Github Repo Expert', link: 'todo'},
+            {label: 'Local File Rag', link: 'todo'},
           ],
-// 					autogenerate: { directory: 'getting_started'},
         },
         {
           label: 'References',

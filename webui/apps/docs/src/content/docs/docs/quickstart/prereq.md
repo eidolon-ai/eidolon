@@ -1,5 +1,5 @@
 ---
-title: Prerequisites
+title: Quickstart
 description: Walk through prequisites for Mac and Linux
 ---
 

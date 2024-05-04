@@ -52,10 +52,9 @@ const {
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
 
-let numStars = " "
 const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
 
-numStars = data.stargazers_count
+const numStars = data.stargazers_count || " "
 ---
 
 <header
