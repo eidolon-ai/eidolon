@@ -17,36 +17,22 @@ def extract_github_traffic(repo_owner, repo_name, access_token):
         "Accept": "application/vnd.github+json"
     }
 
-    try:
-        # Send GET requests to the API endpoints
-        clones_response = requests.get(clones_url, headers=headers)
-        views_response = requests.get(views_url, headers=headers)
+    # Send GET requests to the API endpoints
+    clones_response = requests.get(clones_url, headers=headers)
+    views_response = requests.get(views_url, headers=headers)
 
-        # Check if the requests were successful
-        if clones_response.status_code == 200 and views_response.status_code == 200:
-            # Extract the traffic data from the responses
-            clones_per_day = clones_response.json()["clones"]
-            views_per_day = views_response.json()["views"]
+    # Check if the requests were successful
+    if clones_response.status_code == 200 and views_response.status_code == 200:
+        # Extract the traffic data from the responses
+        clones_per_day = clones_response.json()["clones"]
+        views_per_day = views_response.json()["views"]
 
-            return clones_per_day, views_per_day
-        else:
-            print(f"Failed to retrieve traffic data. Clones status code: {clones_response.status_code}, Views status code: {views_response.status_code}")
-            return None, None
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-        return None, None
+        return clones_per_day, views_per_day
+    else:
+        raise RuntimeError(f"Failed to retrieve traffic data. Clones status code: {clones_response.status_code}, Views status code: {views_response.status_code}")
 
 
 def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_api_key, posthog_project_key):
-    # Set the PostHog API endpoint URL
-    posthog_url = "https://app.posthog.com/capture/"
-
-    # Set the headers with the PostHog API key
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {posthog_api_key}"
-    }
-
     # Iterate over each day's traffic data
     for timestamp, count in counts:
         print(f"Processing data for date {timestamp}, count: {count}")
@@ -56,48 +42,46 @@ def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_
             print(f"Skipping data for date {date} as it is more than 10 days old.")
             continue
 
-        # Check if data for the current day already exists in PostHog
-        events = get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key)
-        print("Exising events: ", events)
-        should_insert = True
-        if events:
-            existing_count = 0
-            for event in events:
-                existing_count += event["properties"]["count"]
+        posthog_update_if_needed(event_name, timestamp, count, posthog_api_key, posthog_project_key)
 
-            if existing_count != count:
-                print(f"Updating existing data for date {timestamp} existing_count: {existing_count}, need: {count}, with new count {count - existing_count}")
-                count = count - existing_count
-            else:
-                should_insert = False
 
-        if should_insert:
-            # Prepare the data payload
-            data = {
-                "event": event_name,
-                "api_key": posthog_project_key,
-                "distinct_id": "github_traffic",
-                "properties": {
-                    "count": count,
-                    "timestamp": timestamp
-                },
-                "timestamp": timestamp,
-            }
+def posthog_update_if_needed(event_name, timestamp, count, posthog_api_key, posthog_project_key, dry_run=False):
+    # Set the PostHog API endpoint URL
+    posthog_url = "https://app.posthog.com/capture/"
+    # Set the headers with the PostHog API key
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {posthog_api_key}"
+    }
+    # Check if data for the current day already exists in PostHog
+    events = get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key)
+    should_insert = True
+    if events:
+        existing_count = 0
+        for event in events:
+            existing_count += event["properties"]["count"]
 
-            try:
-                # Send a POST request to the PostHog API endpoint
-                print("Going to insert data...", data)
-                response = requests.post(posthog_url, headers=headers, json=data)
-
-                # Check if the request was successful
-                if response.status_code == 200:
-                    print(f"Data inserted successfully for event {event_name}, timestamp: {timestamp}")
-                else:
-                    print(f"Failed to insert data for timestamp: {timestamp}. Status code: {response.status_code} {response.text}")
-            except requests.exceptions.RequestException as e:
-                print(f"An error occurred while inserting data for timestamp: {timestamp}. Error: {e}")
+        if existing_count != count:
+            print(f"Updating existing data for date {timestamp} existing_count: {existing_count}, need: {count}, with new count {count - existing_count}")
+            count = count - existing_count
         else:
-            print(f"Data already exists for event {event_name}, timestamp: {timestamp}. Skipping insertion.")
+            should_insert = False
+    if should_insert and not dry_run:
+        # Prepare the data payload
+        data = {
+            "event": event_name,
+            "api_key": posthog_project_key,
+            "distinct_id": "github_traffic",
+            "properties": {
+                "count": count,
+                "timestamp": timestamp
+            },
+            "timestamp": timestamp,
+        }
+
+        # Send a POST request to the PostHog API endpoint
+        response = requests.post(posthog_url, headers=headers, json=data)
+        response.raise_for_status()
 
 
 def get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key):
@@ -122,21 +106,10 @@ def get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_p
         ])
     }
 
-    try:
-        # Send a GET request to the PostHog API endpoint to check for existing data
-        response = requests.get(posthog_url, headers=headers, params=params)
-
-        # Check if the request was successful
-        if response.status_code == 200:
-            # Extract the events from the response
-            events = response.json()["results"]
-            return events
-        else:
-            print(f"Failed to retrieve events from PostHog. Status code: {response.status_code}, {response.text}")
-            return None
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred while checking for duplicates. Error: {e}")
-        return None
+    response = requests.get(posthog_url, headers=headers, params=params)
+    response.raise_for_status()
+    events = response.json()["results"]
+    return events
 
 
     # # Extract the GitHub clones and views per day

@@ -52,10 +52,8 @@ const {
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
 
-let numStars = " "
 const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
-
-numStars = data.stargazers_count
+const numStars = data.stargazers_count || ""
 ---
 
 <header
@@ -154,14 +152,15 @@ numStars = data.stargazers_count
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
           {
             <Button href="https://github.com/eidolon-ai/eidolon" variant="secondary" class="py-2.5 px-2.0 font-semibold shadow-none hover:underline text-sm w-auto"
-            >Star on GitHub {numStars} ⭐</Button>
+            >Star on GitHub&nbsp;{numStars}&nbsp;⭐</Button>
           }
         </div>
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
           <Button href="https://discord.gg/6kVQrHpeqG" variant="link" class="ml-2 py-2.5 px-1 md:px-1 font-semibold shadow-none hover:underline text-sm w-auto">Join us on
             Discord
           </Button>
-          <Image height="16" width="16" src='~/assets/images/discord.png' alt="Discord" class="w-6 h-6 md"/>
+          <Image height="20" width="20" src='~/assets/images/discord.svg' alt="Discord" class="w-6 h-6 md"/>
+          &nbsp;
         </div>
         <div class="flex">
           {showToggleTheme &&

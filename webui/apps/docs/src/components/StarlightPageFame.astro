@@ -22,6 +22,17 @@ const { hasSidebar, labels } = Astro.props;
 	<div class="main-frame"><slot /></div>
 </div>
 
+<style is:global>
+  .sidebar-content summary {
+    display: flex !important;
+  }
+  .main-pane #_top {
+    margin-top: 1rem;
+    font-size: var(--sl-text-h1);
+    font-weight: 600;
+  }
+</style>
+
 <style>
 	.page {
 		flex-direction: column;
@@ -35,7 +46,7 @@ const { hasSidebar, labels } = Astro.props;
     padding-right: 0 !important;
 		inset-block-start: 0;
 		width: 100%;
-		height: 56px;
+		height: 72px;
 		border-bottom: 1px solid var(--sl-color-hairline-shade);
 		background-color: white;
 	}

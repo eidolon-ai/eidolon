@@ -29,7 +29,7 @@ npm install -g pnpm
 
 Alternatively, you can check the [official PNPM installation guide](https://pnpm.io/installation) for more methods and detailed instructions.
 
-### Installing Turbo Reop
+### Installing Turbo Repo
 
 Turbo Repo is a tool that helps you manage multiple repositories. To install it, run the following command in your terminal:
 

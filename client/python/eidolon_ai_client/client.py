@@ -26,11 +26,26 @@ class Machine(BaseModel):
     def agent(self, agent_name: str) -> Agent:
         return Agent(machine=self.machine, agent=agent_name)
 
+    async def process(self, process_id: str) -> ProcessStatus:
+        url = urljoin(self.machine, f"processes/{process_id}")
+        json_ = await get_content(url)
+        if 'machine' not in json_:
+            json_['machine'] = self.machine
+        return ProcessStatus(**json_)
+
     async def processes(self) -> ProcessesResponse:
         url = urljoin(self.machine, "/processes")
         json_ = await get_content(url)
         json_['processes'] = [{"machine":self.machine, **kwargs} for kwargs in json_['processes']]
         return ProcessesResponse(**json_)
+
+    async def openapi(self) -> dict:
+        url = urljoin(self.machine, "/openapi.json")
+        return await get_content(url)
+
+    async def list_agents(self) -> List[str]:
+        schema = await self.openapi()
+        return [p.split("/")[2] for p in schema["paths"] if p.startswith("/agents/")]
 
 
 class Agent(BaseModel):
@@ -83,7 +98,6 @@ class Agent(BaseModel):
 
 class Process(BaseModel):
     machine: str = Field(default_factory=current_machine_url)
-    agent: str
     process_id: str
 
     async def upload_file(self, file_contents: bytes) -> FileHandle:
@@ -104,8 +118,8 @@ class Process(BaseModel):
         url = urljoin(self.machine, f"processes/{self.process_id}/files/{file_id}")
         await delete(url)
 
-    async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
-        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{self.agent}/actions/{action_name}")
+    async def action(self, agent: str, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
+        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{agent}/actions/{action_name}")
         args = {
             "url": url, **kwargs
         }
@@ -114,8 +128,8 @@ class Process(BaseModel):
         json_ = await post_content(**args)
         return ProcessStatus(**{"machine":self.machine, **json_})
 
-    def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
-        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{self.agent}/actions/{action_name}")
+    def stream_action(self, agent: str, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
+        url = urljoin(self.machine, f"processes/{self.process_id}/agent/{agent}/actions/{action_name}")
         return AgentResponseIterator(stream_content(url, body, **kwargs))
 
     async def status(self) -> ProcessStatus:
@@ -147,8 +161,20 @@ class ProcessesResponse(BaseModel):
 
 
 class ProcessStatus(Process, extra=Extra.allow):
+    agent: str
     state: str
+    title: Optional[str]
     available_actions: List[str]
+
+    async def action(self, action_name: str, body: dict | BaseModel | str | None = None, **kwargs) -> ProcessStatus:
+        if "agent" in kwargs:
+            del kwargs["agent"]
+        return await super().action(self.agent, action_name, body, **kwargs)
+
+    def stream_action(self, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
+        if "agent" in kwargs:
+            del kwargs["agent"]
+        return super().stream_action(self.agent, action_name, body, **kwargs)
 
 
 class AgentResponseIterator(AsyncIterator[StreamEvent]):

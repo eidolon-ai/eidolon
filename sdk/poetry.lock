@@ -1340,7 +1340,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.12"
+version = "0.1.15"
 description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1355,6 +1355,9 @@ jsonref = "^1.1.0"
 pydantic = "^2.6.1"
 setuptools = "^69.0.2"
 sse-starlette = "^2.0.0"
+
+[package.extras]
+cli = ["rich (>=13.7.1,<14.0.0)", "simple-term-menu (>=1.6.4,<2.0.0)", "typer (>=0.12.3,<0.13.0)"]
 
 [package.source]
 type = "directory"
@@ -5943,4 +5946,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "50a4139db9bbc980b164cfb9d0a2a8b0bb62b0c22100d721f1db552df2f40310"
+content-hash = "86c2f29fe541bde9af9ba417a1cb3d849027d86d23bd35d80be21bdf44f9848e"
