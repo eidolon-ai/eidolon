@@ -1,13 +1,13 @@
 ---
-title: Prerequisites
+title: Quickstart
 description: Walk through prequisites for Mac and Linux
 ---
+
 Welcome to the Eidolon Quickstart guide. This section covers environment setup, installing **Eidolon**, creating your first **AgentProgram**, and running an **AgentMachine**.
 
-If you have already been through this guide, check out the [References](/docs/references/introduction), [Demos](/docs/getting_started/demos/introduction), or [Tutorials](/docs/getting_started/tutorials/introduction) for more in-depth guidance on what you can do with Eidolon.
+## Prerequisites
 
 We know you are excited about creating your first agent, but first let's make sure we have everything we need to get started. 
-
 
 ### MacOS
 ##### [Python 3.11](https://formulae.brew.sh/formula/python@3.11)
@@ -39,6 +39,11 @@ gh auth login -h GitHub.com -w -p https
 ```
 
 ### Linux
+
+Linux setup is similar to MacOS with installation using the package managers of your choice.
+
+<details>
+
 Commands used are for Debian Bullseye, use apk instead of apt for Alpine Linux.
 
 apt requires root access to run in most Linux distributions. Elevate access by running the commands with ```sudo```.
@@ -69,8 +74,11 @@ export OPENAI_API_KEY=<YOUR OPENAI API KEY>
 In this walkthrough we will use the gh cli to fork our machines. You are free to use the web interface if you prefer.
 You can download the cli with brew, or check out their [installation guide](https://github.com/cli/cli#installation) for other methods.
 
+</details>
+
 ### Windows
 Eidolon AI SDK is only supported on UNIX (Linux/MacOS) systems. Follow the instructions below to install WSL, a feature that lets you to run a Linux environment directly on Windows, and the Debian Linux distribution.
+<details>
 
 #### [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install#manual-installation-steps)
 
@@ -81,3 +89,4 @@ wsl --install -d Debian
 Upon installing WSL and Debian, you will be prompted to create setup your Linux credentials. Remember the password from this step as you will need it when running commands in Linux as the user. If you need to run WSL again, use the command ```wsl```, or find the installed distribution using the Windows key menu.
 
 Once you have installed WSL and a Linux distribution, follow the Linux quickstart process to get started with Eidolon AI!
+</details>
