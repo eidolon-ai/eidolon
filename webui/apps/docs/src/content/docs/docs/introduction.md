@@ -3,6 +3,20 @@ title: Introduction
 description: This page gives a broad overview of Eidolon and the documentation
 ---
 
+
+<div>
+  <a href="https://pypi.org/project/eidolon-ai-sdk/">
+    <img style="display: inline-block;" alt="PyPI - Version" src="https://img.shields.io/pypi/v/eidolon-ai-sdk?style=flat&label=eidolon-ai-sdk">
+  </a>
+  <a href="https://pypi.org/project/eidolon-ai-client/">
+    <img style="display: inline-block" alt="PyPI - Version" src="https://img.shields.io/pypi/v/eidolon-ai-client?style=flat&label=eidolon-ai-client">
+  </a>
+  <a href="https://github.com/eidolon-ai/eidolon">
+    <img style="display: inline-block;" alt="GitHub Test Status" src="https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test.yml?style=flat&logo=github&label=test">
+  </a>
+</div>
+
+
 Welcome to the official documentation of Eidolon Agent Services, an open-source framework for designing and deploying agent-based services.
 
 This page gives a broad overview of the framework and of this documentation, so that you know where to start if you are new to Eidolon or where to look if you need information on a specific feature.

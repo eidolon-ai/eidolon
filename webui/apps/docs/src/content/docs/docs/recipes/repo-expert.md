@@ -3,9 +3,14 @@ title: Git Search
 description: Create a github RAG agent that can answer questions about a git repository
 ---
 
-[![GitHub](https://img.shields.io/badge/eidolon-Git%20Search-blue?style=flat&logo=github)](https://github.com/eidolon-ai/eidolon-git-search)
-
-[![Static Badge](https://img.shields.io/badge/fork-grey?style=flat&logo=forgejo&logoColor=white)](https://github.com/eidolon-ai/eidolon-git-search/fork)
+<div>
+  <a href="https://github.com/eidolon-ai/eidolon-git-search">
+    <img style="display: inline-block;" alt="GitHub Repository" src="https://img.shields.io/badge/eidolon-Git%20Search-blue?style=flat&logo=github">
+  </a>
+  <a href="https://github.com/eidolon-ai/eidolon-git-search/fork">
+    <img style="display: inline-block;" alt="GitHub Forks" src="https://img.shields.io/badge/fork-grey?style=flat&logo=forgejo&logoColor=white">
+  </a>
+</div>
 
 
 In this recipe we have created a GitHub copilot who can answer questions about the Eidolon monorepo.

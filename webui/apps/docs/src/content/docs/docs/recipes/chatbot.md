@@ -3,10 +3,14 @@ title: Chatbot
 description: Create a multi-media chatbot powered by the llm of your choice
 ---
 
-[![GitHub](https://img.shields.io/badge/eidolon-Chatbot-blue?style=flat&logo=github)](https://github.com/eidolon-ai/eidolon-chatbot)
-
-[![Static Badge](https://img.shields.io/badge/fork-grey?style=flat&logo=forgejo&logoColor=white)](https://github.com/eidolon-ai/eidolon-chatbot/fork)
-
+<div>
+  <a href="https://github.com/eidolon-ai/eidolon-chatbot">
+    <img style="display: inline-block;" alt="GitHub Repository" src="https://img.shields.io/badge/eidolon-Chatbot-blue?style=flat&logo=github">
+  </a>
+  <a href="https://github.com/eidolon-ai/eidolon-chatbot/fork">
+    <img style="display: inline-block;" alt="GitHub Forks" src="https://img.shields.io/badge/fork-grey?style=flat&logo=forgejo&logoColor=white">
+  </a>
+</div>
 
 
 This Recipe shows an example of a multi-llm multimedia enabled chatbot. 
