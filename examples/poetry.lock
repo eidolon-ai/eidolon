@@ -1330,7 +1330,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.15"
+version = "0.1.16"
 description = ""
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1371,7 +1371,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.46"
+version = "0.1.47"
 description = "An Open Source Agent Services Framework"
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1386,7 +1386,7 @@ boto3 = "^1.34.74"
 boto3-stubs = {version = "^1.34.74", extras = ["essential"]}
 chromadb = "^0.4.18"
 dill = "^0.3.8"
-eidolon-ai-client = "^0.1.15"
+eidolon-ai-client = "^0.1.16"
 eidolon-ai-mistralai = "^0.1.6a"
 eidolon-ai-usage-client = "^0.1.6"
 esprima = "^4.0.1"
@@ -6028,4 +6028,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "cd122fb0c5ec5c44c8f915bcda12c6db1a65515609711fae8324c98c4d7c080a"
+content-hash = "fdf70307f70fe8fa8a7fa9ec47882c0a3db4839f36af60fa1443fb63d426428d"

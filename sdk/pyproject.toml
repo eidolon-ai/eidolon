@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-ai-sdk"
-version = "0.1.46"
+version = "0.1.47"
 description = "An Open Source Agent Services Framework"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -15,7 +15,7 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "sdk"
-last-update-hash = "a724ed198fbf0ef840c4e15607eecd9782134bb2"
+last-update-hash = "673e3d9da77fe9e3403bb532858647621bbadc28"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
@@ -61,7 +61,7 @@ opentelemetry-instrumentation-fastapi = "^0.44b0"
 opentelemetry-instrumentation-logging = "^0.44b0"
 opentelemetry-sdk = "^1.23.0"
 eidolon-ai-mistralai = "^0.1.6a"
-eidolon-ai-client = "^0.1.15"
+eidolon-ai-client = "^0.1.16"
 eidolon-ai-usage-client = "^0.1.6"
 boto3 = "^1.34.74"
 azure-identity = "^1.16.0"
