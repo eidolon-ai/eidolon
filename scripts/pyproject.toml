@@ -10,6 +10,10 @@ get_deps = "scripts.extract_path_deps:main"
 update_poetry = "scripts.version_poetry_project:main"
 update_next = "scripts.version_next_project:main"
 get_tags = "scripts.get_commit_tags:main"
+push_gh_stars = "scripts.push_github_stars:main"
+push_gh_watches = "scripts.push_github_watches:main"
+push_gh_forks = "scripts.push_github_forks:main"
+push_pypi_downloads = "scripts.push_pypi_downloads:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
@@ -18,6 +22,7 @@ requests = "^2.31.0"
 toml = "^0.10.2"
 gitpython = "^3.1.43"
 pydantic = "^2.7.1"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
