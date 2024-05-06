@@ -67,11 +67,12 @@ export default defineConfig({
         {
           label: 'How To',
           items: [
+            {label: 'Launch the WebUI', link: '/docs/references/webui'},
             {label: 'Agent-Agent Communication', link: '/docs/references/communication'},
             {label: 'Component Customization', link: '/docs/references/pluggable'},
             {label: 'Custom Agent Templates', link: '/docs/references/custom_agents'},
             // {label: 'Custom Logic Units', link: '/docs/references/custom_logic_units'},
-            {label: 'Define Spec', link: '/docs/references/using_references'},
+            {label: 'Custom Components', link: '/docs/references/using_references'},
           ],
         },
         {
@@ -85,36 +86,36 @@ export default defineConfig({
             // {label: 'Local File Rag', link: '/docs/recipes/under-construction/'},
           ],
         },
-        {
-          label: 'Builtin Components',
-          items: [
-            {label: 'Components Overview', link: '/docs/recipes/under-construction/'},
-            {
-              label: 'Agent Templates', collapsed: true, items: [
-                {label: 'Agent Template Overview', link: '/docs/recipes/under-construction/'},
-                {label: 'SimpleAgent', link: '/docs/recipes/under-construction/'},
-                {label: 'RetrieverAgent', link: '/docs/recipes/under-construction/'},
-              ]
-            },
-            {label: 'Agent Processing Unit (APU)', link: '/docs/recipes/under-construction/'},
-            {
-              label: 'LLM Units', collapsed: true, items: [
-                {label: 'LLM Unit Overview', link: '/docs/recipes/under-construction/'},
-                {label: 'OpenAI', link: '/docs/recipes/under-construction/'},
-                {label: 'Mistral', link: '/docs/recipes/under-construction/'},
-                {label: 'Anthropic', link: '/docs/recipes/under-construction/'},
-              ]
-            },
-            {
-              label: 'Logic Unit', collapsed: true, items: [
-                {label: 'Logic Unit Overview', link: '/docs/recipes/under-construction/'},
-                {label: 'Overview', link: '/docs/recipes/under-construction/'},
-                {label: 'Search', link: '/docs/recipes/under-construction/'},
-                {label: 'Browser', link: '/docs/recipes/under-construction/'},
-              ]
-            },
-          ]
-        },
+        // {
+        //   label: 'Builtin Components',
+        //   items: [
+        //     {label: 'Components Overview', link: '/docs/recipes/under-construction/'},
+        //     {
+        //       label: 'Agent Templates', collapsed: true, items: [
+        //         {label: 'Agent Template Overview', link: '/docs/recipes/under-construction/'},
+        //         {label: 'SimpleAgent', link: '/docs/recipes/under-construction/'},
+        //         {label: 'RetrieverAgent', link: '/docs/recipes/under-construction/'},
+        //       ]
+        //     },
+        //     {label: 'Agent Processing Unit (APU)', link: '/docs/recipes/under-construction/'},
+        //     {
+        //       label: 'LLM Units', collapsed: true, items: [
+        //         {label: 'LLM Unit Overview', link: '/docs/recipes/under-construction/'},
+        //         {label: 'OpenAI', link: '/docs/recipes/under-construction/'},
+        //         {label: 'Mistral', link: '/docs/recipes/under-construction/'},
+        //         {label: 'Anthropic', link: '/docs/recipes/under-construction/'},
+        //       ]
+        //     },
+        //     {
+        //       label: 'Logic Unit', collapsed: true, items: [
+        //         {label: 'Logic Unit Overview', link: '/docs/recipes/under-construction/'},
+        //         {label: 'Overview', link: '/docs/recipes/under-construction/'},
+        //         {label: 'Search', link: '/docs/recipes/under-construction/'},
+        //         {label: 'Browser', link: '/docs/recipes/under-construction/'},
+        //       ]
+        //     },
+        //   ]
+        // },
         {
           label: 'Architecture',
           items: [

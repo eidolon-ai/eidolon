@@ -1,5 +1,5 @@
 ---
-title: How to use References
+title: Using References
 description: References - Using References
 ---
 
@@ -13,6 +13,11 @@ or even create your own interfaces that can be expanded in the future. Eidolon h
 will dynamically inject dependencies from the resources you have defined in your yaml files. 
 
 ## How
+
+At its simplest, a reference is any class. So, any object within your python environment can be referenced by its FQN.
+What we care about though is how to define the spec for a reference, so we can customize this classes.
+
+### Defining a Reference with a Spec
 
 Custom components of any kind can define a **spec**. This is what defines the component's configuration which can be 
 defined or overridden in yaml. The spec is just a **Pydantic** model. We can then define our resource to use this spec.
@@ -36,7 +41,7 @@ class CustomResource(BaseModel):
         return f"{self.question} + {self.answer}"
 ```
 
-### Using References within References
+### Using References within a Spec
 So that is all well and good, but what if we want to use a reference within a reference? We have a **Reference** type 
 that is what wires the references up at runtime. There is also an **AnnotatedReference** type that defines the default 
 factory for you.
