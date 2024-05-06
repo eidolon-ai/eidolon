@@ -26,8 +26,8 @@ src="https://www.youtube.com/embed/8GOsbX8Hs50">
 </iframe>
 
 ## Core Concepts
-<li>Customizing the AgentProcessingUnit</li>
-<li>Running the UI</li>
+###### [Customizing the AgentProcessingUnit](http://localhost:4321/docs/references/pluggable)
+###### [Running the UI](/docs/references/webui)
 
 ## Agents
 ### [Conversational Agent](https://github.com/eidolon-ai/eidolon-chatbot/blob/main/resources/conversational_agent.yaml)

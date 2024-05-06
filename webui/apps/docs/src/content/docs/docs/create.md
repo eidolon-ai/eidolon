@@ -82,8 +82,8 @@ Did your agent respond to you? If so, congratulations! You have successfully cre
 Now that you have a running agent machine with a simple agent. Let's start customizing!
 
 - [ ] Add new capabilities via logic units (tools)
-- [ ] Enable agent-to-agent communication
+- [ ] Enable [agent-to-agent communication](/docs/references/communication)
 - [ ] Swap out components (like the underlying llm)
 - [ ] Use structured inputs for prompt templating
 - [ ] Leverage your agent's state machine
-- [ ] Launch Eidolon's UI
+- [ ] Launch [Eidolon's UI](/docs/references/webui)
