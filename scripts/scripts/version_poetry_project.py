@@ -55,7 +55,7 @@ def changed_since_commit(last_update_hash, loc, offset=True, ignore_prefix=None)
         diff = commit.diff('HEAD', paths=loc)
         for item in diff:
             if ignore_prefix and item.a_path.startswith(ignore_prefix):
-                print(f"ignoring change: {item.a_path}")
+                print(f"...ignoring change: {item.a_path}")
             else:
                 print(f"...file {item.a_path} changed")
                 return True
