@@ -1,6 +1,6 @@
 ---
-title: Defining a Machine
-description: References - Defining a Machine
+title: Building Custom Components
+description: References - Building Custom Components
 ---
 
 Customize the server's machine by defining a "Machine" resource.

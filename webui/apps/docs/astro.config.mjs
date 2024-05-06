@@ -65,6 +65,15 @@ export default defineConfig({
         {label: 'Prerequisites', link: '/docs/prereq/'},
         {label: 'Quickstart', link: '/docs/create/'},
         {
+          label: 'How To',
+          items: [
+            {label: 'Agent-Agent Communication', link: '/docs/references/communication'},
+            {label: 'Component Customization', link: '/docs/references/pluggable'},
+            {label: 'Custom Components', link: '/docs/references/custom_components'},
+            {label: 'Custom Agent Templates', link: '/docs/references/custom_agents'},
+          ],
+        },
+        {
           label: 'Recipes',
           items: [
             {label: 'Chatbot', link: '/docs/recipes/chatbot/'},
@@ -76,18 +85,7 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Features',
-          items: [
-            {label: 'Introduction', link: '/docs/references/introduction/'},
-            {label: 'Setup', link: '/docs/references/setup'},
-            {label: 'Agent Communication', link: '/docs/references/communication'},
-            {label: 'Custom Agents', link: '/docs/references/custom'},
-            {label: 'Pluggable Resources', link: '/docs/references/pluggable'},
-            {label: 'Defining a Machine', link: '/docs/references/defining'},
-          ],
-        },
-        {
-          label: 'Components (builtin)',
+          label: 'Builtin Components',
           items: [
             {label: 'Components Overview', link: '/docs/recipes/under-construction/'},
             {
