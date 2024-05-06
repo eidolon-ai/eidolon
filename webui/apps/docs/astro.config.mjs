@@ -69,8 +69,9 @@ export default defineConfig({
           items: [
             {label: 'Agent-Agent Communication', link: '/docs/references/communication'},
             {label: 'Component Customization', link: '/docs/references/pluggable'},
-            {label: 'Custom Components', link: '/docs/references/custom_components'},
             {label: 'Custom Agent Templates', link: '/docs/references/custom_agents'},
+            // {label: 'Custom Logic Units', link: '/docs/references/custom_logic_units'},
+            {label: 'Define Spec', link: '/docs/references/using_references'},
           ],
         },
         {

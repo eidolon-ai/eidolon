@@ -9,7 +9,7 @@ custom resources to use as templates.
 
 ## Why
 LLM applications require a ton of tweaking 🔨. Jumping into code for each and every code means this fiddling is slower 
-and more error-prone. That is why at Eidolon 👻 we have to separate prompting and system configuration into simple 
+and more error-prone. That is why at Eidolon 👻 we separated prompting and system configuration into simple 
 kubernetes-like yaml files that can be modified without needing to open up a code editor 🔡. 
 
 Beyond simply speeding up cycle time 🚀, this also allows more personas 🧑‍🚒🧑‍🏫🧑‍🎨 to work on
@@ -102,13 +102,29 @@ spec:
   apu: frugal_apu
 ```
 
-We can even continue to override sub components
+We can continue to override sub components as you would expect.
 ```yaml
 spec:
   apu: 
     implementation: frugal_apu
     max_num_function_calls: 10
 ```
+
+### Changing Default Components
+Now what if you are a lean startup, and want to use the frugal_apu for all of your agents unless specified otherwise?
+You would prefer not to override the apu of every agent, you just want to set frugal_apu as the default apu.
+
+```yaml
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: APU
+
+spec: frugal_apu
+```
+
+This reference resource will change any component that references the APU to use our new frugal_apu instead of the 
+default (ConversationalAPU).
 
 ## Recipes
 Most recipes will have some form of customization. Here are a few examples that use it more heavily.

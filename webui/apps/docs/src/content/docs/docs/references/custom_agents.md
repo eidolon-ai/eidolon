@@ -62,13 +62,10 @@ class QASpec(BaseModel):
 
 
 class QA(Specable[QASpec]):
-  def __init__(self, **kwargs):
-    Specable.__init__(self, **kwargs)
-    self.apu = self.spec.apu.initialize()
-
   @register_program()
   async def run_tests(self, process_id) -> str:
-    thread = await self.apu.main_thread(process_id)
+    apu = self.spec.apu.initialize()
+    thread = await apu.main_thread(process_id)
     return await thread.run_request(prompts=[
       SystemAPUMessage(prompt="You are a QA assistant responsible for validating agents and tools"),
       UserTextAPUMessage(prompt=f"Exhaustively test all of your tools and agents and report any issues"),
