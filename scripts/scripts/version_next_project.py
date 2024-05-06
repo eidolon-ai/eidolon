@@ -16,7 +16,7 @@ def update_path_deps(loc: str, version: Literal['major', 'minor', 'patch']):
     with open(os.path.join(loc, 'package.json')) as f:
         data = json.load(f)
 
-    if changed_since_commit(data.setdefault('eidolon', {}).get('last-update-hash'), loc):
+    if changed_since_commit(data.setdefault('eidolon', {}).get('last-update-hash'), loc, ignore_prefix="webui/apps/docs"):
         data['eidolon']['last-update-hash'] = Repo(".").head.commit.hexsha
         updated_version = rev_version(data['version'], version)
         data['version'] = updated_version

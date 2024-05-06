@@ -43,7 +43,7 @@ def update_path_deps(loc: str, version: Literal['major', 'minor', 'patch']):
         print("No changes detected")
 
 
-def changed_since_commit(last_update_hash, loc, offset=True):
+def changed_since_commit(last_update_hash, loc, offset=True, ignore_prefix=None):
     repo = Repo(".")
     last_relevant_hash = get_next_commit(repo, last_update_hash) if last_update_hash else None if offset else last_update_hash
     if not last_relevant_hash:
@@ -54,8 +54,11 @@ def changed_since_commit(last_update_hash, loc, offset=True):
         commit = repo.commit(last_relevant_hash)
         diff = commit.diff('HEAD', paths=loc)
         for item in diff:
-            print(f"...file {item.a_path} changed")
-            return True
+            if ignore_prefix and item.a_path.startswith(ignore_prefix):
+                print(f"ignoring change: {item.a_path}")
+            else:
+                print(f"...file {item.a_path} changed")
+                return True
     return False
 
 
