@@ -8,9 +8,8 @@ import TopBar from './TopBar';
 import {LinkToPage} from '../utils/type';
 import {useOnMobile} from '../hooks/index';
 import {SIDEBAR_DESKTOP_ANCHOR, SIDEBAR_WIDTH, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT,} from './config';
-import {UserProfile} from "../components/UserProfile/UserProfile";
-import {UsageIndicator} from "../components/UsageIndicator/UsageIndicator";
 import {EidolonHeader} from "../components/EidolonHeader";
+import {RightSideBarItems} from "./RightSideBarItems";
 
 const TITLE_PRIVATE = 'Eidolon'; // Title for pages after authentication
 
@@ -41,15 +40,6 @@ if (process.env.NEXT_PUBLIC_DEBUG) {
     path: '/dev',
     icon: 'settings',
   });
-}
-
-const RightSideBarItems = () => {
-  return (
-    <Stack direction="row" spacing={"16px"} alignItems={"center"} justifyContent={"flex-end"} width={'240px'} minWidth={'240px'}>
-      <UsageIndicator />
-      <UserProfile />
-    </Stack>
-  )
 }
 
 /**
@@ -91,6 +81,7 @@ const PrivateLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
           paddingLeft: 1,
           paddingRight: 1,
           paddingTop: 1,
+          height:`calc(100vh - ${onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT})`
         }}
       >
         <ErrorBoundary name="Content">{children}</ErrorBoundary>

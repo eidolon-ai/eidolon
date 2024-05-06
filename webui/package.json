@@ -1,6 +1,6 @@
 {
   "name": "eidolon-monorepo",
-  "version": "1.0.30",
+  "version": "1.0.36",
   "scripts": {
     "build": "turbo build",
     "start": "npm --prefix apps/eidolon-ui2 run start",
@@ -18,7 +18,7 @@
     "prettier": "^3.2.5",
     "turbo": "^1.13.3"
   },
-  "packageManager": "pnpm@8.9.0",
+  "packageManager": "pnpm@9.0.6",
   "engines": {
     "node": ">=18"
   },
@@ -26,6 +26,6 @@
     "next": "14.1.3"
   },
   "eidolon": {
-    "last-update-hash": "fae58566d70d948b7f43c4e931dd9c3bb8551e1e"
+    "last-update-hash": "4518ffa766828b8e03ebfb41d3d0ac536e508e84"
   }
 }

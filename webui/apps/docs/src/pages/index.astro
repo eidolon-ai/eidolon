@@ -19,11 +19,10 @@ const metadata = {
 
 const bg = await Astro.slots.render("bg")
 
-let numStars = " "
 const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
 
-numStars = data.stargazers_count
-const githubText = `Star on GitHub &nbsp;${numStars} &nbsp;⭐`
+const numStars = data.stargazers_count || " "
+const githubText = `Star on GitHub&nbsp;${numStars}&nbsp;⭐`
 ---
 
 <Layout metadata={metadata}>
@@ -37,7 +36,7 @@ const githubText = `Star on GitHub &nbsp;${numStars} &nbsp;⭐`
         href: 'https://github.com/eidolon-ai/eidolon',
         target: '_blank',
       },
-      {text: 'Learn more', href: '#features'},
+      {text: 'Getting Started', href: '/docs/introduction'},
     ]}
     image={{src: '~/assets/images/k8s.webp', width: '600px', height: '600px', alt: 'Eidolon'}}
   >
