@@ -13,6 +13,7 @@ get_tags = "scripts.get_commit_tags:main"
 push_gh_stars = "scripts.push_github_stars:main"
 push_gh_watches = "scripts.push_github_watches:main"
 push_gh_forks = "scripts.push_github_forks:main"
+push_pypi_downloads = "scripts.push_pypi_downloads:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"

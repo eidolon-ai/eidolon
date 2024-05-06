@@ -32,20 +32,20 @@ def extract_github_traffic(repo_owner, repo_name, access_token):
         raise RuntimeError(f"Failed to retrieve traffic data. Clones status code: {clones_response.status_code}, Views status code: {views_response.status_code}")
 
 
-def insert_into_posthog(event_name: str, counts: List[Tuple[str, int]], posthog_api_key, posthog_project_key):
+def insert_into_posthog_with_count(distinct_id: str, event_name: str, counts: List[Tuple[str, int]], posthog_api_key, posthog_project_key, skip_older: int, dry_run: bool):
     # Iterate over each day's traffic data
     for timestamp, count in counts:
         print(f"Processing data for date {timestamp}, count: {count}")
         date = timestamp.split("T")[0]
         # check if the date is more than 10 days old
-        if (datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > 10:
+        if skip_older > 0 and ((datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > 10):
             print(f"Skipping data for date {date} as it is more than 10 days old.")
             continue
 
-        posthog_update_if_needed(event_name, timestamp, count, posthog_api_key, posthog_project_key)
+        posthog_update_if_needed(distinct_id, event_name, timestamp, count, posthog_api_key, posthog_project_key, dry_run)
 
 
-def posthog_update_if_needed(event_name, timestamp, count, posthog_api_key, posthog_project_key, dry_run=False):
+def posthog_update_if_needed(distinct_id: str, event_name, timestamp, count, posthog_api_key, posthog_project_key, dry_run):
     # Set the PostHog API endpoint URL
     posthog_url = "https://app.posthog.com/capture/"
     # Set the headers with the PostHog API key
@@ -54,10 +54,10 @@ def posthog_update_if_needed(event_name, timestamp, count, posthog_api_key, post
         "Authorization": f"Bearer {posthog_api_key}"
     }
     # Check if data for the current day already exists in PostHog
-    events = get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key)
+    events = get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key)
     should_insert = True
+    existing_count = 0
     if events:
-        existing_count = 0
         for event in events:
             existing_count += event["properties"]["count"]
 
@@ -66,12 +66,12 @@ def posthog_update_if_needed(event_name, timestamp, count, posthog_api_key, post
             count = count - existing_count
         else:
             should_insert = False
-    if should_insert and not dry_run:
+    if should_insert:
         # Prepare the data payload
         data = {
             "event": event_name,
             "api_key": posthog_project_key,
-            "distinct_id": "github_traffic",
+            "distinct_id": distinct_id,
             "properties": {
                 "count": count,
                 "timestamp": timestamp
@@ -79,12 +79,17 @@ def posthog_update_if_needed(event_name, timestamp, count, posthog_api_key, post
             "timestamp": timestamp,
         }
 
-        # Send a POST request to the PostHog API endpoint
-        response = requests.post(posthog_url, headers=headers, json=data)
-        response.raise_for_status()
+        if dry_run:
+            print(f"Would have sent data: {data}")
+        else:
+            # Send a POST request to the PostHog API endpoint
+            response = requests.post(posthog_url, headers=headers, json=data)
+            response.raise_for_status()
+    else:
+        print(f"Data for date {timestamp} already exists in PostHog", existing_count, count)
 
 
-def get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_project_key):
+def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key):
     # Set the PostHog API endpoint URL for querying events
     posthog_url = "https://app.posthog.com/api/event/"
 
@@ -111,7 +116,6 @@ def get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_p
     events = response.json()["results"]
     return events
 
-
     # # Extract the GitHub clones and views per day
     # # clones, views = extract_github_traffic(owner, repo, args.access_token)
     # timestamps = ["2024-02-12", "2024-02-13", "2024-02-14", "2024-02-15", "2024-02-16", "2024-02-17", "2024-02-18", "2024-02-19", "2024-02-20", "2024-02-21", "2024-02-22",
@@ -137,6 +141,7 @@ def get_existing_events(event_name, timestamp, count, posthog_api_key, posthog_p
     #            196, 86, 42, 232, 254, 303, 284, 258, 84,
     #            234, 40]
 
+
 def main():
     owner = "eidolon-ai"
     repo = "eidolon"
@@ -146,6 +151,8 @@ def main():
     parser.add_argument("--access-token", required=True, help="GitHub access token")
     parser.add_argument("--api-key", required=True, help="PostHog API key")
     parser.add_argument("--project-key", required=True, help="PostHog Project key")
+    parser.add_argument("--dry-run", required=False, help="Just print what would have happened", default=False, action="store_true")
+    parser.add_argument("--skip-older", required=False, help="Skip events older than <days> in the past", default=10, type=int)
 
     # Parse the command-line arguments
     args = parser.parse_args()
@@ -155,13 +162,13 @@ def main():
     if clones:
         clones_per_day = [(clone["timestamp"], clone["count"]) for clone in clones]
         unique_clones_per_day = [(clone["timestamp"], clone["uniques"]) for clone in clones]
-        insert_into_posthog("gh_clones", clones_per_day, args.api_key, args.project_key)
-        insert_into_posthog("gh_unique_clones", unique_clones_per_day, args.api_key, args.project_key)
+        insert_into_posthog_with_count("github_traffic", "gh_clones", clones_per_day, args.api_key, args.project_key, args.skip_older, args.dry_run)
+        insert_into_posthog_with_count("github_traffic", "gh_unique_clones", unique_clones_per_day, args.api_key, args.project_key, args.skip_older, args.dry_run)
     if views:
         views_per_day = [(view["timestamp"], view["count"]) for view in views]
         unique_views_per_day = [(view["timestamp"], view["uniques"]) for view in views]
-        insert_into_posthog("gh_views", views_per_day, args.api_key, args.project_key)
-        insert_into_posthog("gh_unique_views", unique_views_per_day, args.api_key, args.project_key)
+        insert_into_posthog_with_count("github_traffic", "gh_views", views_per_day, args.api_key, args.project_key, args.skip_older, args.dry_run)
+        insert_into_posthog_with_count("github_traffic", "gh_unique_views", unique_views_per_day, args.api_key, args.project_key, args.skip_older, args.dry_run)
 
 
 if __name__ == "__main__":
