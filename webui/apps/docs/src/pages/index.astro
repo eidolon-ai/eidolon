@@ -2,7 +2,6 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 import Hero2 from '~/components/widgets/Hero2.astro';
-import Note from '~/components/widgets/Note.astro';
 import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import Content from '~/components/widgets/Content.astro';
@@ -10,7 +9,7 @@ import FAQs from '~/components/widgets/FAQs.astro';
 import WidgetWrapper from "../components/ui/WidgetWrapper.astro";
 import Item from "../components/blog/GridItem.astro";
 import LinkUnfurl from "../components/widgets/LinkUnfurl.astro";
-import Button from "../components/ui/Button.astro";
+import Testimonials from "../components/widgets/Testimonials.astro";
 
 const metadata = {
   title: 'Eidolon -- Build LLM Agents as Services',
@@ -19,10 +18,10 @@ const metadata = {
 
 const bg = await Astro.slots.render("bg")
 
-const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
+// const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
 
-const numStars = data.stargazers_count || " "
-const githubText = `Star on GitHub&nbsp;${numStars}&nbsp;⭐`
+// const numStars = data.stargazers_count || " "
+const githubText = `Star on GitHub ⭐`
 ---
 
 <Layout metadata={metadata}>
@@ -63,10 +62,40 @@ const githubText = `Star on GitHub&nbsp;${numStars}&nbsp;⭐`
     </Fragment>
   </Hero2>
 
-  <!-- Note Widget ******************* -->
-
-  <Note/>
-
+ <Testimonials
+    title="What our users say?"
+    testimonials={[
+      {
+        testimonial: `The LLM execution pattern and tool call pattern with other solutions, like LangChain, is too rigid and can’t be customized. With your project I get a way less proscriptive design that is flexible enough to meet all my needs.`,
+        name: 'Sr. Software Engineer',
+        job: 'Enterprise Company',
+        image: {
+          src: '~/assets/images/person.png',
+          alt: 'Sr. Software Engineer',
+        },
+      },
+      {
+        testimonial: `Devs don’t need to write 100s of lines of code to do what Eidolon has already done for you. The builtin agents are easy to use and can be customized to fit your needs... and deployment was a breeze.`,
+        name: 'Software Architect',
+        job: 'Startup',
+        image: {
+          src: '~/assets/images/person.png',
+          alt: 'Software Architect',
+        },
+      },
+      {
+        testimonial:
+          'As a green field developer, Eidolon let’s me easily build applications. I was able to throw a demo together in a week and I don\'t know s**t about AI',
+        name: 'Game Developer',
+        job: 'Indie Game Dev',
+        image: {
+          src: '~/assets/images/person.png',
+          alt: 'Game Developer',
+        },
+      },
+    ]}
+  />
+  
   <!-- Features Widget *************** -->
 
   <Features

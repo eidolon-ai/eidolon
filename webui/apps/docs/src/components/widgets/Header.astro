@@ -6,7 +6,7 @@ import ToggleMenu from "~/components/common/ToggleMenu.astro";
 import Button from "~/components/ui/Button.astro"
 
 import {getHomePermalink} from "~/utils/permalinks";
-import {trimSlash, getAsset} from "~/utils/permalinks";
+import {trimSlash} from "~/utils/permalinks";
 import type {CallToAction} from "~/types";
 import Image from "../common/Image.astro";
 
@@ -52,8 +52,8 @@ const {
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`
 
-const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
-const numStars = data.stargazers_count || " "
+// const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
+// const numStars = data.stargazers_count || " "
 ---
 
 <header
@@ -151,12 +151,12 @@ const numStars = data.stargazers_count || " "
         }
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
           {
-            <Button href="https://github.com/eidolon-ai/eidolon" variant="secondary" class="py-2.5 px-2.0 font-semibold shadow-none hover:underline text-sm w-auto"
-            >Star on GitHub&nbsp;{numStars}&nbsp;⭐</Button>
+            <Button href="https://github.com/eidolon-ai/eidolon" variant="link" class="py-2.5 px-2.0 font-semibold shadow-none hover:underline text-sm w-auto capitalize"
+            >Star on GitHub ⭐</Button>
           }
         </div>
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
-          <Button href="https://discord.gg/6kVQrHpeqG" variant="link" class="ml-2 py-2.5 px-1 md:px-1 font-semibold shadow-none hover:underline text-sm w-auto">Join us on
+          <Button href="https://discord.gg/6kVQrHpeqG" variant="link" class="ml-2 py-2.5 px-1 md:px-1 font-semibold shadow-none hover:underline text-sm w-auto capitalize">Join us on
             Discord
           </Button>
           <Image height="20" width="20" src='~/assets/images/discord.svg' alt="Discord" class="w-6 h-6 md"/>
