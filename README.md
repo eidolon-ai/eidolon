@@ -25,12 +25,13 @@ developers will not be able to adapt their agents to the rapidly changing AI lan
 
 Check out [Eidolon's qebsite](https://eidolonai.com/) to learn more.
 
-## Quickstart Guide 🚀
+## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/prereq/)
 
 ### Running the AgentMachine
 ```bash
 git clone https://github.com/eidolon-ai/eidolon-quickstart.git
 cd eidolon-quickstart
+make check
 make serve-dev
 ```
 
