@@ -235,12 +235,12 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
     async def _act(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
         execute_on_cpu = None
         request_body = to_jsonable_python(kwargs.get("body") or {})
-        if "execute_on_cpu" in request_body:
+        if isinstance(request_body, dict) and "execute_on_cpu" in request_body:
             execute_on_cpu = request_body.pop("execute_on_cpu")
 
         attached_files: List[FileHandle] = []
         attached_files_messages = []
-        if "attached_files" in request_body:
+        if isinstance(request_body, dict) and "attached_files" in request_body:
             # add a new file handle message
             attached_files = request_body.pop("attached_files") or []
             for file in attached_files:
