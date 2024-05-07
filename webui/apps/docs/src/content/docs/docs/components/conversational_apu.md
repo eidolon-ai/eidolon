@@ -1,8 +1,6 @@
 ---
 title: AgentProcessingUnit (APU)
 description: Component - AgentProcessingUnit (APU)
-
-
 ---
 The ConversationalAPU (Agent Processing Unit) allows for multiple llm support including multimedia support and function 
 calling (even if the llm does not support it). It does the by defining units that can patch in missing functionality for
@@ -14,7 +12,7 @@ The llm_unit will be called all the messages retrieved from memory (as controlle
 by the memory unit), all new messages, and the tools dynamically created from the logic_units. If the llm_unit executes 
 any tools, it will be fed the response(s) and be executed again. When done the response is returned (or streamed).
 
-## Specifications
+## Spec
 
 | Key                | Description                                                                                                                                                                                                                          |
 |--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

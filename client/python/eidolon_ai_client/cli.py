@@ -1,6 +1,8 @@
 import asyncio
 import os
+import tempfile
 from functools import wraps
+from subprocess import call
 from typing import Optional, Annotated
 
 from eidolon_ai_client.client import Agent, Process, Machine, ProcessStatus
@@ -42,9 +44,7 @@ def coro(f):
     return wrapper
 
 
-@processes.command("create")
-@coro
-async def create(agent: Optional[str] = None, verbose: Optional[bool] = False):
+async def create(agent: Optional[str] = None, verbose: Optional[bool] = False, interactive: Optional[bool] = False):
     if not agent:
         agents = await Machine(machine=server_loc).list_agents()
         if len(agents) == 0:
@@ -65,7 +65,11 @@ async def create(agent: Optional[str] = None, verbose: Optional[bool] = False):
         console.print(process)
     else:
         console.print(process.process_id)
+    if interactive:
+        await run(agent=process.agent, process_id=process.process_id, stream=True, interactive=True)
 
+
+processes.command("create")(coro(create))
 
 @processes.command("delete")
 @coro
@@ -76,14 +80,13 @@ async def delete(process_id: str):
     console.print("Done")
 
 
-@app.command("actions")
-@coro
 async def run(
         action: Annotated[Optional[str], typer.Argument()] = None,
         process_id: Optional[str] = None,
         agent: Optional[str] = None,
         body: Optional[str] = None,
         stream: Optional[bool] = True,
+        interactive: Optional[bool] = False
 ):
     process_status: Optional[ProcessStatus] = None
     if not process_id:
@@ -128,6 +131,14 @@ async def run(
 
     process: Process = Process(machine=server_loc, process_id=process_id)
 
+    if interactive and not body:
+        body = Prompt.ask("Body") or None
+        if body in ["vim", "nano", "emacs"]:
+            with tempfile.NamedTemporaryFile(suffix=".txt") as tf:
+                call([body, tf.name])
+                with open(tf.name) as file:
+                    body = file.read()
+
     if stream:
         has_newline = True
         async for event in process.stream_action(agent, action, body):
@@ -159,6 +170,12 @@ async def run(
         with console.status("Running AgentProgram..."):
             resp = await process.action(agent, action, body)
         console.print(resp)
+
+    if interactive:
+        await run(agent=agent, process_id=process_id, stream=True, interactive=True)
+
+
+processes.command("actions")(coro(run))
 
 
 def _status_display(status: ProcessStatus):

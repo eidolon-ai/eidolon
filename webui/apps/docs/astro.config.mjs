@@ -89,27 +89,26 @@ export default defineConfig({
         {
           label: 'Builtin Components',
           items: [
-            // {
-            //   label: 'Agent Templates', collapsed: true, items: [
-            //     {label: 'Agent Template Overview', link: '/docs/recipes/under-construction/'},
-            //     {label: 'SimpleAgent', link: '/docs/recipes/under-construction/'},
-            //     {label: 'RetrieverAgent', link: '/docs/recipes/under-construction/'},
-            //   ]
-            // },
+            {
+              label: 'Agent Templates', collapsed: true, items: [
+                {label: 'SimpleAgent', link: '/docs/components/simple_agent'},
+                {label: 'RetrieverAgent', link: '/docs/components/retriever_agent'},
+              ]
+            },
             {
               label: 'APU', collapsed: true, items: [
-                {label: 'APU Overview', link: '/docs/components/apu/'},
+                {label: 'Overview', link: '/docs/components/apu/'},
                 {label: 'ConversationalAPU', link: '/docs/components/conversational_apu/'},
               ]
             },
-            // {
-            //   label: 'LLM Units', collapsed: true, items: [
-            //     {label: 'LLM Unit Overview', link: '/docs/recipes/under-construction/'},
-            //     {label: 'OpenAI', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Mistral', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Anthropic', link: '/docs/recipes/under-construction/'},
-            //   ]
-            // },
+            {
+              label: 'LLMUnit', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/llm_unit'},
+                {label: 'OpenAIGPT', link: '/docs/components/llm_unit_openai'},
+                {label: 'MistralGPT', link: '/docs/components/llm_unit_minstral'},
+                {label: 'AnthropicLLMUnit', link: '/docs/components/llm_unit_anthropic'},
+              ]
+            },
             // {
             //   label: 'Logic Unit', collapsed: true, items: [
             //     {label: 'Logic Unit Overview', link: '/docs/recipes/under-construction/'},
@@ -126,7 +125,7 @@ export default defineConfig({
             {label: 'Introduction', link: '/docs/architecture/introduction/'},
             {label: 'Fundamentals', link: '/docs/architecture/fundamentals/'},
             {label: 'Agent Program', link: '/docs/architecture/agent_program/'},
-            {label: 'Agent CPU', link: '/docs/architecture/agent_cpu/'},
+            {label: 'Agent Processing Unit', link: '/docs/architecture/agent_apu/'},
             {label: 'AgentOS', link: '/docs/architecture/agent_os/'},
             {label: 'Conclusion', link: '/docs/architecture/conclusion/'},
           ],
