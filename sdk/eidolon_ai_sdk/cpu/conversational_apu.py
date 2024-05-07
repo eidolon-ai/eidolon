@@ -1,4 +1,4 @@
-from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator
+from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional
 
 from fastapi import HTTPException
 from opentelemetry import trace
@@ -44,8 +44,8 @@ class ConversationalAPUSpec(APUSpec):
     memory_unit: AnnotatedReference[MemoryUnit]
     llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
-    audio_unit: Reference[AudioUnit] = None
-    image_unit: Reference[ImageUnit] = None
+    audio_unit: Optional[Reference[AudioUnit]] = None
+    image_unit: Optional[Reference[ImageUnit]] = None
     record_conversation: bool = True
     allow_tool_errors: bool = True
     document_processor: AnnotatedReference[DocumentProcessor]
