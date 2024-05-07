@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["EIDOLON_USAGE_SERVER"],
+  "globalEnv": [],  // most envars should be dynamic. If local dev needs it to rebuild, it is not dynamic
   "pipeline": {
     "build": {
       // A package's `build` script depends on that package's

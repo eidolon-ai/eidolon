@@ -33,11 +33,10 @@ export default function SigninCard({providers, doSignin}: SigninProps) {
     const errorValue = params.get("error")!
     error = signinErrors[errorValue] ?? signinErrors.default
   }
-
   return (
     <Card variant={"elevation"} sx={{padding: "32px"}}>
       <Typography fontWeight={"bold"} variant={"h5"} sx={{textAlign: "center", marginBottom: "1rem"}}>
-        Eidolon demo cloud
+        Eidolon Demo Cloud
       </Typography>
       {error && (
         <Typography color={"red"} variant={"body1"} sx={{marginBottom:"16px"}}>
@@ -47,7 +46,7 @@ export default function SigninCard({providers, doSignin}: SigninProps) {
       <Box sx={{display: "flex", flexDirection: "column"}}>
         {Object.keys(providers).map((providerType, index) => {
           return (
-            <Box sx={{display: "flex", flexDirection: "column"}}>
+            <Box key={providerType} sx={{display: "flex", flexDirection: "column"}}>
               <Box sx={{marginBottom: "8px"}}>
                 {providers[providerType]!.map((provider, index) => (
                   <SigninForm key={provider.id}
