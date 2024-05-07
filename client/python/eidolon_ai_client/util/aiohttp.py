@@ -82,7 +82,7 @@ async def stream_content(url: str, body, **kwargs):
                     event = BaseStreamEvent.from_dict(data)
                     yield event
                 else:
-                    logger.warning("Empty event from server")
+                    logger.debug("Empty event from server")
 
 
 class AgentError(Exception):
