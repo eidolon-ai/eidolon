@@ -26,7 +26,7 @@ src="https://www.youtube.com/embed/INOjIWMX4mY">
 ## Core Concepts
 ###### [Multi-agent communication](/docs/references/communication)
 ###### [Sub-component customization](/docs/references/communication)
-###### Dynamic embedding management
+###### [Dynamic embedding management](/docs/components/retriever_agent)
 
 ## Agents
 ### [Repo Expert](https://github.com/eidolon-ai/eidolon-git-search/blob/main/resources/repo_expert.yaml)
