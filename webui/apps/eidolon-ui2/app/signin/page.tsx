@@ -2,6 +2,8 @@ import {EidolonProvider, providerMap, signIn} from "../../auth";
 import {Box} from "@mui/material";
 import SigninCard from "./signin_card";
 
+export const revalidate = 0
+
 export default function SignInPage() {
   const providers: Record<string, EidolonProvider[]> = {
     "credentials": [],
