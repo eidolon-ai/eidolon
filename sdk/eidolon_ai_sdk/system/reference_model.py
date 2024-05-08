@@ -24,6 +24,18 @@ class Specable(Generic[T]):
     def __init__(self, spec: T, **kwargs: object):
         self.spec = spec
 
+    @classmethod
+    def get_spec_type(cls):
+        bases = getattr(cls, "__orig_bases__", [])
+        specable = next(
+            (base for base in bases if getattr(base, "__origin__", None) is Specable),
+            None,
+        )
+        if specable:
+            return specable.__args__[0]
+        else:
+            raise ValueError(f"Specable base {cls} not found")
+
 
 B = TypeVar("B")
 D = TypeVar("D")

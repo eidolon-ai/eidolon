@@ -27,6 +27,13 @@ python-dotenv = "^1.0.1"
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
 
+[tool.poetry.dependencies.eidolon-ai-sdk]
+path = "../sdk"
+optional = true
+
+[tool.poetry.extras]
+docbuilder = [ "eidolon-ai-sdk"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
