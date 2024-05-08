@@ -8,7 +8,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "predocker_push": "docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') .",
+    "docker_build": "docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') .",
+    "predocker_push": "npm run docker_build",
     "docker_push": "docker push docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') &&  docker push docker.io/eidolonai/webui:latest",
     "maybe_docker_push": "VERSION=$(npm pkg get version | tr -d '\"') &&  docker manifest inspect docker.io/eidolonai/webui:$VERSION >/dev/null && echo 'Image exists' || npm run docker_push"
   },

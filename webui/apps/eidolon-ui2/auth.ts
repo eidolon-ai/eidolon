@@ -42,18 +42,14 @@ if (providerTypes.includes('azure')) {
   )
 }
 
-if (providerTypes.includes("credentials") || providerTypes.length === 0) {
+if (providerTypes.length === 0) {
   providers.push(CredentialsProvider({
     credentials: {
-      username: {label: "Email", type: "email", placeholder: "system"},
-      password: {label: "Password", type: "password"}
+      username: {label: "Username", type: "text", placeholder: "system"},
     },
     async authorize(credentials: Record<string, any> | undefined) {
-      if (credentials?.username === "system") {
-        return {id: "system", name: 'system', email: 'a@b'}
-      } else {
-        return null
-      }
+      const name = credentials?.username || "system"
+      return {id: name + "_id", name: name, email: name +'@b'}
     }
   }))
 }
@@ -148,26 +144,19 @@ const nextAuth = NextAuth({
       const {pathname} = request.nextUrl
       const currentURL = new URL(request.url)
 
-      // create regular expression that matches all paths under /api except /api/auth, and /eidolon-apps/*
-      const routeRegex = /^\/api(?!\/auth)|\/(eidolon-apps|signin).*/
-      const shouldAuth = routeRegex.test(pathname)
       const parsedParams = qs.parse(currentURL.search, {ignoreQueryPrefix: true})
 
-      let passesAuth = false
-      if (!shouldAuth) {
-        passesAuth = true
+      const shouldAuth = pathname.startsWith("/eidolon-apps")
+      let authenticated = !!auth
+
+      if (authenticated && pathname.startsWith("/signin") && "callbackUrl" in parsedParams) {
+        return NextResponse.redirect(parsedParams["callbackUrl"] as string)
+      } else if (authenticated || !shouldAuth) {
+        return true
       } else {
-        passesAuth = !!auth
+        console.warn("Unauthorized request", request.url)
+        return false
       }
-      if (passesAuth) {
-        if (pathname.startsWith("/signin") && "callbackUrl" in parsedParams) {
-          return NextResponse.redirect(parsedParams["callbackUrl"] as string)
-        } else {
-          return true
-        }
-      }
-      console.log("Unauthorized request", request.url)
-      return false
     }
   }
 })
