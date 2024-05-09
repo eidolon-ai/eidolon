@@ -150,7 +150,9 @@ def run_script(version, action, event_name, extract_data, sort, sort_order):
     if data:
         transformed_data = []
         for event in data:
-            transformed_data.append(extract_data(event))
+            extracted_data = extract_data(event)
+            extracted_data["repo"] = repo
+            transformed_data.append(extracted_data)
         transformed_data.sort(key=lambda x: x["timestamp"])
 
         insert_into_posthog(event_name, transformed_data, args.api_key, args.project_key, args.skip_older, args.dry_run)
