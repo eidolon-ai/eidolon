@@ -1,4 +1,4 @@
-from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional
+from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional, cast
 
 from fastapi import HTTPException
 from opentelemetry import trace
@@ -6,7 +6,7 @@ from opentelemetry import trace
 from eidolon_ai_client.events import (
     StreamEvent,
     LLMToolCallRequestEvent,
-    ToolCallStartEvent,
+    ToolCallStartEvent, ObjectOutputEvent, StringOutputEvent,
 )
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.stream_collector import merge_streams
@@ -29,10 +29,11 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     UserMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
+from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallUnit, ToolCallResponse
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 
@@ -46,6 +47,7 @@ class ConversationalAPUSpec(APUSpec):
     logic_units: List[Reference[LogicUnit]] = []
     audio_unit: Optional[Reference[AudioUnit]] = None
     image_unit: Optional[Reference[ImageUnit]] = None
+    tool_call_unit: Optional[Reference[ToolCallUnit]] = None
     record_conversation: bool = True
     allow_tool_errors: bool = True
     document_processor: AnnotatedReference[DocumentProcessor]
@@ -59,6 +61,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
     audio_unit: AudioUnit
     image_unit: ImageUnit
     document_processor: DocumentProcessor
+    tool_call_unit: ToolCallUnit
 
     def __init__(self, spec: ConversationalAPUSpec = None):
         super().__init__(spec)
@@ -69,6 +72,8 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None
         self.image_unit = self.spec.image_unit.instantiate(**kwargs) if self.spec.image_unit else None
+        self.tool_call_unit = self.spec.tool_call_unit.instantiate(**kwargs) if self.spec.tool_call_unit else None
+
         self.record_memory = self.spec.record_conversation
         self.document_processor = self.spec.document_processor.instantiate()
         if self.audio_unit:
@@ -115,10 +120,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-        self,
-        call_context: CallContext,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+            self,
+            call_context: CallContext,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
@@ -137,10 +142,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             raise APUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
-        self,
-        call_context: CallContext,
-        output_format: Union[Literal["str"], Dict[str, Any]],
-        conversation: List[LLMMessage],
+            self,
+            call_context: CallContext,
+            output_format: Union[Literal["str"], Dict[str, Any]],
+            conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
         # first convert the conversation to fill in file data
         converted_conversation = []
@@ -167,7 +172,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
-                execute_llm_ = self.llm_unit.execute_llm(
+                execute_llm_ = self.wrap_tool_calls(
                     call_context, converted_conversation, llm_facing_tools, output_format
                 )
                 # yield the events but capture the output, so it can be rolled into one event for memory.
@@ -202,11 +207,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         raise APUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
-        self,
-        call_context: CallContext,
-        tool_call_event: LLMToolCallRequestEvent,
-        tool_defs,
-        conversation: List[LLMMessage],
+            self,
+            call_context: CallContext,
+            tool_call_event: LLMToolCallRequestEvent,
+            tool_defs,
+            conversation: List[LLMMessage],
     ):
         tc = tool_call_event.tool_call
         logic_unit_wrapper = ["NaN"]
@@ -305,3 +310,44 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             await processor.clone_thread(call_context, new_context)
 
         return Thread(call_context=new_context, cpu=self)
+
+    def wrap_tool_calls(
+            self,
+            call_context: CallContext,
+            messages: List[LLMMessage],
+            tools: List[LLMCallFunction],
+            output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AsyncIterator[StreamEvent]:
+        if not self.tool_call_unit or self.llm_unit.get_llm_capabilities().supports_tools:
+            stream: AsyncIterator[StreamEvent] = self.llm_unit.execute_llm(call_context, messages, tools, output_format)
+            async for e in stream:
+                yield e
+        else:
+            # find last UserMessage or add one
+            userMessage = None
+            for message in messages:
+                if isinstance(message, UserMessage):
+                    userMessage = message
+
+            if not userMessage:
+                userMessage = UserMessage(content = [])
+
+            self.tool_call_unit.add_tools(userMessage, tools)
+            stream: AsyncIterator[StreamEvent] = self.llm_unit.execute_llm(call_context, messages, tools, ToolCallResponse.model_json_schema())
+            # stream should be a single object output event
+            output_event = None
+            async for event in stream:
+                if isinstance(event, ObjectOutputEvent):
+                    if output_event is not None:
+                        raise ValueError("Duplicate output events")
+                    output_event = event
+                else:
+                    yield event
+
+            if output_event:
+                toolCallResponse = cast(ToolCallResponse, output_event.content)
+                if not toolCallResponse.tools:
+                    yield StringOutputEvent(content = "")
+                else:
+                    for tool_call in toolCallResponse.tools:
+                        yield LLMToolCallRequestEvent(tool_call=tool_call)
