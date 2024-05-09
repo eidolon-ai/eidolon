@@ -311,43 +311,15 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
 
         return Thread(call_context=new_context, cpu=self)
 
-    def wrap_tool_calls(
+    async def wrap_tool_calls(
             self,
             call_context: CallContext,
             messages: List[LLMMessage],
             tools: List[LLMCallFunction],
             output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AsyncIterator[StreamEvent]:
+    ):
         if not self.tool_call_unit or self.llm_unit.get_llm_capabilities().supports_tools:
-            stream: AsyncIterator[StreamEvent] = self.llm_unit.execute_llm(call_context, messages, tools, output_format)
-            async for e in stream:
-                yield e
+            return self.llm_unit.execute_llm(call_context, messages, tools, output_format)
         else:
-            # find last UserMessage or add one
-            userMessage = None
-            for message in messages:
-                if isinstance(message, UserMessage):
-                    userMessage = message
-
-            if not userMessage:
-                userMessage = UserMessage(content = [])
-
-            self.tool_call_unit.add_tools(userMessage, tools)
-            stream: AsyncIterator[StreamEvent] = self.llm_unit.execute_llm(call_context, messages, tools, ToolCallResponse.model_json_schema())
-            # stream should be a single object output event
-            output_event = None
-            async for event in stream:
-                if isinstance(event, ObjectOutputEvent):
-                    if output_event is not None:
-                        raise ValueError("Duplicate output events")
-                    output_event = event
-                else:
-                    yield event
-
-            if output_event:
-                toolCallResponse = cast(ToolCallResponse, output_event.content)
-                if not toolCallResponse.tools:
-                    yield StringOutputEvent(content = "")
-                else:
-                    for tool_call in toolCallResponse.tools:
-                        yield LLMToolCallRequestEvent(tool_call=tool_call)
+            self.tool_call_unit.add_tools(messages, tools)
+            return self.tool_call_unit.wrap_exe_call(self.llm_unit.execute_llm, call_context, messages, tools)
