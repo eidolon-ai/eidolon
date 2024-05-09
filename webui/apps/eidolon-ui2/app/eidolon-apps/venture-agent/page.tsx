@@ -1,19 +1,10 @@
 import {Box, ListItem, ListItemText, ListSubheader, Typography} from "@mui/material";
 import {getApp} from "@/utils/eidolon-apps";
-import {CopilotParams} from "@eidolon/components";
 import List from "@mui/material/List";
-import ListItemWithCode from "./ListItemWithCode";
-
-export interface HomePageProps {
-}
+import ListItemWithCode from "../../../components/ListItemWithCode";
 
 const Page = () => {
   const app = getApp("venture-agent")!
-  const params = app!.params as CopilotParams
-
-  function showConfiguration() {
-
-  }
 
   return (
     <Box component="main" sx={{
