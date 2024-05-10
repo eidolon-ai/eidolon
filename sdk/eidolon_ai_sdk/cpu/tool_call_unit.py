@@ -69,7 +69,6 @@ class ToolCallUnit(ProcessingUnit, Specable[ToolCallUnitSpec]):
         # stream should be a single object output event
         async for event in stream:
             if isinstance(event, ObjectOutputEvent):
-                found_object_event = True
                 toolCallResponse = cast(ToolCallResponse, event.content)
                 if not toolCallResponse.tools:
                     yield StringOutputEvent(content="")
