@@ -46,7 +46,7 @@ from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallUnit
+from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallLLMWrapper
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
@@ -200,7 +200,7 @@ def named_builtins():
         OpenAIConnectionHandler,
         AzureOpenAIConnectionHandler,
         OpenAIImageUnit,
-        ToolCallUnit,
+        ToolCallLLMWrapper,
         DefaultAzureCredential,
         EnvironmentCredential,
         # config objects

@@ -4,17 +4,17 @@ from eidolon_ai_client.events import ObjectOutputEvent, ToolCall, StreamEvent, L
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, LLMMessage
 from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction
-from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallUnit, ToolCallUnitSpec, ToolCallResponse
+from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallLLMWrapper, ToolCallLLMWrapperSpec, ToolCallResponse
 
 
 def test_add_tools_adds_correct_message():
-    unit = ToolCallUnit(spec=ToolCallUnitSpec(tool_message_prompt="here"), processing_unit_locator=None)
+    unit = ToolCallLLMWrapper(spec=ToolCallLLMWrapperSpec(tool_message_prompt="here"), processing_unit_locator=None)
     message = UserMessage(content=[])
     tools = [
         LLMCallFunction(name="foo", description="bar", parameters={"a": "b"}),
         LLMCallFunction(name="foo2", description="bar2", parameters={"a2": "b2"}),
     ]
-    unit.add_tools([message], tools)
+    unit._add_tools([message], tools)
     assert message == UserMessage(type='user', content=[
         UserMessageText(
             type='text',
@@ -27,13 +27,13 @@ here"""
 
 
 def test_add_tools_adds_correct_message_to_new_UserMessage():
-    unit = ToolCallUnit(spec=ToolCallUnitSpec(tool_message_prompt="here"), processing_unit_locator=None)
+    unit = ToolCallLLMWrapper(spec=ToolCallLLMWrapperSpec(tool_message_prompt="here"), processing_unit_locator=None)
     tools = [
         LLMCallFunction(name="foo", description="bar", parameters={"a": "b"}),
         LLMCallFunction(name="foo2", description="bar2", parameters={"a2": "b2"}),
     ]
     messages = []
-    unit.add_tools(messages, tools)
+    unit._add_tools(messages, tools)
     assert len(messages) == 1
     assert messages[0] == UserMessage(type='user', content=[
         UserMessageText(
@@ -47,7 +47,7 @@ here"""
 
 
 async def test_wrap_exe_call_converts_output():
-    unit = ToolCallUnit(spec=ToolCallUnitSpec(tool_message_prompt="here"), processing_unit_locator=None)
+    unit = ToolCallLLMWrapper(spec=ToolCallLLMWrapperSpec(tool_message_prompt="here"), processing_unit_locator=None)
     cc = CallContext(process_id="123")
     mess = [UserMessage(content=[UserMessageText(text="123")])]
     tls = [LLMCallFunction(name="foo", description="bar", parameters={"a": "b"})]
@@ -60,12 +60,12 @@ async def test_wrap_exe_call_converts_output():
         assert output_schema == ToolCallResponse.model_json_schema()
         yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
 
-    response = [event async for event in unit.wrap_exe_call(exec_llm_mock, cc, mess, tls)]
+    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, cc, mess, tls)]
     assert response == [LLMToolCallRequestEvent(tool_call=tool) for tool in tool_response]
 
 
 async def test_wrap_exe_call_yields_other_events():
-    unit = ToolCallUnit(spec=ToolCallUnitSpec(tool_message_prompt="here"), processing_unit_locator=None)
+    unit = ToolCallLLMWrapper(spec=ToolCallLLMWrapperSpec(tool_message_prompt="here"), processing_unit_locator=None)
     cc = CallContext(process_id="123")
     mess = [UserMessage(content=[UserMessageText(text="123")])]
     tls = [LLMCallFunction(name="foo", description="bar", parameters={"a": "b"})]
@@ -80,12 +80,12 @@ async def test_wrap_exe_call_yields_other_events():
         yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
         yield UserInputEvent(input="abc")
 
-    response = [event async for event in unit.wrap_exe_call(exec_llm_mock, cc, mess, tls)]
+    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, cc, mess, tls)]
     assert response == [UserInputEvent(input="abc"), LLMToolCallRequestEvent(tool_call=tool_response[0]), UserInputEvent(input="abc")]
 
 
 async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
-    unit = ToolCallUnit(spec=ToolCallUnitSpec(tool_message_prompt="here"), processing_unit_locator=None)
+    unit = ToolCallLLMWrapper(spec=ToolCallLLMWrapperSpec(tool_message_prompt="here"), processing_unit_locator=None)
     cc = CallContext(process_id="123")
     mess = [UserMessage(content=[UserMessageText(text="123")])]
     tls = [LLMCallFunction(name="foo", description="bar", parameters={"a": "b"})]
@@ -100,5 +100,5 @@ async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
         yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
         yield UserInputEvent(input="abc")
 
-    response = [event async for event in unit.wrap_exe_call(exec_llm_mock, cc, mess, tls)]
+    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, cc, mess, tls)]
     assert response == [UserInputEvent(input="abc"), StringOutputEvent(content=""), UserInputEvent(input="abc")]

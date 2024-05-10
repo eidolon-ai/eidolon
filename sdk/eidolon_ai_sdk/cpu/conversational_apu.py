@@ -29,11 +29,11 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     UserMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallUnit
+from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallLLMWrapper
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 
@@ -47,7 +47,7 @@ class ConversationalAPUSpec(APUSpec):
     logic_units: List[Reference[LogicUnit]] = []
     audio_unit: Optional[Reference[AudioUnit]] = None
     image_unit: Optional[Reference[ImageUnit]] = None
-    tool_call_unit: Optional[Reference[ToolCallUnit]] = None
+    tool_call_unit: Optional[Reference[ToolCallLLMWrapper]] = None
     record_conversation: bool = True
     allow_tool_errors: bool = True
     document_processor: AnnotatedReference[DocumentProcessor]
@@ -61,7 +61,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
     audio_unit: AudioUnit
     image_unit: ImageUnit
     document_processor: DocumentProcessor
-    tool_call_unit: ToolCallUnit
+    tool_call_unit: ToolCallLLMWrapper
 
     def __init__(self, spec: ConversationalAPUSpec = None):
         super().__init__(spec)
@@ -172,7 +172,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
-                execute_llm_ = self.wrap_tool_calls(
+                execute_llm_ = self.llm_unit.execute_llm(
                     call_context, converted_conversation, llm_facing_tools, output_format
                 )
                 # yield the events but capture the output, so it can be rolled into one event for memory.
@@ -310,16 +310,3 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             await processor.clone_thread(call_context, new_context)
 
         return Thread(call_context=new_context, cpu=self)
-
-    async def wrap_tool_calls(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
-    ):
-        if not self.tool_call_unit or self.llm_unit.get_llm_capabilities().supports_tools:
-            return self.llm_unit.execute_llm(call_context, messages, tools, output_format)
-        else:
-            self.tool_call_unit.add_tools(messages, tools)
-            return self.tool_call_unit.wrap_exe_call(self.llm_unit.execute_llm, call_context, messages, tools)
