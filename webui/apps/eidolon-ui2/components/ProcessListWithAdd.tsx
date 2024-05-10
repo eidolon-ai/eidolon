@@ -9,7 +9,7 @@ import {StartProgramDialog} from "../app/eidolon-apps/dev-tool/components/start-
 import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
-import {useProcesses} from "../../../packages/eidolon-components/src/hooks/processes_context";
+import {useProcesses} from "@eidolon/components";
 import {TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT} from "@/layout/config";
 import {useOnMobile} from "@/hooks/index";
 

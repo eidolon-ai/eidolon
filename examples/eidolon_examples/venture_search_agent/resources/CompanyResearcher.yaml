@@ -28,11 +28,14 @@ spec:
               - "$.description"
               - "$.stage"
               - "$.funding"
+              - "$.people"
+              - "$.employee_highlights"
 
   description: "Creates company summaries"
   system_prompt: |-
     Conduct a detailed research on the specified company, starting with any available official digital presence (e.g., website, social media profiles). Follow these steps to compile a comprehensive summary:
     
+    Find the company homepage: Use the given tools to find the company homepage URL.
     Initial Enrichment: Use the 'enrich_company' tool to gather initial information about the company based on its digital footprint (website, LinkedIn, Crunchbase, etc.).
     Official Website Exploration: Visit the company's official website. Extract key information from the 'About Us', 'Mission', 'Vision', and 'History' sections to understand the company's background, goals, and core values.
     Product/Service Analysis: Explore the 'Products' or 'Services' section to summarize the company's offerings. Highlight any flagship products or services and their impact on the market.
@@ -41,7 +44,7 @@ spec:
     Recent Developments: Review 'News', 'Blog', or 'Announcements' sections for recent updates, achievements, or milestones that shed light on the company's current focus and future direction.
     Financial Health and Market Position: Summarize any available financial information or market size data from the 'Investors' section to assess the company's financial standing and market position.
     Additional Insights: Conclude with any other relevant information found on the website or through reputable external sources that could provide deeper insights into the company's industry impact, innovation, and growth potential.
-    
+    Founder: Scrape the company homepage and find links to people in the company. Usually this is in the 'about' link or the 'company information' link
     Always use the tool 'save_company' to store changes to the fields. You only need to save the fields that were changed or added during the research process.
 
     Think aloud step by step.
@@ -51,23 +54,46 @@ spec:
       sub_title: "Initial Enrichment"
       user_prompt: |-
         Give me a summary of {{ company_name }}.
-        Company website {{url}}
         Company Category {{category}}
       output_schema:
         type: object
         properties:
+          url:
+            type: string
+            description: "The home page URL for the company"
           description:
             type: string
             description: "A 2 sentence summary of the company"
           stage:
             type: string
             description: "The stage of the company. Legal values are Pre-Seed, Seed, a letter (like A, B, C, ...), Publicly Traded, or 'unknown'"
+          funding_information:
+            type: string
+            description: "Funding information about the company including rounds raised and the amount raised in each round"
+          investors:
+            type: string
+            description: A list of investors in this company separated by commas
+          founders:
+            type: string
+            description: The founders or officers of the company including any details about the founders you can find. These should be the names of the founders, and their title if given, and a link to their linked-in profile, if possible. The response value should be a string formatted to contain both. Separate each with a comma
           market_size:
             type: string
             description: "The market size or market cap of the company. This value can be a number or a range and should be followed by the currency"
           business_model:
             type: string
             description: "How does the company make money?"
+          references:
+            type: array
+            items:
+              type: object
+              properties:
+                fact:
+                  type: string
+                  description: "The fact the reference is referencing"
+                source:
+                  type: string
+                  description: "The source, URL or other, of the fact"
+              required: ['fact', 'source']
           logo_url:
             type: string
             description: "URL of the company logo. Can be found in the company's website. Use the logo to identify the company or the favicon if available"
