@@ -1,4 +1,4 @@
-from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional, cast
+from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional
 
 from fastapi import HTTPException
 from opentelemetry import trace
@@ -6,7 +6,7 @@ from opentelemetry import trace
 from eidolon_ai_client.events import (
     StreamEvent,
     LLMToolCallRequestEvent,
-    ToolCallStartEvent, ObjectOutputEvent, StringOutputEvent,
+    ToolCallStartEvent,
 )
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.stream_collector import merge_streams
@@ -33,7 +33,7 @@ from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
 from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
-from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallUnit, ToolCallResponse
+from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallUnit
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 

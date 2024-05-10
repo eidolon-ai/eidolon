@@ -16,18 +16,18 @@ class ToolCallResponse(BaseModel):
 
 
 class ToolCallUnitSpec(BaseModel):
-    tool_message_prompt: str = f"""You must follow these instructions:
+    tool_message_prompt: str = """You must follow these instructions:
 Always select one or more of the above tools based on the user query
 If a tool is found, you must respond in the JSON format matching the following schema:
-{{
+{
    "tools": [
-   {{
+   {
         "tool_call_id": "<the id of the selected tool>",
         "name": "<name of the selected tool>",
         "arguments": <arguments for the selected tool, matching the tool's parameter JSON schema
-   }}
+   }
    ]
-}}
+}
 If there are multiple tools required, make sure a list of tools are returned in a JSON array.
 If there is no tool that match the user request, you will respond with empty json.
 Do not add any additional Notes or Explanations"""
