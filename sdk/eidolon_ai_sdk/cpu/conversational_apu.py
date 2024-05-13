@@ -47,7 +47,6 @@ class ConversationalAPUSpec(APUSpec):
     logic_units: List[Reference[LogicUnit]] = []
     audio_unit: Optional[Reference[AudioUnit]] = None
     image_unit: Optional[Reference[ImageUnit]] = None
-    tool_call_unit: Optional[Reference[ToolCallLLMWrapper]] = None
     record_conversation: bool = True
     allow_tool_errors: bool = True
     document_processor: AnnotatedReference[DocumentProcessor]
@@ -61,7 +60,6 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
     audio_unit: AudioUnit
     image_unit: ImageUnit
     document_processor: DocumentProcessor
-    tool_call_unit: ToolCallLLMWrapper
 
     def __init__(self, spec: ConversationalAPUSpec = None):
         super().__init__(spec)
@@ -72,7 +70,6 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None
         self.image_unit = self.spec.image_unit.instantiate(**kwargs) if self.spec.image_unit else None
-        self.tool_call_unit = self.spec.tool_call_unit.instantiate(**kwargs) if self.spec.tool_call_unit else None
 
         self.record_memory = self.spec.record_conversation
         self.document_processor = self.spec.document_processor.instantiate()
@@ -185,11 +182,23 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             if stream_collector.get_content():
                 logger.info(f"LLM Response: {stream_collector.get_content()}")
 
-            assistant_message = AssistantMessage(
-                type="assistant",
-                content=stream_collector.get_content() or "",
-                tool_calls=[tce.tool_call for tce in tool_call_events],
-            )
+            if isinstance(self.llm_unit, ToolCallLLMWrapper) and tool_call_events:
+                content = stream_collector.get_content() or ""
+                content += "\nCall the following tools\n"
+                for tool_call in tool_call_events:
+                    content += f"\n{tool_call.tool_call.model_dump_json()}"
+                assistant_message = AssistantMessage(
+                    type="assistant",
+                    content=content,
+                    tool_calls=[],
+                )
+
+            else:
+                assistant_message = AssistantMessage(
+                    type="assistant",
+                    content=stream_collector.get_content() or "",
+                    tool_calls=[tce.tool_call for tce in tool_call_events],
+                )
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             converted_conversation.append(assistant_message)
@@ -252,12 +261,16 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 else:
                     raise
 
-            message = ToolResponseMessage(
-                logic_unit_name=logic_unit_wrapper[0],
-                tool_call_id=tc.tool_call_id,
-                result=tool_stream.get_content() or "",
-                name=tc.name,
-            )
+            if isinstance(self.llm_unit, ToolCallLLMWrapper):
+                content = tool_stream.get_content() or ""
+                message = UserMessage(content=[UserMessageText(text=f"Tool {tc.model_dump_json()} completed with value {content}")])
+            else:
+                message = ToolResponseMessage(
+                    logic_unit_name=logic_unit_wrapper[0],
+                    tool_call_id=tc.tool_call_id,
+                    result=tool_stream.get_content() or "",
+                    name=tc.name,
+                )
 
         if self.record_memory:
             await self.memory_unit.storeMessages(call_context, [message])

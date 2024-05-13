@@ -178,6 +178,6 @@ async def convert_output_object(it: AsyncIterator[StreamEvent], output_format: T
 
 
 class ToolCall(BaseModel):
-    tool_call_id: str
-    name: str
-    arguments: Dict[str, Any]
+    tool_call_id: str = Field(..., description="The id of the tool call")
+    name: str = Field(..., description="The name of the tool")
+    arguments: Dict[str, Any] = Field({}, description="The arguments to the tool call")

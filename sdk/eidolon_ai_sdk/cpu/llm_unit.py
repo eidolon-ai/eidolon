@@ -55,7 +55,7 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
-        self.model = self.spec.model.instantiate()
+        self.model = self.spec.model.instantiate() if self.spec.model else None
 
     def get_llm_capabilities(self) -> LLMCapabilities:
         return LLMCapabilities(

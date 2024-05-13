@@ -1,67 +1,67 @@
 import json
-from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, cast
+from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, LLMMessage
-from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction, LLMUnit, LLMUnitSpec, LLMModel
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
+from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
+
+
+class _DefaultModel(LLMModel):
+    human_name: str = "Default"
+    name: str = "default"
+    input_context_limit: int = 1024
+    output_context_limit: int = 1024
+    supports_tools: bool = False
+    supports_image_input: bool = False
+    supports_audio_input: bool = False
 
 
 class ModelWrapper(LLMModel):
-    base_model: LLMModel
-
     def __init__(self, base_model: LLMModel):
         super().__init__(**base_model.dict())
         self.supports_tools = True
 
 
 class ToolCallResponse(BaseModel):
-    tools: List[ToolCall]
+    tools: List[ToolCall] = Field(default=[], description="The tools that are available.")
+    notes: str = Field(default="", description="Any notes or explanations.")
 
 
-class ToolCallLLMWrapperSpec(LLMUnitSpec):
+class ToolCallLLMWrapperSpec(BaseModel):
     tool_message_prompt: str = """You must follow these instructions:
-Always select one or more of the above tools based on the user query
+You can select zero or more of the above tools based on the user query
 If there are multiple tools required, make sure a list of tools are returned in a JSON array.
-If there is no tool that match the user request, you will respond with empty json.
-Do not add any additional Notes or Explanations"""
+If there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.
+You can also add any additional notes or explanations in the notes field."""
     llm_unit: AnnotatedReference[LLMUnit]
+    model: Optional[Reference[LLMModel]] = Field(default=None)
 
 
 class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
     llm_unit: LLMUnit
 
     def __init__(self, **kwargs):
-
-        # todo -- need to figure out this mess...
         Specable.__init__(self, **kwargs)
-        self.spec.model = AnnotatedReference[ModelWrapper]
         super().__init__(**kwargs)
-        self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
+        self.llm_unit = self.spec.llm_unit.instantiate(processing_unit_locator=self.processing_unit_locator, spec=self.spec.llm_unit)
         self.model = ModelWrapper(base_model=self.llm_unit.model)
 
-    async def execute_llm(self,
-                          call_context: CallContext,
-                          messages: List[LLMMessage],
-                          tools: List[LLMCallFunction],
-                          output_format: Union[Literal["str"], Dict[str, Any]]
-                          ) -> AsyncIterator[StreamEvent]:
-        self._add_tools(messages, tools)
-        return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, messages, tools)
+    def execute_llm(self,
+                    call_context: CallContext,
+                    messages: List[LLMMessage],
+                    tools: List[LLMCallFunction],
+                    output_format: Union[Literal["str"], Dict[str, Any]]
+                    ) -> AsyncIterator[StreamEvent]:
+        messages = self._add_tools(messages, tools)
+        print("****", messages)
+        return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, messages)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
         # find last UserMessage or add one
-        userMessage = None
-        for message in messages:
-            if isinstance(message, UserMessage):
-                userMessage = message
-
-        if not userMessage:
-            userMessage = UserMessage(content=[])
-            messages.append(userMessage)
         tool_schema = []
         for tool in tools:
             tool_schema.append(
@@ -74,21 +74,23 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
             )
 
         prompt = "You have access to the following tools:\n" + "\n".join(tool_schema) + "\n" + self.spec.tool_message_prompt
-        userMessage.content.insert(0, UserMessageText(text=prompt))
+        return messages + [UserMessage(content=[UserMessageText(text=prompt)])]
 
     async def _wrap_exe_call(self, exec_llm_call: Callable[[CallContext, List[LLMMessage], List[LLMCallFunction],
                                                             Union[Literal["str"], Dict[str, Any]]], AsyncIterator[StreamEvent]],
-                             call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction]) -> AsyncIterator[StreamEvent]:
-        stream: AsyncIterator[StreamEvent] = exec_llm_call(call_context, messages, tools, ToolCallResponse.model_json_schema())
+                             call_context: CallContext, messages: List[LLMMessage]) -> AsyncIterator[StreamEvent]:
+        stream: AsyncIterator[StreamEvent] = exec_llm_call(call_context, messages, [], ToolCallResponse.model_json_schema())
         # stream should be a single object output event
         async for event in stream:
             if isinstance(event, ObjectOutputEvent):
-                toolCallResponse = cast(ToolCallResponse, event.content)
-                if not toolCallResponse.tools:
-                    yield StringOutputEvent(content="")
-                else:
+                toolCallResponse = ToolCallResponse.model_validate(event.content)
+                print(toolCallResponse)
+                if toolCallResponse.tools:
                     for tool_call in toolCallResponse.tools:
                         yield LLMToolCallRequestEvent(tool_call=tool_call)
-
+                    if toolCallResponse.notes:
+                        yield StringOutputEvent(content=toolCallResponse.notes)
+                else:
+                    yield StringOutputEvent(content=toolCallResponse.notes)
             else:
                 yield event
