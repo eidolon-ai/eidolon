@@ -1,9 +1,9 @@
 import React from 'react';
-import {Box, Button, IconButton, Typography} from '@mui/material';
+import {Box, IconButton, ListItem, ListItemText, Typography} from '@mui/material';
 import {Company} from "../../types";
 import {CompanyListItem} from "./CompanyListItem";
-import {Image, ImageRounded} from "@mui/icons-material";
 import harmonicStamp from "./harmonic_stamp.svg"
+import List from "@mui/material/List";
 
 interface CompanyDetailsProps {
   company: Company;
@@ -48,8 +48,17 @@ const CompanyDetailsLayout: React.FC<CompanyDetailsProps> = ({company, refreshRe
           <strong>Stage:</strong> {details?.stage}
         </Typography>
         <Typography variant="body1" paragraph>
-          <strong>Market Size:</strong> {details?.market_size}
+          <strong>Funding:</strong> {details?.funding_information}
         </Typography>
+        <Typography variant="body1" paragraph>
+          <strong>Investors:</strong> {details?.investors}
+        </Typography>
+        <Typography variant="body1" paragraph>
+          <strong>Founders:</strong> {details?.founders}
+        </Typography>
+        {/*<Typography variant="body1" paragraph>*/}
+        {/*  <strong>Market Size:</strong> {details?.market_size}*/}
+        {/*</Typography>*/}
         <Typography variant="body1" paragraph>
           <strong>Business Model:</strong> {details?.business_model}
         </Typography>
@@ -57,6 +66,27 @@ const CompanyDetailsLayout: React.FC<CompanyDetailsProps> = ({company, refreshRe
           <Typography variant="body1" paragraph>
             <strong>Other Information:</strong> {details?.other_information}
           </Typography>
+        )}
+        {details?.references && (
+          <div>
+            <Typography variant="body1">
+              <strong>Sources:</strong>
+            </Typography>
+            <List dense>
+              {details?.references?.map((reference, index) => (
+                <ListItem>
+                  <ListItemText>
+                    {Object.entries(reference).map((kv) => (
+                      <Typography key={kv[0] + index} variant="body1">
+                        <strong>{kv[0]}:</strong> {kv[1]}
+                      </Typography>
+                    ))
+                    }
+                  </ListItemText>
+                </ListItem>
+              ))}
+            </List>
+          </div>
         )}
       </Box>
     </Box>

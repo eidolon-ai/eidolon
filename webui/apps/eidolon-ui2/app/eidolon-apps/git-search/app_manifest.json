@@ -6,6 +6,7 @@
   "location": "http://localhost:8080",
   "type": "copilot",
   "params": {
+    "custom_page": "git-search",
     "agent": "repo_expert",
     "operation": "converse",
     "inputLabel": "How can I help you?",
