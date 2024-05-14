@@ -29,5 +29,5 @@ jobs:
         working-directory: scripts
       - run: poetry run push_gh_forks  --repo eidolon-ai/eidolon --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
         working-directory: scripts
-      - run: poetry run push_pypi_downloads  --repo eidolon-ai/eidolon --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
+      - run: poetry run push_pypi_downloads  --package eidolon-ai-sdk --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
         working-directory: scripts
