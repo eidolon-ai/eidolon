@@ -117,9 +117,6 @@ def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_
 
 
 def run_script(version, action, event_name, extract_data, sort, sort_order):
-    owner = "eidolon-ai"
-    repo = "eidolon"
-
     dotenv.load_dotenv()
 
     # Create an argument parser

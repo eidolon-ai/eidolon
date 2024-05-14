@@ -23,7 +23,7 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: scripts
-      - run: poetry run push_stats  --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
+      - run: poetry run push_stats  --repo eidolon-ai/eidolon --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
         working-directory: scripts
       - run: poetry run push_gh_stars  --repo eidolon-ai/eidolon --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
         working-directory: scripts
