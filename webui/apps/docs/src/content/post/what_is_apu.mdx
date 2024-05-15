@@ -1,0 +1,97 @@
+---
+publishDate: 2024-05-14T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'APU'
+title: 'APU: What is it and how does it work?'
+excerpt: "Part 1: Encapsulate the complexities of the LLM in bite-sized chunks, with a highly configurable and easy to use module."
+image: ~/assets/images/APU.png
+tags:
+  - APU
+  - LLM App Development
+  - LLM memory
+  - LLM Tools
+metadata:
+  canonical: https://www.eidolonai.com/what-is-apu
+---
+import Image from '~/components/common/Image.astro';
+
+Historically LLM applications have been difficult to develop and maintain. The existing tools and libraries intertwine the complexities of the LLM with the application logic, 
+making it difficult to reason about the application's behavior and brittle when adding more LLM functionality. This is where the APU comes in.
+
+## What is an APU?
+The **Agent Processing Unit**, or **APU**, is an abstraction that encapsulates the complexities of the LLM in bite-sized chunks. It provides a clean interface for developers to 
+interact with the LLM, hiding the details of the LLM's inner workings. This separation of concerns makes it easier to reason about the application's behavior and allows developers 
+to focus on building the application logic without worrying about the intricacies of the LLM.
+
+Execution of the APU is asynchronous, allowing you to handle multiple conversations concurrently using the *agent process id* contained in the CallContext. 
+The APU also supports multiple threads, allowing you to handle multiple conversations within the same process. This advanced threading model allows you to build
+complex agents that can handle multiple conversations concurrently, easily allowing you to separate input, output, and processing of separate "threads" of conversation.
+
+## How does it work?
+Communication with an LLM can be quite complex, involving multiple steps and components. However, contrary to the complexities other frameworks drag you through, communication
+with an LLM follows a simple pattern.
+
+Let's start by looking at how an incoming message flows through the APU.
+
+<Image 
+  src={"~/assets/images/llm-events.png"} alt="APU Flow" 
+  loading="eager"
+  decoding="async"
+  background="transparent"
+  class="max-w-full lg:max-w-[900px] mx-auto mb-6"
+  widths={[400, 900]}
+  sizes="(max-width: 900px) 400px, 900px"
+/>
+
+By default, the APU follows the following control pattern:
+1. New events that come into the APU are first stored in memory, using the Memory Unit registered with the APU.
+1. Any prior events, i.e. conversation history, are loaded from memory and prepended with the new events.
+1. The APU then enters an execution loop:
+   + The APU executes the events storing the responses in memory.
+   + If the event requires a tool call, the APU schedules the tool call and waits for the response.
+   + If tools were called, the APU writes the responses to memory and continues execution.
+   + Else the APU exits the loop if no tool calls are required or if it hits its (configurable) tool call limit.
+
+This pattern allows the APU to handle complex conversations, including tool calls, in a simple and efficient manner. 
+
+**EVERY** component in the chain, including the APU control logic, is configurable, allowing you to customize the APU to suit your needs.
+
+### APU Output
+All output from the APU, just like from an agent, is returned as a stream of events. This allows you to process the output in real-time, making it easy to integrate streaming or just-in-time processing
+within your agent.
+
+Events are streamed in the order they are generated from the LLM or tool call. The LLM Unit generates one of the three types of events:
+1. **ObjectOutputEvent**: This event contains a JSON object that represents the output of the LLM as an object, if requested as such.
+1. **StringOutputEvent**: This event contains a string that represents some or all of the output from the LLM.
+1. **LLMToolCallRequestEvent**: This event is generated when the LLM requires a tool call to be made. The event contains the tool name and the input to the tool.
+
+Once a tool call is executed, **ALL** events from the tool call are streamed back to the APU as they are generated. This allows you to process the output from the 
+tool call in real-time. The nested tool call output events will start with a **ToolCallStartEvent** with the *context_id* field set to the ID of the tool call. 
+All subsequent events will have the *stream_context* field set to the *context_id* of the tool call. This allows you to correlate the output from the tool call with the
+original event that triggered the tool call, nested within an APU call.
+
+This nested structures allows the system to handle complex conversations, including nested calls to other agents, in a unified way. This includes the ability to handle multiple
+levels of nested agent or tool calls, allowing a unified view of the conversation history from the calling agent's perspective.
+
+## Components of the APU
+We've discussed the control flow of the APU, now let's look at the components that make up the APU and do the real work.
+
+There are currently six components that make up the APU:
+1. **IO Unit**: This unit is responsible for translating the incoming user messages into LLMEvents to be processed by the APU.
+1. **Memory Unit**: This unit is responsible for storing and retrieving conversation history including *AssistantMessage*, which includes messages and tool call requests,
+   and *ToolResponseMessage*, which includes responses from tool calls.
+1. **LLM Unit**: This unit is responsible for communicating with the LLM, including sending messages to the LLM and receiving responses. Many LLM's have different requirements
+   for communication. This unit is responsible for translating the APU's LLMEvents into the format required by the LLM and processing the LLM's responses into APU events.
+1. **Speech Unit**: This unit is responsible for converting text to speech and vice versa. This unit is optional and can be disabled if not needed or if the LLM provides its own
+   text-to-speech capabilities.
+1. **Image Unit**: This unit is responsible for handling image processing, including converting images to text and vice versa. This unit is optional and can be disabled if not needed
+   or if the LLM provides its own image processing capabilities.
+1. **Logic Units**: These are the tool interfaces that allow the APU to communicate with external tools. These units are responsible for translating the APU's LLMEvents into the format
+   required by the tool and processing the tool's responses into APU events. Logic units can be simple, like a unit that translates text to uppercase, or complex, like a unit that
+   calls other agents or a logic unit that can call any API using OpenAPI schema.
+
+As mentioned above, **EVERY** component in the chain is configurable, allowing you to customize the APU to suit your needs. This includes the ability to add custom logic units to
+handle specific tasks or integrate with external systems as well as the ability to replace any of the built-in units with your own custom implementation.
+
+Now that we have a better understanding of what the APU is and how it works, let's dive deeper into how you can use the APU to build powerful and flexible LLM applications.
+Next we will look at how you can configure the APU to suit your needs.

@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import asyncio
-from abc import abstractmethod, ABC
-from typing import List, Any, Dict, Literal
+from typing import List, Any, Literal
 
 from pydantic import BaseModel
 
 from eidolon_ai_client.events import FileHandle
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
@@ -19,29 +16,33 @@ from eidolon_ai_sdk.cpu.llm_message import (
 from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
 
 
-class ResponseHandler(ABC):
-    @abstractmethod
-    async def handle(self, process_id: str, response: Dict[str, Any]):
-        pass
-
-
 class APUMessage(BaseModel):
+    """
+    Base message type for APU input
+    """
     type: str
 
 
 class UserTextAPUMessage(APUMessage):
+    """
+    A user message to the APU.
+    """
     type: Literal["user"] = "user"
     prompt: str
-    is_boot_prompt: bool = False
 
 
 class SystemAPUMessage(APUMessage):
+    """
+    A system message to the APU
+    """
     type: Literal["system"] = "system"
-    is_boot_prompt: bool = True
     prompt: str
 
 
 class AttachedFileMessage(APUMessage):
+    """
+    A file attachment message to the APU.
+    """
     type: Literal["image_url"] = "file"
     file: FileHandle
     include_directly: bool
@@ -51,8 +52,19 @@ CPUMessageTypes = UserTextAPUMessage | SystemAPUMessage | AttachedFileMessage
 
 
 class IOUnit(ProcessingUnit):
+    """
+    This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM
+
+    This can be overridden to provide custom IO handling.
+    """
     async def process_request(self, call_context: CallContext, prompts: List[CPUMessageTypes]) -> List[LLMMessage]:
-        # convert the prompts to a list of strings
+        """
+        Converts the external prompts to the internal LLM messages.
+
+        :param call_context: The current call context including process id and thread id.
+        :param prompts: The prompts to send to the LLM
+        :return: A list of LLM messages
+        """
         conv_messages = []
         user_message_parts = []
         for prompt in prompts:
@@ -75,9 +87,11 @@ class IOUnit(ProcessingUnit):
         return conv_messages
 
     async def process_response(self, call_context: CallContext, response: Any):
-        return response
+        """
+        Converts the LLM response to the external response. Base implementation just returns the response but can be overridden to provide custom response handling.
+        :param call_context: The current call context including process id and thread id.
+        :param response: The response from the LLM
+        :return: The converted response
+        """
 
-    @classmethod
-    async def delete_process(cls, process_id: str):
-        found = await AgentOS.file_memory.glob(f"uploaded_images/{process_id}/**/*")
-        await asyncio.gather(*[AgentOS.file_memory.delete_file(file) for file in found])
+        return response

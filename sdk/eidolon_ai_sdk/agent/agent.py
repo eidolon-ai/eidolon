@@ -4,7 +4,7 @@ import typing
 from pydantic import BaseModel
 from typing import List, TypeVar, Generic
 
-from eidolon_ai_sdk.cpu.agent_cpu import APU
+from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec,
