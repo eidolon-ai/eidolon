@@ -37,23 +37,23 @@ def extract_github_traffic(repo_owner, repo_name, access_token, action, version,
         raise RuntimeError(f"Failed to retrieve traffic data. Status code: {response.status_code} -- {response.text}")
 
 
-def insert_into_posthog(event_name: str, data: List[Dict[str, any]], posthog_api_key, posthog_project_key, skip_older, dry_run):
+def insert_into_posthog(event_name: str, repo: str, data: List[Dict[str, any]], posthog_api_key, posthog_project_key, skip_older, dry_run):
     # Iterate over each day's traffic data
     for event in data:
         if "timestamp" not in event:
             raise ValueError("Timestamp is required in the event data")
         timestamp = event["timestamp"]
-        print(f"Processing data for date {timestamp}, data: {event}")
+        print(f"Processing {repo}/{event_name} for date {timestamp}, data: {event}")
         date = timestamp.split("T")[0]
         # check if the date is more than 10 days old
         if skip_older > 0 and ((datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > skip_older):
-            print(f"Skipping data for date {date} as it is more than 10 days old.")
+            # print(f"Skipping data for date {date} as it is more than 10 days old.")
             continue
 
-        posthog_update_if_needed(event_name, timestamp, event, posthog_api_key, posthog_project_key, dry_run)
+        posthog_update_if_needed(event_name, repo, timestamp, event, posthog_api_key, posthog_project_key, dry_run)
 
 
-def posthog_update_if_needed(event_name, timestamp, event, posthog_api_key, posthog_project_key, dry_run):
+def posthog_update_if_needed(event_name, repo: str, timestamp, event, posthog_api_key, posthog_project_key, dry_run):
     # Set the PostHog API endpoint URL
     posthog_url = "https://app.posthog.com/capture/"
     # Set the headers with the PostHog API key
@@ -62,7 +62,7 @@ def posthog_update_if_needed(event_name, timestamp, event, posthog_api_key, post
         "Authorization": f"Bearer {posthog_api_key}"
     }
     # Check if data for the current day already exists in PostHog
-    events = get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key)
+    events = get_existing_events(event_name, repo, timestamp, posthog_api_key, posthog_project_key)
     should_insert = not events or len(events) == 0
     if should_insert:
         # Prepare the data payload
@@ -72,7 +72,8 @@ def posthog_update_if_needed(event_name, timestamp, event, posthog_api_key, post
             "distinct_id": event.get("distinct_id") or "github_traffic",
             "properties": {
                 **event,
-                "timestamp": timestamp
+                "timestamp": timestamp,
+                "insertion_timestamp": datetime.now().isoformat(),
             },
             "timestamp": timestamp,
         }
@@ -88,7 +89,7 @@ def posthog_update_if_needed(event_name, timestamp, event, posthog_api_key, post
         print(f"Data for date {timestamp} already exists in PostHog", len(events), events[0]["properties"]["timestamp"])
 
 
-def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key):
+def get_existing_events(event_name, repo, timestamp, posthog_api_key, posthog_project_key):
     # Set the PostHog API endpoint URL for querying events
     posthog_url = "https://app.posthog.com/api/event/"
 
@@ -106,6 +107,10 @@ def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_
                 "key": "timestamp",
                 "value": timestamp,
                 "operator": "exact"
+            }, {
+                "key": "repo",
+                "value": repo,
+                "operator": "exact"
             }
         ])
     }
@@ -117,9 +122,6 @@ def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_
 
 
 def run_script(version, action, event_name, extract_data, sort, sort_order):
-    owner = "eidolon-ai"
-    repo = "eidolon"
-
     dotenv.load_dotenv()
 
     # Create an argument parser
@@ -155,4 +157,4 @@ def run_script(version, action, event_name, extract_data, sort, sort_order):
             transformed_data.append(extracted_data)
         transformed_data.sort(key=lambda x: x["timestamp"])
 
-        insert_into_posthog(event_name, transformed_data, args.api_key, args.project_key, args.skip_older, args.dry_run)
+        insert_into_posthog(event_name, repo, transformed_data, args.api_key, args.project_key, args.skip_older, args.dry_run)
