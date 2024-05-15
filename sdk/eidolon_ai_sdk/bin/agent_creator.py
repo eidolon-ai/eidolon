@@ -17,8 +17,9 @@ from pydantic_core import PydanticUndefinedType
 from rich import print as richprint
 from rich.syntax import Syntax
 
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Reference
-from eidolon_ai_sdk.system.resources import agent_resources, AgentResource
+from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.util.class_utils import for_name, fqn
 
 echo = lambda text, **kwargs: typer.echo(pad(text), **kwargs)  # noqa
@@ -89,6 +90,7 @@ def fqn_completer(text, state):
 
 
 def create_agent():
+    agent_resources = AgentOS.get_resources(AgentResource)
     agents = [a for a in agent_resources.keys() if a != "Agent"] + ["Custom"]
 
     name = prompt("What is the name of the agent?", default="NewAgent")

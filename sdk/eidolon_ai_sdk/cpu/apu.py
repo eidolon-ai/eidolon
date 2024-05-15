@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from pydantic import BaseModel, Field, TypeAdapter
 from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator
 
+from pydantic import BaseModel, Field, TypeAdapter
+
+from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
 from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes
 from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -30,6 +31,10 @@ class APUSpec(BaseModel):
 
 
 class APU(Specable[APUSpec], ABC):
+    """
+    The APU is the main interface for the Agent to interact with the LLM.
+    The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.
+    """
     title: str
 
     def __init__(self, spec: T, **kwargs: object):
@@ -38,19 +43,36 @@ class APU(Specable[APUSpec], ABC):
 
     @abstractmethod
     def get_capabilities(self) -> APUCapabilities:
+        """
+        Returns the capabilities of the APU including the context limits, whether it supports tools, image input, audio input, file search, image generation, and audio generation.
+        """
         pass
 
     @abstractmethod
     async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
+        """
+        Sets the boot messages for the APU storing them in the call context using the registered memory unit.
+
+        :param call_context: The current call context including process id and thread id.
+        :param boot_messages: The boot message
+        """
         pass
 
     @abstractmethod
     async def schedule_request(
-        self,
-        call_context: CallContext,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            call_context: CallContext,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
+        """
+        Schedules the given prompts with the APU. The default implementation saves the new prompts into memory, executes the prompts, including intermediate tool calls, and returns the output in the specified format.
+
+        :param call_context: The current call context including process id and thread id.
+        :param prompts: The new prompts to schedule.
+        :param output_format: The output format to return the response in.
+        :return: Yields a stream of events including the output response.
+        """
         yield None
 
     def _to_json(self, obj):
@@ -86,22 +108,22 @@ class Thread:
         self._cpu = cpu
 
     async def set_boot_messages(
-        self,
-        prompts: List[CPUMessageTypes],
+            self,
+            prompts: List[CPUMessageTypes],
     ):
         return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
     async def run_request(
-        self,
-        prompts: List[CPUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
+            self,
+            prompts: List[CPUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
     ) -> T:
         stream = self.stream_request(prompts, output_format)
         result = None
         error = None
 
         is_string_call = not isinstance(output_format, type) and (
-            output_format == "str" or output_format["type"] == "string"
+                output_format == "str" or output_format["type"] == "string"
         )
         string_output = ""
         async for event in stream:
@@ -124,7 +146,7 @@ class Thread:
         return result
 
     def stream_request(
-        self, prompts: List[CPUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
+            self, prompts: List[CPUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
     ) -> AsyncIterator[StreamEvent]:
         if isinstance(output_format, type):
             model = TypeAdapter(output_format)
