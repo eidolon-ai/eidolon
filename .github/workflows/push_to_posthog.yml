@@ -25,7 +25,5 @@ jobs:
         working-directory: scripts
       - run: poetry run push_pypi_downloads  --package eidolon-ai-sdk --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
         working-directory: scripts
-      - name: Push GitHub Stats
-        uses: ./.github/actions/push-github-stats
-        with:
-          repo: 'eidolon'
+      - run: bin/push_github.sh eidolon-ai/eidolon
+        working-directory: scripts
