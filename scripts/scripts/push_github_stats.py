@@ -35,7 +35,7 @@ def extract_github_traffic(repo_owner, repo_name, access_token):
 def insert_into_posthog_with_count(distinct_id: str, event_name: str, counts: List[Tuple[str, int]], posthog_api_key, posthog_project_key, skip_older: int, dry_run: bool, repo: str):
     # Iterate over each day's traffic data
     for timestamp, count in counts:
-        print(f"Processing data for date {timestamp}, count: {count}")
+        print(f"Processing {repo}/{event_name} for date {timestamp}, count: {count}")
         date = timestamp.split("T")[0]
         # check if the date is more than 10 days old
         if skip_older > 0 and ((datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > 10):
@@ -76,6 +76,7 @@ def posthog_update_if_needed(distinct_id: str, event_name, timestamp, count, pos
                 "count": count,
                 "timestamp": timestamp,
                 "repo": repo,
+                "insertion_timestamp": datetime.now().isoformat(),
             },
             "timestamp": timestamp,
         }
