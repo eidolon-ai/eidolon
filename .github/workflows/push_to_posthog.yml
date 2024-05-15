@@ -21,13 +21,10 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: poetry install
-        working-directory: scripts
-      - run: poetry run push_stats  --repo eidolon-ai/eidolon --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
-        working-directory: scripts
-      - run: poetry run push_gh_stars  --repo eidolon-ai/eidolon --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
-        working-directory: scripts
-      - run: poetry run push_gh_forks  --repo eidolon-ai/eidolon --access-token ${{ secrets.GH_PAT }} --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
-        working-directory: scripts
       - run: poetry run push_pypi_downloads  --package eidolon-ai-sdk --api-key ${{ secrets.POSTHOG_API_KEY }} --project-key ${{ secrets.POSTHOG_PROJECT_KEY }}
         working-directory: scripts
+      - name: Push GitHub Stats
+        uses: .github/actions/push-github-stats
+        with:
+          repo: 'eidolon'
+
