@@ -73,6 +73,7 @@ def posthog_update_if_needed(event_name, repo: str, timestamp, event, posthog_ap
             "properties": {
                 **event,
                 "timestamp": timestamp,
+                "repo": repo,
                 "insertion_timestamp": datetime.now().isoformat(),
             },
             "timestamp": timestamp,
