@@ -39,7 +39,7 @@ def insert_into_posthog_with_count(distinct_id: str, event_name: str, counts: Li
         date = timestamp.split("T")[0]
         # check if the date is more than 10 days old
         if skip_older > 0 and ((datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > 10):
-            print(f"Skipping data for date {date} as it is more than 10 days old.")
+            # print(f"Skipping data for date {date} as it is more than 10 days old.")
             continue
 
         posthog_update_if_needed(distinct_id, event_name, timestamp, count, posthog_api_key, posthog_project_key, dry_run, repo)
@@ -62,7 +62,7 @@ def posthog_update_if_needed(distinct_id: str, event_name, timestamp, count, pos
             existing_count += event["properties"]["count"]
 
         if existing_count != count:
-            print(f"Updating existing data for date {timestamp} existing_count: {existing_count}, need: {count}, with new count {count - existing_count}")
+            print(f"Updating existing data for {repo}/{event_name} date {timestamp} existing_count: {existing_count}, need: {count}, with new count {count - existing_count}")
             count = count - existing_count
         else:
             should_insert = False
@@ -109,9 +109,9 @@ def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_
                 "value": timestamp,
                 "operator": "exact"
             }, {
-               "key": "repo",
-               "value": repo,
-               "operator": "exact"
+                "key": "repo",
+                "value": repo,
+                "operator": "exact"
            }
         ])
     }
