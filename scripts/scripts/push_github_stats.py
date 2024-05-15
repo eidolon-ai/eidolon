@@ -54,7 +54,7 @@ def posthog_update_if_needed(distinct_id: str, event_name, timestamp, count, pos
         "Authorization": f"Bearer {posthog_api_key}"
     }
     # Check if data for the current day already exists in PostHog
-    events = get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key)
+    events = get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key, repo)
     should_insert = True
     existing_count = 0
     if events:
@@ -90,7 +90,7 @@ def posthog_update_if_needed(distinct_id: str, event_name, timestamp, count, pos
         print(f"Data for date {timestamp} already exists in PostHog", existing_count, count)
 
 
-def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key):
+def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_key, repo):
     # Set the PostHog API endpoint URL for querying events
     posthog_url = "https://app.posthog.com/api/event/"
 
@@ -108,7 +108,11 @@ def get_existing_events(event_name, timestamp, posthog_api_key, posthog_project_
                 "key": "timestamp",
                 "value": timestamp,
                 "operator": "exact"
-            }
+            }, {
+               "key": "repo",
+               "value": repo,
+               "operator": "exact"
+           }
         ])
     }
 
