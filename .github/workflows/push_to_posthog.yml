@@ -28,4 +28,7 @@ jobs:
       - run: |
           chmod +x bin/push_github.sh
           bin/push_github.sh eidolon-ai/eidolon ${{ secrets.GH_PAT }} ${{ secrets.POSTHOG_API_KEY }} ${{ secrets.POSTHOG_PROJECT_KEY }}
+          bin/push_github.sh eidolon-ai/agent-machine ${{ secrets.GH_PAT }} ${{ secrets.POSTHOG_API_KEY }} ${{ secrets.POSTHOG_PROJECT_KEY }}
+          bin/push_github.sh eidolon-ai/eidolon-quickstart ${{ secrets.GH_PAT }} ${{ secrets.POSTHOG_API_KEY }} ${{ secrets.POSTHOG_PROJECT_KEY }}
+          bin/push_github.sh eidolon-ai/eidolon-git-search ${{ secrets.GH_PAT }} ${{ secrets.POSTHOG_API_KEY }} ${{ secrets.POSTHOG_PROJECT_KEY }}
         working-directory: scripts
