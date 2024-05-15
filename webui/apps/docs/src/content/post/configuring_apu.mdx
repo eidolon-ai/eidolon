@@ -1,0 +1,226 @@
+---
+publishDate: 2024-05-15T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'APU'
+title: 'APU: Configuring an APU for your LLM Application'
+excerpt: "Part 2: Learn how to configure an APU for your LLM Application."
+image: ~/assets/images/configure_apu.png
+tags:
+  - APU
+  - LLM App Development
+  - LLM memory
+  - LLM Tools
+metadata:
+  canonical: https://www.eidolonai.com/conifguring_apu
+---
+This is part 2 of a 2 part series on the Application Processing Unit (APU).
+
+For more information on what an APU is see <a href="./what_is_apu">Part 1: What is an APU?</a>
+
+<hr/>
+
+In the last section we learned about the APU and how it encapsulates the complexities of the LLM in bite-sized chunks. 
+In this section, we will learn how to configure an APU for your LLM application.
+
+## Configuring an APU
+There are two dimensions that one can use to configure an APU, configuring or changing the built-in components and writing custom components and configuring the APU to use them.
+First let's look at how you can configure the built-in components.
+
+Below is a simple example of a built-in APU configured to use Mistral as the LLM Unit:
+
+```yaml
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: MistralLarge
+  annotations:
+    - title: "Mistral Large"
+spec:
+  implementation: APU
+  audio_unit: OpenAiSpeech
+  image_unit: OpenAIImageUnit
+  llm_unit:
+    implementation: MistralGPT
+    model: "mistral-large-latest"
+```
+
+This configuration tells the APU to use the default APU implementation, MistralGPT LLM Unit with the model `mistral-large-latest`, the OpenAiSpeech Audio Unit, the OpenAIImageUnit Image Unit,
+and the default implementations of the IO Unit and the Memory Unit. It makes this new APU available to the rest of the application as `MistralLarge`, with a human-readable 
+title of "Mistral Large".
+
+As you can see, there is a lot of flexibility and power just using configuration, but how does all of this work under the hood? How are the set of options for configuration defined?
+Like all components in Eidolon, the APU is built using implementations of the `Specable` interface. For example, the specification for the APU is defined in the `APUSpec` class:
+
+```python
+class APUSpec(BaseModel):
+    max_num_function_calls: int = Field(
+        10,
+        description="The maximum number of function calls to make in a single request.",
+    )
+
+```
+
+Whoa! What is going on? There are very few fields in the class. That's because the **DEFAULT** implementation of the APU is the type **ConversationalAPU**. Having a look at 
+the `ConversationalAPUSpec` class, we see that it has a lot more fields:
+
+```python
+class ConversationalAPUSpec(APUSpec):
+    io_unit: AnnotatedReference[IOUnit]
+    memory_unit: AnnotatedReference[MemoryUnit]
+    llm_unit: AnnotatedReference[LLMUnit]
+    logic_units: List[Reference[LogicUnit]] = []
+    audio_unit: Optional[Reference[AudioUnit]] = None
+    image_unit: Optional[Reference[ImageUnit]] = None
+    record_conversation: bool = True
+    allow_tool_errors: bool = True
+    document_processor: AnnotatedReference[DocumentProcessor]
+```
+
+Now we can see what is going on. The `ConversationalAPUSpec` class is a subclass of the `APUSpec` class and adds a lot more fields. These fields breakdown into three categories:
+1. **APU Options**: These are options that control the behavior of the APU, they are max_num_function_calls, record_conversation, and allow_tool_errors.
+1. **Built-in Components with Defaults**: These are components that have a default implementation, but can be replaced with custom implementations. These are io_unit, memory_unit, llm_unit, and document_processor.
+1. **Optional Components**: These are components that are optional and can be added to the APU. These are logic_units, audio_unit, and image_unit.
+
+First, let's look ath the APU Options. The `max_num_function_calls` option controls the maximum number of function calls that the APU will make in a single request. 
+This is useful for preventing infinite loops or runaway function calls. The `record_conversation` option controls whether the APU will record the conversation history in memory.
+The `allow_tool_errors` option controls whether the APU will continue execution if a tool call returns an error. If set to 'True', the LLM will be given the error message as input,
+allowing it to handle the error. If set to 'False', the APU will stop execution and return the error message to the user.
+
+The use of default components, basically anything of type `AnnotatedReference`, is what allows the APU to be configured using a simple configuration file. The 
+default implementations of these components are suitable for most applications. Let's go through each of these components in more detail:
+
+### Memory Unit
+The Memory Unit is responsible for storing and retrieving conversation history. The default implementation of the Memory Unit is the `RawMemoryUnit` class. 
+This class stores the conversation history in memory and is suitable for most applications. It stores the conversation history in `Semantic Memory` under the collection
+`conversation_memory`, keyed by the 'process_id' and 'thread_id'.
+
+Other than the implementation itself, there are no other configuration options for the Memory Unit.
+
+### Document Processor
+The Document Processor is responsible for processing documents uploaded and placed in the conversation history. A document processor is responsible for publishing AND searching
+using common RAG (Retrieval Augmented Generation) techniques. This implementation is wired to process documents found in the `ProcessFileSystem` class of the machine for 
+documents that are associated with the current processes id and referenced in the conversation history. The default configuration likely need not be touched for most applications.
+Configuration options for the Document Processor are quite complex and are not covered here.
+
+### LLM Unit
+Likely the most important component of the APU, the LLM Unit is responsible for communicating with the LLM. You will need to configure the LLM Unit to use the LLM of your choice
+and probably will need to configure one or more options on the LLM Unit. 
+
+The default implementation of the LLM Unit is the `OpenAIGPT` class, configured to use the `gpt-4o' model. However, let's first have a look at the base configuration options for the LLM Unit:
+
+```python
+    model: Reference[LLMModel]
+```
+
+Again, not much there. The `model` field is a reference to the LLM model that the LLM Unit will use. The model doesn't make sense in isolation, so let's have a look at a concrete
+LLM specification. Here is the OpenAIGPT specification:
+
+```python
+
+class OpenAiGPTSpec(LLMUnitSpec):
+    model: AnnotatedReference[LLMModel, gpt_4]
+    temperature: float = 0.3
+    force_json: bool = True
+    max_tokens: Optional[int] = None
+    connection_handler: AnnotatedReference[OpenAIConnectionHandler]
+```
+
+The `OpenAiGPTSpec` class is a subclass of the `LLMUnitSpec` class and adds a few more fields. First off it redefines the `model` field to be of type `AnnotatedReference` with the
+default of 'gpt_4'. The `temperature` field controls the randomness of the LLM output. The `force_json` field controls whether the LLM will return the output in JSON format. The
+`max_tokens` field controls the maximum number of tokens that the LLM will generate. The `connection_handler` field is a reference to the connection handler that the LLM Unit will use.
+The 'connection_handler' can be configured to use different connection handlers, such as the `AzureOpenAIConnectionHandler` class.
+
+Let's look at another example, Anthropic:
+
+```python
+class AnthropicLLMUnitSpec(LLMUnitSpec):
+    model: AnnotatedReference[LLMModel, claude_opus]
+    temperature: float = 0.3
+    max_tokens: Optional[int] = None
+    client_args: dict = {}
+```
+
+As you can see, many of the options are very similar to the OpenAIGPT options. The `model` field is a reference to the LLM model that the LLM Unit will use, claude_opus by default.
+The only difference from the others are the `client_args` field, which is a dictionary of arguments that will be passed to the Anthropic client.
+
+Now let's look at some of the other "optional" components:
+
+### Logic Units
+Logic Units are the set of tools that the LLM can use to perform tasks. A Logic Unit can anything from a simple calculator to a complex search engine.
+
+There is a catalog of Logic Units that are available to use in the Eidolon system. Some of these are:
+* **Search**: A logic unit that uses Google Search to search the web.
+* **Browser**: A logic unit that scrapes web pages using BeautifulSoup.
+
+The implementations of these and any future Logic Units are defined in the `eidolon_ai_sdk.builtins.logic_units` module.
+
+The real power of the Logic Units is that you can write your own custom Logic Units and configure the APU to use them. This is done by creating:
+* A new class that subclasses the `LogicUnit` class. Logic Units can expose multiple functions that can be called by the LLM. Each function should be decorated with the `@llm_function` decorator.
+* A new class that subclasses the `LogicUnitSpec` class. This class should define the configuration options for the Logic Unit, if any.
+
+Then to configure the APU to use your custom Logic Unit, you would add a reference to your custom Logic Unit to the `logic_units` field of the APU configuration.  For example:
+
+```yaml
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: MistralLarge
+  annotations:
+    - title: "Mistral Large"
+spec:
+  implementation: APU
+  audio_unit: OpenAiSpeech
+  image_unit: OpenAIImageUnit
+  llm_unit:
+    implementation: MistralGPT
+    model: "mistral-large-latest"
+  logic_units:
+    - implementation: Search
+    - implementation: Browser
+    - implementation: "my.package.MyCustomLogicUnit"
+      custom_option1: "value1"
+      custom_option2: "value2"
+```
+The `Search` and `Browser` Logic Units are built-in Logic Units, while the `MyCustomLogicUnit` is a custom Logic Unit that you have written. The `custom_option1` and `custom_option2` fields
+are configuration options that you have defined in the `MyCustomLogicUnitSpec` class.
+
+### Audio Unit
+The Audio Unit is responsible for converting audio input to text and text output to audio. The default implementation of the Audio Unit is the `OpenAiSpeech` class. You can configure the
+OpenAISpeech Audio Unit using the following spec:
+
+```python
+class OpenAiSpeechSpec(BaseModel):
+    text_to_speech_model: Literal["tts-1", "tts-1-hd"] = Field(
+        default="tts-1-hd", description="The model to use for text to speech."
+    )
+    text_to_speech_voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = Field(
+        default="alloy", description="The voice to use for text to speech."
+    )
+    speech_to_text_model: Literal["whisper-1"] = Field(
+        default="whisper-1", description="The model to use for speech to text."
+    )
+    speech_to_text_temperature: float = Field(
+        default=0.3,
+        description="The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use log probability to automatically increase the temperature until certain thresholds are hit.",
+    )
+```
+
+### Image Unit
+The Image Unit is responsible for processing images. The default implementation of the Image Unit is the `OpenAIImageUnit` class. You can configure the OpenAIImageUnit Image Unit using the following spec:
+
+```python
+class OpenAIImageUnitSpec(ImageUnitSpec):
+    connection_handler: AnnotatedReference[OpenAIConnectionHandler]
+    image_to_text_model: str = Field(default="gpt-4-turbo", description="The model to use for the vision LLM.")
+    text_to_image_model: str = Field(default="dall-e-3", description="The model to use for the vision LLM.")
+    temperature: float = 0.3
+    image_to_text_system_prompt: str = Field(
+        "You are an expert at answering questions about images. "
+        "You are presented with an image and a question and must answer the question based on the information in the image.",
+        description="The system prompt to use for text to image.",
+    )
+```
+
+## Conclusion
+In this blog, we learned how to configure an APU for your LLM application. We learned about the different components of the APU and how to configure them. 
+We also learned how to write custom components and configure the APU to use them.
