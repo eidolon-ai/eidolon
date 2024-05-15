@@ -14,7 +14,7 @@ from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcesso
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import FileInfo
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.agent_cpu import APU, APUSpec, Thread, APUException, APUCapabilities
+from eidolon_ai_sdk.cpu.apu import APU, APUSpec, Thread, APUException, APUCapabilities
 from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
 from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.cpu.call_context import CallContext

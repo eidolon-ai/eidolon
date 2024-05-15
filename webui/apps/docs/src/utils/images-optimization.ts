@@ -19,6 +19,7 @@ export interface ImageProps extends Omit<HTMLAttributes<'img'>, 'src'> {
   srcset?: string | null;
   sizes?: string | null;
   fetchpriority?: 'high' | 'low' | 'auto' | null;
+  background?: string;
 
   layout?: Layout;
   widths?: number[] | null;
@@ -314,6 +315,7 @@ export async function getImagesOptimized(
         height: height,
         aspectRatio: aspectRatio,
         layout: layout,
+        background: rest.background,
       })}${style ?? ''}`,
       ...rest,
     },

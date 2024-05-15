@@ -14,7 +14,7 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
-from eidolon_ai_sdk.cpu.agent_cpu import APU
+from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage
 from eidolon_ai_sdk.cpu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
 from eidolon_ai_sdk.system.processes import ProcessDoc
