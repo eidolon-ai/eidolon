@@ -20,6 +20,7 @@ class APUMessage(BaseModel):
     """
     Base message type for APU input
     """
+
     type: str
 
 
@@ -27,6 +28,7 @@ class UserTextAPUMessage(APUMessage):
     """
     A user message to the APU.
     """
+
     type: Literal["user"] = "user"
     prompt: str
 
@@ -35,6 +37,7 @@ class SystemAPUMessage(APUMessage):
     """
     A system message to the APU
     """
+
     type: Literal["system"] = "system"
     prompt: str
 
@@ -43,6 +46,7 @@ class AttachedFileMessage(APUMessage):
     """
     A file attachment message to the APU.
     """
+
     type: Literal["image_url"] = "file"
     file: FileHandle
     include_directly: bool
@@ -57,6 +61,7 @@ class IOUnit(ProcessingUnit):
 
     This can be overridden to provide custom IO handling.
     """
+
     async def process_request(self, call_context: CallContext, prompts: List[CPUMessageTypes]) -> List[LLMMessage]:
         """
         Converts the external prompts to the internal LLM messages.

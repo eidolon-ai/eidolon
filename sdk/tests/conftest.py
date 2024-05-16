@@ -333,7 +333,9 @@ def deterministic_process_ids(test_name):
     def patched_fid(*args, **kwargs):
         return next(fid_generator)
 
-    with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(process_file_system, "ObjectId", new=patched_fid):
+    with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(
+        process_file_system, "ObjectId", new=patched_fid
+    ):
         yield
 
 

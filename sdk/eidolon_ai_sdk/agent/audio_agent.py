@@ -22,13 +22,13 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
         self.cpu = self.spec.cpu.instantiate()
 
     @register_program()
-    async def speech_to_text(self, process_id, audio: Annotated[FileHandle, Body(description="The audio file", embed=True)]):
+    async def speech_to_text(
+        self, process_id, audio: Annotated[FileHandle, Body(description="The audio file", embed=True)]
+    ):
         await ProcessDoc.set_delete_on_terminate(process_id, True)
         text = await self.speech_llm.speech_to_text(audio)
         return {"response": text}
 
     @register_program()
-    async def text_to_speech(
-        self, text: Annotated[str, Body(description="The text to speak", embed=True)]
-    ) -> str:
+    async def text_to_speech(self, text: Annotated[str, Body(description="The text to speak", embed=True)]) -> str:
         return await self.speech_llm.text_to_speech(text)

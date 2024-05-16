@@ -89,5 +89,5 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             if remove_count:
                 self.logger.info(f"Removing {remove_count} files...")
             await asyncio.gather(*tasks)
-            self.logger.info(f"Document Manager sync complete")
+            self.logger.info("Document Manager sync complete")
             self.last_reload = time.time()

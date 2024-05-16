@@ -213,7 +213,7 @@ def main():
 
 
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+    exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
     logging.error(f"{await request.body()}: {exc_str}")
 
     return JSONResponse(

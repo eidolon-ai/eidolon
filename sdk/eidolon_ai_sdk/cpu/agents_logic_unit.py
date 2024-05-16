@@ -36,9 +36,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 agent_actions[(call.machine, call.agent, action)].add(call.remote_process_id)
         for key, allowed_pids in agent_actions.items():
             machine, agent, action = key
-            context_ = await self.build_action_tool(
-                machine, agent, action, allowed_pids, call_context
-            )
+            context_ = await self.build_action_tool(machine, agent, action, allowed_pids, call_context)
             if context_:
                 tools.append(context_)
 
@@ -73,11 +71,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             name = self._name(agent, action=action)
             description = self._description(endpoint_schema, name)
             body_schema: dict = self._body_schema(endpoint_schema, name)
-            body_schema['properties']['conversation_id'] = {'type': 'string'}
-            if 'required' in body_schema:
-                body_schema['required'].append('conversation_id')
+            body_schema["properties"]["conversation_id"] = {"type": "string"}
+            if "required" in body_schema:
+                body_schema["required"].append("conversation_id")
             else:
-                body_schema['required'] = ['conversation_id']
+                body_schema["required"] = ["conversation_id"]
             tool = self._build_tool_def(
                 agent,
                 action,
@@ -163,10 +161,12 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
         async def fn(_self, body):
             process = await agent.create_process()
-            yield ObjectOutputEvent(content=dict(
-                action="created new conversation",
-                conversation_id=process.process_id,
-            ))
+            yield ObjectOutputEvent(
+                content=dict(
+                    action="created new conversation",
+                    conversation_id=process.process_id,
+                )
+            )
             async for event in RecordAgentResponseIterator(
                 process.stream_action(program, body),
                 call_context.process_id,
@@ -182,7 +182,9 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             if conversation_id not in allowed_pids:
                 raise ValueError(f"Conversation id {conversation_id} not allowed for action {action}")
             return RecordAgentResponseIterator(
-                Process(machine=agent.machine, process_id=conversation_id).stream_action(agent.agent, action, body), call_context.process_id, call_context.thread_id
+                Process(machine=agent.machine, process_id=conversation_id).stream_action(agent.agent, action, body),
+                call_context.process_id,
+                call_context.thread_id,
             )
 
         return fn

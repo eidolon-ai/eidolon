@@ -226,7 +226,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                     logic_unit_wrapper[0] = tool_def.logic_unit.__class__.__name__
                     return tool_def.execute(tool_call=tc)
                 except KeyError:
-                    raise ValueError(f"Tool {tool_call_event.tool_call.name} not found. Available tools: {tool_defs.keys()}")
+                    raise ValueError(
+                        f"Tool {tool_call_event.tool_call.name} not found. Available tools: {tool_defs.keys()}"
+                    )
 
             tool_stream = stream_manager(
                 tool_event_stream,
