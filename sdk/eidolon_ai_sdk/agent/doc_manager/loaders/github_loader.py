@@ -5,6 +5,7 @@ from asyncio import Task
 from typing import Dict, Any, AsyncIterator, List, Optional
 
 from httpx import AsyncClient
+from pydantic import Field
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     DocumentLoaderSpec,
@@ -28,6 +29,7 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
     root_path: Optional[str] = None
     pattern: str | List[str] = "**/*"
     exclude: str | List[str] = []
+    token: Optional[str] = Field(default_factory=lambda: os.environ.get("GITHUB_TOKEN"))
 
     def root_content(self):
         return f"https://api.github.com/repos/{self.owner}/{self.repo}/contents/{self.root_path or ''}"
@@ -57,7 +59,9 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
                 yield RemovedFile(file_path)
 
     async def _raw_list_files(self, client: AsyncClient, url=None) -> AsyncIterator[Dict[str, Any]]:
-        token_ = os.environ.get("GITHUB_TOKEN")
+        token_ = self.spec.token
+        if not token_:
+            logger.warning("No token provided for GitHubLoader and GITHUB_TOKEN not set in environment.")
         headers = {"Authorization": f"Bearer {token_}"} if token_ else None
         response = await client.get(url=url or self.spec.root_content(), headers=headers)
         # response = await client.get(url=url or self.spec.root_content())
