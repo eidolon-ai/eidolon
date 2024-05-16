@@ -79,7 +79,9 @@ class OpenAiSpeech(AudioUnit, Specable[OpenAiSpeechSpec]):
             "file": ("audio", audio, mime_type),
             "model": self.spec.speech_to_text_model,
             "temperature": self.spec.speech_to_text_temperature,
-            "extra_headers": {"Content-Type": "multipart/form-data; boundary=eidolon-boundary"},  # WTF!!!! -- openai includes a rando boundary id. Bad for tests because it causes the cassettes uniqueness to fail.
+            "extra_headers": {
+                "Content-Type": "multipart/form-data; boundary=eidolon-boundary"
+            },  # WTF!!!! -- openai includes a rando boundary id. Bad for tests because it causes the cassettes uniqueness to fail.
         }
 
         if language:
