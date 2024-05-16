@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon_examples"
-version = "0.1.26"
+version = "0.1.27"
 description = ""
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -14,7 +14,7 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "examples"
-last-update-hash = "d8a126252e6bb70019540a51e86d844e83ad6f37"
+last-update-hash = "3a19d0fd2dd7c1c38c110b94634eae908ac3f85d"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"

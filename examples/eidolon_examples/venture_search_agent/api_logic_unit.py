@@ -68,6 +68,8 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         tools = []
         for operation in self.spec.operations_to_expose:
             op = schema["paths"][operation.path]
+            if operation.path == "/persons":
+                print("***", operation.path, op)
             if not op:
                 logger.error(f"No path found for operation {operation.path}")
             else:
@@ -99,7 +101,7 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                                 "agent_call": True,
                             },
                         ))
-            return tools
+        return tools
 
     def _call_endpoint(self, operation: Operation, method, method_params):
         path = operation.path
