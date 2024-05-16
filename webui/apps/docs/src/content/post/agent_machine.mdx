@@ -1,0 +1,122 @@
+---
+publishDate: 2024-05-16T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'AgentMachine'
+title: 'Agent Machine, Agent Operating System, and Bears, Oh My!'
+excerpt: "Learn the real power of Eidolon."
+image: ~/assets/images/agent_machine.png
+tags:
+  - Agent Machine
+  - LLM App Development
+  - Agent Operating System
+  - Agent Deployment
+metadata:
+  canonical: https://www.eidolonai.com/agent_machine
+---
+By far the most powerful concept in Eidolon is the Agent Operating System. Just like an OS on a physical
+computer, the AgentOS is responsible for managing the resources of the Agent Machine including
+memory, running agent instances (processes in our vernacular), and managing communication.
+
+The Agent Machine is a conceptual virtual computer. It runs as a single process. It is packaged as a single container.
+A mention of "process" below is a virtual process running on the Agent Machine. The Agent Machine **does not run
+multiple processes in the traditional sense.** 
+
+In this post I hope to show the full power of the Agent Machine and AgentOS. Let's first start with the `Agent Machine` abstraction.
+
+## Agent Machine
+You can think of the Agent Machine as a virtual computer that can run multiple agents. Each agent has its own
+memory space and can run independently of other agents. The Agent Machine is responsible for managing the
+resources of the agents, including memory, the APU, and communication of a single agent and mult-agent communication.
+
+Furthermore, the Agent Machine itself also has memory defined on it. This memory comes in three forms:
+* **File Memory**: A basic file "device" that can be used to store data. Users of the AgentOS have access to a "root" file system
+  as well as a "per process" file system. The process file system allows files to be stored in a way that is only accessible
+  to the process that created the file. Furthermore, the data is deleted when the process is deleted. Whereas the "root" file system 
+  is not associated with anything and is up to the user to manage the storage and scope.
+* **Semantic Memory**: A document storage device used to store information that is "queryable" in some way. Internally,
+  this memory is used to store any information associated with a process, keyed off of process_id, as well as any other
+  state that needs to be stored. For example, LLM memory (keyed by process_id, thread_id), output events
+  (keyed by process_id and thread_id), and multi-agent communication is stored in Semantic Memory.
+* **Similarity Memory**: This memory is used to store information that can be looked up using an embedding. Typically,
+  the implemenation of this memory is a vector database. An embedding engine is also needed along with Similarity Memory.
+  This too is a pluggable component.
+
+All memory devices, or components, are pluggable and there are multiple implementations available in Eidolon. For instance, 
+there is a local file memory, a local semantic memory, and a local similarity memory via Chroma. These are primarily
+used for development and testing. However, there are also cloud-based memory devices available, such as S3, DynamoDB. 
+
+**Shameless plug: Eidolon is ALWAYS looking for help building out more components, so if you are interested, please reach out!**
+
+The Agent Machine also has a `communication` layer that is responsible for exposing resources on the Agent Machine, like memory
+and files, as well as the agents themselves to the outside world. This is done via a REST API that is exposed by the Agent Machine.
+All API's are exposed via an OpenAPI json document and, therefore, all resource and agent object definitions are available
+in JSON schema.
+
+There can be multiple Agent Machines active at any given time and they can all reference each other. For example, you could
+have an Agent Machine running in Amazon near some data stored in S3 (say for a RAG use case), and another Agent Machine running
+in Azure near some data stored in Azure Blob Storage (say for a LLM use case). These two Agent Machines could communicate with
+each other via the REST API and are able to autonomously call agents on the other machine.
+
+## Agent Operating System
+The AgentOS is responsible for managing the Agent Machine. This includes starting and stopping agents, managing memory, 
+managing communication, and managing agent "processes" running on the machine. The AgentOS manages retrieving and storing
+IO for an agent, as well as managing the state of the agent. It's kind of a big deal.
+
+The public interface to the AgentOS is quite simple though:
+
+```python
+class AgentOS:
+    file_memory: FileMemory = ... 
+    symbolic_memory: SymbolicMemory = ...
+    similarity_memory: SimilarityMemory = ...
+    security_manager: SecurityManager = ...  
+    process_file_system: ProcessFileSystem = ...
+
+    @classmethod
+    def get_resources(cls, kind: Type[T]) -> Dict[str, T]:
+        ...
+
+    @classmethod
+    def get_resource_raw(cls, kind: Type[T], name: str) -> Resource:
+        ...
+
+    @classmethod
+    def get_resource(cls, kind: Type[T], name: str, default=...) -> T:
+        ...
+```
+
+As you can see, the AgentOS provides access to the built-in resources on the machine, such as memory, security, and file systems,
+through static properties and methods on the class. As with everything in Eidolon, each one of these are exposed through a common
+interface, so that they can be swapped out for different implementations. 
+
+**Everything** in Eidolon is pluggable, well except for the AgentOS itself...
+
+## Putting it all together
+Let's put it all together with an example "request" to the Agent Machine. Let's say we have a user that wants to run a new
+request to an agent. Let's walk through the steps:
+1. The user calls the REST API on the Agent Machine to create a new process (i.e. allocate resources for a new agent instance).
+1. The Agent OS:
+    1. Creates a new process and assigns it a process_id.
+    1. Set's the state for the agent to "initailized" and stores it in Semantic Memory.
+    1. Returns the process_id to the user.
+1. The user then calls an action on the agent giving it the process_id and any data needed to run the action.
+1. The Agent OS:
+    1. Retrieves the state of the agent from Semantic Memory.
+    1. Validates the current state of the agent process matches one of the legal states of the action.
+    1. Sets the state of the agent to "running" (for concurrency purposes).
+    1. Calls the action on the agent.
+    1. Streams the output back to the user, and stores the output in Semantic Memory, as the agent outputs events.
+    1. Once the agent process is done, the state is set to the state returned by the agent and stored in Semantic Memory.
+    1. A "success" event (or error depending on what happened) is stored in Semantic Memory and returned to the user.
+1. The user the processes the output events.
+
+Conversations, whether between a human and an agent or between two agents, follows this same pattern.
+
+The cool part about this process is that the user doesn't need to know anything about the underlying implementation of the Agent Machine
+freeing them up to focus on the task at hand. The Agent Machine and AgentOS handle all the heavy lifting.
+
+## Conclusion
+The Agent Machine and AgentOS are the most powerful concepts in Eidolon. They allow for the creation of complex multi-agent systems
+that can run autonomously. The Agent Machine is responsible for managing the resources of the agents, including memory, APU, and communication
+of a single agent and multi-agent communication. The AgentOS is responsible for managing the Agent Machine. This includes 
+starting and stopping agents, managing memory, managing communication, and managing agent "processes" running on the machine.
