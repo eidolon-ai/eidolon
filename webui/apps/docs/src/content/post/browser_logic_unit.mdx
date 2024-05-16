@@ -1,0 +1,35 @@
+---
+publishDate: 2024-05-16T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'LogicUnit'
+title: 'Browser Logic Unit: Configuring an agent to scrape a web page'
+excerpt: "Learn how to use web scraping in an agent."
+image: ~/assets/images/web_browser.webp
+tags:
+  - APU
+  - LLM App Development
+  - Logic Unit
+  - Web Browser
+  - Configuration
+metadata:
+  canonical: https://www.eidolonai.com/browser_logic_unit
+---
+The `Browser` tool is a LogicUnit that can be registered with the APU to scrape a web page.
+This tool is useful for extracting data from a web page that is not available through an API and is typically
+used in conjunction with the [`Search`](/search_logic_unit) LogicUnit.
+
+The full specification of `Browser` is:
+
+```python
+class BrowseSpec(BaseModel):
+    summarizer: Literal["BeautifulSoup", "noop"] = "BeautifulSoup"
+```
+
+The `summarizer` field is used to specify the summarizer to use when extracting data from the web page.
+It defaults to using `BeautifulSoup`, which is a popular Python library for parsing HTML and XML documents.
+Using this tool it extracts the relavant text from the web page that is suitable for passing to an LLM for processing.
+
+It is important to note that **this tool only scrapes static information**. There will be a tool in the future that
+uses a headless browser to execute javscript and extract the dynamic contents of the web page, among other things.
+
+This tool is typically used in conjunction with the [`Search`](/search_logic_unit) LogicUnit.
