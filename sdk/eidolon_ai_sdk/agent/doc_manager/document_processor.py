@@ -45,12 +45,15 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
                 },
             )
             if len(docs) == 0:
-                self.logger.warning(f"File contained no text {file_info.path}")
+                self.logger.debug(f"File contained no text {file_info.path}")
                 return
             await AgentOS.similarity_memory.add(collection_name, docs)
-            self.logger.info(f"Added file {file_info.path}")
+            self.logger.debug(f"Added file {file_info.path}")
         except Exception:
-            self.logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
+            if self.logger.isEnabledFor(logging.DEBUG):
+                self.logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
+            else:
+                self.logger.warning(f"Failed to parse file {file_info.path}")
 
     async def removeFile(self, collection_name: str, path: str):
         # get the doc ids for the file
