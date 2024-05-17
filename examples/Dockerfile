@@ -3,8 +3,9 @@ FROM python:3.11-slim as builder
 RUN pip install poetry
 COPY . .
 RUN mkdir dist
-RUN touch dist/requirements.txt
-RUN poetry export --without dev --without-hashes --format=requirements.txt | sed '/@ file/d' > dist/requirements.txt
+
+# Generate requirements.txt without local file references
+RUN poetry export --without dev --without-hashes --format=requirements.txt | sed '/^-e /d' > dist/requirements.txt
 
 FROM docker.io/eidolonai/sdk_base:$EIDOLON_VERSION as examples
 COPY --from=builder dist/requirements.txt /tmp/examples/requirements.txt

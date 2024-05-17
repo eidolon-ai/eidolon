@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  eidolon-server:
+    build:
+      context: ./examples
+      dockerfile: Dockerfile
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./examples/resources:/app/resources
+
+  eidolon-ui2:
+    build:
+      context: ./webui
+      dockerfile: Dockerfile
+    environment:
+      - NEXTAUTH_URL=http://localhost:3000/api/auth
+      - AUTH_TRUST_HOST=http://localhost:3000
+      - NEXTAUTH_SECRET=secret
+      - EIDOLON_SERVER=http://eidolon-server:8080
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - NEXT_PUBLIC_DEBUG=true
+      - NEXT_PUBLIC_LOG_LEVEL=DEBUG
+    ports:
+      - "3000:3000"
+    depends_on:
+      - eidolon-server
