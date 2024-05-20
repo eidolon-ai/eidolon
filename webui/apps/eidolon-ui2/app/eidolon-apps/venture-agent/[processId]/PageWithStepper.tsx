@@ -13,7 +13,7 @@ interface ChatbotLayoutProps {
   }
 }
 
-const steps = ['Explore Companies', 'Research'];
+const steps = ['Explore Companies', 'Research', 'Export'];
 
 export default function PageWithStepper({children, params}: ChatbotLayoutProps) {
   const app_name = 'venture-agent'
