@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
 from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, LLMMessage
+from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
 from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
 from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
 
@@ -94,3 +94,16 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                     yield StringOutputEvent(content=toolCallResponse.notes)
             else:
                 yield event
+
+    def create_assistant_message(self, call_context: CallContext, content: str, tool_call_events) -> LLMMessage:
+        content += "\nCall the following tools\n"
+        for tool_call in tool_call_events:
+            content += f"\n{tool_call.tool_call.model_dump_json()}"
+        return AssistantMessage(
+            type="assistant",
+            content=content,
+            tool_calls=[],
+        )
+
+    def create_tool_response_message(self, logic_unit_name: str, tc: ToolCall, content: str) -> LLMMessage:
+        return UserMessage(content=[UserMessageText(text=f"Tool {tc.model_dump_json()} completed with value {content}")])
