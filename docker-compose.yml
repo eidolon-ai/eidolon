@@ -5,15 +5,19 @@ services:
     build:
       context: ./examples
       dockerfile: Dockerfile
+      args:
+        - EIDOLON_VERSION=latest
+    platform: linux/amd64
     environment:
       - PYTHONUNBUFFERED=1
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AGENT_DIRECTORY=/app/resources
     expose:
       - "8080"
     ports:
       - "8080:8080"
     volumes:
-      - ./examples/resources:/app/resources
+      - ./examples/eidolon_examples/conversational_chatbot/resources:/app/conversational_chatbot/resources
 
   eidolon-ui2:
     build:
