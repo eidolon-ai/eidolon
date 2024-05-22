@@ -20,6 +20,8 @@ const whenExternalScripts = (items = []) => hasExternalScripts ? Array.isArray(i
 // https://astro.build/config
 export default defineConfig({
   output: 'static',
+  trailingSlash: 'never',
+  'build.format': 'file',
   integrations: [tailwind({
     applyBaseStyles: false
   }), sitemap(), icon({
