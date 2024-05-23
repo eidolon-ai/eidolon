@@ -12,18 +12,9 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
+    if: secrets.OPENAI_API_KEY
     steps:
       - uses: actions/checkout@v4
-      - name: Check secrets
-        run: |
-          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
-            echo "Error: OPENAI_API_KEY is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.AZURE_AD_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_AD_TENANT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_TEST_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}" ]; then
-            echo "Error: One or more Azure secrets are not set"
-            exit 1
-          fi
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v5
