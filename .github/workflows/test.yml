@@ -12,7 +12,7 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-    if: secrets.OPENAI_API_KEY
+    if: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - name: Install poetry
