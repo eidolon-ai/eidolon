@@ -68,8 +68,6 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         tools = []
         for operation in self.spec.operations_to_expose:
             op = schema["paths"][operation.path]
-            if operation.path == "/persons":
-                print("***", operation.path, op)
             if not op:
                 logger.error(f"No path found for operation {operation.path}")
             else:
@@ -87,31 +85,42 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                         if "request_body" in method:
                             params["__body__"] = self._body_model(method, name + "_Body")
                             required.append("__body__")
-                        model = schema_to_model(dict(type="object", properties=params, required=required), name + "_Input")
                         description = operation.description or self._description(method, name)
-                        tools.append(FnHandler(
+                        tools.append(self._build_tool_def(
+                            agent=self.spec.title,
+                            operation=method["summary"] or name,
                             name=name,
-                            description=lambda a, b: description,
-                            input_model_fn=lambda a, b: model,
-                            output_model_fn=lambda a, b: Any,
-                            fn=self._call_endpoint(operation, method_name, method["parameters"]),
-                            extra={
-                                "title": self.spec.title,
-                                "sub_title": method["summary"] or name,
-                                "agent_call": True,
-                            },
+                            schema=dict(type="object", properties=params, required=required),
+                            description=description,
+                            tool_call=self._call_endpoint(operation, method_name, method["parameters"])
                         ))
         return tools
 
-    def _call_endpoint(self, operation: Operation, method, method_params):
-        path = operation.path
+    def _build_tool_def(self, agent, operation, name, schema, description, tool_call):
+        model = schema_to_model(schema, "InputModel")
+        return FnHandler(
+            name=name,
+            description=lambda a, b: description,
+            input_model_fn=lambda a, b: model,
+            output_model_fn=lambda a, b: Any,
+            fn=tool_call,
+            extra={
+                "title": agent,
+                "sub_title": operation,
+                "agent_call": True,
+            },
+        )
+
+    def _call_endpoint(self, _operation: Operation, method: str, _method_params):
+        path = _operation.path
         api_key = os.environ.get(self.spec.key_env_var, None) if self.spec.key_env_var else None
         headers = {
             "Content-Type": "application/json"
         }
         if self.spec.put_key_as_bearer_token:
             headers["Authorization"] = f"Bearer {api_key}"
-
+        method_params = _method_params.copy()
+        result_filters = _operation.result_filters.copy() if _operation.result_filters else None
         async def _fn(_self, **kwargs):
             path_to_call = path
             query_params = {}
@@ -143,9 +152,9 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
                 retValue = await self.post_content(url, **body)
             else:
                 logger.error(f"Unsupported method {method}")
-            if operation.result_filters:
+            if result_filters:
                 filteredValue = {}
-                for result_filter in operation.result_filters:
+                for result_filter in result_filters:
                     filter = parse(result_filter)
                     filteredValue.update({str(match.full_path): match.value for match in filter.find(retValue)})
                 retValue = filteredValue
