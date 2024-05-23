@@ -1,5 +1,5 @@
 import os
-from typing import Optional, List, Annotated
+from typing import Optional, List, Annotated, Dict
 
 from fastapi import Body
 from pydantic import BaseModel, Field
@@ -22,19 +22,23 @@ class SummarizeWebsiteBody(BaseModel):
 
 
 class CompanyDetails(BaseModel):
+    url: str
     process_id: str
     description: str
     stage: str
     market_size: str
+    funding_information: str
+    investors: str
+    founders: str
     business_model: str
     logo_url: str
     other_information: Optional[str] = None
+    references: List[Dict[str, str]]
     enriched_with_harmonic: Optional[bool] = False
 
 
 class Company(BaseModel):
     name: str
-    url: str
     should_research: bool = Field(default=False, description="Whether the company should be researched")
     category: Optional[str]
     researched_details: Optional[CompanyDetails] = None
@@ -163,7 +167,7 @@ class VentureCopilot(AgentTemplate):
             process = await agent.create_process(process_id)
             response = await process.action(
                 "search_company",
-                {"url": company.url, "company_name": company.name},
+                {"company_name": company.name},
             )
             if response and response.data:
                 details = CompanyDetails.model_validate({"process_id": process.process_id, **response.data})
@@ -176,7 +180,7 @@ class VentureCopilot(AgentTemplate):
     async def research_and_assign_company(self, process_id: str, company: Company, ):
         # Fetch company information
         company_info = await self._research_company(process_id, company)
-        if isinstance(company_info, object):
+        if not isinstance(company_info, str):
             company.researched_details = company_info
             if os.environ.get("HARMONIC_API_KEY"):
                 company.researched_details.enriched_with_harmonic = True

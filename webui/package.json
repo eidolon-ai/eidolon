@@ -1,6 +1,6 @@
 {
   "name": "eidolon-monorepo",
-  "version": "1.0.39",
+  "version": "1.0.44",
   "scripts": {
     "build": "turbo build",
     "start": "npm --prefix apps/eidolon-ui2 run start",
@@ -8,7 +8,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "predocker_push": "docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') .",
+    "docker_build": "docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') .",
+    "predocker_push": "npm run docker_build",
     "docker_push": "docker push docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') &&  docker push docker.io/eidolonai/webui:latest",
     "maybe_docker_push": "VERSION=$(npm pkg get version | tr -d '\"') &&  docker manifest inspect docker.io/eidolonai/webui:$VERSION >/dev/null && echo 'Image exists' || npm run docker_push"
   },
@@ -26,6 +27,6 @@
     "next": "14.1.3"
   },
   "eidolon": {
-    "last-update-hash": "f5e06a963489ea4485048aac8a2465de83ea474e"
+    "last-update-hash": "dfa0657ac6a2e886f37c627f53d657a6f882a658"
   }
 }

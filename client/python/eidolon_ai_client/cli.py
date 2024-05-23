@@ -175,7 +175,7 @@ async def run(
         await run(agent=agent, process_id=process_id, stream=True, interactive=True)
 
 
-processes.command("actions")(coro(run))
+app.command("actions")(coro(run))
 
 
 def _status_display(status: ProcessStatus):

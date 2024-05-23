@@ -29,8 +29,6 @@ def parse_repohistory_data(api_key, project_key):
                 label,
                 timestamp,
                 count[i],
-                "phx_riZKSSe6BDTyXgeiduVvOaP4SGkADWauuMtVtiu5Agz",
-                "phc_9lcmDyxVkji98ggIqy2XvyVcItnrgdrMQhZBFp6Du5d",
             )
 
 

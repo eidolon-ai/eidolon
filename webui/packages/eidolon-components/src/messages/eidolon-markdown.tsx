@@ -13,10 +13,11 @@ import {Link} from "@mui/material";
 
 interface EidolonMarkdownProps {
   machineUrl: string
-  children: string | string[]
+  children: any
+  showLineNumbers?: boolean
 }
 
-export const EidolonMarkdown = ({machineUrl, children}: EidolonMarkdownProps) => {
+export const EidolonMarkdown = ({machineUrl, children, showLineNumbers}: EidolonMarkdownProps) => {
   const pattern = /(https?:\/\/[^/]+)\/processes\/([^/]+)\/files\/([^/\s]+)/;
   const transformURL = (url: string) => {
     const match = url.match(pattern)
@@ -45,6 +46,7 @@ export const EidolonMarkdown = ({machineUrl, children}: EidolonMarkdownProps) =>
             {...rest}
             PreTag="div"
             language={match[1]}
+            showLineNumbers={showLineNumbers}
             style={{...materialLight,
               "pre[class*=\"language-\"]": {...materialLight["pre[class*=\"language-\"]"], padding: "8px", "lineHeight": "1.25em"},
               "code[class*=\"language-\"]": {...materialLight["code[class*=\"language-\"]"], "lineHeight": "1.25em"}

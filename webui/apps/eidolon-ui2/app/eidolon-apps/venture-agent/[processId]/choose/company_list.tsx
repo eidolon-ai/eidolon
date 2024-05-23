@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {alpha} from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -39,12 +38,6 @@ const headCells: readonly HeadCell[] = [
     numeric: true,
     disablePadding: false,
     label: 'Category',
-  },
-  {
-    id: 'url',
-    numeric: true,
-    disablePadding: false,
-    label: 'URL',
   },
 ];
 
@@ -192,7 +185,6 @@ function EnhancedTableRow({row, labelId, selected, setSelected}: {row: Company, 
         {row.name}
       </TableCell>
       <TableCell align="right">{row.category}</TableCell>
-      <TableCell align="right">{row.url}</TableCell>
     </TableRow>
 
   )

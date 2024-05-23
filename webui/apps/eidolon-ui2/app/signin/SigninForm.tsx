@@ -69,6 +69,7 @@ export default function SigninForm({provider, doSignin}: SigninFormData) {
               {Object.keys(credentials).map((credential) => {
                 return (
                   <TextField id={`input-${credential}-for-${provider.id}-provider`}
+                             key={credential}
                              variant="standard"
                              required={true}
                              label={credentials[credential].label ?? credential}

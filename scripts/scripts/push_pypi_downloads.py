@@ -57,7 +57,7 @@ def run_script(event_name):
     # Extract the GitHub clones and views per day
     data = get_package_downloads(args.package)
     if data:
-        insert_into_posthog_with_count("pypi_downloads", event_name, data, args.api_key, args.project_key, args.skip_older, args.dry_run)
+        insert_into_posthog_with_count("pypi_downloads", event_name, data, args.api_key, args.project_key, args.skip_older, args.dry_run, "eidolon")
 
 
 def main():

@@ -94,7 +94,9 @@ def llm_function(
         extra["title"] = title
     if sub_title:
         extra["sub_title"] = sub_title
-    return register_handler(name=name, description=description, input_model=input_model, output_model=output_model, **extra)
+    return register_handler(
+        name=name, description=description, input_model=input_model, output_model=output_model, **extra
+    )
 
 
 class LogicUnit(ProcessingUnit, ABC):

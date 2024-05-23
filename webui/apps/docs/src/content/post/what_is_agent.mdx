@@ -1,0 +1,155 @@
+---
+publishDate: 2024-05-16T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'Agent'
+title: 'Agent: So what is an Agent anyway?'
+excerpt: "Let's define what an agent is, how it works in Eidolon, and what are the built-in types."
+image: ~/assets/images/agent.png
+tags:
+  - Agent
+  - LLM App Development
+  - Simple Agent
+  - Configuration
+metadata:
+  canonical: https://www.eidolonai.com/what_is_agent
+---
+So what is an agent anyway? Boy there are a lot of definitions on the web for what this means. Some people define it as
+an extremely powerful, all knowing, all seeing, all doing entity that can do anything and everything. Others define it
+as a simple piece of software that communicates with an LLM.
+
+At Eidolon, we like to think of it as a service that does one thing and does it well. Why this definition? Why one thing?
+Where is the LLM in this definition? Well, it's all about good software design.
+
+When you build a service that does one thing and does it well, you can build it to be very reliable, very understandable, 
+and very maintainable. You have a better chance of building it to be testable, and, most importantly, you have a much 
+lower chance of an LLM hallucinating because the LLM is reasoning about a singlular task. Oh, and by the way, you can also
+get great agent reuse if you design your components carefully.
+
+So, what is an agent in Eidolon? An agent is a web service, typically communicating with an LLM, that performs a single task.
+It is written in python, its inputs and outputs must be json serializable and its configuration is describable in pydantic.
+That's it! While you will see lots of information here about using our APU to talk to an LLM and talk of using our
+built-in services to build your agent, in reality your agent could be built in llama index, AutoGen, or, ugh, LangChain even.
+
+## Separation of Concern
+So why such an emphasis on modularity and separation of concern? Well besides the fact that it is just good software design,
+better testability, easer maintenance, etc..., it also really, really, really helps with hallucination.
+
+Having an LLM do one task only, giving it all the information and tools it needs to do that job, it tends to do a much
+better job doing what you ask of it. It is less likely to hallucinate, less likely to get confused, and less likely to
+give you unexpected results. It's also easier to maintain a reasonably sized context window for the LLM to work with. It's
+been proven time and time again that the more context you give an LLM, the more likely it is to hallucinate or forget facts
+you've given it.
+
+So instead of one big agent that does everything for you, we recommend you build a bunch of small agents that do one thing
+each and connect those agents either with code or allow the agent to decide which other agents to call. This way you can
+build a very complex system that is still very reliable and understandable.
+
+## Anatomy of an Agent
+In Eidolon, an agent is a python class, with annotated methods that define the "actions" of the agent, an optional 
+specification class, and a yaml configuration file. That's it!
+
+Here is an example of a simple agent:
+
+```python
+class TestCase(BaseModel):
+    name: str
+    details: str
+    passed: bool
+
+class QAResponse(BaseModel):
+    outcome: Literal["success", "failure"]
+    test_cases: List[TestCase]
+    synopsis: str
+
+class QASpec(AgentSpec):
+    validate_agent: bool = False
+
+class QualityAssurance(Agent, Specable[QASpec]):
+    def __init__(self, **kwargs):
+        Agent.__init__(self, **kwargs)
+
+    @register_program()
+    async def test(self, process_id, agent: Annotated[str, Body()]) -> QAResponse:
+      ...
+```
+
+In this example, we have an agent that takes a string and returns a `QAResponse` object. The agent extends from
+the base class Agent, which mixes in an APU in its specification, and also gives you the ability to reference
+other agents in the `agent_refs` field.
+
+Now let's look at how one would declare the configuration for this agent:
+
+```yaml
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: qa
+
+spec:
+  implementation: "eidolon_examples.getting_started.2_custom_agents.qa.QualityAssurance"
+  agent_refs: ["hello_world"]
+  validate_agent: true
+```
+
+In this example, we have a yaml file that declares the agent, the implementation of the agent, the other agents
+that this agent references, and a boolean flag that tells the APU to validate the agent before running it.
+The validate_agent flag is used in the implementation of this agent, which I didn't show in the code above.
+A full reference to this example can be found at [Custom Agents](/docs/references/custom_agents)
+
+## The SimpleAgent
+Eidolon comes with a built-in agent called SimpleAgent. The Simple Agent, as the name implies, is simple to configure
+and use, but don't be fooled by its simplicity. The Simple Agent is a very powerful agent that can is highly configurable
+and can be used to build very complex agents. 
+
+The SimpleAgent's easiest use is to build a chatbot interface. In fact, you can build probably the most feature-rich
+chatbot available with **just configuration**. For example, here is the configuration for our chatbot agent:
+
+```yaml
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: conversational_agent
+spec:
+  system_prompt: "You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio."
+  actions:
+    - name: "converse"
+      description: "A copilot that engages with the user."
+      allow_file_upload: true
+  apus:
+    - apu: MistralSmall
+      title: Mistral Small
+    - apu: MistralMedium
+      title: Mistral Medium
+    - apu: MistralLarge
+      title: Mistral Large
+    - apu: GPT3.5-turbo
+      title: GPT3.5 Turbo
+    - apu: GPT4-turbo
+      title: GPT4 Turbo
+      default: true
+    - apu: ClaudeOpus
+      title: Claude Opus
+    - apu: ClaudeSonnet
+      title: Claude Sonnet
+    - apu: ClaudeHaiku
+      title: Claude Haiku
+```
+
+With this configuration, the ChatBot agent provides file upload support and mult-LLM support. Each of the APU's listed
+are configured to support file search, image processing, and audio processing. Coupled with our UI components, you
+get a very powerful chatbot that can do a lot of things.
+
+SimpleAgent is designed to be driven by configuration. Actions are defined in the yaml file, input and outputs can be changed,
+multiple actions can be defined, tools can be added to all listed apu's or individually, and the agent can be configured
+to use multiple apu's at once.
+
+For more information on the SimpleAgent, see [Simple Agent](/docs/components/simple_agent)
+
+For more information on customizing components, see [Component Customization](/docs/references/pluggable)
+
+For more blog posts about the APU, see [APU](/category/apu)
+
+## Conclusion
+In this article, we defined what an agent is, how it works in Eidolon, and what are the built-in types. We also discussed
+the importance of separation of concern and how it can help with hallucination. We also discussed the anatomy of an agent
+and how to configure the SimpleAgent.

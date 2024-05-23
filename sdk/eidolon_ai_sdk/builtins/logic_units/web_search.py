@@ -48,11 +48,11 @@ class Browser(LogicUnit, Specable[BrowseSpec]):
                     anchor_text = anchor.get_text(strip=True)
 
                     # Find the image tag nested within the anchor tag
-                    img_tag = anchor.find('img')
+                    img_tag = anchor.find("img")
 
                     if img_tag:
                         # Extract the src attribute of the image tag
-                        img_src = img_tag.get('src')
+                        img_src = img_tag.get("src")
 
                         # Append the anchor text and image URL to the text output
                         anchor_text += f"\nImage URL: {img_src}\n\n"
@@ -101,7 +101,13 @@ class Search(LogicUnit, Specable[SearchSpec]):
     def __init__(self, **kwargs):
         LogicUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
-        setattr(self, "search", llm_function(name=self.spec.name, description=self.spec.description, title="Google Search", sub_title="search")(self._search()))
+        setattr(
+            self,
+            "search",
+            llm_function(
+                name=self.spec.name, description=self.spec.description, title="Google Search", sub_title="search"
+            )(self._search()),
+        )
 
     def _search(self):
         if "dateRestrict" in self.spec.params:

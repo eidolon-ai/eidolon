@@ -68,15 +68,26 @@ class DocumentManager(Specable[DocumentManagerSpec]):
 
             self.logger.info(f"Found {len(data)} files in symbolic memory")
 
+            add_count = remove_count = replace_count = 0
             tasks = []
             async for change in self.loader.get_changes(data):
                 if isinstance(change, AddedFile):
                     tasks.append(self.processor.addFile(self.collection_name, change.file_info))
+                    add_count += 1
                 elif isinstance(change, ModifiedFile):
                     tasks.append(self.processor.replaceFile(self.collection_name, change.file_info))
+                    replace_count += 1
                 elif isinstance(change, RemovedFile):
                     tasks.append(self.processor.removeFile(self.collection_name, change.file_path))
+                    remove_count += 1
                 else:
                     logger.warning(f"Unknown change type {change}")
+            if add_count:
+                self.logger.info(f"Adding {add_count} files...")
+            if replace_count:
+                self.logger.info(f"Replacing {replace_count} files...")
+            if remove_count:
+                self.logger.info(f"Removing {remove_count} files...")
             await asyncio.gather(*tasks)
+            self.logger.info("Document Manager sync complete")
             self.last_reload = time.time()

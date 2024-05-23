@@ -12,20 +12,20 @@ export const RightSideBarItems = () => {
   const [numStars, setNumStars] = React.useState("  ")
   const isAuthenticated = useIsAuthenticated()
 
-  React.useEffect(() => {
-    fetch("https://api.github.com/repos/eidolon-ai/eidolon")
-      .then((res) => res.json())
-      .then((data) => {
-        setNumStars(data.stargazers_count)
-      })
-  }, [])
+  // React.useEffect(() => {
+  //   fetch("https://api.github.com/repos/eidolon-ai/eidolon")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setNumStars(data.stargazers_count)
+  //     })
+  // }, [])
   return (
     <Stack direction="row" spacing={"16px"} alignItems={"center"} justifyContent={"flex-end"}>
       <BlackButton
         href="https://github.com/eidolon-ai/eidolon"
         variant={"text"}
         sx={{textWrap: "nowrap"}}
-      >Star on GitHub {numStars} ⭐</BlackButton>
+      >Star on GitHub ⭐</BlackButton>
       <BlackButton
         href="https://discord.gg/6kVQrHpeqG"
         sx={{textWrap: "nowrap", margin: 0}}

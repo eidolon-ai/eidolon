@@ -10,12 +10,9 @@ from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 def r(name, **kwargs):
     spec = dict(
-        implementation=SimpleAgent.__name__, **kwargs,
-        apu=dict(
-            implementation="APU",
-            audio_unit="OpenAiSpeech",
-            image_unit="OpenAIImageUnit"
-        )
+        implementation=SimpleAgent.__name__,
+        **kwargs,
+        apu=dict(implementation="APU", audio_unit="OpenAiSpeech", image_unit="OpenAIImageUnit"),
     )
     return Resource(
         apiVersion="eidolon/v1",
@@ -80,14 +77,21 @@ async def test_image_file_include(test_dir):
 
 async def test_produce_image_from_text(test_dir):
     process = await Agent.get("simple").create_process()
-    result = await process.action("converse", body=dict(body="Create an image of a logo for a new startup called AugustData. The logo should be simple and elegant."))
+    result = await process.action(
+        "converse",
+        body=dict(
+            body="Create an image of a logo for a new startup called AugustData. The logo should be simple and elegant."
+        ),
+    )
     print(result)
 
 
 async def test_audio_file_include_and_produce(test_dir):
     process = await Agent.get("simple").create_process()
-    result = await process.action("converse", body=dict(body="Create an audio file of the text 'Hello world, how are you today?'"))
-    pattern = r'(https?://[^/]+)/processes/([^/]+)/files/([^/\)\s]+)'
+    result = await process.action(
+        "converse", body=dict(body="Create an audio file of the text 'Hello world, how are you today?'")
+    )
+    pattern = r"(https?://[^/]+)/processes/([^/]+)/files/([^/\)\s]+)"
     match = re.search(pattern, result.data)
     assert match is not None
     machine_url, process_id, file_id = match.groups()
@@ -96,5 +100,11 @@ async def test_audio_file_include_and_produce(test_dir):
     assert process_id == process.process_id
     file = await process.download_file(file_id)
     assert file is not None
-    result = await process.action("converse", body=dict(body="What is in the audio clip?", attached_files=[FileHandle(machineURL=machine_url, process_id=process_id, file_id=file_id)]))
+    result = await process.action(
+        "converse",
+        body=dict(
+            body="What is in the audio clip?",
+            attached_files=[FileHandle(machineURL=machine_url, process_id=process_id, file_id=file_id)],
+        ),
+    )
     assert "Hello world, how are you today?" in result.data
