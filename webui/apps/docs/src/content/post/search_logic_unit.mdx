@@ -1,0 +1,62 @@
+---
+publishDate: 2024-05-16T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'LogicUnit'
+title: 'Search Logic Unit: Configuring an agent to search the web'
+excerpt: "Learn how to use search in an agent."
+image: ~/assets/images/google_search.webp
+tags:
+  - APU
+  - LLM App Development
+  - Logic Unit
+  - Google Search
+  - Configuration
+metadata:
+  canonical: https://www.eidolonai.com/search_logic_unit
+---
+The search tool is a LogicUnit that can be registered with any APU to provide Google search capabilities to
+that APU. It uses Google site search and must be configured with a `cse_id` and a `cse_token`. 
+
+The full specification for `Search` is:
+
+```python
+class SearchSpec(BaseModel):
+    cse_id: str = Field(
+        default_factory=lambda: os.environ["CSE_ID"],
+        validate_default=True,
+        desctiption="Google Custom Search Engine Id.",
+    )
+    cse_token: str = Field(
+        default_factory=lambda: os.environ["CSE_TOKEN"],
+        validate_default=True,
+        desctiption="Google Project dev token, must have search permissions.",
+    )
+    name: str = "search"
+    description: str = None
+    defaultDateRestrict: Optional[str] = None
+    params: Optional[dict] = {}
+```
+
+* By default, the `cse_id` and `cse_token` are read from the environment variables `CSE_ID` and `CSE_TOKEN`.
+* The `name`, optional and defaults to `search`, is the name of the LogicUnit.
+* The `description` is a description of the LogicUnit. This is used by the LLM to determine if this tool is called.
+  The value is optional but hightly recommended.
+* The `defaultDateRestrict` is an optional parameter that can be used to restrict the search to a specific date range.
+  The value is optional.
+* The `params` is an optional dictionary of additional parameters that can be passed to the search engine. The value is optional.
+  The `params` are passed to the Google search engine as its configuration parameters so searches that restrict to a particular
+  domain, etc..., are supported.
+
+The `Search` tool will execute the query and return a list of `SearchResult` objects. The full specification for `SearchResult` is:
+
+```python
+class SearchResult(BaseModel):
+    url: str
+    title: str
+    description: Optional[str]
+```
+
+These are filled directly from the search with the values returned.
+
+Typically, the `Search` tool is used in conjunction with the [`Browser`](/browser_logic_unit) tool so the LLM can scrape the contents
+of the most relavent web pages in the results.

@@ -18,8 +18,14 @@ class ImageCreationCapabilities(BaseModel):
 
 
 class ImageUnitSpec(BaseModel):
-    image_to_text_prompt: str = Field(default="Use the following prompt to describe the image:", description="The prompt to use for the conversion. The text should be very verbose and detailed.")
-    text_to_image_prompt: str = Field(default="Use the provided text to create an image:", description="The prompt to use for the conversion. The text should be very verbose and detailed.")
+    image_to_text_prompt: str = Field(
+        default="Use the following prompt to describe the image:",
+        description="The prompt to use for the conversion. The text should be very verbose and detailed.",
+    )
+    text_to_image_prompt: str = Field(
+        default="Use the provided text to create an image:",
+        description="The prompt to use for the conversion. The text should be very verbose and detailed.",
+    )
 
 
 class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
@@ -59,8 +65,15 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
         raise NotImplementedError("image_to_text not implemented")
 
     @llm_function()
-    async def text_to_image(self, text: str, quality: Optional[str] = None, width: int = 1024, height: int = 1024, style: Optional[str] = None,
-                            image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp") -> List[str]:
+    async def text_to_image(
+        self,
+        text: str,
+        quality: Optional[str] = None,
+        width: int = 1024,
+        height: int = 1024,
+        style: Optional[str] = None,
+        image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp",
+    ) -> List[str]:
         """
         Converts text to one or more images. The result of the call is a list of file handles that should be returned to the user unchanged.
         :param width: The width of the image. Defaults to 1024.
@@ -74,12 +87,22 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
         message = self.spec.text_to_image_prompt + "\n" + text
         call_context = CallContext(process_id=RequestContext.get("process_id"))
         image_links = []
-        for file_handle in await self._text_to_image(call_context, message, quality, (width, height), style, image_format):
-            image_links.append(f"{file_handle.machineURL}/processes/{file_handle.process_id}/files/{file_handle.file_id}")
+        for file_handle in await self._text_to_image(
+            call_context, message, quality, (width, height), style, image_format
+        ):
+            image_links.append(
+                f"{file_handle.machineURL}/processes/{file_handle.process_id}/files/{file_handle.file_id}"
+            )
         return image_links
 
-    async def _text_to_image(self, call_context: CallContext, text: str, quality: Optional[str] = None, size: Tuple[int, int] = (1024, 1024), style: Optional[str] = None,
-                             image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp",
+    async def _text_to_image(
+        self,
+        call_context: CallContext,
+        text: str,
+        quality: Optional[str] = None,
+        size: Tuple[int, int] = (1024, 1024),
+        style: Optional[str] = None,
+        image_format: Literal["jpeg", "png", "tiff", "bmp", "webp"] = "webp",
     ) -> List[FileHandle]:
         """
         Converts text to an image.

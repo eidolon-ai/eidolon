@@ -138,7 +138,7 @@ class AgentController:
             raise HTTPException(
                 status_code=409,
                 detail=f'Action "{handler.name}" cannot process state "{process.state}"',
-                headers=headers
+                headers=headers,
             )
         last_state = process.state
         RequestContext.set("__last_state__", last_state)
@@ -274,7 +274,7 @@ class AgentController:
                         agent_name=self.name,
                         call_name=handler.name,
                         process_id=process.record_id,
-                        **extra
+                        **extra,
                     )
                     events_to_store.append(output_event)
                     yield output_event

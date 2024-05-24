@@ -1,7 +1,11 @@
-import OpenAPIParser from "@readme/openapi-parser";
 import {OpenAPIV3_1} from "openapi-types";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
 import {HttpException} from "./exceptions";
+
+// Disable SSR for @readme/openapi-parser due to Turbopack incompatibility
+const initializeParser = async () => {
+  return (await import("@readme/openapi-parser")).default;
+};
 
 export interface ChatEvent extends Record<string, any> {
   event_type: string,
@@ -105,6 +109,7 @@ export class EidolonClient {
 
   private async initialize() {
     if (!this.isLoaded) {
+      const OpenAPIParser = await initializeParser();
       const results = await fetch(`${this.machineUrl}/openapi.json`, {headers: this.headers})
       if (results.status !== 200) {
         throw new HttpException(`Failed to fetch openapi.json: ${results.statusText}`, results.status)

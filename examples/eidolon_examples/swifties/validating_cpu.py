@@ -9,7 +9,7 @@ from pydantic_core import to_jsonable_python
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import StartStreamContextEvent, OutputEvent
 from eidolon_ai_client.util.stream_collector import merge_streams
-from eidolon_ai_sdk.cpu.agent_cpu import APU, Thread
+from eidolon_ai_sdk.cpu.apu import APU, Thread
 from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes, SystemAPUMessage
 from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit

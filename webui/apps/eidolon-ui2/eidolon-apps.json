@@ -39,8 +39,8 @@
     "image": "image.webp",
     "location": "http://localhost:8080",
     "type": "copilot",
-    "custom_page": "git-search",
     "params": {
+      "custom_page": "git-search",
       "agent": "repo_expert",
       "operation": "converse",
       "inputLabel": "How can I help you?",

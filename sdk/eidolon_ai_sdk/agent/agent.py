@@ -4,7 +4,7 @@ import typing
 from pydantic import BaseModel
 from typing import List, TypeVar, Generic
 
-from eidolon_ai_sdk.cpu.agent_cpu import APU
+from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec,
@@ -54,7 +54,7 @@ def register_action(
     description: typing.Optional[typing.Callable[[object, FnHandler], str]] = None,
     input_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Type[BaseModel]]] = None,
     output_model: typing.Optional[typing.Callable[[object, FnHandler], typing.Any]] = None,
-    **extra
+    **extra,
 ):
     if not allowed_states:
         raise ValueError("Must specify at least one valid state")

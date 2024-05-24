@@ -24,17 +24,17 @@ class PlaywrightWrapper:
         try:
             import playwright
         except ImportError:
-            raise ImportError(
-                "playwright is not installed. Please install it with `pip install playwright`."
-            )
+            raise ImportError("playwright is not installed. Please install it with `pip install playwright`.")
         self.playwright = playwright
         self.playwright_browser_type = playwright_browser_type
         self.timeout = timeout
         self.kwargs = kwargs
 
     def _create_browser_context(self, **kwargs: Any) -> Any:
-        browser = self.playwright.sync_playwright().start().launcher.launch(
-            self.playwright[self.playwright_browser_type], **kwargs
+        browser = (
+            self.playwright.sync_playwright()
+            .start()
+            .launcher.launch(self.playwright[self.playwright_browser_type], **kwargs)
         )
         return browser.new_context()
 

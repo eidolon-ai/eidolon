@@ -29,7 +29,18 @@ spec:
               - "$.stage"
               - "$.funding"
               - "$.people"
+              - "$.headcount"
               - "$.employee_highlights"
+          - name: "get_persons"
+            description: "Gets a list of people from the Harmonic API"
+            path: "/persons"
+            method: "get"
+            result_filters:
+              - "$.full_name"
+              - "$.first_name"
+              - "$.last_name"
+              - "$.experience"
+              - "$.linkedin_headline"
 
   description: "Creates company summaries"
   system_prompt: |-
