@@ -102,30 +102,43 @@ export default defineConfig({
             {
               label: 'Agents', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/agents/overview/'},
-                {label: 'Agents', link: '/docs/components/agents/simpleagent/'},
-                {label: 'Agents', link: '/docs/components/agents/retrieveragent/'},
+                {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent/'},
+                {label: 'RetrieverAgent', link: '/docs/components/agents/retrieveragent/'},
               ]
             },
             {
               label: 'APU', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/apu/overview/'},
-                {label: 'APU', link: '/docs/components/apu/conversationalapu/'},
-                {label: 'APU', link: '/docs/components/apu/gpt3.5-turbo/'},
-                {label: 'APU', link: '/docs/components/apu/mistrallarge/'},
-                {label: 'APU', link: '/docs/components/apu/mistralsmall/'},
-                {label: 'APU', link: '/docs/components/apu/mistralmedium/'},
-                {label: 'APU', link: '/docs/components/apu/claudehaiku/'},
-                {label: 'APU', link: '/docs/components/apu/claudesonnet/'},
-                {label: 'APU', link: '/docs/components/apu/claudeopus/'},
-                {label: 'APU', link: '/docs/components/apu/gpt4-turbo/'},
+                {label: 'ClaudeHaiku', link: '/docs/components/apu/claudehaiku/'},
+                {label: 'ClaudeOpus', link: '/docs/components/apu/claudeopus/'},
+                {label: 'ClaudeSonnet', link: '/docs/components/apu/claudesonnet/'},
+                {label: 'ConversationalAPU', link: '/docs/components/apu/conversationalapu/'},
+                {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo/'},
+                {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo/'},
+                {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge/'},
+                {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium/'},
+                {label: 'MistralSmall', link: '/docs/components/apu/mistralsmall/'},
               ]
             },
             {
               label: 'LLMUnit', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmunit/overview/'},
-                {label: 'LLMUnit', link: '/docs/components/llmunit/openaigpt/'},
-                {label: 'LLMUnit', link: '/docs/components/llmunit/mistralgpt/'},
-                {label: 'LLMUnit', link: '/docs/components/llmunit/anthropicllmunit/'},
+                {label: 'AnthropicLLMUnit', link: '/docs/components/llmunit/anthropicllmunit/'},
+                {label: 'MistralGPT', link: '/docs/components/llmunit/mistralgpt/'},
+                {label: 'OpenAIGPT', link: '/docs/components/llmunit/openaigpt/'},
+              ]
+            },
+            {
+              label: 'LLMModel', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/llmmodel/overview/'},
+                {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307/'},
+                {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229/'},
+                {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229/'},
+                {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo/'},
+                {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo/'},
+                {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest/'},
+                {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest/'},
+                {label: 'mistral-small-latest', link: '/docs/components/llmmodel/mistral-small-latest/'},
               ]
             },
             {
@@ -137,8 +150,8 @@ export default defineConfig({
             {
               label: 'DocumentLoader', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/documentloader/overview/'},
-                {label: 'DocumentLoader', link: '/docs/components/documentloader/filesystemloader/'},
-                {label: 'DocumentLoader', link: '/docs/components/documentloader/githubloader/'},
+                {label: 'FilesystemLoader', link: '/docs/components/documentloader/filesystemloader/'},
+                {label: 'GitHubLoader', link: '/docs/components/documentloader/githubloader/'},
               ]
             },
             // ### End Components ###

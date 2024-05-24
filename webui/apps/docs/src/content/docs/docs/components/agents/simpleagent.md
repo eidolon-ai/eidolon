@@ -1,4 +1,3 @@
-
 ---
 title: SimpleAgent
 description: SimpleAgent
@@ -16,7 +15,7 @@ description: SimpleAgent
   - **Items** *(string)*
 - **`actions`** *(array)*: Default: `[{"name": "converse", "title": null, "sub_title": null, "description": null, "user_prompt": "{{ body }}", "input_schema": {}, "output_schema": "str", "allow_file_upload": false, "supported_mime_types": [], "allowed_states": ["initialized", "idle", "http_error"], "output_state": "idle"}]`.
   - **Items**: Refer to *[#/$defs/ActionDefinition](#%24defs/ActionDefinition)*.
-- **`apu`** *(Reference[APU])*: Default: `"APU"`.
+- **`apu`** *([Reference[APU]](/docs/components/apu/overview/))*: Default: `"APU"`.
 - **`apus`** *(array)*: Default: `[]`.
   - **Items**: Refer to *[#/$defs/NamedCPU](#%24defs/NamedCPU)*.
 - **`title_generation_mode`** *(string)*: Must be one of: `["none", "on_request"]`. Default: `"on_request"`.
@@ -55,5 +54,5 @@ description: SimpleAgent
     - **Any of**
       - *string*
       - *null*
-  - **`apu`** *(Reference[APU])*: Default: `"APU"`.
+  - **`apu`** *([Reference[APU]](/docs/components/apu/overview/))*: Default: `"APU"`.
   - **`default`** *(boolean)*: Default: `false`.

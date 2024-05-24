@@ -1,4 +1,3 @@
-
 ---
 title: ClaudeHaiku
 description: ClaudeHaiku
@@ -10,7 +9,7 @@ description: ClaudeHaiku
 - **`max_num_function_calls`** *(integer)*: The maximum number of function calls to make in a single request. Default: `10`.
 - **`io_unit`** *(Reference[IOUnit])*: Default: `"IOUnit"`.
 - **`memory_unit`** *(Reference[MemoryUnit])*: Default: `"MemoryUnit"`.
-- **`llm_unit`** *(Reference[LLMUnit])*: Default: `{"implementation": "AnthropicLLMUnit", "model": "claude-3-haiku-20240307"}`.
+- **`llm_unit`** *([Reference[LLMUnit]](/docs/components/llmunit/overview/))*: Default: `{"implementation": "AnthropicLLMUnit", "model": "claude-3-haiku-20240307"}`.
 - **`logic_units`** *(array)*: Default: `[]`.
   - **Items** *(Reference[LogicUnit])*: Default: `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`.
 - **`audio_unit`**: Default: `null`.

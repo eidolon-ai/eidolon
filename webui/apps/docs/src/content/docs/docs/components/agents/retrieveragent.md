@@ -1,4 +1,3 @@
-
 ---
 title: RetrieverAgent
 description: RetrieverAgent
@@ -14,4 +13,4 @@ description: RetrieverAgent
 - **`description`** *(string)*: A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...
 - **`loader_root_location`** *(string)*: A URL specifying the root location of the loader. Default: `null`.
 - **`loader_pattern`** *(string)*: The search pattern to use when loading files. Default: `"**/*"`.
-- **`document_manager`** *(Reference[DocumentManager])*: Default: `"eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager"`.
+- **`document_manager`** *([Reference[DocumentManager]](/docs/components/documentmanager/overview/))*: Default: `"eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager"`.

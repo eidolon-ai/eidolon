@@ -1,4 +1,3 @@
-
 ---
 title: DocumentManager
 description: DocumentManager
@@ -9,5 +8,5 @@ description: DocumentManager
 
 - **`name`** *(string)*
 - **`recheck_frequency`** *(integer)*: The number of seconds between checks. Default: `60`.
-- **`loader`** *(Reference[DocumentLoader])*: Default: `"DocumentLoader"`.
+- **`loader`** *([Reference[DocumentLoader]](/docs/components/documentloader/overview/))*: Default: `"DocumentLoader"`.
 - **`doc_processor`** *(Reference[DocumentProcessor])*: Default: `"DocumentProcessor"`.

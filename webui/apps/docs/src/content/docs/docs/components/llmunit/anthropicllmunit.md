@@ -1,4 +1,3 @@
-
 ---
 title: AnthropicLLMUnit
 description: AnthropicLLMUnit
@@ -7,7 +6,7 @@ description: AnthropicLLMUnit
 
 ## Properties
 
-- **`model`** *(Reference[LLMModel])*: Default: `"claude-3-opus-20240229"`.
+- **`model`** *([Reference[LLMModel]](/docs/components/llmmodel/overview/))*: Default: `"claude-3-opus-20240229"`.
 - **`temperature`** *(number)*: Default: `0.3`.
 - **`max_tokens`**: Default: `null`.
   - **Any of**

@@ -13,7 +13,7 @@ from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.apu import APU
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
@@ -25,6 +25,9 @@ class Group(BaseModel):
     components: list[tuple[str, type, dict]] = []
     include_root: bool = False
 
+    def sort_components(self):
+        self.components = sorted(self.components, key=lambda x: x[0])
+
 
 components_to_load: list[Group] = [
     Group(base="Agents", default="SimpleAgent", components=[
@@ -33,6 +36,7 @@ components_to_load: list[Group] = [
     ]),
     Group(base=APU),
     Group(base=LLMUnit),
+    Group(base=LLMModel),
     Group(base=DocumentManager, include_root=True),
     Group(base=DocumentLoader),
 ]
@@ -46,7 +50,8 @@ def main():
     update_sitemap()
 
 
-def update_sitemap(astro_config_loc=Path(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "astro.config.mjs"):
+def update_sitemap(astro_config_loc=Path(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "astro.config.mjs"):
     with open(astro_config_loc, "r") as astro_config_file:
         lines = astro_config_file.readlines()
     start_index, finish_index = None, None
@@ -61,33 +66,35 @@ def update_sitemap(astro_config_loc=Path(os.path.dirname(os.path.dirname(os.path
         overview_str_acc.extend([
             "{",
             f"  label: '{name}', collapsed: true, items: [",
-            f"    {{label: 'Overview', link: '/docs/components/{name.lower()}/overview/'}},",
+            f"    {{label: 'Overview', link: '/docs/components/{url_safe(name)}/overview/'}},",
         ])
         for component_name, base, overrides in group.components:
-            overview_str_acc.append(f"    {{label: '{name}', link: '/docs/components/{name.lower()}/{component_name.lower()}/'}},")
+            overview_str_acc.append(
+                f"    {{label: '{component_name}', link: '/docs/components/{url_safe(name)}/{url_safe(component_name)}/'}},")
         overview_str_acc.extend([
             "  ]",
             "},"
         ])
     with open(astro_config_loc, "w") as components_file:
         components_file.write(''.join(lines[:start_index + 1]))
-        components_file.write("\n".join([" "*12 + s for s in overview_str_acc]) + "\n")
+        components_file.write("\n".join([" " * 12 + s for s in overview_str_acc]) + "\n")
         components_file.write(''.join(lines[finish_index:]))
 
 
-def write_md(read_loc, write_loc=Path(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
+def write_md(read_loc, write_loc=Path(os.path.dirname(os.path.dirname(
+    os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     for k, g in groups.items():
-        write_file_loc = write_loc / k.lower() / "overview.md"
+        write_file_loc = write_loc / url_safe(k) / "overview.md"
         title = f"{k} Overview"
         description = f"Overview of {k} components"
         content = [f"## {k} Components"]
         for name, clz, overrides in g.components:
-            content.append(f"* [{name}](/docs/components/{k.lower()}/{name.lower()}/)")
+            content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
         write_astro_md_file("\n".join(content), description, title, write_file_loc)
 
     for component in os.listdir(read_loc):
         for file in os.listdir(read_loc / component):
-            write_file_loc = write_loc / component.lower() / (file.replace(".json", ".md")).lower()
+            write_file_loc = write_loc / url_safe(component) / (url_safe(file.replace(".json", "")) + ".md")
             parser = jsonschema2md.Parser(examples_as_yaml=True, )
             with open(read_loc / component / file, 'r') as json_file:
                 obj = json.load(json_file)
@@ -99,9 +106,10 @@ def write_md(read_loc, write_loc=Path(os.path.dirname(os.path.dirname(os.path.di
 
 
 def write_astro_md_file(content, description, title, write_file_loc):
+    for name, group in groups.items():
+        content = content.replace(f"Reference[{name}]", f"[Reference[{name}]](/docs/components/{url_safe(name)}/overview/)")
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
-    md_str = f"""
----
+    md_str = f"""---
 title: {title}
 description: {description}
 ---
@@ -121,8 +129,10 @@ def generate_json(write_base):
         try:
             clz = for_name(pointer, object)
             for k, g in groups.items():
-                if not isinstance(g.base, str) and (issubclass(clz, g.base) or clz == g.base) and (k != key or g.include_root):
+                if not isinstance(g.base, str) and (issubclass(clz, g.base) or clz == g.base) and (
+                        k != key or g.include_root):
                     g.components.append((key, clz, overrides))
+                    g.sort_components()
         except ValueError as ve:
             print(f"skipping {key}", ve)
     for key, group in groups.items():
@@ -170,6 +180,10 @@ def inline_refs(schema, resolver=None):
         return [inline_refs(i, resolver) for i in schema]
     else:
         return schema
+
+
+def url_safe(name: str) -> str:
+    return name.replace(" ", "_").replace(".", "_").lower()
 
 
 if __name__ == "__main__":
