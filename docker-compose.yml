@@ -1,6 +1,15 @@
+# This file is used to run the Eidolon server, a MongoDB database, and the Eidolon UI together in a single command.
+# Run `docker-compose up` in the same directory as this file to start the services.
 version: '3.8'
 
 services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
   eidolon-server:
     build:
       context: ./examples
@@ -12,12 +21,15 @@ services:
       - PYTHONUNBUFFERED=1
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - AGENT_DIRECTORY=/app/resources
+      - MONGO_CONNECTION_STR=mongodb://mongo:27017
     expose:
       - "8080"
     ports:
       - "8080:8080"
     volumes:
-      - ./examples/eidolon_examples/conversational_chatbot/resources:/app/conversational_chatbot/resources
+      - ./examples/eidolon_examples/conversational_chatbot/resources:/app/resources
+    depends_on:
+      - mongo
 
   eidolon-ui2:
     build:
@@ -35,3 +47,6 @@ services:
       - "3000:3000"
     depends_on:
       - eidolon-server
+
+volumes:
+  mongo-data:

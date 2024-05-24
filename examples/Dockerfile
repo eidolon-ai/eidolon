@@ -15,7 +15,8 @@ ARG LOC=eidolon_examples
 FROM examples
 WORKDIR /app
 COPY $LOC .
-COPY demo_resources/ resources/
+COPY demo_resources/usage_resources.yaml resources/
+COPY eidolon_examples/conversational_chatbot/resources/conversational_agent.yaml /app/resources/conversational_agent.yaml
 
 # runner work
 RUN addgroup --system --gid 1001 eidolon
