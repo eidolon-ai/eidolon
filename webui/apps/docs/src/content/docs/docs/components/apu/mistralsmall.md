@@ -1,9 +1,7 @@
 ---
 title: MistralSmall
-description: MistralSmall
+description: Description of MistralSmall component
 ---
-# MistralSmall
-
 ## Properties
 
 - **`max_num_function_calls`** *(integer)*: The maximum number of function calls to make in a single request. Default: `10`.

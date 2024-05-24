@@ -34,6 +34,8 @@ class APU(Specable[APUSpec], ABC):
     """
     The APU is the main interface for the Agent to interact with the LLM.
     The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.
+
+    To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).
     """
 
     title: str

@@ -1,9 +1,7 @@
 ---
 title: gpt-4-turbo
-description: gpt-4-turbo
+description: Description of gpt-4-turbo component
 ---
-# gpt-4-turbo
-
 ## Properties
 
 - **`human_name`** *(string)*: Default: `"GPT-4 Turbo"`.

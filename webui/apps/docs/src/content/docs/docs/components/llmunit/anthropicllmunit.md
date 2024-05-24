@@ -1,9 +1,7 @@
 ---
 title: AnthropicLLMUnit
-description: AnthropicLLMUnit
+description: Description of AnthropicLLMUnit component
 ---
-# AnthropicLLMUnit
-
 ## Properties
 
 - **`model`** *([Reference[LLMModel]](/docs/components/llmmodel/overview/))*: Default: `"claude-3-opus-20240229"`.

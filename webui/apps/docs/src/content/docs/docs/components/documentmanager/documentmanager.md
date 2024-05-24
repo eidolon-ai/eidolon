@@ -1,9 +1,7 @@
 ---
 title: DocumentManager
-description: DocumentManager
+description: Description of DocumentManager component
 ---
-# DocumentManager
-
 ## Properties
 
 - **`name`** *(string)*

@@ -1,9 +1,7 @@
 ---
 title: mistral-large-latest
-description: mistral-large-latest
+description: Description of mistral-large-latest component
 ---
-# mistral-large-latest
-
 ## Properties
 
 - **`human_name`** *(string)*: Default: `"Mistral Large"`.

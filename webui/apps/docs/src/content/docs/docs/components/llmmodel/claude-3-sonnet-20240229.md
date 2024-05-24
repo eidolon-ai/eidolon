@@ -1,9 +1,7 @@
 ---
 title: claude-3-sonnet-20240229
-description: claude-3-sonnet-20240229
+description: Description of claude-3-sonnet-20240229 component
 ---
-# claude-3-sonnet-20240229
-
 ## Properties
 
 - **`human_name`** *(string)*: Default: `"Claude Sonnet"`.

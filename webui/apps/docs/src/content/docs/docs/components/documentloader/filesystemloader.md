@@ -1,9 +1,7 @@
 ---
 title: FilesystemLoader
-description: FilesystemLoader
+description: Description of FilesystemLoader component
 ---
-# FilesystemLoader
-
 ## Properties
 
 - **`root_dir`** *(string)*

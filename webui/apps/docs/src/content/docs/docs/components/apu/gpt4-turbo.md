@@ -1,9 +1,7 @@
 ---
 title: GPT4-turbo
-description: GPT4-turbo
+description: Description of GPT4-turbo component
 ---
-# GPT4-turbo
-
 ## Properties
 
 - **`max_num_function_calls`** *(integer)*: The maximum number of function calls to make in a single request. Default: `10`.

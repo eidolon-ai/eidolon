@@ -1,9 +1,7 @@
 ---
 title: gpt-3.5-turbo
-description: gpt-3.5-turbo
+description: Description of gpt-3.5-turbo component
 ---
-# gpt-3.5-turbo
-
 ## Properties
 
 - **`human_name`** *(string)*: Default: `"GPT-3.5 Turbo"`.

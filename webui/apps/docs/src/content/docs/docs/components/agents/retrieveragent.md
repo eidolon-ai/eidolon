@@ -1,8 +1,9 @@
 ---
 title: RetrieverAgent
-description: RetrieverAgent
+description: Description of RetrieverAgent component
 ---
-# RetrieverAgent
+*A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.
+The agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.*
 
 ## Properties
 

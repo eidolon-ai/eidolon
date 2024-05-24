@@ -2,6 +2,7 @@
 title: DocumentLoader Overview
 description: Overview of DocumentLoader components
 ---
-## DocumentLoader Components
+
+## Builtins
 * [FilesystemLoader](/docs/components/documentloader/filesystemloader/)
 * [GitHubLoader](/docs/components/documentloader/githubloader/)

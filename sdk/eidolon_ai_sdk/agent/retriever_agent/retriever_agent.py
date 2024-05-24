@@ -19,6 +19,11 @@ def make_description(agent: object, _handler: FnHandler) -> str:
 
 
 class RetrieverAgentSpec(RetrieverSpec):
+    """
+    A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.
+    The agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.
+    """
+
     name: str = Field(description="The name of the document store to use.")
     description: str = Field(
         description="A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc..."

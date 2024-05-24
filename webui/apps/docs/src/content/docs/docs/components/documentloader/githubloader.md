@@ -1,9 +1,7 @@
 ---
 title: GitHubLoader
-description: GitHubLoader
+description: Description of GitHubLoader component
 ---
-# GitHubLoader
-
 ## Properties
 
 - **`owner`** *(string)*

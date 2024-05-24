@@ -1,9 +1,7 @@
 ---
 title: GPT3.5-turbo
-description: GPT3.5-turbo
+description: Description of GPT3.5-turbo component
 ---
-# GPT3.5-turbo
-
 ## Properties
 
 - **`max_num_function_calls`** *(integer)*: The maximum number of function calls to make in a single request. Default: `10`.

@@ -1,9 +1,7 @@
 ---
 title: ClaudeOpus
-description: ClaudeOpus
+description: Description of ClaudeOpus component
 ---
-# ClaudeOpus
-
 ## Properties
 
 - **`max_num_function_calls`** *(integer)*: The maximum number of function calls to make in a single request. Default: `10`.

@@ -1,9 +1,7 @@
 ---
 title: OpenAIGPT
-description: OpenAIGPT
+description: Description of OpenAIGPT component
 ---
-# OpenAIGPT
-
 ## Properties
 
 - **`model`** *([Reference[LLMModel]](/docs/components/llmmodel/overview/))*: Default: `"gpt-4-turbo"`.

@@ -1,9 +1,7 @@
 ---
 title: claude-3-haiku-20240307
-description: claude-3-haiku-20240307
+description: Description of claude-3-haiku-20240307 component
 ---
-# claude-3-haiku-20240307
-
 ## Properties
 
 - **`human_name`** *(string)*: Default: `"Claude Haiku"`.

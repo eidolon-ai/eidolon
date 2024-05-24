@@ -1,9 +1,7 @@
 ---
 title: mistral-small-latest
-description: mistral-small-latest
+description: Description of mistral-small-latest component
 ---
-# mistral-small-latest
-
 ## Properties
 
 - **`human_name`** *(string)*: Default: `"Mistral Small"`.

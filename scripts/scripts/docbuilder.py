@@ -1,11 +1,12 @@
 import json
 import os
+import textwrap
 from pathlib import Path
-from typing import Optional, Dict, cast
+from typing import Optional, Dict, cast, Self
 
 import jsonschema
 import jsonschema2md
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
@@ -24,9 +25,16 @@ class Group(BaseModel):
     default: Optional[str] = None
     components: list[tuple[str, type, dict]] = []
     include_root: bool = False
+    description: str = None
 
     def sort_components(self):
         self.components = sorted(self.components, key=lambda x: x[0])
+
+    @model_validator(mode='after')
+    def update_description(self) -> Self:
+        if not self.description:
+            self.description = textwrap.dedent(self.base.__doc__) if self.base.__doc__ else ""
+        return self
 
 
 components_to_load: list[Group] = [
@@ -87,20 +95,20 @@ def write_md(read_loc, write_loc=Path(os.path.dirname(os.path.dirname(
         write_file_loc = write_loc / url_safe(k) / "overview.md"
         title = f"{k} Overview"
         description = f"Overview of {k} components"
-        content = [f"## {k} Components"]
+        content = [f"## Builtins"]
         for name, clz, overrides in g.components:
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
-        write_astro_md_file("\n".join(content), description, title, write_file_loc)
+        write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
     for component in os.listdir(read_loc):
         for file in os.listdir(read_loc / component):
             write_file_loc = write_loc / url_safe(component) / (url_safe(file.replace(".json", "")) + ".md")
-            parser = jsonschema2md.Parser(examples_as_yaml=True, )
+            parser = jsonschema2md.Parser(examples_as_yaml=True)
             with open(read_loc / component / file, 'r') as json_file:
                 obj = json.load(json_file)
-                md_lines = parser.parse_schema(obj)
             title = obj.get('title', file)
-            description = obj.get('description', title)
+            description = f"Description of {title} component"
+            md_lines = parser.parse_schema(obj)[1:]  # remove title
             content = ''.join(md_lines)
             write_astro_md_file(content, description, title, write_file_loc)
 
@@ -141,7 +149,6 @@ def generate_json(write_base):
         for name, clz, overrides in group.components:
             if hasattr(clz, "model_json_schema"):
                 json_schema = clz.model_json_schema()
-
                 to_pop = set()
                 # todo, this should be part of reference json schema
                 for k, v in json_schema.get("$defs", {}).items():

@@ -1,9 +1,7 @@
 ---
 title: mistral-medium-latest
-description: mistral-medium-latest
+description: Description of mistral-medium-latest component
 ---
-# mistral-medium-latest
-
 ## Properties
 
 - **`human_name`** *(string)*: Default: `"Mistral Medium"`.

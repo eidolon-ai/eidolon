@@ -2,5 +2,6 @@
 title: DocumentManager Overview
 description: Overview of DocumentManager components
 ---
-## DocumentManager Components
+
+## Builtins
 * [DocumentManager](/docs/components/documentmanager/documentmanager/)

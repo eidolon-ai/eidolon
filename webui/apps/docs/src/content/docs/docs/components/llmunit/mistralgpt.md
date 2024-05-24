@@ -1,9 +1,7 @@
 ---
 title: MistralGPT
-description: MistralGPT
+description: Description of MistralGPT component
 ---
-# MistralGPT
-
 ## Properties
 
 - **`model`** *([Reference[LLMModel]](/docs/components/llmmodel/overview/))*: Default: `"mistral-large-latest"`.
