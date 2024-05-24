@@ -100,33 +100,47 @@ export default defineConfig({
           items: [
             // ### Start Components ###
             {
-              label: 'Agent Templates', collapsed: true, items: [
-                {label: 'SimpleAgent', link: '/docs/components/simple_agent'},
-                {label: 'RetrieverAgent', link: '/docs/components/retriever_agent'},
+              label: 'Agents', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/agents/overview/'},
+                {label: 'Agents', link: '/docs/components/agents/simpleagent/'},
+                {label: 'Agents', link: '/docs/components/agents/retrieveragent/'},
               ]
             },
             {
               label: 'APU', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/apu/'},
-                {label: 'ConversationalAPU', link: '/docs/components/conversational_apu/'},
+                {label: 'Overview', link: '/docs/components/apu/overview/'},
+                {label: 'APU', link: '/docs/components/apu/conversationalapu/'},
+                {label: 'APU', link: '/docs/components/apu/gpt3.5-turbo/'},
+                {label: 'APU', link: '/docs/components/apu/mistrallarge/'},
+                {label: 'APU', link: '/docs/components/apu/mistralsmall/'},
+                {label: 'APU', link: '/docs/components/apu/mistralmedium/'},
+                {label: 'APU', link: '/docs/components/apu/claudehaiku/'},
+                {label: 'APU', link: '/docs/components/apu/claudesonnet/'},
+                {label: 'APU', link: '/docs/components/apu/claudeopus/'},
+                {label: 'APU', link: '/docs/components/apu/gpt4-turbo/'},
               ]
             },
             {
               label: 'LLMUnit', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/llm_unit'},
-                {label: 'OpenAIGPT', link: '/docs/components/llm_unit_openai'},
-                {label: 'MistralGPT', link: '/docs/components/llm_unit_minstral'},
-                {label: 'AnthropicLLMUnit', link: '/docs/components/llm_unit_anthropic'},
+                {label: 'Overview', link: '/docs/components/llmunit/overview/'},
+                {label: 'LLMUnit', link: '/docs/components/llmunit/openaigpt/'},
+                {label: 'LLMUnit', link: '/docs/components/llmunit/mistralgpt/'},
+                {label: 'LLMUnit', link: '/docs/components/llmunit/anthropicllmunit/'},
               ]
             },
-            // {
-            //   label: 'Logic Unit', collapsed: true, items: [
-            //     {label: 'Logic Unit Overview', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Overview', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Search', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Browser', link: '/docs/recipes/under-construction/'},
-            //   ]
-            // },
+            {
+              label: 'DocumentManager', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/documentmanager/overview/'},
+                {label: 'DocumentManager', link: '/docs/components/documentmanager/documentmanager/'},
+              ]
+            },
+            {
+              label: 'DocumentLoader', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/documentloader/overview/'},
+                {label: 'DocumentLoader', link: '/docs/components/documentloader/filesystemloader/'},
+                {label: 'DocumentLoader', link: '/docs/components/documentloader/githubloader/'},
+              ]
+            },
             // ### End Components ###
           ]
         },

@@ -1,11 +1,14 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, cast
 
 import jsonschema
+import jsonschema2md
 from pydantic import BaseModel
 
+from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
+from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -13,30 +16,101 @@ from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.util.class_utils import for_name, fqn
+from eidolon_ai_sdk.util.class_utils import for_name
 
 
 class Group(BaseModel):
-    base: type
+    base: type | str
     default: Optional[str] = None
-    components: list[tuple[type, dict]] = []
+    components: list[tuple[str, type, dict]] = []
+    include_root: bool = False
 
 
-groups: dict[str, Group] = {
-    "LLMUnit": Group(base=LLMUnit),
-    "Agents": Group(base=object, default="SimpleAgent", components=[
-        (SimpleAgent, {}),
-        (RetrieverAgent, {}),
+components_to_load: list[Group] = [
+    Group(base="Agents", default="SimpleAgent", components=[
+        ("SimpleAgent", SimpleAgent, {}),
+        ("RetrieverAgent", RetrieverAgent, {}),
     ]),
-    "APU": Group(base=APU),
-}
+    Group(base=APU),
+    Group(base=LLMUnit),
+    Group(base=DocumentManager, include_root=True),
+    Group(base=DocumentLoader),
+]
+groups: Dict[str, Group] = {g.base if isinstance(g.base, str) else g.base.__name__: g for g in components_to_load}
 
 
 def main():
-    generate_json()
+    dist_component_schemas = Path(os.path.dirname(os.path.dirname(__file__))) / "dist" / "component_schemas"
+    generate_json(dist_component_schemas)
+    write_md(dist_component_schemas)
+    update_sitemap()
 
 
-def generate_json():
+def update_sitemap(astro_config_loc=Path(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "astro.config.mjs"):
+    with open(astro_config_loc, "r") as astro_config_file:
+        lines = astro_config_file.readlines()
+    start_index, finish_index = None, None
+    for i in range(len(lines)):
+        if "### Start Components ###" in lines[i]:
+            start_index = i
+        if "### End Components ###" in lines[i]:
+            finish_index = i
+    overview_str_acc = []
+    for name, group in groups.items():
+        group = cast(Group, group)
+        overview_str_acc.extend([
+            "{",
+            f"  label: '{name}', collapsed: true, items: [",
+            f"    {{label: 'Overview', link: '/docs/components/{name.lower()}/overview/'}},",
+        ])
+        for component_name, base, overrides in group.components:
+            overview_str_acc.append(f"    {{label: '{name}', link: '/docs/components/{name.lower()}/{component_name.lower()}/'}},")
+        overview_str_acc.extend([
+            "  ]",
+            "},"
+        ])
+    with open(astro_config_loc, "w") as components_file:
+        components_file.write(''.join(lines[:start_index + 1]))
+        components_file.write("\n".join([" "*12 + s for s in overview_str_acc]) + "\n")
+        components_file.write(''.join(lines[finish_index:]))
+
+
+def write_md(read_loc, write_loc=Path(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
+    for k, g in groups.items():
+        write_file_loc = write_loc / k.lower() / "overview.md"
+        title = f"{k} Overview"
+        description = f"Overview of {k} components"
+        content = [f"## {k} Components"]
+        for name, clz, overrides in g.components:
+            content.append(f"* [{name}](/docs/components/{k.lower()}/{name.lower()}/)")
+        write_astro_md_file("\n".join(content), description, title, write_file_loc)
+
+    for component in os.listdir(read_loc):
+        for file in os.listdir(read_loc / component):
+            write_file_loc = write_loc / component.lower() / (file.replace(".json", ".md")).lower()
+            parser = jsonschema2md.Parser(examples_as_yaml=True, )
+            with open(read_loc / component / file, 'r') as json_file:
+                obj = json.load(json_file)
+                md_lines = parser.parse_schema(obj)
+            title = obj.get('title', file)
+            description = obj.get('description', title)
+            content = ''.join(md_lines)
+            write_astro_md_file(content, description, title, write_file_loc)
+
+
+def write_astro_md_file(content, description, title, write_file_loc):
+    os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
+    md_str = f"""
+---
+title: {title}
+description: {description}
+---
+""" + content
+    with open(write_file_loc, 'w') as md_file:
+        md_file.write(md_str)
+
+
+def generate_json(write_base):
     resources: list[ReferenceResource] = AgentOS.get_resources(ReferenceResource).values()
     for r in resources:
         key = r.metadata.name
@@ -44,27 +118,19 @@ def generate_json():
         pointer = overrides.pop("implementation")
         if key in groups:
             groups[key].default = pointer
-        else:
-            try:
-                clz = for_name(pointer, object)
-                for g in groups.values():
-                    if issubclass(clz, g.base) and g.base != object:
-                        g.components.append((clz, overrides))
-            except ValueError as ve:
-                print(f"skipping {key}", ve)
+        try:
+            clz = for_name(pointer, object)
+            for k, g in groups.items():
+                if not isinstance(g.base, str) and (issubclass(clz, g.base) or clz == g.base) and (k != key or g.include_root):
+                    g.components.append((key, clz, overrides))
+        except ValueError as ve:
+            print(f"skipping {key}", ve)
     for key, group in groups.items():
-        write_loc = Path(os.path.dirname(os.path.dirname(__file__))) / "dist" / "component_schemas" / key
+        write_loc = write_base / key
         os.makedirs(os.path.dirname(write_loc / "overview.json"), exist_ok=True)
-
-        with open(write_loc / "overview.json", "w") as file:
-            components = [c.__name__ for c, _ in group.components]
-            json.dump(
-                dict(key=key, contract=fqn(group.base), default=group.default, components=components), file, indent=2
-            )
-
-        for component, overrides in group.components:
-            if hasattr(component, "model_json_schema"):
-                json_schema = component.model_json_schema()
+        for name, clz, overrides in group.components:
+            if hasattr(clz, "model_json_schema"):
+                json_schema = clz.model_json_schema()
 
                 to_pop = set()
                 # todo, this should be part of reference json schema
@@ -75,15 +141,19 @@ def generate_json():
                         del v["additionalProperties"]
 
                 json_schema = inline_refs(json_schema)
-                json_schema['overrides'] = overrides
+                for k, v in json_schema['properties'].items():
+                    if k in overrides:
+                        v['default'] = overrides[k]
+                json_schema['title'] = name
+
                 for r in to_pop:
                     del json_schema["$defs"][r]
                 if "$defs" in json_schema and not json_schema["$defs"]:
                     del json_schema["$defs"]
-                with open(write_loc / (component.__name__ + ".json"), 'w') as file:
+                with open(write_loc / (name + ".json"), 'w') as file:
                     json.dump(json_schema, file, indent=2)
             else:
-                print(f"Skipping non BaseModel component {component}")
+                print(f"Skipping non BaseModel component {name}")
 
 
 def inline_refs(schema, resolver=None):
@@ -100,8 +170,6 @@ def inline_refs(schema, resolver=None):
         return [inline_refs(i, resolver) for i in schema]
     else:
         return schema
-
-
 
 
 if __name__ == "__main__":
