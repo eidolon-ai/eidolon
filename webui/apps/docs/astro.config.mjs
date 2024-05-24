@@ -98,6 +98,7 @@ export default defineConfig({
         {
           label: 'Builtin Components',
           items: [
+            // ### Start Components ###
             {
               label: 'Agent Templates', collapsed: true, items: [
                 {label: 'SimpleAgent', link: '/docs/components/simple_agent'},
@@ -126,6 +127,7 @@ export default defineConfig({
             //     {label: 'Browser', link: '/docs/recipes/under-construction/'},
             //   ]
             // },
+            // ### End Components ###
           ]
         },
         {
