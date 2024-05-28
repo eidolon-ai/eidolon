@@ -35,7 +35,6 @@ from eidolon_ai_sdk.util.class_utils import fqn
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "run_app" in i.fixturenames, items):
         item.add_marker(pytest.mark.vcr)
-        item.fixturenames.append("patched_vcr_object_handling")
         item.fixturenames.append("deterministic_process_ids")
 
 
@@ -287,22 +286,6 @@ def cat(test_dir):
     loc = str(test_dir / "images" / "cat.png")
     with open(loc, "rb") as f:
         yield f
-
-
-@pytest.fixture
-def patched_vcr_object_handling():
-    """
-    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
-    even the fake test client requests, so we need to pipe the body through ourselves
-    """
-
-    def my_custom_function(httpx_request, **kwargs):
-        uri = str(httpx_request.url)
-        headers = dict(httpx_request.headers)
-        return VcrRequest(httpx_request.method, uri, httpx_request, headers)
-
-    with patch.object(httpx_stubs, "_make_vcr_request", new=my_custom_function):
-        yield
 
 
 def deterministic_id_generator(test_name):
