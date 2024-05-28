@@ -46,6 +46,9 @@ class LLMCallFunction(BaseModel):
 
 
 class LLMUnitSpec(BaseModel):
+    """
+
+    """
     model: Reference[LLMModel]
 
 

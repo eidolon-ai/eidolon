@@ -17,6 +17,7 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
@@ -47,6 +48,7 @@ components_to_load: list[Group] = [
     Group(base=APU),
     Group(base=LLMUnit),
     Group(base=LLMModel),
+    Group(base=LogicUnit),
     Group(base=DocumentManager, include_root=True),
     Group(base=DocumentLoader),
 ]
