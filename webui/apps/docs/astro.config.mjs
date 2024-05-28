@@ -98,34 +98,64 @@ export default defineConfig({
         {
           label: 'Builtin Components',
           items: [
+            // ### Start Components ###
             {
-              label: 'Agent Templates', collapsed: true, items: [
-                {label: 'SimpleAgent', link: '/docs/components/simple_agent'},
-                {label: 'RetrieverAgent', link: '/docs/components/retriever_agent'},
+              label: 'Agents', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/agents/overview/'},
+                {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent/'},
+                {label: 'RetrieverAgent', link: '/docs/components/agents/retrieveragent/'},
               ]
             },
             {
               label: 'APU', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/apu/'},
-                {label: 'ConversationalAPU', link: '/docs/components/conversational_apu/'},
+                {label: 'Overview', link: '/docs/components/apu/overview/'},
+                {label: 'ClaudeHaiku', link: '/docs/components/apu/claudehaiku/'},
+                {label: 'ClaudeOpus', link: '/docs/components/apu/claudeopus/'},
+                {label: 'ClaudeSonnet', link: '/docs/components/apu/claudesonnet/'},
+                {label: 'ConversationalAPU', link: '/docs/components/apu/conversationalapu/'},
+                {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo/'},
+                {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo/'},
+                {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge/'},
+                {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium/'},
+                {label: 'MistralSmall', link: '/docs/components/apu/mistralsmall/'},
               ]
             },
             {
               label: 'LLMUnit', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/llm_unit'},
-                {label: 'OpenAIGPT', link: '/docs/components/llm_unit_openai'},
-                {label: 'MistralGPT', link: '/docs/components/llm_unit_minstral'},
-                {label: 'AnthropicLLMUnit', link: '/docs/components/llm_unit_anthropic'},
+                {label: 'Overview', link: '/docs/components/llmunit/overview/'},
+                {label: 'AnthropicLLMUnit', link: '/docs/components/llmunit/anthropicllmunit/'},
+                {label: 'MistralGPT', link: '/docs/components/llmunit/mistralgpt/'},
+                {label: 'OpenAIGPT', link: '/docs/components/llmunit/openaigpt/'},
+                {label: 'ToolCallLLMWrapper', link: '/docs/components/llmunit/toolcallllmwrapper/'},
               ]
             },
-            // {
-            //   label: 'Logic Unit', collapsed: true, items: [
-            //     {label: 'Logic Unit Overview', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Overview', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Search', link: '/docs/recipes/under-construction/'},
-            //     {label: 'Browser', link: '/docs/recipes/under-construction/'},
-            //   ]
-            // },
+            {
+              label: 'LLMModel', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/llmmodel/overview/'},
+                {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307/'},
+                {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229/'},
+                {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229/'},
+                {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo/'},
+                {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo/'},
+                {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest/'},
+                {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest/'},
+                {label: 'mistral-small-latest', link: '/docs/components/llmmodel/mistral-small-latest/'},
+              ]
+            },
+            {
+              label: 'DocumentManager', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/documentmanager/overview/'},
+                {label: 'DocumentManager', link: '/docs/components/documentmanager/documentmanager/'},
+              ]
+            },
+            {
+              label: 'DocumentLoader', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/documentloader/overview/'},
+                {label: 'FilesystemLoader', link: '/docs/components/documentloader/filesystemloader/'},
+                {label: 'GitHubLoader', link: '/docs/components/documentloader/githubloader/'},
+              ]
+            },
+            // ### End Components ###
           ]
         },
         {

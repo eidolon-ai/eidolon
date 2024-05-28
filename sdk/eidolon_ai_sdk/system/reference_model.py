@@ -24,6 +24,19 @@ class Specable(Generic[T]):
     def __init__(self, spec: T, **kwargs: object):
         self.spec = spec
 
+    @classmethod
+    def model_json_schema(cls):
+        bases = getattr(cls, "__orig_bases__", [])
+        specable = next(
+            (base for base in bases if getattr(base, "__origin__", None) is Specable),
+            None,
+        )
+        if specable:
+            model = specable.__args__[0]
+            return model.model_json_schema()
+        else:
+            raise ValueError(f"Specable base {cls} not found")
+
 
 B = TypeVar("B")
 D = TypeVar("D")
@@ -68,6 +81,13 @@ class Reference(BaseModel):
         class _Reference(cls):
             _bound = params[0]
             _default = params[1]
+
+            class Config:
+                title = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
+                json_schema_extra = {
+                    "type": f"Reference[{params[0] if isinstance(params[0], str) else params[0].__name__}]",
+                    "default": str(params[1]),
+                }
 
             @model_validator(mode="before")
             def _dump_ref(cls, value):
