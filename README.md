@@ -23,7 +23,7 @@ etc or just define your own.
 This means no vendor lock-in and minimizes the work needed to upgrade portions of an agent. Without this flexibility, 
 developers will not be able to adapt their agents to the rapidly changing AI landscape.
 
-Check out [Eidolon's qebsite](https://eidolonai.com/) to learn more.
+Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 
 ## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/prereq/)
 
