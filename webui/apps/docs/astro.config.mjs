@@ -126,6 +126,7 @@ export default defineConfig({
                 {label: 'AnthropicLLMUnit', link: '/docs/components/llmunit/anthropicllmunit/'},
                 {label: 'MistralGPT', link: '/docs/components/llmunit/mistralgpt/'},
                 {label: 'OpenAIGPT', link: '/docs/components/llmunit/openaigpt/'},
+                {label: 'ToolCallLLMWrapper', link: '/docs/components/llmunit/toolcallllmwrapper/'},
               ]
             },
             {
