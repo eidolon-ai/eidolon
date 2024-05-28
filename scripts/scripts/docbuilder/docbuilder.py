@@ -2,6 +2,7 @@ import json
 import os
 import textwrap
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Optional, Dict, Self, List
 
 import jsonschema
@@ -51,14 +52,17 @@ components_to_load: list[Group] = [
 ]
 groups: Dict[str, Group] = {g.base if isinstance(g.base, str) else g.base.__name__: g for g in components_to_load}
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
-env = Environment(undefined=StrictUndefined)
 
 
 def main():
-    dist_component_schemas = EIDOLON / "scripts" / "dist" / "component_schemas"
-    generate_json(dist_component_schemas)
-    write_md(dist_component_schemas)
-    update_sitemap()
+    print("Generating docs...")
+    # dist_component_schemas = EIDOLON / "scripts" / "dist" / "component_schemas"
+    with TemporaryDirectory() as dist_component_schemas:
+        dist_component_schemas = Path(dist_component_schemas)
+        generate_json(dist_component_schemas)
+        write_md(dist_component_schemas)
+        update_sitemap()
+    print("Done")
 
 
 def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro.config.mjs"):
@@ -117,8 +121,7 @@ def write_astro_md_file(content, description, title, write_file_loc):
 
 def template(template_file, **kwargs):
     with open(EIDOLON / "scripts" / "scripts" / "docbuilder" / template_file) as template:
-        md_str = env.from_string(template.read()).render(**kwargs)
-    return md_str
+        return Environment(undefined=StrictUndefined).from_string(template.read()).render(**kwargs)
 
 
 def generate_json(write_base):
