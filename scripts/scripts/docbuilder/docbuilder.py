@@ -2,10 +2,11 @@ import json
 import os
 import textwrap
 from pathlib import Path
-from typing import Optional, Dict, cast, Self
+from typing import Optional, Dict, Self, List
 
 import jsonschema
 import jsonschema2md
+from jinja2 import Environment, StrictUndefined
 from pydantic import BaseModel, model_validator
 
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
@@ -49,17 +50,18 @@ components_to_load: list[Group] = [
     Group(base=DocumentLoader),
 ]
 groups: Dict[str, Group] = {g.base if isinstance(g.base, str) else g.base.__name__: g for g in components_to_load}
+EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+env = Environment(undefined=StrictUndefined)
 
 
 def main():
-    dist_component_schemas = Path(os.path.dirname(os.path.dirname(__file__))) / "dist" / "component_schemas"
+    dist_component_schemas = EIDOLON / "scripts" / "dist" / "component_schemas"
     generate_json(dist_component_schemas)
     write_md(dist_component_schemas)
     update_sitemap()
 
 
-def update_sitemap(astro_config_loc=Path(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "astro.config.mjs"):
+def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro.config.mjs"):
     with open(astro_config_loc, "r") as astro_config_file:
         lines = astro_config_file.readlines()
     start_index, finish_index = None, None
@@ -68,29 +70,18 @@ def update_sitemap(astro_config_loc=Path(
             start_index = i
         if "### End Components ###" in lines[i]:
             finish_index = i
-    overview_str_acc = []
-    for name, group in groups.items():
-        group = cast(Group, group)
-        overview_str_acc.extend([
-            "{",
-            f"  label: '{name}', collapsed: true, items: [",
-            f"    {{label: 'Overview', link: '/docs/components/{url_safe(name)}/overview/'}},",
-        ])
-        for component_name, base, overrides in group.components:
-            overview_str_acc.append(
-                f"    {{label: '{component_name}', link: '/docs/components/{url_safe(name)}/{url_safe(component_name)}/'}},")
-        overview_str_acc.extend([
-            "  ]",
-            "},"
-        ])
+    args = [dict(name=name, safe_name=url_safe(name), components=[
+            dict(name=c_name, safe_name=url_safe(c_name)) for c_name, _, _ in g.components
+        ]) for name, g in groups.items()]
+    templated = template("template_sitemap_mjs", groups=args)
+
     with open(astro_config_loc, "w") as components_file:
         components_file.write(''.join(lines[:start_index + 1]))
-        components_file.write("\n".join([" " * 12 + s for s in overview_str_acc]) + "\n")
+        components_file.write(templated)
         components_file.write(''.join(lines[finish_index:]))
 
 
-def write_md(read_loc, write_loc=Path(os.path.dirname(os.path.dirname(
-    os.path.dirname(__file__)))) / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
+def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     for k, g in groups.items():
         write_file_loc = write_loc / url_safe(k) / "overview.md"
         title = f"{k} Overview"
@@ -115,19 +106,23 @@ def write_md(read_loc, write_loc=Path(os.path.dirname(os.path.dirname(
 
 def write_astro_md_file(content, description, title, write_file_loc):
     for name, group in groups.items():
-        content = content.replace(f"Reference[{name}]", f"[Reference[{name}]](/docs/components/{url_safe(name)}/overview/)")
+        content = content.replace(f"Reference[{name}]",
+                                  f"[Reference[{name}]](/docs/components/{url_safe(name)}/overview/)")
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
-    md_str = f"""---
-title: {title}
-description: {description}
----
-""" + content
+
+    md_str = template("template_component_md", title=title, description=description, content=content)
     with open(write_file_loc, 'w') as md_file:
         md_file.write(md_str)
 
 
+def template(template_file, **kwargs):
+    with open(EIDOLON / "scripts" / "scripts" / "docbuilder" / template_file) as template:
+        md_str = env.from_string(template.read()).render(**kwargs)
+    return md_str
+
+
 def generate_json(write_base):
-    resources: list[ReferenceResource] = AgentOS.get_resources(ReferenceResource).values()
+    resources: List[ReferenceResource] = list(AgentOS.get_resources(ReferenceResource).values())
     for r in resources:
         key = r.metadata.name
         overrides = Reference[object, key]._transform(r.spec)
@@ -145,7 +140,7 @@ def generate_json(write_base):
             print(f"skipping {key}", ve)
     for key, group in groups.items():
         write_loc = write_base / key
-        os.makedirs(os.path.dirname(write_loc / "overview.json"), exist_ok=True)
+        os.makedirs(write_loc, exist_ok=True)
         for name, clz, overrides in group.components:
             if hasattr(clz, "model_json_schema"):
                 json_schema = clz.model_json_schema()

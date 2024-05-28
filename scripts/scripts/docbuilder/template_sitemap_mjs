@@ -1,0 +1,7 @@
+{% for group in groups %}            {
+              label: '{{group.name}}', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/{{group.safe_name}}/overview/'},{% for component in group.components %}
+                {label: '{{component.name}}', link: '/docs/components/{{group.safe_name}}/{{component.safe_name}}/'},{% endfor %}
+              ]
+            },
+{% endfor %}
