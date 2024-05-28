@@ -75,7 +75,7 @@ export default function SigninForm({provider, doSignin}: SigninFormData) {
                              label={credentials[credential].label ?? credential}
                              placeholder={credentials[credential].placeholder ?? ""}
                              name={credential}
-                             type={credentials[credential].type ?? "text"}
+                             type={credentials[credential].type ?? "email"}
                   />
                 )
               })}
@@ -107,7 +107,7 @@ export default function SigninForm({provider, doSignin}: SigninFormData) {
                     name={field}
                     data-form-field
                     id={`input-${field}-for-${provider.id}-provider`}
-                    type={provider.formFields[field].type ?? "text"}
+                    type={provider.formFields[field].type ?? "email"}
                     placeholder={
                       provider.formFields[field].placeholder ?? ""
                     }

@@ -1,0 +1,75 @@
+name: Playwright Tests
+
+on:
+  pull_request:
+    paths:
+      - 'eidolon/webui/apps/eidolon-ui2/**'
+      - 'eidolon/eidolon_examples/conversational_chatbot/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand("ping")'" 
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install PNPM
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: eidolon/webui
+
+      - name: Build Docker images
+        run: pnpm run docker:build
+        working-directory: eidolon/webui/apps/eidolon-ui2
+
+      - name: Start Docker containers
+        run: pnpm run docker:up
+        working-directory: eidolon/webui/apps/eidolon-ui2
+
+      - name: Run Playwright tests
+        run: pnpm exec playwright test
+        working-directory: eidolon/webui/apps/eidolon-ui2
+
+      - name: Stop Docker containers
+        run: pnpm run docker:down
+        working-directory: eidolon/webui/apps/eidolon-ui2
+
+      - name: Upload Playwright test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-results
+          path: |
+            eidolon/webui/apps/eidolon-ui2/test-results
+          if-no-files-found: ignore
+
+      - name: Upload Playwright screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-screenshots
+          path: |
+            eidolon/webui/apps/eidolon-ui2/screenshots
+          if-no-files-found: ignore
