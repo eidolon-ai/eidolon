@@ -9,7 +9,7 @@ description: Description of GPT4-turbo component
 - **`memory_unit`** *(Reference[MemoryUnit])*: Default: `"MemoryUnit"`.
 - **`llm_unit`** *([Reference[LLMUnit]](/docs/components/llmunit/overview/))*: Default: `{"implementation": "OpenAIGPT", "model": "gpt-4-turbo"}`.
 - **`logic_units`** *(array)*: Default: `[]`.
-  - **Items** *(Reference[LogicUnit])*: Default: `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`.
+  - **Items** *([Reference[LogicUnit]](/docs/components/logicunit/overview/))*: Default: `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`.
 - **`audio_unit`**: Default: `"OpenAiSpeech"`.
   - **Any of**
     - *Reference[AudioUnit]*: Default: `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`.

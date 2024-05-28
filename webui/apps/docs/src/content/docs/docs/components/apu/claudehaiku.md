@@ -9,7 +9,7 @@ description: Description of ClaudeHaiku component
 - **`memory_unit`** *(Reference[MemoryUnit])*: Default: `"MemoryUnit"`.
 - **`llm_unit`** *([Reference[LLMUnit]](/docs/components/llmunit/overview/))*: Default: `{"implementation": "AnthropicLLMUnit", "model": "claude-3-haiku-20240307"}`.
 - **`logic_units`** *(array)*: Default: `[]`.
-  - **Items** *(Reference[LogicUnit])*: Default: `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`.
+  - **Items** *([Reference[LogicUnit]](/docs/components/logicunit/overview/))*: Default: `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`.
 - **`audio_unit`**: Default: `null`.
   - **Any of**
     - *Reference[AudioUnit]*: Default: `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`.

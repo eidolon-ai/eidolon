@@ -143,6 +143,17 @@ export default defineConfig({
               ]
             },
             {
+              label: 'LogicUnit', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/logicunit/overview/'},
+                {label: 'AudioUnit', link: '/docs/components/logicunit/audiounit/'},
+                {label: 'Browser', link: '/docs/components/logicunit/browser/'},
+                {label: 'OpenAIImageUnit', link: '/docs/components/logicunit/openaiimageunit/'},
+                {label: 'OpenAiSpeech', link: '/docs/components/logicunit/openaispeech/'},
+                {label: 'Search', link: '/docs/components/logicunit/search/'},
+                {label: 'WebSearch', link: '/docs/components/logicunit/websearch/'},
+              ]
+            },
+            {
               label: 'DocumentManager', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/documentmanager/overview/'},
                 {label: 'DocumentManager', link: '/docs/components/documentmanager/documentmanager/'},

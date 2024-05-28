@@ -2,6 +2,9 @@
 title: GitHubLoader
 description: Description of GitHubLoader component
 ---
+*Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
+unless a TOKEN is provided*
+
 ## Properties
 
 - **`owner`** *(string)*
@@ -21,7 +24,7 @@ description: Description of GitHubLoader component
     - *string*
     - *array*
       - **Items** *(string)*
-- **`token`**
+- **`token`**: Github token, can also be set via envar 'GITHUB_TOKEN'.
   - **Any of**
     - *string*
     - *null*

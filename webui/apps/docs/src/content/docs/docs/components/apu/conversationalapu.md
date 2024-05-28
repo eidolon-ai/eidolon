@@ -9,7 +9,7 @@ description: Description of ConversationalAPU component
 - **`memory_unit`** *(Reference[MemoryUnit])*: Default: `"MemoryUnit"`.
 - **`llm_unit`** *([Reference[LLMUnit]](/docs/components/llmunit/overview/))*: Default: `"LLMUnit"`.
 - **`logic_units`** *(array)*: Default: `[]`.
-  - **Items** *(Reference[LogicUnit])*: Default: `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`.
+  - **Items** *([Reference[LogicUnit]](/docs/components/logicunit/overview/))*: Default: `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`.
 - **`audio_unit`**: Default: `null`.
   - **Any of**
     - *Reference[AudioUnit]*: Default: `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`.
