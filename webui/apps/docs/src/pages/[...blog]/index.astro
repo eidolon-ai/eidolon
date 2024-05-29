@@ -12,6 +12,7 @@ import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/blog';
 import { findImage } from '~/utils/images';
 import type { MetaData } from '~/types';
 import RelatedPosts from '~/components/blog/RelatedPosts.astro';
+import  SpeedInsights  from "@vercel/speed-insights/astro"
 
 export const prerender = true;
 
@@ -44,6 +45,7 @@ const metadata = merge(
 ---
 
 <Layout metadata={metadata}>
+  <SpeedInsights />
   <SinglePost post={{ ...post, image: image }} url={url} />
   <ToBlogLink />
   <RelatedPosts post={post} />
