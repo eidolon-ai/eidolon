@@ -20,6 +20,15 @@ jobs:
           --health-timeout=10s
           --health-retries=10
 
+    env:
+      AUTH_TRUST_HOST: ${{ secrets.AUTH_TRUST_HOST }}
+      EIDOLON_SERVER: ${{ secrets.EIDOLON_SERVER }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_DEBUG: ${{ secrets.NEXT_PUBLIC_DEBUG }}
+      NEXT_PUBLIC_LOG_LEVEL: ${{ secrets.NEXT_PUBLIC_LOG_LEVEL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -36,6 +45,16 @@ jobs:
 
       - name: Install PNPM
         run: npm install -g pnpm
+
+      - name: Stop conflicting MongoDB containers
+        run: |
+          CONFLICTING_CONTAINERS=$(docker ps -q --filter "ancestor=mongo:latest" --filter "status=running")
+          if [ -n "$CONFLICTING_CONTAINERS" ]; then
+            echo "Stopping conflicting MongoDB containers"
+            docker stop $CONFLICTING_CONTAINERS
+          else
+            echo "No conflicting MongoDB containers"
+          fi
 
       - name: Install dependencies
         run: pnpm install
