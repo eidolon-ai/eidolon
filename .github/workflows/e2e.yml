@@ -61,6 +61,10 @@ jobs:
         run: pnpm install
         working-directory: ./webui
 
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install
+        working-directory: ./webui
+
       - name: Build Docker images
         run: pnpm run docker:build
         working-directory: ./webui/apps/eidolon-ui2
