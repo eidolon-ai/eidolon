@@ -15,10 +15,10 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd="mongosh --eval 'db.adminCommand("ping")'" 
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd="echo 'db.runCommand({ ping: 1 })' | mongosh localhost:27017/test --quiet"
+          --health-interval=30s
+          --health-timeout=10s
+          --health-retries=10
 
     steps:
       - name: Checkout code
@@ -48,6 +48,12 @@ jobs:
       - name: Start Docker containers
         run: pnpm run docker:up
         working-directory: eidolon/webui/apps/eidolon-ui2
+
+      - name: Print MongoDB logs
+        run: docker logs $(docker ps -q --filter name=mongo)
+
+      - name: List Docker containers
+        run: docker ps -a
 
       - name: Run Playwright tests
         run: pnpm exec playwright test
