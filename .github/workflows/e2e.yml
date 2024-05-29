@@ -39,15 +39,15 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: eidolon/webui
+        working-directory: ./webui
 
       - name: Build Docker images
         run: pnpm run docker:build
-        working-directory: eidolon/webui/apps/eidolon-ui2
+        working-directory: ./webui/apps/eidolon-ui2
 
       - name: Start Docker containers
         run: pnpm run docker:up
-        working-directory: eidolon/webui/apps/eidolon-ui2
+        working-directory: ./webui/apps/eidolon-ui2
 
       - name: Print MongoDB logs
         run: docker logs $(docker ps -q --filter name=mongo)
@@ -57,18 +57,18 @@ jobs:
 
       - name: Run Playwright tests
         run: pnpm exec playwright test
-        working-directory: eidolon/webui/apps/eidolon-ui2
+        working-directory: ./webui/apps/eidolon-ui2
 
       - name: Stop Docker containers
         run: pnpm run docker:down
-        working-directory: eidolon/webui/apps/eidolon-ui2
+        working-directory: ./webui/apps/eidolon-ui2
 
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
         with:
           name: playwright-results
           path: |
-            eidolon/webui/apps/eidolon-ui2/test-results
+            webui/apps/eidolon-ui2/test-results
           if-no-files-found: ignore
 
       - name: Upload Playwright screenshots
@@ -76,5 +76,5 @@ jobs:
         with:
           name: playwright-screenshots
           path: |
-            eidolon/webui/apps/eidolon-ui2/screenshots
+            webui/apps/eidolon-ui2/screenshots
           if-no-files-found: ignore
