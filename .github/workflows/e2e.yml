@@ -101,5 +101,5 @@ jobs:
         with:
           name: playwright-screenshots
           path: |
-            webui/apps/eidolon-ui2/screenshots
+            webui/apps/eidolon-ui2/tests/screenshots
           if-no-files-found: ignore
