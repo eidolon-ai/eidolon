@@ -59,11 +59,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: ./webui
+        working-directory: ./webui/apps/eidolon-ui2
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install
-        working-directory: ./webui
+        working-directory: ./webui/apps/eidolon-ui2
 
       - name: Build Docker images
         run: pnpm run docker:build
