@@ -2,15 +2,6 @@
 title: DocumentManager
 description: Description of DocumentManager component
 ---
-# DocumentManager
-
-- [1. Property `DocumentManager > name`](#name)
-- [2. Property `DocumentManager > recheck_frequency`](#recheck_frequency)
-- [3. Property `DocumentManager > loader`](#loader)
-- [4. Property `DocumentManager > doc_processor`](#doc_processor)
-
-**Title:** DocumentManager
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -27,7 +18,7 @@ provided by loader) into similarity memory where they can be searched.
 | - [loader](#loader )                       | No      | [Reference[DocumentLoader]](/docs/components/documentloader/overview/)    | No         | -          | DocumentLoader Reference    |
 | - [doc_processor](#doc_processor )         | No      | Reference[DocumentProcessor] | No         | -          | DocumentProcessor Reference |
 
-## <a name="name"></a>1. Property `DocumentManager > name`
+## <a name="name"></a>1. Property `name`
 
 **Title:** Name
 
@@ -38,7 +29,7 @@ provided by loader) into similarity memory where they can be searched.
 
 **Description:** The name of the document manager (used to name database collections).
 
-## <a name="recheck_frequency"></a>2. Property `DocumentManager > recheck_frequency`
+## <a name="recheck_frequency"></a>2. Property `recheck_frequency`
 
 **Title:** Recheck Frequency
 
@@ -50,7 +41,7 @@ provided by loader) into similarity memory where they can be searched.
 
 **Description:** The number of seconds between checks.
 
-## <a name="loader"></a>3. Property `DocumentManager > loader`
+## <a name="loader"></a>3. Property `loader`
 
 **Title:** DocumentLoader Reference
 
@@ -60,7 +51,7 @@ provided by loader) into similarity memory where they can be searched.
 | **Required** | No                          |
 | **Default**  | `"DocumentLoader"`          |
 
-## <a name="doc_processor"></a>4. Property `DocumentManager > doc_processor`
+## <a name="doc_processor"></a>4. Property `doc_processor`
 
 **Title:** DocumentProcessor Reference
 

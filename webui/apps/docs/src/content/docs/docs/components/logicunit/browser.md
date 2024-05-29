@@ -2,12 +2,6 @@
 title: Browser
 description: Description of Browser component
 ---
-# Browser
-
-- [1. Property `Browser > summarizer`](#summarizer)
-
-**Title:** Browser
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -18,7 +12,7 @@ description: Description of Browser component
 | ---------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
 | - [summarizer](#summarizer ) | No      | enum (of string) | No         | -          | Summarizer        |
 
-## <a name="summarizer"></a>1. Property `Browser > summarizer`
+## <a name="summarizer"></a>1. Property `summarizer`
 
 **Title:** Summarizer
 

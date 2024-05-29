@@ -2,18 +2,6 @@
 title: OpenAIImageUnit
 description: Description of OpenAIImageUnit component
 ---
-# OpenAIImageUnit
-
-- [1. Property `OpenAIImageUnit > image_to_text_prompt`](#image_to_text_prompt)
-- [2. Property `OpenAIImageUnit > text_to_image_prompt`](#text_to_image_prompt)
-- [3. Property `OpenAIImageUnit > connection_handler`](#connection_handler)
-- [4. Property `OpenAIImageUnit > image_to_text_model`](#image_to_text_model)
-- [5. Property `OpenAIImageUnit > text_to_image_model`](#text_to_image_model)
-- [6. Property `OpenAIImageUnit > temperature`](#temperature)
-- [7. Property `OpenAIImageUnit > image_to_text_system_prompt`](#image_to_text_system_prompt)
-
-**Title:** OpenAIImageUnit
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -30,7 +18,7 @@ description: Description of OpenAIImageUnit component
 | - [temperature](#temperature )                                 | No      | number                             | No         | -          | Temperature                       |
 | - [image_to_text_system_prompt](#image_to_text_system_prompt ) | No      | string                             | No         | -          | Image To Text System Prompt       |
 
-## <a name="image_to_text_prompt"></a>1. Property `OpenAIImageUnit > image_to_text_prompt`
+## <a name="image_to_text_prompt"></a>1. Property `image_to_text_prompt`
 
 **Title:** Image To Text Prompt
 
@@ -42,7 +30,7 @@ description: Description of OpenAIImageUnit component
 
 **Description:** The prompt to use for the conversion. The text should be very verbose and detailed.
 
-## <a name="text_to_image_prompt"></a>2. Property `OpenAIImageUnit > text_to_image_prompt`
+## <a name="text_to_image_prompt"></a>2. Property `text_to_image_prompt`
 
 **Title:** Text To Image Prompt
 
@@ -54,7 +42,7 @@ description: Description of OpenAIImageUnit component
 
 **Description:** The prompt to use for the conversion. The text should be very verbose and detailed.
 
-## <a name="connection_handler"></a>3. Property `OpenAIImageUnit > connection_handler`
+## <a name="connection_handler"></a>3. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -64,7 +52,7 @@ description: Description of OpenAIImageUnit component
 | **Required** | No                                   |
 | **Default**  | `"OpenAIConnectionHandler"`          |
 
-## <a name="image_to_text_model"></a>4. Property `OpenAIImageUnit > image_to_text_model`
+## <a name="image_to_text_model"></a>4. Property `image_to_text_model`
 
 **Title:** Image To Text Model
 
@@ -76,7 +64,7 @@ description: Description of OpenAIImageUnit component
 
 **Description:** The model to use for the vision LLM.
 
-## <a name="text_to_image_model"></a>5. Property `OpenAIImageUnit > text_to_image_model`
+## <a name="text_to_image_model"></a>5. Property `text_to_image_model`
 
 **Title:** Text To Image Model
 
@@ -88,7 +76,7 @@ description: Description of OpenAIImageUnit component
 
 **Description:** The model to use for the vision LLM.
 
-## <a name="temperature"></a>6. Property `OpenAIImageUnit > temperature`
+## <a name="temperature"></a>6. Property `temperature`
 
 **Title:** Temperature
 
@@ -98,7 +86,7 @@ description: Description of OpenAIImageUnit component
 | **Required** | No       |
 | **Default**  | `0.3`    |
 
-## <a name="image_to_text_system_prompt"></a>7. Property `OpenAIImageUnit > image_to_text_system_prompt`
+## <a name="image_to_text_system_prompt"></a>7. Property `image_to_text_system_prompt`
 
 **Title:** Image To Text System Prompt
 

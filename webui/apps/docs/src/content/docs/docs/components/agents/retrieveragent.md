@@ -2,19 +2,6 @@
 title: RetrieverAgent
 description: Description of RetrieverAgent component
 ---
-# RetrieverAgent
-
-- [1. Property `RetrieverAgent > max_num_results`](#max_num_results)
-- [2. Property `RetrieverAgent > question_transformer`](#question_transformer)
-- [3. Property `RetrieverAgent > document_reranker`](#document_reranker)
-- [4. Property `RetrieverAgent > name`](#name)
-- [5. Property `RetrieverAgent > description`](#description)
-- [6. Property `RetrieverAgent > loader_root_location`](#loader_root_location)
-- [7. Property `RetrieverAgent > loader_pattern`](#loader_pattern)
-- [8. Property `RetrieverAgent > document_manager`](#document_manager)
-
-**Title:** RetrieverAgent
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -35,7 +22,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 | - [loader_pattern](#loader_pattern )             | No      | string                         | No         | -          | Loader Pattern                |
 | + [document_manager](#document_manager )         | No      | [Reference[DocumentManager]](/docs/components/documentmanager/overview/)     | No         | -          | DocumentManager Reference     |
 
-## <a name="max_num_results"></a>1. Property `RetrieverAgent > max_num_results`
+## <a name="max_num_results"></a>1. Property `max_num_results`
 
 **Title:** Max Num Results
 
@@ -47,7 +34,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 
 **Description:** The maximum number of results to send to cpu.
 
-## <a name="question_transformer"></a>2. Property `RetrieverAgent > question_transformer`
+## <a name="question_transformer"></a>2. Property `question_transformer`
 
 **Title:** QuestionTransformer Reference
 
@@ -57,7 +44,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 | **Required** | No                               |
 | **Default**  | `"QuestionTransformer"`          |
 
-## <a name="document_reranker"></a>3. Property `RetrieverAgent > document_reranker`
+## <a name="document_reranker"></a>3. Property `document_reranker`
 
 **Title:** DocumentReranker Reference
 
@@ -67,7 +54,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 | **Required** | No                            |
 | **Default**  | `"DocumentReranker"`          |
 
-## <a name="name"></a>4. Property `RetrieverAgent > name`
+## <a name="name"></a>4. Property `name`
 
 **Title:** Name
 
@@ -78,7 +65,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 
 **Description:** The name of the document store to use.
 
-## <a name="description"></a>5. Property `RetrieverAgent > description`
+## <a name="description"></a>5. Property `description`
 
 **Title:** Description
 
@@ -89,7 +76,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 
 **Description:** A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...
 
-## <a name="loader_root_location"></a>6. Property `RetrieverAgent > loader_root_location`
+## <a name="loader_root_location"></a>6. Property `loader_root_location`
 
 **Title:** Loader Root Location
 
@@ -101,7 +88,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 
 **Description:** A URL specifying the root location of the loader.
 
-## <a name="loader_pattern"></a>7. Property `RetrieverAgent > loader_pattern`
+## <a name="loader_pattern"></a>7. Property `loader_pattern`
 
 **Title:** Loader Pattern
 
@@ -113,7 +100,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 
 **Description:** The search pattern to use when loading files.
 
-## <a name="document_manager"></a>8. Property `RetrieverAgent > document_manager`
+## <a name="document_manager"></a>8. Property `document_manager`
 
 **Title:** DocumentManager Reference
 

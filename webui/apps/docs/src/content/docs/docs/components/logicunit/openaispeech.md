@@ -2,15 +2,6 @@
 title: OpenAiSpeech
 description: Description of OpenAiSpeech component
 ---
-# OpenAiSpeech
-
-- [1. Property `OpenAiSpeech > text_to_speech_model`](#text_to_speech_model)
-- [2. Property `OpenAiSpeech > text_to_speech_voice`](#text_to_speech_voice)
-- [3. Property `OpenAiSpeech > speech_to_text_model`](#speech_to_text_model)
-- [4. Property `OpenAiSpeech > speech_to_text_temperature`](#speech_to_text_temperature)
-
-**Title:** OpenAiSpeech
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -24,7 +15,7 @@ description: Description of OpenAiSpeech component
 | - [speech_to_text_model](#speech_to_text_model )             | No      | const            | No         | -          | Speech To Text Model       |
 | - [speech_to_text_temperature](#speech_to_text_temperature ) | No      | number           | No         | -          | Speech To Text Temperature |
 
-## <a name="text_to_speech_model"></a>1. Property `OpenAiSpeech > text_to_speech_model`
+## <a name="text_to_speech_model"></a>1. Property `text_to_speech_model`
 
 **Title:** Text To Speech Model
 
@@ -40,7 +31,7 @@ Must be one of:
 * "tts-1"
 * "tts-1-hd"
 
-## <a name="text_to_speech_voice"></a>2. Property `OpenAiSpeech > text_to_speech_voice`
+## <a name="text_to_speech_voice"></a>2. Property `text_to_speech_voice`
 
 **Title:** Text To Speech Voice
 
@@ -60,7 +51,7 @@ Must be one of:
 * "nova"
 * "shimmer"
 
-## <a name="speech_to_text_model"></a>3. Property `OpenAiSpeech > speech_to_text_model`
+## <a name="speech_to_text_model"></a>3. Property `speech_to_text_model`
 
 **Title:** Speech To Text Model
 
@@ -76,7 +67,7 @@ Must be one of:
 * "whisper-1"
 Specific value: `"whisper-1"`
 
-## <a name="speech_to_text_temperature"></a>4. Property `OpenAiSpeech > speech_to_text_temperature`
+## <a name="speech_to_text_temperature"></a>4. Property `speech_to_text_temperature`
 
 **Title:** Speech To Text Temperature
 

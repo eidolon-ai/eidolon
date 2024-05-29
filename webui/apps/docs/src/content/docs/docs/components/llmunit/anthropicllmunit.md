@@ -2,17 +2,6 @@
 title: AnthropicLLMUnit
 description: Description of AnthropicLLMUnit component
 ---
-# AnthropicLLMUnit
-
-- [1. Property `AnthropicLLMUnit > model`](#model)
-- [2. Property `AnthropicLLMUnit > temperature`](#temperature)
-- [3. Property `AnthropicLLMUnit > max_tokens`](#max_tokens)
-  - [3.1. Property `AnthropicLLMUnit > max_tokens > anyOf > item 0`](#max_tokens_anyOf_i0)
-  - [3.2. Property `AnthropicLLMUnit > max_tokens > anyOf > item 1`](#max_tokens_anyOf_i1)
-- [4. Property `AnthropicLLMUnit > client_args`](#client_args)
-
-**Title:** AnthropicLLMUnit
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -26,7 +15,7 @@ description: Description of AnthropicLLMUnit component
 | - [max_tokens](#max_tokens )   | No      | Combination         | No         | -          | Max Tokens         |
 | - [client_args](#client_args ) | No      | object              | No         | -          | Client Args        |
 
-## <a name="model"></a>1. Property `AnthropicLLMUnit > model`
+## <a name="model"></a>1. Property `model`
 
 **Title:** LLMModel Reference
 
@@ -36,7 +25,7 @@ description: Description of AnthropicLLMUnit component
 | **Required** | No                         |
 | **Default**  | `"claude-3-opus-20240229"` |
 
-## <a name="temperature"></a>2. Property `AnthropicLLMUnit > temperature`
+## <a name="temperature"></a>2. Property `temperature`
 
 **Title:** Temperature
 
@@ -46,7 +35,7 @@ description: Description of AnthropicLLMUnit component
 | **Required** | No       |
 | **Default**  | `0.3`    |
 
-## <a name="max_tokens"></a>3. Property `AnthropicLLMUnit > max_tokens`
+## <a name="max_tokens"></a>3. Property `max_tokens`
 
 **Title:** Max Tokens
 
@@ -62,21 +51,21 @@ description: Description of AnthropicLLMUnit component
 | [item 0](#max_tokens_anyOf_i0) |
 | [item 1](#max_tokens_anyOf_i1) |
 
-### <a name="max_tokens_anyOf_i0"></a>3.1. Property `AnthropicLLMUnit > max_tokens > anyOf > item 0`
+### <a name="max_tokens_anyOf_i0"></a>3.1. Property `item 0`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
 | **Required** | No        |
 
-### <a name="max_tokens_anyOf_i1"></a>3.2. Property `AnthropicLLMUnit > max_tokens > anyOf > item 1`
+### <a name="max_tokens_anyOf_i1"></a>3.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-## <a name="client_args"></a>4. Property `AnthropicLLMUnit > client_args`
+## <a name="client_args"></a>4. Property `client_args`
 
 **Title:** Client Args
 

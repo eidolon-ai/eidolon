@@ -2,16 +2,6 @@
 title: ToolCallLLMWrapper
 description: Description of ToolCallLLMWrapper component
 ---
-# ToolCallLLMWrapper
-
-- [1. Property `ToolCallLLMWrapper > tool_message_prompt`](#tool_message_prompt)
-- [2. Property `ToolCallLLMWrapper > llm_unit`](#llm_unit)
-- [3. Property `ToolCallLLMWrapper > model`](#model)
-  - [3.1. Property `ToolCallLLMWrapper > model > anyOf > LLMModel Reference`](#model_anyOf_i0)
-  - [3.2. Property `ToolCallLLMWrapper > model > anyOf > item 1`](#model_anyOf_i1)
-
-**Title:** ToolCallLLMWrapper
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -24,7 +14,7 @@ description: Description of ToolCallLLMWrapper component
 | - [llm_unit](#llm_unit )                       | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview/) | No         | -          | LLMUnit Reference   |
 | - [model](#model )                             | No      | Combination        | No         | -          | -                   |
 
-## <a name="tool_message_prompt"></a>1. Property `ToolCallLLMWrapper > tool_message_prompt`
+## <a name="tool_message_prompt"></a>1. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -34,7 +24,7 @@ description: Description of ToolCallLLMWrapper component
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-## <a name="llm_unit"></a>2. Property `ToolCallLLMWrapper > llm_unit`
+## <a name="llm_unit"></a>2. Property `llm_unit`
 
 **Title:** LLMUnit Reference
 
@@ -44,7 +34,7 @@ description: Description of ToolCallLLMWrapper component
 | **Required** | No                   |
 | **Default**  | `"LLMUnit"`          |
 
-## <a name="model"></a>3. Property `ToolCallLLMWrapper > model`
+## <a name="model"></a>3. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -58,7 +48,7 @@ description: Description of ToolCallLLMWrapper component
 | [LLMModel Reference](#model_anyOf_i0) |
 | [item 1](#model_anyOf_i1)             |
 
-### <a name="model_anyOf_i0"></a>3.1. Property `ToolCallLLMWrapper > model > anyOf > LLMModel Reference`
+### <a name="model_anyOf_i0"></a>3.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -68,7 +58,7 @@ description: Description of ToolCallLLMWrapper component
 | **Required** | No                                       |
 | **Default**  | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"` |
 
-### <a name="model_anyOf_i1"></a>3.2. Property `ToolCallLLMWrapper > model > anyOf > item 1`
+### <a name="model_anyOf_i1"></a>3.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |

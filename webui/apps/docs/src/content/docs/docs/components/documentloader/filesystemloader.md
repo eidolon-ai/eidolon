@@ -2,13 +2,6 @@
 title: FilesystemLoader
 description: Description of FilesystemLoader component
 ---
-# FilesystemLoader
-
-- [1. Property `FilesystemLoader > root_dir`](#root_dir)
-- [2. Property `FilesystemLoader > pattern`](#pattern)
-
-**Title:** FilesystemLoader
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
@@ -20,7 +13,7 @@ description: Description of FilesystemLoader component
 | + [root_dir](#root_dir ) | No      | string | No         | -          | Root Dir          |
 | - [pattern](#pattern )   | No      | string | No         | -          | Pattern           |
 
-## <a name="root_dir"></a>1. Property `FilesystemLoader > root_dir`
+## <a name="root_dir"></a>1. Property `root_dir`
 
 **Title:** Root Dir
 
@@ -29,7 +22,7 @@ description: Description of FilesystemLoader component
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="pattern"></a>2. Property `FilesystemLoader > pattern`
+## <a name="pattern"></a>2. Property `pattern`
 
 **Title:** Pattern
 

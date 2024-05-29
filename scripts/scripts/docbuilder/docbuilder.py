@@ -108,11 +108,12 @@ def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "
             description = f"Description of {title} component"
 
             # Generate HTML content
-            html_content = generate_from_schema(read_loc / component / file, config=GenerationConfiguration(
+            content = generate_from_schema(read_loc / component / file, config=GenerationConfiguration(
+                show_breadcrumbs=False,
                 template_name="md",
                 with_footer=False,
             ))
-            write_astro_md_file(html_content, description, title, write_file_loc)
+            write_astro_md_file(content, description, title, write_file_loc)
 
 
 def write_astro_md_file(content, description, title, write_file_loc):
