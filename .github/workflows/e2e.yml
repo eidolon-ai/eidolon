@@ -28,6 +28,7 @@ jobs:
       NEXT_PUBLIC_DEBUG: ${{ secrets.NEXT_PUBLIC_DEBUG }}
       NEXT_PUBLIC_LOG_LEVEL: ${{ secrets.NEXT_PUBLIC_LOG_LEVEL }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      CI: true
 
     steps:
       - name: Checkout code
@@ -75,7 +76,8 @@ jobs:
         run: docker ps -a
 
       - name: Run Playwright tests
-        run: pnpm exec playwright test
+        run: |
+          pnpm exec playwright test --config=playwright.config.js
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Stop Docker containers
