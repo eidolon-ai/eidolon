@@ -2,11 +2,6 @@
 title: GPT4-turbo
 description: Description of GPT4-turbo component
 ---
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description           |
 | ---------------------------------------------------- | ------- | ----------------------------- | ---------- | ---------- | --------------------------- |

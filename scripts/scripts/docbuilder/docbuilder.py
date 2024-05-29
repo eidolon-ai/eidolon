@@ -38,7 +38,10 @@ class Group(BaseModel):
     @model_validator(mode='after')
     def update_description(self) -> Self:
         if not self.description:
-            self.description = textwrap.dedent(self.base.__doc__) if self.base.__doc__ else ""
+            if isinstance(self.base, type) and self.base.__doc__:
+                self.description = textwrap.dedent(self.base.__doc__)
+            else:
+                self.description = f"Overview of {self.base} components"
         return self
 
 
@@ -89,6 +92,14 @@ def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro
         components_file.write(''.join(lines[finish_index:]))
 
 
+cut_after_str = """|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+"""
+
+
 def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     for k, g in groups.items():
         write_file_loc = write_loc / url_safe(k) / "overview.md"
@@ -113,6 +124,7 @@ def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "
                 template_name="md",
                 with_footer=False,
             ))
+            content = content[(content.index(cut_after_str) + len(cut_after_str)):]
             write_astro_md_file(content, description, title, write_file_loc)
 
 

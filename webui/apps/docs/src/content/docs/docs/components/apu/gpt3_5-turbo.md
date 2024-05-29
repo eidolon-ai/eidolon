@@ -2,11 +2,6 @@
 title: GPT3.5-turbo
 description: Description of GPT3.5-turbo component
 ---
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description           |
 | ---------------------------------------------------- | ------- | ----------------------------- | ---------- | ---------- | --------------------------- |

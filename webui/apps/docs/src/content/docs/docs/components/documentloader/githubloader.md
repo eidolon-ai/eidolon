@@ -2,11 +2,6 @@
 title: GitHubLoader
 description: Description of GitHubLoader component
 ---
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 **Description:** Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
 unless a TOKEN is provided

@@ -2,11 +2,6 @@
 title: Search
 description: Description of Search component
 ---
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------- |
