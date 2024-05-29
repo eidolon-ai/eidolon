@@ -1,16 +1,16 @@
-import type { PaginateFunction } from 'astro';
-import { getCollection } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
-import type { Post } from '~/types';
-import { APP_BLOG } from 'astrowind:config';
-import { cleanSlug, trimSlash, BLOG_BASE, POST_PERMALINK_PATTERN, CATEGORY_BASE, TAG_BASE } from './permalinks';
+import type {PaginateFunction} from 'astro';
+import {getCollection} from 'astro:content';
+import type {CollectionEntry} from 'astro:content';
+import type {Post} from '~/types';
+import {APP_BLOG} from 'astrowind:config';
+import {cleanSlug, trimSlash, BLOG_BASE, POST_PERMALINK_PATTERN, CATEGORY_BASE, TAG_BASE} from './permalinks';
 
 const generatePermalink = async ({
-  id,
-  slug,
-  publishDate,
-  category,
-}: {
+                                   id,
+                                   slug,
+                                   publishDate,
+                                   category,
+                                 }: {
   id: string;
   slug: string;
   publishDate: Date;
@@ -41,8 +41,8 @@ const generatePermalink = async ({
 };
 
 const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> => {
-  const { id, slug: rawSlug = '', data } = post;
-  const { Content, remarkPluginFrontmatter } = await post.render();
+  const {id, slug: rawSlug = '', data} = post;
+  const {Content, remarkPluginFrontmatter} = await post.render();
 
   const {
     publishDate: rawPublishDate = new Date(),
@@ -63,10 +63,10 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
   const category = rawCategory ? cleanSlug(rawCategory) : undefined;
   const tags = rawTags.map((tag: string) => cleanSlug(tag));
 
-  return {
+  const ret = {
     id: id,
     slug: slug,
-    permalink: await generatePermalink({ id, slug, publishDate, category }),
+    permalink: await generatePermalink({id, slug, publishDate, category}),
 
     publishDate: publishDate,
     updateDate: updateDate,
@@ -87,7 +87,16 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
     // or 'content' in case you consume from API
 
     readingTime: remarkPluginFrontmatter?.readingTime,
-  };
+  } as Post;
+
+  if (image && typeof image === 'object') {
+    ret.image = image.url;
+    ret.imageWidth = image.width;
+    ret.imageHeight = image.height;
+    ret.imageLayout = image.layout;
+  }
+
+  return ret;
 };
 
 const getRandomizedPosts = (array: Post[], num: number) => {
@@ -168,7 +177,7 @@ export const findPostsByIds = async (ids: Array<string>): Promise<Array<Post>> =
 };
 
 /** */
-export const findLatestPosts = async ({ count }: { count?: number }): Promise<Array<Post>> => {
+export const findLatestPosts = async ({count}: { count?: number }): Promise<Array<Post>> => {
   const _count = count || 4;
   const posts = await fetchPosts();
 
@@ -176,10 +185,10 @@ export const findLatestPosts = async ({ count }: { count?: number }): Promise<Ar
 };
 
 /** */
-export const getStaticPathsBlogList = async ({ paginate }: { paginate: PaginateFunction }) => {
+export const getStaticPathsBlogList = async ({paginate}: { paginate: PaginateFunction }) => {
   if (!isBlogEnabled || !isBlogListRouteEnabled) return [];
   return paginate(await fetchPosts(), {
-    params: { blog: BLOG_BASE || undefined },
+    params: {blog: BLOG_BASE || undefined},
     pageSize: blogPostsPerPage,
   });
 };
@@ -191,12 +200,12 @@ export const getStaticPathsBlogPost = async () => {
     params: {
       blog: post.permalink,
     },
-    props: { post },
+    props: {post},
   }));
 };
 
 /** */
-export const getStaticPathsBlogCategory = async ({ paginate }: { paginate: PaginateFunction }) => {
+export const getStaticPathsBlogCategory = async ({paginate}: { paginate: PaginateFunction }) => {
   if (!isBlogEnabled || !isBlogCategoryRouteEnabled) return [];
 
   const posts = await fetchPosts();
@@ -209,16 +218,16 @@ export const getStaticPathsBlogCategory = async ({ paginate }: { paginate: Pagin
     paginate(
       posts.filter((post) => typeof post.category === 'string' && category === post.category.toLowerCase()),
       {
-        params: { category: category, blog: CATEGORY_BASE || undefined },
+        params: {category: category, blog: CATEGORY_BASE || undefined},
         pageSize: blogPostsPerPage,
-        props: { category },
+        props: {category},
       }
     )
   );
 };
 
 /** */
-export const getStaticPathsBlogTag = async ({ paginate }: { paginate: PaginateFunction }) => {
+export const getStaticPathsBlogTag = async ({paginate}: { paginate: PaginateFunction }) => {
   if (!isBlogEnabled || !isBlogTagRouteEnabled) return [];
 
   const posts = await fetchPosts();
@@ -231,9 +240,9 @@ export const getStaticPathsBlogTag = async ({ paginate }: { paginate: PaginateFu
     paginate(
       posts.filter((post) => Array.isArray(post.tags) && post.tags.find((elem) => elem.toLowerCase() === tag)),
       {
-        params: { tag: tag, blog: TAG_BASE || undefined },
+        params: {tag: tag, blog: TAG_BASE || undefined},
         pageSize: blogPostsPerPage,
-        props: { tag },
+        props: {tag},
       }
     )
   );

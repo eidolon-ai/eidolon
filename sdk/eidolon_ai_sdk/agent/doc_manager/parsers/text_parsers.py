@@ -18,7 +18,7 @@ class BS4HTMLParserSpec(DocumentParserSpec):
 
 
 class BS4HTMLParser(DocumentParser, Specable[BS4HTMLParserSpec]):
-    """Pparse HTML files using `Beautiful Soup`."""
+    """Parse HTML files using `Beautiful Soup`."""
 
     def __init__(self, spec: BS4HTMLParserSpec):
         super().__init__(spec)
