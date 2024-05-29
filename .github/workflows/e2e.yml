@@ -93,7 +93,7 @@ jobs:
         with:
           name: playwright-results
           path: |
-            webui/apps/eidolon-ui2/test-results
+            webui/apps/eidolon-ui2/tests/test-results
           if-no-files-found: ignore
 
       - name: Upload Playwright screenshots
