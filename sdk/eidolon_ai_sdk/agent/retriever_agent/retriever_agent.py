@@ -87,4 +87,5 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
         """
         await self.document_manager.sync_docs()
 
-        return await super().search(f"doc_contents_{self.spec.name}", question)
+        results = await super().search(f"doc_contents_{self.spec.name}", question)
+        return [doc async for doc in results]
