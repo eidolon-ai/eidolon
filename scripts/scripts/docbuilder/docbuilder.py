@@ -1,15 +1,15 @@
 import json
 import os
+import shutil
 import textwrap
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Dict, Self, List
 
 import jsonschema
-import jsonschema2md
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
-from json_schema_for_humans.generation_configuration import GenerationConfiguration, DEFAULT_PROPERTIES_TABLE_COLUMNS
+from json_schema_for_humans.generation_configuration import GenerationConfiguration
 from pydantic import BaseModel, model_validator
 
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
@@ -17,9 +17,11 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory, SymbolicMemory
 from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
+from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
@@ -46,6 +48,9 @@ class Group(BaseModel):
 
 
 components_to_load: list[Group] = [
+    Group(base=SymbolicMemory),
+    Group(base=SimilarityMemory),
+    Group(base=FileMemoryBase),
     Group(base="Agents", default="SimpleAgent", components=[
         ("SimpleAgent", SimpleAgent, {}),
         ("RetrieverAgent", RetrieverAgent, {}),
@@ -101,6 +106,7 @@ cut_after_str = """|                           |                                
 
 
 def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
+    shutil.rmtree(write_loc, ignore_errors=True)
     for k, g in groups.items():
         write_file_loc = write_loc / url_safe(k) / "overview.md"
         title = f"{k} Overview"
