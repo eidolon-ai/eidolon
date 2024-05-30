@@ -7,7 +7,8 @@ from pydantic import model_validator, Field
 from eidolon_ai_sdk.agent.agent import register_program, AgentState
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
-from eidolon_ai_sdk.agent.retriever_agent.retriever import RetrieverSpec, Retriever, DocSummary
+from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import DocSummary
+from eidolon_ai_sdk.agent.retriever_agent.retriever import RetrieverSpec, Retriever
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable, Reference
 from eidolon_ai_sdk.util.class_utils import fqn

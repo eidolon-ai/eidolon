@@ -1,53 +1,14 @@
 import asyncio
-from typing import List, AsyncIterable
+from typing import AsyncIterable
 
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import DocumentReranker
+from eidolon_ai_sdk.agent.retriever_agent.document_retriever import DocumentRetriever
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
+from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer, DocSummary
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.memory.document import Document
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
-
-
-class DocumentRetrieverSpec(BaseModel):
-    pass
-
-
-class DocumentRetriever(Specable[DocumentRetrieverSpec]):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        Specable.__init__(self, **kwargs)
-
-    async def get_docs(self, vector_collection_name: str, doc_ids: List[str]) -> AsyncIterable[Document]:
-        pass
-
-
-class SimilarityMemoryRetriever(DocumentRetriever):
-    async def get_docs(self, vector_collection_name: str, doc_ids: List[str]) -> AsyncIterable[Document]:
-        return AgentOS.similarity_memory.get_docs(vector_collection_name, doc_ids)
-
-
-class DocSummary(BaseModel):
-    id: str
-    file_name: str
-    file_path: str
-    text: str
-
-
-class ResultSummarizerSpec(BaseModel):
-    pass
-
-
-class ResultSummarizer(Specable[ResultSummarizerSpec]):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        Specable.__init__(self, **kwargs)
-
-    async def summarize(self, docs: AsyncIterable[Document]) -> AsyncIterable[DocSummary]:
-        async for doc in docs:
-            file_path = doc.metadata["source"]
-            yield DocSummary(id=doc.id, file_name=file_path.split("/")[-1], file_path=file_path, text=doc.page_content)
 
 
 class RetrieverSpec(BaseModel):

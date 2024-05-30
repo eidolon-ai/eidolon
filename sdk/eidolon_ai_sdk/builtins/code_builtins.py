@@ -21,8 +21,10 @@ from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTr
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent.generic_agent import GenericAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
+from eidolon_ai_sdk.agent.retriever_agent.document_retriever import SimilarityMemoryRetriever, DocumentRetriever
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
+from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
@@ -187,6 +189,9 @@ def named_builtins():
         MultiQuestionTransformer,
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
+        (DocumentRetriever, SimilarityMemoryRetriever),
+        SimilarityMemoryRetriever,
+        ResultSummarizer,
         (DocumentLoader, FilesystemLoader),
         DocumentProcessor,
         DocumentManager,
