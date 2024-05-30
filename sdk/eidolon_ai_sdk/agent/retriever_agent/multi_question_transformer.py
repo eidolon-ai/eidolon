@@ -10,7 +10,7 @@ from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class MultiQuestionTransformerSpec(QuestionTransformerSpec):
-    cpu: AnnotatedReference[APU]
+    apu: AnnotatedReference[APU]
     keep_original: bool = Field(default=True, description="Whether to keep the original question in the output")
     number_to_generate: int = Field(default=3, description="The number of questions to generate")
     prompt: str = Field(
@@ -29,11 +29,11 @@ class QuestionList(BaseModel):
 class MultiQuestionTransformer(QuestionTransformer, Specable[MultiQuestionTransformerSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.cpu = self.spec.cpu.instantiate()
-        self.cpu.record_memory = False
+        self.apu = self.spec.apu.instantiate()
+        self.apu.record_memory = False
 
     async def transform(self, question: str) -> List[str]:
-        thread = await self.cpu.main_thread(str(uuid.uuid4()))
+        thread = await self.apu.main_thread(str(uuid.uuid4()))
         env = Environment(undefined=StrictUndefined)
         userPrompt = env.from_string(self.spec.prompt).render(
             question=question, number_to_generate=self.spec.number_to_generate

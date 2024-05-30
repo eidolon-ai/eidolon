@@ -21,8 +21,10 @@ from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTr
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent.generic_agent import GenericAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
+from eidolon_ai_sdk.agent.retriever_agent.document_retriever import SimilarityMemoryRetriever, DocumentRetriever
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
+from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
@@ -33,8 +35,8 @@ from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, Simil
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
-from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.agent_io import IOUnit
+from eidolon_ai_sdk.cpu.apu import APU
 from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.cpu.conversation_memory_unit import RawMemoryUnit
 from eidolon_ai_sdk.cpu.conversational_apu import ConversationalAPU
@@ -187,6 +189,9 @@ def named_builtins():
         MultiQuestionTransformer,
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
+        (DocumentRetriever, SimilarityMemoryRetriever),
+        SimilarityMemoryRetriever,
+        ResultSummarizer,
         (DocumentLoader, FilesystemLoader),
         DocumentProcessor,
         DocumentManager,

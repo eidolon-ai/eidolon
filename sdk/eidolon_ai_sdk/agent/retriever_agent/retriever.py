@@ -1,28 +1,30 @@
 import asyncio
-from typing import List
+from typing import AsyncIterable
 
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import DocumentReranker
+from eidolon_ai_sdk.agent.retriever_agent.document_retriever import DocumentRetriever
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
+from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer, DocSummary
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
 class RetrieverSpec(BaseModel):
-    max_num_results: int = Field(default=10, description="The maximum number of results to send to cpu.")
+    max_num_results: int = Field(default=10, description="The maximum number of results to consider.")
     question_transformer: AnnotatedReference[QuestionTransformer]
+    document_retriever: AnnotatedReference[DocumentRetriever]
     document_reranker: AnnotatedReference[DocumentReranker]
-
-
-class DocSummary(BaseModel):
-    id: str
-    file_name: str
-    file_path: str
-    text: str
+    result_summarizer: AnnotatedReference[ResultSummarizer]
 
 
 class Retriever(Specable[RetrieverSpec]):
+    document_retriever: DocumentRetriever
+    document_reranker: DocumentReranker
+    question_transformer: QuestionTransformer
+    result_summarizer: ResultSummarizer
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
@@ -31,8 +33,10 @@ class Retriever(Specable[RetrieverSpec]):
             self.spec.question_transformer.instantiate() if self.spec.question_transformer else None
         )
         self.document_reranker = self.spec.document_reranker.instantiate()
+        self.document_retriever = self.spec.document_retriever.instantiate()
+        self.result_summarizer = self.spec.result_summarizer.instantiate()
 
-    async def search(self, vector_collection_name: str, question: str) -> List[DocSummary]:
+    async def search(self, vector_collection_name: str, question: str) -> AsyncIterable[DocSummary]:
         """
         Process the question by searching the document store.
         :param vector_collection_name:
@@ -54,15 +58,9 @@ class Retriever(Specable[RetrieverSpec]):
         # now limit reranked_docs to max_num_results
         reranked_docs = reranked_docs[: self.spec.max_num_results]
 
-        docs = AgentOS.similarity_memory.get_docs(vector_collection_name, [doc[0] for doc in reranked_docs])
-        summaries = []
-        async for doc in docs:
-            file_path = doc.metadata["source"]
-            summaries.append(
-                DocSummary(id=doc.id, file_name=file_path.split("/")[-1], file_path=file_path, text=doc.page_content)
-            )
+        docs = await self.document_retriever.get_docs(vector_collection_name, [doc[0] for doc in reranked_docs])
 
-        return summaries
+        return self.result_summarizer.summarize(docs)
 
     async def _embed_question(self, vector_collection_name, question):
         embedded_q = await AgentOS.similarity_memory.embed_text(question)
