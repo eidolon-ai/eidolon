@@ -23,7 +23,7 @@ etc or just define your own.
 This means no vendor lock-in and minimizes the work needed to upgrade portions of an agent. Without this flexibility, 
 developers will not be able to adapt their agents to the rapidly changing AI landscape.
 
-Check out [Eidolon's qebsite](https://eidolonai.com/) to learn more.
+Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 
 ## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/prereq/)
 
@@ -42,7 +42,7 @@ INFO - Starting agent 'hello_world'
 INFO - Server Started
 ```
 
-You can also check out your machine's [swagger docs]((http://localhost:8080/docs#/)).
+You can also check out your machine's [swagger docs](http://localhost:8080/docs#/).
 
 ### Try it out!
 Head over to another terminal where we will install a cli, create a new process, and then converse with our agent on 

@@ -54,7 +54,12 @@ const postCollection = defineCollection({
 
     title: z.string(),
     excerpt: z.string().optional(),
-    image: z.string().optional(),
+    image: z.union([z.string(), z.object({
+      url: z.string(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+      layout: z.string().optional(),
+    })]).optional(),
 
     category: z.string().optional(),
     tags: z.array(z.string()).optional(),

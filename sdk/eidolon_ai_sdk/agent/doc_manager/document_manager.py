@@ -36,7 +36,12 @@ class DocumentDirectory(BaseModel):
 
 
 class DocumentManagerSpec(BaseModel):
-    name: str
+    """
+    Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (
+    provided by loader) into similarity memory where they can be searched.
+    """
+
+    name: str = Field(description="The name of the document manager (used to name database collections).")
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
     loader: AnnotatedReference[DocumentLoader]
     doc_processor: AnnotatedReference[DocumentProcessor]

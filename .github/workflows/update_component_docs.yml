@@ -1,0 +1,36 @@
+name: Update Component Doc Files
+
+on:
+  # Trigger the workflow every time you push to the `main` branch
+  # Using a different branch name? Replace `main` with your branch’s name
+  push:
+    branches: [ main ]
+    paths:
+      - 'sdk/**'
+  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  docbuilder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install -E docbuilder
+        working-directory: scripts
+      - run: poetry run python scripts/docbuilder/docbuilder.py
+        working-directory: scripts
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Updating component docs"

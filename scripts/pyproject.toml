@@ -23,9 +23,20 @@ toml = "^0.10.2"
 gitpython = "^3.1.43"
 pydantic = "^2.7.1"
 python-dotenv = "^1.0.1"
+ref-resolver = "^1.0.3"
+jsonschema = "^4.22.0"
+json-schema-for-humans = {version = "^1.0.2", optional = true}
+
+[tool.poetry.dependencies.eidolon-ai-sdk]
+path = "../sdk"
+develop = true
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
+
+[tool.poetry.extras]
+docbuilder = [ "eidolon-ai-sdk", "json-schema-for-humans"]
 
 [build-system]
 requires = ["poetry-core"]

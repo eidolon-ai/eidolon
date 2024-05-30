@@ -10,6 +10,7 @@ import WidgetWrapper from "../components/ui/WidgetWrapper.astro";
 import Item from "../components/blog/GridItem.astro";
 import LinkUnfurl from "../components/widgets/LinkUnfurl.astro";
 import Testimonials from "../components/widgets/Testimonials.astro";
+import  SpeedInsights  from "@vercel/speed-insights/astro"
 
 const metadata = {
   title: 'Eidolon -- Build LLM Agents as Services',
@@ -25,6 +26,7 @@ const githubText = `Star on GitHub ⭐`
 ---
 
 <Layout metadata={metadata}>
+  <SpeedInsights/>
   <!-- Hero Widget ******************* -->
 
   <Hero2

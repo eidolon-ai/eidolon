@@ -21,7 +21,10 @@ export interface Post {
   /** Optional summary of post content. */
   excerpt?: string;
   /**  */
-  image?: ImageMetadata | string;
+  image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageLayout?: string;
 
   /**  */
   category?: string;

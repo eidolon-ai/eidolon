@@ -118,6 +118,12 @@ class NamedCPU(BaseModel):
 
 
 class SimpleAgentSpec(BaseModel):
+    """
+    The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This
+    agent is designed to be a flexible, modular component that can interact with various processing units and perform a
+    range of actions based on its configuration.
+    """
+
     description: Optional[str] = None
     system_prompt: str = "You are a helpful assistant"
     agent_refs: List[str] = []
