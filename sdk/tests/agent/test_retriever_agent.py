@@ -43,7 +43,21 @@ class TestRetrieverAgent:
     async def test_list_files(self, agent):
         process = await agent.create_process()
         found = await process.action("list_files")
-        assert set(found.data) == {"caz", "car", "doo", "dar", "daz", "coo", "ear", "eaz", "foo", "boo", "baz", "bar", "eoo"}
+        assert set(found.data) == {
+            "caz",
+            "car",
+            "doo",
+            "dar",
+            "daz",
+            "coo",
+            "ear",
+            "eaz",
+            "foo",
+            "boo",
+            "baz",
+            "bar",
+            "eoo",
+        }
 
     async def test_search(self, agent):
         process = await agent.create_process()

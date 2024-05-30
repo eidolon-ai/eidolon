@@ -46,9 +46,8 @@ class LLMCallFunction(BaseModel):
 
 
 class LLMUnitSpec(BaseModel):
-    """
+    """ """
 
-    """
     model: Reference[LLMModel]
 
 
@@ -77,7 +76,7 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
         )
 
     def create_tool_response_message(self, logic_unit_name: str, tc: ToolCall, content: str) -> LLMMessage:
-        return  ToolResponseMessage(
+        return ToolResponseMessage(
             logic_unit_name=logic_unit_name,
             tool_call_id=tc.tool_call_id,
             result=content,
