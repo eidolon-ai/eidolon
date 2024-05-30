@@ -36,7 +36,7 @@ INFO - Starting agent 'hello_world'
 INFO - Server Started
 ```
 
-You can also check out your machine's [swagger docs]((http://localhost:8080/docs#/)).
+You can also check out your machine's [swagger docs](http://localhost:8080/docs#/).
 
 Believe it or not, you are already up and running with a simple agent! 🎉
 

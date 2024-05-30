@@ -42,7 +42,7 @@ INFO - Starting agent 'hello_world'
 INFO - Server Started
 ```
 
-You can also check out your machine's [swagger docs]((http://localhost:8080/docs#/)).
+You can also check out your machine's [swagger docs](http://localhost:8080/docs#/).
 
 ### Try it out!
 Head over to another terminal where we will install a cli, create a new process, and then converse with our agent on 
