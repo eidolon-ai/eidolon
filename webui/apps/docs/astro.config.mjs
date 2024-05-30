@@ -100,6 +100,27 @@ export default defineConfig({
           items: [
             // ### Start Components ###
             {
+              label: 'SymbolicMemory', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/symbolicmemory/overview/'},
+                {label: 'LocalSymbolicMemory', link: '/docs/components/symbolicmemory/localsymbolicmemory/'},
+                {label: 'MongoSymbolicMemory', link: '/docs/components/symbolicmemory/mongosymbolicmemory/'},
+              ]
+            },
+            {
+              label: 'SimilarityMemory', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/similaritymemory/overview/'},
+                {label: 'SimilarityMemoryImpl', link: '/docs/components/similaritymemory/similaritymemoryimpl/'},
+              ]
+            },
+            {
+              label: 'FileMemoryBase', collapsed: true, items: [
+                {label: 'Overview', link: '/docs/components/filememorybase/overview/'},
+                {label: 'FileMemory', link: '/docs/components/filememorybase/filememory/'},
+                {label: 'LocalFileMemory', link: '/docs/components/filememorybase/localfilememory/'},
+                {label: 'S3FileMemory', link: '/docs/components/filememorybase/s3filememory/'},
+              ]
+            },
+            {
               label: 'Agents', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/agents/overview/'},
                 {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent/'},

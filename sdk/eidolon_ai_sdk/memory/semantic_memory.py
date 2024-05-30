@@ -1,7 +1,9 @@
+from abc import ABC
+
 from eidolon_ai_sdk.agent_os_interfaces import SymbolicMemory
 
 
-class SymbolicMemoryBase(SymbolicMemory):
+class SymbolicMemoryBase(SymbolicMemory, ABC):
     """
     Abstract base class for a symbolic memory component within an agent.
 
