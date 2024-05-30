@@ -113,9 +113,8 @@ class ProcessFileSystemImpl(Specable[ProcessFileSystemSpec], ProcessFileSystem):
 
     async def list_files(self, process_id: str, include_only_index: bool):
         path = Path(self.root, process_id)
-        files = await AgentOS.file_memory.glob(f"{path}/*.md")
-        for file in files:
-            contents = await AgentOS.file_memory.read_file(file)
+        async for file in AgentOS.file_memory.glob(f"{path}/*.md"):
+            contents = await AgentOS.file_memory.read_file(file.file_path)
             file_md = json.loads(contents)
             if not include_only_index or ("indexed" in file_md and file_md["indexed"]):
                 yield file_md
@@ -129,5 +128,5 @@ class ProcessFileSystemImpl(Specable[ProcessFileSystemSpec], ProcessFileSystem):
         """
         pfs: ProcessFileSystem = AgentOS.process_file_system
         process_path = str(Path(pfs.root, process_id))
-        found = await AgentOS.file_memory.glob(f"{process_path}/**/*")
+        found = [f.file_path async for f in AgentOS.file_memory.glob(f"{process_path}/**/*")]
         await asyncio.gather(*[AgentOS.file_memory.delete_file(file) for file in found])

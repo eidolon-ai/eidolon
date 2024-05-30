@@ -51,7 +51,7 @@ def replayable(
     async def maybe_save_args(*args, **kwargs):
         if config.save_loc:
             try:
-                existing_dirs = [os.path.split(d)[-1] for d in await AgentOS.file_memory.glob(config.save_loc + "/*")]
+                existing_dirs = [os.path.split(d.file_path)[-1] async for d in AgentOS.file_memory.glob(config.save_loc + "/*")]
                 dir_number = [int(d.split("_")[0]) for d in existing_dirs]
                 top = max(0, *dir_number) if dir_number else -1
                 next_ = str(top + 1)

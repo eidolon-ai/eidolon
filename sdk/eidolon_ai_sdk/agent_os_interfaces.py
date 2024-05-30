@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, Dict, Any, Union, List, AsyncIterable, Set, Literal, Sequence, AsyncGenerator
+from typing import Optional, Tuple, Dict, Any, Union, List, AsyncIterable, Set, Literal, Sequence, AsyncGenerator, \
+    Iterable
+
+from pydantic import BaseModel
 from starlette.requests import Request
 
 from eidolon_ai_client.events import FileHandle
@@ -23,7 +26,7 @@ class ProcessFileSystem(ABC):
 
     @abstractmethod
     async def write_file(
-        self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None
+            self, process_id: str, file_contents: bytes, file_md: Optional[Dict[str, any]] = None
     ) -> FileHandle:
         """
         Writes the given `file_contents` to a new file within the context of the process_id.
@@ -64,6 +67,14 @@ class ProcessFileSystem(ABC):
         :return:
         """
         raise NotImplementedError("not implemented")
+
+
+class FileMetadata(BaseModel):
+    file_path: str
+    created: Optional[str] = None
+    updated: Optional[str] = None
+    hash: Optional[str] = None
+    extra: dict[str, Any] = {}
 
 
 class FileMemory(ABC):
@@ -122,7 +133,7 @@ class FileMemory(ABC):
         pass
 
     @abstractmethod
-    async def glob(self, pattern: str):
+    def glob(self, pattern: str) -> AsyncIterable[FileMetadata]:
         raise NotImplementedError("not implemented")
 
 
@@ -152,12 +163,12 @@ class SymbolicMemory(ABC):
 
     @abstractmethod
     def find(
-        self,
-        symbol_collection: str,
-        query: dict[str, Any],
-        projection: Union[List[str], Dict[str, int]] = None,
-        sort: dict = None,
-        skip: int = None,
+            self,
+            symbol_collection: str,
+            query: dict[str, Any],
+            projection: Union[List[str], Dict[str, int]] = None,
+            sort: dict = None,
+            skip: int = None,
     ) -> AsyncIterable[dict[str, Any]]:
         """
         Searches for symbols within a specified collection that match the given query.
@@ -179,7 +190,7 @@ class SymbolicMemory(ABC):
 
     @abstractmethod
     async def find_one(
-        self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None
+            self, symbol_collection: str, query: dict[str, Any], sort: dict[str, int] = None
     ) -> Optional[dict[str, Any]]:
         """
         Searches for a single symbol within a specified collection that matches the given query.
@@ -279,22 +290,22 @@ class SimilarityMemory(ABC):
 
     @abstractmethod
     async def query(
-        self,
-        collection: str,
-        query: str,
-        num_results: int,
-        metadata_where: Optional[Dict[str, str]] = None,
+            self,
+            collection: str,
+            query: str,
+            num_results: int,
+            metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:
         raise NotImplementedError("not implemented")
 
     @abstractmethod
     async def raw_query(
-        self,
-        collection: str,
-        query: List[float],
-        num_results: int,
-        metadata_where: Optional[Dict[str, str]] = None,
-        include_embeddings: bool = False,
+            self,
+            collection: str,
+            query: List[float],
+            num_results: int,
+            metadata_where: Optional[Dict[str, str]] = None,
+            include_embeddings: bool = False,
     ) -> List[QueryItem]:
         raise NotImplementedError("not implemented")
 
@@ -309,7 +320,7 @@ Permission = Literal["create", "read", "update", "delete"]  # probably expands t
 class SecurityManager(ABC):
     @abstractmethod
     async def check_permissions(
-        self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
+            self, permissions: Permission | Set[Permission], agent: str, process_id: Optional[str] = None
     ):
         """
         Checks if the authenticated user has the specified permission(s) to the provided agent process.

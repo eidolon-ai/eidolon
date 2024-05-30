@@ -1,9 +1,12 @@
+import asyncio
 import fnmatch
 from io import BytesIO
+from typing import AsyncIterable
 
 import boto3
 from pydantic import BaseModel
 
+from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.util.async_wrapper import make_async
 
@@ -60,10 +63,14 @@ class S3FileMemory(BaseModel, FileMemoryBase):
                     return True
         return False
 
-    @make_async
-    def glob(self, pattern: str):
-        acc = []
-        for page in self.client().objects.pages():
-            matching = fnmatch.filter((o.key for o in page), pattern)
-            acc.extend(matching)
-        return acc
+    async def glob(self, pattern: str) -> AsyncIterable[FileMetadata]:
+        loop = asyncio.get_event_loop()
+        pages = self.client().objects.pages()
+        try:
+            while True:
+                page = await loop.run_in_executor(None, next, pages)
+                for o in page:
+                    if fnmatch.fnmatch(o.key, pattern):
+                        yield FileMetadata(file_path=o.key, hash=o.e_tag, updated=o.last_modified)
+        except StopIteration:
+            pass

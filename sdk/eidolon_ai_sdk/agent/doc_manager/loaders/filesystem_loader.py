@@ -61,11 +61,12 @@ class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
                 # first check the timestamp to see if it changed.  If not, skip the file
                 timestamp = os.path.getmtime(file)
                 if file_path in metadata:
-                    if timestamp != metadata[file_path]["timestamp"]:
+                    file_metadata = metadata[file_path]
+                    if 'timestamp' not in file_metadata or timestamp != file_metadata["timestamp"]:
                         # create a hash of the file at file path
                         file_hash = hash_file(file)
                         # if the file exists in symbolic memory, check if the hashes are different
-                        if "hash" not in file_hash != metadata[file_path]:
+                        if "hash" not in file_metadata or file_hash != file_metadata:
                             new_metadata = {"timestamp": timestamp, "file_hash": file_hash}
                             yield ModifiedFile(
                                 FileInfo(file_path, new_metadata, DataBlob.from_path(str(self.root_path / file_path)))
