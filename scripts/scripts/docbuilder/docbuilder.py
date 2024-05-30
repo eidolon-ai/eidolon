@@ -8,6 +8,8 @@ from typing import Optional, Dict, Self, List
 import jsonschema
 import jsonschema2md
 from jinja2 import Environment, StrictUndefined
+from json_schema_for_humans.generate import generate_from_schema
+from json_schema_for_humans.generation_configuration import GenerationConfiguration, DEFAULT_PROPERTIES_TABLE_COLUMNS
 from pydantic import BaseModel, model_validator
 
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
@@ -36,7 +38,10 @@ class Group(BaseModel):
     @model_validator(mode='after')
     def update_description(self) -> Self:
         if not self.description:
-            self.description = textwrap.dedent(self.base.__doc__) if self.base.__doc__ else ""
+            if isinstance(self.base, type) and self.base.__doc__:
+                self.description = textwrap.dedent(self.base.__doc__)
+            else:
+                self.description = f"Overview of {self.base} components"
         return self
 
 
@@ -87,6 +92,14 @@ def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro
         components_file.write(''.join(lines[finish_index:]))
 
 
+cut_after_str = """|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+"""
+
+
 def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     for k, g in groups.items():
         write_file_loc = write_loc / url_safe(k) / "overview.md"
@@ -100,13 +113,18 @@ def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "
     for component in os.listdir(read_loc):
         for file in os.listdir(read_loc / component):
             write_file_loc = write_loc / url_safe(component) / (url_safe(file.replace(".json", "")) + ".md")
-            parser = jsonschema2md.Parser(examples_as_yaml=True)
             with open(read_loc / component / file, 'r') as json_file:
                 obj = json.load(json_file)
             title = obj.get('title', file)
             description = f"Description of {title} component"
-            md_lines = parser.parse_schema(obj)[1:]  # remove title
-            content = ''.join(md_lines)
+
+            # Generate HTML content
+            content = generate_from_schema(read_loc / component / file, config=GenerationConfiguration(
+                show_breadcrumbs=False,
+                template_name="md",
+                with_footer=False,
+            ))
+            content = content[(content.index(cut_after_str) + len(cut_after_str)):]
             write_astro_md_file(content, description, title, write_file_loc)
 
 
