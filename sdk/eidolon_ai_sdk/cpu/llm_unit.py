@@ -46,7 +46,9 @@ class LLMCallFunction(BaseModel):
 
 
 class LLMUnitSpec(BaseModel):
-    """ """
+    """
+    The LLMUnit is a processing unit that is used to interact with a language model.
+    """
 
     model: Reference[LLMModel]
 
