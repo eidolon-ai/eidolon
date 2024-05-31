@@ -44,7 +44,7 @@ const image = (await findImage(post.image));
         post.title
       ) : (
         <a
-          href={"/" + post.permalink}
+          href={post.permalink}
           class="hover:text-primary dark:hover:text-blue-700  transition ease-in duration-200"
         >
           {post.title}
