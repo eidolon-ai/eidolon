@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Optional, Tuple, Dict, Any, Union, List, AsyncIterable, Set, Literal, Sequence, AsyncGenerator
 
 from pydantic import BaseModel
@@ -70,8 +71,8 @@ class ProcessFileSystem(ABC):
 
 class FileMetadata(BaseModel):
     file_path: str
-    created: Optional[str] = None
-    updated: Optional[str] = None
+    created: Optional[datetime] = None
+    updated: Optional[datetime] = None
     hash: Optional[str] = None
     extra: dict[str, Any] = {}
 

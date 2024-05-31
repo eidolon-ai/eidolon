@@ -1,5 +1,6 @@
 import asyncio
 import fnmatch
+from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
 from typing import AsyncIterable
 
@@ -66,11 +67,17 @@ class S3FileMemory(BaseModel, FileMemoryBase):
     async def glob(self, pattern: str) -> AsyncIterable[FileMetadata]:
         loop = asyncio.get_event_loop()
         pages = self.client().objects.pages()
-        try:
-            while True:
-                page = await loop.run_in_executor(None, next, pages)
-                for o in page:
-                    if fnmatch.fnmatch(o.key, pattern):
-                        yield FileMetadata(file_path=o.key, hash=o.e_tag, updated=o.last_modified)
-        except StopIteration:
-            pass
+
+        def get_next():
+            try:
+                return next(pages)
+            except StopIteration:  # executor will not propagate stop iteration
+                return None
+
+        while True:
+            page = await loop.run_in_executor(None, get_next)
+            if page is None:  # explicit none check since page could potentially be empty
+                break
+            for o in page:
+                if fnmatch.fnmatch(o.key, pattern):
+                    yield FileMetadata(file_path=o.key, hash=o.e_tag, updated=o.last_modified)
