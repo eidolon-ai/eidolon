@@ -172,3 +172,6 @@ node_modules/
 .next/
 
 .turbo
+
+# Mongo data directory (generated when running with Docker Compose)
+mongo-data/

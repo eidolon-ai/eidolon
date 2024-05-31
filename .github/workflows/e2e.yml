@@ -73,8 +73,8 @@ jobs:
         run: pnpm run docker:up
         working-directory: ./webui/apps/eidolon-ui2
 
-      - name: Print MongoDB logs
-        run: docker logs $(docker ps -q --filter name=mongo)
+      - name: Save MongoDB logs
+        run: docker logs $(docker ps -q --filter name=mongo) > mongodb-logs.txt
 
       - name: List Docker containers
         run: docker ps -a
@@ -87,9 +87,18 @@ jobs:
       - name: Stop Docker containers
         run: pnpm run docker:down
         working-directory: ./webui/apps/eidolon-ui2
+        if: always()
+
+      - name: Upload MongoDB logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: mongodb-logs
+          path: mongodb-logs.txt
 
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: playwright-results
           path: |
@@ -98,6 +107,7 @@ jobs:
 
       - name: Upload Playwright screenshots
         uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: playwright-screenshots
           path: |

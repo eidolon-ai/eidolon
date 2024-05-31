@@ -3,9 +3,8 @@ FROM python:3.11-slim as builder
 RUN pip install poetry
 COPY . .
 RUN mkdir dist
-
-# Generate requirements.txt without local file references
-RUN poetry export --without dev --without-hashes --format=requirements.txt | sed '/^-e /d' > dist/requirements.txt
+RUN touch dist/requirements.txt
+RUN poetry export --without dev --without-hashes --format=requirements.txt | sed '/@ file/d' > dist/requirements.txt
 
 FROM docker.io/eidolonai/sdk_base:$EIDOLON_VERSION as examples
 COPY --from=builder dist/requirements.txt /tmp/examples/requirements.txt
@@ -15,8 +14,7 @@ ARG LOC=eidolon_examples
 FROM examples
 WORKDIR /app
 COPY $LOC .
-COPY demo_resources/usage_resources.yaml resources/
-COPY eidolon_examples/conversational_chatbot/resources/conversational_agent.yaml /app/resources/conversational_agent.yaml
+COPY demo_resources/ resources/
 
 # runner work
 RUN addgroup --system --gid 1001 eidolon

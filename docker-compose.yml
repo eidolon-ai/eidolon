@@ -12,7 +12,7 @@ services:
 
   eidolon-server:
     build:
-      context: ./examples
+      context: ./sdk
       dockerfile: Dockerfile
       args:
         - EIDOLON_VERSION=latest
