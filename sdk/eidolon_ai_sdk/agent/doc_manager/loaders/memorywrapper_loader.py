@@ -29,7 +29,7 @@ class WrappedMemoryLoaderSpec(DocumentLoaderSpec):
     """
 
     memory: Reference[FileMemoryBase]
-    pattern: str = "**/*"
+    pattern: str = "**"
 
 
 # noinspection PyShadowingNames
@@ -72,7 +72,7 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
                 del metadata[file_path]
             else:
                 data = await self.memory.read_file(file_path)
-                file["loader_hash"] = hash_file(data)
+                file.extra["loader_hash"] = hash_file(data)
                 yield AddedFile(FileInfo(file_path, file.model_dump(), DataBlob.from_bytes(data, path=file_path)))
 
         for not_found in metadata.keys():

@@ -32,7 +32,7 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
     repo: str
     client_args: dict = {}
     root_path: Optional[str] = None
-    pattern: str | List[str] = "**/*"
+    pattern: str | List[str] = "**"
     exclude: str | List[str] = []
     token: Optional[str] = Field(
         default_factory=lambda: os.environ.get("GITHUB_TOKEN"),
