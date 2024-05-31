@@ -48,7 +48,7 @@ class TestRetrieverAgent:
                 document_manager=dict(
                     loader=dict(
                         implementation=S3Loader.__name__,
-                        bucket="tesla-docs",
+                        bucket="rag-search-test",
                     )
                 )
             ),
@@ -92,5 +92,5 @@ class TestRetrieverAgent:
     async def test_s3(self, agent):
         s3_agent = Agent.get("RetrieverAgentS3")
         process = await s3_agent.create_process()
-        found = await process.action("search", body={"question": "how do I open the door?"})
-        assert "Model 3" in str(found.data)
+        found = await process.action("search", body={"question": "how do I make a pdf?"})
+        assert "Get_Started_With_Smallpdf" in str(found.data)
