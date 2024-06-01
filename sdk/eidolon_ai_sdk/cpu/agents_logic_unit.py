@@ -12,7 +12,6 @@ from eidolon_ai_client.events import StreamEvent, ObjectOutputEvent
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
 class AgentsLogicUnitSpec(BaseModel):

@@ -2,7 +2,7 @@ from typing import Annotated
 
 import pytest
 from anthropic import BaseModel
-from fastapi import UploadFile, Body
+from fastapi import Body
 from pydantic import Field
 
 from eidolon_ai_client.client import Agent
