@@ -8,7 +8,10 @@ import time
 from jsonref import requests
 from pytest_asyncio import fixture
 
+from eidolon_ai_sdk.util.posthog import PosthogConfig
+
 dotenv.load_dotenv()
+PosthogConfig.enabled = False
 
 
 def tail(file_path, sleep_sec=0.1):
