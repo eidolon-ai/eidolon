@@ -1,7 +1,13 @@
+from typing import Annotated
+
 import pytest
+from anthropic import BaseModel
+from fastapi import Body
+from pydantic import Field
 
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
+from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
@@ -20,12 +26,26 @@ class MeaningOfLife(LogicUnit):
         return "42"
 
 
-def r(name, **kwargs):
+class NestedObject(BaseModel):
+    int_field: int = None
+
+
+class ComplexInput(BaseModel):
+    array_of_objects: list[NestedObject] = Field(description="An array of objects")
+
+
+class ComplexAgent:
+    @register_program()
+    async def do_not_call(self, body: Annotated[ComplexInput, Body(embed=True)]) -> str:
+        return "You shouldn't call this function"
+
+
+def r(name, impl=SimpleAgent.__name__, **kwargs):
     return Resource(
         apiVersion="eidolon/v1",
         kind="Agent",
         metadata=Metadata(name=name),
-        spec=dict(implementation=SimpleAgent.__name__, **kwargs),
+        spec=dict(implementation=impl, **kwargs),
     )
 
 
@@ -65,6 +85,8 @@ resources = [
     r("system_prompt", system_prompt="You are a helpful assistant, and your favorite country is France"),
     r("refs", agent_refs=["system_prompt"]),
     r("with_tools", cpu=dict(logic_units=[fqn(MeaningOfLife)])),
+    r("complex_refs", agent_refs=["complex_agent"]),
+    r("complex_agent", impl=fqn(ComplexAgent)),
 ]
 
 
@@ -179,3 +201,10 @@ async def test_with_replay_points(file_memory_loc, record):
 
     with open(file_memory_loc / record / "001_openai_completion" / "data.yaml", "r") as f:
         assert "You are a helpful assistant" in f.read()
+
+
+async def test_agent_with_complex_refs():
+    process = await Agent.get("complex_refs").create_process()
+    resp = await process.action("converse", body="What is the capital of France?")
+    assert "paris" in resp.data.lower()
+

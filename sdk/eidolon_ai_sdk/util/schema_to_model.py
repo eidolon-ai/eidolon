@@ -108,16 +108,15 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
             field_type = property_schema.get("type")
             if field_type == "object":
                 # Recursive call for nested object
-                nested_model = schema_to_model(property_schema, f"{model_name}_{property_name.capitalize()}Model")
+                sub_model_name = property_schema.get("title", f"{model_name}_{property_name.capitalize()}Model")
+                nested_model = schema_to_model(property_schema, sub_model_name)
                 fields[property_name] = wrap_optional(nested_model, makeFieldOrDefaultValue())
             elif field_type == "array":
                 # Recursive call for arrays of objects
                 items_schema = property_schema.get("items", {})
                 if isinstance(items_schema, dict) and items_schema.get("type") == "object":
-                    nested_item_model = schema_to_model(
-                        items_schema,
-                        f"{model_name}_{property_name.capitalize()}ItemModel",
-                    )
+                    sub_model_name = property_schema.get("title", f"{model_name}_{property_name.capitalize()}Model")
+                    nested_item_model = schema_to_model(items_schema, sub_model_name)
                     fields[property_name] = wrap_optional(List[nested_item_model], makeFieldOrDefaultValue())
                 else:
                     python_type = get_python_type(property_name, items_schema, str)
