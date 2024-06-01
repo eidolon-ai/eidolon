@@ -13,7 +13,7 @@ class FnHandler:
     name: str
     fn: callable
     description: typing.Callable[[object, FnHandler], str]
-    input_model_fn: typing.Callable[[object, FnHandler], typing.Type[BaseModel]]
+    input_model_fn: typing.Callable[[object, FnHandler], typing.Type[BaseModel] | dict]
     output_model_fn: typing.Callable[[object, FnHandler], type]
     extra: dict
 

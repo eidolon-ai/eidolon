@@ -73,7 +73,7 @@ class LLMToolWrapper:
                     llm_message=LLMCallFunction(
                         name=new_name,
                         description=handler.description(logic_unit, handler),
-                        parameters=input_model.model_json_schema(),
+                        parameters=input_model if isinstance(input_model, dict) else input_model.model_json_schema(),
                     ),
                     eidolon_handler=handler,
                     input_model=input_model,

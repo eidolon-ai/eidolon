@@ -360,16 +360,16 @@ class AgentController:
         logger.debug(f"Registering action {handler.name} for program {self.name}")
         sig = inspect.signature(handler.fn)
         params = dict(sig.parameters)
-        model: typing.Type[BaseModel] = handler.input_model_fn(self.agent, handler)
-        for field in model.model_fields:
-            kwargs = dict(annotation=model.model_fields[field].annotation)
-            if isinstance(model.model_fields[field], Body) or isinstance(model.model_fields[field], Param):
-                kwargs["annotation"] = typing.Annotated[model.model_fields[field].annotation, model.model_fields[field]]
-            if model.model_fields[field].default is not PydanticUndefined:
-                kwargs["default"] = model.model_fields[field].default
-                model.model_fields[field].default = PydanticUndefined
-
-            params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
+        model: typing.Type[BaseModel] | dict = handler.input_model_fn(self.agent, handler)
+        if not isinstance(model, dict):
+            for field in model.model_fields:
+                kwargs = dict(annotation=model.model_fields[field].annotation)
+                if isinstance(model.model_fields[field], Body) or isinstance(model.model_fields[field], Param):
+                    kwargs["annotation"] = typing.Annotated[model.model_fields[field].annotation, model.model_fields[field]]
+                if model.model_fields[field].default is not PydanticUndefined:
+                    kwargs["default"] = model.model_fields[field].default
+                    model.model_fields[field].default = PydanticUndefined
+                params[field] = Parameter(field, Parameter.KEYWORD_ONLY, **kwargs)
         if "process_id" in params:
             if isEndpointAProgram:
                 del params["process_id"]
