@@ -46,7 +46,7 @@ def distinct_id():
         return distinct_id
 
     except Exception:
-        logger.debug(f"Error creating or reading the file", exc_info=True)
+        logger.debug("Error creating or reading the file", exc_info=True)
         return "r_" + str(uuid.uuid4())
 
 
