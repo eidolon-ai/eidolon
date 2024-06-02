@@ -123,7 +123,7 @@ def get_existing_events(event_name, repo, timestamp, posthog_api_key, posthog_pr
     return events
 
 
-def run_script(version, action, event_name, extract_data, sort, sort_order):
+def run_script(version, action, event_name, extract_data):
     dotenv.load_dotenv()
 
     # Create an argument parser
