@@ -75,7 +75,6 @@ class LLMToolWrapper:
                     input_model.model_json_schema(),
                     jsonschema=True,
                 ))
-                schema.pop("$defs", None)
                 acc[new_name] = LLMToolWrapper(
                     logic_unit=logic_unit,
                     llm_message=LLMCallFunction(
