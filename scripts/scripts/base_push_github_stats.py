@@ -44,13 +44,13 @@ def insert_into_posthog(event_name: str, repo: str, data: List[Dict[str, any]], 
         if "timestamp" not in event:
             raise ValueError("Timestamp is required in the event data")
         timestamp = event["timestamp"]
-        print(f"Processing {repo}/{event_name} for date {timestamp}, data: {event}")
         date = timestamp.split("T")[0]
         # check if the date is more than 10 days old
         if skip_older > 0 and ((datetime.now() - datetime.strptime(date, "%Y-%m-%d")).days > skip_older):
             # print(f"Skipping data for date {date} as it is more than 10 days old.")
             continue
 
+        print(f"Processing {repo}/{event_name} for date {timestamp}, data: {event}")
         posthog_update_if_needed(event_name, repo, timestamp, event, posthog_api_key, posthog_project_key, dry_run)
 
 
