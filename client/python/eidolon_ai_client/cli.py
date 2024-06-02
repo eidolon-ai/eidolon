@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import tempfile
 from functools import wraps
@@ -71,6 +72,7 @@ async def create(agent: Optional[str] = None, verbose: Optional[bool] = False, i
 
 processes.command("create")(coro(create))
 
+
 @processes.command("delete")
 @coro
 async def delete(process_id: str):
@@ -138,6 +140,12 @@ async def run(
                 call([body, tf.name])
                 with open(tf.name) as file:
                     body = file.read()
+    try:
+        body = json.loads(body)
+    except json.JSONDecodeError:
+        pass
+    except TypeError:
+        pass
 
     if stream:
         has_newline = True
