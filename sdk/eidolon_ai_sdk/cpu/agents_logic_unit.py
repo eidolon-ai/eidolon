@@ -61,7 +61,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return copy.deepcopy(self._machine_schemas[machine])
 
     async def build_action_tool(
-        self, machine: str, agent: str, action: str, allowed_pids: Set[str], call_context: CallContext
+            self, machine: str, agent: str, action: str, allowed_pids: Set[str], call_context: CallContext
     ):
         agent_client = Agent.get(agent)
         path = f"/processes/{{process_id}}/agent/{agent}/actions/{action}"
@@ -85,6 +85,8 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 self._process_tool(agent_client, action, allowed_pids, call_context),
             )
             return tool
+        except _InvalidSchema:
+            logger.warning(f"unable to build tool {path}")
         except ValueError:
             logger.warning(f"unable to build tool {path}", exc_info=True)
 
@@ -108,12 +110,14 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                         self._program_tool(agent_client, action, call_context),
                     )
                     tools.append(tool)
+                except _InvalidSchema:
+                    logger.warning(f"unable to build tool {path}")
                 except ValueError:
                     logger.warning(f"unable to build tool {path}", exc_info=True)
         return tools
 
     def _build_tool_def(self, agent, operation, name, schema, description, tool_call):
-        model = schema_to_model(schema, "BodyModel")
+        model = schema_to_model(schema, "InputModel")
         return FnHandler(
             name=name,
             description=lambda a, b: description,
@@ -139,7 +143,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         elif "text/plain" in body["content"]:
             return dict(type="object", properties=dict(body=dict(type="string")))
         else:
-            raise ValueError(f"Agent action at {name} does not support text/plain or application/json")
+            raise _InvalidSchema(f"Agent action at {name} does not support text/plain or application/json")
 
     @staticmethod
     def _description(endpoint_schema, name):
@@ -213,3 +217,7 @@ class RecordAgentResponseIterator(AgentResponseIterator):
         await call_data.upsert()
 
         return await super().iteration_complete()
+
+
+class _InvalidSchema(ValueError):
+    pass

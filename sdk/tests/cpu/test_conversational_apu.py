@@ -77,13 +77,12 @@ async def test_image_file_include(test_dir):
 
 async def test_produce_image_from_text(test_dir):
     process = await Agent.get("simple").create_process()
-    result = await process.action(
+    await process.action(
         "converse",
         body=dict(
             body="Create an image of a logo for a new startup called AugustData. The logo should be simple and elegant."
         ),
     )
-    print(result)
 
 
 async def test_audio_file_include_and_produce(test_dir):
@@ -95,7 +94,6 @@ async def test_audio_file_include_and_produce(test_dir):
     match = re.search(pattern, result.data)
     assert match is not None
     machine_url, process_id, file_id = match.groups()
-    print(machine_url, process_id, file_id)
     assert machine_url == process.machine
     assert process_id == process.process_id
     file = await process.download_file(file_id)
