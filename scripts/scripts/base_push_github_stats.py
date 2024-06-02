@@ -8,7 +8,7 @@ import dotenv
 import requests
 
 
-def extract_github_traffic(repo_owner, repo_name, access_token, action, version, sort, sort_order):
+def extract_github_traffic(repo_owner, repo_name, access_token, action, version):
     # Set the API endpoint URLs
     url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/{action}"
 
@@ -18,23 +18,24 @@ def extract_github_traffic(repo_owner, repo_name, access_token, action, version,
         "Accept": f"application/{version}",
         "X-GitHub-Api-Version": "2022-11-28"
     }
-    params = {
-        "sort": sort,
-        "direction": sort_order,
-        "per_page": 100000
-    }
 
-    # Send GET requests to the API endpoints
-    response = requests.get(url, headers=headers, params=params)
+    page = 0
+    response = ['placeholder']
+    while response:
+        page += 1
+        params = {
+            "per_page": 100,  # max
+            "page": page
+        }
 
-    # Check if the requests were successful
-    if response.status_code == 200 :
-        # Extract the traffic data from the responses
+        # Send GET requests to the API endpoints
+        response = requests.get(url, headers=headers, params=params)
+
+        # Check if the requests were successful
+        response.raise_for_status()
         response = response.json()
-
-        return response
-    else:
-        raise RuntimeError(f"Failed to retrieve traffic data. Status code: {response.status_code} -- {response.text}")
+        for record in response:
+            yield record
 
 
 def insert_into_posthog(event_name: str, repo: str, data: List[Dict[str, any]], posthog_api_key, posthog_project_key, skip_older, dry_run):
@@ -149,13 +150,12 @@ def run_script(version, action, event_name, extract_data, sort, sort_order):
         raise ValueError("Invalid repo format. Please provide the repo in the format owner/repo")
 
     # Extract the GitHub clones and views per day
-    data = extract_github_traffic(owner, repo, args.access_token, action, version, sort, sort_order)
-    if data:
-        transformed_data = []
-        for event in data:
-            extracted_data = extract_data(event)
-            extracted_data["repo"] = repo
-            transformed_data.append(extracted_data)
-        transformed_data.sort(key=lambda x: x["timestamp"])
+    transformed_data = []
+    for event in extract_github_traffic(owner, repo, args.access_token, action, version):
+        extracted_data = extract_data(event)
+        extracted_data["repo"] = repo
+        transformed_data.append(extracted_data)
+    transformed_data.sort(key=lambda x: x["timestamp"])
 
+    if transformed_data:
         insert_into_posthog(event_name, repo, transformed_data, args.api_key, args.project_key, args.skip_older, args.dry_run)
