@@ -133,7 +133,7 @@ def run_script(version, action, event_name, extract_data):
     parser.add_argument("--project-key", required=False, help="PostHog Project key", default=os.environ.get("POSTHOG_PROJECT_KEY"))
     parser.add_argument("--repo", required=True, help="The repo to gather stats from in the form of owner/repo")
     parser.add_argument("--dry-run", required=False, help="Just print what would have happened", default=False, action="store_true")
-    parser.add_argument("--skip-older", required=False, help="Skip events older than <days> in the past", default=10, type=int)
+    parser.add_argument("--skip-older", required=False, help="Skip events older than <days> in the past", default=21, type=int)
 
     # Parse the command-line arguments
     args = parser.parse_args()
