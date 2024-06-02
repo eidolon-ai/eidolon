@@ -24,6 +24,13 @@
     "dev": "(patch -N ../../node_modules/.pnpm/@jsdevtools+ono@7.1.3/node_modules/@jsdevtools/ono/esm/index.js ono_turbo.patch || true) && npm run build-eidolon && next dev --turbo",
     "build": "npm run build-eidolon && next build",
     "build:static": "npm run build-eidolon && next build && next export",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build-sdk": "docker build -t eidolonai/sdk_base:latest -f ../../../sdk/Dockerfile ../../../sdk/",
+    "docker:build": "npm run docker:build-sdk && docker-compose build",
+    "docker:rebuild": "pnpm run docker:down && pnpm run docker:build && pnpm run docker:up",
+    "test:e2e": "pnpm run docker:rebuild && pnpm exec playwright test && pnpm run docker:down",
+    "playwright:debug": "pnpm exec playwright test --debug",
     "format": "prettier ./ --write",
     "lint": "next lint",
     "start": "next start",
@@ -44,6 +51,7 @@
     "@mui/material": "latest",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/faker": "^6.6.9",
     "@types/qs": "^6.9.15",
     "clsx": "latest",
     "copy-to-clipboard": "latest",
@@ -55,6 +63,7 @@
     "sharp": "^0.33.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.44.1",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@testing-library/user-event": "latest",
@@ -67,6 +76,7 @@
     "jest": "latest",
     "jest-environment-jsdom": "latest",
     "next-router-mock": "latest",
+    "playwright": "^1.44.1",
     "prettier": "latest",
     "typescript": "latest"
   }
