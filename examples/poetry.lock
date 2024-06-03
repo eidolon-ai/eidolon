@@ -1371,7 +1371,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.62"
+version = "0.1.64"
 description = "An open source sgent service SDK"
 optional = false
 python-versions = ">=3.11,<3.12"
@@ -1406,6 +1406,7 @@ opentelemetry-instrumentation-logging = "^0.44b0"
 opentelemetry-sdk = "^1.23.0"
 pillow = "^10.2.0"
 playwright = "^1.43.0"
+posthog = "^3.5.0"
 pypdf = "^4.0.1"
 pytest-json-report = "^1.5.0"
 python-docx = "^1.1.0"
@@ -6035,4 +6036,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "276a45e747364011ff09b42c07e5b060f7fe2a10c15029a677f7b872bfd77a2c"
+content-hash = "449062949f792f11b0dfbaeecbf2801bad9a1718a96dad16fc0af59d3f895d34"

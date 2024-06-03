@@ -87,12 +87,6 @@ jobs:
           - 27017:27017
     steps:
       - uses: actions/checkout@v4
-      - name: Check secrets
-        run: |
-          if [ -z "${{ secrets.CLOUD_SEARCH_ENGINE_ID }}" ] || [ -z "${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}" ]; then
-            echo "Error: CLOUD_SEARCH_ENGINE_ID or CLOUD_SEARCH_ENGINE_TOKEN is not set"
-            exit 1
-          fi
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v5
@@ -108,20 +102,12 @@ jobs:
       - run: poetry run pytest
         env:
           OPENAI_API_KEY: intentionally_unused
-          CSE_ID: ${{ secrets.CLOUD_SEARCH_ENGINE_ID }}
-          CSE_TOKEN: ${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}
         working-directory: sdk
 
   sdk-test-local-memory:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check secrets
-        run: |
-          if [ -z "${{ secrets.CLOUD_SEARCH_ENGINE_ID }}" ] || [ -z "${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}" ]; then
-            echo "Error: CLOUD_SEARCH_ENGINE_ID or CLOUD_SEARCH_ENGINE_TOKEN is not set"
-            exit 1
-          fi
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v5
@@ -133,8 +119,6 @@ jobs:
       - run: poetry run pytest --symbolic_memory local
         env:
           OPENAI_API_KEY: intentionally_unused
-          CSE_ID: ${{ secrets.CLOUD_SEARCH_ENGINE_ID }}
-          CSE_TOKEN: ${{ secrets.CLOUD_SEARCH_ENGINE_TOKEN }}
         working-directory: sdk
 
   usage-service-test:

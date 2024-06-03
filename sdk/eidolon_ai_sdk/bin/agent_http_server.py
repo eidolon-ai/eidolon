@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from importlib.metadata import version, PackageNotFoundError
 
 import dotenv
+import time
 import uvicorn
 import yaml
 from fastapi import FastAPI
@@ -32,6 +33,7 @@ from eidolon_ai_sdk.system.dynamic_middleware import DynamicMiddleware
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
+from eidolon_ai_sdk.util.posthog import report_server_started, PosthogConfig
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()
@@ -84,6 +86,11 @@ def parse_args():
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--disable-metrics",
+        help="Disable anonymous metrics collection",
+        default=False,
+    )
 
     # Parse command line arguments
     return parser.parse_args()
@@ -91,6 +98,7 @@ def parse_args():
 
 @asynccontextmanager
 async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO, replay_override=...):
+    t0 = time.perf_counter()
     def custom_openapi():
         if app.openapi_schema:
             return app.openapi_schema
@@ -120,7 +128,6 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         return app.openapi_schema
 
     app.openapi = custom_openapi
-
     conf_ = pathlib.Path(__file__).parent.parent.parent / "logging.conf"
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
@@ -159,13 +166,17 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         open_tele = AgentOS.get_instance(OpenTelemetryManager)
         await open_tele.start()
         try:
-            logger.info("Server Started")
+            time_to_start = time.perf_counter() - t0
+            report_server_started(time_to_start, len(machine.agent_controllers), False)
+            logger.info(f"Server Started in {time_to_start:.2f}s")
             yield
         finally:
             await open_tele.stop()
 
         await machine.stop()
     except BaseException:
+        time_to_start = time.perf_counter() - t0
+        report_server_started(time_to_start, -1, True)
         logger.exception("Failed to start AgentOS")
         raise
     finally:
@@ -189,6 +200,9 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 def main():
     args = parse_args()
+    disable_metrics = args.disable_metrics
+    if disable_metrics:
+        PosthogConfig.enabled = False
     log_level_str = "debug" if args.debug else "info"
     log_level = logging.DEBUG if args.debug else logging.INFO
 

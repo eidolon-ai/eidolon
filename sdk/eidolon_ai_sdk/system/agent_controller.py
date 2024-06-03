@@ -46,6 +46,7 @@ from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_event
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
+from eidolon_ai_sdk.util.posthog import report_agent_action, report_new_process
 
 
 # todo, agent controller has become a mega impl, we should break up responsibilities
@@ -385,6 +386,8 @@ class AgentController:
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]
 
         async def _run_program(**_kwargs):
+            agent = type(self.agent).__name__
+            report_agent_action(agent)
             return await self.run_program(handler, **_kwargs)
 
         _run_program.__signature__ = sig.replace(parameters=params_values, return_annotation=typing.Any)
@@ -427,6 +430,7 @@ class AgentController:
                 available_actions=[],
             )
             await history.upsert()
+        report_new_process()
         return JSONResponse(
             StateSummary(
                 agent=self.name,
