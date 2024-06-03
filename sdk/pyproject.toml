@@ -67,7 +67,6 @@ boto3 = "^1.34.74"
 azure-identity = "^1.16.0"
 playwright = "^1.43.0"
 posthog = "^3.5.0"
-vcrpy = "^5.1.0"
 
 [tool.pytest.ini_options]
 pythonpath = "project"
