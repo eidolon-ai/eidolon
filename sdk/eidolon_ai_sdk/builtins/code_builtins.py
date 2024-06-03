@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 
 from azure.identity import DefaultAzureCredential, EnvironmentCredential
 from openai import AsyncOpenAI
@@ -100,7 +100,7 @@ def _to_resource(maybe_tuple: type | Tuple[type | str, type]) -> ReferenceResour
         )
 
 
-def named_builtins():
+def named_builtins() -> List[ReferenceResource]:
     """
     Shorthand for defining builtin resources since most are just a pointer to a class.
 
