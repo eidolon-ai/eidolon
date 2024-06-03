@@ -14,7 +14,7 @@ def extract_data(event):
 
 
 def main():
-    run_script("vnd.github.v3.star+json", "stargazers", "gh_stars", extract_data, "created", "desc")
+    run_script("vnd.github.v3.star+json", "stargazers", "gh_stars", extract_data)
 
 
 if __name__ == "__main__":

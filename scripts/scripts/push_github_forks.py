@@ -12,7 +12,7 @@ def extract_data(event):
 
 
 def main():
-    run_script("vnd.github+json", "forks", "gh_forks", extract_data, "newest", "desc")
+    run_script("vnd.github+json", "forks", "gh_forks", extract_data)
 
 
 if __name__ == "__main__":

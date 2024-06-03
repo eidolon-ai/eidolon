@@ -5,7 +5,7 @@ from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearchConfig, Sear
 
 @pytest.mark.vcr
 async def test_go_to_url():
-    browser = Browser(processing_unit_locator=None, spec=WebSearchConfig())
+    browser = Browser(processing_unit_locator=None, spec=WebSearchConfig(cse_id="testcx", cse_token="testtoken"))
     found = await browser.go_to_url("https://httpbin.org/get")
     assert '"url": "https://httpbin.org/get"' in found
 

@@ -29,6 +29,9 @@ from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
+from eidolon_ai_sdk.util.posthog import PosthogConfig
+
+PosthogConfig.enabled = False
 
 
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai

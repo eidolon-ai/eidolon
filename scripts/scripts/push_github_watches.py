@@ -15,7 +15,7 @@ def extract_data(event):
 
 def main():
     raise "Broken -- need a date time field to"
-    run_script("vnd.github+json", "subscribers", "gh_watchers", extract_data, "created", "desc")
+    run_script("vnd.github+json", "subscribers", "gh_watchers", extract_data)
 
 
 if __name__ == "__main__":

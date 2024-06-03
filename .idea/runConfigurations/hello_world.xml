@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="hello world" type="PythonConfigurationType" factoryName="Python">
     <module name="examples" />
+    <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
@@ -13,7 +14,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="../sdk/eidolon_ai_sdk/bin/agent_http_server.py" />
-    <option name="PARAMETERS" value="eidolon_examples/hello_world/resources --record" />
+    <option name="PARAMETERS" value="eidolon_examples/hello_world/resources --record --machine local_dev" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
