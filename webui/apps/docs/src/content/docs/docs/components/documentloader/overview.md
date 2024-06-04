@@ -6,3 +6,4 @@ Overview of <class 'eidolon_ai_sdk.agent.doc_manager.loaders.base_loader.Documen
 ## Builtins
 * [FilesystemLoader](/docs/components/documentloader/filesystemloader/)
 * [GitHubLoader](/docs/components/documentloader/githubloader/)
+* [S3Loader](/docs/components/documentloader/s3loader/)

@@ -136,6 +136,7 @@ export default defineConfig({
                 {label: 'ConversationalAPU', link: '/docs/components/apu/conversationalapu/'},
                 {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo/'},
                 {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo/'},
+                {label: 'GPT4o', link: '/docs/components/apu/gpt4o/'},
                 {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge/'},
                 {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium/'},
                 {label: 'MistralSmall', link: '/docs/components/apu/mistralsmall/'},
@@ -158,6 +159,7 @@ export default defineConfig({
                 {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229/'},
                 {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo/'},
                 {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo/'},
+                {label: 'gpt-4o', link: '/docs/components/llmmodel/gpt-4o/'},
                 {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest/'},
                 {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest/'},
                 {label: 'mistral-small-latest', link: '/docs/components/llmmodel/mistral-small-latest/'},
@@ -185,6 +187,7 @@ export default defineConfig({
                 {label: 'Overview', link: '/docs/components/documentloader/overview/'},
                 {label: 'FilesystemLoader', link: '/docs/components/documentloader/filesystemloader/'},
                 {label: 'GitHubLoader', link: '/docs/components/documentloader/githubloader/'},
+                {label: 'S3Loader', link: '/docs/components/documentloader/s3loader/'},
               ]
             },
             // ### End Components ###

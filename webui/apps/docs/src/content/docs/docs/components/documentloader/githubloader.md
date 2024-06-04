@@ -84,7 +84,7 @@ unless a TOKEN is provided
 | **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"**/*"`                                                                  |
+| **Default**               | `"**"`                                                                    |
 
 | Any of(Option)              |
 | --------------------------- |
