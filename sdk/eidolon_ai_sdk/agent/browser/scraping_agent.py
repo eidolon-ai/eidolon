@@ -18,6 +18,9 @@ class WebScrapeResponse(BaseModel):
 
 
 class WebScrapingAgentSpec(BaseModel):
+    """
+    The web scraping agent uses playwright to scrape a webpage and return the text, links and images.
+    """
     summarizer: Literal["BeautifulSoup", "noop"] = "BeautifulSoup"
 
 
@@ -26,8 +29,8 @@ class WebScrapingAgent(Specable[WebScrapingAgentSpec]):
         Specable.__init__(self, **kwargs)
 
     async def _getBrowser(self):
-        browser = await async_playwright().start()
-        return await browser.chromium.launch(headless=True)
+        server = await async_playwright().start()
+        return await server.chromium.launch(headless=True)
 
     def scrape_page(self, page: Any, text: str):
         if self.spec.summarizer == "BeautifulSoup":
