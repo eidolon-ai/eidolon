@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Optional, Tuple, Dict, Any, Union, List, AsyncIterable, Set, Literal, Sequence, AsyncGenerator
+
+from pydantic import BaseModel
 from starlette.requests import Request
 
 from eidolon_ai_client.events import FileHandle
@@ -66,6 +69,14 @@ class ProcessFileSystem(ABC):
         raise NotImplementedError("not implemented")
 
 
+class FileMetadata(BaseModel):
+    file_path: str
+    created: Optional[datetime] = None
+    updated: Optional[datetime] = None
+    hash: Optional[str] = None
+    extra: dict[str, Any] = {}
+
+
 class FileMemory(ABC):
     """
     Abstract base class representing the file memory interface for an agent.
@@ -122,7 +133,7 @@ class FileMemory(ABC):
         pass
 
     @abstractmethod
-    async def glob(self, pattern: str):
+    def glob(self, pattern: str) -> AsyncIterable[FileMetadata]:
         raise NotImplementedError("not implemented")
 
 

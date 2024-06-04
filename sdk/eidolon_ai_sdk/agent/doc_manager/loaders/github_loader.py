@@ -32,9 +32,12 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
     repo: str
     client_args: dict = {}
     root_path: Optional[str] = None
-    pattern: str | List[str] = "**/*"
+    pattern: str | List[str] = "**"
     exclude: str | List[str] = []
-    token: Optional[str] = Field(default_factory=lambda: os.environ.get("GITHUB_TOKEN"), description="Github token, can also be set via envar 'GITHUB_TOKEN'")
+    token: Optional[str] = Field(
+        default_factory=lambda: os.environ.get("GITHUB_TOKEN"),
+        description="Github token, can also be set via envar 'GITHUB_TOKEN'",
+    )
 
     def root_content(self):
         return f"https://api.github.com/repos/{self.owner}/{self.repo}/contents/{self.root_path or ''}"

@@ -47,15 +47,18 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
     def __init__(self, **kwargs):
         Specable.__init__(self, **kwargs)
         super().__init__(**kwargs)
-        self.llm_unit = self.spec.llm_unit.instantiate(processing_unit_locator=self.processing_unit_locator, spec=self.spec.llm_unit)
+        self.llm_unit = self.spec.llm_unit.instantiate(
+            processing_unit_locator=self.processing_unit_locator, spec=self.spec.llm_unit
+        )
         self.model = ModelWrapper(base_model=self.llm_unit.model)
 
-    def execute_llm(self,
-                    call_context: CallContext,
-                    messages: List[LLMMessage],
-                    tools: List[LLMCallFunction],
-                    output_format: Union[Literal["str"], Dict[str, Any]]
-                    ) -> AsyncIterator[StreamEvent]:
+    def execute_llm(
+        self,
+        call_context: CallContext,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AsyncIterator[StreamEvent]:
         messages = self._add_tools(messages, tools)
         print("****", messages)
         return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, messages)
@@ -65,21 +68,33 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         tool_schema = []
         for tool in tools:
             tool_schema.append(
-                json.dumps({
-                    "tool_call_id": tool.name,
-                    "name": tool.name,
-                    "description": tool.description,
-                    "parameters": tool.parameters,
-                })
+                json.dumps(
+                    {
+                        "tool_call_id": tool.name,
+                        "name": tool.name,
+                        "description": tool.description,
+                        "parameters": tool.parameters,
+                    }
+                )
             )
 
-        prompt = "You have access to the following tools:\n" + "\n".join(tool_schema) + "\n" + self.spec.tool_message_prompt
+        prompt = (
+            "You have access to the following tools:\n" + "\n".join(tool_schema) + "\n" + self.spec.tool_message_prompt
+        )
         return messages + [UserMessage(content=[UserMessageText(text=prompt)])]
 
-    async def _wrap_exe_call(self, exec_llm_call: Callable[[CallContext, List[LLMMessage], List[LLMCallFunction],
-                                                            Union[Literal["str"], Dict[str, Any]]], AsyncIterator[StreamEvent]],
-                             call_context: CallContext, messages: List[LLMMessage]) -> AsyncIterator[StreamEvent]:
-        stream: AsyncIterator[StreamEvent] = exec_llm_call(call_context, messages, [], ToolCallResponse.model_json_schema())
+    async def _wrap_exe_call(
+        self,
+        exec_llm_call: Callable[
+            [CallContext, List[LLMMessage], List[LLMCallFunction], Union[Literal["str"], Dict[str, Any]]],
+            AsyncIterator[StreamEvent],
+        ],
+        call_context: CallContext,
+        messages: List[LLMMessage],
+    ) -> AsyncIterator[StreamEvent]:
+        stream: AsyncIterator[StreamEvent] = exec_llm_call(
+            call_context, messages, [], ToolCallResponse.model_json_schema()
+        )
         # stream should be a single object output event
         async for event in stream:
             if isinstance(event, ObjectOutputEvent):

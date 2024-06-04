@@ -3,6 +3,7 @@ from pathlib import Path
 
 from pydantic import Field, field_validator, BaseModel
 
+from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.async_wrapper import make_async
@@ -149,10 +150,8 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
 
     async def glob(self, pattern):
         safe_file_path = self.resolve(pattern)
-        return [
-            s.removeprefix(str(self.root_dir)).removeprefix("/")
-            for s in glob.glob(str(safe_file_path), root_dir=self.root_dir)
-        ]
+        for s in glob.glob(str(safe_file_path), root_dir=self.root_dir):
+            yield FileMetadata(file_path=s.removeprefix(str(self.root_dir)).removeprefix("/"))
 
     async def start(self):
         """
