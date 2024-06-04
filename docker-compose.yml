@@ -22,6 +22,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - AGENT_DIRECTORY=/app/resources
       - MONGO_CONNECTION_STR=mongodb://mongo:27017
+      - DISABLE_ANONYMOUS_METRICS=true
     expose:
       - "8080"
     ports:
