@@ -51,4 +51,4 @@ class TestFileMemory:
     @pytest.mark.vcr
     async def test_glob(self, memory: FileMemoryBase):
         await memory.write_file("bar.py", file_contents=b"FOO")
-        assert await memory.glob("**.py") == ["bar.py"]
+        assert [f.file_path async for f in memory.glob("**.py")] == ["bar.py"]

@@ -1,0 +1,115 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="echo 'db.runCommand({ ping: 1 })' | mongosh localhost:27017/test --quiet"
+          --health-interval=30s
+          --health-timeout=10s
+          --health-retries=10
+
+    env:
+      AUTH_TRUST_HOST: ${{ secrets.AUTH_TRUST_HOST }}
+      EIDOLON_SERVER: ${{ secrets.EIDOLON_SERVER }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_DEBUG: ${{ secrets.NEXT_PUBLIC_DEBUG }}
+      NEXT_PUBLIC_LOG_LEVEL: ${{ secrets.NEXT_PUBLIC_LOG_LEVEL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      CI: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install PNPM
+        run: npm install -g pnpm
+
+      - name: Stop conflicting MongoDB containers
+        run: |
+          CONFLICTING_CONTAINERS=$(docker ps -q --filter "ancestor=mongo:latest" --filter "status=running")
+          if [ -n "$CONFLICTING_CONTAINERS" ]; then
+            echo "Stopping conflicting MongoDB containers"
+            docker stop $CONFLICTING_CONTAINERS
+          else
+            echo "No conflicting MongoDB containers"
+          fi
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ./webui/apps/eidolon-ui2
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install
+        working-directory: ./webui/apps/eidolon-ui2
+
+      - name: Build Docker images
+        run: pnpm run docker:build
+        working-directory: ./webui/apps/eidolon-ui2
+
+      - name: Start Docker containers
+        run: pnpm run docker:up
+        working-directory: ./webui/apps/eidolon-ui2
+
+      - name: Save MongoDB logs
+        run: docker logs $(docker ps -q --filter name=mongo) > mongodb-logs.txt
+
+      - name: List Docker containers
+        run: docker ps -a
+
+      - name: Run Playwright tests
+        run: |
+          pnpm exec playwright test --config=playwright.config.js
+        working-directory: ./webui/apps/eidolon-ui2
+
+      - name: Stop Docker containers
+        run: pnpm run docker:down
+        working-directory: ./webui/apps/eidolon-ui2
+        if: always()
+
+      - name: Upload MongoDB logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: mongodb-logs
+          path: mongodb-logs.txt
+
+      - name: Upload Playwright test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-results
+          path: |
+            webui/apps/eidolon-ui2/tests/test-results
+          if-no-files-found: ignore
+
+      - name: Upload Playwright screenshots
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-screenshots
+          path: |
+            webui/apps/eidolon-ui2/tests/screenshots
+          if-no-files-found: ignore

@@ -1,17 +1,19 @@
 ---
-title: S3FileMemory
-description: Description of S3FileMemory component
+title: S3Loader
+description: Description of S3Loader component
 ---
 
-| Property                                                 | Pattern | Type        | Deprecated | Definition | Title/Description        |
-| -------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------------ |
-| + [bucket](#bucket )                                     | No      | string      | No         | -          | Bucket                   |
-| - [region_name](#region_name )                           | No      | Combination | No         | -          | Region Name              |
-| - [aws_access_key_id](#aws_access_key_id )               | No      | Combination | No         | -          | Aws Access Key Id        |
-| - [aws_secret_access_key](#aws_secret_access_key )       | No      | Combination | No         | -          | Aws Secret Access Key    |
-| - [aws_session_token](#aws_session_token )               | No      | Combination | No         | -          | Aws Session Token        |
-| - [session_args](#session_args )                         | No      | object      | No         | -          | Session Args             |
-| - [create_bucket_on_startup](#create_bucket_on_startup ) | No      | boolean     | No         | -          | Create Bucket On Startup |
+**Description:** Loads documents from an S3 bucket.
+
+| Property                                           | Pattern | Type        | Deprecated | Definition | Title/Description     |
+| -------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------- |
+| + [bucket](#bucket )                               | No      | string      | No         | -          | Bucket                |
+| - [region_name](#region_name )                     | No      | Combination | No         | -          | Region Name           |
+| - [aws_access_key_id](#aws_access_key_id )         | No      | Combination | No         | -          | Aws Access Key Id     |
+| - [aws_secret_access_key](#aws_secret_access_key ) | No      | Combination | No         | -          | Aws Secret Access Key |
+| - [aws_session_token](#aws_session_token )         | No      | Combination | No         | -          | Aws Session Token     |
+| - [session_args](#session_args )                   | No      | object      | No         | -          | Session Args          |
+| - [pattern](#pattern )                             | No      | string      | No         | -          | Pattern               |
 
 ## <a name="bucket"></a>1. Property `bucket`
 
@@ -155,14 +157,14 @@ description: Description of S3FileMemory component
 
 **Description:** Additional arguments to pass to the boto3 session.
 
-## <a name="create_bucket_on_startup"></a>7. Property `create_bucket_on_startup`
+## <a name="pattern"></a>7. Property `pattern`
 
-**Title:** Create Bucket On Startup
+**Title:** Pattern
 
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-| **Default**  | `false`   |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `"**"`   |
 
 ----------------------------------------------------------------------------------------------------------------------------
