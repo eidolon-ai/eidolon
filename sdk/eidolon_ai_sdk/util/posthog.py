@@ -40,10 +40,10 @@ def distinct_id():
             with open(file_path, 'r') as file:
                 data = json.load(file)
                 return data.get('distinct_id')
-        distinct_id = str(uuid.uuid4())
+        distinct_id_ = str(uuid.uuid4())
         with open(file_path, 'w') as file:
-            json.dump({'distinct_id': distinct_id}, file)
-        return distinct_id
+            json.dump({'distinct_id': distinct_id_}, file)
+        return distinct_id_
 
     except Exception:
         logger.debug("Error creating or reading the file", exc_info=True)
