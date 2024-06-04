@@ -9,6 +9,7 @@ RUN poetry export --without-hashes --format=requirements.txt | sed '/@ file/d' >
 FROM ${BASE_IMAGE} as sdk_base
 COPY --from=builder dist/requirements.txt /tmp/eidolon_ai_sdk/requirements.txt
 RUN pip install -r /tmp/eidolon_ai_sdk/requirements.txt
+RUN playwright install
 COPY --from=builder dist/*.whl /tmp/eidolon_ai_sdk/
 RUN pip install /tmp/eidolon_ai_sdk/*.whl
 

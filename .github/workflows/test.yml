@@ -33,6 +33,8 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: examples
+      - run: playwright install
+        working-directory: examples
       - run: poetry run ruff format .
         working-directory: examples
       - run: poetry run ruff check .
@@ -95,6 +97,8 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: sdk
+      - run: playwright install
+        working-directory: sdk
       - run: poetry run ruff format .
         working-directory: sdk
       - run: poetry run ruff check .
@@ -115,6 +119,8 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - run: poetry install
+        working-directory: sdk
+      - run: playwright install
         working-directory: sdk
       - run: poetry run pytest --symbolic_memory local
         env:
