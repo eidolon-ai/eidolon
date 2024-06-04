@@ -114,47 +114,49 @@ class Search(LogicUnit, Specable[SearchSpec]):
 
             async def fn(self_, term: str, num_results: int = 10, lang: str = "en") -> List[SearchResult]:
                 return [
-                    r async for r in self_._search_results(term, num_results, lang, self.spec.params["dateRestrict"])
+                    r async for r in do_google_search(self.spec, term, num_results, lang, self.spec.params["dateRestrict"])
                 ]
         else:
 
             async def fn(
-                self_,
-                term: str,
-                num_results: int = 10,
-                lang: str = "en",
-                dateRestrict: Optional[str] = self.spec.defaultDateRestrict,
+                    self_,
+                    term: str,
+                    num_results: int = 10,
+                    lang: str = "en",
+                    dateRestrict: Optional[str] = self.spec.defaultDateRestrict,
             ) -> List[SearchResult]:
-                return [r async for r in self_._search_results(term, num_results, lang, dateRestrict)]
+                return [r async for r in do_google_search(self.spec, term, num_results, lang, dateRestrict)]
 
         return fn
 
-    async def _search_results(self, term, num_results, lang, date_restrict):
-        if num_results > 100:
-            raise ValueError("Cannot return more than 100 results")
-        escaped_term = term.replace(" ", "+")
-        resp = await self._req(escaped_term, num_results, lang, date_restrict)
-        items = []
-        if "items" in resp:
-            items = resp["items"]
-        for item in items:
-            yield SearchResult(url=item["link"], title=item["title"], description=item.get("snippet"))
 
-    async def _req(self, term, results, lang, date_restrict):
-        params = {
-            "q": term,
-            "num": results,  # Prevents multiple requests
-            "hl": lang,
-            "cx": self.spec.cse_id,
-            "key": self.spec.cse_token,
-        }
-        if date_restrict:
-            params["dateRestrict"] = date_restrict
-        params.update(self.spec.params)
+async def do_google_search(spec: SearchSpec, term: str, num_results: int, lang: str, date_restrict: Optional[str]):
+    if num_results > 100:
+        raise ValueError("Cannot return more than 100 results")
+    escaped_term = term.replace(" ", "+")
+    resp = await _req(spec, escaped_term, num_results, lang, date_restrict)
+    items = []
+    if "items" in resp:
+        items = resp["items"]
+    for item in items:
+        yield SearchResult(url=item["link"], title=item["title"], description=item.get("snippet"))
 
-        async with _get(url="https://customsearch.googleapis.com/customsearch/v1", params=params) as resp:
-            resp.raise_for_status()
-            return resp.json()
+
+async def _req(spec: SearchSpec, term, results, lang, date_restrict: Optional[str]):
+    params = {
+        "q": term,
+        "num": results,  # Prevents multiple requests
+        "hl": lang,
+        "cx": spec.cse_id,
+        "key": spec.cse_token,
+    }
+    if date_restrict:
+        params["dateRestrict"] = date_restrict
+    params.update(spec.params)
+
+    async with _get(url="https://customsearch.googleapis.com/customsearch/v1", params=params) as resp:
+        resp.raise_for_status()
+        return resp.json()
 
 
 class WebSearchConfig(SearchSpec, BrowseSpec):
