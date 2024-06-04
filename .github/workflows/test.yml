@@ -33,7 +33,7 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: examples
-      - run: playwright install
+      - run: poetry run playwright install
         working-directory: examples
       - run: poetry run ruff format .
         working-directory: examples
@@ -97,7 +97,7 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: sdk
-      - run: playwright install
+      - run: poetry run playwright install
         working-directory: sdk
       - run: poetry run ruff format .
         working-directory: sdk
@@ -120,7 +120,7 @@ jobs:
           cache: 'poetry'
       - run: poetry install
         working-directory: sdk
-      - run: playwright install
+      - run: poetry run playwright install
         working-directory: sdk
       - run: poetry run pytest --symbolic_memory local
         env:
