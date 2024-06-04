@@ -1,0 +1,28 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: GPT4o
+  annotations:
+    - title: "OpenAI GPT 4o"
+spec:
+    implementation: APU
+    audio_unit: OpenAiSpeech
+    image_unit: OpenAIImageUnit
+    llm_unit:
+      implementation: OpenAIGPT
+      model: "gpt-4o"
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: "gpt-4o"
+spec:
+  implementation: LLMModel
+  human_name: "GPT-4o"
+  name: "gpt-4o"
+  input_context_limit: 128000
+  output_context_limit: 4096
+  supports_tools: True
+  supports_image_input: False
+  supports_audio_input: False

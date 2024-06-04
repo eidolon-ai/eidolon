@@ -87,6 +87,7 @@ resources = [
     r("with_tools", cpu=dict(logic_units=[fqn(MeaningOfLife)])),
     r("complex_refs", agent_refs=["complex_agent"]),
     r("complex_agent", impl=fqn(ComplexAgent)),
+    r("4o", apu="GPT4o"),
 ]
 
 
@@ -205,6 +206,12 @@ async def test_with_replay_points(file_memory_loc, record):
 
 async def test_agent_with_complex_refs():
     process = await Agent.get("complex_refs").create_process()
+    resp = await process.action("converse", body="What is the capital of France?")
+    assert "paris" in resp.data.lower()
+
+
+async def test_4o_powered_agent():
+    process = await Agent.get("4o").create_process()
     resp = await process.action("converse", body="What is the capital of France?")
     assert "paris" in resp.data.lower()
 
