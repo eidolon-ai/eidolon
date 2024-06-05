@@ -15,9 +15,9 @@ from eidolon_ai_client.events import (
     ToolCall,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHandler
-from eidolon_ai_sdk.cpu.llm_message import (
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
+from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
     AssistantMessage,
     ToolResponseMessage,
@@ -26,7 +26,7 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     UserMessageImage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
+from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.image_utils import scale_image
 

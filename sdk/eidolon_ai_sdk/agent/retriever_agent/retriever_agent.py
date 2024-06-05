@@ -76,7 +76,7 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
     async def list_files(self) -> AgentState[List[str]]:
         """
         List the files in the document store.
-        :return: The response from the cpu
+        :return: The response from the apu
         """
         if self.document_manager:
             files = [item async for item in await self.document_manager.list_files()]
@@ -91,7 +91,7 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
         """
         Process the question by searching the document store.
         :param question: The question to process
-        :return: The response from the cpu
+        :return: The response from the apu
         """
         if hasattr(self, "document_manager") and self.document_manager:
             await self.document_manager.sync_docs()

@@ -1,6 +1,6 @@
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_examples.venture_search_agent.venture_copilot import Thesis
 

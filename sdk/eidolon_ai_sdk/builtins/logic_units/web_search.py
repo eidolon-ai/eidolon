@@ -8,8 +8,8 @@ from httpx import AsyncClient, Timeout
 from pydantic import BaseModel, Field, model_validator
 
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
 
