@@ -48,6 +48,7 @@ class TestRetrieverAgent:
                 name="s3retriever",
                 description="A test retriever agent no store",
                 document_manager=dict(
+                    recheck_frequency=0,
                     loader=dict(
                         implementation=S3Loader.__name__,
                         bucket="rag-search-test",
@@ -100,3 +101,12 @@ class TestRetrieverAgent:
         process = await s3_agent.create_process()
         found = await process.action("search", body={"question": "how do I make a pdf?"})
         assert "Get_Started_With_Smallpdf" in str(found.data)
+
+    async def test_s3_cached_results(self, agent):
+        s3_agent = Agent.get("RetrieverAgentS3")
+        process = await s3_agent.create_process()
+        await process.action("search", body={"question": "how do I make a pdf?"})
+
+        #  will error if there is an issue with syncing docs
+        process = await s3_agent.create_process()
+        await process.action("search", body={"question": "what about a .exe"})
