@@ -1,4 +1,3 @@
-import pytest
 from jsonref import requests
 from pytest_asyncio import fixture
 
