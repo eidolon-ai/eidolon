@@ -1,3 +1,5 @@
+from os import environ
+
 import pytest
 
 from eidolon_ai_client.client import Agent
@@ -28,6 +30,9 @@ class TestWebResearcher:
             metadata=Metadata(name="WebSearchAgent"),
             spec=Reference(
                 implementation=fqn(WebSearchAgent),
+                # these need to be set for cassette to match, but grab them from environ if present to make generating cassettes easier
+                cse_id=environ.get("CSE_ID", "foo"),
+                cse_token=environ.get("CSE_TOKEN", "bar"),
             ),
         )
 

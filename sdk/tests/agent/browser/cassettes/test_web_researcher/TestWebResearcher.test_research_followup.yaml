@@ -457,7 +457,7 @@ interactions:
       user-agent:
       - python-httpx/0.27.0
     method: GET
-    uri: https://customsearch.googleapis.com/customsearch/v1?q=When%2Bwas%2BMorrow%2BOhio%2Bfounded%3F&num=1&hl=en&cx=f0fc534b024d5428e&key=AIzaSyA5NotPGkaHGdcc3yoLDRRYSu_KXlFr_Jc
+    uri: https://customsearch.googleapis.com/customsearch/v1?q=When%2Bwas%2BMorrow%2BOhio%2Bfounded%3F&num=1&hl=en&cx=bar
   response:
     body:
       string: !!binary |

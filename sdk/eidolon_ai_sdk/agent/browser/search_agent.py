@@ -23,7 +23,7 @@ class WebSearchAgentSpec(SearchSpec):
     pass
 
 
-class WebSearchAgent(Specable[SearchSpec]):
+class WebSearchAgent(Specable[WebSearchAgentSpec]):
     def __init__(self, **kwargs):
         Specable.__init__(self, **kwargs)
 
