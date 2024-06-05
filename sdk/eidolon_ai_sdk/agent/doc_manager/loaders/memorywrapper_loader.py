@@ -51,7 +51,7 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
             if file_path in metadata:
                 saved_metadata: FileMetadata = FileMetadata(**metadata[file_path])
                 data: Optional[bytes] = None
-                if saved_metadata.timestamp:
+                if saved_metadata.updated:
                     changed = saved_metadata.updated != file.updated
                 elif saved_metadata.hash:
                     changed = saved_metadata.hash != file.hash
