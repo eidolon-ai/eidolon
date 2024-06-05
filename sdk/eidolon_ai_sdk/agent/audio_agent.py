@@ -4,7 +4,7 @@ from fastapi import Body
 
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.agent import AgentSpec, Agent, register_program
-from eidolon_ai_sdk.apu.audio_unit import AudioUnit
+from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
 
@@ -19,7 +19,7 @@ class AutonomousSpeechAgent(Agent, Specable[AutonomousSpeechAgentSpec]):
     def __init__(self, spec: AutonomousSpeechAgentSpec):
         super().__init__(spec=spec)
         self.speech_llm = self.spec.speech_llm.instantiate(processing_unit_locator=None)
-        self.apu = self.spec.apu.instantiate()
+        self.cpu = self.spec.cpu.instantiate()
 
     @register_program()
     async def speech_to_text(

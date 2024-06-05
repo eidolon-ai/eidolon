@@ -74,8 +74,8 @@ export const ProcessProvider = ({children}: { children: JSX.Element }) => {
               ret.fetchError = new HttpException(`Operation ${options.operation} not found`, 404)
             } else {
               options.operationInfo = operation
-              if (operation.schema?.properties?.execute_on_apu) {
-                const property = operation.schema?.properties?.execute_on_apu as Record<string, any>
+              if (operation.schema?.properties?.execute_on_cpu) {
+                const property = operation.schema?.properties?.execute_on_cpu as Record<string, any>
                 options.supportedLLMs = property?.["enum"] as string[]
                 options.defaultLLM = property?.default as string
               }

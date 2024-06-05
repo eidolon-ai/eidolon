@@ -4,7 +4,7 @@ from fastapi import Body, HTTPException
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentSpec
-from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_client.util.logger import logger
 
@@ -41,7 +41,7 @@ class QualityAssurance(Agent, Specable[QASpec]):
                 f"NOTE: the input should be a bare json string. Do not wrap it in quotes.",
             )
 
-        thread = await self.apu.main_thread(process_id)
+        thread = await self.cpu.main_thread(process_id)
         await thread.set_boot_messages([SystemAPUMessage(prompt=system_message)])
         await thread.run_request(prompts=[UserTextAPUMessage(prompt=f"Please test all tools related to {agent}")])
         logger.info(f"Tests Complete for {agent}")

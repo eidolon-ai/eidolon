@@ -4,9 +4,9 @@ from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Opt
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
-from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
-from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
+from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
 from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
 
 
@@ -60,6 +60,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
         messages = self._add_tools(messages, tools)
+        print("****", messages)
         return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, messages)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
@@ -98,6 +99,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         async for event in stream:
             if isinstance(event, ObjectOutputEvent):
                 toolCallResponse = ToolCallResponse.model_validate(event.content)
+                print(toolCallResponse)
                 if toolCallResponse.tools:
                     for tool_call in toolCallResponse.tools:
                         yield LLMToolCallRequestEvent(tool_call=tool_call)

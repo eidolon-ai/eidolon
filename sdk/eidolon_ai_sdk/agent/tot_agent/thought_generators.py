@@ -12,8 +12,8 @@ from typing import Any, Dict, List, Callable, Awaitable
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, APUMessageTypes
-from eidolon_ai_sdk.apu.llm_message import UserMessage, LLMMessage
+from eidolon_ai_sdk.cpu.agent_io import SystemAPUMessage, UserTextAPUMessage, CPUMessageTypes
+from eidolon_ai_sdk.cpu.llm_message import UserMessage, LLMMessage
 from eidolon_ai_sdk.agent.tot_agent.prompts import (
     POST_AMBLE,
     THOUGHTS,
@@ -42,7 +42,7 @@ class ThoughtGenerationStrategy(Specable[TGSConfig]):
         super().__init__(spec)
         self.spec = spec
 
-    def build_prompt(self, user_message, thoughts_path: List[str]) -> (List[APUMessageTypes], List[APUMessageTypes]):
+    def build_prompt(self, user_message, thoughts_path: List[str]) -> (List[CPUMessageTypes], List[CPUMessageTypes]):
         thoughts_tuple = tuple(thoughts_path)
         preamble_txt = self.env.from_string(self.spec.preamble).render(thoughts=thoughts_tuple, n=self.spec.num_children)
         thoughts_txt = self.env.from_string(self.spec.thoughts).render(thoughts=thoughts_tuple, n=self.spec.num_children)

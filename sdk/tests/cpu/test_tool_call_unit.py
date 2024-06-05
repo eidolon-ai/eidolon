@@ -12,11 +12,11 @@ from eidolon_ai_client.events import (
     StringOutputEvent,
 )
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
-from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage
-from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit
-from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.apu.tool_call_unit import ToolCallLLMWrapper, ToolCallResponse
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, LLMMessage
+from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction, LLMUnit
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallLLMWrapper, ToolCallResponse
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.class_utils import fqn

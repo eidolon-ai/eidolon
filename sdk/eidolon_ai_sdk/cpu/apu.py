@@ -7,8 +7,8 @@ from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIt
 from pydantic import BaseModel, Field, TypeAdapter
 
 from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
-from eidolon_ai_sdk.apu.agent_io import APUMessageTypes
-from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes
+from eidolon_ai_sdk.cpu.call_context import CallContext
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -52,7 +52,7 @@ class APU(Specable[APUSpec], ABC):
         pass
 
     @abstractmethod
-    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[APUMessageTypes]):
+    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
         """
         Sets the boot messages for the APU storing them in the call context using the registered memory unit.
 
@@ -65,7 +65,7 @@ class APU(Specable[APUSpec], ABC):
     async def schedule_request(
         self,
         call_context: CallContext,
-        prompts: List[APUMessageTypes],
+        prompts: List[CPUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
         """
@@ -104,21 +104,21 @@ T = TypeVar("T")
 
 class Thread:
     _call_context: CallContext
-    _apu: APU
+    _cpu: APU
 
-    def __init__(self, call_context: CallContext, apu: APU):
+    def __init__(self, call_context: CallContext, cpu: APU):
         self._call_context = call_context
-        self._apu = apu
+        self._cpu = cpu
 
     async def set_boot_messages(
         self,
-        prompts: List[APUMessageTypes],
+        prompts: List[CPUMessageTypes],
     ):
-        return await self._apu.set_boot_messages(self._call_context, list(prompts))
+        return await self._cpu.set_boot_messages(self._call_context, list(prompts))
 
     async def run_request(
         self,
-        prompts: List[APUMessageTypes],
+        prompts: List[CPUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
     ) -> T:
         stream = self.stream_request(prompts, output_format)
@@ -149,16 +149,16 @@ class Thread:
         return result
 
     def stream_request(
-        self, prompts: List[APUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
+        self, prompts: List[CPUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
     ) -> AsyncIterator[StreamEvent]:
         if isinstance(output_format, type):
             model = TypeAdapter(output_format)
             schema = model.json_schema()
             s = convert_output_object(
-                self._apu.schedule_request(self._call_context, prompts, schema), cast(Type[T], output_format)
+                self._cpu.schedule_request(self._call_context, prompts, schema), cast(Type[T], output_format)
             )
         else:
-            s = self._apu.schedule_request(self._call_context, prompts, output_format)
+            s = self._cpu.schedule_request(self._call_context, prompts, output_format)
 
         return s
 
@@ -166,9 +166,9 @@ class Thread:
         return self._call_context
 
     async def clone(self) -> Thread:
-        return await self._apu.clone_thread(self._call_context)
+        return await self._cpu.clone_thread(self._call_context)
 
 
 class APUException(Exception):
     def __init__(self, description):
-        super().__init__("APU Error: " + description)
+        super().__init__("CPU Error: " + description)

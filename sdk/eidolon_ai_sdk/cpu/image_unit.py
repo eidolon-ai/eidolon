@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.logic_unit import llm_function, LogicUnit
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
 from eidolon_ai_sdk.system.reference_model import Specable
 
 

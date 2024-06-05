@@ -89,9 +89,6 @@ function getAppsRaw() {
     }
     if (process.env.EIDOLON_SERVER) {
       app.location = process.env.EIDOLON_SERVER
-      while (app.location.endsWith('/')) {
-        app.location = app.location.slice(0, -1)
-      }
     }
     apps[key] = app
   }

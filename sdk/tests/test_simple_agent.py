@@ -10,7 +10,7 @@ from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.apu.logic_unit import llm_function, LogicUnit
+from eidolon_ai_sdk.cpu.logic_unit import llm_function, LogicUnit
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
@@ -84,7 +84,7 @@ resources = [
     ),
     r("system_prompt", system_prompt="You are a helpful assistant, and your favorite country is France"),
     r("refs", agent_refs=["system_prompt"]),
-    r("with_tools", apu=dict(logic_units=[fqn(MeaningOfLife)])),
+    r("with_tools", cpu=dict(logic_units=[fqn(MeaningOfLife)])),
     r("complex_refs", agent_refs=["complex_agent"]),
     r("complex_agent", impl=fqn(ComplexAgent)),
     r("4o", apu="GPT4o"),

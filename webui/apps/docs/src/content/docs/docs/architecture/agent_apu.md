@@ -56,7 +56,7 @@ By translating between raw input/output and structured representations used by a
 The `MemoryUnit` in the Eidolon SDK serves as an abstract base class that specifies the interface for memory storage operations within the APU framework. The primary responsibility of the MemoryUnit is to manage the recording and retrieval of
 messages exchanged during agent interactions.
 
-The `eidolon/apu/memory_unit.py` source code provides a blueprint for the essential functions a MemoryUnit implementation must provide:
+The `eidolon/cpu/memory_unit.py` source code provides a blueprint for the essential functions a MemoryUnit implementation must provide:
 
 - **storeMessages(CallContext, List[LLMMessage])**: This method is used to store a list of messages associated with a particular call context. It's an asynchronous method that gets passed the call context, which uniquely identifies an interaction
   sequence, along with the messages that need to be stored for that context.
@@ -122,7 +122,7 @@ processing framework within the agent system.
 The core functionality of an LLMUnit involves its ability to execute requests using an LLM and parsing the responses from the LLM to be usable within the agent system. This involves exchanging messages in a way that an LLM can work with, dealing
 with intricacies such as token limitations and formats.
 
-Here is a deeper dive into the key abstract method within `eidolon/apu/llm_unit.py`:
+Here is a deeper dive into the key abstract method within `eidolon/cpu/llm_unit.py`:
 
 - **execute_llm(CallContext, List[LLMMessage], List[LLMCallFunction], Union[Literal["str"], Dict])**: This method signature reflects its core purpose. It takes a `CallContext` which provides the context for the request, such as the current state of
   a conversation. It takes a list of `LLMMessage` objects, which represents the collected input for the LLM, and a list of `LLMCallFunction` objects which describe tools that may influence how the LLM processes the messages. The output format is
@@ -147,7 +147,7 @@ ProcessingUnit subclass ensures that it seamlessly fits into the larger operatio
 
 ## Additional APU Components
 
-Within the Eidolon SDK, the `eidolon/apu` package includes a variety of additional APU components vital to the operation of advanced software agent systems. These components fulfill specific roles within the agent architecture, enhancing the
+Within the Eidolon SDK, the `eidolon/cpu` package includes a variety of additional APU components vital to the operation of advanced software agent systems. These components fulfill specific roles within the agent architecture, enhancing the
 flexibility of agent capabilities.
 
 These additional APU components underscore the SDK's commitment to offering a robust and extendable framework for agent development. Each component—be it conversational logic, summarization, or integration with third-party services like

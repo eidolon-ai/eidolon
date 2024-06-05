@@ -35,7 +35,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import SecurityManager
-from eidolon_ai_sdk.apu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,

@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import TypeVar, Type, Optional
 
-from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.cpu.call_context import CallContext
 
 PU_T = TypeVar("PU_T", bound="ProcessingUnit")
 

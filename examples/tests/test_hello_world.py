@@ -1,3 +1,4 @@
+import pytest
 from jsonref import requests
 from pytest_asyncio import fixture
 
@@ -27,3 +28,4 @@ def test_server_is_running(server_loc, http_server):
     response = requests.get(f"{server_loc}/openapi.json")
     assert response.status_code == 200
     assert "/processes/{process_id}/agent/ExampleGeneric/actions/question" in response.json()["paths"]
+

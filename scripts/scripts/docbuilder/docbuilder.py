@@ -16,9 +16,9 @@ from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory, SymbolicMemory
-from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
-from eidolon_ai_sdk.apu.logic_unit import LogicUnit
+from eidolon_ai_sdk.cpu.apu import APU
+from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource

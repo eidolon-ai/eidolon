@@ -9,9 +9,9 @@ from pydantic import Field
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.image_unit import ImageUnitSpec, ImageUnit, ImageCreationCapabilities
-from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.image_unit import ImageUnitSpec, ImageUnit, ImageCreationCapabilities
+from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
 from eidolon_ai_sdk.util.image_utils import scale_image
 
@@ -85,6 +85,7 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         }
 
         result: ChatCompletion = await self.connection_handler.completion(**request)
+        print(result)
         return result.choices[0].message.content
 
     async def _text_to_image(

@@ -13,7 +13,7 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.stream_collector import merge_streams
 from eidolon_ai_sdk.agent.agent import register_program, Agent as AgentTemplate, register_action
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage
+from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.system.processes import ProcessDoc
 
 
@@ -192,7 +192,7 @@ class VentureCopilot(AgentTemplate):
     @register_action("idle")
     async def converse(self, process_id, question: str = Body(..., media_type="text/plain")):
         text_message = UserTextAPUMessage(prompt=question)
-        thread = await self.apu.main_thread(process_id)
+        thread = await self.cpu.main_thread(process_id)
         async for event in thread.stream_request(prompts=[text_message]):
             yield event
         yield AgentStateEvent(state="idle")

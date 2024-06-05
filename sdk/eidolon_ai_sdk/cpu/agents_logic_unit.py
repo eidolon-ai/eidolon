@@ -5,9 +5,9 @@ from pydantic import BaseModel
 from typing import List, Any, Dict, AsyncIterator, Set
 
 from eidolon_ai_client.client import Machine, Agent, AgentResponseIterator, Process
-from eidolon_ai_sdk.apu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.logic_unit import LogicUnit
+from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
 from eidolon_ai_client.events import StreamEvent, ObjectOutputEvent
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
@@ -95,10 +95,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         for agent in self.spec.agents:
             agent_client = Agent.get(agent)
             machine_schema = await self._get_schema(agent_client.machine)
-            programs = await agent_client.programs()
-            if len(programs) == 0:
-                logger.error(f"Agent {agent} has no programs")
-            for action in programs:
+            for action in await agent_client.programs():
                 path = f"/processes/{{process_id}}/agent/{agent}/actions/{action}"
                 try:
                     name = self._name(agent, action=action)
