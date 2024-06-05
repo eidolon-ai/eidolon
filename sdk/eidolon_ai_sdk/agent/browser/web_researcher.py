@@ -49,7 +49,6 @@ class WebResearcher(Specable[WebResearcherSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.apu = self.spec.apu.instantiate()
-        print("adding logic unit", self.spec.search_agent, self.spec.scraping_agent)
         self.apu.logic_units.append(
             AgentsLogicUnit(
                 processing_unit_locator=self.apu,
@@ -73,10 +72,8 @@ class WebResearcher(Specable[WebResearcherSpec]):
         if self.spec.system_prompt_postamble:
             system_messages.append(SystemAPUMessage(prompt=self.spec.system_prompt_postamble))
 
-        print("setting boot messages", system_messages)
         await thread.set_boot_messages(system_messages)
         async for event in thread.stream_request(prompts=[text_message]):
-            print("event", event)
             yield event
         yield AgentStateEvent(state="idle")
 

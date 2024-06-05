@@ -85,7 +85,6 @@ class OpenAIImageUnit(ImageUnit, Specable[OpenAIImageUnitSpec]):
         }
 
         result: ChatCompletion = await self.connection_handler.completion(**request)
-        print(result)
         return result.choices[0].message.content
 
     async def _text_to_image(
