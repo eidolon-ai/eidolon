@@ -1,0 +1,24 @@
+{
+  "title": "LogicUnit",
+  "description": "Overview of <class 'eidolon_ai_sdk.cpu.logic_unit.LogicUnit'> components",
+  "anyOf": [
+    {
+      "$ref": "file:./AudioUnit.json"
+    },
+    {
+      "$ref": "file:./Browser.json"
+    },
+    {
+      "$ref": "file:./OpenAIImageUnit.json"
+    },
+    {
+      "$ref": "file:./OpenAiSpeech.json"
+    },
+    {
+      "$ref": "file:./Search.json"
+    },
+    {
+      "$ref": "file:./WebSearch.json"
+    }
+  ]
+}

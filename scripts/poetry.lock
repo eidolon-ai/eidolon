@@ -2091,7 +2091,7 @@ six = "*"
 name = "jsonref"
 version = "1.1.0"
 description = "jsonref is a library for automatic dereferencing of JSON Reference objects for Python."
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "jsonref-1.1.0-py3-none-any.whl", hash = "sha256:590dc7773df6c21cbf948b5dac07a72a251db28b0238ceecce0a2abfa8ec30a9"},
@@ -5977,4 +5977,4 @@ docbuilder = ["eidolon-ai-sdk", "json-schema-for-humans"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "b9dcfc53803273e0a8d3101b57aa5a2ebc7d57de244bc13c60e4d02d94f374a2"
+content-hash = "f3aedad3311be4550b4c7773349e7559907cad77d46ae084b8ef4fb992084095"

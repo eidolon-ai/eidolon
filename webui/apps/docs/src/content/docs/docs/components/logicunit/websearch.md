@@ -5,6 +5,7 @@ description: Description of WebSearch component
 
 | Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------- |
+| - [implementation](#implementation )           | No      | const            | No         | -          | WebSearch           |
 | - [summarizer](#summarizer )                   | No      | enum (of string) | No         | -          | Summarizer          |
 | - [cse_id](#cse_id )                           | No      | string           | No         | -          | Cse Id              |
 | - [cse_token](#cse_token )                     | No      | string           | No         | -          | Cse Token           |
@@ -13,7 +14,18 @@ description: Description of WebSearch component
 | - [defaultDateRestrict](#defaultDateRestrict ) | No      | Combination      | No         | -          | Defaultdaterestrict |
 | - [params](#params )                           | No      | Combination      | No         | -          | Params              |
 
-## <a name="summarizer"></a>1. Property `summarizer`
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** WebSearch
+
+Specific value: `"WebSearch"`
+
+## <a name="summarizer"></a>2. Property `summarizer`
 
 **Title:** Summarizer
 
@@ -27,7 +39,7 @@ Must be one of:
 * "BeautifulSoup"
 * "noop"
 
-## <a name="cse_id"></a>2. Property `cse_id`
+## <a name="cse_id"></a>3. Property `cse_id`
 
 **Title:** Cse Id
 
@@ -36,7 +48,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="cse_token"></a>3. Property `cse_token`
+## <a name="cse_token"></a>4. Property `cse_token`
 
 **Title:** Cse Token
 
@@ -45,7 +57,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="name"></a>4. Property `name`
+## <a name="name"></a>5. Property `name`
 
 **Title:** Name
 
@@ -55,7 +67,7 @@ Must be one of:
 | **Required** | No         |
 | **Default**  | `"search"` |
 
-## <a name="description"></a>5. Property `description`
+## <a name="description"></a>6. Property `description`
 
 **Title:** Description
 
@@ -65,7 +77,7 @@ Must be one of:
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="defaultDateRestrict"></a>6. Property `defaultDateRestrict`
+## <a name="defaultDateRestrict"></a>7. Property `defaultDateRestrict`
 
 **Title:** Defaultdaterestrict
 
@@ -81,21 +93,21 @@ Must be one of:
 | [item 0](#defaultDateRestrict_anyOf_i0) |
 | [item 1](#defaultDateRestrict_anyOf_i1) |
 
-### <a name="defaultDateRestrict_anyOf_i0"></a>6.1. Property `item 0`
+### <a name="defaultDateRestrict_anyOf_i0"></a>7.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="defaultDateRestrict_anyOf_i1"></a>6.2. Property `item 1`
+### <a name="defaultDateRestrict_anyOf_i1"></a>7.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-## <a name="params"></a>7. Property `params`
+## <a name="params"></a>8. Property `params`
 
 **Title:** Params
 
@@ -111,7 +123,7 @@ Must be one of:
 | [item 0](#params_anyOf_i0) |
 | [item 1](#params_anyOf_i1) |
 
-### <a name="params_anyOf_i0"></a>7.1. Property `item 0`
+### <a name="params_anyOf_i0"></a>8.1. Property `item 0`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -119,7 +131,7 @@ Must be one of:
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-### <a name="params_anyOf_i1"></a>7.2. Property `item 1`
+### <a name="params_anyOf_i1"></a>8.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |

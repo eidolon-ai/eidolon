@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "ToolCallLLMWrapper",
+      "description": "ToolCallLLMWrapper"
+    },
+    "tool_message_prompt": {
+      "default": "You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field.",
+      "title": "Tool Message Prompt",
+      "type": "string"
+    },
+    "llm_unit": {
+      "$ref": "file:../LLMUnit/overview.json",
+      "default": "LLMUnit"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "default": "eidolon_ai_sdk.cpu.llm_unit.LLMModel",
+          "properties": {
+            "implementation": {
+              "default": null,
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "title": "LLMModel Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "ToolCallLLMWrapper",
+  "type": "object"
+}

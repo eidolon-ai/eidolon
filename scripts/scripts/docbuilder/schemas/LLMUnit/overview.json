@@ -1,0 +1,18 @@
+{
+  "title": "LLMUnit",
+  "description": "Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components",
+  "anyOf": [
+    {
+      "$ref": "file:./AnthropicLLMUnit.json"
+    },
+    {
+      "$ref": "file:./MistralGPT.json"
+    },
+    {
+      "$ref": "file:./OpenAIGPT.json"
+    },
+    {
+      "$ref": "file:./ToolCallLLMWrapper.json"
+    }
+  ]
+}
