@@ -1,7 +1,7 @@
 import pytest
 
 from eidolon_ai_client.client import Agent
-from eidolon_ai_sdk.agent.browser.scraping_agent import WebScrapingAgent, WebScrapeResponse
+from eidolon_ai_sdk.agent.browser.scraping_agent import WebScrapingAgent
 from eidolon_ai_sdk.agent.browser.search_agent import WebSearchAgent
 from eidolon_ai_sdk.agent.browser.web_researcher import WebResearcher
 from eidolon_ai_sdk.system.reference_model import Reference
