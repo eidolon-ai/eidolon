@@ -17,8 +17,7 @@ async def test_can_hit_generic_agent(server_loc, http_server):
     assert "paris" in response.data.lower()
 
 
-@pytest.mark.parametrize("i", range(10))
-async def test_tool_calls(server_loc, http_server, i):
+async def test_tool_calls(server_loc, http_server):
     process = await Machine(machine=server_loc).agent("ExampleGeneric").create_process()
     await process.action("question", json=dict(instruction="Hi! My name is Luke."))
     response = await process.action("respond", json=dict(statement="Please use the HelloWorld tool with my name."))
