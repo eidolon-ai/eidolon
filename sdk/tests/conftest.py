@@ -75,6 +75,7 @@ def port():
 def vcr_config():
     return dict(
         filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None)],
+        filter_query_parameters=["cx"], # google custom search engine id
         ignore_localhost=True,
         ignore_hosts=["0.0.0.0", "localhost"],
         record_mode="once",
