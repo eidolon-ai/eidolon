@@ -18,7 +18,7 @@ from vcr.stubs import httpx_stubs
 import eidolon_ai_sdk.system.process_file_system as process_file_system
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
-from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
+from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory

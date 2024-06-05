@@ -4,9 +4,9 @@ from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Opt
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
-from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
+from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
 from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
 
 

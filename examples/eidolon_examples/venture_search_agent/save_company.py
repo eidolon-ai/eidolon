@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 
 
 class SaveCompany(LogicUnit):

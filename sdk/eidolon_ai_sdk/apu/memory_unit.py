@@ -3,9 +3,9 @@ from typing import List
 
 from pydantic import BaseModel
 
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_message import LLMMessage
-from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.llm_message import LLMMessage
+from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 from eidolon_ai_sdk.system.reference_model import Specable
 
 

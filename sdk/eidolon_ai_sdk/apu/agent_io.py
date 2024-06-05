@@ -5,15 +5,15 @@ from typing import List, Any, Literal
 from pydantic import BaseModel
 
 from eidolon_ai_client.events import FileHandle
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_message import (
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.llm_message import (
     UserMessageText,
     SystemMessage,
     UserMessage,
     LLMMessage,
     UserMessageFileHandle,
 )
-from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
+from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 
 
 class APUMessage(BaseModel):
@@ -52,7 +52,7 @@ class AttachedFileMessage(APUMessage):
     include_directly: bool
 
 
-CPUMessageTypes = UserTextAPUMessage | SystemAPUMessage | AttachedFileMessage
+APUMessageTypes = UserTextAPUMessage | SystemAPUMessage | AttachedFileMessage
 
 
 class IOUnit(ProcessingUnit):
@@ -62,7 +62,7 @@ class IOUnit(ProcessingUnit):
     This can be overridden to provide custom IO handling.
     """
 
-    async def process_request(self, call_context: CallContext, prompts: List[CPUMessageTypes]) -> List[LLMMessage]:
+    async def process_request(self, call_context: CallContext, prompts: List[APUMessageTypes]) -> List[LLMMessage]:
         """
         Converts the external prompts to the internal LLM messages.
 

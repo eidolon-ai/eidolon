@@ -3,6 +3,8 @@ kind: Agent
 metadata:
   name: conversational_agent
 spec:
+  agent_refs:
+    - research_agent
   system_prompt: "You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio."
   actions:
     - name: "converse"

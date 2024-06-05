@@ -14,7 +14,7 @@ from eidolon_ai_sdk.agent.agent import (
     AgentSpec,
     register_program,
 )
-from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage, SystemAPUMessage
+from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage, SystemAPUMessage
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -99,12 +99,12 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
         body = to_jsonable_python(body)
 
         env = Environment(undefined=StrictUndefined)
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         await t.set_boot_messages(
             prompts=[SystemAPUMessage(prompt=(env.from_string(self.spec.system_prompt).render(**body)))],
         )
 
-        # pull out any kwargs that are UploadFile and put them in a list of UserImageCPUMessage
+        # pull out any kwargs that are UploadFile and put them in a list of UserImageAPUMessage
         image_messages = []
 
         response = t.stream_request(
@@ -120,6 +120,6 @@ class GenericAgent(Agent, Specable[GenericAgentSpec]):
 
     @register_action("idle", "http_error")
     async def respond(self, process_id, statement: Annotated[str, Body(embed=True)]) -> AgentState[Any]:
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         response = await t.run_request([UserTextAPUMessage(prompt=statement)], self.spec.output_schema)
         return AgentState(name="idle", data=response)

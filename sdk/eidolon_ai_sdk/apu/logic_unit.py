@@ -10,9 +10,9 @@ import jsonref
 from pydantic import BaseModel, TypeAdapter
 from typing import Dict, List, AsyncIterator, Coroutine
 
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.llm_unit import LLMCallFunction
-from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnit
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction
+from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 from eidolon_ai_client.events import (
     SuccessEvent,
     ObjectOutputEvent,

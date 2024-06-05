@@ -7,12 +7,12 @@ from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program, register_action, AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.agents_logic_unit import (
+from eidolon_ai_sdk.apu.agents_logic_unit import (
     AgentsLogicUnit,
     AgentsLogicUnitSpec,
 )
-from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.cpu.call_context import CallContext
+from eidolon_ai_sdk.apu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_client.events import SuccessEvent
 
 

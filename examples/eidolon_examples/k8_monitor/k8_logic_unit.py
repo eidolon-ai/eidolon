@@ -18,7 +18,7 @@ from pydantic_core import to_jsonable_python
 
 from eidolon_ai_client.events import StringOutputEvent, OutputEvent
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
