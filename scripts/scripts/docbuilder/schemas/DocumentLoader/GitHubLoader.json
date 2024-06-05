@@ -1,0 +1,82 @@
+{
+  "description": "Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories\nunless a TOKEN is provided",
+  "properties": {
+    "implementation": {
+      "const": "GitHubLoader",
+      "description": "GitHubLoader"
+    },
+    "owner": {
+      "title": "Owner",
+      "type": "string"
+    },
+    "repo": {
+      "title": "Repo",
+      "type": "string"
+    },
+    "client_args": {
+      "default": {},
+      "title": "Client Args",
+      "type": "object"
+    },
+    "root_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Root Path"
+    },
+    "pattern": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ],
+      "default": "**",
+      "title": "Pattern"
+    },
+    "exclude": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ],
+      "default": [],
+      "title": "Exclude"
+    },
+    "token": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Github token, can also be set via envar 'GITHUB_TOKEN'",
+      "title": "Token"
+    }
+  },
+  "required": [
+    "owner",
+    "repo"
+  ],
+  "title": "GitHubLoader",
+  "type": "object"
+}

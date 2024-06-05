@@ -1,0 +1,77 @@
+{
+  "description": "Loads documents from an S3 bucket.",
+  "properties": {
+    "implementation": {
+      "const": "S3Loader",
+      "description": "S3Loader"
+    },
+    "bucket": {
+      "title": "Bucket",
+      "type": "string"
+    },
+    "region_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Region Name"
+    },
+    "aws_access_key_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Aws Access Key Id"
+    },
+    "aws_secret_access_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Aws Secret Access Key"
+    },
+    "aws_session_token": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Aws Session Token"
+    },
+    "session_args": {
+      "default": {},
+      "description": "Additional arguments to pass to the boto3 session.",
+      "title": "Session Args",
+      "type": "object"
+    },
+    "pattern": {
+      "default": "**",
+      "title": "Pattern",
+      "type": "string"
+    }
+  },
+  "required": [
+    "bucket"
+  ],
+  "title": "S3Loader",
+  "type": "object"
+}

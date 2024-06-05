@@ -5,6 +5,7 @@ description: Description of gpt-4-turbo component
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
+| - [implementation](#implementation )             | No      | const   | No         | -          | gpt-4-turbo          |
 | + [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
 | + [name](#name )                                 | No      | string  | No         | -          | Name                 |
 | + [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
@@ -13,27 +14,36 @@ description: Description of gpt-4-turbo component
 | + [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
 | + [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
-## <a name="human_name"></a>1. Property `human_name`
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** gpt-4-turbo
+
+Specific value: `"gpt-4-turbo"`
+
+## <a name="human_name"></a>2. Property `human_name`
 
 **Title:** Human Name
 
-|              |                 |
-| ------------ | --------------- |
-| **Type**     | `string`        |
-| **Required** | Yes             |
-| **Default**  | `"GPT-4 Turbo"` |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
 
-## <a name="name"></a>2. Property `name`
+## <a name="name"></a>3. Property `name`
 
 **Title:** Name
 
-|              |                 |
-| ------------ | --------------- |
-| **Type**     | `string`        |
-| **Required** | Yes             |
-| **Default**  | `"gpt-4-turbo"` |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
 
-## <a name="input_context_limit"></a>3. Property `input_context_limit`
+## <a name="input_context_limit"></a>4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -41,9 +51,8 @@ description: Description of gpt-4-turbo component
 | ------------ | --------- |
 | **Type**     | `integer` |
 | **Required** | Yes       |
-| **Default**  | `128000`  |
 
-## <a name="output_context_limit"></a>4. Property `output_context_limit`
+## <a name="output_context_limit"></a>5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -51,9 +60,8 @@ description: Description of gpt-4-turbo component
 | ------------ | --------- |
 | **Type**     | `integer` |
 | **Required** | Yes       |
-| **Default**  | `4096`    |
 
-## <a name="supports_tools"></a>5. Property `supports_tools`
+## <a name="supports_tools"></a>6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -61,9 +69,8 @@ description: Description of gpt-4-turbo component
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | Yes       |
-| **Default**  | `true`    |
 
-## <a name="supports_image_input"></a>6. Property `supports_image_input`
+## <a name="supports_image_input"></a>7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -71,9 +78,8 @@ description: Description of gpt-4-turbo component
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | Yes       |
-| **Default**  | `false`   |
 
-## <a name="supports_audio_input"></a>7. Property `supports_audio_input`
+## <a name="supports_audio_input"></a>8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -81,6 +87,5 @@ description: Description of gpt-4-turbo component
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | Yes       |
-| **Default**  | `false`   |
 
 ----------------------------------------------------------------------------------------------------------------------------

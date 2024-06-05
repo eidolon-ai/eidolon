@@ -1,0 +1,47 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "mistral-large-latest",
+      "description": "mistral-large-latest"
+    },
+    "human_name": {
+      "title": "Human Name",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "input_context_limit": {
+      "title": "Input Context Limit",
+      "type": "integer"
+    },
+    "output_context_limit": {
+      "title": "Output Context Limit",
+      "type": "integer"
+    },
+    "supports_tools": {
+      "title": "Supports Tools",
+      "type": "boolean"
+    },
+    "supports_image_input": {
+      "title": "Supports Image Input",
+      "type": "boolean"
+    },
+    "supports_audio_input": {
+      "title": "Supports Audio Input",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "human_name",
+    "name",
+    "input_context_limit",
+    "output_context_limit",
+    "supports_tools",
+    "supports_image_input",
+    "supports_audio_input"
+  ],
+  "title": "mistral-large-latest",
+  "type": "object"
+}

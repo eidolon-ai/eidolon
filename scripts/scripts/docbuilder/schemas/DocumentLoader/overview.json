@@ -1,0 +1,15 @@
+{
+  "title": "DocumentLoader",
+  "description": "Overview of <class 'eidolon_ai_sdk.agent.doc_manager.loaders.base_loader.DocumentLoader'> components",
+  "anyOf": [
+    {
+      "$ref": "file:./FilesystemLoader.json"
+    },
+    {
+      "$ref": "file:./GitHubLoader.json"
+    },
+    {
+      "$ref": "file:./S3Loader.json"
+    }
+  ]
+}

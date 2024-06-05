@@ -5,12 +5,24 @@ description: Description of AudioUnit component
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |
 | ------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | -------------------------- |
+| - [implementation](#implementation )                         | No      | const            | No         | -          | AudioUnit                  |
 | - [text_to_speech_model](#text_to_speech_model )             | No      | enum (of string) | No         | -          | Text To Speech Model       |
 | - [text_to_speech_voice](#text_to_speech_voice )             | No      | enum (of string) | No         | -          | Text To Speech Voice       |
 | - [speech_to_text_model](#speech_to_text_model )             | No      | const            | No         | -          | Speech To Text Model       |
 | - [speech_to_text_temperature](#speech_to_text_temperature ) | No      | number           | No         | -          | Speech To Text Temperature |
 
-## <a name="text_to_speech_model"></a>1. Property `text_to_speech_model`
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** AudioUnit
+
+Specific value: `"AudioUnit"`
+
+## <a name="text_to_speech_model"></a>2. Property `text_to_speech_model`
 
 **Title:** Text To Speech Model
 
@@ -26,7 +38,7 @@ Must be one of:
 * "tts-1"
 * "tts-1-hd"
 
-## <a name="text_to_speech_voice"></a>2. Property `text_to_speech_voice`
+## <a name="text_to_speech_voice"></a>3. Property `text_to_speech_voice`
 
 **Title:** Text To Speech Voice
 
@@ -46,7 +58,7 @@ Must be one of:
 * "nova"
 * "shimmer"
 
-## <a name="speech_to_text_model"></a>3. Property `speech_to_text_model`
+## <a name="speech_to_text_model"></a>4. Property `speech_to_text_model`
 
 **Title:** Speech To Text Model
 
@@ -62,7 +74,7 @@ Must be one of:
 * "whisper-1"
 Specific value: `"whisper-1"`
 
-## <a name="speech_to_text_temperature"></a>4. Property `speech_to_text_temperature`
+## <a name="speech_to_text_temperature"></a>5. Property `speech_to_text_temperature`
 
 **Title:** Speech To Text Temperature
 

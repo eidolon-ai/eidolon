@@ -1,0 +1,234 @@
+{
+  "$defs": {
+    "ActionDefinition": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "default": "converse",
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "sub_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "user_prompt": {
+          "default": "{{ body }}",
+          "title": "User Prompt",
+          "type": "string"
+        },
+        "input_schema": {
+          "additionalProperties": {
+            "type": "object"
+          },
+          "default": {},
+          "title": "Input Schema",
+          "type": "object"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "const": "str",
+              "enum": [
+                "str"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ],
+          "default": "str",
+          "title": "Output Schema"
+        },
+        "allow_file_upload": {
+          "default": false,
+          "title": "Allow File Upload",
+          "type": "boolean"
+        },
+        "supported_mime_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Supported Mime Types",
+          "type": "array"
+        },
+        "allowed_states": {
+          "default": [
+            "initialized",
+            "idle",
+            "http_error"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed States",
+          "type": "array"
+        },
+        "output_state": {
+          "default": "idle",
+          "title": "Output State",
+          "type": "string"
+        }
+      },
+      "title": "ActionDefinition",
+      "type": "object"
+    },
+    "NamedCPU": {
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "apu": {
+          "$ref": "file:../APU/overview.json",
+          "default": "APU"
+        },
+        "default": {
+          "type": "boolean",
+          "default": false,
+          "title": "Default"
+        }
+      },
+      "title": "NamedCPU",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "description": "The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This\nagent is designed to be a flexible, modular component that can interact with various processing units and perform a\nrange of actions based on its configuration.",
+  "properties": {
+    "implementation": {
+      "const": "SimpleAgent",
+      "description": "SimpleAgent"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "system_prompt": {
+      "default": "You are a helpful assistant",
+      "title": "System Prompt",
+      "type": "string"
+    },
+    "agent_refs": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Agent Refs",
+      "type": "array"
+    },
+    "actions": {
+      "default": [
+        {
+          "name": "converse",
+          "title": null,
+          "sub_title": null,
+          "description": null,
+          "user_prompt": "{{ body }}",
+          "input_schema": {},
+          "output_schema": "str",
+          "allow_file_upload": false,
+          "supported_mime_types": [],
+          "allowed_states": [
+            "initialized",
+            "idle",
+            "http_error"
+          ],
+          "output_state": "idle"
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/ActionDefinition"
+      },
+      "title": "Actions",
+      "type": "array"
+    },
+    "apu": {
+      "$ref": "file:../APU/overview.json",
+      "default": "APU"
+    },
+    "apus": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/NamedCPU"
+      },
+      "title": "Apus",
+      "type": "array"
+    },
+    "title_generation_mode": {
+      "default": "on_request",
+      "enum": [
+        "none",
+        "on_request"
+      ],
+      "title": "Title Generation Mode",
+      "type": "string"
+    },
+    "doc_processor": {
+      "additionalProperties": true,
+      "default": "DocumentProcessor",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "DocumentProcessor Reference",
+      "type": "object"
+    }
+  },
+  "title": "SimpleAgent",
+  "type": "object"
+}

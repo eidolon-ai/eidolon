@@ -1,0 +1,129 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "MistralSmall",
+      "description": "MistralSmall"
+    },
+    "max_num_function_calls": {
+      "default": 10,
+      "description": "The maximum number of function calls to make in a single request.",
+      "title": "Max Num Function Calls",
+      "type": "integer"
+    },
+    "io_unit": {
+      "additionalProperties": true,
+      "default": "IOUnit",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "IOUnit Reference",
+      "type": "object"
+    },
+    "memory_unit": {
+      "additionalProperties": true,
+      "default": "MemoryUnit",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "MemoryUnit Reference",
+      "type": "object"
+    },
+    "llm_unit": {
+      "$ref": "file:../LLMUnit/overview.json",
+      "default": "LLMUnit"
+    },
+    "logic_units": {
+      "default": [],
+      "items": {
+        "additionalProperties": true,
+        "default": "eidolon_ai_sdk.cpu.logic_unit.LogicUnit",
+        "properties": {
+          "implementation": {
+            "default": null,
+            "title": "Implementation",
+            "type": "string"
+          }
+        },
+        "title": "LogicUnit Reference",
+        "type": "object"
+      },
+      "title": "Logic Units",
+      "type": "array"
+    },
+    "audio_unit": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "default": "eidolon_ai_sdk.cpu.audio_unit.AudioUnit",
+          "properties": {
+            "implementation": {
+              "default": null,
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "title": "AudioUnit Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "image_unit": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "default": "eidolon_ai_sdk.cpu.image_unit.ImageUnit",
+          "properties": {
+            "implementation": {
+              "default": null,
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "title": "ImageUnit Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "record_conversation": {
+      "default": true,
+      "title": "Record Conversation",
+      "type": "boolean"
+    },
+    "allow_tool_errors": {
+      "default": true,
+      "title": "Allow Tool Errors",
+      "type": "boolean"
+    },
+    "document_processor": {
+      "additionalProperties": true,
+      "default": "DocumentProcessor",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "DocumentProcessor Reference",
+      "type": "object"
+    }
+  },
+  "title": "MistralSmall",
+  "type": "object"
+}

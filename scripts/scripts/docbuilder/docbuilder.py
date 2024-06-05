@@ -3,10 +3,8 @@ import os
 import shutil
 import textwrap
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Optional, Dict, Self, List
 
-import jsonschema
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
@@ -68,12 +66,11 @@ EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 
 def main():
     print("Generating docs...")
-    # dist_component_schemas = EIDOLON / "scripts" / "dist" / "component_schemas"
-    with TemporaryDirectory() as dist_component_schemas:
-        dist_component_schemas = Path(dist_component_schemas)
-        generate_json(dist_component_schemas)
-        write_md(dist_component_schemas)
-        update_sitemap()
+    dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
+    shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    generate_json(dist_component_schemas)
+    write_md(dist_component_schemas)
+    update_sitemap()
     print("Done")
 
 
@@ -117,7 +114,7 @@ def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
     for component in os.listdir(read_loc):
-        for file in os.listdir(read_loc / component):
+        for file in (f for f in os.listdir(read_loc / component) if f != "overview.json"):
             write_file_loc = write_loc / url_safe(component) / (url_safe(file.replace(".json", "")) + ".md")
             with open(read_loc / component / file, 'r') as json_file:
                 obj = json.load(json_file)
@@ -136,8 +133,8 @@ def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "
 
 def write_astro_md_file(content, description, title, write_file_loc):
     for name, group in groups.items():
-        content = content.replace(f"Reference[{name}]",
-                                  f"[Reference[{name}]](/docs/components/{url_safe(name)}/overview/)")
+        content = content.replace(f"file:../{name}/overview.json",
+                                  f"[{name}](/docs/components/{url_safe(name)}/overview)")
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
     md_str = template("template_component_md", title=title, description=description, content=content)
@@ -170,45 +167,60 @@ def generate_json(write_base):
     for key, group in groups.items():
         write_loc = write_base / key
         os.makedirs(write_loc, exist_ok=True)
+
+        base_json = {
+            "title": key,
+            "description": group.description,
+            "anyOf": [
+                {"$ref": f"file:./{name}.json"} for name, _, _ in group.components
+            ],
+        }
+        with open(write_loc / "overview.json", 'w') as file:
+            json.dump(base_json, file, indent=2)
+
         for name, clz, overrides in group.components:
             if hasattr(clz, "model_json_schema"):
                 json_schema = clz.model_json_schema()
-                to_pop = set()
-                # todo, this should be part of reference json schema
-                for k, v in json_schema.get("$defs", {}).items():
+                defs = dict()
+                for k, v in list(json_schema.get("$defs", {}).items()):
                     if "_Reference" in k:
-                        to_pop.add(k)
-                        del v["properties"]
-                        del v["additionalProperties"]
+                        default = v.get("default")
+                        if default in groups:
+                            defs[k] = {"$ref": f"file:../{default}/overview.json", "default": default}
+                        else:
+                            defs[k] = json_schema['$defs'][k]
+                            defs[k]['type'] = "object"
+                        del json_schema['$defs'][k]
 
-                json_schema = inline_refs(json_schema)
-                for k, v in json_schema['properties'].items():
-                    if k in overrides:
-                        v['default'] = overrides[k]
-                json_schema['title'] = name
-
-                for r in to_pop:
-                    del json_schema["$defs"][r]
+                json_schema = inline_refs(json_schema, defs)
                 if "$defs" in json_schema and not json_schema["$defs"]:
                     del json_schema["$defs"]
-                with open(write_loc / (name + ".json"), 'w') as file:
-                    json.dump(json_schema, file, indent=2)
+                json_schema['title'] = name
             else:
-                print(f"Skipping non BaseModel component {name}")
+                json_schema = {
+                    "title": name,
+                    "type": "object",
+                    "properties": {
+                        "implementation": {"const": name}
+                    }
+                }
+                if clz.__doc__:
+                    json_schema["description"] = textwrap.dedent(clz.__doc__)
+
+            json_schema['properties']['implementation'] = {"const": name, "description": name}
+            json_schema['properties'] = dict(implementation=json_schema['properties'].pop('implementation'), **json_schema['properties'])
+            with open(write_loc / (name + ".json"), 'w') as file:
+                json.dump(json_schema, file, indent=2)
 
 
-def inline_refs(schema, resolver=None):
-    if resolver is None:
-        resolver = jsonschema.RefResolver.from_schema(schema)
-
+def inline_refs(schema, defs):
     if isinstance(schema, dict):
         if "$ref" in schema and "_Reference" in schema["$ref"]:
-            with resolver.resolving(schema["$ref"]) as resolved:
-                return inline_refs(resolved, resolver)
+            return defs[schema["$ref"].replace("#/$defs/", "")]
         else:
-            return {k: inline_refs(v, resolver) for k, v in schema.items()}
+            return {k: inline_refs(v, defs) for k, v in schema.items()}
     elif isinstance(schema, list):
-        return [inline_refs(i, resolver) for i in schema]
+        return [inline_refs(i, defs) for i in schema]
     else:
         return schema
 

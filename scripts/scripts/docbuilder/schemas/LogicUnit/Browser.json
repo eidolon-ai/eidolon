@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "Browser",
+      "description": "Browser"
+    },
+    "summarizer": {
+      "default": "BeautifulSoup",
+      "enum": [
+        "BeautifulSoup",
+        "noop"
+      ],
+      "title": "Summarizer",
+      "type": "string"
+    }
+  },
+  "title": "Browser",
+  "type": "object"
+}

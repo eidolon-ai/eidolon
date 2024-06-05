@@ -1,0 +1,130 @@
+{
+  "description": "A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.\nThe agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.",
+  "properties": {
+    "implementation": {
+      "const": "RetrieverAgent",
+      "description": "RetrieverAgent"
+    },
+    "max_num_results": {
+      "default": 10,
+      "description": "The maximum number of results to consider.",
+      "title": "Max Num Results",
+      "type": "integer"
+    },
+    "question_transformer": {
+      "additionalProperties": true,
+      "default": "QuestionTransformer",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "QuestionTransformer Reference",
+      "type": "object"
+    },
+    "document_retriever": {
+      "additionalProperties": true,
+      "default": "DocumentRetriever",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "DocumentRetriever Reference",
+      "type": "object"
+    },
+    "document_reranker": {
+      "additionalProperties": true,
+      "default": "DocumentReranker",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "DocumentReranker Reference",
+      "type": "object"
+    },
+    "result_summarizer": {
+      "additionalProperties": true,
+      "default": "ResultSummarizer",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "ResultSummarizer Reference",
+      "type": "object"
+    },
+    "name": {
+      "description": "The name of the document store to use.",
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "description": "A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...",
+      "title": "Description",
+      "type": "string"
+    },
+    "loader_root_location": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "A URL specifying the root location of the loader.",
+      "title": "Loader Root Location"
+    },
+    "loader_pattern": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "**/*",
+      "description": "The search pattern to use when loading files.",
+      "title": "Loader Pattern"
+    },
+    "document_manager": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "default": "eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager",
+          "properties": {
+            "implementation": {
+              "default": null,
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "title": "DocumentManager Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "name",
+    "description"
+  ],
+  "title": "RetrieverAgent",
+  "type": "object"
+}

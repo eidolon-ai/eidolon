@@ -3,11 +3,23 @@ title: FileMemory
 description: Description of FileMemory component
 ---
 
-| Property                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [root_dir](#root_dir ) | No      | string | No         | -          | Root Dir          |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const  | No         | -          | FileMemory        |
+| - [root_dir](#root_dir )             | No      | string | No         | -          | Root Dir          |
 
-## <a name="root_dir"></a>1. Property `root_dir`
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** FileMemory
+
+Specific value: `"FileMemory"`
+
+## <a name="root_dir"></a>2. Property `root_dir`
 
 **Title:** Root Dir
 
