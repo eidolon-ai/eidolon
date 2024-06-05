@@ -41,7 +41,7 @@ class Retriever(Specable[RetrieverSpec]):
         Process the question by searching the document store.
         :param vector_collection_name:
         :param question: The question to process
-        :return: The response from the cpu
+        :return: The response from the apu
         """
         if self.question_transformer:
             questions = await self.question_transformer.transform(question)

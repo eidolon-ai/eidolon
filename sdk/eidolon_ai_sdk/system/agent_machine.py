@@ -19,7 +19,7 @@ from .reference_model import AnnotatedReference, Specable
 from .resources.agent_resource import AgentResource
 from .resources.resources_base import Resource
 from ..agent_os import AgentOS
-from ..cpu.agent_call_history import AgentCallHistory
+from ..apu.agent_call_history import AgentCallHistory
 from ..security.permissions import PermissionException
 
 

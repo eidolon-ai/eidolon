@@ -9,10 +9,10 @@ from pydantic_core import to_jsonable_python
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import StartStreamContextEvent, OutputEvent
 from eidolon_ai_client.util.stream_collector import merge_streams
-from eidolon_ai_sdk.cpu.apu import APU, Thread
-from eidolon_ai_sdk.cpu.agent_io import CPUMessageTypes, SystemAPUMessage
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit
+from eidolon_ai_sdk.apu.apu import APU, Thread
+from eidolon_ai_sdk.apu.agent_io import APUMessageTypes, SystemAPUMessage
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable, Reference
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager
 
@@ -81,7 +81,7 @@ class ValidatingCPU(APU, Specable[ValidatingCPUSpec]):
     async def schedule_request(
         self,
         call_context: CallContext,
-        prompts: List[CPUMessageTypes],
+        prompts: List[APUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> Any:
         prompts_str = json.dumps(to_jsonable_python(prompts))

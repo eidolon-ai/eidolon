@@ -14,12 +14,12 @@ from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcesso
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import FileInfo
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.cpu.apu import APU, APUSpec, Thread, APUException, APUCapabilities
-from eidolon_ai_sdk.cpu.agent_io import IOUnit, CPUMessageTypes
-from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
-from eidolon_ai_sdk.cpu.call_context import CallContext
-from eidolon_ai_sdk.cpu.image_unit import ImageUnit
-from eidolon_ai_sdk.cpu.llm_message import (
+from eidolon_ai_sdk.apu.apu import APU, APUSpec, Thread, APUException, APUCapabilities
+from eidolon_ai_sdk.apu.agent_io import IOUnit, APUMessageTypes
+from eidolon_ai_sdk.apu.audio_unit import AudioUnit
+from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_sdk.apu.image_unit import ImageUnit
+from eidolon_ai_sdk.apu.llm_message import (
     ToolResponseMessage,
     LLMMessage,
     UserMessageFile,
@@ -28,14 +28,14 @@ from eidolon_ai_sdk.cpu.llm_message import (
     UserMessageText,
     UserMessage,
 )
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit
-from eidolon_ai_sdk.cpu.logic_unit import LogicUnit, LLMToolWrapper
-from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_sdk.cpu.processing_unit import ProcessingUnitLocator, PU_T
+from eidolon_ai_sdk.apu.llm_unit import LLMUnit
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit, LLMToolWrapper
+from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
+from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 
-tracer = trace.get_tracer("cpu")
+tracer = trace.get_tracer("apu")
 
 
 class ConversationalAPUSpec(APUSpec):
@@ -110,14 +110,14 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
 
         raise ValueError(f"Could not locate {unit_type}")
 
-    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[CPUMessageTypes]):
+    async def set_boot_messages(self, call_context: CallContext, boot_messages: List[APUMessageTypes]):
         conversation_messages = await self.io_unit.process_request(call_context, boot_messages)
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
         self,
         call_context: CallContext,
-        prompts: List[CPUMessageTypes],
+        prompts: List[APUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
@@ -167,6 +167,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
+                logger.info(f"Following tools are available: {list(tool_defs.keys())}")
                 execute_llm_ = self.llm_unit.execute_llm(
                     call_context, converted_conversation, llm_facing_tools, output_format
                 )
@@ -302,4 +303,4 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         for processor in self.logic_units:
             await processor.clone_thread(call_context, new_context)
 
-        return Thread(call_context=new_context, cpu=self)
+        return Thread(call_context=new_context, apu=self)

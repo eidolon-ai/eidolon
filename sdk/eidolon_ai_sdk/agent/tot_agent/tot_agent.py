@@ -16,8 +16,8 @@ from eidolon_ai_sdk.agent.tot_agent.thought import Thought
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import (
     ThoughtGenerationStrategy,
 )
-from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
-from eidolon_ai_sdk.cpu.llm_message import LLMMessage
+from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage
+from eidolon_ai_sdk.apu.llm_message import LLMMessage
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -87,7 +87,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.thought_generator = self.spec.thought_generator.instantiate()
-        self.checker = self.spec.checker.instantiate(cpu=self.cpu)
+        self.checker = self.spec.checker.instantiate(apu=self.apu)
         self.tot_memory = ToTDFSMemory()
         self.tot_controller = ToTController()
         if self.spec.init_description:
@@ -126,7 +126,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             _messages: List[LLMMessage],
             _output_format: Dict[str, Any],
         ) -> Dict[str, Any]:
-            t2 = await self.cpu.new_thread(process_id)
+            t2 = await self.apu.new_thread(process_id)
             await t2.set_boot_messages(prompts=_boot_messages)
             return await t2.run_request(_messages, _output_format)
 
@@ -141,7 +141,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             self.tot_memory.store(thought)
             self.log_thought(thought, level)
             if thought.validity == "VALID":
-                mainThread = await self.cpu.main_thread(process_id)
+                mainThread = await self.apu.main_thread(process_id)
                 # go back to llm now with the tree of thoughts and the requested output format
                 conversation = [
                     UserTextAPUMessage(prompt=question),
@@ -168,7 +168,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
                     + str(synopsis)
                 ),
             ]
-            thread = await self.cpu.new_thread(process_id)
+            thread = await self.apu.new_thread(process_id)
             resp = await thread.run_request(conversation, self.spec.output_schema)
             return TotResponse(answer=resp, thoughts=thoughts_path)
         else:

@@ -3,8 +3,8 @@ from typing import List
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.cpu.apu import APU
-from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
+from eidolon_ai_sdk.apu.apu import APU
+from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.agent.tot_agent.prompts import CHECKER_PROMPT
 from eidolon_ai_sdk.agent.tot_agent.thought import ThoughtValidity
 from eidolon_ai_sdk.system.reference_model import Specable
@@ -17,11 +17,11 @@ class TotCheckerConfig(BaseModel):
 
 class ToTChecker(Specable[TotCheckerConfig]):
     spec: TotCheckerConfig
-    cpu: APU
+    apu: APU
 
-    def __init__(self, cpu, spec):
+    def __init__(self, apu, spec):
         super().__init__(spec)
-        self.cpu = cpu
+        self.apu = apu
         self.spec = spec
 
     """
@@ -52,7 +52,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
             )
         )
 
-        thread = await self.cpu.new_thread(process_id)
+        thread = await self.apu.new_thread(process_id)
         resp = await thread.run_request(
             prompts=[UserTextAPUMessage(prompt=checker_prompt)],
             output_format=ThoughtValidity.model_json_schema(),

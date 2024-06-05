@@ -41,8 +41,8 @@ export function CopilotInputPanel({
         const operation = operations.find((o) => o.name === options.operation)
         if (operation) {
           options.operationInfo = operation
-          if (operation.schema?.properties?.execute_on_cpu) {
-            const property = operation.schema?.properties?.execute_on_cpu as Record<string, any>
+          if (operation.schema?.properties?.execute_on_apu) {
+            const property = operation.schema?.properties?.execute_on_apu as Record<string, any>
             options.supportedLLMs = property?.["enum"] as string[]
             options.defaultLLM = property?.default as string
           }
@@ -61,7 +61,7 @@ export function CopilotInputPanel({
     }
 
     if (copilotParams.supportedLLMs && copilotParams.supportedLLMs.length > 0) {
-      payload['execute_on_cpu'] = selectedLLM
+      payload['execute_on_apu'] = selectedLLM
     }
 
     if (uploadedFiles.length > 0) {
