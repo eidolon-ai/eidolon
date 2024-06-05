@@ -108,7 +108,7 @@ def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "
         write_file_loc = write_loc / url_safe(k) / "overview.md"
         title = f"{k} Overview"
         description = f"Overview of {k} components"
-        content = [f"## Builtins"]
+        content = ["## Builtins"]
         for name, clz, overrides in g.components:
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
@@ -200,9 +200,6 @@ def generate_json(write_base):
                 json_schema = {
                     "title": name,
                     "type": "object",
-                    "properties": {
-                        "implementation": {"const": name}
-                    }
                 }
                 if clz.__doc__:
                     json_schema["description"] = textwrap.dedent(clz.__doc__)

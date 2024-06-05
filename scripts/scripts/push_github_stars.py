@@ -1,4 +1,3 @@
-from datetime import datetime
 
 from scripts.base_push_github_stats import run_script
 
