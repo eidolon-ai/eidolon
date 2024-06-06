@@ -204,7 +204,7 @@ def generate_json(write_base):
                 if clz.__doc__:
                     json_schema["description"] = textwrap.dedent(clz.__doc__)
 
-            json_schema['properties']['implementation'] = {"const": name, "description": name}
+            json_schema.setdefault('properties', {})['implementation'] = {"const": name, "description": name}
             json_schema['properties'] = dict(implementation=json_schema['properties'].pop('implementation'), **json_schema['properties'])
             with open(write_loc / (name + ".json"), 'w') as file:
                 json.dump(json_schema, file, indent=2)
