@@ -76,6 +76,7 @@ class ImageUnit(LogicUnit, Specable[ImageUnitSpec]):
     ) -> List[str]:
         """
         Converts text to one or more images. The result of the call is a list of file handles that should be returned to the user unchanged.
+        Only call this tool if you are generating a new image.
         :param width: The width of the image. Defaults to 1024.
         :param height: The height of the image. Defaults to 1024.
         :param text: The text to convert to an image. The text should be very verbose and detailed. The text CANNOT exceed 4000 characters
