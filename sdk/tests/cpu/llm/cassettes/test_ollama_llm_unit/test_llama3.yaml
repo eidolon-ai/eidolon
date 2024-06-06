@@ -4,29 +4,9 @@ interactions:
       state: !!python/tuple
       - !!binary |
         eyJtb2RlbCI6ICJsbGFtYTMiLCAibWVzc2FnZXMiOiBbeyJyb2xlIjogInN5c3RlbSIsICJjb250
-        ZW50IjogIllvdSBhcmUgYSBoZWxwZnVsIGFzc2lzdGFudFxuXG5Zb3VyIHJlc3BvbnNlIE1VU1Qg
-        YmUgdmFsaWQgSlNPTiBzYXRpc2Z5aW5nIHRoZSBmb2xsb3dpbmcgSlNPTiBzY2hlbWE6XG57XCIk
-        ZGVmc1wiOiB7XCJUb29sQ2FsbFwiOiB7XCJwcm9wZXJ0aWVzXCI6IHtcInRvb2xfY2FsbF9pZFwi
-        OiB7XCJkZXNjcmlwdGlvblwiOiBcIlRoZSBpZCBvZiB0aGUgdG9vbCBjYWxsXCIsIFwidGl0bGVc
-        IjogXCJUb29sIENhbGwgSWRcIiwgXCJ0eXBlXCI6IFwic3RyaW5nXCJ9LCBcIm5hbWVcIjoge1wi
-        ZGVzY3JpcHRpb25cIjogXCJUaGUgbmFtZSBvZiB0aGUgdG9vbFwiLCBcInRpdGxlXCI6IFwiTmFt
-        ZVwiLCBcInR5cGVcIjogXCJzdHJpbmdcIn0sIFwiYXJndW1lbnRzXCI6IHtcImRlZmF1bHRcIjog
-        e30sIFwiZGVzY3JpcHRpb25cIjogXCJUaGUgYXJndW1lbnRzIHRvIHRoZSB0b29sIGNhbGxcIiwg
-        XCJ0aXRsZVwiOiBcIkFyZ3VtZW50c1wiLCBcInR5cGVcIjogXCJvYmplY3RcIn19LCBcInJlcXVp
-        cmVkXCI6IFtcInRvb2xfY2FsbF9pZFwiLCBcIm5hbWVcIl0sIFwidGl0bGVcIjogXCJUb29sQ2Fs
-        bFwiLCBcInR5cGVcIjogXCJvYmplY3RcIn19LCBcImRlc2NyaXB0aW9uXCI6IFwiUmVzcG9uc2Ug
-        b2JqZWN0IGZyb20gTExNLiBPbmx5IGZpbGwgaW4gdGhlIHRvb2xzIGlmIHlvdSB3ZXJlIGdpdmVu
-        IHZhbGlkIHRvb2xzIGFuZCB5b3UgbmVlZCB0byBjYWxsIHRoZW0uXCIsIFwicHJvcGVydGllc1wi
-        OiB7XCJ0b29sc1wiOiB7XCJhbnlPZlwiOiBbe1wiaXRlbXNcIjoge1wiJHJlZlwiOiBcIiMvJGRl
-        ZnMvVG9vbENhbGxcIn0sIFwidHlwZVwiOiBcImFycmF5XCJ9LCB7XCJ0eXBlXCI6IFwibnVsbFwi
-        fV0sIFwiZGVmYXVsdFwiOiBbXSwgXCJkZXNjcmlwdGlvblwiOiBcIlRoZSB0b29scyB0aGF0IGFy
-        ZSBhdmFpbGFibGUuXCIsIFwidGl0bGVcIjogXCJUb29sc1wifSwgXCJub3Rlc1wiOiB7XCJkZWZh
-        dWx0XCI6IFwiXCIsIFwiZGVzY3JpcHRpb25cIjogXCJBbnkgbm90ZXMgb3IgZXhwbGFuYXRpb25z
-        LlwiLCBcInRpdGxlXCI6IFwiTm90ZXNcIiwgXCJ0eXBlXCI6IFwic3RyaW5nXCJ9fSwgXCJ0aXRs
-        ZVwiOiBcIlRvb2xDYWxsUmVzcG9uc2VcIiwgXCJ0eXBlXCI6IFwib2JqZWN0XCJ9In0sIHsicm9s
-        ZSI6ICJ1c2VyIiwgImNvbnRlbnQiOiAiV2hhdCBpcyB0aGUgY2FwaXRhbCBvZiBGcmFuY2U/In1d
-        LCAic3RyZWFtIjogdHJ1ZSwgImZvcm1hdCI6ICJqc29uIiwgIm9wdGlvbnMiOiB7fSwgImtlZXBf
-        YWxpdmUiOiBudWxsfQ==
+        ZW50IjogIllvdSBhcmUgYSBoZWxwZnVsIGFzc2lzdGFudCJ9LCB7InJvbGUiOiAidXNlciIsICJj
+        b250ZW50IjogIldoYXQgaXMgdGhlIGNhcGl0YWwgb2YgRnJhbmNlPyJ9XSwgInN0cmVhbSI6IHRy
+        dWUsICJmb3JtYXQiOiAiIiwgIm9wdGlvbnMiOiB7fSwgImtlZXBfYWxpdmUiOiBudWxsfQ==
       - 0
       - null
     headers:
@@ -37,7 +17,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1324'
+      - '223'
       content-type:
       - application/json
       host:
@@ -48,54 +28,33 @@ interactions:
     uri: http://127.0.0.1:11434/api/chat
   response:
     body:
-      string: '{"model":"llama3","created_at":"2024-06-06T21:26:43.4448165Z","message":{"role":"assistant","content":"{\""},"done":false}
+      string: '{"model":"llama3","created_at":"2024-06-06T21:55:57.8690423Z","message":{"role":"assistant","content":"The"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.4688169Z","message":{"role":"assistant","content":"tools"},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.4938165Z","message":{"role":"assistant","content":"\":"},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.5138166Z","message":{"role":"assistant","content":"
-        [],"},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.5353166Z","message":{"role":"assistant","content":"
-        \""},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.5633168Z","message":{"role":"assistant","content":"notes"},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.5843167Z","message":{"role":"assistant","content":"\":"},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.6058167Z","message":{"role":"assistant","content":"
-        \""},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.629818Z","message":{"role":"assistant","content":"The"},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.6488163Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.8885423Z","message":{"role":"assistant","content":"
         capital"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.6713177Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9080425Z","message":{"role":"assistant","content":"
         of"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.6973165Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9260424Z","message":{"role":"assistant","content":"
         France"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.7193171Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9455424Z","message":{"role":"assistant","content":"
         is"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.7403162Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9640423Z","message":{"role":"assistant","content":"
         Paris"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.7633179Z","message":{"role":"assistant","content":".\""},"done":false}
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9835425Z","message":{"role":"assistant","content":"."},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.7838165Z","message":{"role":"assistant","content":"}"},"done":false}
-
-        {"model":"llama3","created_at":"2024-06-06T21:26:43.8068164Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":4764074100,"load_duration":3979361300,"prompt_eval_count":289,"prompt_eval_duration":421049000,"eval_count":17,"eval_duration":362013000}
+        {"model":"llama3","created_at":"2024-06-06T21:55:58.0039388Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":4327516600,"load_duration":4095307100,"prompt_eval_count":26,"prompt_eval_duration":95478000,"eval_count":8,"eval_duration":134739000}
 
         '
     headers:
       Content-Type:
       - application/x-ndjson
       Date:
-      - Thu, 06 Jun 2024 21:26:43 GMT
+      - Thu, 06 Jun 2024 21:55:57 GMT
       Transfer-Encoding:
       - chunked
     status:

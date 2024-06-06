@@ -64,7 +64,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
         messages = self._add_tools(messages, tools)
-        return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, messages)
+        return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, tools, messages)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
         if tools and len(tools) > 0:
@@ -95,10 +95,12 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
             AsyncIterator[StreamEvent],
         ],
         call_context: CallContext,
+        tools: List[LLMCallFunction],
         messages: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
+        ret_type = ToolCallResponse.model_json_schema() if tools else dict(type="string")
         stream: AsyncIterator[StreamEvent] = exec_llm_call(
-            call_context, messages, [], ToolCallResponse.model_json_schema()
+            call_context, messages, [], ret_type
         )
         # stream should be a single object output event
         async for event in stream:

@@ -94,7 +94,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
                 if content:
                     if can_stream_message:
                         logger.debug(
-                            f"open ai llm stream response: {content}", extra=dict(content=content)
+                            f"ollama llm stream response: {content}", extra=dict(content=content)
                         )
                         yield StringOutputEvent(content=content)
                     else:
