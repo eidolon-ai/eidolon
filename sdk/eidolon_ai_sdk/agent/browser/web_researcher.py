@@ -36,7 +36,7 @@ class WebResearcherSpec(BaseModel):
             - FOLLOW: Follow links if needed.
             - RETURN: Return the answer and the source of the information.
           
-        Let's think through step by step. Explain what you are going to do then do it
+        Let's think through step by step. Explain what you are going to do then call the tools to get it done all in the same cycle.
         """),
         description="The prompt to use for the system to ask the user for input"
     )
