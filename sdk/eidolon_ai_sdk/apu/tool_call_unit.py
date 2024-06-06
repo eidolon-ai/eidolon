@@ -3,7 +3,8 @@ from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Opt
 
 from pydantic import BaseModel, Field
 
-from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
+from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, \
+    LLMToolCallRequestEvent
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
@@ -27,7 +28,10 @@ class ModelWrapper(LLMModel):
 
 
 class ToolCallResponse(BaseModel):
-    tools: List[ToolCall] = Field(default=[], description="The tools that are available.")
+    """
+    Response
+    """
+    tools: Optional[List[ToolCall]] = Field(default=[], description="The tools that are available.")
     notes: str = Field(default="", description="Any notes or explanations.")
 
 
@@ -63,24 +67,26 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, messages)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
-        # find last UserMessage or add one
-        tool_schema = []
-        for tool in tools:
-            tool_schema.append(
-                json.dumps(
-                    {
-                        "tool_call_id": tool.name,
-                        "name": tool.name,
-                        "description": tool.description,
-                        "parameters": tool.parameters,
-                    }
+        if tools and len(tools) > 0:
+            tool_schema = []
+            for tool in tools:
+                tool_schema.append(
+                    json.dumps(
+                        {
+                            "tool_call_id": tool.name,
+                            "name": tool.name,
+                            "description": tool.description,
+                            "parameters": tool.parameters,
+                        }
+                    )
                 )
-            )
 
-        prompt = (
-            "You have access to the following tools:\n" + "\n".join(tool_schema) + "\n" + self.spec.tool_message_prompt
-        )
-        return messages + [UserMessage(content=[UserMessageText(text=prompt)])]
+            prompt = (
+                "You have access to the following tools:\n" + "\n".join(tool_schema) + "\n" + self.spec.tool_message_prompt
+            )
+            messages = messages + [UserMessage(content=[UserMessageText(text=prompt)])]
+
+        return messages
 
     async def _wrap_exe_call(
         self,
@@ -109,9 +115,10 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                 yield event
 
     def create_assistant_message(self, call_context: CallContext, content: str, tool_call_events) -> LLMMessage:
-        content += "\nCall the following tools\n"
-        for tool_call in tool_call_events:
-            content += f"\n{tool_call.tool_call.model_dump_json()}"
+        if tool_call_events and len(tool_call_events) > 0:
+            content += "\nCall the following tools\n"
+            for tool_call in tool_call_events:
+                content += f"\n{tool_call.tool_call.model_dump_json()}"
         return AssistantMessage(
             type="assistant",
             content=content,

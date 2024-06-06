@@ -49,7 +49,7 @@ async def convert_to_ollama(message: LLMMessage):
     #         "content": json.dumps(message.result),
     #     }
     else:
-        raise ValueError(f"Unknown message type {message.type}")
+        raise ValueError(f"Unknown message type {message.type}: {message}")
 
 
 llama3 = "llama3"
@@ -60,7 +60,7 @@ class OllamaLLMUnitSpec(LLMUnitSpec):
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
-    client_args: dict = {}
+    client_options: dict = {}
 
 
 class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
@@ -85,7 +85,6 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
         complete_message = ""
         try:
             async for m_chunk in llm_request(**request):
-                print("chunk", m_chunk)
                 content = m_chunk["message"]["content"]
                 logger.debug(
                     f"ollama ai llm response\ncontent:\n{content}",
@@ -133,7 +132,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
             else:
                 messages.insert(0, {"role": "system", "content": force_json_msg})
         logger.debug(messages)
-        options = cast(Options, self.spec.client_args or {})
+        options = cast(Options, self.spec.client_options or {})
         if self.spec.max_tokens:
             options["num_predict"] = self.spec.max_tokens
         options["temperature"] = self.spec.temperature
@@ -143,7 +142,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
 
 
 def _ollama_client():
-    async def fn(client_args: dict = None, **kwargs):
+    async def fn(**kwargs):
         client: AsyncClient = AsyncClient()
         async for e in await client.chat(**kwargs, stream=True):
             yield e

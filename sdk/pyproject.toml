@@ -87,6 +87,7 @@ ruff = "^0.1.7"
 pytest-recording = "^0.13.1"
 pytest-asyncio = "^0.23.4"
 pdoc = "^14.4.0"
+vcrpy = "^6.0.1"
 
 [tool.poetry.group.dev.dependencies.eidolon-ai-client]
 path = "../client/python"
