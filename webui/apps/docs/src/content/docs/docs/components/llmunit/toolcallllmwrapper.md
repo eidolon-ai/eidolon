@@ -7,7 +7,7 @@ description: Description of ToolCallLLMWrapper component
 | ---------------------------------------------- | ------- | ----------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
 | - [implementation](#implementation )           | No      | const       | No         | -                                | ToolCallLLMWrapper                                                   |
 | - [tool_message_prompt](#tool_message_prompt ) | No      | string      | No         | -                                | Tool Message Prompt                                                  |
-| - [llm_unit](#llm_unit )                       | No      | object      | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#llm_unit )                       | No      | object      | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [model](#model )                             | No      | Combination | No         | -                                | -                                                                    |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -41,7 +41,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                |
 | --------------------------------------------- |
@@ -434,7 +434,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |

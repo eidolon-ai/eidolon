@@ -17,7 +17,7 @@
       "anyOf": [
         {
           "additionalProperties": true,
-          "default": "eidolon_ai_sdk.cpu.llm_unit.LLMModel",
+          "default": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
           "properties": {
             "implementation": {
               "default": null,

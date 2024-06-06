@@ -2,7 +2,7 @@
 title: Custom Agent Templates
 description: References - Building Custom Agent Templates
 ---
-Eidolon defines several useful [AgentTemplates](/docs/components/agent_templates/) out of the box, but for domain 
+Eidolon defines several useful [AgentTemplates](/docs/components/agents/overview) out of the box, but for domain 
 specific problems, you may need to create your own.
 
 ## Why

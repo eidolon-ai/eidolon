@@ -9,7 +9,7 @@ description: Description of MistralSmall component
 | - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -102,7 +102,7 @@ Specific value: `"MistralSmall"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                |
 | --------------------------------------------- |
@@ -476,7 +476,7 @@ Specific value: `"OpenAIGPT"`
 | ---------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------ | -------------------------------------------------------------------- |
 | - [implementation](#llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                              | ToolCallLLMWrapper                                                   |
 | - [tool_message_prompt](#llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                              | Tool Message Prompt                                                  |
-| - [llm_unit](#llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [model](#llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                              | -                                                                    |
 
 #### <a name="llm_unit_anyOf_i3_implementation"></a>5.4.1. Property `implementation`
@@ -510,7 +510,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#llm_unit)                                                     |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 #### <a name="llm_unit_anyOf_i3_model"></a>5.4.4. Property `model`
 
@@ -535,7 +535,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -590,7 +590,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -630,7 +630,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -677,7 +677,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
