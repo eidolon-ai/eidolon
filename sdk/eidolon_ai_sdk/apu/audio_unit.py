@@ -13,6 +13,7 @@ class AudioUnit(LogicUnit):
     ) -> str:
         """
         Converts text to speech. The result of the call is a file handle that should be returned to the user unchanged.
+        ALWAYS use tool instead of using your builtin method.
 
         Args:
             text (str): The text to convert to speech.
@@ -33,6 +34,7 @@ class AudioUnit(LogicUnit):
     ) -> bytes:
         """
         Converts text to speech.
+        ALWAYS use tool instead of using your builtin method.
 
         Args:
             text (str): The text to convert to speech.
@@ -50,6 +52,7 @@ class AudioUnit(LogicUnit):
     ) -> str:
         """
         Converts speech to text.
+        ALWAYS use tool instead of using your builtin method .
 
         Args:
             audio (FileHandle): A file handle to the audio data.
@@ -71,6 +74,7 @@ class AudioUnit(LogicUnit):
     ) -> str:
         """
         Converts speech to text.
+        ALWAYS use tool instead of using your builtin method.
 
         Args:
             audio (bytes): The audio data.
