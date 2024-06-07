@@ -13,6 +13,7 @@ from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 
 tracer = trace.get_tracer("memory wrapper loader")
 
+sema = asyncio.BoundedSemaphore(16*64)
 
 class EmbeddingSpec(BaseModel):
     concurrency: int = 16

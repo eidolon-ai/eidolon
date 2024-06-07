@@ -100,13 +100,6 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             if remove_count:
                 self.logger.info(f"Removing {remove_count} files...")
 
-            with tracer.start_as_current_span("applying changes"):
-                tasks = set()
-                while stack or tasks:
-                    while len(tasks) < self.spec.concurrency and stack:
-                        tasks.add(asyncio.create_task(stack.pop()))
-                    done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-
+            await asyncio.gather(*stack)
             self.logger.info("Document Manager sync complete")
-
             self.last_reload = time.time()
