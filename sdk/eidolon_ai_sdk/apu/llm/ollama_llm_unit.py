@@ -39,15 +39,7 @@ async def convert_to_ollama(message: LLMMessage):
                     pass
         return {"role": "user", "content": content}
     elif isinstance(message, AssistantMessage):
-        # TODO: tool calls
         return {"role": "assistant", "content": message.content}
-    # elif isinstance(message, ToolResponseMessage):
-    #     # tool_call_id, content
-    #     return {
-    #         "role": "tool",
-    #         "tool_call_id": message.tool_call_id,
-    #         "content": json.dumps(message.result),
-    #     }
     else:
         raise ValueError(f"Unknown message type {message.type}: {message}")
 
@@ -101,7 +93,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
                         complete_message += content
 
             if not can_stream_message:
-                logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
+                logger.debug(f"ollama llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json:
                     # message format looks like json```{...}```, parse content and pull out the json
                     complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
