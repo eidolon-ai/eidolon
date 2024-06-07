@@ -1,0 +1,28 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: Llamma3-8b
+  annotations:
+    - title: "Llamma3 8b"
+spec:
+  implementation: APU
+  llm_unit:
+    implementation: ToolCallLLMWrapper
+    llm_unit:
+      implementation: OllamaLLMUnit
+      model: "llama3-8b"
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: "llama3-8b"
+spec:
+  implementation: LLMModel
+  human_name: Mistral Small
+  name: "llama3"
+  input_context_limit: 8000
+  output_context_limit: 4096
+  supports_tools: False
+  supports_image_input: True
+  supports_audio_input: False
