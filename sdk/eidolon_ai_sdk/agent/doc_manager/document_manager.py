@@ -49,7 +49,7 @@ class DocumentManagerSpec(BaseModel):
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
     loader: AnnotatedReference[DocumentLoader]
     doc_processor: AnnotatedReference[DocumentProcessor]
-    concurrency: int = Field(default=64, description="The number of concurrent tasks to run.")
+    concurrency: int = Field(default=8, description="The number of concurrent tasks to run.")
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
@@ -79,27 +79,30 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             self.logger.info(f"Found {len(data)} files in symbolic memory")
 
             add_count = remove_count = replace_count = 0
-            stack = []
-            with tracer.start_as_current_span("getting changes"):
+            tasks = set()
+            with tracer.start_as_current_span("syncing docs"):
                 async for change in self.loader.get_changes(data):
+                    while len(tasks) > self.spec.concurrency:
+                        _, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+
                     if isinstance(change, AddedFile):
-                        stack.append(self.processor.addFile(self.collection_name, change.file_info))
+                        tasks.add(asyncio.create_task(self.processor.addFile(self.collection_name, change.file_info)))
                         add_count += 1
                     elif isinstance(change, ModifiedFile):
-                        stack.append(self.processor.replaceFile(self.collection_name, change.file_info))
+                        tasks.add(asyncio.create_task(self.processor.replaceFile(self.collection_name, change.file_info)))
                         replace_count += 1
                     elif isinstance(change, RemovedFile):
-                        stack.append(self.processor.removeFile(self.collection_name, change.file_path))
+                        tasks.add(asyncio.create_task(self.processor.removeFile(self.collection_name, change.file_path)))
                         remove_count += 1
                     else:
                         logger.warning(f"Unknown change type {change}")
-            if add_count:
-                self.logger.info(f"Adding {add_count} files...")
-            if replace_count:
-                self.logger.info(f"Replacing {replace_count} files...")
-            if remove_count:
-                self.logger.info(f"Removing {remove_count} files...")
+                if add_count:
+                    self.logger.info(f"Adding {add_count} files...")
+                if replace_count:
+                    self.logger.info(f"Replacing {replace_count} files...")
+                if remove_count:
+                    self.logger.info(f"Removing {remove_count} files...")
 
-            await asyncio.gather(*stack)
-            self.logger.info("Document Manager sync complete")
+                await asyncio.gather(*tasks)
+                self.logger.info("Document Manager sync complete")
             self.last_reload = time.time()

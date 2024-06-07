@@ -14,14 +14,13 @@ tracer = trace.get_tracer("memory wrapper loader")
 
 
 class EmbeddingSpec(BaseModel):
-    concurrency: int = Field(default=512, description="The number of concurrent tasks to run.")
+    pass
 
 
 class Embedding(ABC, Specable[EmbeddingSpec]):
     def __init__(self, spec: EmbeddingSpec):
         super().__init__(spec)
-        self.spec = spec
-        self.sema = asyncio.BoundedSemaphore(8 * 64)
+        self.spec: EmbeddingSpec = spec
 
     @abstractmethod
     async def embed_text(self, text: str, **kwargs: Any) -> List[float]:
@@ -53,14 +52,13 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
                     yield task.result()
 
     async def _embed(self, document, kwargs):
-        async with self.sema:
-            with tracer.start_as_current_span("embed text"):
-                text = await self.embed_text(document.page_content, **kwargs)
-                return EmbeddedDocument(
-                    id=document.id,
-                    embedding=text,
-                    metadata=document.metadata,
-            )
+        with tracer.start_as_current_span("embed text"):
+            text = await self.embed_text(document.page_content, **kwargs)
+            return EmbeddedDocument(
+                id=document.id,
+                embedding=text,
+                metadata=document.metadata,
+        )
 
     async def start(self):
         pass

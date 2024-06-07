@@ -36,6 +36,7 @@ class WrappedMemoryLoaderSpec(DocumentLoaderSpec):
 
     memory: Reference[FileMemoryBase]
     pattern: str = "**"
+    concurrency: int = 16
 
 
 # noinspection PyShadowingNames
@@ -51,13 +52,20 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
             yield file.file_path
 
     async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> AsyncIterator[FileChange]:
-        tasks = []
+        tasks = set()
         async for file in self.memory.glob(self.spec.pattern):
+            while len(tasks) >= self.spec.concurrency:
+                done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                for task in done:
+                    change_record = task.result()
+                    if change_record:
+                        yield change_record
+
             if file.file_path in metadata:
-                tasks.append(asyncio.create_task(self._process_existing_file(file, FileMetadata(**metadata[file.file_path]))))
+                tasks.add(asyncio.create_task(self._process_existing_file(file, FileMetadata(**metadata[file.file_path]))))
                 del metadata[file.file_path]
             else:
-                tasks.append(asyncio.create_task(self._process_new_file(file)))
+                tasks.add(asyncio.create_task(self._process_new_file(file)))
 
         for not_found in metadata.keys():
             yield RemovedFile(not_found)

@@ -30,9 +30,11 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
         self.splitter = self.spec.splitter.instantiate()
         self.logger = logging.getLogger("eidolon")
 
+    @make_async
     def parse(self, data: bytes, mimetype: str, path: str):
         return self.parser.parse(DataBlob.from_bytes(data=data, mimetype=mimetype, path=path))
 
+    @make_async
     def split(self, docs):
         return self.splitter.transform_documents(docs)
 

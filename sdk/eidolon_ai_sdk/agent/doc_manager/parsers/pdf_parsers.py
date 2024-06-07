@@ -1,6 +1,7 @@
-import numpy as np
-import pypdf
 from typing import Optional, Iterable, Union
+
+import numpy as np
+from pymupdf import pymupdf
 
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DocumentParserSpec, DataBlob
 from eidolon_ai_sdk.memory.document import Document
@@ -66,33 +67,14 @@ class PyPDFParser(DocumentParser, Specable[PyPDFParserSpec]):
         self.extract_images = spec.extract_images
 
     def parse(self, blob: DataBlob) -> Iterable[Document]:
-        with blob.as_bytes() as pdf_file_obj:
-            pdf_reader = pypdf.PdfReader(pdf_file_obj, password=self.password)
-            yield from [
-                Document(
-                    page_content=page.extract_text() + self._extract_images_from_page(page),
-                    metadata={"source": blob.path, "page": page_number, "mime_type": blob.mimetype},
-                )
-                for page_number, page in enumerate(pdf_reader.pages)
-            ]
-
-    # noinspection PyProtectedMember
-    def _extract_images_from_page(self, page: pypdf._page.PageObject) -> str:
-        """Extract images from page and get the text with RapidOCR."""
-        # noinspection PyUnresolvedReferences
-        if not self.extract_images or "/XObject" not in page["/Resources"].keys():
-            return ""
-
-        xObject = page["/Resources"]["/XObject"].get_object()  # type: ignore
-        images = []
-        for obj in xObject:
-            if xObject[obj]["/Subtype"] == "/Image":
-                if xObject[obj]["/Filter"][1:] in _PDF_FILTER_WITHOUT_LOSS:
-                    height, width = xObject[obj]["/Height"], xObject[obj]["/Width"]
-
-                    images.append(np.frombuffer(xObject[obj].get_data(), dtype=np.uint8).reshape(height, width, -1))
-                elif xObject[obj]["/Filter"][1:] in _PDF_FILTER_WITH_LOSS:
-                    images.append(xObject[obj].get_data())
-                else:
-                    self.logger.warn("Unknown PDF Filter!")
-        return extract_from_images_with_rapidocr(images)
+        data = blob.data
+        if not isinstance(blob.data, bytes):
+            data = blob.as_bytes()
+        pdf_reader = pymupdf.open(stream=data)
+        yield from [
+            Document(
+                page_content=page.get_text(),
+                metadata={"source": blob.path, "page": page_number, "mime_type": blob.mimetype},
+            )
+            for page_number, page in enumerate(pdf_reader.pages())
+        ]
