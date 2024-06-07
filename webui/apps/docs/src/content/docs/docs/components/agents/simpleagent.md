@@ -417,9 +417,10 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | [GPT3.5-turbo.json](#apu_anyOf_i4)      |
 | [GPT4-turbo.json](#apu_anyOf_i5)        |
 | [GPT4o.json](#apu_anyOf_i6)             |
-| [MistralLarge.json](#apu_anyOf_i7)      |
-| [MistralMedium.json](#apu_anyOf_i8)     |
-| [MistralSmall.json](#apu_anyOf_i9)      |
+| [Llamma3-8b.json](#apu_anyOf_i7)        |
+| [MistralLarge.json](#apu_anyOf_i8)      |
+| [MistralMedium.json](#apu_anyOf_i9)     |
+| [MistralSmall.json](#apu_anyOf_i10)     |
 
 ### <a name="apu_anyOf_i0"></a>6.1. Property `ClaudeHaiku.json`
 
@@ -436,7 +437,7 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | - [max_num_function_calls](#apu_anyOf_i0_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i0_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i0_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i0_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i0_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i0_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i0_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i0_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -529,14 +530,15 @@ Specific value: `"ClaudeHaiku"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.1.5.1. Property `AnthropicLLMUnit.json`
 
@@ -759,23 +761,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.1.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.1.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.1.5.3.1. Property `implementation`
 
@@ -784,9 +786,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.1.5.3.2. Property `model`
 
@@ -797,7 +799,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -864,7 +866,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.1.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.1.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.1.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.1.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.1.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.1.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.1.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.1.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.1.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.1.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.1.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.1.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -877,10 +995,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.1.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.1.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -890,7 +1008,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.1.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.1.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -901,12 +1019,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.1.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.1.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -917,7 +1035,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.1.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.1.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -927,7 +1045,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.1.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.1.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -937,9 +1055,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.1.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.1.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -950,10 +1068,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.1.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.1.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -962,14 +1080,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.1.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.1.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -979,7 +1097,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.1.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.1.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -1017,7 +1135,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1057,7 +1175,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1104,7 +1222,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1189,7 +1307,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i1_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i1_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i1_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i1_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i1_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i1_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i1_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i1_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -1282,14 +1400,15 @@ Specific value: `"ClaudeOpus"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.2.5.1. Property `AnthropicLLMUnit.json`
 
@@ -1512,23 +1631,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.2.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.2.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.2.5.3.1. Property `implementation`
 
@@ -1537,9 +1656,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.2.5.3.2. Property `model`
 
@@ -1550,7 +1669,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1617,7 +1736,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.2.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.2.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.2.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.2.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.2.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.2.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.2.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.2.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.2.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.2.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.2.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.2.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -1630,10 +1865,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.2.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.2.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -1643,7 +1878,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.2.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.2.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1654,12 +1889,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.2.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.2.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -1670,7 +1905,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.2.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.2.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -1680,7 +1915,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.2.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.2.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1690,9 +1925,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.2.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.2.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1703,10 +1938,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.2.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.2.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -1715,14 +1950,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.2.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.2.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -1732,7 +1967,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.2.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.2.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -1770,7 +2005,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1810,7 +2045,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1857,7 +2092,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1942,7 +2177,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i2_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i2_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i2_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i2_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i2_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i2_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i2_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i2_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -2035,14 +2270,15 @@ Specific value: `"ClaudeSonnet"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.3.5.1. Property `AnthropicLLMUnit.json`
 
@@ -2265,23 +2501,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.3.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.3.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.3.5.3.1. Property `implementation`
 
@@ -2290,9 +2526,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.3.5.3.2. Property `model`
 
@@ -2303,7 +2539,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2370,7 +2606,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.3.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.3.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.3.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.3.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.3.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.3.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.3.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.3.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.3.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.3.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.3.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.3.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -2383,10 +2735,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.3.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.3.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -2396,7 +2748,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.3.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.3.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -2407,12 +2759,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.3.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.3.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -2423,7 +2775,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.3.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.3.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -2433,7 +2785,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.3.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.3.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -2443,9 +2795,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.3.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.3.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -2456,10 +2808,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.3.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.3.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -2468,14 +2820,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.3.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.3.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -2485,7 +2837,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.3.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.3.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -2523,7 +2875,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2563,7 +2915,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2610,7 +2962,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2695,7 +3047,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i3_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i3_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i3_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i3_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i3_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i3_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i3_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i3_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -2788,14 +3140,15 @@ Specific value: `"ConversationalAPU"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.4.5.1. Property `AnthropicLLMUnit.json`
 
@@ -3018,23 +3371,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.4.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.4.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.4.5.3.1. Property `implementation`
 
@@ -3043,9 +3396,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.4.5.3.2. Property `model`
 
@@ -3056,7 +3409,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3123,7 +3476,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.4.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.4.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.4.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.4.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.4.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.4.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.4.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.4.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.4.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.4.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.4.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.4.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -3136,10 +3605,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.4.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.4.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -3149,7 +3618,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.4.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.4.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -3160,12 +3629,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.4.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.4.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -3176,7 +3645,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.4.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.4.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -3186,7 +3655,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.4.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.4.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -3196,9 +3665,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.4.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.4.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -3209,10 +3678,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.4.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.4.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -3221,14 +3690,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.4.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.4.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -3238,7 +3707,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.4.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.4.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -3276,7 +3745,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3316,7 +3785,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3363,7 +3832,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3448,7 +3917,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i4_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i4_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i4_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i4_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i4_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i4_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i4_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i4_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -3541,14 +4010,15 @@ Specific value: `"GPT3.5-turbo"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.5.5.1. Property `AnthropicLLMUnit.json`
 
@@ -3771,23 +4241,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.5.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.5.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.5.5.3.1. Property `implementation`
 
@@ -3796,9 +4266,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.5.5.3.2. Property `model`
 
@@ -3809,7 +4279,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3876,7 +4346,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.5.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.5.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.5.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.5.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.5.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.5.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.5.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.5.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.5.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.5.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.5.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.5.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -3889,10 +4475,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.5.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.5.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -3902,7 +4488,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.5.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.5.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -3913,12 +4499,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.5.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.5.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -3929,7 +4515,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.5.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.5.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -3939,7 +4525,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.5.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.5.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -3949,9 +4535,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.5.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.5.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -3962,10 +4548,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.5.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.5.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -3974,14 +4560,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.5.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.5.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -3991,7 +4577,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.5.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.5.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -4029,7 +4615,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4069,7 +4655,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4116,7 +4702,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4201,7 +4787,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i5_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i5_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i5_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i5_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i5_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i5_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i5_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i5_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -4294,14 +4880,15 @@ Specific value: `"GPT4-turbo"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.6.5.1. Property `AnthropicLLMUnit.json`
 
@@ -4524,23 +5111,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.6.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.6.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.6.5.3.1. Property `implementation`
 
@@ -4549,9 +5136,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.6.5.3.2. Property `model`
 
@@ -4562,7 +5149,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4629,7 +5216,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.6.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.6.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.6.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.6.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.6.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.6.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.6.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.6.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.6.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.6.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.6.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.6.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -4642,10 +5345,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.6.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.6.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -4655,7 +5358,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.6.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.6.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -4666,12 +5369,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.6.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.6.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -4682,7 +5385,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.6.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.6.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -4692,7 +5395,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.6.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.6.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -4702,9 +5405,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.6.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.6.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -4715,10 +5418,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.6.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.6.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -4727,14 +5430,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.6.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.6.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -4744,7 +5447,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.6.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.6.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -4782,7 +5485,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4822,7 +5525,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4869,7 +5572,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4954,7 +5657,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i6_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i6_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i6_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i6_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i6_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i6_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i6_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i6_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -5047,14 +5750,15 @@ Specific value: `"GPT4o"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.7.5.1. Property `AnthropicLLMUnit.json`
 
@@ -5277,23 +5981,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.7.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.7.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.7.5.3.1. Property `implementation`
 
@@ -5302,9 +6006,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.7.5.3.2. Property `model`
 
@@ -5315,7 +6019,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5382,7 +6086,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.7.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.7.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.7.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.7.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.7.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.7.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.7.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.7.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.7.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.7.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.7.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.7.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -5395,10 +6215,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.7.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.7.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -5408,7 +6228,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.7.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.7.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -5419,12 +6239,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.7.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.7.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -5435,7 +6255,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.7.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.7.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -5445,7 +6265,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.7.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.7.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -5455,9 +6275,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.7.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.7.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -5468,10 +6288,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.7.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.7.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -5480,14 +6300,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.7.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.7.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -5497,7 +6317,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.7.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.7.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -5535,7 +6355,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5575,7 +6395,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5622,7 +6442,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5692,22 +6512,22 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-### <a name="apu_anyOf_i7"></a>6.8. Property `MistralLarge.json`
+### <a name="apu_anyOf_i7"></a>6.8. Property `Llamma3-8b.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./MistralLarge.json                                                  |
+| **Defined in**            | file:./Llamma3-8b.json                                                    |
 
 | Property                                                          | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
 | ----------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i7_implementation )                 | No      | const           | No         | -                                | MistralLarge                                                         |
+| - [implementation](#apu_anyOf_i7_implementation )                 | No      | const           | No         | -                                | Llamma3-8b                                                           |
 | - [max_num_function_calls](#apu_anyOf_i7_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i7_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i7_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i7_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i7_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i7_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i7_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i7_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -5722,9 +6542,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** MistralLarge
+**Description:** Llamma3-8b
 
-Specific value: `"MistralLarge"`
+Specific value: `"Llamma3-8b"`
 
 #### <a name="apu_anyOf_i7_max_num_function_calls"></a>6.8.2. Property `max_num_function_calls`
 
@@ -5800,14 +6620,15 @@ Specific value: `"MistralLarge"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.8.5.1. Property `AnthropicLLMUnit.json`
 
@@ -6030,23 +6851,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.8.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.8.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.8.5.3.1. Property `implementation`
 
@@ -6055,9 +6876,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.8.5.3.2. Property `model`
 
@@ -6068,7 +6889,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6135,7 +6956,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.8.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.8.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.8.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.8.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.8.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.8.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.8.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.8.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.8.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.8.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.8.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.8.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -6148,10 +7085,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.8.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.8.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -6161,7 +7098,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.8.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.8.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -6172,12 +7109,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.8.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.8.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -6188,7 +7125,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.8.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.8.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -6198,7 +7135,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.8.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.8.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -6208,9 +7145,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.8.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.8.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -6221,10 +7158,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.8.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.8.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -6233,14 +7170,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.8.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.8.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -6250,7 +7187,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.8.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.8.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -6288,7 +7225,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6328,7 +7265,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6375,7 +7312,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6445,22 +7382,22 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-### <a name="apu_anyOf_i8"></a>6.9. Property `MistralMedium.json`
+### <a name="apu_anyOf_i8"></a>6.9. Property `MistralLarge.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./MistralMedium.json                                                 |
+| **Defined in**            | file:./MistralLarge.json                                                  |
 
 | Property                                                          | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
 | ----------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i8_implementation )                 | No      | const           | No         | -                                | MistralMedium                                                        |
+| - [implementation](#apu_anyOf_i8_implementation )                 | No      | const           | No         | -                                | MistralLarge                                                         |
 | - [max_num_function_calls](#apu_anyOf_i8_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i8_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i8_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i8_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i8_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i8_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i8_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i8_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -6475,9 +7412,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** MistralMedium
+**Description:** MistralLarge
 
-Specific value: `"MistralMedium"`
+Specific value: `"MistralLarge"`
 
 #### <a name="apu_anyOf_i8_max_num_function_calls"></a>6.9.2. Property `max_num_function_calls`
 
@@ -6553,14 +7490,15 @@ Specific value: `"MistralMedium"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.9.5.1. Property `AnthropicLLMUnit.json`
 
@@ -6783,23 +7721,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.9.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.9.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.9.5.3.1. Property `implementation`
 
@@ -6808,9 +7746,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.9.5.3.2. Property `model`
 
@@ -6821,7 +7759,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6888,7 +7826,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.9.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.9.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.9.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.9.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.9.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.9.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.9.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.9.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.9.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.9.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.9.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.9.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -6901,10 +7955,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.9.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.9.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -6914,7 +7968,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.9.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.9.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -6925,12 +7979,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.9.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.9.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -6941,7 +7995,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.9.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.9.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -6951,7 +8005,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.9.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.9.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -6961,9 +8015,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.9.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.9.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -6974,10 +8028,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.9.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.9.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -6986,14 +8040,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.9.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.9.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -7003,7 +8057,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.9.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.9.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -7041,7 +8095,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7081,7 +8135,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7128,7 +8182,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7198,22 +8252,22 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-### <a name="apu_anyOf_i9"></a>6.10. Property `MistralSmall.json`
+### <a name="apu_anyOf_i9"></a>6.10. Property `MistralMedium.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./MistralSmall.json                                                  |
+| **Defined in**            | file:./MistralMedium.json                                                 |
 
 | Property                                                          | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
 | ----------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i9_implementation )                 | No      | const           | No         | -                                | MistralSmall                                                         |
+| - [implementation](#apu_anyOf_i9_implementation )                 | No      | const           | No         | -                                | MistralMedium                                                        |
 | - [max_num_function_calls](#apu_anyOf_i9_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i9_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i9_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i9_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i9_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i9_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i9_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i9_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -7228,9 +8282,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** MistralSmall
+**Description:** MistralMedium
 
-Specific value: `"MistralSmall"`
+Specific value: `"MistralMedium"`
 
 #### <a name="apu_anyOf_i9_max_num_function_calls"></a>6.10.2. Property `max_num_function_calls`
 
@@ -7306,14 +8360,15 @@ Specific value: `"MistralSmall"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.10.5.1. Property `AnthropicLLMUnit.json`
 
@@ -7536,23 +8591,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.10.5.3. Property `OpenAIGPT.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.10.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.10.5.3.1. Property `implementation`
 
@@ -7561,9 +8616,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.10.5.3.2. Property `model`
 
@@ -7574,7 +8629,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7641,7 +8696,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>6.10.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.10.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.10.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.10.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.10.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.10.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.10.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.10.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.10.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.10.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.10.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.10.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -7654,10 +8825,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>6.10.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.10.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -7667,7 +8838,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.10.5.4. Property `ToolCallLLMWrapper.json`
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.10.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -7678,12 +8849,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.10.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.10.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -7694,7 +8865,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>6.10.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.10.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -7704,7 +8875,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>6.10.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.10.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -7714,9 +8885,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.10.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.10.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -7727,10 +8898,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>6.10.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.10.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -7739,14 +8910,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>6.10.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.10.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -7756,7 +8927,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>6.10.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.10.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -7794,7 +8965,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7834,7 +9005,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7881,7 +9052,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7951,6 +9122,876 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+### <a name="apu_anyOf_i10"></a>6.11. Property `MistralSmall.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./MistralSmall.json                                                  |
+
+| Property                                                           | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
+| ------------------------------------------------------------------ | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
+| - [implementation](#apu_anyOf_i10_implementation )                 | No      | const           | No         | -                                | MistralSmall                                                         |
+| - [max_num_function_calls](#apu_anyOf_i10_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
+| - [io_unit](#apu_anyOf_i10_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
+| - [memory_unit](#apu_anyOf_i10_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
+| - [llm_unit](#apu_anyOf_i10_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [logic_units](#apu_anyOf_i10_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
+| - [audio_unit](#apu_anyOf_i10_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
+| - [image_unit](#apu_anyOf_i10_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
+| - [record_conversation](#apu_anyOf_i10_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
+| - [allow_tool_errors](#apu_anyOf_i10_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
+| - [document_processor](#apu_anyOf_i10_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+
+#### <a name="apu_anyOf_i10_implementation"></a>6.11.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** MistralSmall
+
+Specific value: `"MistralSmall"`
+
+#### <a name="apu_anyOf_i10_max_num_function_calls"></a>6.11.2. Property `max_num_function_calls`
+
+**Title:** Max Num Function Calls
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+| **Default**  | `10`      |
+
+**Description:** The maximum number of function calls to make in a single request.
+
+#### <a name="apu_anyOf_i10_io_unit"></a>6.11.3. Property `io_unit`
+
+**Title:** IOUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"IOUnit"`                                                                |
+
+| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_io_unit_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_io_unit_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i10_io_unit_implementation"></a>6.11.3.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i10_memory_unit"></a>6.11.4. Property `memory_unit`
+
+**Title:** MemoryUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"MemoryUnit"`                                                            |
+
+| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_memory_unit_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_memory_unit_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i10_memory_unit_implementation"></a>6.11.4.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i10_llm_unit"></a>6.11.5. Property `llm_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"LLMUnit"`                                                               |
+| **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
+
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+
+| Any of(Option)                                             |
+| ---------------------------------------------------------- |
+| [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
+| [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>6.11.5.1. Property `AnthropicLLMUnit.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./AnthropicLLMUnit.json                                              |
+
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i0_implementation ) | No      | const       | No         | -          | AnthropicLLMUnit   |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i0_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i0_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_args](#apu_anyOf_i0_llm_unit_anyOf_i0_client_args )       | No      | object      | No         | -          | Client Args        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_implementation"></a>6.11.5.1.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** AnthropicLLMUnit
+
+Specific value: `"AnthropicLLMUnit"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_model"></a>6.11.5.1.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"claude-3-opus-20240229"`                                                |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i0_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i0_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_model_implementation"></a>6.11.5.1.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_temperature"></a>6.11.5.1.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens"></a>6.11.5.1.4. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i0"></a>6.11.5.1.4.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i1"></a>6.11.5.1.4.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_client_args"></a>6.11.5.1.5. Property `client_args`
+
+**Title:** Client Args
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i1"></a>6.11.5.2. Property `MistralGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./MistralGPT.json                                                    |
+
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i1_implementation ) | No      | const       | No         | -          | MistralGPT         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i1_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i1_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i1_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_args](#apu_anyOf_i0_llm_unit_anyOf_i1_client_args )       | No      | object      | No         | -          | Client Args        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_implementation"></a>6.11.5.2.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** MistralGPT
+
+Specific value: `"MistralGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_model"></a>6.11.5.2.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"mistral-large-latest"`                                                  |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i1_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i1_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_model_implementation"></a>6.11.5.2.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_temperature"></a>6.11.5.2.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_force_json"></a>6.11.5.2.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens"></a>6.11.5.2.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i0"></a>6.11.5.2.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i1"></a>6.11.5.2.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_client_args"></a>6.11.5.2.6. Property `client_args`
+
+**Title:** Client Args
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>6.11.5.3. Property `OllamaLLMUnit.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
+
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>6.11.5.3.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OllamaLLMUnit
+
+Specific value: `"OllamaLLMUnit"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>6.11.5.3.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"llama3"`                                                                |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model_implementation"></a>6.11.5.3.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_temperature"></a>6.11.5.3.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_force_json"></a>6.11.5.3.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens"></a>6.11.5.3.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i0"></a>6.11.5.3.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i1"></a>6.11.5.3.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>6.11.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>6.11.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>6.11.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>6.11.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>6.11.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>6.11.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>6.11.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>6.11.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>6.11.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>6.11.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>6.11.5.4.6. Property `connection_handler`
+
+**Title:** OpenAIConnectionHandler Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"OpenAIConnectionHandler"`                                               |
+
+| Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>6.11.5.4.6.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>6.11.5.5. Property `ToolCallLLMWrapper.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./ToolCallLLMWrapper.json                                            |
+
+| Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
+| ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>6.11.5.5.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** ToolCallLLMWrapper
+
+Specific value: `"ToolCallLLMWrapper"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>6.11.5.5.2. Property `tool_message_prompt`
+
+**Title:** Tool Message Prompt
+
+|              |                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**     | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>6.11.5.5.3. Property `llm_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"LLMUnit"`                                                               |
+| **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
+
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>6.11.5.5.4. Property `model`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                       |
+| -------------------------------------------------------------------- |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>6.11.5.5.4.1. Property `LLMModel Reference`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
+
+| Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>6.11.5.5.4.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>6.11.5.5.4.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+#### <a name="apu_anyOf_i10_logic_units"></a>6.11.6. Property `logic_units`
+
+**Title:** Logic Units
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+| **Default**  | `[]`              |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                         | Description |
+| ------------------------------------------------------- | ----------- |
+| [LogicUnit Reference](#apu_anyOf_i10_logic_units_items) | -           |
+
+##### <a name="autogenerated_heading_16"></a>6.11.6.1. LogicUnit Reference
+
+**Title:** LogicUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
+
+| Property                                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_logic_units_items_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_logic_units_items_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_logic_units_items_implementation"></a>6.11.6.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i10_audio_unit"></a>6.11.7. Property `audio_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                            |
+| --------------------------------------------------------- |
+| [AudioUnit Reference](#apu_anyOf_i10_audio_unit_anyOf_i0) |
+| [item 1](#apu_anyOf_i10_audio_unit_anyOf_i1)              |
+
+##### <a name="apu_anyOf_i10_audio_unit_anyOf_i0"></a>6.11.7.1. Property `AudioUnit Reference`
+
+**Title:** AudioUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_audio_unit_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_audio_unit_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_audio_unit_anyOf_i0_implementation"></a>6.11.7.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i10_audio_unit_anyOf_i1"></a>6.11.7.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+#### <a name="apu_anyOf_i10_image_unit"></a>6.11.8. Property `image_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                            |
+| --------------------------------------------------------- |
+| [ImageUnit Reference](#apu_anyOf_i10_image_unit_anyOf_i0) |
+| [item 1](#apu_anyOf_i10_image_unit_anyOf_i1)              |
+
+##### <a name="apu_anyOf_i10_image_unit_anyOf_i0"></a>6.11.8.1. Property `ImageUnit Reference`
+
+**Title:** ImageUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_image_unit_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_image_unit_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_image_unit_anyOf_i0_implementation"></a>6.11.8.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i10_image_unit_anyOf_i1"></a>6.11.8.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+#### <a name="apu_anyOf_i10_record_conversation"></a>6.11.9. Property `record_conversation`
+
+**Title:** Record Conversation
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+#### <a name="apu_anyOf_i10_allow_tool_errors"></a>6.11.10. Property `allow_tool_errors`
+
+**Title:** Allow Tool Errors
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+#### <a name="apu_anyOf_i10_document_processor"></a>6.11.11. Property `document_processor`
+
+**Title:** DocumentProcessor Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"DocumentProcessor"`                                                     |
+
+| Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_document_processor_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_document_processor_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i10_document_processor_implementation"></a>6.11.11.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
 ## <a name="apus"></a>7. Property `apus`
 
 **Title:** Apus
@@ -7971,16 +10012,16 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Each item of this array must be | Description |
 | ------------------------------- | ----------- |
-| [NamedCPU](#apus_items)         | -           |
+| [NamedAPU](#apus_items)         | -           |
 
-### <a name="autogenerated_heading_16"></a>7.1. NamedCPU
+### <a name="autogenerated_heading_17"></a>7.1. NamedAPU
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | #/$defs/NamedCPU                                                          |
+| **Defined in**            | #/$defs/NamedAPU                                                          |
 
 | Property                                | Pattern | Type        | Deprecated | Definition                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------- | ------- | ----------- | ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -8044,9 +10085,10 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | [GPT3.5-turbo.json](#apu_anyOf_i4)      |
 | [GPT4-turbo.json](#apu_anyOf_i5)        |
 | [GPT4o.json](#apu_anyOf_i6)             |
-| [MistralLarge.json](#apu_anyOf_i7)      |
-| [MistralMedium.json](#apu_anyOf_i8)     |
-| [MistralSmall.json](#apu_anyOf_i9)      |
+| [Llamma3-8b.json](#apu_anyOf_i7)        |
+| [MistralLarge.json](#apu_anyOf_i8)      |
+| [MistralMedium.json](#apu_anyOf_i9)     |
+| [MistralSmall.json](#apu_anyOf_i10)     |
 
 ##### <a name="apu_anyOf_i0"></a>7.1.2.1. Property `ClaudeHaiku.json`
 
@@ -8063,7 +10105,7 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | - [max_num_function_calls](#apu_anyOf_i0_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i0_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i0_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i0_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i0_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i0_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i0_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i0_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -8156,14 +10198,15 @@ Specific value: `"ClaudeHaiku"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.1.5.1. Property `AnthropicLLMUnit.json`
 
@@ -8386,23 +10429,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.1.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.1.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.1.5.3.1. Property `implementation`
 
@@ -8411,9 +10454,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.1.5.3.2. Property `model`
 
@@ -8424,7 +10467,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -8491,7 +10534,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.1.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.1.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.1.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.1.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.1.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.1.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.1.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.1.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.1.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.1.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.1.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.1.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -8504,10 +10663,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.1.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.1.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -8517,7 +10676,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.1.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.1.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -8528,12 +10687,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.1.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.1.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -8544,7 +10703,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.1.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.1.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -8554,7 +10713,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.1.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.1.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -8564,9 +10723,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.1.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.1.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -8577,10 +10736,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.1.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.1.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -8589,14 +10748,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.1.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.1.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -8606,7 +10765,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.1.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.1.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -8635,7 +10794,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i0_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_17"></a>7.1.2.1.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_18"></a>7.1.2.1.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -8644,7 +10803,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -8684,7 +10843,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -8731,7 +10890,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -8816,7 +10975,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i1_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i1_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i1_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i1_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i1_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i1_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i1_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i1_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -8909,14 +11068,15 @@ Specific value: `"ClaudeOpus"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.2.5.1. Property `AnthropicLLMUnit.json`
 
@@ -9139,23 +11299,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.2.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.2.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.2.5.3.1. Property `implementation`
 
@@ -9164,9 +11324,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.2.5.3.2. Property `model`
 
@@ -9177,7 +11337,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -9244,7 +11404,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.2.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.2.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.2.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.2.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.2.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.2.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.2.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.2.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.2.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.2.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.2.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.2.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -9257,10 +11533,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.2.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.2.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -9270,7 +11546,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.2.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.2.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -9281,12 +11557,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.2.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.2.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -9297,7 +11573,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.2.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.2.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -9307,7 +11583,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.2.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.2.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -9317,9 +11593,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.2.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.2.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -9330,10 +11606,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.2.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.2.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -9342,14 +11618,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.2.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.2.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -9359,7 +11635,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.2.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.2.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -9388,7 +11664,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i1_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_18"></a>7.1.2.2.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_19"></a>7.1.2.2.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -9397,7 +11673,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -9437,7 +11713,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -9484,7 +11760,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -9569,7 +11845,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i2_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i2_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i2_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i2_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i2_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i2_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i2_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i2_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -9662,14 +11938,15 @@ Specific value: `"ClaudeSonnet"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.3.5.1. Property `AnthropicLLMUnit.json`
 
@@ -9892,23 +12169,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.3.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.3.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.3.5.3.1. Property `implementation`
 
@@ -9917,9 +12194,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.3.5.3.2. Property `model`
 
@@ -9930,7 +12207,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -9997,7 +12274,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.3.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.3.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.3.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.3.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.3.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.3.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.3.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.3.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.3.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.3.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.3.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.3.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -10010,10 +12403,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.3.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.3.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -10023,7 +12416,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.3.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.3.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -10034,12 +12427,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.3.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.3.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -10050,7 +12443,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.3.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.3.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -10060,7 +12453,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.3.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.3.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -10070,9 +12463,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.3.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.3.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -10083,10 +12476,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.3.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.3.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -10095,14 +12488,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.3.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.3.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -10112,7 +12505,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.3.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.3.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -10141,7 +12534,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i2_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_19"></a>7.1.2.3.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_20"></a>7.1.2.3.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -10150,7 +12543,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -10190,7 +12583,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -10237,7 +12630,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -10322,7 +12715,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i3_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i3_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i3_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i3_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i3_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i3_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i3_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i3_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -10415,14 +12808,15 @@ Specific value: `"ConversationalAPU"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.4.5.1. Property `AnthropicLLMUnit.json`
 
@@ -10645,23 +13039,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.4.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.4.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.4.5.3.1. Property `implementation`
 
@@ -10670,9 +13064,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.4.5.3.2. Property `model`
 
@@ -10683,7 +13077,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -10750,7 +13144,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.4.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.4.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.4.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.4.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.4.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.4.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.4.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.4.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.4.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.4.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.4.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.4.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -10763,10 +13273,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.4.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.4.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -10776,7 +13286,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.4.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.4.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -10787,12 +13297,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.4.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.4.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -10803,7 +13313,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.4.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.4.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -10813,7 +13323,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.4.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.4.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -10823,9 +13333,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.4.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.4.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -10836,10 +13346,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.4.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.4.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -10848,14 +13358,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.4.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.4.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -10865,7 +13375,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.4.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.4.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -10894,7 +13404,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i3_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_20"></a>7.1.2.4.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_21"></a>7.1.2.4.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -10903,7 +13413,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -10943,7 +13453,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -10990,7 +13500,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -11075,7 +13585,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i4_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i4_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i4_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i4_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i4_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i4_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i4_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i4_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -11168,14 +13678,15 @@ Specific value: `"GPT3.5-turbo"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.5.5.1. Property `AnthropicLLMUnit.json`
 
@@ -11398,23 +13909,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.5.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.5.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.5.5.3.1. Property `implementation`
 
@@ -11423,9 +13934,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.5.5.3.2. Property `model`
 
@@ -11436,7 +13947,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -11503,7 +14014,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.5.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.5.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.5.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.5.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.5.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.5.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.5.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.5.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.5.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.5.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.5.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.5.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -11516,10 +14143,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.5.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.5.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -11529,7 +14156,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.5.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.5.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -11540,12 +14167,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.5.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.5.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -11556,7 +14183,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.5.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.5.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -11566,7 +14193,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.5.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.5.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -11576,9 +14203,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.5.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.5.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -11589,10 +14216,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.5.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.5.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -11601,14 +14228,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.5.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.5.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -11618,7 +14245,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.5.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.5.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -11647,7 +14274,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i4_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_21"></a>7.1.2.5.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_22"></a>7.1.2.5.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -11656,7 +14283,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -11696,7 +14323,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -11743,7 +14370,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -11828,7 +14455,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i5_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i5_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i5_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i5_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i5_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i5_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i5_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i5_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -11921,14 +14548,15 @@ Specific value: `"GPT4-turbo"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.6.5.1. Property `AnthropicLLMUnit.json`
 
@@ -12151,23 +14779,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.6.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.6.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.6.5.3.1. Property `implementation`
 
@@ -12176,9 +14804,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.6.5.3.2. Property `model`
 
@@ -12189,7 +14817,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -12256,7 +14884,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.6.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.6.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.6.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.6.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.6.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.6.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.6.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.6.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.6.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.6.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.6.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.6.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -12269,10 +15013,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.6.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.6.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -12282,7 +15026,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.6.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.6.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -12293,12 +15037,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.6.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.6.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -12309,7 +15053,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.6.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.6.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -12319,7 +15063,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.6.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.6.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -12329,9 +15073,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.6.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.6.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -12342,10 +15086,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.6.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.6.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -12354,14 +15098,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.6.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.6.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -12371,7 +15115,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.6.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.6.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -12400,7 +15144,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i5_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_22"></a>7.1.2.6.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_23"></a>7.1.2.6.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -12409,7 +15153,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -12449,7 +15193,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -12496,7 +15240,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -12581,7 +15325,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [max_num_function_calls](#apu_anyOf_i6_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i6_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i6_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i6_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i6_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i6_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i6_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i6_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -12674,14 +15418,15 @@ Specific value: `"GPT4o"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.7.5.1. Property `AnthropicLLMUnit.json`
 
@@ -12904,23 +15649,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.7.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.7.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.7.5.3.1. Property `implementation`
 
@@ -12929,9 +15674,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.7.5.3.2. Property `model`
 
@@ -12942,7 +15687,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -13009,7 +15754,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.7.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.7.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.7.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.7.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.7.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.7.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.7.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.7.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.7.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.7.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.7.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.7.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -13022,10 +15883,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.7.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.7.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -13035,7 +15896,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.7.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.7.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -13046,12 +15907,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.7.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.7.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -13062,7 +15923,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.7.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.7.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -13072,7 +15933,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.7.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.7.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -13082,9 +15943,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.7.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.7.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -13095,10 +15956,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.7.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.7.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -13107,14 +15968,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.7.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.7.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -13124,7 +15985,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.7.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.7.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -13153,7 +16014,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i6_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_23"></a>7.1.2.7.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_24"></a>7.1.2.7.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -13162,7 +16023,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -13202,7 +16063,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -13249,7 +16110,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -13319,22 +16180,22 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i7"></a>7.1.2.8. Property `MistralLarge.json`
+##### <a name="apu_anyOf_i7"></a>7.1.2.8. Property `Llamma3-8b.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./MistralLarge.json                                                  |
+| **Defined in**            | file:./Llamma3-8b.json                                                    |
 
 | Property                                                          | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
 | ----------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i7_implementation )                 | No      | const           | No         | -                                | MistralLarge                                                         |
+| - [implementation](#apu_anyOf_i7_implementation )                 | No      | const           | No         | -                                | Llamma3-8b                                                           |
 | - [max_num_function_calls](#apu_anyOf_i7_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i7_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i7_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i7_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i7_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i7_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i7_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i7_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -13349,9 +16210,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** MistralLarge
+**Description:** Llamma3-8b
 
-Specific value: `"MistralLarge"`
+Specific value: `"Llamma3-8b"`
 
 ###### <a name="apu_anyOf_i7_max_num_function_calls"></a>7.1.2.8.2. Property `max_num_function_calls`
 
@@ -13427,14 +16288,15 @@ Specific value: `"MistralLarge"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.8.5.1. Property `AnthropicLLMUnit.json`
 
@@ -13657,23 +16519,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.8.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.8.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.8.5.3.1. Property `implementation`
 
@@ -13682,9 +16544,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.8.5.3.2. Property `model`
 
@@ -13695,7 +16557,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -13762,7 +16624,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.8.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.8.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.8.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.8.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.8.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.8.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.8.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.8.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.8.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.8.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.8.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.8.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -13775,10 +16753,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.8.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.8.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -13788,7 +16766,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.8.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.8.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -13799,12 +16777,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.8.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.8.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -13815,7 +16793,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.8.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.8.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -13825,7 +16803,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.8.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.8.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -13835,9 +16813,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.8.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.8.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -13848,10 +16826,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.8.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.8.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -13860,14 +16838,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.8.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.8.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -13877,7 +16855,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.8.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.8.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -13906,7 +16884,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i7_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_24"></a>7.1.2.8.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_25"></a>7.1.2.8.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -13915,7 +16893,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -13955,7 +16933,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -14002,7 +16980,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -14072,22 +17050,22 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i8"></a>7.1.2.9. Property `MistralMedium.json`
+##### <a name="apu_anyOf_i8"></a>7.1.2.9. Property `MistralLarge.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./MistralMedium.json                                                 |
+| **Defined in**            | file:./MistralLarge.json                                                  |
 
 | Property                                                          | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
 | ----------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i8_implementation )                 | No      | const           | No         | -                                | MistralMedium                                                        |
+| - [implementation](#apu_anyOf_i8_implementation )                 | No      | const           | No         | -                                | MistralLarge                                                         |
 | - [max_num_function_calls](#apu_anyOf_i8_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i8_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i8_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i8_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i8_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i8_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i8_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i8_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -14102,9 +17080,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** MistralMedium
+**Description:** MistralLarge
 
-Specific value: `"MistralMedium"`
+Specific value: `"MistralLarge"`
 
 ###### <a name="apu_anyOf_i8_max_num_function_calls"></a>7.1.2.9.2. Property `max_num_function_calls`
 
@@ -14180,14 +17158,15 @@ Specific value: `"MistralMedium"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.9.5.1. Property `AnthropicLLMUnit.json`
 
@@ -14410,23 +17389,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.9.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.9.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.9.5.3.1. Property `implementation`
 
@@ -14435,9 +17414,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.9.5.3.2. Property `model`
 
@@ -14448,7 +17427,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -14515,7 +17494,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.9.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.9.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.9.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.9.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.9.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.9.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.9.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.9.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.9.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.9.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.9.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.9.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -14528,10 +17623,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.9.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.9.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -14541,7 +17636,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.9.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.9.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -14552,12 +17647,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.9.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.9.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -14568,7 +17663,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.9.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.9.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -14578,7 +17673,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.9.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.9.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -14588,9 +17683,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.9.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.9.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -14601,10 +17696,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.9.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.9.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -14613,14 +17708,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.9.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.9.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -14630,7 +17725,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.9.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.9.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -14659,7 +17754,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i8_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_25"></a>7.1.2.9.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_26"></a>7.1.2.9.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -14668,7 +17763,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -14708,7 +17803,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -14755,7 +17850,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -14825,22 +17920,22 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-##### <a name="apu_anyOf_i9"></a>7.1.2.10. Property `MistralSmall.json`
+##### <a name="apu_anyOf_i9"></a>7.1.2.10. Property `MistralMedium.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./MistralSmall.json                                                  |
+| **Defined in**            | file:./MistralMedium.json                                                 |
 
 | Property                                                          | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
 | ----------------------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i9_implementation )                 | No      | const           | No         | -                                | MistralSmall                                                         |
+| - [implementation](#apu_anyOf_i9_implementation )                 | No      | const           | No         | -                                | MistralMedium                                                        |
 | - [max_num_function_calls](#apu_anyOf_i9_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#apu_anyOf_i9_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#apu_anyOf_i9_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#apu_anyOf_i9_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#apu_anyOf_i9_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [logic_units](#apu_anyOf_i9_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
 | - [audio_unit](#apu_anyOf_i9_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
 | - [image_unit](#apu_anyOf_i9_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
@@ -14855,9 +17950,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** MistralSmall
+**Description:** MistralMedium
 
-Specific value: `"MistralSmall"`
+Specific value: `"MistralMedium"`
 
 ###### <a name="apu_anyOf_i9_max_num_function_calls"></a>7.1.2.10.2. Property `max_num_function_calls`
 
@@ -14933,14 +18028,15 @@ Specific value: `"MistralSmall"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                             |
 | ---------------------------------------------------------- |
 | [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.10.5.1. Property `AnthropicLLMUnit.json`
 
@@ -15163,23 +18259,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.10.5.3. Property `OpenAIGPT.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.10.5.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.10.5.3.1. Property `implementation`
 
@@ -15188,9 +18284,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 ###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.10.5.3.2. Property `model`
 
@@ -15201,7 +18297,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -15268,7 +18364,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler"></a>7.1.2.10.5.3.6. Property `connection_handler`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.10.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.10.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.10.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.10.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.10.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.10.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.10.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.10.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.10.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.10.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.10.5.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -15281,10 +18493,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_connection_handler_implementation"></a>7.1.2.10.5.3.6.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.10.5.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -15294,7 +18506,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.10.5.4. Property `ToolCallLLMWrapper.json`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.10.5.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -15305,12 +18517,12 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
 | ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
-| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
-| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.10.5.4.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.10.5.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -15321,7 +18533,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"ToolCallLLMWrapper"`
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_tool_message_prompt"></a>7.1.2.10.5.4.2. Property `tool_message_prompt`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.10.5.5.2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -15331,7 +18543,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_llm_unit"></a>7.1.2.10.5.4.3. Property `llm_unit`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.10.5.5.3. Property `llm_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -15341,9 +18553,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.10.5.4.4. Property `model`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.10.5.5.4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -15354,10 +18566,10 @@ Specific value: `"ToolCallLLMWrapper"`
 
 | Any of(Option)                                                       |
 | -------------------------------------------------------------------- |
-| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0) |
-| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1)             |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0"></a>7.1.2.10.5.4.4.1. Property `LLMModel Reference`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.10.5.5.4.1. Property `LLMModel Reference`
 
 **Title:** LLMModel Reference
 
@@ -15366,14 +18578,14 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i0_implementation"></a>7.1.2.10.5.4.4.1.1. Property `implementation`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.10.5.5.4.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -15383,7 +18595,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_anyOf_i1"></a>7.1.2.10.5.4.4.2. Property `item 1`
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.10.5.5.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -15412,7 +18624,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | ------------------------------------------------------ | ----------- |
 | [LogicUnit Reference](#apu_anyOf_i9_logic_units_items) | -           |
 
-###### <a name="autogenerated_heading_26"></a>7.1.2.10.6.1. LogicUnit Reference
+###### <a name="autogenerated_heading_27"></a>7.1.2.10.6.1. LogicUnit Reference
 
 **Title:** LogicUnit Reference
 
@@ -15421,7 +18633,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.logic_unit.LogicUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -15461,7 +18673,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.audio_unit.AudioUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -15508,7 +18720,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.image_unit.ImageUnit"`                               |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -15569,6 +18781,876 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [](#apu_anyOf_i9_document_processor_additionalProperties )         | No      | object | No         | -          | -                 |
 
 ###### <a name="apu_anyOf_i9_document_processor_implementation"></a>7.1.2.10.11.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i10"></a>7.1.2.11. Property `MistralSmall.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./MistralSmall.json                                                  |
+
+| Property                                                           | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
+| ------------------------------------------------------------------ | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
+| - [implementation](#apu_anyOf_i10_implementation )                 | No      | const           | No         | -                                | MistralSmall                                                         |
+| - [max_num_function_calls](#apu_anyOf_i10_max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
+| - [io_unit](#apu_anyOf_i10_io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
+| - [memory_unit](#apu_anyOf_i10_memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
+| - [llm_unit](#apu_anyOf_i10_llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [logic_units](#apu_anyOf_i10_logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
+| - [audio_unit](#apu_anyOf_i10_audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
+| - [image_unit](#apu_anyOf_i10_image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
+| - [record_conversation](#apu_anyOf_i10_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
+| - [allow_tool_errors](#apu_anyOf_i10_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
+| - [document_processor](#apu_anyOf_i10_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+
+###### <a name="apu_anyOf_i10_implementation"></a>7.1.2.11.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** MistralSmall
+
+Specific value: `"MistralSmall"`
+
+###### <a name="apu_anyOf_i10_max_num_function_calls"></a>7.1.2.11.2. Property `max_num_function_calls`
+
+**Title:** Max Num Function Calls
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+| **Default**  | `10`      |
+
+**Description:** The maximum number of function calls to make in a single request.
+
+###### <a name="apu_anyOf_i10_io_unit"></a>7.1.2.11.3. Property `io_unit`
+
+**Title:** IOUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"IOUnit"`                                                                |
+
+| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_io_unit_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_io_unit_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_io_unit_implementation"></a>7.1.2.11.3.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i10_memory_unit"></a>7.1.2.11.4. Property `memory_unit`
+
+**Title:** MemoryUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"MemoryUnit"`                                                            |
+
+| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_memory_unit_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_memory_unit_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_memory_unit_implementation"></a>7.1.2.11.4.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i10_llm_unit"></a>7.1.2.11.5. Property `llm_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"LLMUnit"`                                                               |
+| **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
+
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+
+| Any of(Option)                                             |
+| ---------------------------------------------------------- |
+| [AnthropicLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i0)   |
+| [MistralGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i1)         |
+| [OllamaLLMUnit.json](#apu_anyOf_i0_llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#apu_anyOf_i0_llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#apu_anyOf_i0_llm_unit_anyOf_i4) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0"></a>7.1.2.11.5.1. Property `AnthropicLLMUnit.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./AnthropicLLMUnit.json                                              |
+
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i0_implementation ) | No      | const       | No         | -          | AnthropicLLMUnit   |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i0_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i0_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_args](#apu_anyOf_i0_llm_unit_anyOf_i0_client_args )       | No      | object      | No         | -          | Client Args        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_implementation"></a>7.1.2.11.5.1.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** AnthropicLLMUnit
+
+Specific value: `"AnthropicLLMUnit"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_model"></a>7.1.2.11.5.1.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"claude-3-opus-20240229"`                                                |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i0_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i0_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_model_implementation"></a>7.1.2.11.5.1.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_temperature"></a>7.1.2.11.5.1.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens"></a>7.1.2.11.5.1.4. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i0"></a>7.1.2.11.5.1.4.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_max_tokens_anyOf_i1"></a>7.1.2.11.5.1.4.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i0_client_args"></a>7.1.2.11.5.1.5. Property `client_args`
+
+**Title:** Client Args
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1"></a>7.1.2.11.5.2. Property `MistralGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./MistralGPT.json                                                    |
+
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i1_implementation ) | No      | const       | No         | -          | MistralGPT         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i1_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i1_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i1_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_args](#apu_anyOf_i0_llm_unit_anyOf_i1_client_args )       | No      | object      | No         | -          | Client Args        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_implementation"></a>7.1.2.11.5.2.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** MistralGPT
+
+Specific value: `"MistralGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_model"></a>7.1.2.11.5.2.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"mistral-large-latest"`                                                  |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i1_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i1_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_model_implementation"></a>7.1.2.11.5.2.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_temperature"></a>7.1.2.11.5.2.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_force_json"></a>7.1.2.11.5.2.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens"></a>7.1.2.11.5.2.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i0"></a>7.1.2.11.5.2.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_max_tokens_anyOf_i1"></a>7.1.2.11.5.2.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i1_client_args"></a>7.1.2.11.5.2.6. Property `client_args`
+
+**Title:** Client Args
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2"></a>7.1.2.11.5.3. Property `OllamaLLMUnit.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
+
+| Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#apu_anyOf_i0_llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_implementation"></a>7.1.2.11.5.3.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OllamaLLMUnit
+
+Specific value: `"OllamaLLMUnit"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model"></a>7.1.2.11.5.3.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"llama3"`                                                                |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i2_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i2_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_model_implementation"></a>7.1.2.11.5.3.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_temperature"></a>7.1.2.11.5.3.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_force_json"></a>7.1.2.11.5.3.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens"></a>7.1.2.11.5.3.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i0"></a>7.1.2.11.5.3.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_max_tokens_anyOf_i1"></a>7.1.2.11.5.3.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i2_client_options"></a>7.1.2.11.5.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3"></a>7.1.2.11.5.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                                    | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| --------------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#apu_anyOf_i0_llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#apu_anyOf_i0_llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_implementation"></a>7.1.2.11.5.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model"></a>7.1.2.11.5.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_model_implementation"></a>7.1.2.11.5.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_temperature"></a>7.1.2.11.5.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_force_json"></a>7.1.2.11.5.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens"></a>7.1.2.11.5.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                |
+| ------------------------------------------------------------- |
+| [item 0](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>7.1.2.11.5.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>7.1.2.11.5.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler"></a>7.1.2.11.5.4.6. Property `connection_handler`
+
+**Title:** OpenAIConnectionHandler Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"OpenAIConnectionHandler"`                                               |
+
+| Property                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i3_connection_handler_implementation"></a>7.1.2.11.5.4.6.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4"></a>7.1.2.11.5.5. Property `ToolCallLLMWrapper.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./ToolCallLLMWrapper.json                                            |
+
+| Property                                                                      | Pattern | Type        | Deprecated | Definition                                  | Title/Description                                                    |
+| ----------------------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                                           | ToolCallLLMWrapper                                                   |
+| - [tool_message_prompt](#apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                                           | Tool Message Prompt                                                  |
+| - [llm_unit](#apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#apu_anyOf_i0_llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [model](#apu_anyOf_i0_llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                                           | -                                                                    |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_implementation"></a>7.1.2.11.5.5.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** ToolCallLLMWrapper
+
+Specific value: `"ToolCallLLMWrapper"`
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_tool_message_prompt"></a>7.1.2.11.5.5.2. Property `tool_message_prompt`
+
+**Title:** Tool Message Prompt
+
+|              |                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**     | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_llm_unit"></a>7.1.2.11.5.5.3. Property `llm_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"LLMUnit"`                                                               |
+| **Same definition as**    | [llm_unit](#apu_anyOf_i0_llm_unit)                                        |
+
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model"></a>7.1.2.11.5.5.4. Property `model`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                                       |
+| -------------------------------------------------------------------- |
+| [LLMModel Reference](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1)             |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0"></a>7.1.2.11.5.5.4.1. Property `LLMModel Reference`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
+
+| Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i0_implementation"></a>7.1.2.11.5.5.4.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_llm_unit_anyOf_i4_model_anyOf_i1"></a>7.1.2.11.5.5.4.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i10_logic_units"></a>7.1.2.11.6. Property `logic_units`
+
+**Title:** Logic Units
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+| **Default**  | `[]`              |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                         | Description |
+| ------------------------------------------------------- | ----------- |
+| [LogicUnit Reference](#apu_anyOf_i10_logic_units_items) | -           |
+
+###### <a name="autogenerated_heading_28"></a>7.1.2.11.6.1. LogicUnit Reference
+
+**Title:** LogicUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.logic_unit.LogicUnit"`                               |
+
+| Property                                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_logic_units_items_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_logic_units_items_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_logic_units_items_implementation"></a>7.1.2.11.6.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i10_audio_unit"></a>7.1.2.11.7. Property `audio_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                            |
+| --------------------------------------------------------- |
+| [AudioUnit Reference](#apu_anyOf_i10_audio_unit_anyOf_i0) |
+| [item 1](#apu_anyOf_i10_audio_unit_anyOf_i1)              |
+
+###### <a name="apu_anyOf_i10_audio_unit_anyOf_i0"></a>7.1.2.11.7.1. Property `AudioUnit Reference`
+
+**Title:** AudioUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.audio_unit.AudioUnit"`                               |
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_audio_unit_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_audio_unit_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_audio_unit_anyOf_i0_implementation"></a>7.1.2.11.7.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i10_audio_unit_anyOf_i1"></a>7.1.2.11.7.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i10_image_unit"></a>7.1.2.11.8. Property `image_unit`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                            |
+| --------------------------------------------------------- |
+| [ImageUnit Reference](#apu_anyOf_i10_image_unit_anyOf_i0) |
+| [item 1](#apu_anyOf_i10_image_unit_anyOf_i1)              |
+
+###### <a name="apu_anyOf_i10_image_unit_anyOf_i0"></a>7.1.2.11.8.1. Property `ImageUnit Reference`
+
+**Title:** ImageUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"`                               |
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_image_unit_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_image_unit_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_image_unit_anyOf_i0_implementation"></a>7.1.2.11.8.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i10_image_unit_anyOf_i1"></a>7.1.2.11.8.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+###### <a name="apu_anyOf_i10_record_conversation"></a>7.1.2.11.9. Property `record_conversation`
+
+**Title:** Record Conversation
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i10_allow_tool_errors"></a>7.1.2.11.10. Property `allow_tool_errors`
+
+**Title:** Allow Tool Errors
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+###### <a name="apu_anyOf_i10_document_processor"></a>7.1.2.11.11. Property `document_processor`
+
+**Title:** DocumentProcessor Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"DocumentProcessor"`                                                     |
+
+| Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_document_processor_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_document_processor_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_document_processor_implementation"></a>7.1.2.11.11.1. Property `implementation`
 
 **Title:** Implementation
 

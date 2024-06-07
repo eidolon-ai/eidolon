@@ -137,6 +137,7 @@ export default defineConfig({
                 {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo/'},
                 {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo/'},
                 {label: 'GPT4o', link: '/docs/components/apu/gpt4o/'},
+                {label: 'Llamma3-8b', link: '/docs/components/apu/llamma3-8b/'},
                 {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge/'},
                 {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium/'},
                 {label: 'MistralSmall', link: '/docs/components/apu/mistralsmall/'},
@@ -147,6 +148,7 @@ export default defineConfig({
                 {label: 'Overview', link: '/docs/components/llmunit/overview/'},
                 {label: 'AnthropicLLMUnit', link: '/docs/components/llmunit/anthropicllmunit/'},
                 {label: 'MistralGPT', link: '/docs/components/llmunit/mistralgpt/'},
+                {label: 'OllamaLLMUnit', link: '/docs/components/llmunit/ollamallmunit/'},
                 {label: 'OpenAIGPT', link: '/docs/components/llmunit/openaigpt/'},
                 {label: 'ToolCallLLMWrapper', link: '/docs/components/llmunit/toolcallllmwrapper/'},
               ]
@@ -160,6 +162,7 @@ export default defineConfig({
                 {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo/'},
                 {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo/'},
                 {label: 'gpt-4o', link: '/docs/components/llmmodel/gpt-4o/'},
+                {label: 'llama3-8b', link: '/docs/components/llmmodel/llama3-8b/'},
                 {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest/'},
                 {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest/'},
                 {label: 'mistral-small-latest', link: '/docs/components/llmmodel/mistral-small-latest/'},
