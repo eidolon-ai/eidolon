@@ -1,12 +1,16 @@
 from abc import abstractmethod
 from typing import List, Dict, Optional, Sequence, Any, Iterable
 
+from opentelemetry import trace
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 from eidolon_ai_sdk.memory.vector_store import QueryItem, VectorStore
 from eidolon_ai_sdk.system.reference_model import Specable
+
+
+tracer = trace.get_tracer(__name__)
 
 
 class FileSystemVectorStoreSpec(BaseModel):
