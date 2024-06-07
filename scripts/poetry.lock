@@ -1339,12 +1339,13 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.22"
+version = "0.1.23"
 description = "Eidolon python client and CLI"
 optional = true
 python-versions = "<3.12,>=3.11"
 files = [
-    {file = "eidolon_ai_client-0.1.22-py3-none-any.whl", hash = "sha256:4616e91096bfc3318dfc55bac9b0ef64f4aaa365c97861ebb10421e6263e2540"},
+    {file = "eidolon_ai_client-0.1.23-py3-none-any.whl", hash = "sha256:e23a5b93c0d38069a03f423484f134e0974883c7de2a174c1cda25da4875a4b1"},
+    {file = "eidolon_ai_client-0.1.23.tar.gz", hash = "sha256:ba2975d034d1e0dce075b86dfe06837bc2af94d58a0b3c7374ad49e1ac7b2713"},
 ]
 
 [package.dependencies]
@@ -1377,7 +1378,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.59"
+version = "0.1.67"
 description = "An open source sgent service SDK"
 optional = true
 python-versions = ">=3.11,<3.12"
@@ -1392,7 +1393,7 @@ boto3 = "^1.34.74"
 boto3-stubs = {version = "^1.34.74", extras = ["essential"]}
 chromadb = "^0.4.18"
 dill = "^0.3.8"
-eidolon-ai-client = "^0.1.22"
+eidolon-ai-client = "^0.1.23"
 eidolon-ai-mistralai = "^0.1.6a"
 eidolon-ai-usage-client = "^0.1.6"
 esprima = "^4.0.1"
@@ -1406,12 +1407,14 @@ jsonschema = "^4.21.1"
 lxml = "^5.1.0"
 motor = "^3.3.2"
 numpy = "^1.26.3"
+ollama = "^0.2.0"
 openai = "^1.9.0"
 opentelemetry-instrumentation-fastapi = "^0.44b0"
 opentelemetry-instrumentation-logging = "^0.44b0"
 opentelemetry-sdk = "^1.23.0"
 pillow = "^10.2.0"
 playwright = "^1.43.0"
+posthog = "^3.5.0"
 pypdf = "^4.0.1"
 pytest-json-report = "^1.5.0"
 python-docx = "^1.1.0"
@@ -3027,6 +3030,20 @@ files = [
 rsa = ["cryptography (>=3.0.0)"]
 signals = ["blinker (>=1.4.0)"]
 signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
+
+[[package]]
+name = "ollama"
+version = "0.2.1"
+description = "The official Python client for Ollama."
+optional = true
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "ollama-0.2.1-py3-none-any.whl", hash = "sha256:b6e2414921c94f573a903d1069d682ba2fb2607070ea9e19ca4a7872f2a460ec"},
+    {file = "ollama-0.2.1.tar.gz", hash = "sha256:fa316baa9a81eac3beb4affb0a17deb3008fdd6ed05b123c26306cfbe4c349b6"},
+]
+
+[package.dependencies]
+httpx = ">=0.27.0,<0.28.0"
 
 [[package]]
 name = "onnxruntime"
