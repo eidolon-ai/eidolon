@@ -10,6 +10,7 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser,
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.util.async_wrapper import make_async
 
 tracer = trace.get_tracer(__name__)
 
@@ -39,9 +40,9 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
         with tracer.start_as_current_span("add file"):
             try:
                 with tracer.start_as_current_span("parsing"):
-                    parsedDocs = list(self.parser.parse(file_info.data))
+                    parsedDocs = await make_async(lambda d: list(self.parser.parse(d)))(file_info.data)
                 with tracer.start_as_current_span("transforming"):
-                    docs = list(self.splitter.transform_documents(parsedDocs))
+                    docs = await make_async(lambda pd: list(self.splitter.transform_documents(pd)))(parsedDocs)
                 with tracer.start_as_current_span("record symbolic"):
                     await AgentOS.symbolic_memory.insert_one(
                         collection_name,
