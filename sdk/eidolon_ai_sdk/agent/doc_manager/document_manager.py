@@ -3,6 +3,7 @@ import logging
 from typing import List
 
 import time
+from opentelemetry import trace
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.util.logger import logger
@@ -15,6 +16,9 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
 )
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+
+
+tracer = trace.get_tracer(__name__)
 
 
 class SearchResult(BaseModel):
@@ -45,6 +49,7 @@ class DocumentManagerSpec(BaseModel):
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
     loader: AnnotatedReference[DocumentLoader]
     doc_processor: AnnotatedReference[DocumentProcessor]
+    concurrency: int = Field(default=64, description="The number of concurrent tasks to run.")
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
@@ -74,25 +79,34 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             self.logger.info(f"Found {len(data)} files in symbolic memory")
 
             add_count = remove_count = replace_count = 0
-            tasks = []
-            async for change in self.loader.get_changes(data):
-                if isinstance(change, AddedFile):
-                    tasks.append(self.processor.addFile(self.collection_name, change.file_info))
-                    add_count += 1
-                elif isinstance(change, ModifiedFile):
-                    tasks.append(self.processor.replaceFile(self.collection_name, change.file_info))
-                    replace_count += 1
-                elif isinstance(change, RemovedFile):
-                    tasks.append(self.processor.removeFile(self.collection_name, change.file_path))
-                    remove_count += 1
-                else:
-                    logger.warning(f"Unknown change type {change}")
+            stack = []
+            with tracer.start_as_current_span("getting changes"):
+                async for change in self.loader.get_changes(data):
+                    if isinstance(change, AddedFile):
+                        stack.append(self.processor.addFile(self.collection_name, change.file_info))
+                        add_count += 1
+                    elif isinstance(change, ModifiedFile):
+                        stack.append(self.processor.replaceFile(self.collection_name, change.file_info))
+                        replace_count += 1
+                    elif isinstance(change, RemovedFile):
+                        stack.append(self.processor.removeFile(self.collection_name, change.file_path))
+                        remove_count += 1
+                    else:
+                        logger.warning(f"Unknown change type {change}")
             if add_count:
                 self.logger.info(f"Adding {add_count} files...")
             if replace_count:
                 self.logger.info(f"Replacing {replace_count} files...")
             if remove_count:
                 self.logger.info(f"Removing {remove_count} files...")
-            await asyncio.gather(*tasks)
+
+            with tracer.start_as_current_span("applying changes"):
+                tasks = set()
+                while stack or tasks:
+                    while len(tasks) < self.spec.concurrency and stack:
+                        tasks.add(asyncio.create_task(stack.pop()))
+                    done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+
             self.logger.info("Document Manager sync complete")
+
             self.last_reload = time.time()
