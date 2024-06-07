@@ -48,9 +48,11 @@ class S3FileMemory(BaseModel, FileMemoryBase):
     @make_async
     def read_file(self, file_path: str) -> bytes:
         with BytesIO() as buffer:
-            self.client().download_fileobj(file_path, buffer)
-            buffer.seek(0)
-            return buffer.read()
+            with tracer.start_as_current_span("downloading file"):
+                self.client().download_fileobj(file_path, buffer)
+            with tracer.start_as_current_span("writing to buffer"):
+                buffer.seek(0)
+                return buffer.read()
 
     @make_async
     def write_file(self, file_path: str, file_contents: bytes) -> None:

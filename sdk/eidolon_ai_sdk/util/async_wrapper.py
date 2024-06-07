@@ -37,10 +37,10 @@ class TracedThreadPoolExecutor(ThreadPoolExecutor):
 
 
 tracer = trace.get_tracer(__name__)
-executor = TracedThreadPoolExecutor(tracer, max_workers=multiprocessing.cpu_count())
+executor = TracedThreadPoolExecutor(tracer)
 
 
-def make_async(func):
+def make_async(func, exe=executor):
     """
     Decorator to make a sync function async and non-blocking by running them in a thread.
     """
@@ -49,6 +49,6 @@ def make_async(func):
     async def run(*args, **kwargs):
         loop = asyncio.get_event_loop()
         # use default ThreadPoolExecutor. Executor will be cached on event loop, so we don't want to manage it ourselves
-        return await loop.run_in_executor(executor=executor, func=(partial(func, *args, **kwargs)))
+        return await loop.run_in_executor(executor=exe, func=(partial(func, *args, **kwargs)))
 
     return run

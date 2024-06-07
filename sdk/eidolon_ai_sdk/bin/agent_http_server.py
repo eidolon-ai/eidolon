@@ -150,7 +150,10 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
                 resource, source = resource_or_tuple, None
             else:
                 resource, source = resource_or_tuple
-            AgentOS.register_resource(resource=resource, source=source)
+            try:
+                AgentOS.register_resource(resource=resource, source=source)
+            except Exception as e:
+                raise ValueError(f"Failed to load resource {resource.metadata.name} from {source}") from e
 
         logger.info(f"Building machine '{machine_name}'")
         machine_spec = AgentOS.get_resource(MachineResource, machine_name).spec

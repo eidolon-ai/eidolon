@@ -1,4 +1,5 @@
 import asyncio
+import time
 from abc import ABC, abstractmethod
 from typing import Sequence, Any, AsyncGenerator, Optional, List
 
@@ -6,6 +7,7 @@ from openai import AsyncOpenAI
 from opentelemetry import trace
 from pydantic import BaseModel, Field
 
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
@@ -98,6 +100,4 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
                 input=text,
                 model=self.spec.model,  # Choose the model as per your requirement
             )
-
-            embedding_vector = response.data[0].embedding
-            return embedding_vector
+            return response.data[0].embedding

@@ -69,13 +69,11 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
                     yield change_record
 
     async def _process_new_file(self, file):
-        with tracer.start_as_current_span("process new file"):
+        with tracer.start_as_current_span("reading file"):
             file_path = file.file_path
-            with tracer.start_as_current_span("reading from memory"):
-                data = await self.memory.read_file(file_path)
+            data = await self.memory.read_file(file_path)
             file.extra["loader_hash"] = hash_file(data)
-            with tracer.start_as_current_span("building response object"):
-                return AddedFile(FileInfo(file_path, file.model_dump(), DataBlob.from_bytes(data, path=file_path)))
+            return AddedFile(FileInfo(file_path, file.model_dump(), DataBlob.from_bytes(data, path=file_path)))
 
     async def _process_existing_file(self, file, saved_metadata):
         with tracer.start_as_current_span("process existing file"):

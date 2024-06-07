@@ -1,4 +1,6 @@
 import logging
+import os
+from concurrent.futures import ProcessPoolExecutor
 
 from opentelemetry import trace
 from pydantic import BaseModel
@@ -10,6 +12,7 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser,
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.util.async_wrapper import make_async
 
 tracer = trace.get_tracer("document processor")
 
@@ -39,9 +42,9 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
         with tracer.start_as_current_span("add file"):
             try:
                 with tracer.start_as_current_span("parse"):
-                    parsedDocs = list(self.parser.parse(file_info.data))
+                    parsedDocs = await make_async(lambda d: list(self.parser.parse(d)))(file_info.data)
                 with tracer.start_as_current_span("transform"):
-                    docs = list(self.splitter.transform_documents(parsedDocs))
+                    docs = await make_async(lambda pd: list(self.splitter.transform_documents(pd)))(parsedDocs)
                 with tracer.start_as_current_span("record semantic"):
                     await AgentOS.symbolic_memory.insert_one(
                         collection_name,
@@ -57,11 +60,11 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
                 with tracer.start_as_current_span("record similarity"):
                     await AgentOS.similarity_memory.add(collection_name, docs)
                 self.logger.debug(f"Added file {file_info.path}")
-            except Exception:
+            except Exception as e:
                 if self.logger.isEnabledFor(logging.DEBUG):
                     self.logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
                 else:
-                    self.logger.warning(f"Failed to parse file {file_info.path}")
+                    self.logger.warning(f"Failed to parse file {file_info.path} ({e})")
 
     async def removeFile(self, collection_name: str, path: str):
         with tracer.start_as_current_span("remove file"):
