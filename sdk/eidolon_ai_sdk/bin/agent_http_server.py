@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import logging.config
 import pathlib
 from collections import deque
@@ -71,6 +72,7 @@ def parse_args():
     parser.add_argument(
         "yaml_path",
         type=str,
+        nargs='+',
         help="Path to a directory containing YAML files describing the agent machine to start.",
     )
     parser.add_argument(
@@ -205,6 +207,8 @@ def main():
         PosthogConfig.enabled = False
     log_level_str = "debug" if args.debug else "info"
     log_level = logging.DEBUG if args.debug else logging.INFO
+    loop = asyncio.get_event_loop()
+    loop.set_debug(True)
 
     _app = start_app(
         lambda app: start_os(

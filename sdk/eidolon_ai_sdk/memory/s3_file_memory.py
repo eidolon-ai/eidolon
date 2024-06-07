@@ -4,11 +4,15 @@ from io import BytesIO
 from typing import AsyncIterable, Optional
 
 import boto3
+from opentelemetry import trace
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
 from eidolon_ai_sdk.util.async_wrapper import make_async
+
+
+tracer = trace.get_tracer("s3 file memory")
 
 
 class S3FileMemory(BaseModel, FileMemoryBase):
@@ -71,17 +75,19 @@ class S3FileMemory(BaseModel, FileMemoryBase):
         return False
 
     async def glob(self, pattern: str) -> AsyncIterable[FileMetadata]:
-        loop = asyncio.get_event_loop()
-        pages = self.client().objects.pages()
+        with tracer.start_as_current_span("getting client"):
+            loop = asyncio.get_event_loop()
+            pages = self.client().objects.pages()
 
-        def get_next():
+        def next_page():
             try:
                 return next(pages)
             except StopIteration:  # executor will not propagate stop iteration
                 return None
 
         while True:
-            page = await loop.run_in_executor(None, get_next)
+            with tracer.start_as_current_span("getting page"):
+                page = await loop.run_in_executor(None, next_page)
             if page is None:  # explicit none check since page could potentially be empty
                 break
             for o in page:

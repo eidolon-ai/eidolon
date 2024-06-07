@@ -1,3 +1,7 @@
+from opentelemetry import trace
+
+from eidolon_ai_sdk.util.async_wrapper import make_async
+
 try:
     __import__("pysqlite3")
     import sys
@@ -19,6 +23,8 @@ from eidolon_ai_sdk.memory.vector_store import QueryItem
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
 
+
+tracer = trace.get_tracer("chroma")
 
 class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
     url: str = Field(
@@ -86,6 +92,7 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
     async def stop(self):
         pass
 
+    @tracer.start_as_current_span("getting_collection")
     def _get_collection(self, name: str) -> Collection:
         if not self.client:
             self.connect()
@@ -95,22 +102,27 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         except BaseException as e:
             raise RuntimeError(f"Failed to get collection {name}") from e
 
-    async def add_embedding(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
+    @make_async
+    def add_embedding(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
         collection = self._get_collection(name=collection)
         doc_ids = [doc.id for doc in docs]
         embeddings = [doc.embedding for doc in docs]
         metadata = [doc.metadata for doc in docs]
-        collection.upsert(embeddings=embeddings, ids=doc_ids, metadatas=metadata, **add_kwargs)
+        with tracer.start_as_current_span("upsert"):
+            collection.upsert(embeddings=embeddings, ids=doc_ids, metadatas=metadata, **add_kwargs)
 
-    async def delete_embedding(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
+    @make_async
+    def delete_embedding(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
         collection = self._get_collection(name=collection)
         collection.delete(ids=doc_ids, **delete_kwargs)
 
-    async def get_metadata(self, collection: str, doc_ids: List[str]):
+    @make_async
+    def get_metadata(self, collection: str, doc_ids: List[str]):
         collection = self._get_collection(name=collection)
         return collection.get(ids=doc_ids, include=["metadatas"])["metadatas"]
 
-    async def query_embedding(
+    @make_async
+    def query_embedding(
         self,
         collection: str,
         query: List[float],

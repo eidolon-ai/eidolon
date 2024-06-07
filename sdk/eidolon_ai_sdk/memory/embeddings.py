@@ -1,13 +1,16 @@
+import asyncio
 from abc import ABC, abstractmethod
 from typing import Sequence, Any, AsyncGenerator, Optional, List
 
 from openai import AsyncOpenAI
+from opentelemetry import trace
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 
+tracer = trace.get_tracer("document processor")
 
 class EmbeddingSpec(BaseModel):
     pass
@@ -38,13 +41,22 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
         Returns:
             A sequence of EmbeddedDocuments.
         """
-        for document in documents:
-            text = await self.embed_text(document.page_content, **kwargs)
-            yield EmbeddedDocument(
-                id=document.id,
-                embedding=text,
-                metadata=document.metadata,
-            )
+        with tracer.start_as_current_span("embed document"):
+            tasks = []
+            for document in documents:
+                tasks.append(asyncio.create_task(self._embed(document, kwargs)))
+            while tasks:
+                done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                for task in done:
+                    yield task.result()
+
+    async def _embed(self, document, kwargs):
+        text = await self.embed_text(document.page_content, **kwargs)
+        return EmbeddedDocument(
+            id=document.id,
+            embedding=text,
+            metadata=document.metadata,
+        )
 
     async def start(self):
         pass
@@ -81,10 +93,11 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
         self.llm = None
 
     async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
-        response = await self.llm.embeddings.create(
-            input=text,
-            model=self.spec.model,  # Choose the model as per your requirement
-        )
+        with tracer.start_as_current_span("openai embed text"):
+            response = await self.llm.embeddings.create(
+                input=text,
+                model=self.spec.model,  # Choose the model as per your requirement
+            )
 
-        embedding_vector = response.data[0].embedding
-        return embedding_vector
+            embedding_vector = response.data[0].embedding
+            return embedding_vector

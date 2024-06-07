@@ -7,10 +7,14 @@ from dataclasses import dataclass
 from io import BufferedReader, BytesIO, IOBase
 from typing import Union, Optional, Generator, Iterable
 
+from opentelemetry import trace
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.memory.document import Document
 from eidolon_ai_sdk.system.reference_model import Specable
+
+
+tracer = trace.get_tracer("base parser")
 
 
 @dataclass

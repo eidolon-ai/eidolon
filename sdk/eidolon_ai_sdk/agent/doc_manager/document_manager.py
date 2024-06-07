@@ -3,6 +3,7 @@ import logging
 from typing import List
 
 import time
+from opentelemetry import trace
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.util.logger import logger
@@ -15,6 +16,9 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
 )
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+
+
+tracer = trace.get_tracer("document manager")
 
 
 class SearchResult(BaseModel):
@@ -62,37 +66,41 @@ class DocumentManager(Specable[DocumentManagerSpec]):
     async def list_files(self):
         return self.loader.list_files()
 
+    @tracer.start_as_current_span("syncing docs")
     async def sync_docs(self, force: bool = False):
         if force or self.last_reload + self.spec.recheck_frequency < time.time():
             self.logger.info(f"Syncing files from {self.spec.name}")
 
             self.last_reload = time.time()
             data = {}
-            async for file in AgentOS.symbolic_memory.find(self.collection_name, {}):
-                data[file["file_path"]] = file["data"]
+            with tracer.start_as_current_span("retrieve existing files"):
+                async for file in AgentOS.symbolic_memory.find(self.collection_name, {}):
+                    data[file["file_path"]] = file["data"]
 
             self.logger.info(f"Found {len(data)} files in symbolic memory")
 
             add_count = remove_count = replace_count = 0
             tasks = []
-            async for change in self.loader.get_changes(data):
-                if isinstance(change, AddedFile):
-                    tasks.append(self.processor.addFile(self.collection_name, change.file_info))
-                    add_count += 1
-                elif isinstance(change, ModifiedFile):
-                    tasks.append(self.processor.replaceFile(self.collection_name, change.file_info))
-                    replace_count += 1
-                elif isinstance(change, RemovedFile):
-                    tasks.append(self.processor.removeFile(self.collection_name, change.file_path))
-                    remove_count += 1
-                else:
-                    logger.warning(f"Unknown change type {change}")
+            with tracer.start_as_current_span("get changes"):
+                async for change in self.loader.get_changes(data):
+                    if isinstance(change, AddedFile):
+                        tasks.append(asyncio.create_task(self.processor.addFile(self.collection_name, change.file_info)))
+                        add_count += 1
+                    elif isinstance(change, ModifiedFile):
+                        tasks.append(asyncio.create_task(self.processor.replaceFile(self.collection_name, change.file_info)))
+                        replace_count += 1
+                    elif isinstance(change, RemovedFile):
+                        tasks.append(asyncio.create_task(self.processor.removeFile(self.collection_name, change.file_path)))
+                        remove_count += 1
+                    else:
+                        logger.warning(f"Unknown change type {change}")
             if add_count:
                 self.logger.info(f"Adding {add_count} files...")
             if replace_count:
                 self.logger.info(f"Replacing {replace_count} files...")
             if remove_count:
                 self.logger.info(f"Removing {remove_count} files...")
-            await asyncio.gather(*tasks)
+            with tracer.start_as_current_span("wait for changes to complete"):
+                await asyncio.gather(*tasks)
             self.logger.info("Document Manager sync complete")
             self.last_reload = time.time()
