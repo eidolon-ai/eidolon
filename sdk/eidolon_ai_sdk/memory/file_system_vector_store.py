@@ -61,11 +61,12 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         async for embeddedDoc in AgentOS.similarity_memory.embed(docs):
             embeddedDocs.append(embeddedDoc)
         await self.add_embedding(collection, embeddedDocs)
-        for doc in docs:
-            await AgentOS.file_memory.write_file(
-                self.spec.root_document_directory + "/" + collection + "/" + doc.id,
-                doc.page_content.encode(),
-            )
+        with tracer.start_as_current_span("add documents"):
+            for doc in docs:
+                await AgentOS.file_memory.write_file(
+                    self.spec.root_document_directory + "/" + collection + "/" + doc.id,
+                    doc.page_content.encode(),
+                )
 
     async def delete(self, collection: str, doc_ids: List[str]):
         await self.delete_embedding(collection, doc_ids)
