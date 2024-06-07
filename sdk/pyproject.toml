@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-ai-sdk"
-version = "0.1.67"
+version = "0.1.68"
 description = "An open source sgent service SDK"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -15,7 +15,7 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "sdk"
-last-update-hash = "2cbb4928928c8285f36a04f7b5ec4d59eeb6995e"
+last-update-hash = "79aa32315ac1a2206a0ff323c782eb44789a5851"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
@@ -46,7 +46,6 @@ chromadb = "^0.4.18"
 spacy = "^3.7.2"
 lxml = "^5.1.0"
 filetype = "^1.2.0"
-pypdf = "^4.0.1"
 esprima = "^4.0.1"
 unstructured = "^0.12.3"
 python-multipart = ">=0.0.6,<0.0.8"
@@ -67,6 +66,7 @@ boto3 = "^1.34.74"
 azure-identity = "^1.16.0"
 playwright = "^1.43.0"
 posthog = "^3.5.0"
+ollama = "^0.2.0"
 pymupdf = "^1.24.5"
 
 [tool.pytest.ini_options]
@@ -87,6 +87,7 @@ ruff = "^0.1.7"
 pytest-recording = "^0.13.1"
 pytest-asyncio = "^0.23.4"
 pdoc = "^14.4.0"
+vcrpy = "^6.0.1"
 
 [tool.poetry.group.dev.dependencies.eidolon-ai-client]
 path = "../client/python"

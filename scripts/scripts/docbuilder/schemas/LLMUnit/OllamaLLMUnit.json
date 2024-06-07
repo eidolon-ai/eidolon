@@ -1,0 +1,50 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "OllamaLLMUnit",
+      "description": "OllamaLLMUnit"
+    },
+    "model": {
+      "additionalProperties": true,
+      "default": "llama3",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "LLMModel Reference",
+      "type": "object"
+    },
+    "temperature": {
+      "default": 0.3,
+      "title": "Temperature",
+      "type": "number"
+    },
+    "force_json": {
+      "default": true,
+      "title": "Force Json",
+      "type": "boolean"
+    },
+    "max_tokens": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Tokens"
+    },
+    "client_options": {
+      "default": {},
+      "title": "Client Options",
+      "type": "object"
+    }
+  },
+  "title": "OllamaLLMUnit",
+  "type": "object"
+}

@@ -7,7 +7,7 @@ description: Description of ToolCallLLMWrapper component
 | ---------------------------------------------- | ------- | ----------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
 | - [implementation](#implementation )           | No      | const       | No         | -                                | ToolCallLLMWrapper                                                   |
 | - [tool_message_prompt](#tool_message_prompt ) | No      | string      | No         | -                                | Tool Message Prompt                                                  |
-| - [llm_unit](#llm_unit )                       | No      | object      | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components |
+| - [llm_unit](#llm_unit )                       | No      | object      | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
 | - [model](#model )                             | No      | Combination | No         | -                                | -                                                                    |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -41,14 +41,15 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.cpu.llm_unit.LLMUnit'> components
+**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
 
 | Any of(Option)                                |
 | --------------------------------------------- |
 | [AnthropicLLMUnit.json](#llm_unit_anyOf_i0)   |
 | [MistralGPT.json](#llm_unit_anyOf_i1)         |
-| [OpenAIGPT.json](#llm_unit_anyOf_i2)          |
-| [ToolCallLLMWrapper.json](#llm_unit_anyOf_i3) |
+| [OllamaLLMUnit.json](#llm_unit_anyOf_i2)      |
+| [OpenAIGPT.json](#llm_unit_anyOf_i3)          |
+| [ToolCallLLMWrapper.json](#llm_unit_anyOf_i4) |
 
 ### <a name="llm_unit_anyOf_i0"></a>3.1. Property `AnthropicLLMUnit.json`
 
@@ -271,23 +272,23 @@ Specific value: `"MistralGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-### <a name="llm_unit_anyOf_i2"></a>3.3. Property `OpenAIGPT.json`
+### <a name="llm_unit_anyOf_i2"></a>3.3. Property `OllamaLLMUnit.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:./OpenAIGPT.json                                                     |
+| **Defined in**            | file:./OllamaLLMUnit.json                                                 |
 
-| Property                                                       | Pattern | Type        | Deprecated | Definition | Title/Description                 |
-| -------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
-| - [implementation](#llm_unit_anyOf_i2_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
-| - [model](#llm_unit_anyOf_i2_model )                           | No      | object      | No         | -          | LLMModel Reference                |
-| - [temperature](#llm_unit_anyOf_i2_temperature )               | No      | number      | No         | -          | Temperature                       |
-| - [force_json](#llm_unit_anyOf_i2_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
-| - [max_tokens](#llm_unit_anyOf_i2_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
-| - [connection_handler](#llm_unit_anyOf_i2_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+| Property                                               | Pattern | Type        | Deprecated | Definition | Title/Description  |
+| ------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | ------------------ |
+| - [implementation](#llm_unit_anyOf_i2_implementation ) | No      | const       | No         | -          | OllamaLLMUnit      |
+| - [model](#llm_unit_anyOf_i2_model )                   | No      | object      | No         | -          | LLMModel Reference |
+| - [temperature](#llm_unit_anyOf_i2_temperature )       | No      | number      | No         | -          | Temperature        |
+| - [force_json](#llm_unit_anyOf_i2_force_json )         | No      | boolean     | No         | -          | Force Json         |
+| - [max_tokens](#llm_unit_anyOf_i2_max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
+| - [client_options](#llm_unit_anyOf_i2_client_options ) | No      | object      | No         | -          | Client Options     |
 
 #### <a name="llm_unit_anyOf_i2_implementation"></a>3.3.1. Property `implementation`
 
@@ -296,9 +297,9 @@ Specific value: `"MistralGPT"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** OpenAIGPT
+**Description:** OllamaLLMUnit
 
-Specific value: `"OpenAIGPT"`
+Specific value: `"OllamaLLMUnit"`
 
 #### <a name="llm_unit_anyOf_i2_model"></a>3.3.2. Property `model`
 
@@ -309,7 +310,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"gpt-4-turbo"`                                                           |
+| **Default**               | `"llama3"`                                                                |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -376,7 +377,123 @@ Specific value: `"OpenAIGPT"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-#### <a name="llm_unit_anyOf_i2_connection_handler"></a>3.3.6. Property `connection_handler`
+#### <a name="llm_unit_anyOf_i2_client_options"></a>3.3.6. Property `client_options`
+
+**Title:** Client Options
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+### <a name="llm_unit_anyOf_i3"></a>3.4. Property `OpenAIGPT.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./OpenAIGPT.json                                                     |
+
+| Property                                                       | Pattern | Type        | Deprecated | Definition | Title/Description                 |
+| -------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------------------- |
+| - [implementation](#llm_unit_anyOf_i3_implementation )         | No      | const       | No         | -          | OpenAIGPT                         |
+| - [model](#llm_unit_anyOf_i3_model )                           | No      | object      | No         | -          | LLMModel Reference                |
+| - [temperature](#llm_unit_anyOf_i3_temperature )               | No      | number      | No         | -          | Temperature                       |
+| - [force_json](#llm_unit_anyOf_i3_force_json )                 | No      | boolean     | No         | -          | Force Json                        |
+| - [max_tokens](#llm_unit_anyOf_i3_max_tokens )                 | No      | Combination | No         | -          | Max Tokens                        |
+| - [connection_handler](#llm_unit_anyOf_i3_connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler Reference |
+
+#### <a name="llm_unit_anyOf_i3_implementation"></a>3.4.1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** OpenAIGPT
+
+Specific value: `"OpenAIGPT"`
+
+#### <a name="llm_unit_anyOf_i3_model"></a>3.4.2. Property `model`
+
+**Title:** LLMModel Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"gpt-4-turbo"`                                                           |
+
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#llm_unit_anyOf_i3_model_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#llm_unit_anyOf_i3_model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="llm_unit_anyOf_i3_model_implementation"></a>3.4.2.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="llm_unit_anyOf_i3_temperature"></a>3.4.3. Property `temperature`
+
+**Title:** Temperature
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+| **Default**  | `0.3`    |
+
+#### <a name="llm_unit_anyOf_i3_force_json"></a>3.4.4. Property `force_json`
+
+**Title:** Force Json
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `true`    |
+
+#### <a name="llm_unit_anyOf_i3_max_tokens"></a>3.4.5. Property `max_tokens`
+
+**Title:** Max Tokens
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                   |
+| ------------------------------------------------ |
+| [item 0](#llm_unit_anyOf_i3_max_tokens_anyOf_i0) |
+| [item 1](#llm_unit_anyOf_i3_max_tokens_anyOf_i1) |
+
+##### <a name="llm_unit_anyOf_i3_max_tokens_anyOf_i0"></a>3.4.5.1. Property `item 0`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+##### <a name="llm_unit_anyOf_i3_max_tokens_anyOf_i1"></a>3.4.5.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+#### <a name="llm_unit_anyOf_i3_connection_handler"></a>3.4.6. Property `connection_handler`
 
 **Title:** OpenAIConnectionHandler Reference
 
@@ -389,10 +506,10 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#llm_unit_anyOf_i2_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#llm_unit_anyOf_i2_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
+| - [implementation](#llm_unit_anyOf_i3_connection_handler_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#llm_unit_anyOf_i3_connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
 
-##### <a name="llm_unit_anyOf_i2_connection_handler_implementation"></a>3.3.6.1. Property `implementation`
+##### <a name="llm_unit_anyOf_i3_connection_handler_implementation"></a>3.4.6.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -402,7 +519,7 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-### <a name="llm_unit_anyOf_i3"></a>3.4. Property `ToolCallLLMWrapper.json`
+### <a name="llm_unit_anyOf_i4"></a>3.5. Property `ToolCallLLMWrapper.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -434,7 +551,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"`                                  |
+| **Default**               | `"eidolon_ai_sdk.apu.llm_unit.LLMModel"`                                  |
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
