@@ -57,20 +57,23 @@ def extract_from_images_with_rapidocr(
 
 class PyPDFParserSpec(DocumentParserSpec):
     password: Optional[Union[str, bytes]] = None
-    extract_images: bool = False
 
 
 class PyPDFParser(DocumentParser, Specable[PyPDFParserSpec]):
     def __init__(self, spec: PyPDFParserSpec):
         super().__init__(spec)
         self.password = spec.password
-        self.extract_images = spec.extract_images
 
     def parse(self, blob: DataBlob) -> Iterable[Document]:
-        data = blob.data
-        if not isinstance(blob.data, bytes):
-            data = blob.as_bytes()
-        pdf_reader = pymupdf.open(stream=data)
+        if isinstance(blob.data, bytes):
+            pdf_reader = pymupdf.open(stream=blob.data)
+        elif not blob.data and blob.path:
+            pdf_reader = pymupdf.open(blob.path)
+        else:
+            with blob.as_bytes() as data:
+                pdf_reader = pymupdf.open(stream=data.read())
+        if self.password:
+            pdf_reader.authenticate(self.password)
         yield from [
             Document(
                 page_content=page.get_text(),
