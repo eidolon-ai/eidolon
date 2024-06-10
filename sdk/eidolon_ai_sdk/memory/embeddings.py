@@ -1,12 +1,16 @@
+import asyncio
 from abc import ABC, abstractmethod
 from typing import Sequence, Any, AsyncGenerator, Optional, List
 
 from openai import AsyncOpenAI
+from opentelemetry import trace
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
+
+tracer = trace.get_tracer("memory wrapper loader")
 
 
 class EmbeddingSpec(BaseModel):
@@ -16,7 +20,7 @@ class EmbeddingSpec(BaseModel):
 class Embedding(ABC, Specable[EmbeddingSpec]):
     def __init__(self, spec: EmbeddingSpec):
         super().__init__(spec)
-        self.spec = spec
+        self.spec: EmbeddingSpec = spec
 
     @abstractmethod
     async def embed_text(self, text: str, **kwargs: Any) -> List[float]:
@@ -38,13 +42,23 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
         Returns:
             A sequence of EmbeddedDocuments.
         """
-        for document in documents:
+        with tracer.start_as_current_span("embed documents"):
+            tasks = set()
+            for doc in documents:
+                tasks.add(asyncio.create_task(self._embed(doc, kwargs)))
+            while tasks:
+                done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                for task in done:
+                    yield task.result()
+
+    async def _embed(self, document, kwargs):
+        with tracer.start_as_current_span("embed text"):
             text = await self.embed_text(document.page_content, **kwargs)
-            yield EmbeddedDocument(
+            return EmbeddedDocument(
                 id=document.id,
                 embedding=text,
                 metadata=document.metadata,
-            )
+        )
 
     async def start(self):
         pass

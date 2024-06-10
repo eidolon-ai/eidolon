@@ -277,7 +277,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             path = metadata.get("path") or metadata.get("filename") or None
             mimetype = metadata.get("mimetype")
             message = f"The file {path} was uploaded. The text of the file is:\n"
-            for docs in self.document_processor.parse(data, mimetype, path):
+            for docs in await self.document_processor.parse(data, mimetype, path):
                 message += docs.page_content + "\n"
 
             parts.append(UserMessageText(text=message))
