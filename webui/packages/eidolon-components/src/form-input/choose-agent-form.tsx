@@ -2,8 +2,8 @@
 
 import {FormControl, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
-import {createProcess} from "../client-api-helpers/process-helper";
-import {getAgents} from "../client-api-helpers/machine-helper";
+import {createProcess} from "../client-api-helpers/process-helper.ts";
+import {getAgents} from "../client-api-helpers/machine-helper.ts";
 
 export interface ChooseAgentFormProps {
   machineUrl: string,

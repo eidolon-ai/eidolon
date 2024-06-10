@@ -5,9 +5,13 @@
   "type": "module",
   "main": "./index",
   "scripts": {
+    "build": "tsup index.ts",
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
     "test": "jest --ci"
+  },
+  "exports": {
+    ".": "./dist/index.ts"
   },
   "dependencies": {
     "@eidolon/client": "workspace:*",
@@ -57,6 +61,7 @@
     "node-mocks-http": "^1.14.1",
     "react": "^18.3.1",
     "setup-polly-jest": "^0.11.0",
+    "tsup": "^8.1.0",
     "typescript": "^5.4.5"
   }
 }

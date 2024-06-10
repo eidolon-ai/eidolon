@@ -5,9 +5,13 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
+    "build": "tsup src/client.ts src/exceptions.ts",
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
     "test": "jest --ci"
+  },
+  "exports": {
+    ".": "./dist/index.ts"
   },
   "dependencies": {
     "@jsdevtools/ono": "latest",
@@ -34,6 +38,7 @@
     "jest": "^29.7.0",
     "react": "^18.3.1",
     "setup-polly-jest": "^0.11.0",
+    "tsup": "^8.1.0",
     "typescript": "^5.4.5"
   }
 }

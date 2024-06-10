@@ -1,12 +1,12 @@
 'use client'
 
 import {Box, Theme} from "@mui/material";
-import {EidolonEvents} from "../messages/eidolon-events";
-import {ButtonScrollToBottom} from "./button-scroll-to-bottom";
-import {CopilotInputPanel} from "./copilot_input_form";
-import {useProcessEvents} from "../hooks/useProcessEvents";
-import {CopilotParams} from "../lib/util";
-import {useEidolonContext} from "../provider/eidolon_provider";
+import {EidolonEvents} from "../messages/eidolon-events.tsx";
+import {ButtonScrollToBottom} from "./button-scroll-to-bottom.tsx";
+import {CopilotInputPanel} from "./copilot_input_form.tsx";
+import {useProcessEvents} from "../hooks/useProcessEvents.ts";
+import {CopilotParams} from "../lib/util.ts";
+import {useEidolonContext} from "../provider/eidolon_provider.tsx";
 import "./copilot-panel.css"
 import {SxProps} from "@mui/material/styles";
 

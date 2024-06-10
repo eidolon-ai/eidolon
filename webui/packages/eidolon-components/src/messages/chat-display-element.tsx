@@ -1,8 +1,8 @@
 // @ts-ignore
 import {Avatar, Box, Divider, Typography} from "@mui/material";
-import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements";
-import {ToolCall} from "./tool-call-element";
-import {EidolonMarkdown} from "./eidolon-markdown";
+import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements.ts";
+import {ToolCall} from "./tool-call-element.tsx";
+import {EidolonMarkdown} from "./eidolon-markdown.tsx";
 
 export interface ChatDisplayElementProps {
   machineUrl: string

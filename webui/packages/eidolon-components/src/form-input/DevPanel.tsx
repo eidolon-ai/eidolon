@@ -1,11 +1,11 @@
 'use client'
 
 import {Box} from "@mui/material";
-import {useProcessEvents} from "../hooks/useProcessEvents";
-import {EidolonEvents} from "../messages/eidolon-events";
-import {AgentProcess} from "./agent-process";
-import {useEidolonContext} from "../provider/eidolon_provider";
-import {DevParams} from "../lib/util";
+import {useProcessEvents} from "../hooks/useProcessEvents.ts";
+import {EidolonEvents} from "../messages/eidolon-events.tsx";
+import {AgentProcess} from "./agent-process.tsx";
+import {useEidolonContext} from "../provider/eidolon_provider.tsx";
+import {DevParams} from "../lib/util.ts";
 
 export interface MessagesWithActionProps {
   machineUrl: string

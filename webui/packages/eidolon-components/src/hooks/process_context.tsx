@@ -1,10 +1,10 @@
 'use client'
 
 import {createContext, useContext, useState} from "react";
-import {getProcessStatus} from "../client-api-helpers/process-helper";
+import {getProcessStatus} from "../client-api-helpers/process-helper.ts";
 import {HttpException, ProcessStatus} from "@eidolon/client";
-import {getApps, getOperations} from "../client-api-helpers/machine-helper";
-import {CopilotParams, EidolonApp} from "../lib/util";
+import {getApps, getOperations} from "../client-api-helpers/machine-helper.ts";
+import {CopilotParams, EidolonApp} from "../lib/util.ts";
 
 export interface ContextObject {
   processStatus?: ProcessStatus

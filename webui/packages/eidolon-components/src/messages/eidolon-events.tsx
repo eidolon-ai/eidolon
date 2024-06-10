@@ -1,10 +1,10 @@
 'use client'
 
 import {Box} from "@mui/material";
-import {ElementsAndLookup} from "../lib/display-elements";
+import {ElementsAndLookup} from "../lib/display-elements.ts";
 import "./eidolon-events.css"
-import {ChatScrollAnchor} from "./chat-scroll-anchor";
-import {ChatDisplayElement} from "./chat-display-element";
+import {ChatScrollAnchor} from "./chat-scroll-anchor.tsx";
+import {ChatDisplayElement} from "./chat-display-element.tsx";
 
 export interface EidolonEventProps {
   machineUrl: string

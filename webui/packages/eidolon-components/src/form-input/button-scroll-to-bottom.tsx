@@ -2,7 +2,7 @@
 
 import {Fab} from "@mui/material";
 import {ArrowDownward} from "@mui/icons-material";
-import {useAtBottom} from "../hooks/use-at-bottom";
+import {useAtBottom} from "../hooks/use-at-bottom.tsx";
 
 export function ButtonScrollToBottom() {
   const isAtBottom = useAtBottom()

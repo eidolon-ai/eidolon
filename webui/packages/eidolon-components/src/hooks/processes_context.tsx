@@ -1,8 +1,8 @@
 'use client'
 
 import {createContext, useContext, useState} from "react";
-import {groupProcessesByUpdateDate} from "../process-list/group-processes";
-import {getRootProcesses} from "../client-api-helpers/process-helper";
+import {groupProcessesByUpdateDate} from "../process-list/group-processes.ts";
+import {getRootProcesses} from "../client-api-helpers/process-helper.ts";
 import {HttpException, ProcessStatus} from "@eidolon/client";
 
 const EidolonProcessesContext = createContext<{

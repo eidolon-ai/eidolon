@@ -2,10 +2,10 @@
 
 import {useEffect, useRef, useState} from "react";
 import {ProcessStatus} from "@eidolon/client";
-import {ElementsAndLookup} from "../lib/display-elements";
-import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper";
-import {getProcessStatus} from "../client-api-helpers/process-helper";
-import {EidolonEvent, RecordUsage} from "../provider/eidolon_provider";
+import {ElementsAndLookup} from "../lib/display-elements.ts";
+import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper.ts";
+import {getProcessStatus} from "../client-api-helpers/process-helper.ts";
+import {EidolonEvent, RecordUsage} from "../provider/eidolon_provider.tsx";
 
 export function useProcessEvents(machineUrl: string, agent: string, processId: string,
                                  // eslint-disable-next-line no-unused-vars

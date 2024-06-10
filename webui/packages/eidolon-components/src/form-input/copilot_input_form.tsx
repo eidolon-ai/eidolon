@@ -1,15 +1,15 @@
 import {Badge, Divider, IconButton, Paper, Typography} from "@mui/material";
-import {ChooseLLMElement} from "../messages/choose-llm-element";
-import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
-import {useProcesses} from "../hooks/processes_context";
-import {executeOperation} from "../client-api-helpers/process-event-helper";
-import {CopilotParams} from "../lib/util";
-import {CopilotInputForm, ProcessError, ProcessLoading, ProcessTerminated} from "./input_form_components";
+import {ChooseLLMElement} from "../messages/choose-llm-element.tsx";
+import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation.ts";
+import {useProcesses} from "../hooks/processes_context.tsx";
+import {executeOperation} from "../client-api-helpers/process-event-helper.ts";
+import {CopilotParams} from "../lib/util.ts";
+import {CopilotInputForm, ProcessError, ProcessLoading, ProcessTerminated} from "./input_form_components.tsx";
 import {FileHandle, ProcessStatus} from "@eidolon/client";
-import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined.js';
 import {useEffect, useState} from "react";
-import {getOperations} from "../client-api-helpers/machine-helper";
-import {useProcess} from "../hooks/process_context";
+import {getOperations} from "../client-api-helpers/machine-helper.ts";
+import {useProcess} from "../hooks/process_context.tsx";
 
 export interface CopilotInputPanelParams {
   machineUrl: string

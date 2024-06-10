@@ -2,8 +2,8 @@
 
 import {ChangeEvent, useRef, useState} from "react";
 import {Box, CircularProgress, CircularProgressProps, IconButton, Typography} from '@mui/material';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import {setMetadata, uploadFile} from "../client-api-helpers/files-helper";
+import AttachFileIcon from '@mui/icons-material/AttachFile.js';
+import {setMetadata, uploadFile} from "../client-api-helpers/files-helper.ts";
 import {FileHandle} from "@eidolon/client";
 
 function CircularProgressWithLabel(

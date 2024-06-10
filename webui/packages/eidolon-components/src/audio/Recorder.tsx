@@ -1,11 +1,11 @@
 import {useEffect, useState} from "react";
-import {createProcess, deleteProcess} from "../client-api-helpers/process-helper";
-import {executeOperation} from "../client-api-helpers/process-event-helper";
+import {createProcess, deleteProcess} from "../client-api-helpers/process-helper.ts";
+import {executeOperation} from "../client-api-helpers/process-event-helper.ts";
 import {Button, Tooltip} from "@mui/material";
-import StopIcon from '@mui/icons-material/Stop';
-import {uploadFile} from "../client-api-helpers/files-helper";
-import MicIcon from '@mui/icons-material/Mic';
-import MicOffIcon from '@mui/icons-material/MicOff';
+import StopIcon from '@mui/icons-material/Stop.js';
+import {uploadFile} from "../client-api-helpers/files-helper.ts";
+import MicIcon from '@mui/icons-material/Mic.js';
+import MicOffIcon from '@mui/icons-material/MicOff.js';
 
 interface RecorderProps {
   machineUrl: string;

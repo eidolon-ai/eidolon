@@ -1,5 +1,5 @@
 import {HttpException, OperationInfo} from "@eidolon/client";
-import {EidolonApp} from "../lib/util";
+import {EidolonApp} from "../lib/util.ts";
 
 export async function getAgents(machineUrl: string) {
   return fetch(`/api/eidolon/machine?machineURL=${machineUrl}`, {

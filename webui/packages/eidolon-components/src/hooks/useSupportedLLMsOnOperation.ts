@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react"
 import {OperationInfo} from "@eidolon/client"
-import {CopilotParams} from "../lib/util"
-import {getOperations} from "../client-api-helpers/machine-helper"
+import {CopilotParams} from "../lib/util.ts"
+import {getOperations} from "../client-api-helpers/machine-helper.ts"
 
 export function useSupportedLLMsOnOperation(machineURL: string, copilotParams: CopilotParams) {
   const [selectedLLM, setSelectedLLM] = useState<string>(copilotParams?.defaultLLM || "")

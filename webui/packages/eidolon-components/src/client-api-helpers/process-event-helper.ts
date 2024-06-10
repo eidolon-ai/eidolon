@@ -1,4 +1,4 @@
-import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements";
+import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements.ts";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
 import {ChatEvent} from "@eidolon/client";
 

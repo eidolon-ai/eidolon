@@ -1,10 +1,10 @@
-import {ToolCallElement} from "../lib/display-elements";
+import {ToolCallElement} from "../lib/display-elements.ts";
 import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, IconButtonProps, styled, Typography} from "@mui/material";
 import {ExpandMore} from "@mui/icons-material";
-import {ChatDisplayElement} from "./chat-display-element";
+import {ChatDisplayElement} from "./chat-display-element.tsx";
 import {useState} from "react";
-import BuildCircleIcon from '@mui/icons-material/BuildCircle';
-import {EidolonMarkdown} from "./eidolon-markdown";
+import BuildCircleIcon from '@mui/icons-material/BuildCircle.js';
+import {EidolonMarkdown} from "./eidolon-markdown.tsx";
 
 interface ExpandMoreDivProps extends IconButtonProps {
   expand: boolean;

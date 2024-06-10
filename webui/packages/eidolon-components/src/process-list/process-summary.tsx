@@ -4,7 +4,7 @@ import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, List
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {Delete} from '@mui/icons-material';
 import {ProcessStatus} from "@eidolon/client";
-import {ProcessStatusWithChildren} from "../client-api-helpers/process-helper";
+import {ProcessStatusWithChildren} from "../client-api-helpers/process-helper.ts";
 import {useState} from "react";
 
 export interface ProcessSummaryProps {

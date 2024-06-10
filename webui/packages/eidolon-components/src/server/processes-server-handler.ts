@@ -1,5 +1,5 @@
 import {EidolonClient} from "@eidolon/client";
-import {convertException, processResponse} from "../lib/util";
+import {convertException, processResponse} from "../lib/util.ts";
 
 export const getAuthHeaders = (access_token: string | undefined): Record<string, string> => {
   if (!access_token) {
