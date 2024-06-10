@@ -1,3 +1,15 @@
 {
-  "extends": "@repo/typescript-config/base.json"
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@eidolon/client": ["packages/eidolon-client"],
+      "@eidolon/components": ["packages/eidolon-components"]
+    },
+    "allowImportingTsExtensions": true
+  },
+  "references": [
+    { "path": "./packages/eidolon-client" },
+    { "path": "./packages/eidolon-components" }
+  ]
 }

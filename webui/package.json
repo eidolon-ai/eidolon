@@ -1,8 +1,12 @@
 {
   "name": "eidolon-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "version": "1.0.45",
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo build --no-cache",
     "start": "npm --prefix apps/eidolon-ui2 run start",
     "test": "turbo test",
     "dev": "turbo dev",
@@ -16,8 +20,8 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "prettier": "^3.2.5",
-    "turbo": "^1.13.3"
+    "prettier": "^3.3.1",
+    "turbo": "^2.0.3"
   },
   "packageManager": "pnpm@9.0.6",
   "engines": {

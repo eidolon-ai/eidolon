@@ -3,15 +3,27 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index",
+  "tsup": {
+    "entry": ["./index.ts"],
+    "splitting": false,
+    "clean": true,
+    "format": ["cjs", "esm"],
+    "dts": {
+      "resolve": true,
+      "entry": "./index.ts"
+    }
+  },
   "scripts": {
-    "build": "tsup src/client.ts src/exceptions.ts",
+    "build": "tsup index.ts --dts --format cjs,esm",
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
     "test": "jest --ci"
   },
   "exports": {
-    ".": "./dist/index.ts"
+    ".": "./dist/index.js"
   },
   "dependencies": {
     "@jsdevtools/ono": "latest",

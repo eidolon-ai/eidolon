@@ -3,7 +3,19 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./index",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index",
+  "tsup": {
+    "entry": ["./index.ts"],
+    "splitting": false,
+    "clean": true,
+    "format": ["cjs", "esm"],
+    "dts": {
+      "resolve": true,
+      "entry": "./index.ts"
+    }
+  },
   "scripts": {
     "build": "tsup index.ts",
     "lint": "eslint . --max-warnings 0",
@@ -11,7 +23,7 @@
     "test": "jest --ci"
   },
   "exports": {
-    ".": "./dist/index.ts"
+    ".": "./dist/index.js"
   },
   "dependencies": {
     "@eidolon/client": "workspace:*",
