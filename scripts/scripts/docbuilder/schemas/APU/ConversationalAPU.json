@@ -44,7 +44,7 @@
       "default": [],
       "items": {
         "additionalProperties": true,
-        "default": "eidolon_ai_sdk.cpu.logic_unit.LogicUnit",
+        "default": "eidolon_ai_sdk.apu.logic_unit.LogicUnit",
         "properties": {
           "implementation": {
             "default": null,
@@ -62,7 +62,7 @@
       "anyOf": [
         {
           "additionalProperties": true,
-          "default": "eidolon_ai_sdk.cpu.audio_unit.AudioUnit",
+          "default": "eidolon_ai_sdk.apu.audio_unit.AudioUnit",
           "properties": {
             "implementation": {
               "default": null,
@@ -83,7 +83,7 @@
       "anyOf": [
         {
           "additionalProperties": true,
-          "default": "eidolon_ai_sdk.cpu.image_unit.ImageUnit",
+          "default": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
           "properties": {
             "implementation": {
               "default": null,

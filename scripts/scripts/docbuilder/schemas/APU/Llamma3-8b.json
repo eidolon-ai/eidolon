@@ -1,8 +1,8 @@
 {
   "properties": {
     "implementation": {
-      "const": "MistralSmall",
-      "description": "MistralSmall"
+      "const": "Llamma3-8b",
+      "description": "Llamma3-8b"
     },
     "max_num_function_calls": {
       "default": 10,
@@ -124,6 +124,6 @@
       "type": "object"
     }
   },
-  "title": "MistralSmall",
+  "title": "Llamma3-8b",
   "type": "object"
 }

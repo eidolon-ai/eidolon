@@ -1,12 +1,16 @@
 from abc import abstractmethod
 from typing import List, Dict, Optional, Sequence, Any, Iterable
 
+from opentelemetry import trace
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 from eidolon_ai_sdk.memory.vector_store import QueryItem, VectorStore
 from eidolon_ai_sdk.system.reference_model import Specable
+
+
+tracer = trace.get_tracer(__name__)
 
 
 class FileSystemVectorStoreSpec(BaseModel):
@@ -57,11 +61,12 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         async for embeddedDoc in AgentOS.similarity_memory.embed(docs):
             embeddedDocs.append(embeddedDoc)
         await self.add_embedding(collection, embeddedDocs)
-        for doc in docs:
-            await AgentOS.file_memory.write_file(
-                self.spec.root_document_directory + "/" + collection + "/" + doc.id,
-                doc.page_content.encode(),
-            )
+        with tracer.start_as_current_span("add documents"):
+            for doc in docs:
+                await AgentOS.file_memory.write_file(
+                    self.spec.root_document_directory + "/" + collection + "/" + doc.id,
+                    doc.page_content.encode(),
+                )
 
     async def delete(self, collection: str, doc_ids: List[str]):
         await self.delete_embedding(collection, doc_ids)

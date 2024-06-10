@@ -46,6 +46,7 @@ from eidolon_ai_sdk.apu.conversation_memory_unit import RawMemoryUnit
 from eidolon_ai_sdk.apu.conversational_apu import ConversationalAPU
 from eidolon_ai_sdk.apu.llm.anthropic_llm_unit import AnthropicLLMUnit
 from eidolon_ai_sdk.apu.llm.mistral_llm_unit import MistralGPT
+from eidolon_ai_sdk.apu.llm.ollama_llm_unit import OllamaLLMUnit
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler, AzureOpenAIConnectionHandler
 from eidolon_ai_sdk.apu.llm.open_ai_image_unit import OpenAIImageUnit
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
@@ -144,6 +145,7 @@ def named_builtins() -> List[ReferenceResource]:
         OpenAIGPT,
         MistralGPT,
         AnthropicLLMUnit,
+        OllamaLLMUnit,
         ToolCallLLMWrapper,
         LLMModel,
         (MemoryUnit, RawMemoryUnit),
