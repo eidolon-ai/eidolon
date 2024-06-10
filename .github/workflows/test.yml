@@ -6,6 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  lock-files-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: make lock
+      - run: git diff --quiet
+        continue-on-error: true
+      - name: Lock files out of date, run make lock to fix
+        if: ${{ failure() }} # This step will only run if the previous step failed
+        run: echo "Lock files out of date, run make lock to fix"
+
   examples-test:
     runs-on: ubuntu-latest
     services:
