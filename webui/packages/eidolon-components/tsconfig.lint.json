@@ -11,8 +11,5 @@
     "outDir": "dist"
   },
   "include": ["src", "turbo"],
-  "exclude": ["node_modules", "dist"],
-  "references": [
-    { "path": "../eidolon-client" }
-  ]
+  "exclude": ["node_modules", "dist"]
 }
