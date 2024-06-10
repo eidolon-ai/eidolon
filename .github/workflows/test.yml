@@ -18,7 +18,9 @@ jobs:
           cache: 'poetry'
       - run: make lock
       - name: Checking if lock files are out of date, (run "make lock" to fix)
-        run: git diff --quiet
+        run: |
+          git status
+          git diff --quiet
 
   examples-test:
     runs-on: ubuntu-latest
