@@ -6,7 +6,7 @@
   ],
   "version": "1.0.45",
   "scripts": {
-    "build": "turbo build --no-cache",
+    "build": "turbo build",
     "start": "npm --prefix apps/eidolon-ui2 run start",
     "test": "turbo test",
     "dev": "turbo dev",
