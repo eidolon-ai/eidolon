@@ -20,8 +20,7 @@ webui/.version: force
 .SECONDEXPANSION:
 
 $(addsuffix .lock, $(ALL_POETRY_PROJECTS)): %.lock: force
-	@echo "Locking dependencies for $*...";
-	@cd $*; poetry lock --no-update;
+	cd $*; poetry lock --no-update;
 
 $(addsuffix .version, $(ALL_POETRY_PROJECTS)): %.version: force $$(shell make -C scripts -s run "get_deps $$* --suffix .version")
 	@make -s -C scripts run "update_poetry ${*}";
