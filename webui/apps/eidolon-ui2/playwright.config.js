@@ -14,6 +14,6 @@ module.exports = defineConfig({
         cwd: '../../..',
         port: 3000,
         timeout: 120000,
-        reuseExistingServer: process.env.CI === 'true',
+        reuseExistingServer: true,
     },
 });
