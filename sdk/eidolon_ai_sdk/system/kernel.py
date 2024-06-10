@@ -23,7 +23,7 @@ class AgentOSKernel:
             cls._resources = {}
             for resource in named_builtins():
                 cls.register_resource(resource, source="builtin")
-            for resource, loc in load_resources(pathlib.Path(__file__).parent.parent / "builtins" / "resources"):
+            for resource, loc in load_resources([pathlib.Path(__file__).parent.parent / "builtins" / "resources"]):
                 cls.register_resource(resource, source="builtin")
 
         return cls._resources
