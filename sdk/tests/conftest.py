@@ -16,14 +16,14 @@ from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
 import eidolon_ai_sdk.system.process_file_system as process_file_system
-from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
+from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
 from eidolon_ai_sdk.system import agent_controller
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -179,9 +179,9 @@ def machine_manager(file_memory, symbolic_memory, similarity_memory):
 async def machine(machine_manager):
     async with machine_manager() as m:
         instantiated = m.spec.instantiate()
-        AgentOS.load_machine(instantiated)
+        AgentOSKernel.load_machine(instantiated)
         yield instantiated
-        AgentOS.reset()
+        AgentOSKernel.reset()
 
 
 @pytest.fixture(scope="module")

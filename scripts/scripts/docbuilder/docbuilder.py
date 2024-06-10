@@ -14,12 +14,12 @@ from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory, SymbolicMemory
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
@@ -148,7 +148,7 @@ def template(template_file, **kwargs):
 
 
 def generate_json(write_base):
-    resources: List[ReferenceResource] = list(AgentOS.get_resources(ReferenceResource).values())
+    resources: List[ReferenceResource] = list(AgentOSKernel.get_resources(ReferenceResource).values())
     for r in resources:
         key = r.metadata.name
         overrides = Reference[object, key]._transform(r.spec)

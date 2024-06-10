@@ -30,6 +30,7 @@ from eidolon_ai_sdk.security.permissions import PermissionException, permission_
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.dynamic_middleware import DynamicMiddleware
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
@@ -91,14 +92,22 @@ def parse_args():
         help="Disable anonymous metrics collection",
         default=False,
     )
+    parser.add_argument(
+        "--fail-on-bad-agent",
+        help="Fail the server if an agent fails to start",
+        default=False,
+    )
 
     # Parse command line arguments
     return parser.parse_args()
 
 
 @asynccontextmanager
-async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO, replay_override=...):
+async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO, replay_override=..., fail_on_agent_start_error=False):
     t0 = time.perf_counter()
+
+    AgentOS.fail_on_agent_start_error = fail_on_agent_start_error
+
     def custom_openapi():
         if app.openapi_schema:
             return app.openapi_schema
@@ -148,22 +157,22 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
                 resource, source = resource_or_tuple, None
             else:
                 resource, source = resource_or_tuple
-            AgentOS.register_resource(resource=resource, source=source)
+            AgentOSKernel.register_resource(resource=resource, source=source)
 
         logger.info(f"Building machine '{machine_name}'")
-        machine_spec = AgentOS.get_resource(MachineResource, machine_name).spec
+        machine_spec = AgentOSKernel.get_resource(MachineResource, machine_name).spec
         logger.debug(yaml.safe_dump(machine_spec.model_dump()))
         machine: AgentMachine = machine_spec.instantiate()
-        AgentOS.load_machine(machine)
+        AgentOSKernel.load_machine(machine)
         await machine.start(app)
 
         if replay_override is not ...:
-            spec = AgentOS.get_resource_raw(ReferenceResource, "ReplayConfig").spec
+            spec = AgentOSKernel.get_resource_raw(ReferenceResource, "ReplayConfig").spec
             spec["save_loc"] = replay_override
-        if AgentOS.get_instance(ReplayConfig).save_loc:
+        if AgentOSKernel.get_instance(ReplayConfig).save_loc:
             logger.warning("Replay points are enabled, this feature is intended for test environments only.")
 
-        open_tele = AgentOS.get_instance(OpenTelemetryManager)
+        open_tele = AgentOSKernel.get_instance(OpenTelemetryManager)
         await open_tele.start()
         try:
             time_to_start = time.perf_counter() - t0
@@ -180,7 +189,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         logger.exception("Failed to start AgentOS")
         raise
     finally:
-        AgentOS.reset()
+        AgentOSKernel.reset()
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
@@ -213,6 +222,7 @@ def main():
             args.machine,
             log_level,
             replay_override="recordings" if args.record else ...,
+            fail_on_agent_start_error=args.fail_on_bad_agent,
         )
     )
 
