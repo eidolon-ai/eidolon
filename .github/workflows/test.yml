@@ -17,11 +17,8 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - run: make lock
-      - run: git diff --quiet
-        continue-on-error: true
-      - name: Lock files out of date, run make lock to fix
-        if: ${{ failure() }} # This step will only run if the previous step failed
-        run: echo "Lock files out of date, run make lock to fix"
+      - name: Checking if lock files are out of date, (run "make lock" to fix)
+        run: git diff --quiet
 
   examples-test:
     runs-on: ubuntu-latest
