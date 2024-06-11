@@ -58,7 +58,7 @@ a loader that reads files from disk, but Eidolon has a GitHub loader built in th
 
 ## Try it out!
 
-First let's fork for Eidolon's chatbot repository, clone it to your local machine, and start your server.
+First clone Eidolon's chatbot repository and then start your server.
 ```bash
 export AWS_ACCESS_KEY_ID=<YOUR_ACCESS_KEY_ID>
 export AWS_SECRET_ACCESS_KEY=<YOUR_SECRET_ACCESS_KEY>
