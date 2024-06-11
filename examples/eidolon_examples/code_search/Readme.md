@@ -89,7 +89,7 @@ Where `{process_id}` is the process id you received from the previous request.
 
 Having covered the basics, challenge yourself to delve deeper into the Eidolon ecosystem. Here's how you can expand your knowledge:
 
-- Don't just genrate our docs, build a documentation generator for your own personal project.
+- Don't just generate our docs, build a documentation generator for your own personal project.
 - Craft a custom agent tailored for specific documentation types, like API guides or tutorial walkthroughs.
 - Experiment with adding new RAG components to bolster the agent's functionality. Perhaps develop an S3 rag component?
 
