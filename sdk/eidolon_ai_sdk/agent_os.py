@@ -17,7 +17,6 @@ class AgentOS:
     similarity_memory: SimilarityMemory = ...  # noqa: F821
     security_manager: SecurityManager = ...  # noqa: F821
     process_file_system: ProcessFileSystem = ...  # noqa: F821
-    fail_on_agent_start_error: bool = ... # noqa: F821
 
     @staticmethod
     def current_machine_url() -> str:

@@ -5,6 +5,7 @@ from typing import Dict, Tuple, TypeVar, Type
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system import resource_load_error_handler
 from eidolon_ai_sdk.system.resource_load_error_handler import register_resource_error, register_resource_promote_error
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
 
@@ -35,7 +36,7 @@ class AgentOSKernel:
         AgentOS.similarity_memory = machine.memory.similarity_memory
         AgentOS.security_manager = machine.security_manager
         AgentOS.process_file_system = machine.process_file_system
-        AgentOS.fail_on_agent_start_error = machine.spec.fail_on_agent_start_error
+        resource_load_error_handler.fail_on_agent_start_error = machine.spec.fail_on_agent_start_error
 
     @classmethod
     def register_resource(cls, resource: Resource, source=None):  # noqa: F821

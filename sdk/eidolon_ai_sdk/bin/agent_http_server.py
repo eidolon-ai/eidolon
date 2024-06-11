@@ -25,10 +25,10 @@ from starlette.responses import JSONResponse
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import ContextMiddleware
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
+from eidolon_ai_sdk.system import resource_load_error_handler
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.dynamic_middleware import DynamicMiddleware
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
@@ -108,7 +108,7 @@ def parse_args():
 async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO, replay_override=..., fail_on_agent_start_error=False):
     t0 = time.perf_counter()
 
-    AgentOS.fail_on_agent_start_error = fail_on_agent_start_error
+    resource_load_error_handler.fail_on_agent_start_error = fail_on_agent_start_error
 
     def custom_openapi():
         if app.openapi_schema:
