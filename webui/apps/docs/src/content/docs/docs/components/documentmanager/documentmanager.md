@@ -13,6 +13,7 @@ provided by loader) into similarity memory where they can be searched.
 | - [recheck_frequency](#recheck_frequency ) | No      | integer | No         | -                                       | Recheck Frequency                                                                                    |
 | - [loader](#loader )                       | No      | object  | No         | In [DocumentLoader](/docs/components/documentloader/overview) | Overview of <class 'eidolon_ai_sdk.agent.doc_manager.loaders.base_loader.DocumentLoader'> components |
 | - [doc_processor](#doc_processor )         | No      | object  | No         | -                                       | DocumentProcessor Reference                                                                          |
+| - [concurrency](#concurrency )             | No      | integer | No         | -                                       | Concurrency                                                                                          |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -543,5 +544,17 @@ Specific value: `"S3Loader"`
 | **Type**     | `string` |
 | **Required** | No       |
 | **Default**  | `null`   |
+
+## <a name="concurrency"></a>6. Property `concurrency`
+
+**Title:** Concurrency
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+| **Default**  | `8`       |
+
+**Description:** The number of concurrent tasks to run.
 
 ----------------------------------------------------------------------------------------------------------------------------
