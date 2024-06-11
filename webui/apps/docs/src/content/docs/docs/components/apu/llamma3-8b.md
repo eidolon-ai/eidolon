@@ -1,11 +1,11 @@
 ---
-title: GPT3.5-turbo
-description: Description of GPT3.5-turbo component
+title: Llamma3-8b
+description: Description of Llamma3-8b component
 ---
 
 | Property                                             | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
 | ---------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#implementation )                 | No      | const           | No         | -                                | GPT3.5-turbo                                                         |
+| - [implementation](#implementation )                 | No      | const           | No         | -                                | Llamma3-8b                                                           |
 | - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
 | - [io_unit](#io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
 | - [memory_unit](#memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
@@ -24,9 +24,9 @@ description: Description of GPT3.5-turbo component
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** GPT3.5-turbo
+**Description:** Llamma3-8b
 
-Specific value: `"GPT3.5-turbo"`
+Specific value: `"Llamma3-8b"`
 
 ## <a name="max_num_function_calls"></a>2. Property `max_num_function_calls`
 

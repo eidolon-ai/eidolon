@@ -64,7 +64,7 @@ def app_builder(machine_manager):
 @pytest.fixture(scope="module")
 def port():
     # fixing the port. Do we need to be so cool to have a random port?
-    return 9080
+    return 5346
     # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     #     s.bind(("", 0))
     #     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -73,11 +73,15 @@ def port():
 
 @pytest.fixture(autouse=True)
 def vcr_config():
+    def ignore_some_localhost(request: VcrRequest):
+        if (request.host == "0.0.0.0" or request.host=="localhost") and port != 11434:
+            return None
+        return request
+
     return dict(
         filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None)],
         filter_query_parameters=["cx", "key"], # google custom search engine id
-        ignore_localhost=True,
-        ignore_hosts=["0.0.0.0", "localhost"],
+        before_record_request=ignore_some_localhost,
         record_mode="once",
         match_on=["method", "scheme", "host", "port", "path", "query", "body"],
     )
@@ -243,7 +247,7 @@ def file_memory(file_memory_loc):
 
 
 @pytest.fixture(scope="module")
-def similarity_memory(tmp_path_factory):
+def similarity_memory(tmp_path_factory, module_identifier):
     @asynccontextmanager
     async def cm():
         tmp_dir = tmp_path_factory.mktemp(f"vector_store_{module_identifier}_{ObjectId()}")

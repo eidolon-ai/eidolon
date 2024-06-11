@@ -107,7 +107,7 @@
       "title": "ActionDefinition",
       "type": "object"
     },
-    "NamedCPU": {
+    "NamedAPU": {
       "additionalProperties": true,
       "properties": {
         "title": {
@@ -132,7 +132,7 @@
           "title": "Default"
         }
       },
-      "title": "NamedCPU",
+      "title": "NamedAPU",
       "type": "object"
     }
   },
@@ -201,7 +201,7 @@
     "apus": {
       "default": [],
       "items": {
-        "$ref": "#/$defs/NamedCPU"
+        "$ref": "#/$defs/NamedAPU"
       },
       "title": "Apus",
       "type": "array"

@@ -1,0 +1,63 @@
+interactions:
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        eyJtb2RlbCI6ICJsbGFtYTMiLCAibWVzc2FnZXMiOiBbeyJyb2xlIjogInN5c3RlbSIsICJjb250
+        ZW50IjogIllvdSBhcmUgYSBoZWxwZnVsIGFzc2lzdGFudCJ9LCB7InJvbGUiOiAidXNlciIsICJj
+        b250ZW50IjogIldoYXQgaXMgdGhlIGNhcGl0YWwgb2YgRnJhbmNlPyJ9XSwgInN0cmVhbSI6IHRy
+        dWUsICJmb3JtYXQiOiAiIiwgIm9wdGlvbnMiOiB7fSwgImtlZXBfYWxpdmUiOiBudWxsfQ==
+      - 0
+      - null
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '223'
+      content-type:
+      - application/json
+      host:
+      - 127.0.0.1:11434
+      user-agent:
+      - ollama-python/0.2.1 (AMD64 windows) Python/3.11.6
+    method: POST
+    uri: http://127.0.0.1:11434/api/chat
+  response:
+    body:
+      string: '{"model":"llama3","created_at":"2024-06-06T21:55:57.8690423Z","message":{"role":"assistant","content":"The"},"done":false}
+
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.8885423Z","message":{"role":"assistant","content":"
+        capital"},"done":false}
+
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9080425Z","message":{"role":"assistant","content":"
+        of"},"done":false}
+
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9260424Z","message":{"role":"assistant","content":"
+        France"},"done":false}
+
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9455424Z","message":{"role":"assistant","content":"
+        is"},"done":false}
+
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9640423Z","message":{"role":"assistant","content":"
+        Paris"},"done":false}
+
+        {"model":"llama3","created_at":"2024-06-06T21:55:57.9835425Z","message":{"role":"assistant","content":"."},"done":false}
+
+        {"model":"llama3","created_at":"2024-06-06T21:55:58.0039388Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":4327516600,"load_duration":4095307100,"prompt_eval_count":26,"prompt_eval_duration":95478000,"eval_count":8,"eval_duration":134739000}
+
+        '
+    headers:
+      Content-Type:
+      - application/x-ndjson
+      Date:
+      - Thu, 06 Jun 2024 21:55:57 GMT
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

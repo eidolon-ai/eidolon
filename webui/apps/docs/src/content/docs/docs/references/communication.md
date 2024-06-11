@@ -42,8 +42,9 @@ spec:
 ## Recipes
 
 #### [GitHub Repo Expert](/docs/recipes/repo-expert)
-The [GitHub Repo Expert](/docs/recipes/repo-expert) recipe is a great example of how agents can communicate with each 
-other. In this example we have separated the copilot agent from the agent who handles relevance search. 
+The [GitHub Repo Expert](/docs/recipes/repo-expert) or [S3 RAG](/docs/recipes/s3-rag) recipes are great examples of how 
+agents can communicate with each other. In this example we have separated the copilot agent from the agent who handles 
+relevance search. 
 
-The copilot agent 👨 will ask the relevance search agent 🔎 to find the most relevant repositories for a given query as 
-needed.
+In these examples, the copilot agent 👨 will ask the search agent 🔎 to find the most relevant information for a given 
+query as needed.
