@@ -156,7 +156,7 @@
       "title": "Description"
     },
     "system_prompt": {
-      "default": "You are a helpful assistant",
+      "default": "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task.",
       "title": "System Prompt",
       "type": "string"
     },
