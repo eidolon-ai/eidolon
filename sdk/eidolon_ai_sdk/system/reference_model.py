@@ -6,7 +6,6 @@ from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 
 from pydantic import BaseModel, model_validator, Field, ConfigDict
 
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name, fqn
 
@@ -127,7 +126,8 @@ class Reference(BaseModel):
 
     @classmethod
     def _expand(cls, impl, extra):
-        ref = AgentOS.get_resource(ReferenceResource, impl, default=None)
+        from eidolon_ai_sdk.system.kernel import AgentOSKernel
+        ref = AgentOSKernel.get_resource(ReferenceResource, impl, default=None)
         if not ref:
             return impl, extra
         else:

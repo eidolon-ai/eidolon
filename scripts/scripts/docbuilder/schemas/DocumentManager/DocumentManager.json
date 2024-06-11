@@ -32,6 +32,12 @@
       },
       "title": "DocumentProcessor Reference",
       "type": "object"
+    },
+    "concurrency": {
+      "default": 8,
+      "description": "The number of concurrent tasks to run.",
+      "title": "Concurrency",
+      "type": "integer"
     }
   },
   "required": [

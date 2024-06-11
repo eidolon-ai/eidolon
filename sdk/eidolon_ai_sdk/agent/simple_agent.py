@@ -125,7 +125,7 @@ class SimpleAgentSpec(BaseModel):
     """
 
     description: Optional[str] = None
-    system_prompt: str = "You are a helpful assistant"
+    system_prompt: str = "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task."
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
     apu: AnnotatedReference[APU] = None

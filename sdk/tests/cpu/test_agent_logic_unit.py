@@ -105,5 +105,5 @@ async def test_multiple_calls(conversational_logic_unit):
     with conversational_logic_unit(Foo) as clu:
         for _ in range(3):
             tools = await clu.build_tools(CallContext(process_id="parent_pid"))
-            output = {type(e) async for e in tools[0].fn(clu, body=dict(name="foo"))}
+            output = {type(e) async for e in tools[0].fn(clu, name="foo")}
             assert SuccessEvent in output
