@@ -70,7 +70,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         try:
             name = self._name(agent, action=action)
             description = self._description(endpoint_schema, name)
-            body_schema: dict = self._body_schema(endpoint_schema, name)
+            type_, body_schema = self._body_schema(endpoint_schema, name)
             body_schema["properties"]["conversation_id"] = {"type": "string"}
             if "required" in body_schema:
                 body_schema["required"].append("conversation_id")
@@ -82,7 +82,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 name,
                 body_schema,
                 description,
-                self._process_tool(agent_client, action, allowed_pids, call_context),
+                self._process_tool(agent_client, action, allowed_pids, call_context, type_),
             )
             return tool
         except _InvalidSchema:
@@ -104,13 +104,14 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     name = self._name(agent, action=action)
                     schema = machine_schema["paths"][path]["post"]
                     description = self._description(schema, name)
+                    _type, body_schema = self._body_schema(schema, name)
                     tool = self._build_tool_def(
                         agent,
                         action,
                         name,
-                        self._body_schema(schema, name),
+                        body_schema,
                         description,
-                        self._program_tool(agent_client, action, call_context),
+                        self._program_tool(agent_client, action, call_context, _type),
                     )
                     tools.append(tool)
                 except _InvalidSchema:
@@ -138,13 +139,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
     def _body_schema(endpoint_schema, name):
         body = endpoint_schema.get("requestBody")
         if not body:
-            json_schema = dict(type="object", properties={})
-            return dict(type="object", properties=dict(body=json_schema))
+            return dict, dict(type="object", properties={})
+        elif "text/plain" in body["content"] or ("application/json" in body["content"] and body["content"]["application/json"]["schema"]['type'] == 'string'):
+            return str, dict(type="object", properties=dict(body=dict(type="string")))
         elif "application/json" in body["content"]:
-            json_schema = body["content"]["application/json"]["schema"]
-            return dict(type="object", properties=dict(body=json_schema))
-        elif "text/plain" in body["content"]:
-            return dict(type="object", properties=dict(body=dict(type="string")))
+            return dict, body["content"]["application/json"]["schema"]
         else:
             raise _InvalidSchema(f"Agent action at {name} does not support text/plain or application/json")
 
@@ -165,8 +164,8 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return self.spec.tool_prefix + "_" + agent + process_id + action
 
     # todo, this needs to create history record before iterating
-    def _program_tool(self, agent: Agent, program: str, call_context: CallContext):
-        async def fn(_self, body):
+    def _program_tool(self, agent: Agent, program: str, call_context: CallContext, type_: type):
+        async def fn(_self, **kwargs):
             process = await agent.create_process()
             yield ObjectOutputEvent(
                 content=dict(
@@ -174,6 +173,10 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     conversation_id=process.process_id,
                 )
             )
+            if type_ is str:
+                body = kwargs.get("body", "")
+            else:
+                body = kwargs
             async for event in RecordAgentResponseIterator(
                 process.stream_action(program, body),
                 call_context.process_id,
@@ -184,10 +187,14 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return fn
 
     # todo, this needs to create history record before iterating
-    def _process_tool(self, agent: Agent, action: str, allowed_pids: Set[str], call_context: CallContext):
-        def fn(_self, conversation_id: str, body):
+    def _process_tool(self, agent: Agent, action: str, allowed_pids: Set[str], call_context: CallContext, _type: type):
+        def fn(_self, conversation_id: str, **kwargs):
             if conversation_id not in allowed_pids:
                 raise ValueError(f"Conversation id {conversation_id} not allowed for action {action}")
+            if _type is str:
+                body = kwargs.get("body", "")
+            else:
+                body = kwargs
             return RecordAgentResponseIterator(
                 Process(machine=agent.machine, process_id=conversation_id).stream_action(agent.agent, action, body),
                 call_context.process_id,
