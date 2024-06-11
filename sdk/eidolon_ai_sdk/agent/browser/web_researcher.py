@@ -32,11 +32,11 @@ class WebResearcherSpec(BaseModel):
             - Determine what the user is asking for. In this case, the capital of France.
             - ADD information to the user query if needed.
             - SEARCH: Use the search tool to find the answer. Include EVERYTHING from the user query plus any additional information.
-            - SCRAPE: If needed, use the scraping tool to go to the site and get the information.
+            - SCRAPE: Use the scraping tool to get the full content of the page. Make sure you get the full contents.
             - FOLLOW: Follow links if needed.
             - RETURN: Return the answer and the source of the information.
           
-        Let's think through step by step. Explain what you are going to do then do it
+        Let's think through step by step. Explain what you are going to do then call the tools to get it done all in the same cycle.
         """),
         description="The prompt to use for the system to ask the user for input"
     )

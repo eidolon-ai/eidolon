@@ -101,7 +101,6 @@ export const makeElement = (event: ChatEvent) => {
         content: event.content
       } as MarkdownElement
     case "object":
-      console.log(event)
       return {
         type: "json",
         content: event.content

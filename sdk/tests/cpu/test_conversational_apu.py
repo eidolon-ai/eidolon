@@ -36,6 +36,7 @@ async def server(run_app):
 async def test_text_file_include():
     process = await Agent.get("simple").create_process()
     file_handle = await process.upload_file("This is a sample text file".encode("utf-8"))
+    await process.set_metadata(file_handle.file_id, dict(mime_type="text/plain", filename="sample.txt"))
     resp = await process.action(
         "converse", body=dict(body="What is in the attached file?", attached_files=[file_handle])
     )

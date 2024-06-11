@@ -5,7 +5,10 @@ metadata:
 spec:
   agent_refs:
     - research_agent
-  system_prompt: "You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio."
+  system_prompt:
+    You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio.
+    Only generate images or speach if directly asked by the user.
+
   actions:
     - name: "converse"
       description: "A copilot that engages with the user."
