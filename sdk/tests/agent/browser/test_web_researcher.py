@@ -65,4 +65,4 @@ class TestWebResearcher:
         # noinspection Pydantic
         assert "Warren" in found.data
         followup = await process.action("followup_question", body={"question": "When was it founded?"})
-        assert "1845" in followup.data
+        assert "1844" in followup.data
