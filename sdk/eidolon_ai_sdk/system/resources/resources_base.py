@@ -7,6 +7,7 @@ import yaml
 from pydantic import BaseModel
 
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.system.resource_load_error_handler import register_load_error
 
 
 class Metadata(BaseModel):
@@ -46,7 +47,7 @@ def load_resources(paths):
                     else:
                         logger.info(f"Skipping {file_loc}")
                 except Exception as e:
-                    raise ValueError(f"Error building resource {file_loc}") from e
+                    register_load_error(str(file_loc), e)
 
 
 def _load_resources_from_file(file_loc):

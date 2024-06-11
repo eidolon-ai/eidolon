@@ -3,7 +3,7 @@ from contextlib import contextmanager
 import pytest
 from pydantic import BaseModel, Field
 
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference, Specable, AnnotatedReference
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.class_utils import fqn
@@ -52,7 +52,7 @@ class SimpleModel(BaseModel):
 def resource(name="TestResource", implementation=fqn(OS), spec=None):
     spec = spec or {}
     try:
-        AgentOS.register_resource(
+        AgentOSKernel.register_resource(
             Resource(
                 apiVersion="eidolon/v1",
                 kind="Reference",
@@ -62,7 +62,7 @@ def resource(name="TestResource", implementation=fqn(OS), spec=None):
         )
         yield
     finally:
-        AgentOS.reset()
+        AgentOSKernel.reset()
 
 
 def test_explicit_reference_default_spec():
