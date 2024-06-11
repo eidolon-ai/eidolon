@@ -7,13 +7,13 @@ from openai import BaseModel
 from pydantic import PrivateAttr
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
 
 
 class DynamicMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
-        middleware = AgentOS.get_instance(Middleware)
+        middleware = AgentOSKernel.get_instance(Middleware)
         return await middleware.dispatch(request, call_next)
 
 

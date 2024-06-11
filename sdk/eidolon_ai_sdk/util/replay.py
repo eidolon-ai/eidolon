@@ -14,6 +14,7 @@ from srsly.ruamel_yaml.scalarstring import walk_tree
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.util.str_utils import log_stack_trace
 
 
@@ -46,7 +47,7 @@ async def default_parser(resp):
 def replayable(
     fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
-    config = AgentOS.get_instance(ReplayConfig)
+    config = AgentOSKernel.get_instance(ReplayConfig)
 
     async def maybe_save_args(*args, **kwargs):
         if config.save_loc:

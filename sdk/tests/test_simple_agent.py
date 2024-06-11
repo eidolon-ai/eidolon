@@ -9,8 +9,8 @@ from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
-from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.logic_unit import llm_function, LogicUnit
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
@@ -184,7 +184,7 @@ async def test_with_tools():
 @pytest.fixture
 def record(test_name):
     save_loc = f"resume_points_{test_name}"
-    AgentOS.register_resource(
+    AgentOSKernel.register_resource(
         ReferenceResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name=ReplayConfig.__name__),
@@ -214,4 +214,3 @@ async def test_4o_powered_agent():
     process = await Agent.get("4o").create_process()
     resp = await process.action("converse", body="What is the capital of France?")
     assert "paris" in resp.data.lower()
-
