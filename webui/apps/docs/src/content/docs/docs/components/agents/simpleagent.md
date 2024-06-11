@@ -65,11 +65,11 @@ Specific value: `"SimpleAgent"`
 
 **Title:** System Prompt
 
-|              |                                 |
-| ------------ | ------------------------------- |
-| **Type**     | `string`                        |
-| **Required** | No                              |
-| **Default**  | `"You are a helpful assistant"` |
+|              |                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------- |
+| **Type**     | `string`                                                                                              |
+| **Required** | No                                                                                                    |
+| **Default**  | `"You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task."` |
 
 ## <a name="agent_refs"></a>4. Property `agent_refs`
 
