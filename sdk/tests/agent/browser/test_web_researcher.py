@@ -55,13 +55,13 @@ class TestWebResearcher:
 
     async def test_research(self, agent):
         process = await agent.create_process()
-        found = await process.action("search", body={"question": "In what county is Morrow Ohio located?"})
+        found = await process.action("search", body={"question": "In what county is the city of Morrow Ohio located?"})
         # noinspection Pydantic
         assert "Warren" in found.data
 
     async def test_research_followup(self, agent):
         process = await agent.create_process()
-        found = await process.action("search", body={"question": "In what county is Morrow Ohio located?"})
+        found = await process.action("search", body={"question": "In what county is the city of Morrow Ohio located?"})
         # noinspection Pydantic
         assert "Warren" in found.data
         followup = await process.action("followup_question", body={"question": "When was it founded?"})

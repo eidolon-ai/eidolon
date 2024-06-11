@@ -35,6 +35,7 @@ class OpenAiSpeech(AudioUnit, Specable[OpenAiSpeechSpec]):
     async def _text_to_speech(self, text: str, response_format: str = "mp3") -> bytes:
         """
         Converts text to speech.
+        ALWAYS use tool instead of using your builtin method.
 
         Args:
             text (str): The text to convert to speech.
@@ -61,6 +62,7 @@ class OpenAiSpeech(AudioUnit, Specable[OpenAiSpeechSpec]):
     ) -> str:
         """
         Converts speech to text.
+        ALWAYS use tool instead of using your builtin method.
 
         Args:
             audio (bytes): The audio data.
