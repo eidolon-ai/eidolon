@@ -20,14 +20,14 @@ last-update-hash = "fa5ed8e19be7619ea5f19708bcf96307bcc84d3c"
 eidolon-cli = "eidolon_ai_client.cli:app"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.12"
-setuptools = "^69.0.2"
+python = ">=3.11,<3.13"
+setuptools = ">=69.0.2"
 jsonref = "^1.1.0"
-pydantic = "^2.6.1"
-httpx = "^0.27.0"
-httpx-sse = "^0.4.0"
-sse-starlette = "^2.0.0"
-aiostream = "^0.5.2"
+pydantic = ">=2.6.1"
+httpx = ">=0.27.0"
+httpx-sse = ">=0.4.0"
+sse-starlette = ">=2.0.0"
+aiostream = ">=0.5.2"
 
 [tool.poetry.extras]
 cli = [ "typer", "rich", "simple-term-menu",]
