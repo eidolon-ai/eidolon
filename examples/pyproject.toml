@@ -17,8 +17,8 @@ update-tag = "examples"
 last-update-hash = "23cf1ab2bda0bf712314e806db227567c612a7ab"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.12"
-setuptools = "^69.0.2"
+python = ">=3.11,<3.13"
+setuptools = ">=69.0.2"
 transformers = "^4.35.2"
 eidolon-ai-sdk = "^0.1.73"
 eidolon-ai-client = "^0.1.23"

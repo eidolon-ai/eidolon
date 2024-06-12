@@ -13,7 +13,7 @@ readme = "README.md"
 last-update-hash = "84dbaf5b9f4b2ac567148a396b7d4a58917fadc0"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 pydantic = "^2.6.4"
 setuptools = "^69.2.0"
 httpx = "^0.27.0"
