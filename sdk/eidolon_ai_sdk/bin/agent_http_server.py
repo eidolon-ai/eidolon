@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging.config
+import os
 import pathlib
 from collections import deque
 from contextlib import asynccontextmanager
@@ -10,6 +11,7 @@ import dotenv
 import time
 import uvicorn
 import yaml
+from dotenv import find_dotenv
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -99,8 +101,18 @@ def parse_args():
         help="Fail the server if an agent fails to start",
         default=False,
     )
-
-    # Parse command line arguments
+    parser.add_argument(
+        "--ensure-envar",
+        action="append",
+        help="prompt for an environment variable if not set"
+    )
+    parser.add_argument(
+        '--persist-env',
+        nargs='?',
+        const=find_dotenv() or ".env",
+        default=False,
+        help='Save ensured environment variables to a file. Defaults to .env.'
+    )
     return parser.parse_args()
 
 
@@ -221,6 +233,14 @@ def main():
     log_level = logging.DEBUG if args.debug else logging.INFO
     loop = asyncio.get_event_loop()
     loop.set_debug(True)
+    added = []
+    for envar in args.ensure_envar:
+        if envar not in os.environ:
+            os.environ[envar] = input(f"Please enter the value for \"{envar}\": ")
+            added.append(envar)
+    if added and args.persist_env:
+        with open(args.persist_env, "a") as f:
+            f.write("\n".join(f"{k}={os.environ[k]}" for k in added))
 
     _app = start_app(
         lambda app: start_os(
