@@ -1345,7 +1345,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.25"
+version = "0.1.26"
 description = "Eidolon python client and CLI"
 optional = false
 python-versions = ">=3.11,<3.13"
@@ -6189,4 +6189,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "13423cd97894033cd6d6e1ef5b08ea0467515b519e1c3d7be1861cad0a4a6e92"
+content-hash = "cc11a24a50b3b0ae20a11e3587f3edf675339bae77aa244589328fcc37b1b52b"
