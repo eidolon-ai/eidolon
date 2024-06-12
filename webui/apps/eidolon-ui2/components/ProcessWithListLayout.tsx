@@ -5,8 +5,7 @@ import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
 import {ProcessesProvider} from "../../../packages/eidolon-components/src/hooks/processes_context";
 import {EidolonApp} from "@eidolon/components";
-import {useEffect, useRef, useState} from "react";
-import {getAgents} from "@eidolon/components/src/client-api-helpers/machine-helper";
+import {useRef} from "react";
 
 
 export interface DevTooLayoutProps {

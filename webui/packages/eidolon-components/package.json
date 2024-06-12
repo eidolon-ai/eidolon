@@ -23,7 +23,15 @@
     "test": "jest --ci"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": {
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "default": "./dist/index.js"
+      }
+    }
   },
   "dependencies": {
     "@eidolon/client": "workspace:*",

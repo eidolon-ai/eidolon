@@ -3,7 +3,7 @@
 import * as React from "react";
 import {useEffect} from "react";
 import {Box} from "@mui/material";
-import {executeOperation, streamOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
+import {executeOperation, streamOperation} from "@eidolon/components";
 import {CopilotParams, useProcess} from "@eidolon/components";
 import {CompanyImageList} from "./CompanyImageList";
 import {Company} from "../../types";
