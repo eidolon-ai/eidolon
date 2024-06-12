@@ -73,6 +73,7 @@ export default defineConfig({
         },
         {label: 'Prerequisites', link: '/docs/prereq'},
         {label: 'Quickstart', link: '/docs/create'},
+        {label: 'Contributing', link: '/docs/contributing'},
         {
           label: 'How To',
           items: [
