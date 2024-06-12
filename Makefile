@@ -1,8 +1,11 @@
-.PHONY: force version publish
+.PHONY: force lock version publish
 
 ALL_POETRY_PROJECTS := $(dir $(shell find . -name 'pyproject.toml'))
 UNVERSIONED_PROJECTS := %scripts/ %usage-server/
 UPUBLISHED_PROJECTS := $(UNVERSIONED_PROJECTS) %examples/
+
+lock: $(addsuffix .lock, $(ALL_POETRY_PROJECTS))
+	@echo "Done!"
 
 version: $(addsuffix .version, $(filter-out $(UNVERSIONED_PROJECTS),$(ALL_POETRY_PROJECTS))) webui/.version
 	@echo "Done!"
@@ -15,6 +18,9 @@ webui/.version: force
 
 # targets need to be defined as part of first expansion so we can grab dependencies from second expansion
 .SECONDEXPANSION:
+
+$(addsuffix .lock, $(ALL_POETRY_PROJECTS)): %.lock: force
+	cd $*; poetry lock --no-update;
 
 $(addsuffix .version, $(ALL_POETRY_PROJECTS)): %.version: force $$(shell make -C scripts -s run "get_deps $$* --suffix .version")
 	@make -s -C scripts run "update_poetry ${*}";
