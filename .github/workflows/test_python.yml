@@ -6,6 +6,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  lock-files-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: make lock
+      - name: Checking if lock files are out of date, (run "make lock" to fix)
+        run: |
+          git status
+          git diff --quiet
+
   examples-test:
     runs-on: ubuntu-latest
     services:

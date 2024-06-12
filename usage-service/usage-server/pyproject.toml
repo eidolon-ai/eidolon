@@ -9,7 +9,7 @@ readme = "README.md"
 usage-service = "usage_server.server:main"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 pydantic = "^2.6.4"
 fastapi = "^0.110.0"
 motor = "^3.3.2"

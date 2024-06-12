@@ -1339,23 +1339,23 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.23"
+version = "0.1.25"
 description = "Eidolon python client and CLI"
 optional = true
-python-versions = "<3.12,>=3.11"
+python-versions = "<3.13,>=3.11"
 files = [
-    {file = "eidolon_ai_client-0.1.23-py3-none-any.whl", hash = "sha256:e23a5b93c0d38069a03f423484f134e0974883c7de2a174c1cda25da4875a4b1"},
-    {file = "eidolon_ai_client-0.1.23.tar.gz", hash = "sha256:ba2975d034d1e0dce075b86dfe06837bc2af94d58a0b3c7374ad49e1ac7b2713"},
+    {file = "eidolon_ai_client-0.1.25-py3-none-any.whl", hash = "sha256:3229904a33d233e53c9eb0664385addcc1d08005d390938168d0b9c641aecf2d"},
+    {file = "eidolon_ai_client-0.1.25.tar.gz", hash = "sha256:00f899e986aa9a1c07282a86d09bea94e9c10de29070e1d31ac2a7e9d51b101d"},
 ]
 
 [package.dependencies]
-aiostream = ">=0.5.2,<0.6.0"
-httpx = ">=0.27.0,<0.28.0"
-httpx-sse = ">=0.4.0,<0.5.0"
+aiostream = ">=0.5.2"
+httpx = ">=0.27.0"
+httpx-sse = ">=0.4.0"
 jsonref = ">=1.1.0,<2.0.0"
-pydantic = ">=2.6.1,<3.0.0"
-setuptools = ">=69.0.2,<70.0.0"
-sse-starlette = ">=2.0.0,<3.0.0"
+pydantic = ">=2.6.1"
+setuptools = ">=69.0.2"
+sse-starlette = ">=2.0.0"
 
 [package.extras]
 cli = ["rich (>=13.7.1,<14.0.0)", "simple-term-menu (>=1.6.4,<2.0.0)", "typer (>=0.12.3,<0.13.0)"]
@@ -1378,30 +1378,31 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.70"
+version = "0.1.75"
 description = "An open source sgent service SDK"
 optional = true
-python-versions = ">=3.11,<3.12"
+python-versions = ">=3.11,<3.13"
 files = []
 develop = true
 
 [package.dependencies]
-anthropic = "^0.21.3"
+anthropic = ">=0.21.3"
 authlib = "^1.3.0"
 azure-identity = "^1.16.0"
 boto3 = "^1.34.74"
 boto3-stubs = {version = "^1.34.74", extras = ["essential"]}
-chromadb = "^0.4.18"
+chromadb = ">=0.4.18"
 dill = "^0.3.8"
-eidolon-ai-client = "^0.1.23"
+eidolon-ai-client = "^0.1.25"
 eidolon-ai-mistralai = "^0.1.6a"
-eidolon-ai-usage-client = "^0.1.6"
+eidolon-ai-usage-client = "^0.1.7"
 esprima = "^4.0.1"
-fastapi = "^0.109.0"
+fastapi = ">=0.109.0"
 filetype = "^1.2.0"
 httpx = "^0.27.0"
 httpx-sse = "^0.4.0"
 jinja2 = "^3.1.3"
+jsonpath-ng = "^1.6.1"
 jsonref = "^1.1.0"
 jsonschema = "^4.21.1"
 lxml = "^5.1.0"
@@ -1409,9 +1410,9 @@ motor = "^3.3.2"
 numpy = "^1.26.3"
 ollama = "^0.2.0"
 openai = "^1.9.0"
-opentelemetry-instrumentation-fastapi = "^0.44b0"
-opentelemetry-instrumentation-logging = "^0.44b0"
-opentelemetry-sdk = "^1.23.0"
+opentelemetry-instrumentation-fastapi = ">=0.44b0"
+opentelemetry-instrumentation-logging = ">=0.44b0"
+opentelemetry-sdk = ">=1.23.0"
 pillow = "^10.2.0"
 playwright = "^1.43.0"
 posthog = "^3.5.0"
@@ -1422,13 +1423,13 @@ python-dotenv = "^1.0.1"
 python-jose = "^3.3.0"
 python-multipart = ">=0.0.6,<0.0.8"
 pyyaml = "^6.0.1"
-setuptools = "^69.0.2"
+setuptools = ">=69.0.2"
 spacy = "^3.7.2"
 sse-starlette = "^2.0.0"
-tiktoken = "^0.5.1"
+tiktoken = ">=0.5.1"
 typer = {version = "^0.9.0", extras = ["all"]}
-unstructured = "^0.12.3"
-uvicorn = "^0.27.0"
+unstructured = "^0.14.5"
+uvicorn = ">=0.27.0"
 
 [package.source]
 type = "directory"
@@ -1436,13 +1437,13 @@ url = "../sdk"
 
 [[package]]
 name = "eidolon-ai-usage-client"
-version = "0.1.6"
+version = "0.1.7"
 description = ""
 optional = true
-python-versions = "<4.0,>=3.11"
+python-versions = "<3.13,>=3.11"
 files = [
-    {file = "eidolon_ai_usage_client-0.1.6-py3-none-any.whl", hash = "sha256:ca09764ef2149c3df9c3290ba44b6884f8bb12b248e97689ce935fb5b6fdcf9b"},
-    {file = "eidolon_ai_usage_client-0.1.6.tar.gz", hash = "sha256:080feb956798f977686865f84f4bd0369cb1cb4f8c270ec8b6957078588c2536"},
+    {file = "eidolon_ai_usage_client-0.1.7-py3-none-any.whl", hash = "sha256:148b6e01d27d5ba55a2c1461a160d628de3227232c37576496d9ad7f74d75a1e"},
+    {file = "eidolon_ai_usage_client-0.1.7.tar.gz", hash = "sha256:4334dc9233878f59d51a831fae1131d58b89fdbf572c32397468579db24cf848"},
 ]
 
 [package.dependencies]
@@ -2063,6 +2064,20 @@ Pygments = ">=2.10.0,<3.0.0"
 pytz = "*"
 PyYAML = ">=5.4.1,<7"
 requests = ">=2.31.0,<3.0.0"
+
+[[package]]
+name = "jsonpath-ng"
+version = "1.6.1"
+description = "A final implementation of JSONPath for Python that aims to be standard compliant, including arithmetic and binary comparison operators and providing clear AST for metaprogramming."
+optional = true
+python-versions = "*"
+files = [
+    {file = "jsonpath-ng-1.6.1.tar.gz", hash = "sha256:086c37ba4917304850bd837aeab806670224d3f038fe2833ff593a672ef0a5fa"},
+    {file = "jsonpath_ng-1.6.1-py3-none-any.whl", hash = "sha256:8f22cd8273d7772eea9aaa84d922e0841aa36fdb8a2c6b7f6c3791a16a9bc0be"},
+]
+
+[package.dependencies]
+ply = "*"
 
 [[package]]
 name = "jsonpath-python"
@@ -5510,13 +5525,13 @@ typing-extensions = ">=3.7.4"
 
 [[package]]
 name = "unstructured"
-version = "0.12.5"
+version = "0.14.5"
 description = "A library that prepares raw documents for downstream ML tasks."
 optional = true
-python-versions = ">=3.9.0,<3.12"
+python-versions = "<3.13,>=3.9.0"
 files = [
-    {file = "unstructured-0.12.5-py3-none-any.whl", hash = "sha256:cce7de36964f556810adb8728d0639d8e9b3ef4567443877609f3c66a54e24d1"},
-    {file = "unstructured-0.12.5.tar.gz", hash = "sha256:5ea6c881049e7d98a88c07192bcb6ab750de41b4e3b594972ed1034bda99dbae"},
+    {file = "unstructured-0.14.5-py3-none-any.whl", hash = "sha256:2286180ac089b691e1effb73c2ab17b7809011fbf7f751439301b12a4c984131"},
+    {file = "unstructured-0.14.5.tar.gz", hash = "sha256:f37975273cdcf8f05768ef2f86abaf3d8f805992f6acb0441c2be00fa4ef6588"},
 ]
 
 [package.dependencies]
@@ -5536,29 +5551,33 @@ rapidfuzz = "*"
 requests = "*"
 tabulate = "*"
 typing-extensions = "*"
-unstructured-client = ">=0.15.1"
+unstructured-client = "*"
 wrapt = "*"
 
 [package.extras]
 airtable = ["pyairtable"]
-all-docs = ["markdown", "msg-parser", "networkx", "onnx", "openpyxl", "pandas", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypandoc", "pypdf", "python-docx", "python-pptx (<=0.6.23)", "unstructured-inference (==0.7.23)", "unstructured.pytesseract (>=0.3.12)", "xlrd"]
+all-docs = ["effdet", "google-cloud-vision", "markdown", "networkx", "onnx", "openpyxl", "pandas", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypandoc", "pypdf", "pytesseract", "python-docx (>=1.1.2)", "python-oxmsg", "python-pptx (<=0.6.23)", "unstructured-inference (==0.7.33)", "unstructured.pytesseract (>=0.3.12)", "xlrd"]
 astra = ["astrapy"]
 azure = ["adlfs", "fsspec"]
 azure-cognitive-search = ["azure-search-documents"]
 bedrock = ["boto3", "langchain-community"]
 biomed = ["bs4"]
 box = ["boxfs", "fsspec"]
-chroma = ["chromadb"]
+chroma = ["chromadb", "importlib-metadata (>=7.1.0)", "typer (<=0.9.0)"]
+clarifai = ["clarifai"]
 confluence = ["atlassian-python-api"]
 csv = ["pandas"]
 databricks-volumes = ["databricks-sdk"]
 delta-table = ["deltalake", "fsspec"]
 discord = ["discord-py"]
-doc = ["python-docx"]
-docx = ["python-docx"]
+doc = ["python-docx (>=1.1.2)"]
+docx = ["python-docx (>=1.1.2)"]
 dropbox = ["dropboxdrivefs", "fsspec"]
 elasticsearch = ["elasticsearch"]
 embed-huggingface = ["huggingface", "langchain-community", "sentence-transformers"]
+embed-octoai = ["openai", "tiktoken"]
+embed-vertexai = ["langchain", "langchain-community", "langchain-google-vertexai"]
+embed-voyageai = ["langchain", "langchain-voyageai"]
 epub = ["pypandoc"]
 gcs = ["bs4", "fsspec", "gcsfs"]
 github = ["pygithub (>1.58.0)"]
@@ -5566,22 +5585,22 @@ gitlab = ["python-gitlab"]
 google-drive = ["google-api-python-client"]
 hubspot = ["hubspot-api-client", "urllib3"]
 huggingface = ["langdetect", "sacremoses", "sentencepiece", "torch", "transformers"]
-image = ["onnx", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypdf", "unstructured-inference (==0.7.23)", "unstructured.pytesseract (>=0.3.12)"]
+image = ["effdet", "google-cloud-vision", "onnx", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypdf", "pytesseract", "unstructured-inference (==0.7.33)", "unstructured.pytesseract (>=0.3.12)"]
 jira = ["atlassian-python-api"]
-local-inference = ["markdown", "msg-parser", "networkx", "onnx", "openpyxl", "pandas", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypandoc", "pypdf", "python-docx", "python-pptx (<=0.6.23)", "unstructured-inference (==0.7.23)", "unstructured.pytesseract (>=0.3.12)", "xlrd"]
+local-inference = ["effdet", "google-cloud-vision", "markdown", "networkx", "onnx", "openpyxl", "pandas", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypandoc", "pypdf", "pytesseract", "python-docx (>=1.1.2)", "python-oxmsg", "python-pptx (<=0.6.23)", "unstructured-inference (==0.7.33)", "unstructured.pytesseract (>=0.3.12)", "xlrd"]
 md = ["markdown"]
 mongodb = ["pymongo"]
-msg = ["msg-parser"]
+msg = ["python-oxmsg"]
 notion = ["htmlBuilder", "notion-client"]
-odt = ["pypandoc", "python-docx"]
+odt = ["pypandoc", "python-docx (>=1.1.2)"]
 onedrive = ["Office365-REST-Python-Client", "bs4", "msal"]
 openai = ["langchain-community", "openai", "tiktoken"]
 opensearch = ["opensearch-py"]
 org = ["pypandoc"]
 outlook = ["Office365-REST-Python-Client", "msal"]
 paddleocr = ["unstructured.paddleocr (==2.6.1.3)"]
-pdf = ["onnx", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypdf", "unstructured-inference (==0.7.23)", "unstructured.pytesseract (>=0.3.12)"]
-pinecone = ["pinecone-client (==2.2.4)"]
+pdf = ["effdet", "google-cloud-vision", "onnx", "pdf2image", "pdfminer.six", "pikepdf", "pillow-heif", "pypdf", "pytesseract", "unstructured-inference (==0.7.33)", "unstructured.pytesseract (>=0.3.12)"]
+pinecone = ["pinecone-client (>=3.7.1)"]
 postgres = ["psycopg2-binary"]
 ppt = ["python-pptx (<=0.6.23)"]
 pptx = ["python-pptx (<=0.6.23)"]
