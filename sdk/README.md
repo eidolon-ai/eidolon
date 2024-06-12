@@ -1,7 +1,7 @@
 # Eidolon SDK
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/eidolon-ai-sdk)](https://pypistats.org/packages/eidolon-ai-sdk)
-[![Tests - Status](https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test.yml?style=flat&label=test)](https://github.com/eidolon-ai/eidolon/actions/workflows/test.yml?query=branch%3Amain)
+[![Tests - Status](https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&label=test)](https://github.com/eidolon-ai/eidolon/actions/workflows/test.yml?query=branch%3Amain)
 
 ## An Open Source Agent Service SDK
 
