@@ -1,4 +1,4 @@
-name: Test
+name: Test Python 3.12
 on:
   push:
     branches: [main]
@@ -150,50 +150,3 @@ jobs:
         working-directory: usage-service/usage-server
       - run: poetry run pytest
         working-directory: usage-service/usage-server
-
-  test-webui:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 21.x
-      - uses: pnpm/action-setup@v3
-        name: Install pnpm
-        with:
-          version: 9
-          run_install: false
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-      - name: Install dependencies
-        run: pnpm install
-        working-directory: webui
-      - name: lint
-        run: pnpm lint
-        working-directory: webui
-      - name: build
-        run: pnpm build
-        working-directory: webui
-      - name: test
-        run: pnpm test --if-present
-        working-directory: webui
-
-  test-webui-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: test docker build
-        run: docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '"') .
-        working-directory: webui
