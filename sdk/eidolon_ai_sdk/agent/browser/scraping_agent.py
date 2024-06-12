@@ -28,10 +28,6 @@ class WebScrapingAgent(Specable[WebScrapingAgentSpec]):
     def __init__(self, **kwargs):
         Specable.__init__(self, **kwargs)
 
-    async def _getBrowser(self):
-        server = await async_playwright().start()
-        return await server.chromium.launch(headless=True)
-
     def scrape_page(self, page: Any, text: str):
         if self.spec.summarizer == "BeautifulSoup":
             soup = BeautifulSoup(text, "lxml")
@@ -54,12 +50,13 @@ class WebScrapingAgent(Specable[WebScrapingAgentSpec]):
         :return:
         """
         await ProcessDoc.set_delete_on_terminate(process_id, True)
-        browser = await self._getBrowser()
-        try:
-            context = await browser.new_context()
-            page = await context.new_page()
-            await page.goto(url)
-            html_content = await page.content()
-            return self.scrape_page(page, html_content)
-        finally:
-            await browser.close()
+        async with async_playwright() as playwright:
+            browser = await playwright.chromium.launch(headless=True)
+            try:
+                context = await browser.new_context()
+                page = await context.new_page()
+                await page.goto(url)
+                html_content = await page.content()
+                return self.scrape_page(page, html_content)
+            finally:
+                await browser.close()
