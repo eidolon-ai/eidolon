@@ -12,7 +12,7 @@ description: This page gives a broad overview of Eidolon and the documentation
     <img style="display: inline-block" alt="PyPI - Version" src="https://img.shields.io/pypi/v/eidolon-ai-client?style=flat&label=eidolon-ai-client">
   </a>
   <a href="https://github.com/eidolon-ai/eidolon">
-    <img style="display: inline-block;" alt="GitHub Test Status" src="https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test.yml?style=flat&logo=github&label=test">
+    <img style="display: inline-block;" alt="GitHub Test Status" src="https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&logo=github&label=test">
   </a>
 </div>
 
