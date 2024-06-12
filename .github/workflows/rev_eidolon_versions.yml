@@ -1,7 +1,7 @@
 name: Rev and Publish Python Projects
 on:
   workflow_run:
-    workflows: ["Test"]  # The name of the test workflow
+    workflows: ["Test Python"]  # The name of the test workflow
     types:
       - completed
     branches:

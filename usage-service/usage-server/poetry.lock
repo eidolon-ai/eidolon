@@ -89,10 +89,10 @@ wmi = ["wmi (>=1.5.1)"]
 
 [[package]]
 name = "eidolon-ai-usage-client"
-version = "0.1.6"
+version = "0.1.7"
 description = ""
 optional = false
-python-versions = "^3.11"
+python-versions = ">=3.11,<3.13"
 files = []
 develop = true
 
@@ -618,5 +618,5 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.11"
-content-hash = "5d25000abdfb0153d17e702d2604302b84943e2db8af5114d234ca7bc615f731"
+python-versions = ">=3.11,<3.13"
+content-hash = "f50517359acd196c465a0e0e1adc1b3065063fccdeb4bef5b0dc9f0c845d4127"
