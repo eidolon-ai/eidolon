@@ -1,0 +1,78 @@
+name: Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  sdk-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: sdk
+      - run: poetry run playwright install
+        working-directory: sdk
+      - run: poetry run ruff format .
+        working-directory: sdk
+      - run: poetry run ruff check .
+        working-directory: sdk
+      - run: poetry run pytest
+        env:
+          OPENAI_API_KEY: intentionally_unused
+        working-directory: sdk
+
+  sdk-test-local-memory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: sdk
+      - run: poetry run playwright install
+        working-directory: sdk
+      - run: poetry run pytest --symbolic_memory local
+        env:
+          OPENAI_API_KEY: intentionally_unused
+        working-directory: sdk
+
+  usage-service-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: usage-service/usage-server
+      - run: poetry run ruff format .
+        working-directory: usage-service/usage-server
+      - run: poetry run ruff check .
+        working-directory: usage-service/usage-server
+      - run: poetry run pytest
+        working-directory: usage-service/usage-server
