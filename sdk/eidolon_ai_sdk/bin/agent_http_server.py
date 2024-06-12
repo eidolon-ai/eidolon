@@ -111,7 +111,7 @@ def parse_args():
         nargs='?',
         const=find_dotenv() or ".env",
         default=False,
-        help='Save ensured environment variables to a file. Defaults to .env.'
+        help='Save ensured environment variables to a file.'
     )
     return parser.parse_args()
 
