@@ -1,3 +1,5 @@
+'use client'
+
 import {Badge, Divider, IconButton, Paper, Typography} from "@mui/material";
 import {ChooseLLMElement} from "../messages/choose-llm-element";
 import {useSupportedLLMsOnOperation} from "../hooks/useSupportedLLMsOnOperation";
