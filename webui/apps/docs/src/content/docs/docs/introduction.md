@@ -24,9 +24,11 @@ This page gives a broad overview of the framework and of this documentation, so 
 
 ## Before you Start
 
-The [Quickstart Guide](/docs/prereq/) is a great starting point for anyone new to the Eidolon Framework. There you will find a step-by-step tutorial on setting up and running your first project with Eidolon. After that check out the video [Demos](/docs/getting_started/demos/introduction) or text [Tutorials](/docs/getting_started/tutorials/introduction) for inspiration and to see what is possible with Eidolon.
+The [Quickstart Guide](/docs/quickstart/) is a great starting point for anyone new to the Eidolon Framework. There you will find a step-by-step tutorial on setting up and running your first project with Eidolon.
 
-The [References](/docs/references/introduction) section contains an in-depth guide showcasing the features and capabilities of Eidolon. And if you're curious about the design behind Eidolon check out the [Architecture](/docs/architecture/introduction) section.
+After that check out our [Recipes](/docs/recipes/chatbot) for inspiration and to see what is possible with Eidolon.
+
+The [Builtin Components](/docs/components/symbolicmemory/overview) section contains an in-depth guide showcasing the features and capabilities of Eidolon. And if you're curious about the design behind Eidolon check out the [Architecture](/docs/architecture/introduction) section.
 
 
 ## Frequently Asked Questions

@@ -56,9 +56,6 @@ a loader that reads files from disk, but Eidolon has a GitHub loader built in th
 
 First clone Eidolon's chatbot repository and then start your server.
 ```bash
-export AWS_ACCESS_KEY_ID=<YOUR_ACCESS_KEY_ID>
-export AWS_SECRET_ACCESS_KEY=<YOUR_SECRET_ACCESS_KEY>
-export OPENAI_API_KEY=<YOUR_OPEN_AI_API_KEY>
 git clone https://github.com/eidolon-ai/eidolon-s3-rag.git
 cd eidolon-s3-rag
 make serve-dev

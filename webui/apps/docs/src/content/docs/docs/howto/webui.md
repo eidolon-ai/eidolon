@@ -1,5 +1,5 @@
 ---
-title: Run the Webui
+title: Launch the Webui
 description: References - Running the Webui
 ---
 

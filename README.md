@@ -25,7 +25,7 @@ developers will not be able to adapt their agents to the rapidly changing AI lan
 
 Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 
-## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/prereq/)
+## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/quickstart)
 
 ### Running the AgentMachine
 ```bash

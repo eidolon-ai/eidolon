@@ -1,5 +1,5 @@
 ---
-title: Agent Communication
+title: Agent-Agent Communication
 description: References - Agent Communication
 ---
 In a multi-agent system, agents need to communicate with each other to share information, coordinate actions, and achieve 
