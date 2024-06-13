@@ -99,8 +99,11 @@ def parse_args():
         help="Fail the server if an agent fails to start",
         default=False,
     )
-
-    # Parse command line arguments
+    parser.add_argument(
+        "--dotenv",
+        action="append",
+        help="specify a .env file to load environment variables from.",
+    )
     return parser.parse_args()
 
 
@@ -221,6 +224,8 @@ def main():
     log_level = logging.DEBUG if args.debug else logging.INFO
     loop = asyncio.get_event_loop()
     loop.set_debug(True)
+    for dotenv_file in args.dotenv or []:
+        dotenv.load_dotenv(dotenv_file)
 
     _app = start_app(
         lambda app: start_os(
