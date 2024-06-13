@@ -66,8 +66,7 @@ a loader that reads files from disk, but Eidolon has a GitHub loader built in th
 
 First let's fork for Eidolon's chatbot repository, clone it to your local machine, and start your server.
 ```bash
-export GITHUB_TOKEN=<YOUR_GITHUB_TOKEN>
-gh repo fork eidolon-ai/eidolon-git-search --clone=true
+git clone https://github.com/eidolon-ai/eidolon-git-search.git
 cd eidolon-git-search
 make serve-dev
 ```

@@ -1,5 +1,5 @@
 ---
-title: Pluggable Resources
+title: Customizing Builtin Components
 description: References - Pluggable Resources
 ---
 In a multi-agent system, agents will have vastly different needs. This may be as simple as choosing a different system 

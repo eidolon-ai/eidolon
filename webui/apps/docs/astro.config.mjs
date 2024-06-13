@@ -71,18 +71,15 @@ export default defineConfig({
         {
           label: 'Introduction', link: '/docs/introduction'
         },
-        {label: 'Prerequisites', link: '/docs/prereq'},
-        {label: 'Quickstart', link: '/docs/create'},
-        {label: 'Contributing', link: '/docs/contributing'},
+        {label: 'Quickstart', link: '/docs/quickstart'},
         {
           label: 'How To',
           items: [
-            {label: 'Launch the WebUI', link: '/docs/references/webui'},
-            {label: 'Agent-Agent Communication', link: '/docs/references/communication'},
-            {label: 'Component Customization', link: '/docs/references/pluggable'},
-            {label: 'Custom Agent Templates', link: '/docs/references/custom_agents'},
-            // {label: 'Custom Logic Units', link: '/docs/references/custom_logic_units'},
-            {label: 'Custom Components', link: '/docs/references/using_references'},
+            {label: 'Launch the WebUI', link: '/docs/howto/webui'},
+            {label: 'Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Customizing Builtin Components', link: '/docs/howto/customize_builtins'},
+            {label: 'Custom Agent Templates', link: '/docs/howto/custom_agents'},
+            {label: 'Custom Components', link: '/docs/howto/using_references'},
           ],
         },
         {
@@ -200,6 +197,7 @@ export default defineConfig({
         },
         {
           label: 'Architecture',
+          collapsed: true,
           items: [
             {label: 'Introduction', link: '/docs/architecture/introduction'},
             {label: 'Fundamentals', link: '/docs/architecture/fundamentals'},
@@ -209,6 +207,7 @@ export default defineConfig({
             {label: 'Conclusion', link: '/docs/architecture/conclusion'},
           ],
         },
+        {label: 'Contributing', link: '/docs/contributing'},
       ]
     })
   ],
