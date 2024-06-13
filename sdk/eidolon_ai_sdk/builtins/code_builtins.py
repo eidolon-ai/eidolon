@@ -9,6 +9,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler
 
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent.api_agent import APIAgent
 from eidolon_ai_sdk.agent.audio_agent import AutonomousSpeechAgent
 from eidolon_ai_sdk.agent.browser.scraping_agent import WebScrapingAgent
 from eidolon_ai_sdk.agent.browser.search_agent import WebSearchAgent
@@ -157,6 +158,7 @@ def named_builtins() -> List[ReferenceResource]:
         WebScrapingAgent,
         WebSearchAgent,
         WebResearcher,
+        APIAgent,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
         MongoSymbolicMemory,

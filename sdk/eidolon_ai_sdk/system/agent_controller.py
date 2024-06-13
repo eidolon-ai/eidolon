@@ -61,6 +61,12 @@ class AgentController:
         self.name = name
         self.actions = {}
         self.agent = agent
+
+    async def start(self, app: FastAPI):
+        logger.info(f"Starting agent '{self.name}'")
+        if hasattr(self.agent, "start"):
+            await self.agent.start()
+
         for handler in get_handlers(self.agent):
             if handler.name in self.actions:
                 self.actions[handler.name].extra["allowed_states"] = (
@@ -70,8 +76,6 @@ class AgentController:
             else:
                 self.actions[handler.name] = handler
 
-    async def start(self, app: FastAPI):
-        logger.info(f"Starting agent '{self.name}'")
         self.security = AgentOS.security_manager
 
         app.add_api_route(
@@ -381,7 +385,11 @@ class AgentController:
         elif not isEndpointAProgram:
             params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
 
-        del params["self"]
+        if "self" in params:
+            del params["self"]
+
+        if "_self" in params:
+            del params["_self"]
 
         params["__request"] = Parameter("__request", Parameter.KEYWORD_ONLY, annotation=Request)
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]

@@ -25,6 +25,9 @@ type_mapping = {
     # More complex types like 'format' can be handled by specific Pydantic types or custom validators
 }
 
+# todo -- add method to flatten refs...
+
+
 
 def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
     """
