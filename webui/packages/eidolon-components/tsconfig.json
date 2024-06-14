@@ -7,8 +7,14 @@
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
-    "noEmit": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"],

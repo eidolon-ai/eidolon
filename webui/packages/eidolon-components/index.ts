@@ -1,3 +1,5 @@
+"use client";
+
 export { AgentHandler, FileHandler, FilesHandler, MachineHandler, ProcessesHandler, ProcessEventsHandler, ProcessHandler } from './src/server/processes-server-handler.js';
 export { ProcessList, type ProcessListProps } from './src/process-list/process-list.js';
 export * from './src/client-api-helpers/process-helper.js';
