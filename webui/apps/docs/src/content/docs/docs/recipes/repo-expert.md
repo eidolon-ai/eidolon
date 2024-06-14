@@ -24,8 +24,8 @@ src="https://www.youtube.com/embed/INOjIWMX4mY">
 </iframe>
 
 ## Core Concepts
-###### [Multi-agent communication](/docs/references/communication)
-###### [Sub-component customization](/docs/references/communication)
+###### [Multi-agent communication](/docs/howto/communication)
+###### [Sub-component customization](/docs/howto/communication)
 ###### [Dynamic embedding management](/docs/components/retriever_agent)
 
 ## Agents

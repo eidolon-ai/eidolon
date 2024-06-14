@@ -73,7 +73,7 @@ class QA(Specable[QASpec]):
 ```
 
 🔎 What is this `Specable` thing? Eidolon uses Pydantic to define the spec of different resources. [Learn more about 
-how references work.](/docs/references/using_references)
+how references work.](/docs/howto/using_references)
 
 ### Streaming Response
 LLMs can be slow, and sometimes you want to stream responses back to the user. Eidolon supports this by allowing you to 

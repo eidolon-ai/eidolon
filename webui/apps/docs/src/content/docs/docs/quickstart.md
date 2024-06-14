@@ -166,8 +166,8 @@ Now that you have a running agent machine with a simple agent. Let's start custo
 
 - [ ] ⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub. Eidolon is a fully open source project, and we love your support!
 - [ ] Add new capabilities via logic units (tools)
-- [ ] Enable [agent-to-agent communication](/docs/references/communication)
-- [ ] [Swap out components](/docs/references/pluggable) (like the underlying llm)
+- [ ] Enable [agent-to-agent communication](/docs/howto/communication)
+- [ ] [Swap out components](/docs/howto/customize_builtins) (like the underlying llm)
 - [ ] Use [structured inputs](/docs/components/simple_agent#defining-actions) for prompt templating
 - [ ] Leverage your agent's [state machine](/docs/components/simple_agent#defining-actions)
-- [ ] Launch [Eidolon's UI](/docs/references/webui)
+- [ ] Launch [Eidolon's UI](/docs/howto/webui)

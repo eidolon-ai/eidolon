@@ -16,8 +16,8 @@ description: Create a multi-media chatbot powered web-researcher using the llm o
 This Recipe shows an example of a web researcher chatbot. 
 
 ## Core Concepts
-###### [Customizing the AgentProcessingUnit](http://localhost:4321/docs/references/pluggable)
-###### [Running the UI](/docs/references/webui)
+###### [Customizing the AgentProcessingUnit](http://localhost:4321/docs/howto/customize_builtins)
+###### [Running the UI](/docs/howto/webui)
 
 ## Agents
 #### [Conversational Agent](https://github.com/eidolon-ai/web-researcher/blob/main/resources/conversational_agent.yaml)

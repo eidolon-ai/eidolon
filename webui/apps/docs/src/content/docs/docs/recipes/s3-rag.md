@@ -20,8 +20,8 @@ It dynamically pulls in information via similarity search to answer user queries
 This is important if you have a body of information that is constantly changing, but you need real time information about (ie, a git repository).
 
 ## Core Concepts
-###### [Multi-agent communication](/docs/references/communication)
-###### [Sub-component customization](/docs/references/communication)
+###### [Multi-agent communication](/docs/howto/communication)
+###### [Sub-component customization](/docs/howto/communication)
 ###### [Dynamic embedding management](/docs/components/retriever_agent)
 
 ## Agents
