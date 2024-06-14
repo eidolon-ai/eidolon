@@ -1,10 +1,10 @@
 from typing import List, Optional, Tuple, Any, Annotated
 
+from jsonref import replace_refs
 from pydantic import BaseModel, SkipValidation
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json
-from eidolon_ai_sdk.util.schema_to_model import flatten_refs
 
 
 class Operation(BaseModel):
@@ -33,6 +33,7 @@ class Action(BaseModel):
 
 def build_actions(operations_to_expose: List[Operation], schema: dict, title: str,
                   call_fn: callable):
+    schema = replace_refs(schema)
     actions = []
     for op_path, op in schema["paths"].items():
         for operation in operations_to_expose:
@@ -93,7 +94,7 @@ def _body_model(schema, endpoint_schema, name):
     content = body["content"]
 
     if "application/json" in content:
-        return flatten_refs(schema, content["application/json"]["schema"])
+        return content["application/json"]["schema"]
     elif "text/plain" in content:
         return dict(type="object", properties=dict(body=dict(type="string")))
     else:
