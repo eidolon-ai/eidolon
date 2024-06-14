@@ -1,19 +1,18 @@
-from typing import List, Optional, Tuple, Any, Dict, Callable
+from typing import List, Optional, Tuple, Any, Annotated
 
-from aiostream.stream.create import AsyncCallable
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, SkipValidation
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json
-from eidolon_ai_sdk.util.schema_to_model import schema_to_model
+from eidolon_ai_sdk.util.schema_to_model import flatten_refs
 
 
 class Operation(BaseModel):
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     path: str
     method: str
-    result_filters: Optional[List[str]]
+    result_filters: Optional[List[str]] = []
 
     def matches(self, path: str) -> bool:
         return self.path == path
@@ -26,13 +25,14 @@ class Action(BaseModel):
     title: str
     sub_title: str
     name: str
-    schema: dict
+    action_schema: dict
     description: str
-    tool_call: callable
+
+    tool_call: Annotated[callable, SkipValidation]
 
 
 def build_actions(operations_to_expose: List[Operation], schema: dict, title: str,
-                  call_fn: Callable[[str, str, List[Tuple[str, Any]], Dict[str, Any], Dict[str, Any]], Dict[str, Any]]):
+                  call_fn: callable):
     actions = []
     for op_path, op in schema["paths"].items():
         for operation in operations_to_expose:
@@ -46,30 +46,35 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                         if "parameters" in method:
                             methodParams = method["parameters"]
                             for param in method["parameters"]:
+                                schema_ = param["schema"]
                                 if param["in"] == "query":
-                                    params[param["name"]] = param["schema"]
+                                    params[param["name"]] = schema_
+                                    if "type" not in schema_:
+                                        schema_["type"] = "string"
                                     if param["required"]:
                                         required.append(param["name"])
                                 elif param["in"] == "path":
-                                    params[param["name"]] = param["schema"]
+                                    params[param["name"]] = schema_
+                                    if "type" not in schema_:
+                                        schema_["type"] = "string"
                                     required.append(param["name"])
                                 elif param["in"] == "header":
-                                    params[param["name"]] = param["schema"]
+                                    params[param["name"]] = schema_
+                                    if "type" not in schema_:
+                                        schema_["type"] = "string"
                                     required.append(param["name"])
                                 else:
                                     logger.error(f"Unsupported parameter location {param['in']}")
 
-                        print(">>>>", method)
                         if "requestBody" in method:
-                            params["__body__"] = _body_model(method, name + "_Body").model_json_schema()
-                            print(">>>>", params["__body__"])
+                            params["__body__"] = _body_model(schema, method, name)
                             required.append("__body__")
                         description = operation.description or _description(method, name)
                         actions.append(Action(
                             title=title,
                             sub_title=method.get("summary", name),
                             name=name,
-                            schema=dict(type="object", properties=params, required=required),
+                            action_schema=dict(type="object", properties=params, required=required),
                             description=description,
                             tool_call=_call_endpoint(operation.path, operation.result_filters, method_name, methodParams, call_fn)
                         ))
@@ -85,15 +90,10 @@ def _description(endpoint_schema, name):
 
 def _body_model(schema, endpoint_schema, name):
     body = endpoint_schema.get("requestBody")
-    description = body.get("description", "")
-    required = body.get("required", False)
     content = body["content"]
 
     if "application/json" in content:
-        json_schema = content["application/json"]["schema"]
-        if "$ref" in json_schema:
-            json_schema = findRef(json_schema["$ref"], schema)
-        return dict(type="object", properties=dict(body=dict(type="string")), required=required, description=description)
+        return flatten_refs(schema, content["application/json"]["schema"])
     elif "text/plain" in content:
         return dict(type="object", properties=dict(body=dict(type="string")))
     else:
@@ -122,7 +122,7 @@ def _convert_runtime_value(query_params: List[Tuple[str, Any]], param: dict, val
 
 
 def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, _method_params,
-                   call_fn: Callable[[str, str, List[Tuple[str, Any]], Dict[str, Any], Dict[str, Any]], Dict[str, Any]]):
+                   call_fn: callable):
     method_params = _method_params.copy() if _method_params else None
     result_filters = result_filters.copy() if result_filters else None
 
@@ -143,9 +143,8 @@ def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, 
                 else:
                     logger.error(f"Unsupported parameter location {param['in']}")
         body = kwargs.pop("__body__", {})
-        print(f"Calling {path_to_call} with {query_params} and {headers} and {body}")
 
-        retValue = call_fn(path_to_call, method, query_params, headers, body)
+        retValue = await call_fn(path_to_call, method, query_params, headers, body)
 
         if result_filters:
             retValue = filter_and_reconstruct_json(retValue, result_filters)

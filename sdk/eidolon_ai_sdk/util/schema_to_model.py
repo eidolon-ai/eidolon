@@ -25,8 +25,35 @@ type_mapping = {
     # More complex types like 'format' can be handled by specific Pydantic types or custom validators
 }
 
-# todo -- add method to flatten refs...
 
+def flatten_refs(main_schema: Dict[str, Any], starting_node: Dict[str, Any]):
+    if not isinstance(starting_node, dict):
+        raise ValueError("starting_node must be python object.")
+
+    def process_node(schema):
+        if isinstance(schema, dict):
+            node = {}
+            for property_name, property_schema in schema.items():
+                if property_name == "$ref":
+                    if property_schema.startswith("#/"):
+                        ref_path = property_schema.split("#/")[-1]
+                        ref_parts = ref_path.split("/")
+                        ref_node = main_schema
+                        for part in ref_parts:
+                            ref_node = ref_node[part]
+                        node.update(process_node(ref_node))
+                    else:
+                        # External refs are not supported
+                        raise ValueError("External or relative refs are not supported")
+                else:
+                    node[property_name] = process_node(property_schema)
+            return node
+        elif isinstance(schema, list):
+            return [process_node(item) for item in schema]
+        else:
+            return schema
+        
+    return process_node(starting_node)
 
 
 def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
@@ -168,5 +195,5 @@ def get_python_type(property_name, property_schema, default=None):
             return literal_
         python_type = type_mapping.get(field_type, default)
         if python_type is None:
-            raise ValueError(f"Unsupported type '{field_type}'")
+            raise ValueError(f"Unsupported type '{field_type}' for property '{property_name} in schema {property_schema}'")
         return python_type

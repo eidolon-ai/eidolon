@@ -42,7 +42,7 @@ async def test_query_params(pet_store):
     assert action.description == "Find Pets"
     assert action.title == "PetStore"
     assert action.sub_title == "pets"
-    assert action.schema == {
+    assert action.action_schema == {
         "type": "object",
         'properties': {'limit': {'format': 'int32', 'type': 'integer'},
                        'tags': {'items': {'type': 'string'}, 'type': 'array'},
@@ -75,7 +75,7 @@ async def test_path_params(pet_store):
     assert action.description == "Get Pet"
     assert action.title == "PetStore"
     assert action.sub_title == "get_pet"
-    assert action.schema == {
+    assert action.action_schema == {
         "type": "object",
         'properties': {'id': {'format': 'int64', 'type': 'integer'}},
         "required": ['id']
@@ -105,7 +105,7 @@ async def test_header_params(pet_store):
     assert action.description == "Find Pet"
     assert action.title == "PetStore"
     assert action.sub_title == "find_pet"
-    assert action.schema == {
+    assert action.action_schema == {
         "type": "object",
         'properties': {'id': {'format': 'int64', 'type': 'integer'}},
         "required": ['id']
@@ -135,19 +135,27 @@ async def test_body_params(pet_store):
     assert action.description == "Creates a new pet in the store. Duplicates are allowed"
     assert action.title == "PetStore"
     assert action.sub_title == "add_pet"
-    assert action.schema == {
+    assert action.action_schema == {
         "type": "object",
         "required": [
-          "name"
+            "__body__"
         ],
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "tag": {
-            "type": "string"
-          }
+            "__body__": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "tag": {
+                        "type": "string"
+                    }
+                }
+            }
         }
-      }
+    }
     await action.tool_call(None, **{"__body__": {"name": "dog", "tag": "pet"}})
     assert tool_called
