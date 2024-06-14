@@ -9,14 +9,15 @@ from eidolon_ai_sdk.agent.agent import register_program, register_action
 from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage, SystemAPUMessage
 from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnit, AgentsLogicUnitSpec
 from eidolon_ai_sdk.apu.apu import APU
+from eidolon_ai_sdk.builtins.logic_units.web_search import SearchSpec, Search
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
 
 
 class WebResearcherSpec(BaseModel):
     apu: AnnotatedReference[APU]
 
-    search_agent: str = Field(description="The agent to use for searching")
-    scraping_agent: str = Field(description="The agent to use for scraping")
+    search_unit: AnnotatedReference[Search]
+    scraping_unit: AnnotatedReference[Scraper]
 
     system_prompt: str = Field(
         dedent("""You have many tools available to you to help you find the information you need. Only use the relevant tools for the task at hand.
@@ -49,12 +50,7 @@ class WebResearcher(Specable[WebResearcherSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.apu = self.spec.apu.instantiate()
-        self.apu.logic_units.append(
-            AgentsLogicUnit(
-                processing_unit_locator=self.apu,
-                spec=AgentsLogicUnitSpec(agents=[self.spec.search_agent, self.spec.scraping_agent]),
-            )
-        )
+        self.apu.logic_units.extend([self.spec.search_unit.instantiate(), self.spec.scraping_unit.instantiate()])
 
     @register_program()
     async def search(self, process_id,
