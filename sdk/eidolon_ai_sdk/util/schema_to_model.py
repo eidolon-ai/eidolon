@@ -165,5 +165,5 @@ def get_python_type(property_name, property_schema, default=None):
             return literal_
         python_type = type_mapping.get(field_type, default)
         if python_type is None:
-            raise ValueError(f"Unsupported type '{field_type}'")
+            raise ValueError(f"Unsupported type '{field_type}' for property '{property_name} in schema {property_schema}'")
         return python_type
