@@ -18,8 +18,8 @@ class ApiLogicUnitSpec(BaseModel):
     root_call_url: str = Field(description="Root URL of the API to call")
     open_api_location: str = Field(description="Location of the OpenAPI schema")
     operations_to_expose: List[Operation] = Field(description="Operations to expose")
-    extra_header_params: Optional[dict] = Field(description="Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=None)
-    extra_query_params: Optional[dict] = Field(description="Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=None)
+    extra_header_params: dict = Field(description="Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=dict())
+    extra_query_params: dict = Field(description="Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=dict())
 
 
 class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
