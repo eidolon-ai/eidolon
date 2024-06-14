@@ -3,6 +3,8 @@ import json
 import os
 import uuid
 from functools import wraps, cache
+from importlib import metadata
+from platform import python_version, uname
 from typing import Optional
 
 from posthog import Posthog
@@ -50,6 +52,29 @@ def distinct_id():
         return "r_" + str(uuid.uuid4())
 
 
+@cache
+def properties():
+    system, _, release, version, machine, processor = uname()  # node contains identifying information, ignore
+    rtn = {
+        "python version": python_version(),
+        "platform.system": system,
+        "platform.release": release,
+        "platform.version": version,
+        "platform.machine": machine,
+        "platform.processor": processor,
+    }
+    toml_loc = os.path.join(os.path.dirname(os.path.dirname((os.path.dirname(__file__)))), 'metrics.json')
+    with open(toml_loc, 'r') as file:
+        metrics = json.load(file)
+    rtn.update(metrics)
+    try:
+        rtn['eidolon version'] = metadata.version("eidolon-ai-sdk")
+    except metadata.PackageNotFoundError:
+        pass
+
+    return {k: v for k, v in rtn.items() if v != "" and v is not None}
+
+
 def metric(fn):
     def with_logging(*args, **kwargs):
         try:
@@ -59,7 +84,7 @@ def metric(fn):
 
     @wraps(fn)
     def second_wrapper(*args, **kwargs):
-        asyncio.create_task(make_async(with_logging)(*args, **kwargs))
+        return asyncio.create_task(make_async(with_logging)(*args, **kwargs))
 
     return second_wrapper
 
@@ -70,13 +95,14 @@ def report_server_started(time_to_start: float, number_of_agents: int, error: bo
     PosthogConfig.client.capture(distinct_id(), event='server_started', properties={
         'time_to_start': time_to_start,
         'number_of_agents': number_of_agents,
-        'error': error
+        'error': error,
+        **properties()
     })
 
 
 @metric
 def report_new_process():
-    PosthogConfig.client.capture(distinct_id(), event='new_process')
+    PosthogConfig.client.capture(distinct_id(), event='new_process', properties=properties())
 
 
 @cache
@@ -91,5 +117,6 @@ def report_agent_action(agent_name: str):
         agent_name = "custom"
     PosthogConfig.client.capture(distinct_id(), event='agent_action', properties={
         'agent_type': agent_name,
+        **properties()
     })
     logger.info("Agent request reported")
