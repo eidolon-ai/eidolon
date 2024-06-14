@@ -1,4 +1,4 @@
-from typing import List, Optional, Any, cast
+from typing import List, Any, cast
 
 import jsonref
 from pydantic import BaseModel, Field
