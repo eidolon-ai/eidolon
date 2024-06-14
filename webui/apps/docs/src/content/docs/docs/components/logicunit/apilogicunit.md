@@ -3,15 +3,15 @@ title: ApiLogicUnit
 description: Description of ApiLogicUnit component
 ---
 
-| Property                                         | Pattern | Type        | Deprecated | Definition | Title/Description    |
-| ------------------------------------------------ | ------- | ----------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const       | No         | -          | ApiLogicUnit         |
-| + [title](#title )                               | No      | string      | No         | -          | Title                |
-| + [root_call_url](#root_call_url )               | No      | string      | No         | -          | Root Call Url        |
-| + [open_api_location](#open_api_location )       | No      | string      | No         | -          | Open Api Location    |
-| + [operations_to_expose](#operations_to_expose ) | No      | array       | No         | -          | Operations To Expose |
-| - [extra_header_params](#extra_header_params )   | No      | Combination | No         | -          | Extra Header Params  |
-| - [extra_query_params](#extra_query_params )     | No      | Combination | No         | -          | Extra Query Params   |
+| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description    |
+| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------- |
+| - [implementation](#implementation )             | No      | const  | No         | -          | ApiLogicUnit         |
+| + [title](#title )                               | No      | string | No         | -          | Title                |
+| + [root_call_url](#root_call_url )               | No      | string | No         | -          | Root Call Url        |
+| + [open_api_location](#open_api_location )       | No      | string | No         | -          | Open Api Location    |
+| + [operations_to_expose](#operations_to_expose ) | No      | array  | No         | -          | Operations To Expose |
+| - [extra_header_params](#extra_header_params )   | No      | object | No         | -          | Extra Header Params  |
+| - [extra_query_params](#extra_query_params )     | No      | object | No         | -          | Extra Query Params   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -219,32 +219,12 @@ Specific value: `"ApiLogicUnit"`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-**Description:** Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)
-
-| Any of(Option)                          |
-| --------------------------------------- |
-| [item 0](#extra_header_params_anyOf_i0) |
-| [item 1](#extra_header_params_anyOf_i1) |
-
-### <a name="extra_header_params_anyOf_i0"></a>6.1. Property `item 0`
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
 
-### <a name="extra_header_params_anyOf_i1"></a>6.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+**Description:** Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)
 
 ## <a name="extra_query_params"></a>7. Property `extra_query_params`
 
@@ -252,31 +232,11 @@ Specific value: `"ApiLogicUnit"`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-**Description:** Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)
-
-| Any of(Option)                         |
-| -------------------------------------- |
-| [item 0](#extra_query_params_anyOf_i0) |
-| [item 1](#extra_query_params_anyOf_i1) |
-
-### <a name="extra_query_params_anyOf_i0"></a>7.1. Property `item 0`
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
 
-### <a name="extra_query_params_anyOf_i1"></a>7.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+**Description:** Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)
 
 ----------------------------------------------------------------------------------------------------------------------------

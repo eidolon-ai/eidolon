@@ -85,30 +85,16 @@
       "type": "array"
     },
     "extra_header_params": {
-      "anyOf": [
-        {
-          "type": "object"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
+      "default": {},
       "description": "Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
-      "title": "Extra Header Params"
+      "title": "Extra Header Params",
+      "type": "object"
     },
     "extra_query_params": {
-      "anyOf": [
-        {
-          "type": "object"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
+      "default": {},
       "description": "Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
-      "title": "Extra Query Params"
+      "title": "Extra Query Params",
+      "type": "object"
     }
   },
   "required": [
