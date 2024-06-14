@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test_e2e:
+  test-e2e:
     runs-on: ubuntu-latest
 
     services:
