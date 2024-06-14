@@ -171,6 +171,7 @@ export default defineConfig({
             {
               label: 'LogicUnit', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/logicunit/overview'},
+                {label: 'ApiLogicUnit', link: '/docs/components/logicunit/apilogicunit'},
                 {label: 'AudioUnit', link: '/docs/components/logicunit/audiounit'},
                 {label: 'Browser', link: '/docs/components/logicunit/browser'},
                 {label: 'OpenAIImageUnit', link: '/docs/components/logicunit/openaiimageunit'},

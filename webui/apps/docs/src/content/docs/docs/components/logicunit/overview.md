@@ -4,6 +4,7 @@ description: Overview of LogicUnit components
 ---
 Overview of <class 'eidolon_ai_sdk.apu.logic_unit.LogicUnit'> components
 ## Builtins
+* [ApiLogicUnit](/docs/components/logicunit/apilogicunit/)
 * [AudioUnit](/docs/components/logicunit/audiounit/)
 * [Browser](/docs/components/logicunit/browser/)
 * [OpenAIImageUnit](/docs/components/logicunit/openaiimageunit/)
