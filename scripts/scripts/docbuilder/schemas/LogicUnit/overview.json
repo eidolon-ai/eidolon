@@ -3,6 +3,9 @@
   "description": "Overview of <class 'eidolon_ai_sdk.apu.logic_unit.LogicUnit'> components",
   "anyOf": [
     {
+      "$ref": "file:./ApiLogicUnit.json"
+    },
+    {
       "$ref": "file:./AudioUnit.json"
     },
     {
