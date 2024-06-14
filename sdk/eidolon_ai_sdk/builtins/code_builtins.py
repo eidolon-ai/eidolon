@@ -39,6 +39,7 @@ from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
+from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.apu.agent_io import IOUnit
 from eidolon_ai_sdk.apu.apu import APU
@@ -158,6 +159,7 @@ def named_builtins() -> List[ReferenceResource]:
         WebScrapingAgent,
         WebSearchAgent,
         WebResearcher,
+        ApiLogicUnit,
         APIAgent,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
