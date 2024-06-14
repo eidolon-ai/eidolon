@@ -17,7 +17,7 @@ def pet_store(test_dir):
 async def test_query_params(pet_store):
     tool_called = False
 
-    def do_call(path_to_call, method, query_params, headers, body):
+    async def do_call(path_to_call, method, query_params, headers, body):
         nonlocal tool_called
         tool_called = True
         assert path_to_call == "/pets"
@@ -57,7 +57,7 @@ async def test_query_params(pet_store):
 async def test_path_params(pet_store):
     tool_called = False
 
-    def do_call(path_to_call, method, query_params, headers, body):
+    async def do_call(path_to_call, method, query_params, headers, body):
         nonlocal tool_called
         tool_called = True
         assert path_to_call == "/pets/10"
@@ -87,7 +87,7 @@ async def test_path_params(pet_store):
 async def test_header_params(pet_store):
     tool_called = False
 
-    def do_call(path_to_call, method, query_params, headers, body):
+    async def do_call(path_to_call, method, query_params, headers, body):
         nonlocal tool_called
         tool_called = True
         assert path_to_call == "/pets/findWithHeader"
@@ -117,7 +117,7 @@ async def test_header_params(pet_store):
 async def test_body_params(pet_store):
     tool_called = False
 
-    def do_call(path_to_call, method, query_params, headers, body):
+    async def do_call(path_to_call, method, query_params, headers, body):
         nonlocal tool_called
         tool_called = True
         assert path_to_call == "/pets"
