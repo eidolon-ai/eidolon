@@ -27,15 +27,19 @@ async def post_content(url: str, headers=None, **kwargs):
         return response.json()
 
 
-def build_call(key_env_var, key_query_param, put_key_as_bearer_token, root_call_url):
+def build_call(key_env_var, key_query_param, key_header_param, put_key_as_bearer_token, root_call_url):
     async def do_call(path_to_call, method, query_params, headers, body):
-        nonlocal key_env_var, key_query_param, put_key_as_bearer_token, root_call_url
+        nonlocal key_env_var, key_query_param, put_key_as_bearer_token, key_header_param, root_call_url
         path_to_call = path_to_call.lstrip('/')
         api_key = os.environ.get(key_env_var, None) if key_env_var else None
         headers = headers or {}
         headers["Content-Type"] = "application/json"
         if put_key_as_bearer_token and api_key:
             headers["Authorization"] = f"Bearer {api_key}"
+
+        if key_header_param and api_key:
+            headers[key_header_param] = api_key
+
         if api_key and key_query_param:
             query_params.append((key_query_param, api_key))
 

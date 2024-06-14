@@ -1,18 +1,18 @@
 from typing import List, Optional, Tuple, Any, Annotated
 
 from jsonref import replace_refs
-from pydantic import BaseModel, SkipValidation
+from pydantic import BaseModel, SkipValidation, Field
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json
 
 
 class Operation(BaseModel):
-    name: str
-    description: Optional[str] = None
-    path: str
-    method: str
-    result_filters: Optional[List[str]] = []
+    name: str = Field(description="Name of the operation")
+    description: Optional[str] = Field(default=None, description="Description of the operation")
+    path: str = Field(description="Path of the operation. Must match exactly including path parameters")
+    method: str = Field(description="HTTP method of the operation.  get and post are supported")
+    result_filters: Optional[List[str]] = Field(default=None, description="Filters to apply to the result of the operation per json ref spec")
 
     def matches(self, path: str) -> bool:
         return self.path == path
@@ -68,7 +68,7 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                     logger.error(f"Unsupported parameter location {param['in']}")
 
                         if "requestBody" in method:
-                            params["__body__"] = _body_model(schema, method, name)
+                            params["__body__"] = _body_model(method, name)
                             required.append("__body__")
                         description = operation.description or _description(method, name)
                         actions.append(Action(
@@ -85,11 +85,11 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
 def _description(endpoint_schema, name):
     description = endpoint_schema.get("description", "")
     if not description:
-        logger.warning(f"Agent program at {name} does not have a description. LLM may not use it properly")
+        logger.warning(f"API endpoint at {name} does not have a description. LLM may not use it properly")
     return description
 
 
-def _body_model(schema, endpoint_schema, name):
+def _body_model(endpoint_schema, name):
     body = endpoint_schema.get("requestBody")
     content = body["content"]
 

@@ -12,13 +12,14 @@ from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
 class APIAgentSpec(BaseModel):
-    title: str
-    root_call_url: str
-    open_api_location: str
-    operations_to_expose: List[Operation]  # map of tool name to openapi path
-    key_env_var: Optional[str] = None
-    key_query_param: Optional[str] = None
-    put_key_as_bearer_token: bool = Field(default=False)
+    title: str = Field(description="Title of the API")
+    root_call_url: str = Field(description="Root URL of the API to call")
+    open_api_location: str = Field(description="Location of the OpenAPI schema")
+    operations_to_expose: List[Operation] = Field(description="Operations to expose")
+    key_env_var: Optional[str] = Field(description="Environment variable to use as the API key to send to the API. Only needed if the API has security needs.", default=None)
+    key_query_param: Optional[str] = Field(description="The name of the query parameter to use to send the API key to the API. Only needed if the API has security and that is passed as a query param", default=None)
+    key_header_param: Optional[str] = Field(description="The name of the header parameter to use to send the API key to the API. Only needed if the API has security and that is passed as a non-standard (Authorization Bearer) header", default=None)
+    put_api_key_as_bearer_token: Optional[bool] = Field(description="Whether to put the API key as a bearer token in the Authorization header", default=False)
 
 
 class APIAgent(Specable[APIAgentSpec]):
@@ -47,7 +48,7 @@ class APIAgent(Specable[APIAgentSpec]):
         operations_to_expose = self.spec.operations_to_expose
         title = self.spec.title
         actions = build_actions(operations_to_expose, schema, title,
-                                build_call(self.spec.key_env_var, self.spec.key_query_param, self.spec.put_key_as_bearer_token, self.spec.root_call_url))
+                                build_call(self.spec.key_env_var, self.spec.key_query_param, self.spec.key_header_param, self.spec.put_api_key_as_bearer_token, self.spec.root_call_url))
         for action in actions:
             self._add_action(action)
 
