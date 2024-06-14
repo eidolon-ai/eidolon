@@ -7,7 +7,6 @@ from importlib import metadata
 from platform import python_version, uname
 from typing import Optional
 
-import toml
 from posthog import Posthog
 
 from eidolon_ai_client.util.logger import logger
