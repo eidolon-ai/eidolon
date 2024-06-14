@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from eidolon_ai_client.client import Agent
@@ -18,7 +20,10 @@ def processes_resource():
             Operation(**{
                 "name": "get_books",
                 "path": "/api/books",
-                "method": "get"
+                "method": "get",
+                "extra_query_params": {
+                    "format": "{{ENV_FORMAT}}"
+                }
             })
         ],
     )
@@ -40,5 +45,6 @@ async def agent(processes_resource, run_app) -> Agent:
 
 async def test_get_processes(agent):
     process = await agent.create_process()
+    os.environ["ENV_FORMAT"] = "json"
     found = await process.action("get_books",{"bibkeys": 'OCLC:263296519'})
     assert found.data.get('OCLC:263296519') is not None

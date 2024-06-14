@@ -2,6 +2,7 @@ import os
 from urllib.parse import urljoin, quote_plus
 
 from httpx import AsyncClient, Timeout
+from jinja2 import Template
 
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_client.util.logger import logger
@@ -27,26 +28,32 @@ async def post_content(url: str, headers=None, **kwargs):
         return response.json()
 
 
-def build_call(key_env_var, key_query_param, key_header_param, put_key_as_bearer_token, root_call_url):
+def _render_template_from_env(template_string):
+    template = Template(template_string)
+    rendered_template = template.render(os.environ)
+    return rendered_template
+
+
+def build_call(extra_header_params, extra_query_params, root_call_url):
     async def do_call(path_to_call, method, query_params, headers, body):
-        nonlocal key_env_var, key_query_param, put_key_as_bearer_token, key_header_param, root_call_url
+        nonlocal extra_header_params, extra_query_params, root_call_url
         path_to_call = path_to_call.lstrip('/')
-        api_key = os.environ.get(key_env_var, None) if key_env_var else None
         headers = headers or {}
         headers["Content-Type"] = "application/json"
-        if put_key_as_bearer_token and api_key:
-            headers["Authorization"] = f"Bearer {api_key}"
 
-        if key_header_param and api_key:
-            headers[key_header_param] = api_key
+        if extra_header_params:
+            for k, v in extra_header_params.items():
+                headers[k] = _render_template_from_env(v)
 
-        if api_key and key_query_param:
-            query_params.append((key_query_param, api_key))
+        if extra_query_params:
+            for k, v in extra_query_params.items():
+                query_params.append((k, _render_template_from_env(v)))
 
         if query_params and len(query_params) > 0:
             path_to_call += "?" + "&".join([f"{quote_plus(k)}={quote_plus(str(v))}" for k, v in query_params if v])
 
         url = urljoin(root_call_url + "/", path_to_call)
+        logger.info(f"Calling API {url}")
         try:
             if method == "get":
                 return await get_content(url, headers=headers, **body)
