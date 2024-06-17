@@ -6,7 +6,8 @@
       "@eidolon/client": ["packages/eidolon-client"],
       "@eidolon/components": ["packages/eidolon-components"]
     },
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "references": [
     { "path": "./packages/eidolon-client" },

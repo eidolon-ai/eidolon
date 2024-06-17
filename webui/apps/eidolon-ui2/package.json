@@ -1,5 +1,6 @@
 {
   "name": "eidolon-ui2",
+  "type": "module",
   "version": "0.0.1",
   "description": "Eidolon UI app",
   "author": {
@@ -22,14 +23,13 @@
   },
   "scripts": {
     "dev": "(patch -N ../../node_modules/.pnpm/@jsdevtools+ono@7.1.3/node_modules/@jsdevtools/ono/esm/index.js ono_turbo.patch || true) && npm run build-eidolon && next dev --turbo",
-    "build": "npm run build-eidolon && next build",
-    "build:static": "npm run build-eidolon && next build && next export",
+    "build": "pnpm run build-eidolon && next build",
+    "build:static": "pnpm run build-eidolon && next build && next export",
     "format": "prettier ./ --write",
     "lint": "next lint",
     "start": "next start",
-    "test": "npm run build-eidolon && jest --ci --passWithNoTests",
-    "type": "tsc",
-    "build-eidolon": "node eidolon-app.build.js"
+    "test": "pnpm run build-eidolon && jest --ci --passWithNoTests",
+    "build-eidolon": "node eidolon-app.build.cjs"
   },
   "dependencies": {
     "@eidolon/client": "workspace:*",
