@@ -45,10 +45,6 @@ const EidolonReducer: Reducer<EidolonProviderState, EidolonEvent> = (state, acti
 
 export const useEidolonContext = (): EidolonContextReturningType => useContext(EidolonContext);
 
-export interface EidolonEvent {
-  event_type: "CLEAR_USAGE"
-}
-
 export const RecordUsage = {
   event_type: "CLEAR_USAGE",
 } as EidolonEvent
