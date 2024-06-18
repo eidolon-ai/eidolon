@@ -9,10 +9,13 @@ from eidolon_ai_client.events import (
     ToolCallStartEvent,
 )
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_client.util.stream_collector import merge_streams
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import FileInfo
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
+from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import DocSummary
+from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.agent_io import IOUnit, APUMessageTypes
 from eidolon_ai_sdk.apu.apu import APU, APUSpec, Thread, APUException, APUCapabilities
@@ -28,7 +31,7 @@ from eidolon_ai_sdk.apu.llm_message import (
     UserMessage,
 )
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
-from eidolon_ai_sdk.apu.logic_unit import LogicUnit, LLMToolWrapper
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit, LLMToolWrapper, llm_function
 from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
@@ -47,6 +50,8 @@ class ConversationalAPUSpec(APUSpec):
     record_conversation: bool = True
     allow_tool_errors: bool = True
     document_processor: AnnotatedReference[DocumentProcessor]
+    retriever: AnnotatedReference[Retriever]
+    retriever_apu: Optional[Reference[APU]] = None
 
 
 class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLocator):
@@ -57,6 +62,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
     audio_unit: AudioUnit
     image_unit: ImageUnit
     document_processor: DocumentProcessor
+    retriever: Retriever
 
     def __init__(self, spec: ConversationalAPUSpec = None):
         super().__init__(spec)
@@ -74,6 +80,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             self.logic_units.append(self.audio_unit)
         if self.image_unit:
             self.logic_units.append(self.image_unit)
+        self.retriever = self.spec.retriever.instantiate()
+        self.retriever_apu = self.spec.retriever_apu.instantiate() if self.spec.retriever_apu else self
+        self.logic_units.append(RagLogicUnit(self.retriever, apu=self.retriever_apu, **kwargs))
 
     def get_capabilities(self) -> APUCapabilities:
         llm_props = self.llm_unit.get_llm_capabilities()
@@ -114,10 +123,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-        self,
-        call_context: CallContext,
-        prompts: List[APUMessageTypes],
-        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+            self,
+            call_context: CallContext,
+            prompts: List[APUMessageTypes],
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
@@ -136,10 +145,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             raise APUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
-        self,
-        call_context: CallContext,
-        output_format: Union[Literal["str"], Dict[str, Any]],
-        conversation: List[LLMMessage],
+            self,
+            call_context: CallContext,
+            output_format: Union[Literal["str"], Dict[str, Any]],
+            conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
         # first convert the conversation to fill in file data
         converted_conversation = []
@@ -147,7 +156,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             if isinstance(event, UserMessage):
                 converted_messages = []
                 for message in event.content:
-                    if isinstance(message, UserMessageFile) and message.include_directly:
+                    if isinstance(message, UserMessageFile):
                         converted_messages.extend(await self.process_file_message(call_context.process_id, message))
                     elif isinstance(message, UserMessageAudio):
                         converted_messages.extend(await self.process_audio_message(message))
@@ -201,11 +210,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         raise APUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
-        self,
-        call_context: CallContext,
-        tool_call_event: LLMToolCallRequestEvent,
-        tool_defs,
-        conversation: List[LLMMessage],
+            self,
+            call_context: CallContext,
+            tool_call_event: LLMToolCallRequestEvent,
+            tool_defs,
+            conversation: List[LLMMessage],
     ):
         tc = tool_call_event.tool_call
         logic_unit_wrapper = ["NaN"]
@@ -289,7 +298,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             await self.document_processor.addFile(
                 f"pf_pid_{process_id}", FileInfo(data=blob, path="", metadata=metadata)
             )
-            message = f"The file {path} is available to search. Use the provided search tool to find information contained in the file\n"
+            message = f"The file {path} is available to search. Use the RagLogicUnit_search search tool to find information contained in the file\n"
             parts.append(UserMessageText(text=message))
 
         return parts
@@ -302,3 +311,24 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             await processor.clone_thread(call_context, new_context)
 
         return Thread(call_context=new_context, apu=self)
+
+
+class RagLogicUnit(LogicUnit):
+    retriever: Retriever
+
+    def __init__(self, retriever: Retriever, apu: APU, **kwargs):
+        super().__init__(**kwargs)
+        self.retriever = retriever
+        self.apu = apu
+
+    @llm_function(title="Document Processor", sub_title="Search")
+    async def search(self, question: str) -> List[DocSummary]:
+        """
+        Searches the document store for the given question. Use this tool to search the contents of any file you are asked to search.
+        :param question:
+        :return:
+        """
+        process_id = RequestContext.get("process_id")
+        collection_name = f"pf_pid_{process_id}"
+        results = await self.retriever.do_search(collection_name, self.apu, process_id, question)
+        return [doc async for doc in results]
