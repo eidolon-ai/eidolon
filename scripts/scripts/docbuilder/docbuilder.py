@@ -3,7 +3,7 @@ import os
 import shutil
 import textwrap
 from pathlib import Path
-from typing import Optional, Dict, Self, List
+from typing import Optional, Dict, Self, List, Type
 
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
@@ -31,6 +31,7 @@ class Group(BaseModel):
     components: list[tuple[str, type, dict]] = []
     include_root: bool = False
     description: str = None
+    document_in_sidebar: bool = True
 
     def sort_components(self):
         self.components = sorted(self.components, key=lambda x: x[0])
@@ -68,6 +69,8 @@ def main():
     print("Generating docs...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
     shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    for t in groups["Agents"].components:
+        generate_schema_only_groups(t[1])
     generate_json(dist_component_schemas)
     write_md(dist_component_schemas)
     update_sitemap()
@@ -84,8 +87,8 @@ def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro
         if "### End Components ###" in lines[i]:
             finish_index = i
     args = [dict(name=name, safe_name=url_safe(name), components=[
-            dict(name=c_name, safe_name=url_safe(c_name)) for c_name, _, _ in g.components
-        ]) for name, g in groups.items()]
+        dict(name=c_name, safe_name=url_safe(c_name)) for c_name, _, _ in g.components
+    ]) for name, g in groups.items() if g.document_in_sidebar]
     templated = template("template_sitemap_mjs", groups=args)
 
     with open(astro_config_loc, "w") as components_file:
@@ -113,16 +116,16 @@ def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
-    for component in os.listdir(read_loc):
-        for file in (f for f in os.listdir(read_loc / component) if f != "overview.json"):
-            write_file_loc = write_loc / url_safe(component) / (url_safe(file.replace(".json", "")) + ".md")
-            with open(read_loc / component / file, 'r') as json_file:
+    for k, g in groups.items():
+        for component, _, _ in g.components:
+            write_file_loc = write_loc / url_safe(k) / (url_safe(component.replace(".json", "")) + ".md")
+            with open(read_loc / k / (component + ".json"), 'r') as json_file:
                 obj = json.load(json_file)
-            title = obj.get('title', file)
+            title = obj.get('title', component)
             description = f"Description of {title} component"
 
             # Generate HTML content
-            content = generate_from_schema(read_loc / component / file, config=GenerationConfiguration(
+            content = generate_from_schema(read_loc / k / (component + ".json"), config=GenerationConfiguration(
                 show_breadcrumbs=False,
                 template_name="md",
                 with_footer=False,
@@ -145,6 +148,18 @@ def write_astro_md_file(content, description, title, write_file_loc):
 def template(template_file, **kwargs):
     with open(EIDOLON / "scripts" / "scripts" / "docbuilder" / template_file) as template:
         return Environment(undefined=StrictUndefined).from_string(template.read()).render(**kwargs)
+
+
+def generate_schema_only_groups(bound: type):
+    spec: Optional[BaseModel] = Reference.get_spec_type(bound)
+    if spec:
+        for vv in spec.model_fields.values():
+            v = vv.annotation
+            if hasattr(v, "_bound"):
+                generate_schema_only_groups(v._bound)
+                if v._bound.__name__ not in groups:
+                    groups[v._bound.__name__] = Group(base=v._bound, document_in_sidebar=False)
+                generate_schema_only_groups(v._bound)
 
 
 def generate_json(write_base):
