@@ -21,17 +21,8 @@
       "default": "DocumentLoader"
     },
     "doc_processor": {
-      "additionalProperties": true,
-      "default": "DocumentProcessor",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentProcessor Reference",
-      "type": "object"
+      "$ref": "file:../DocumentProcessor/overview.json",
+      "default": "DocumentProcessor"
     },
     "concurrency": {
       "default": 8,

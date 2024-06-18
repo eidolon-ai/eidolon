@@ -3,19 +3,19 @@ title: Llamma3-8b
 description: Description of Llamma3-8b component
 ---
 
-| Property                                             | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
-| ---------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#implementation )                 | No      | const           | No         | -                                | Llamma3-8b                                                           |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
-| - [io_unit](#io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
-| - [memory_unit](#memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
-| - [llm_unit](#llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
-| - [logic_units](#logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
-| - [audio_unit](#audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
-| - [image_unit](#image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
-| - [record_conversation](#record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
-| - [document_processor](#document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| Property                                             | Pattern | Type            | Deprecated | Definition                                 | Title/Description                                                                                      |
+| ---------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| - [implementation](#implementation )                 | No      | const           | No         | -                                          | Llamma3-8b                                                                                             |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -                                          | Max Num Function Calls                                                                                 |
+| - [io_unit](#io_unit )                               | No      | object          | No         | -                                          | IOUnit Reference                                                                                       |
+| - [memory_unit](#memory_unit )                       | No      | object          | No         | -                                          | MemoryUnit Reference                                                                                   |
+| - [llm_unit](#llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components                                   |
+| - [logic_units](#logic_units )                       | No      | array of object | No         | -                                          | Logic Units                                                                                            |
+| - [audio_unit](#audio_unit )                         | No      | Combination     | No         | -                                          | -                                                                                                      |
+| - [image_unit](#image_unit )                         | No      | Combination     | No         | -                                          | -                                                                                                      |
+| - [record_conversation](#record_conversation )       | No      | boolean         | No         | -                                          | Record Conversation                                                                                    |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean         | No         | -                                          | Allow Tool Errors                                                                                      |
+| - [document_processor](#document_processor )         | No      | object          | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor'> components |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -840,28 +840,14 @@ Specific value: `"ToolCallLLMWrapper"`
 
 ## <a name="document_processor"></a>11. Property `document_processor`
 
-**Title:** DocumentProcessor Reference
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
+| **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `"DocumentProcessor"`                                                     |
+| **Defined in**            | [DocumentProcessor](/docs/components/documentprocessor/overview)                                   |
 
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#document_processor_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#document_processor_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="document_processor_implementation"></a>11.1. Property `implementation`
-
-**Title:** Implementation
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-| **Default**  | `null`   |
+**Description:** Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor'> components
 
 ----------------------------------------------------------------------------------------------------------------------------

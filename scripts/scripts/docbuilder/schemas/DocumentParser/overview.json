@@ -1,0 +1,9 @@
+{
+  "title": "DocumentParser",
+  "description": "Overview of <class 'eidolon_ai_sdk.agent.doc_manager.parsers.base_parser.DocumentParser'> components",
+  "anyOf": [
+    {
+      "$ref": "file:./AutoParser.json"
+    }
+  ]
+}

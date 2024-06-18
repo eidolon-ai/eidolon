@@ -12,56 +12,20 @@
       "type": "integer"
     },
     "question_transformer": {
-      "additionalProperties": true,
-      "default": "QuestionTransformer",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "QuestionTransformer Reference",
-      "type": "object"
+      "$ref": "file:../QuestionTransformer/overview.json",
+      "default": "QuestionTransformer"
     },
     "document_retriever": {
-      "additionalProperties": true,
-      "default": "DocumentRetriever",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentRetriever Reference",
-      "type": "object"
+      "$ref": "file:../DocumentRetriever/overview.json",
+      "default": "DocumentRetriever"
     },
     "document_reranker": {
-      "additionalProperties": true,
-      "default": "DocumentReranker",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentReranker Reference",
-      "type": "object"
+      "$ref": "file:../DocumentReranker/overview.json",
+      "default": "DocumentReranker"
     },
     "result_summarizer": {
-      "additionalProperties": true,
-      "default": "ResultSummarizer",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "ResultSummarizer Reference",
-      "type": "object"
+      "$ref": "file:../ResultSummarizer/overview.json",
+      "default": "ResultSummarizer"
     },
     "name": {
       "description": "The name of the document store to use.",

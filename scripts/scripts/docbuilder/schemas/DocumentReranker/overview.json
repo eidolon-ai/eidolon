@@ -1,0 +1,9 @@
+{
+  "title": "DocumentReranker",
+  "description": "Overview of <class 'eidolon_ai_sdk.agent.retriever_agent.document_reranker.DocumentReranker'> components",
+  "anyOf": [
+    {
+      "$ref": "file:./RAGFusionReranker.json"
+    }
+  ]
+}
