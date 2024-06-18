@@ -3,19 +3,19 @@ title: ConversationalAPU
 description: Description of ConversationalAPU component
 ---
 
-| Property                                             | Pattern | Type            | Deprecated | Definition                                 | Title/Description                                                                                      |
-| ---------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| - [implementation](#implementation )                 | No      | const           | No         | -                                          | ConversationalAPU                                                                                      |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -                                          | Max Num Function Calls                                                                                 |
-| - [io_unit](#io_unit )                               | No      | object          | No         | -                                          | IOUnit Reference                                                                                       |
-| - [memory_unit](#memory_unit )                       | No      | object          | No         | -                                          | MemoryUnit Reference                                                                                   |
-| - [llm_unit](#llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components                                   |
-| - [logic_units](#logic_units )                       | No      | array of object | No         | -                                          | Logic Units                                                                                            |
-| - [audio_unit](#audio_unit )                         | No      | Combination     | No         | -                                          | -                                                                                                      |
-| - [image_unit](#image_unit )                         | No      | Combination     | No         | -                                          | -                                                                                                      |
-| - [record_conversation](#record_conversation )       | No      | boolean         | No         | -                                          | Record Conversation                                                                                    |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean         | No         | -                                          | Allow Tool Errors                                                                                      |
-| - [document_processor](#document_processor )         | No      | object          | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor'> components |
+| Property                                             | Pattern | Type            | Deprecated | Definition                                 | Title/Description                        |
+| ---------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------ | ---------------------------------------- |
+| - [implementation](#implementation )                 | No      | const           | No         | -                                          | ConversationalAPU                        |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -                                          | Max Num Function Calls                   |
+| - [io_unit](#io_unit )                               | No      | object          | No         | -                                          | IOUnit Reference                         |
+| - [memory_unit](#memory_unit )                       | No      | object          | No         | -                                          | MemoryUnit Reference                     |
+| - [llm_unit](#llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of LLMUnit components           |
+| - [logic_units](#logic_units )                       | No      | array of object | No         | -                                          | Logic Units                              |
+| - [audio_unit](#audio_unit )                         | No      | Combination     | No         | -                                          | -                                        |
+| - [image_unit](#image_unit )                         | No      | Combination     | No         | -                                          | -                                        |
+| - [record_conversation](#record_conversation )       | No      | boolean         | No         | -                                          | Record Conversation                      |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean         | No         | -                                          | Allow Tool Errors                        |
+| - [document_processor](#document_processor )         | No      | object          | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -102,7 +102,7 @@ Specific value: `"ConversationalAPU"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+**Description:** Overview of LLMUnit components
 
 | Any of(Option)                                |
 | --------------------------------------------- |
@@ -589,12 +589,12 @@ Specific value: `"OpenAIGPT"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | file:./ToolCallLLMWrapper.json                                            |
 
-| Property                                                         | Pattern | Type        | Deprecated | Definition                     | Title/Description                                                    |
-| ---------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------ | -------------------------------------------------------------------- |
-| - [implementation](#llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                              | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                              | Tool Message Prompt                                                  |
-| - [llm_unit](#llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#llm_unit ) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
-| - [model](#llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                              | -                                                                    |
+| Property                                                         | Pattern | Type        | Deprecated | Definition                     | Title/Description              |
+| ---------------------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------ | ------------------------------ |
+| - [implementation](#llm_unit_anyOf_i4_implementation )           | No      | const       | No         | -                              | ToolCallLLMWrapper             |
+| - [tool_message_prompt](#llm_unit_anyOf_i4_tool_message_prompt ) | No      | string      | No         | -                              | Tool Message Prompt            |
+| - [llm_unit](#llm_unit_anyOf_i4_llm_unit )                       | No      | object      | No         | Same as [llm_unit](#llm_unit ) | Overview of LLMUnit components |
+| - [model](#llm_unit_anyOf_i4_model )                             | No      | Combination | No         | -                              | -                              |
 
 #### <a name="llm_unit_anyOf_i4_implementation"></a>5.5.1. Property `implementation`
 
@@ -627,7 +627,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Same definition as**    | [llm_unit](#llm_unit)                                                     |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+**Description:** Overview of LLMUnit components
 
 #### <a name="llm_unit_anyOf_i4_model"></a>5.5.4. Property `model`
 
@@ -848,6 +848,6 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"DocumentProcessor"`                                                     |
 | **Defined in**            | [DocumentProcessor](/docs/components/documentprocessor/overview)                                   |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor'> components
+**Description:** Overview of DocumentProcessor components
 
 ----------------------------------------------------------------------------------------------------------------------------

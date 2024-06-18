@@ -3,12 +3,12 @@ title: ToolCallLLMWrapper
 description: Description of ToolCallLLMWrapper component
 ---
 
-| Property                                       | Pattern | Type        | Deprecated | Definition                       | Title/Description                                                    |
-| ---------------------------------------------- | ------- | ----------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
-| - [implementation](#implementation )           | No      | const       | No         | -                                | ToolCallLLMWrapper                                                   |
-| - [tool_message_prompt](#tool_message_prompt ) | No      | string      | No         | -                                | Tool Message Prompt                                                  |
-| - [llm_unit](#llm_unit )                       | No      | object      | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
-| - [model](#model )                             | No      | Combination | No         | -                                | -                                                                    |
+| Property                                       | Pattern | Type        | Deprecated | Definition                       | Title/Description              |
+| ---------------------------------------------- | ------- | ----------- | ---------- | -------------------------------- | ------------------------------ |
+| - [implementation](#implementation )           | No      | const       | No         | -                                | ToolCallLLMWrapper             |
+| - [tool_message_prompt](#tool_message_prompt ) | No      | string      | No         | -                                | Tool Message Prompt            |
+| - [llm_unit](#llm_unit )                       | No      | object      | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of LLMUnit components |
+| - [model](#model )                             | No      | Combination | No         | -                                | -                              |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -41,7 +41,7 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Default**               | `"LLMUnit"`                                                               |
 | **Defined in**            | [LLMUnit](/docs/components/llmunit/overview)                                             |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+**Description:** Overview of LLMUnit components
 
 | Any of(Option)                                |
 | --------------------------------------------- |

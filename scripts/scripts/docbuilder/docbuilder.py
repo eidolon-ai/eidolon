@@ -41,6 +41,8 @@ class Group(BaseModel):
         if not self.description:
             if isinstance(self.base, type) and self.base.__doc__:
                 self.description = textwrap.dedent(self.base.__doc__)
+            elif isinstance(self.base, type):
+                self.description = f"Overview of {self.base.__name__} components"
             else:
                 self.description = f"Overview of {self.base} components"
         return self

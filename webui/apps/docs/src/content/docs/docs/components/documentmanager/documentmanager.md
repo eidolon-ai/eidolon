@@ -6,14 +6,14 @@ description: Description of DocumentManager component
 **Description:** Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (
 provided by loader) into similarity memory where they can be searched.
 
-| Property                                   | Pattern | Type    | Deprecated | Definition                                 | Title/Description                                                                                      |
-| ------------------------------------------ | ------- | ------- | ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| - [implementation](#implementation )       | No      | const   | No         | -                                          | DocumentManager                                                                                        |
-| + [name](#name )                           | No      | string  | No         | -                                          | Name                                                                                                   |
-| - [recheck_frequency](#recheck_frequency ) | No      | integer | No         | -                                          | Recheck Frequency                                                                                      |
-| - [loader](#loader )                       | No      | object  | No         | In [DocumentLoader](/docs/components/documentloader/overview)    | Overview of <class 'eidolon_ai_sdk.agent.doc_manager.loaders.base_loader.DocumentLoader'> components   |
-| - [doc_processor](#doc_processor )         | No      | object  | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor'> components |
-| - [concurrency](#concurrency )             | No      | integer | No         | -                                          | Concurrency                                                                                            |
+| Property                                   | Pattern | Type    | Deprecated | Definition                                 | Title/Description                        |
+| ------------------------------------------ | ------- | ------- | ---------- | ------------------------------------------ | ---------------------------------------- |
+| - [implementation](#implementation )       | No      | const   | No         | -                                          | DocumentManager                          |
+| + [name](#name )                           | No      | string  | No         | -                                          | Name                                     |
+| - [recheck_frequency](#recheck_frequency ) | No      | integer | No         | -                                          | Recheck Frequency                        |
+| - [loader](#loader )                       | No      | object  | No         | In [DocumentLoader](/docs/components/documentloader/overview)    | Overview of DocumentLoader components    |
+| - [doc_processor](#doc_processor )         | No      | object  | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components |
+| - [concurrency](#concurrency )             | No      | integer | No         | -                                          | Concurrency                              |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -59,7 +59,7 @@ Specific value: `"DocumentManager"`
 | **Default**               | `"DocumentLoader"`                                                        |
 | **Defined in**            | [DocumentLoader](/docs/components/documentloader/overview)                                      |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.agent.doc_manager.loaders.base_loader.DocumentLoader'> components
+**Description:** Overview of DocumentLoader components
 
 | Any of(Option)                            |
 | ----------------------------------------- |
@@ -529,7 +529,7 @@ Specific value: `"S3Loader"`
 | **Default**               | `"DocumentProcessor"`                                                     |
 | **Defined in**            | [DocumentProcessor](/docs/components/documentprocessor/overview)                                   |
 
-**Description:** Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor'> components
+**Description:** Overview of DocumentProcessor components
 
 ## <a name="concurrency"></a>6. Property `concurrency`
 
