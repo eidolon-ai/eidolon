@@ -82,7 +82,6 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             self.logic_units.append(self.image_unit)
         self.retriever = self.spec.retriever.instantiate()
         self.retriever_apu = self.spec.retriever_apu.instantiate() if self.spec.retriever_apu else self
-        self.logic_units.append(RagLogicUnit(self.retriever, apu=self.retriever_apu, **kwargs))
 
     def get_capabilities(self) -> APUCapabilities:
         llm_props = self.llm_unit.get_llm_capabilities()
@@ -151,6 +150,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
         # first convert the conversation to fill in file data
+        num_files = 0
         converted_conversation = []
         for event in conversation:
             if isinstance(event, UserMessage):
@@ -158,6 +158,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 for message in event.content:
                     if isinstance(message, UserMessageFile):
                         converted_messages.extend(await self.process_file_message(call_context.process_id, message))
+                        num_files += 1
                     elif isinstance(message, UserMessageAudio):
                         converted_messages.extend(await self.process_audio_message(message))
                     elif isinstance(message, UserMessageImage):
@@ -171,7 +172,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         num_iterations = 0
         while num_iterations < self.spec.max_num_function_calls:
             with tracer.start_as_current_span("building tools"):
-                tool_defs = await LLMToolWrapper.from_logic_units(call_context, self.logic_units)
+                lus = self.logic_units
+                if num_files > 0:
+                    lus += RagLogicUnit(self.retriever, apu=self.retriever_apu, processing_unit_locator=self),
+                tool_defs = await LLMToolWrapper.from_logic_units(call_context, lus)
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
