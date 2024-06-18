@@ -3,7 +3,7 @@ import os
 import shutil
 import textwrap
 from pathlib import Path
-from typing import Optional, Dict, Self, List, Type
+from typing import Optional, Dict, Self, List
 
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
