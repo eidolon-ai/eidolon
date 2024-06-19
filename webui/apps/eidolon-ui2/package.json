@@ -1,6 +1,5 @@
 {
   "name": "eidolon-ui2",
-  "type": "module",
   "version": "0.0.1",
   "description": "Eidolon UI app",
   "author": {
@@ -29,7 +28,7 @@
     "lint": "next lint",
     "start": "next start",
     "test": "pnpm run build-eidolon && jest --ci --passWithNoTests",
-    "build-eidolon": "node eidolon-app.build.cjs"
+    "build-eidolon": "node eidolon-app.build.js"
   },
   "dependencies": {
     "@eidolon/client": "workspace:*",
