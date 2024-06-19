@@ -6,7 +6,7 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 
 import yaml
 from PIL import Image
-from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError, InputJsonEvent, TextEvent, ContentBlockStopEvent
+from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError, TextEvent, ContentBlockStopEvent
 from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
 from anthropic.types.image_block_param import Source
 from fastapi import HTTPException
@@ -259,7 +259,6 @@ async def _raw_parser(resp):
         message = cast(MessageStreamEvent, in_message)
 
         if isinstance(message, ContentBlockStopEvent) and isinstance(message.content_block, ToolUseBlock):
-            tc = ToolCall(tool_call_id=message.content_block.id, name=message.content_block.name, arguments=message.content_block.input)
             yield f"\nTool Call: {message.content_block.name}\nArguments: {message.content_block.input}\n"
         elif isinstance(message, TextEvent):
             yield message.text
