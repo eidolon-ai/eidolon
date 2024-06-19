@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.apu.call_context import CallContext
@@ -40,6 +40,10 @@ class SystemAPUMessage(APUMessage):
 
     type: Literal["system"] = "system"
     prompt: str
+
+
+class FileHandleWithInclude(FileHandle):
+    include_directly: bool = Field(default=True, description="Include the file directly in the llm context")
 
 
 class AttachedFileMessage(APUMessage):
