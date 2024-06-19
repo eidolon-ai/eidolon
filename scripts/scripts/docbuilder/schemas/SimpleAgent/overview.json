@@ -1,0 +1,9 @@
+{
+  "title": "SimpleAgent",
+  "description": "Overview of SimpleAgent components",
+  "oneOf": [
+    {
+      "$ref": "file:./Agent.json"
+    }
+  ]
+}

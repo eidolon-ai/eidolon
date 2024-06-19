@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "OpenAIEmbedding",
+      "description": "OpenAIEmbedding"
+    },
+    "model": {
+      "default": "text-embedding-ada-002",
+      "description": "The name of the model to use.",
+      "title": "Model",
+      "type": "string"
+    },
+    "connection_handler": {
+      "$ref": "file:../OpenAIConnectionHandler/overview.json",
+      "default": "OpenAIConnectionHandler"
+    }
+  },
+  "title": "OpenAIEmbedding",
+  "type": "object"
+}

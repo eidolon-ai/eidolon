@@ -13,15 +13,15 @@
     },
     "question_transformer": {
       "$ref": "file:../QuestionTransformer/overview.json",
-      "default": "QuestionTransformer"
+      "default": "MultiQuestionTransformer"
     },
     "document_retriever": {
       "$ref": "file:../DocumentRetriever/overview.json",
-      "default": "DocumentRetriever"
+      "default": "SimilarityMemoryRetriever"
     },
     "document_reranker": {
       "$ref": "file:../DocumentReranker/overview.json",
-      "default": "DocumentReranker"
+      "default": "RAGFusionReranker"
     },
     "result_summarizer": {
       "$ref": "file:../ResultSummarizer/overview.json",
@@ -66,17 +66,8 @@
     "document_manager": {
       "anyOf": [
         {
-          "additionalProperties": true,
-          "default": "eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager",
-          "properties": {
-            "implementation": {
-              "default": null,
-              "title": "Implementation",
-              "type": "string"
-            }
-          },
-          "title": "DocumentManager Reference",
-          "type": "object"
+          "$ref": "file:../DocumentManager/overview.json",
+          "default": "DocumentManager"
         },
         {
           "type": "null"

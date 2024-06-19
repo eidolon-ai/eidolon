@@ -1,0 +1,12 @@
+{
+  "title": "Embedding",
+  "description": "Overview of Embedding components",
+  "oneOf": [
+    {
+      "$ref": "file:./NoopEmbedding.json"
+    },
+    {
+      "$ref": "file:./OpenAIEmbedding.json"
+    }
+  ]
+}

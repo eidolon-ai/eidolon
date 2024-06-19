@@ -56,18 +56,18 @@ Specific value: `"DocumentManager"`
 | **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"DocumentLoader"`                                                        |
+| **Default**               | `"FilesystemLoader"`                                                      |
 | **Defined in**            | [DocumentLoader](/docs/components/documentloader/overview)                                      |
 
 **Description:** Overview of DocumentLoader components
 
-| Any of(Option)                            |
+| One of(Option)                            |
 | ----------------------------------------- |
-| [FilesystemLoader.json](#loader_anyOf_i0) |
-| [GitHubLoader.json](#loader_anyOf_i1)     |
-| [S3Loader.json](#loader_anyOf_i2)         |
+| [FilesystemLoader.json](#loader_oneOf_i0) |
+| [GitHubLoader.json](#loader_oneOf_i1)     |
+| [S3Loader.json](#loader_oneOf_i2)         |
 
-### <a name="loader_anyOf_i0"></a>4.1. Property `FilesystemLoader.json`
+### <a name="loader_oneOf_i0"></a>4.1. Property `FilesystemLoader.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -78,11 +78,11 @@ Specific value: `"DocumentManager"`
 
 | Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#loader_anyOf_i0_implementation ) | No      | const  | No         | -          | FilesystemLoader  |
-| + [root_dir](#loader_anyOf_i0_root_dir )             | No      | string | No         | -          | Root Dir          |
-| - [pattern](#loader_anyOf_i0_pattern )               | No      | string | No         | -          | Pattern           |
+| - [implementation](#loader_oneOf_i0_implementation ) | No      | const  | No         | -          | FilesystemLoader  |
+| + [root_dir](#loader_oneOf_i0_root_dir )             | No      | string | No         | -          | Root Dir          |
+| - [pattern](#loader_oneOf_i0_pattern )               | No      | string | No         | -          | Pattern           |
 
-#### <a name="loader_anyOf_i0_implementation"></a>4.1.1. Property `implementation`
+#### <a name="loader_oneOf_i0_implementation"></a>4.1.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -93,7 +93,7 @@ Specific value: `"DocumentManager"`
 
 Specific value: `"FilesystemLoader"`
 
-#### <a name="loader_anyOf_i0_root_dir"></a>4.1.2. Property `root_dir`
+#### <a name="loader_oneOf_i0_root_dir"></a>4.1.2. Property `root_dir`
 
 **Title:** Root Dir
 
@@ -102,7 +102,7 @@ Specific value: `"FilesystemLoader"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="loader_anyOf_i0_pattern"></a>4.1.3. Property `pattern`
+#### <a name="loader_oneOf_i0_pattern"></a>4.1.3. Property `pattern`
 
 **Title:** Pattern
 
@@ -112,7 +112,7 @@ Specific value: `"FilesystemLoader"`
 | **Required** | No       |
 | **Default**  | `"**/*"` |
 
-### <a name="loader_anyOf_i1"></a>4.2. Property `GitHubLoader.json`
+### <a name="loader_oneOf_i1"></a>4.2. Property `GitHubLoader.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -126,16 +126,16 @@ unless a TOKEN is provided
 
 | Property                                             | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
-| - [implementation](#loader_anyOf_i1_implementation ) | No      | const       | No         | -          | GitHubLoader      |
-| + [owner](#loader_anyOf_i1_owner )                   | No      | string      | No         | -          | Owner             |
-| + [repo](#loader_anyOf_i1_repo )                     | No      | string      | No         | -          | Repo              |
-| - [client_args](#loader_anyOf_i1_client_args )       | No      | object      | No         | -          | Client Args       |
-| - [root_path](#loader_anyOf_i1_root_path )           | No      | Combination | No         | -          | Root Path         |
-| - [pattern](#loader_anyOf_i1_pattern )               | No      | Combination | No         | -          | Pattern           |
-| - [exclude](#loader_anyOf_i1_exclude )               | No      | Combination | No         | -          | Exclude           |
-| - [token](#loader_anyOf_i1_token )                   | No      | Combination | No         | -          | Token             |
+| - [implementation](#loader_oneOf_i1_implementation ) | No      | const       | No         | -          | GitHubLoader      |
+| + [owner](#loader_oneOf_i1_owner )                   | No      | string      | No         | -          | Owner             |
+| + [repo](#loader_oneOf_i1_repo )                     | No      | string      | No         | -          | Repo              |
+| - [client_args](#loader_oneOf_i1_client_args )       | No      | object      | No         | -          | Client Args       |
+| - [root_path](#loader_oneOf_i1_root_path )           | No      | Combination | No         | -          | Root Path         |
+| - [pattern](#loader_oneOf_i1_pattern )               | No      | Combination | No         | -          | Pattern           |
+| - [exclude](#loader_oneOf_i1_exclude )               | No      | Combination | No         | -          | Exclude           |
+| - [token](#loader_oneOf_i1_token )                   | No      | Combination | No         | -          | Token             |
 
-#### <a name="loader_anyOf_i1_implementation"></a>4.2.1. Property `implementation`
+#### <a name="loader_oneOf_i1_implementation"></a>4.2.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -146,7 +146,7 @@ unless a TOKEN is provided
 
 Specific value: `"GitHubLoader"`
 
-#### <a name="loader_anyOf_i1_owner"></a>4.2.2. Property `owner`
+#### <a name="loader_oneOf_i1_owner"></a>4.2.2. Property `owner`
 
 **Title:** Owner
 
@@ -155,7 +155,7 @@ Specific value: `"GitHubLoader"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="loader_anyOf_i1_repo"></a>4.2.3. Property `repo`
+#### <a name="loader_oneOf_i1_repo"></a>4.2.3. Property `repo`
 
 **Title:** Repo
 
@@ -164,7 +164,7 @@ Specific value: `"GitHubLoader"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="loader_anyOf_i1_client_args"></a>4.2.4. Property `client_args`
+#### <a name="loader_oneOf_i1_client_args"></a>4.2.4. Property `client_args`
 
 **Title:** Client Args
 
@@ -175,7 +175,7 @@ Specific value: `"GitHubLoader"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
-#### <a name="loader_anyOf_i1_root_path"></a>4.2.5. Property `root_path`
+#### <a name="loader_oneOf_i1_root_path"></a>4.2.5. Property `root_path`
 
 **Title:** Root Path
 
@@ -188,24 +188,24 @@ Specific value: `"GitHubLoader"`
 
 | Any of(Option)                                |
 | --------------------------------------------- |
-| [item 0](#loader_anyOf_i1_root_path_anyOf_i0) |
-| [item 1](#loader_anyOf_i1_root_path_anyOf_i1) |
+| [item 0](#loader_oneOf_i1_root_path_anyOf_i0) |
+| [item 1](#loader_oneOf_i1_root_path_anyOf_i1) |
 
-##### <a name="loader_anyOf_i1_root_path_anyOf_i0"></a>4.2.5.1. Property `item 0`
+##### <a name="loader_oneOf_i1_root_path_anyOf_i0"></a>4.2.5.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i1_root_path_anyOf_i1"></a>4.2.5.2. Property `item 1`
+##### <a name="loader_oneOf_i1_root_path_anyOf_i1"></a>4.2.5.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-#### <a name="loader_anyOf_i1_pattern"></a>4.2.6. Property `pattern`
+#### <a name="loader_oneOf_i1_pattern"></a>4.2.6. Property `pattern`
 
 **Title:** Pattern
 
@@ -218,17 +218,17 @@ Specific value: `"GitHubLoader"`
 
 | Any of(Option)                              |
 | ------------------------------------------- |
-| [item 0](#loader_anyOf_i1_pattern_anyOf_i0) |
-| [item 1](#loader_anyOf_i1_pattern_anyOf_i1) |
+| [item 0](#loader_oneOf_i1_pattern_anyOf_i0) |
+| [item 1](#loader_oneOf_i1_pattern_anyOf_i1) |
 
-##### <a name="loader_anyOf_i1_pattern_anyOf_i0"></a>4.2.6.1. Property `item 0`
+##### <a name="loader_oneOf_i1_pattern_anyOf_i0"></a>4.2.6.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i1_pattern_anyOf_i1"></a>4.2.6.2. Property `item 1`
+##### <a name="loader_oneOf_i1_pattern_anyOf_i1"></a>4.2.6.2. Property `item 1`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -245,7 +245,7 @@ Specific value: `"GitHubLoader"`
 
 | Each item of this array must be                         | Description |
 | ------------------------------------------------------- | ----------- |
-| [item 1 items](#loader_anyOf_i1_pattern_anyOf_i1_items) | -           |
+| [item 1 items](#loader_oneOf_i1_pattern_anyOf_i1_items) | -           |
 
 ###### <a name="autogenerated_heading_2"></a>4.2.6.2.1. item 1 items
 
@@ -254,7 +254,7 @@ Specific value: `"GitHubLoader"`
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="loader_anyOf_i1_exclude"></a>4.2.7. Property `exclude`
+#### <a name="loader_oneOf_i1_exclude"></a>4.2.7. Property `exclude`
 
 **Title:** Exclude
 
@@ -267,17 +267,17 @@ Specific value: `"GitHubLoader"`
 
 | Any of(Option)                              |
 | ------------------------------------------- |
-| [item 0](#loader_anyOf_i1_exclude_anyOf_i0) |
-| [item 1](#loader_anyOf_i1_exclude_anyOf_i1) |
+| [item 0](#loader_oneOf_i1_exclude_anyOf_i0) |
+| [item 1](#loader_oneOf_i1_exclude_anyOf_i1) |
 
-##### <a name="loader_anyOf_i1_exclude_anyOf_i0"></a>4.2.7.1. Property `item 0`
+##### <a name="loader_oneOf_i1_exclude_anyOf_i0"></a>4.2.7.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i1_exclude_anyOf_i1"></a>4.2.7.2. Property `item 1`
+##### <a name="loader_oneOf_i1_exclude_anyOf_i1"></a>4.2.7.2. Property `item 1`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -294,7 +294,7 @@ Specific value: `"GitHubLoader"`
 
 | Each item of this array must be                         | Description |
 | ------------------------------------------------------- | ----------- |
-| [item 1 items](#loader_anyOf_i1_exclude_anyOf_i1_items) | -           |
+| [item 1 items](#loader_oneOf_i1_exclude_anyOf_i1_items) | -           |
 
 ###### <a name="autogenerated_heading_3"></a>4.2.7.2.1. item 1 items
 
@@ -303,7 +303,7 @@ Specific value: `"GitHubLoader"`
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="loader_anyOf_i1_token"></a>4.2.8. Property `token`
+#### <a name="loader_oneOf_i1_token"></a>4.2.8. Property `token`
 
 **Title:** Token
 
@@ -317,24 +317,24 @@ Specific value: `"GitHubLoader"`
 
 | Any of(Option)                            |
 | ----------------------------------------- |
-| [item 0](#loader_anyOf_i1_token_anyOf_i0) |
-| [item 1](#loader_anyOf_i1_token_anyOf_i1) |
+| [item 0](#loader_oneOf_i1_token_anyOf_i0) |
+| [item 1](#loader_oneOf_i1_token_anyOf_i1) |
 
-##### <a name="loader_anyOf_i1_token_anyOf_i0"></a>4.2.8.1. Property `item 0`
+##### <a name="loader_oneOf_i1_token_anyOf_i0"></a>4.2.8.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i1_token_anyOf_i1"></a>4.2.8.2. Property `item 1`
+##### <a name="loader_oneOf_i1_token_anyOf_i1"></a>4.2.8.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-### <a name="loader_anyOf_i2"></a>4.3. Property `S3Loader.json`
+### <a name="loader_oneOf_i2"></a>4.3. Property `S3Loader.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -347,16 +347,16 @@ Specific value: `"GitHubLoader"`
 
 | Property                                                           | Pattern | Type        | Deprecated | Definition | Title/Description     |
 | ------------------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | --------------------- |
-| - [implementation](#loader_anyOf_i2_implementation )               | No      | const       | No         | -          | S3Loader              |
-| + [bucket](#loader_anyOf_i2_bucket )                               | No      | string      | No         | -          | Bucket                |
-| - [region_name](#loader_anyOf_i2_region_name )                     | No      | Combination | No         | -          | Region Name           |
-| - [aws_access_key_id](#loader_anyOf_i2_aws_access_key_id )         | No      | Combination | No         | -          | Aws Access Key Id     |
-| - [aws_secret_access_key](#loader_anyOf_i2_aws_secret_access_key ) | No      | Combination | No         | -          | Aws Secret Access Key |
-| - [aws_session_token](#loader_anyOf_i2_aws_session_token )         | No      | Combination | No         | -          | Aws Session Token     |
-| - [session_args](#loader_anyOf_i2_session_args )                   | No      | object      | No         | -          | Session Args          |
-| - [pattern](#loader_anyOf_i2_pattern )                             | No      | string      | No         | -          | Pattern               |
+| - [implementation](#loader_oneOf_i2_implementation )               | No      | const       | No         | -          | S3Loader              |
+| + [bucket](#loader_oneOf_i2_bucket )                               | No      | string      | No         | -          | Bucket                |
+| - [region_name](#loader_oneOf_i2_region_name )                     | No      | Combination | No         | -          | Region Name           |
+| - [aws_access_key_id](#loader_oneOf_i2_aws_access_key_id )         | No      | Combination | No         | -          | Aws Access Key Id     |
+| - [aws_secret_access_key](#loader_oneOf_i2_aws_secret_access_key ) | No      | Combination | No         | -          | Aws Secret Access Key |
+| - [aws_session_token](#loader_oneOf_i2_aws_session_token )         | No      | Combination | No         | -          | Aws Session Token     |
+| - [session_args](#loader_oneOf_i2_session_args )                   | No      | object      | No         | -          | Session Args          |
+| - [pattern](#loader_oneOf_i2_pattern )                             | No      | string      | No         | -          | Pattern               |
 
-#### <a name="loader_anyOf_i2_implementation"></a>4.3.1. Property `implementation`
+#### <a name="loader_oneOf_i2_implementation"></a>4.3.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -367,7 +367,7 @@ Specific value: `"GitHubLoader"`
 
 Specific value: `"S3Loader"`
 
-#### <a name="loader_anyOf_i2_bucket"></a>4.3.2. Property `bucket`
+#### <a name="loader_oneOf_i2_bucket"></a>4.3.2. Property `bucket`
 
 **Title:** Bucket
 
@@ -376,7 +376,7 @@ Specific value: `"S3Loader"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="loader_anyOf_i2_region_name"></a>4.3.3. Property `region_name`
+#### <a name="loader_oneOf_i2_region_name"></a>4.3.3. Property `region_name`
 
 **Title:** Region Name
 
@@ -389,24 +389,24 @@ Specific value: `"S3Loader"`
 
 | Any of(Option)                                  |
 | ----------------------------------------------- |
-| [item 0](#loader_anyOf_i2_region_name_anyOf_i0) |
-| [item 1](#loader_anyOf_i2_region_name_anyOf_i1) |
+| [item 0](#loader_oneOf_i2_region_name_anyOf_i0) |
+| [item 1](#loader_oneOf_i2_region_name_anyOf_i1) |
 
-##### <a name="loader_anyOf_i2_region_name_anyOf_i0"></a>4.3.3.1. Property `item 0`
+##### <a name="loader_oneOf_i2_region_name_anyOf_i0"></a>4.3.3.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i2_region_name_anyOf_i1"></a>4.3.3.2. Property `item 1`
+##### <a name="loader_oneOf_i2_region_name_anyOf_i1"></a>4.3.3.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-#### <a name="loader_anyOf_i2_aws_access_key_id"></a>4.3.4. Property `aws_access_key_id`
+#### <a name="loader_oneOf_i2_aws_access_key_id"></a>4.3.4. Property `aws_access_key_id`
 
 **Title:** Aws Access Key Id
 
@@ -419,24 +419,24 @@ Specific value: `"S3Loader"`
 
 | Any of(Option)                                        |
 | ----------------------------------------------------- |
-| [item 0](#loader_anyOf_i2_aws_access_key_id_anyOf_i0) |
-| [item 1](#loader_anyOf_i2_aws_access_key_id_anyOf_i1) |
+| [item 0](#loader_oneOf_i2_aws_access_key_id_anyOf_i0) |
+| [item 1](#loader_oneOf_i2_aws_access_key_id_anyOf_i1) |
 
-##### <a name="loader_anyOf_i2_aws_access_key_id_anyOf_i0"></a>4.3.4.1. Property `item 0`
+##### <a name="loader_oneOf_i2_aws_access_key_id_anyOf_i0"></a>4.3.4.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i2_aws_access_key_id_anyOf_i1"></a>4.3.4.2. Property `item 1`
+##### <a name="loader_oneOf_i2_aws_access_key_id_anyOf_i1"></a>4.3.4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-#### <a name="loader_anyOf_i2_aws_secret_access_key"></a>4.3.5. Property `aws_secret_access_key`
+#### <a name="loader_oneOf_i2_aws_secret_access_key"></a>4.3.5. Property `aws_secret_access_key`
 
 **Title:** Aws Secret Access Key
 
@@ -449,24 +449,24 @@ Specific value: `"S3Loader"`
 
 | Any of(Option)                                            |
 | --------------------------------------------------------- |
-| [item 0](#loader_anyOf_i2_aws_secret_access_key_anyOf_i0) |
-| [item 1](#loader_anyOf_i2_aws_secret_access_key_anyOf_i1) |
+| [item 0](#loader_oneOf_i2_aws_secret_access_key_anyOf_i0) |
+| [item 1](#loader_oneOf_i2_aws_secret_access_key_anyOf_i1) |
 
-##### <a name="loader_anyOf_i2_aws_secret_access_key_anyOf_i0"></a>4.3.5.1. Property `item 0`
+##### <a name="loader_oneOf_i2_aws_secret_access_key_anyOf_i0"></a>4.3.5.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i2_aws_secret_access_key_anyOf_i1"></a>4.3.5.2. Property `item 1`
+##### <a name="loader_oneOf_i2_aws_secret_access_key_anyOf_i1"></a>4.3.5.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-#### <a name="loader_anyOf_i2_aws_session_token"></a>4.3.6. Property `aws_session_token`
+#### <a name="loader_oneOf_i2_aws_session_token"></a>4.3.6. Property `aws_session_token`
 
 **Title:** Aws Session Token
 
@@ -479,24 +479,24 @@ Specific value: `"S3Loader"`
 
 | Any of(Option)                                        |
 | ----------------------------------------------------- |
-| [item 0](#loader_anyOf_i2_aws_session_token_anyOf_i0) |
-| [item 1](#loader_anyOf_i2_aws_session_token_anyOf_i1) |
+| [item 0](#loader_oneOf_i2_aws_session_token_anyOf_i0) |
+| [item 1](#loader_oneOf_i2_aws_session_token_anyOf_i1) |
 
-##### <a name="loader_anyOf_i2_aws_session_token_anyOf_i0"></a>4.3.6.1. Property `item 0`
+##### <a name="loader_oneOf_i2_aws_session_token_anyOf_i0"></a>4.3.6.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="loader_anyOf_i2_aws_session_token_anyOf_i1"></a>4.3.6.2. Property `item 1`
+##### <a name="loader_oneOf_i2_aws_session_token_anyOf_i1"></a>4.3.6.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-#### <a name="loader_anyOf_i2_session_args"></a>4.3.7. Property `session_args`
+#### <a name="loader_oneOf_i2_session_args"></a>4.3.7. Property `session_args`
 
 **Title:** Session Args
 
@@ -509,7 +509,7 @@ Specific value: `"S3Loader"`
 
 **Description:** Additional arguments to pass to the boto3 session.
 
-#### <a name="loader_anyOf_i2_pattern"></a>4.3.8. Property `pattern`
+#### <a name="loader_oneOf_i2_pattern"></a>4.3.8. Property `pattern`
 
 **Title:** Pattern
 

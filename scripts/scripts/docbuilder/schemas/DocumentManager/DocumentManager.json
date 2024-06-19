@@ -18,7 +18,7 @@
     },
     "loader": {
       "$ref": "file:../DocumentLoader/overview.json",
-      "default": "DocumentLoader"
+      "default": "FilesystemLoader"
     },
     "doc_processor": {
       "$ref": "file:../DocumentProcessor/overview.json",

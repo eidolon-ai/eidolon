@@ -124,7 +124,7 @@
         },
         "apu": {
           "$ref": "file:../APU/overview.json",
-          "default": "APU"
+          "default": "ConversationalAPU"
         },
         "default": {
           "type": "boolean",
@@ -196,7 +196,7 @@
     },
     "apu": {
       "$ref": "file:../APU/overview.json",
-      "default": "APU"
+      "default": "ConversationalAPU"
     },
     "apus": {
       "default": [],

@@ -17,17 +17,8 @@
       "type": "string"
     },
     "connection_handler": {
-      "additionalProperties": true,
-      "default": "OpenAIConnectionHandler",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "OpenAIConnectionHandler Reference",
-      "type": "object"
+      "$ref": "file:../OpenAIConnectionHandler/overview.json",
+      "default": "OpenAIConnectionHandler"
     },
     "image_to_text_model": {
       "default": "gpt-4-turbo",

@@ -1,7 +1,7 @@
 {
   "title": "LogicUnit",
   "description": "Overview of LogicUnit components",
-  "anyOf": [
+  "oneOf": [
     {
       "$ref": "file:./ApiLogicUnit.json"
     },

@@ -1,7 +1,7 @@
 {
   "title": "DocumentLoader",
   "description": "Overview of DocumentLoader components",
-  "anyOf": [
+  "oneOf": [
     {
       "$ref": "file:./FilesystemLoader.json"
     },

@@ -1,7 +1,7 @@
 {
   "title": "DocumentReranker",
   "description": "Overview of DocumentReranker components",
-  "anyOf": [
+  "oneOf": [
     {
       "$ref": "file:./RAGFusionReranker.json"
     }

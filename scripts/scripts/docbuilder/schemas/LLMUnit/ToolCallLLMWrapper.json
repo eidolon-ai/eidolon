@@ -11,22 +11,13 @@
     },
     "llm_unit": {
       "$ref": "file:../LLMUnit/overview.json",
-      "default": "LLMUnit"
+      "default": "OpenAIGPT"
     },
     "model": {
       "anyOf": [
         {
-          "additionalProperties": true,
-          "default": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
-          "properties": {
-            "implementation": {
-              "default": null,
-              "title": "Implementation",
-              "type": "string"
-            }
-          },
-          "title": "LLMModel Reference",
-          "type": "object"
+          "$ref": "file:../LLMModel/overview.json",
+          "default": "LLMModel"
         },
         {
           "type": "null"

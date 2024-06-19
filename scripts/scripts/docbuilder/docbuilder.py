@@ -27,7 +27,6 @@ from eidolon_ai_sdk.util.class_utils import for_name
 
 class Group(BaseModel):
     base: type | str
-    default: Optional[str] = None
     components: list[tuple[str, type, dict]] = []
     include_root: bool = False
     description: str = None
@@ -71,6 +70,7 @@ def main():
     print("Generating docs...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
     shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    generate_schema_only_groups(SimilarityMemory)
     for t in groups["Agents"].components:
         generate_schema_only_groups(t[1])
     generate_json(dist_component_schemas)
@@ -153,15 +153,22 @@ def template(template_file, **kwargs):
 
 
 def generate_schema_only_groups(bound: type):
-    spec: Optional[BaseModel] = Reference.get_spec_type(bound)
-    if spec:
-        for vv in spec.model_fields.values():
-            v = vv.annotation
-            if hasattr(v, "_bound"):
-                generate_schema_only_groups(v._bound)
-                if v._bound.__name__ not in groups:
-                    groups[v._bound.__name__] = Group(base=v._bound, document_in_sidebar=False)
-                generate_schema_only_groups(v._bound)
+    if bound.__name__ not in groups:
+        groups[bound.__name__] = Group(base=bound, document_in_sidebar=False)
+
+    resources: List[ReferenceResource] = list(AgentOSKernel.get_resources(ReferenceResource).values())
+    for r in resources:
+        key = r.metadata.name
+        overrides = Reference[object, key]._transform(r.spec)
+        pointer = overrides.pop("implementation")
+        clz = for_name(pointer, object)
+        if issubclass(clz, bound) or clz == bound:
+            spec: Optional[BaseModel] = Reference.get_spec_type(clz)
+            if spec:
+                for vv in spec.model_fields.values():
+                    v = vv.annotation
+                    if hasattr(v, "_bound") and v._bound.__name__ not in groups:
+                        generate_schema_only_groups(v._bound)
 
 
 def generate_json(write_base):
@@ -170,8 +177,6 @@ def generate_json(write_base):
         key = r.metadata.name
         overrides = Reference[object, key]._transform(r.spec)
         pointer = overrides.pop("implementation")
-        if key in groups:
-            groups[key].default = pointer
         try:
             clz = for_name(pointer, object)
             for k, g in groups.items():
@@ -188,9 +193,7 @@ def generate_json(write_base):
         base_json = {
             "title": key,
             "description": group.description,
-            "anyOf": [
-                {"$ref": f"file:./{name}.json"} for name, _, _ in group.components
-            ],
+            "oneOf": [{"$ref": f"file:./{name}.json"} for name, _, _ in group.components],
         }
         with open(write_loc / "overview.json", 'w') as file:
             json.dump(base_json, file, indent=2)
@@ -200,10 +203,10 @@ def generate_json(write_base):
                 json_schema = clz.model_json_schema()
                 defs = dict()
                 for k, v in list(json_schema.get("$defs", {}).items()):
-                    if "_Reference" in k:
-                        default = v.get("default")
-                        if default in groups:
-                            defs[k] = {"$ref": f"file:../{default}/overview.json", "default": default}
+                    if 'reference_info' in v:
+                        type_ = v['reference_info']['type']
+                        if type_ in groups:
+                            defs[k] = {"$ref": f"file:../{type_}/overview.json", "default": v['reference_info']['default_impl']}
                         else:
                             defs[k] = json_schema['$defs'][k]
                             defs[k]['type'] = "object"

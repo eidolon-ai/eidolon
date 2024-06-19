@@ -1,7 +1,7 @@
 {
   "title": "QuestionTransformer",
   "description": "Overview of QuestionTransformer components",
-  "anyOf": [
+  "oneOf": [
     {
       "$ref": "file:./MultiQuestionTransformer.json"
     }

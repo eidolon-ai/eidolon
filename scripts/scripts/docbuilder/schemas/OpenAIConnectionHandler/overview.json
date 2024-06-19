@@ -1,0 +1,9 @@
+{
+  "title": "OpenAIConnectionHandler",
+  "description": "Overview of OpenAIConnectionHandler components",
+  "oneOf": [
+    {
+      "$ref": "file:./AzureOpenAIConnectionHandler.json"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "title": "DocumentTransformer",
   "description": "Overview of DocumentTransformer components",
-  "anyOf": [
+  "oneOf": [
     {
       "$ref": "file:./AutoTransformer.json"
     }
