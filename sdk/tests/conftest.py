@@ -80,8 +80,8 @@ def vcr_config():
         return request
 
     return dict(
-        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None)],
-        filter_query_parameters=["cx", "key"],  # google custom search engine id
+        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None), ("x-api-key", None)],
+        filter_query_parameters=["cx", "key"], # google custom search engine id
         before_record_request=ignore_some_localhost,
         record_mode="once",
         match_on=["method", "scheme", "host", "port", "path", "query", "body"],
