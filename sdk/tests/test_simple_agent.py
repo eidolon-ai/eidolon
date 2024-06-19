@@ -1,3 +1,4 @@
+import os
 from typing import Annotated
 
 import pytest
@@ -93,6 +94,9 @@ resources = [
 def pytest_generate_tests(metafunc):
     apus = metafunc.cls.apus
     metafunc.parametrize(["apu"], [[apu] for apu in apus], ids=metafunc.cls.apus, scope="class")
+
+
+os.environ.setdefault("ANTHROPIC_API_KEY", "key_not_needed_with_saved_cassettes")
 
 
 class TestSimpleTests:
