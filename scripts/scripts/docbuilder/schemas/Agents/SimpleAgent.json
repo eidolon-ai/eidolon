@@ -214,19 +214,6 @@
       ],
       "title": "Title Generation Mode",
       "type": "string"
-    },
-    "doc_processor": {
-      "additionalProperties": true,
-      "default": "DocumentProcessor",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentProcessor Reference",
-      "type": "object"
     }
   },
   "title": "SimpleAgent",

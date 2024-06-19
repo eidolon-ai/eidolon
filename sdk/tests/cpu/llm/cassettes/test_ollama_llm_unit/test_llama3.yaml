@@ -30,33 +30,33 @@ interactions:
     uri: http://127.0.0.1:11434/api/chat
   response:
     body:
-      string: '{"model":"llama3","created_at":"2024-06-11T18:42:33.349298Z","message":{"role":"assistant","content":"The"},"done":false}
+      string: '{"model":"llama3","created_at":"2024-06-18T21:59:50.039788Z","message":{"role":"assistant","content":"The"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-11T18:42:33.37148Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-18T21:59:50.060759Z","message":{"role":"assistant","content":"
         capital"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-11T18:42:33.391517Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-18T21:59:50.080758Z","message":{"role":"assistant","content":"
         of"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-11T18:42:33.411315Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-18T21:59:50.101285Z","message":{"role":"assistant","content":"
         France"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-11T18:42:33.430791Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-18T21:59:50.121049Z","message":{"role":"assistant","content":"
         is"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-11T18:42:33.45082Z","message":{"role":"assistant","content":"
+        {"model":"llama3","created_at":"2024-06-18T21:59:50.141473Z","message":{"role":"assistant","content":"
         Paris"},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-11T18:42:33.471037Z","message":{"role":"assistant","content":"."},"done":false}
+        {"model":"llama3","created_at":"2024-06-18T21:59:50.16246Z","message":{"role":"assistant","content":"."},"done":false}
 
-        {"model":"llama3","created_at":"2024-06-11T18:42:33.49064Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":10883307209,"load_duration":10580841709,"prompt_eval_count":41,"prompt_eval_duration":158611000,"eval_count":8,"eval_duration":141733000}
+        {"model":"llama3","created_at":"2024-06-18T21:59:50.181815Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":6625548666,"load_duration":6326055166,"prompt_eval_count":41,"prompt_eval_duration":153944000,"eval_count":8,"eval_duration":142053000}
 
         '
     headers:
       Content-Type:
       - application/x-ndjson
       Date:
-      - Tue, 11 Jun 2024 18:42:33 GMT
+      - Tue, 18 Jun 2024 21:59:50 GMT
       Transfer-Encoding:
       - chunked
     status:

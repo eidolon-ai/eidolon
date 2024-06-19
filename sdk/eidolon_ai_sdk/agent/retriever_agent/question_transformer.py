@@ -1,9 +1,9 @@
-from typing import List
-
 from abc import ABC, abstractmethod
+from typing import List
 
 from pydantic import BaseModel
 
+from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -13,7 +13,7 @@ class QuestionTransformerSpec(BaseModel):
 
 class QuestionTransformer(ABC, Specable[QuestionTransformerSpec]):
     @abstractmethod
-    async def transform(self, question: str) -> List[str]:
+    async def transform(self, apu: APU, process_id: str, question: str) -> List[str]:
         """Transform a question into a series of related question.
 
         Args:
@@ -21,4 +21,6 @@ class QuestionTransformer(ABC, Specable[QuestionTransformerSpec]):
 
         Returns:
             The transformed questions.
+            :param question:
+            :param apu:
         """
