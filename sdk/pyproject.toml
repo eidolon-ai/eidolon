@@ -70,6 +70,7 @@ ollama = "^0.2.0"
 pymupdf = "^1.24.5"
 jsonpath-ng = "^1.6.1"
 
+google-generativeai = "^0.7.0"
 [tool.pytest.ini_options]
 pythonpath = "project"
 
