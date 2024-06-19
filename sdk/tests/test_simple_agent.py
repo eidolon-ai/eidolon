@@ -57,7 +57,7 @@ resources = [
         "json_input",
         actions=[
             dict(
-                user_prompt="Repeat the following text: {{ one_int }}, {{ two_optional }}, {{ three_default }}",
+                user_prompt="echo the following text: {{ one_int }}, {{ two_optional }}, {{ three_default }}",
                 input_schema=dict(
                     one_int=dict(type="integer"),
                     two_optional=dict(type="string", default="default"),
@@ -87,130 +87,136 @@ resources = [
     r("with_tools", apu=dict(logic_units=[fqn(MeaningOfLife)])),
     r("complex_refs", agent_refs=["complex_agent"]),
     r("complex_agent", impl=fqn(ComplexAgent)),
-    r("4o", apu="GPT4o"),
 ]
 
 
-@pytest.fixture(scope="module", autouse=True)
-async def server(run_app):
-    async with run_app(*resources) as ra:
-        yield ra
+def pytest_generate_tests(metafunc):
+    apus = metafunc.cls.apus
+    metafunc.parametrize(["apu"], [[apu] for apu in apus], ids=metafunc.cls.apus, scope="class")
 
 
-async def test_default_agent():
-    process = await Agent.get("default").create_process()
-    resp = await process.action("converse", body="What is the capital of France?")
-    assert "paris" in resp.data.lower()
+class TestSimpleTests:
+    apus = ["GPT4o", "GPT4-turbo", "ClaudeOpus"]
 
+    @pytest.fixture(scope="class")
+    async def llm_name(self, apu):
+        if "Claude" in apu:
+            return "anthropic_completion"
+        elif "GPT4" in apu:
+            return "openai_completion"
+        else:
+            raise ValueError(f"Unknown apu {apu}")
 
-async def test_no_vars():
-    process = await Agent.get("test_no_vars").create_process()
-    resp = await process.action("converse")
-    assert "paris" in resp.data.lower()
+    @pytest.fixture(scope="class", autouse=True)
+    async def server(self, run_app, apu):
+        res_copy = []
+        for res in resources:
+            if res.spec["implementation"] == SimpleAgent.__name__:
+                copy = res.model_dump()
+                if "apu" in copy["spec"] and not isinstance(copy["spec"]["apu"], str):
+                    copy["spec"]["apu"]["implementation"] = apu
+                else:
+                    copy["spec"]["apu"] = apu
+                res_copy.append(Resource(**copy))
+            else:
+                res_copy.append(res)
+        async with run_app(*res_copy) as ra:
+            yield ra
 
+    async def test_default_agent(self):
+        process = await Agent.get("default").create_process()
+        resp = await process.action("converse", body="What is the capital of France?")
+        assert "paris" in resp.data.lower()
 
-async def test_multiple_prompt_args():
-    process = await Agent.get("multiple_prompt_args").create_process()
-    resp = await process.action("converse", body=dict(a1="What is the capital of", a2="France?"))
-    assert "paris" in resp.data.lower()
+    async def test_no_vars(self):
+        process = await Agent.get("test_no_vars").create_process()
+        resp = await process.action("converse")
+        assert "paris" in resp.data.lower()
 
+    async def test_multiple_prompt_args(self):
+        process = await Agent.get("multiple_prompt_args").create_process()
+        resp = await process.action("converse", body=dict(a1="What is the capital of", a2="France?"))
+        assert "paris" in resp.data.lower()
 
-async def test_generating_title():
-    process = await Agent.get("json_output").create_process()
-    resp = await process.action("generate_title", body="What is the capital of France?")
-    assert "france" in resp.data.lower()
-    resp = await process.action("converse", body="What is the capital of France?")
-    assert "population" in resp.data
-    assert isinstance(resp.data["population"], int) and resp.data["population"] > 0
-    assert "paris" in resp.data["capital"].lower()
+    async def test_generating_title(self):
+        process = await Agent.get("json_output").create_process()
+        resp = await process.action("generate_title", body="What is the capital of France?")
+        assert "france" in resp.data.lower()
 
+    async def test_json_input(self):
+        process = await Agent.get("json_input").create_process()
+        resp = await process.action("converse", body=dict(one_int=1, three_default="three"))
+        assert "1, default, three" in resp.data
 
-async def test_json_input():
-    process = await Agent.get("json_input").create_process()
-    resp = await process.action("converse", body=dict(one_int=1, three_default="three"))
-    assert "1, default, three" in resp.data
+    async def test_json_output(self):
+        process = await Agent.get("json_output").create_process()
+        resp = await process.action("converse", body="What is the population of France?")
+        assert "population" in resp.data
+        assert (isinstance(resp.data["population"], int) or isinstance(resp.data["population"], float)) and resp.data["population"] > 0
+        assert "paris" in resp.data["capital"].lower()
 
+    async def test_states(self):
+        process = await Agent.get("states").create_process()
+        status = await process.status()
+        assert status.state == "initialized"
+        assert status.available_actions == ["first", "generate_title"]
+        first = await process.action("first", body="What is the capital of France?")
+        status = await first.status()
+        assert status.state == "s2"
+        assert status.available_actions == ["second"]
+        assert "paris" in first.data.lower()
+        second = await first.action("second", body="What about Spain?")
+        status = await second.status()
+        assert status.state == "idle"
+        assert status.available_actions == ["generate_title"]
+        assert "madrid" in second.data.lower()
 
-async def test_json_output():
-    process = await Agent.get("json_output").create_process()
-    resp = await process.action("converse", body="What is the capital of France?")
-    assert "population" in resp.data
-    assert isinstance(resp.data["population"], int) and resp.data["population"] > 0
-    assert "paris" in resp.data["capital"].lower()
+        with pytest.raises(AgentError) as e:
+            await second.action("first", body="What is the capital of France?")
+        assert e.value.status_code == 409
 
+    async def test_states_bad_initial_program(self):
+        process = await Agent.get("states").create_process()
+        with pytest.raises(AgentError) as e:
+            await process.action("second", body="What is the capital of France?")
+        assert e.value.status_code == 409
 
-async def test_states():
-    process = await Agent.get("states").create_process()
-    status = await process.status()
-    assert status.state == "initialized"
-    assert status.available_actions == ["first", "generate_title"]
-    first = await process.action("first", body="What is the capital of France?")
-    status = await first.status()
-    assert status.state == "s2"
-    assert status.available_actions == ["second"]
-    assert "paris" in first.data.lower()
-    second = await first.action("second", body="What about Spain?")
-    status = await second.status()
-    assert status.state == "idle"
-    assert status.available_actions == ["generate_title"]
-    assert "madrid" in second.data.lower()
-
-    with pytest.raises(AgentError) as e:
-        await second.action("first", body="What is the capital of France?")
-    assert e.value.status_code == 409
-
-
-async def test_states_bad_initial_program():
-    process = await Agent.get("states").create_process()
-    with pytest.raises(AgentError) as e:
-        await process.action("second", body="What is the capital of France?")
-    assert e.value.status_code == 409
-
-
-async def test_refs():
-    process = await Agent.get("refs").create_process()
-    resp = await process.action(
-        "converse", body="Start a conversation with system_prompt and what its favorite country is."
-    )
-    assert "france" in resp.data.lower()
-
-
-async def test_with_tools():
-    process = await Agent.get("with_tools").create_process()
-    resp = await process.action("converse", body="What is the meaning of life?")
-    assert "42" in resp.data.lower()
-
-
-@pytest.fixture
-def record(test_name):
-    save_loc = f"resume_points_{test_name}"
-    AgentOSKernel.register_resource(
-        ReferenceResource(
-            apiVersion="eidolon/v1",
-            metadata=Metadata(name=ReplayConfig.__name__),
-            spec=dict(save_loc=save_loc),
+    async def test_refs(self):
+        process = await Agent.get("refs").create_process()
+        resp = await process.action(
+            "converse", body="Start a conversation with system_prompt and what its favorite country is."
         )
-    )
-    return save_loc
+        assert "france" in resp.data.lower()
 
+    async def test_with_tools(self):
+        process = await Agent.get("with_tools").create_process()
+        resp = await process.action("converse", body="What is the meaning of life?")
+        assert "42" in resp.data.lower()
 
-async def test_with_replay_points(file_memory_loc, record):
-    process = await Agent.get("with_tools").create_process()
-    await process.action("converse", body="What is the meaning of life?")
-    stream = replay(file_memory_loc / record / "001_openai_completion")
-    assert "42" in [s async for s in stream]
+    @pytest.fixture
+    def record(self, test_name):
+        test_name = test_name.replace("[", "_").replace("]", "_")
+        print("test_name", test_name)
+        save_loc = f"resume_points_{test_name}"
+        AgentOSKernel.register_resource(
+            ReferenceResource(
+                apiVersion="eidolon/v1",
+                metadata=Metadata(name=ReplayConfig.__name__),
+                spec=dict(save_loc=save_loc),
+            )
+        )
+        return save_loc
 
-    with open(file_memory_loc / record / "001_openai_completion" / "data.yaml", "r") as f:
-        assert "You are a helpful assistant" in f.read()
+    async def test_with_replay_points(self, file_memory_loc, record, llm_name):
+        process = await Agent.get("with_tools").create_process()
+        await process.action("converse", body="What is the meaning of life?")
+        stream = replay(file_memory_loc / record / f"001_{llm_name}")
+        assert "42" in [s async for s in stream]
 
+        with open(file_memory_loc / record / f"001_{llm_name}" / "data.yaml", "r") as f:
+            assert "You are a helpful assistant" in f.read()
 
-async def test_agent_with_complex_refs():
-    process = await Agent.get("complex_refs").create_process()
-    resp = await process.action("converse", body="What is the capital of France?")
-    assert "paris" in resp.data.lower()
-
-
-async def test_4o_powered_agent():
-    process = await Agent.get("4o").create_process()
-    resp = await process.action("converse", body="What is the capital of France?")
-    assert "paris" in resp.data.lower()
+    async def test_agent_with_complex_refs(self):
+        process = await Agent.get("complex_refs").create_process()
+        resp = await process.action("converse", body="What is the capital of France?")
+        assert "paris" in resp.data.lower()

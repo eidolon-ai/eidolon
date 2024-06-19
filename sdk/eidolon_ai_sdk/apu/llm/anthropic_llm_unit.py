@@ -2,17 +2,19 @@ import base64
 import json
 import logging
 from io import BytesIO
-from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator
+from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 import yaml
 from PIL import Image
-from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError
+from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError, InputJsonEvent, TextEvent, ContentBlockStopEvent
+from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
+from anthropic.types.image_block_param import Source
 from fastapi import HTTPException
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
     ObjectOutputEvent,
-    ToolCall,
+    ToolCall, LLMToolCallRequestEvent,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -75,14 +77,15 @@ def scale_image(image_bytes):
 
 async def convert_to_llm(message: LLMMessage):
     if isinstance(message, SystemMessage):
-        return {"role": "system", "content": message.content}
+        return {"role": "user", "content": [TextBlockParam(type="text", text=message.content)]}
     elif isinstance(message, UserMessage):
         content = message.content
         if not isinstance(content, str):
             content = []
             for part in message.content:
                 if part.type == "text":
-                    content.append({"type": "text", "text": part.text})
+                    if part.text:
+                        content.append(TextBlockParam(text=part.text, type="text"))
                 else:
                     # retrieve the image from the file system
                     data = await AgentOS.file_memory.read_file(part.image_url)
@@ -90,36 +93,27 @@ async def convert_to_llm(message: LLMMessage):
                     data = scale_image(data)
                     # base64 encode the data
                     base64_image = base64.b64encode(data).decode("utf-8")
-                    content.append(
-                        {
-                            "type": "image_url",
-                            "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
-                        }
-                    )
+                    content.append(ImageBlockParam(source=Source(data = base64_image, media_type="image/png", type="base64" ), type="image"))
+        else:
+            content = [TextBlockParam(type="text", text=content)]
 
         return {"role": "user", "content": content}
     elif isinstance(message, AssistantMessage):
-        ret = {"role": "assistant", "content": str(message.content)}
+        content = [TextBlockParam(type="text", text=message.content)]
         if message.tool_calls and len(message.tool_calls) > 0:
-            ret["tool_calls"] = [
-                {
-                    "id": tool_call.tool_call_id,
-                    "type": "function",
-                    "function": {
-                        "name": tool_call.name,
-                        "arguments": str(tool_call.arguments),
-                    },
-                }
-                for tool_call in message.tool_calls
-            ]
-        return ret
+            for tool_call in message.tool_calls:
+                content.append(ToolUseBlockParam(type="tool_use", id=tool_call.tool_call_id, name=tool_call.name, input=tool_call.arguments))
+        return {"role": "assistant", "content": content}
     elif isinstance(message, ToolResponseMessage):
         # tool_call_id, content
-        return {
-            "role": "tool",
-            "tool_call_id": message.tool_call_id,
-            "content": json.dumps(message.result),
+        data = json.dumps(message.result)
+        content = [TextBlockParam(type="text", text=data)]
+        return {"role": "user", "content": [{
+            "type": "tool_result",
+            "tool_use_id": message.tool_call_id,
+            "content": content
         }
+        ]}
     else:
         raise ValueError(f"Unknown message type {message.type}")
 
@@ -145,14 +139,12 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         self.temperature = self.spec.temperature
 
     async def execute_llm(
-        self,
-        call_context: CallContext,
-        messages: List[LLMMessage],
-        tools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            call_context: CallContext,
+            messages: List[LLMMessage],
+            tools: List[LLMCallFunction],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
-        if len(tools) > 0:
-            logger.warn("Anthropic does not support tool calls, ignoring")
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing open ai llm request", extra=request)
@@ -160,19 +152,31 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             logger.debug("request content:\n" + yaml.dump(request))
         llm_request = replayable(fn=_llm_request(), name_override="anthropic_completion", parser=_raw_parser)
         complete_message = ""
+        tools_to_call = []
         try:
-            async for message in llm_request(client_args=self.spec.client_args, **request):
-                # todo -- handle tool calls in some weird way...
-                if can_stream_message:
-                    logger.debug(f"anthropic llm stream response: {message}", extra=dict(content=message))
-                    yield StringOutputEvent(content=message)
-                else:
-                    complete_message += message
+            async for in_message in llm_request(client_args=self.spec.client_args, **request):
+                message = cast(MessageStreamEvent, in_message)
+
+                if isinstance(message, ContentBlockStopEvent) and isinstance(message.content_block, ToolUseBlock):
+                    tc = ToolCall(tool_call_id=message.content_block.id, name=message.content_block.name, arguments=message.content_block.input)
+                    tools_to_call.append(tc)
+                elif isinstance(message, TextEvent):
+                    content = message.text
+                    if can_stream_message:
+                        logger.debug(f"open ai llm stream response: {content}", extra=dict(content=content))
+                        yield StringOutputEvent(content=content)
+                    else:
+                        complete_message += content
+
+            if len(tools_to_call) > 0:
+                logger.info(f"anthropic llm tool calls: {tools_to_call}", extra=dict(tool_calls=tools_to_call))
+                for tool in tools_to_call:
+                    yield LLMToolCallRequestEvent(tool_call=tool)
 
             if not can_stream_message:
                 logger.debug(f"anthropic llm object response: {complete_message}", extra=dict(content=complete_message))
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
@@ -184,18 +188,9 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             raise HTTPException(502, f"Anthropic Status Error: {e.message}") from e
 
     async def _build_request(self, inMessages, inTools, output_format):
-        # tools = await self._build_tools(inTools)
-        tools = []
+        tools = await self._build_tools(inTools)
         system_prompt = "\n".join([message.content for message in inMessages if isinstance(message, SystemMessage)])
         messages = [await convert_to_llm(message) for message in inMessages if not isinstance(message, SystemMessage)]
-        request = {
-            "messages": messages,
-            "model": self.model.name,
-            "temperature": self.temperature,
-        }
-        if system_prompt:
-            request["system"] = system_prompt
-
         if output_format == "str" or output_format["type"] == "string":
             is_string = True
         else:
@@ -206,11 +201,31 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
 
             # add response rules to original system message for this call only
-            if messages[0]["role"] == "system":
-                messages[0]["content"] += f"\n\n{force_json_msg}"
+            messages.insert(0, {"role": "user", "content": [TextBlockParam(type="text", text=force_json_msg)]})
+
+        # combine messages such that no two user messages are consecutive
+        last_message = None
+        new_messages = []
+        for message in messages:
+            if message["role"] == "user":
+                if last_message and last_message["role"] == "user":
+                    content = message["content"]
+                    last_message["content"].extend(content)
+                else:
+                    new_messages.append(message)
             else:
-                messages.insert(0, {"role": "system", "content": force_json_msg})
-        logger.debug(messages)
+                new_messages.append(message)
+            last_message = message
+
+        request = {
+            "messages": new_messages,
+            "model": self.model.name,
+            "temperature": self.temperature,
+        }
+        if system_prompt:
+            request["system"] = system_prompt
+
+        logger.debug(new_messages)
         if len(tools) > 0:
             request["tools"] = tools
         request["max_tokens"] = self.spec.max_tokens or 4000
@@ -218,41 +233,33 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
 
     async def _build_tools(self, inTools):
         tools = []
-        # for tool in inTools:
-        #     tools.append(
-        #         ChatCompletionToolParam(
-        #             **{
-        #                 "type": "function",
-        #                 "function": {
-        #                     "name": tool.name,
-        #                     "description": tool.description,
-        #                     "parameters": tool.parameters,
-        #                 },
-        #             }
-        #         )
-        #     )
+        for tool in inTools:
+            tools.append(
+                {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "input_schema": tool.parameters,
+                }
+            )
         return tools
-
-
-def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
-    name = tool["name"]
-    try:
-        loads = json.loads(tool["arguments"])
-    except json.JSONDecodeError as e:
-        raise RuntimeError(f"Error decoding response function arguments for tool {name}") from e
-    return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
 
 
 def _llm_request():
     async def fn(client_args: dict = None, **kwargs):
         client = AsyncAnthropic(**(client_args or {}))
         async with client.messages.stream(**kwargs) as stream:
-            async for e in stream.text_stream:
+            async for e in stream:
                 yield e
 
     return fn
 
 
 async def _raw_parser(resp):
-    async for m_chunk in resp:
-        yield m_chunk
+    async for in_message in resp:
+        message = cast(MessageStreamEvent, in_message)
+
+        if isinstance(message, ContentBlockStopEvent) and isinstance(message.content_block, ToolUseBlock):
+            tc = ToolCall(tool_call_id=message.content_block.id, name=message.content_block.name, arguments=message.content_block.input)
+            yield f"\nTool Call: {message.content_block.name}\nArguments: {message.content_block.input}\n"
+        elif isinstance(message, TextEvent):
+            yield message.text
