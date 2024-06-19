@@ -3,8 +3,8 @@
 import {Box} from "@mui/material";
 import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
-import {ProcessesProvider} from "../../../packages/eidolon-components/src/hooks/processes_context";
-import {EidolonApp} from "@eidolon/components";
+import {ProcessesProvider} from "@eidolon/components/client";
+import {EidolonApp} from "@eidolon/components/client";
 import {useRef} from "react";
 
 

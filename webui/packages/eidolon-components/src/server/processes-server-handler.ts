@@ -1,5 +1,30 @@
-import {EidolonClient} from "@eidolon/client";
-import {convertException, processResponse} from "../lib/util.ts";
+import {EidolonClient, HttpException} from "@eidolon/client";
+
+export function processResponse(promise: Promise<any>) {
+  return convertException(promise.then(Response.json))
+}
+
+export function convertException(promise: Promise<any>) {
+  return promise.catch((e) => {
+    if (e instanceof HttpException) {
+      return new Response(e.statusText, {status: e.status, statusText: e.statusText})
+    } else if (e instanceof Error) {
+      // @ts-ignore
+      if (e?.cause?.code === 'ECONNREFUSED') {
+        return new Response('Server Down', {status: 503})
+      }
+
+      return new Response(e.message, {status: 500})
+    } else {
+      if (e?.cause?.code === 'ECONNREFUSED') {
+        return new Response('Server Down', {status: 503})
+      }
+
+      return new Response('Unknown error', {status: 500})
+    }
+  })
+}
+
 
 export const getAuthHeaders = (access_token: string | undefined): Record<string, string> => {
   if (!access_token) {

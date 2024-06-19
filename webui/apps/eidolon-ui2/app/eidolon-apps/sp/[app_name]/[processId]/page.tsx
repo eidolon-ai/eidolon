@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react";
-import {CopilotPanel, CopilotParams, useProcess} from "@eidolon/components";
+import {CopilotPanel, CopilotParams, useProcess} from "@eidolon/components/client";
 import {Box} from "@mui/material";
 import {useSession} from "next-auth/react";
 import {useEffect} from "react";

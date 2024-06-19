@@ -1,6 +1,6 @@
 'use client'
 
-import {CopilotPanel, CopilotParams} from "@eidolon/components";
+import {CopilotPanel, CopilotParams} from "@eidolon/components/client";
 import * as React from "react";
 import {Company} from "../../types";
 import {Box, IconButton, Paper, useMediaQuery, useTheme} from "@mui/material";

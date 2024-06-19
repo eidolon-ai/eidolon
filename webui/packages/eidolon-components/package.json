@@ -7,21 +7,21 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup index.ts",
+    "build": "tsup",
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
     "test": "jest --ci"
   },
   "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
+    "./client": {
+      "import": "./dist/client/index.js",
+      "require": "./dist/client/index.cjs",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server/index.js",
+      "require": "./dist/server/index.cjs",
+      "types": "./dist/server/index.d.ts"
     }
   },
   "dependencies": {

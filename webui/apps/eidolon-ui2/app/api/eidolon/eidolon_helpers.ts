@@ -1,6 +1,6 @@
-import {ProcessesHandler, ProcessEventsHandler, ProcessHandler} from "@eidolon/components";
+import {ProcessesHandler, ProcessEventsHandler, ProcessHandler} from "@eidolon/components/server";
 import {auth} from "../../../auth";
-import {AgentHandler, FileHandler, FilesHandler, MachineHandler} from "@eidolon/components";
+import {AgentHandler, FileHandler, FilesHandler, MachineHandler} from "@eidolon/components/server";
 
 const getAccessToken = async () => {
   const session = await auth()
