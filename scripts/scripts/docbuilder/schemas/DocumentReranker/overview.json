@@ -1,9 +1,12 @@
 {
   "title": "DocumentReranker",
   "description": "Overview of DocumentReranker components",
-  "oneOf": [
+  "anyOf": [
     {
       "$ref": "file:./RAGFusionReranker.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "DocumentReranker"
+  }
 }

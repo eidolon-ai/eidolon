@@ -1,0 +1,12 @@
+{
+  "title": "AudioUnit",
+  "description": "Overview of AudioUnit components",
+  "anyOf": [
+    {
+      "$ref": "file:./OpenAiSpeech.json"
+    }
+  ],
+  "reference_group": {
+    "type": "AudioUnit"
+  }
+}

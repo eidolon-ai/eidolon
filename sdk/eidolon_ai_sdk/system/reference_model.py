@@ -94,11 +94,18 @@ class Reference(BaseModel):
                 if "." in impl:
                     impl = impl.split(".")[-1]
                 json_schema['properties']['implementation']['default'] = impl
-                json_schema['reference_info'] = {
+                json_schema['reference_pointer'] = {
                     'type': params[0] if isinstance(params[0], str) else params[0].__name__,
-                    'default_impl': impl,
+                    'default_impl': impl
                 }
                 return json_schema
+
+            @classmethod
+            def _transformed_impl(cls):
+                impl = cls._transform({})['implementation']
+                if "." in impl:
+                    impl = impl.split(".")[-1]
+                return impl
 
             @model_validator(mode="before")
             def _dump_ref(cls, value):

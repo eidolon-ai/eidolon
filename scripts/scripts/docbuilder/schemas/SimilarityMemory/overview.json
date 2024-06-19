@@ -1,9 +1,12 @@
 {
   "title": "SimilarityMemory",
   "description": "Overview of SimilarityMemory components",
-  "oneOf": [
+  "anyOf": [
     {
       "$ref": "file:./SimilarityMemoryImpl.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "SimilarityMemory"
+  }
 }

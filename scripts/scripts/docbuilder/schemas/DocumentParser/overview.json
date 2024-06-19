@@ -1,9 +1,12 @@
 {
   "title": "DocumentParser",
   "description": "Overview of DocumentParser components",
-  "oneOf": [
+  "anyOf": [
     {
       "$ref": "file:./AutoParser.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "DocumentParser"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "title": "DocumentLoader",
   "description": "Overview of DocumentLoader components",
-  "oneOf": [
+  "anyOf": [
     {
       "$ref": "file:./FilesystemLoader.json"
     },
@@ -11,5 +11,8 @@
     {
       "$ref": "file:./S3Loader.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "DocumentLoader"
+  }
 }

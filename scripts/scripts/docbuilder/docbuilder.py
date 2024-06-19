@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import textwrap
+from collections import deque
 from pathlib import Path
 from typing import Optional, Dict, Self, List
 
@@ -70,12 +71,10 @@ def main():
     print("Generating docs...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
     shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    generate_schema_only_groups(SimilarityMemory)
-    for t in groups["Agents"].components:
-        generate_schema_only_groups(t[1])
+    generate_groups()
     generate_json(dist_component_schemas)
-    write_md(dist_component_schemas)
-    update_sitemap()
+    # write_md(dist_component_schemas)
+    # update_sitemap()
     print("Done")
 
 
@@ -107,7 +106,8 @@ cut_after_str = """|                           |                                
 """
 
 
-def write_md(read_loc, write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
+def write_md(read_loc,
+             write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     shutil.rmtree(write_loc, ignore_errors=True)
     for k, g in groups.items():
         write_file_loc = write_loc / url_safe(k) / "overview.md"
@@ -152,40 +152,31 @@ def template(template_file, **kwargs):
         return Environment(undefined=StrictUndefined).from_string(template.read()).render(**kwargs)
 
 
-def generate_schema_only_groups(bound: type):
-    if bound.__name__ not in groups:
-        groups[bound.__name__] = Group(base=bound, document_in_sidebar=False)
+def generate_groups():
+    # Get all groups. Groups are any Reference base used by registered component
+    for r in AgentOSKernel.get_resources(ReferenceResource).values():
+        overrides = Reference[object, r.metadata.name]._transform(r.spec)
+        pointer = overrides.pop("implementation")
+        clz = for_name(pointer, object)
+        spec: Optional[BaseModel] = Reference.get_spec_type(clz)
+        if spec:
+            for vv in spec.model_fields.values():
+                v = vv.annotation
+                if hasattr(v, "_bound") and v._bound.__name__ not in groups:
+                    groups[v._bound.__name__] = Group(base=v._bound, document_in_sidebar=False)
 
-    resources: List[ReferenceResource] = list(AgentOSKernel.get_resources(ReferenceResource).values())
-    for r in resources:
+    # check all components to see which group they are in and add them to the group
+    for r in AgentOSKernel.get_resources(ReferenceResource).values():
         key = r.metadata.name
         overrides = Reference[object, key]._transform(r.spec)
         pointer = overrides.pop("implementation")
         clz = for_name(pointer, object)
-        if issubclass(clz, bound) or clz == bound:
-            spec: Optional[BaseModel] = Reference.get_spec_type(clz)
-            if spec:
-                for vv in spec.model_fields.values():
-                    v = vv.annotation
-                    if hasattr(v, "_bound") and v._bound.__name__ not in groups:
-                        generate_schema_only_groups(v._bound)
+        for group_key, group in groups.items():
+            if not isinstance(group.base, str) and group != object and issubclass(clz, group.base) and (key != group_key or group.include_root):
+                group.components.append((key, clz, overrides))
 
 
 def generate_json(write_base):
-    resources: List[ReferenceResource] = list(AgentOSKernel.get_resources(ReferenceResource).values())
-    for r in resources:
-        key = r.metadata.name
-        overrides = Reference[object, key]._transform(r.spec)
-        pointer = overrides.pop("implementation")
-        try:
-            clz = for_name(pointer, object)
-            for k, g in groups.items():
-                if not isinstance(g.base, str) and (issubclass(clz, g.base) or clz == g.base) and (
-                        k != key or g.include_root):
-                    g.components.append((key, clz, overrides))
-                    g.sort_components()
-        except ValueError as ve:
-            print(f"skipping {key}", ve)
     for key, group in groups.items():
         write_loc = write_base / key
         os.makedirs(write_loc, exist_ok=True)
@@ -193,7 +184,9 @@ def generate_json(write_base):
         base_json = {
             "title": key,
             "description": group.description,
-            "oneOf": [{"$ref": f"file:./{name}.json"} for name, _, _ in group.components],
+            "anyOf": [{"$ref": f"file:./{name}.json"} for name, _, _ in group.components],
+            "reference_group":
+                {"type": key}
         }
         with open(write_loc / "overview.json", 'w') as file:
             json.dump(base_json, file, indent=2)
@@ -203,10 +196,11 @@ def generate_json(write_base):
                 json_schema = clz.model_json_schema()
                 defs = dict()
                 for k, v in list(json_schema.get("$defs", {}).items()):
-                    if 'reference_info' in v:
-                        type_ = v['reference_info']['type']
+                    if 'reference_pointer' in v:
+                        type_ = v['reference_pointer']['type']
                         if type_ in groups:
-                            defs[k] = {"$ref": f"file:../{type_}/overview.json", "default": v['reference_info']['default_impl']}
+                            defs[k] = {"$ref": f"file:../{type_}/overview.json",
+                                       "default": v['reference_pointer']['default_impl']}
                         else:
                             defs[k] = json_schema['$defs'][k]
                             defs[k]['type'] = "object"
@@ -225,7 +219,8 @@ def generate_json(write_base):
                     json_schema["description"] = textwrap.dedent(clz.__doc__)
 
             json_schema.setdefault('properties', {})['implementation'] = {"const": name, "description": name}
-            json_schema['properties'] = dict(implementation=json_schema['properties'].pop('implementation'), **json_schema['properties'])
+            json_schema['properties'] = dict(implementation=json_schema['properties'].pop('implementation'),
+                                             **json_schema['properties'])
             with open(write_loc / (name + ".json"), 'w') as file:
                 json.dump(json_schema, file, indent=2)
 

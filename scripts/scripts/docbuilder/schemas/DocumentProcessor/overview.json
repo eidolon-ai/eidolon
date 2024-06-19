@@ -1,5 +1,8 @@
 {
   "title": "DocumentProcessor",
   "description": "Overview of DocumentProcessor components",
-  "oneOf": []
+  "anyOf": [],
+  "reference_group": {
+    "type": "DocumentProcessor"
+  }
 }

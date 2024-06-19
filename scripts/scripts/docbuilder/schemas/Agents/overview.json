@@ -1,12 +1,15 @@
 {
   "title": "Agents",
   "description": "Overview of Agents components",
-  "oneOf": [
+  "anyOf": [
     {
       "$ref": "file:./SimpleAgent.json"
     },
     {
       "$ref": "file:./RetrieverAgent.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "Agents"
+  }
 }
