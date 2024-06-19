@@ -187,7 +187,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 except json.JSONDecodeError as e:
                     logger.error(f"Error decoding response JSON from Mistral: {complete_message}")
                     logger.exception(e)
-                    raise HTTPException(502, f"Error decoding response JSON from Mistral") from e
+                    raise HTTPException(502, "Error decoding response JSON from Mistral") from e
                 yield ObjectOutputEvent(content=content)
         except MistralConnectionException as e:
             raise HTTPException(429, f"Mistral Connection Error: {e.message}") from e
