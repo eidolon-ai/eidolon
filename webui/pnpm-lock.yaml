@@ -476,10 +476,10 @@ importers:
   packages/eslint-config:
     devDependencies:
       '@vercel/style-guide':
-        specifier: latest
+        specifier: ^6.0.0
         version: 6.0.0(@next/eslint-plugin-next@14.2.3)(eslint@8.57.0)(jest@29.7.0(@types/node@20.12.8)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.5.29(@swc/helpers@0.5.5))(@types/node@20.12.8)(typescript@5.4.5)))(prettier@3.3.1)(typescript@5.4.5)
       eslint-config-turbo:
-        specifier: latest
+        specifier: ^2.0.4
         version: 2.0.4(eslint@8.57.0)
 
   packages/typescript-config: {}
