@@ -26,7 +26,7 @@ $(addsuffix .lock, $(ALL_POETRY_PROJECTS)): %.lock: force
 	cd $*; poetry lock --no-update;
 
 $(addsuffix .ruff, $(ALL_POETRY_PROJECTS)): %.ruff: force
-	cd $*; poetry run ruff --fix;
+	cd $*; poetry run ruff check --fix;
 
 $(addsuffix .version, $(ALL_POETRY_PROJECTS)): %.version: force $$(shell make -C scripts -s run "get_deps $$* --suffix .version")
 	@make -s -C scripts run "update_poetry ${*}";
