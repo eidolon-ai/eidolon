@@ -119,6 +119,15 @@
         }
       ],
       "default": null
+    },
+    "apu": {
+      "allOf": [
+        {
+          "$ref": "file:../APU/overview.json",
+          "default": "APU"
+        }
+      ],
+      "description": "The APU to use for question transformation."
     }
   },
   "required": [

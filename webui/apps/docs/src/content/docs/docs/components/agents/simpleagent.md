@@ -17,7 +17,6 @@ range of actions based on its configuration.
 | - [apu](#apu )                                     | No      | object           | No         | In [APU](/docs/components/apu/overview) | <br />The APU is the main interface for the Agent to interact with the LLM.<br />The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.<br /><br />To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).<br /> |
 | - [apus](#apus )                                   | No      | array            | No         | -                            | Apus                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [title_generation_mode](#title_generation_mode ) | No      | enum (of string) | No         | -                            | Title Generation Mode                                                                                                                                                                                                                                                                                                                                                                               |
-| - [doc_processor](#doc_processor )                 | No      | object           | No         | -                            | DocumentProcessor Reference                                                                                                                                                                                                                                                                                                                                                                         |
 | - [](#additionalProperties )                       | No      | object           | No         | -                            | -                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -444,6 +443,8 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | - [record_conversation](#apu_anyOf_i0_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i0_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i0_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i0_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i0_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i0_implementation"></a>6.1.1. Property `implementation`
 
@@ -1292,6 +1293,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i0_retriever"></a>6.1.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i0_retriever_implementation"></a>6.1.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i0_retriever_apu"></a>6.1.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i0_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i0_retriever_apu_anyOf_i0"></a>6.1.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_retriever_apu_anyOf_i0_implementation"></a>6.1.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i0_retriever_apu_anyOf_i1"></a>6.1.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i1"></a>6.2. Property `ClaudeOpus.json`
 
 |                           |                                                                           |
@@ -1314,6 +1388,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i1_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i1_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i1_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i1_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i1_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i1_implementation"></a>6.2.1. Property `implementation`
 
@@ -2162,6 +2238,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i1_retriever"></a>6.2.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i1_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i1_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i1_retriever_implementation"></a>6.2.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i1_retriever_apu"></a>6.2.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i1_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i1_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i1_retriever_apu_anyOf_i0"></a>6.2.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i1_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i1_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i1_retriever_apu_anyOf_i0_implementation"></a>6.2.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i1_retriever_apu_anyOf_i1"></a>6.2.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i2"></a>6.3. Property `ClaudeSonnet.json`
 
 |                           |                                                                           |
@@ -2184,6 +2333,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i2_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i2_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i2_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i2_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i2_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i2_implementation"></a>6.3.1. Property `implementation`
 
@@ -3032,6 +3183,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i2_retriever"></a>6.3.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i2_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i2_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i2_retriever_implementation"></a>6.3.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i2_retriever_apu"></a>6.3.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i2_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i2_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i2_retriever_apu_anyOf_i0"></a>6.3.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i2_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i2_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i2_retriever_apu_anyOf_i0_implementation"></a>6.3.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i2_retriever_apu_anyOf_i1"></a>6.3.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i3"></a>6.4. Property `ConversationalAPU.json`
 
 |                           |                                                                           |
@@ -3054,6 +3278,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i3_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i3_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i3_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i3_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i3_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i3_implementation"></a>6.4.1. Property `implementation`
 
@@ -3902,6 +4128,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i3_retriever"></a>6.4.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i3_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i3_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i3_retriever_implementation"></a>6.4.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i3_retriever_apu"></a>6.4.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i3_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i3_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i3_retriever_apu_anyOf_i0"></a>6.4.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i3_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i3_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i3_retriever_apu_anyOf_i0_implementation"></a>6.4.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i3_retriever_apu_anyOf_i1"></a>6.4.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i4"></a>6.5. Property `GPT3.5-turbo.json`
 
 |                           |                                                                           |
@@ -3924,6 +4223,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i4_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i4_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i4_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i4_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i4_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i4_implementation"></a>6.5.1. Property `implementation`
 
@@ -4772,6 +5073,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i4_retriever"></a>6.5.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i4_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i4_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i4_retriever_implementation"></a>6.5.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i4_retriever_apu"></a>6.5.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i4_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i4_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i4_retriever_apu_anyOf_i0"></a>6.5.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i4_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i4_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i4_retriever_apu_anyOf_i0_implementation"></a>6.5.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i4_retriever_apu_anyOf_i1"></a>6.5.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i5"></a>6.6. Property `GPT4-turbo.json`
 
 |                           |                                                                           |
@@ -4794,6 +5168,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i5_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i5_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i5_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i5_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i5_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i5_implementation"></a>6.6.1. Property `implementation`
 
@@ -5642,6 +6018,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i5_retriever"></a>6.6.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i5_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i5_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i5_retriever_implementation"></a>6.6.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i5_retriever_apu"></a>6.6.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i5_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i5_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i5_retriever_apu_anyOf_i0"></a>6.6.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i5_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i5_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i5_retriever_apu_anyOf_i0_implementation"></a>6.6.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i5_retriever_apu_anyOf_i1"></a>6.6.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i6"></a>6.7. Property `GPT4o.json`
 
 |                           |                                                                           |
@@ -5664,6 +6113,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i6_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i6_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i6_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i6_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i6_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i6_implementation"></a>6.7.1. Property `implementation`
 
@@ -6512,6 +6963,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i6_retriever"></a>6.7.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i6_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i6_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i6_retriever_implementation"></a>6.7.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i6_retriever_apu"></a>6.7.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i6_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i6_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i6_retriever_apu_anyOf_i0"></a>6.7.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i6_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i6_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i6_retriever_apu_anyOf_i0_implementation"></a>6.7.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i6_retriever_apu_anyOf_i1"></a>6.7.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i7"></a>6.8. Property `Llamma3-8b.json`
 
 |                           |                                                                           |
@@ -6534,6 +7058,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i7_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i7_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i7_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i7_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i7_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i7_implementation"></a>6.8.1. Property `implementation`
 
@@ -7382,6 +7908,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i7_retriever"></a>6.8.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i7_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i7_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i7_retriever_implementation"></a>6.8.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i7_retriever_apu"></a>6.8.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i7_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i7_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i7_retriever_apu_anyOf_i0"></a>6.8.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i7_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i7_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i7_retriever_apu_anyOf_i0_implementation"></a>6.8.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i7_retriever_apu_anyOf_i1"></a>6.8.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i8"></a>6.9. Property `MistralLarge.json`
 
 |                           |                                                                           |
@@ -7404,6 +8003,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i8_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i8_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i8_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i8_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i8_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i8_implementation"></a>6.9.1. Property `implementation`
 
@@ -8252,6 +8853,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i8_retriever"></a>6.9.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i8_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i8_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i8_retriever_implementation"></a>6.9.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i8_retriever_apu"></a>6.9.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i8_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i8_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i8_retriever_apu_anyOf_i0"></a>6.9.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i8_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i8_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i8_retriever_apu_anyOf_i0_implementation"></a>6.9.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i8_retriever_apu_anyOf_i1"></a>6.9.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i9"></a>6.10. Property `MistralMedium.json`
 
 |                           |                                                                           |
@@ -8274,6 +8948,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i9_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i9_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i9_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i9_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i9_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i9_implementation"></a>6.10.1. Property `implementation`
 
@@ -9122,6 +9798,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i9_retriever"></a>6.10.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i9_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i9_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i9_retriever_implementation"></a>6.10.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i9_retriever_apu"></a>6.10.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i9_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i9_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i9_retriever_apu_anyOf_i0"></a>6.10.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i9_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i9_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i9_retriever_apu_anyOf_i0_implementation"></a>6.10.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i9_retriever_apu_anyOf_i1"></a>6.10.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ### <a name="apu_anyOf_i10"></a>6.11. Property `MistralSmall.json`
 
 |                           |                                                                           |
@@ -9144,6 +9893,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i10_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i10_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i10_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i10_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i10_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 #### <a name="apu_anyOf_i10_implementation"></a>6.11.1. Property `implementation`
 
@@ -9992,6 +10743,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+#### <a name="apu_anyOf_i10_retriever"></a>6.11.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+##### <a name="apu_anyOf_i10_retriever_implementation"></a>6.11.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+#### <a name="apu_anyOf_i10_retriever_apu"></a>6.11.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                         |
+| ------------------------------------------------------ |
+| [APU Reference](#apu_anyOf_i10_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i10_retriever_apu_anyOf_i1)        |
+
+##### <a name="apu_anyOf_i10_retriever_apu_anyOf_i0"></a>6.11.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_retriever_apu_anyOf_i0_implementation"></a>6.11.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+##### <a name="apu_anyOf_i10_retriever_apu_anyOf_i1"></a>6.11.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ## <a name="apus"></a>7. Property `apus`
 
 **Title:** Apus
@@ -10112,6 +10936,8 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | - [record_conversation](#apu_anyOf_i0_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i0_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i0_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i0_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i0_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i0_implementation"></a>7.1.2.1.1. Property `implementation`
 
@@ -10960,6 +11786,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i0_retriever"></a>7.1.2.1.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_retriever_implementation"></a>7.1.2.1.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_retriever_apu"></a>7.1.2.1.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i0_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i0_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i0_retriever_apu_anyOf_i0"></a>7.1.2.1.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i0_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i0_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i0_retriever_apu_anyOf_i0_implementation"></a>7.1.2.1.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i0_retriever_apu_anyOf_i1"></a>7.1.2.1.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i1"></a>7.1.2.2. Property `ClaudeOpus.json`
 
 |                           |                                                                           |
@@ -10982,6 +11881,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i1_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i1_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i1_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i1_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i1_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i1_implementation"></a>7.1.2.2.1. Property `implementation`
 
@@ -11830,6 +12731,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i1_retriever"></a>7.1.2.2.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i1_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i1_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i1_retriever_implementation"></a>7.1.2.2.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i1_retriever_apu"></a>7.1.2.2.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i1_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i1_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i1_retriever_apu_anyOf_i0"></a>7.1.2.2.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i1_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i1_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i1_retriever_apu_anyOf_i0_implementation"></a>7.1.2.2.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i1_retriever_apu_anyOf_i1"></a>7.1.2.2.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i2"></a>7.1.2.3. Property `ClaudeSonnet.json`
 
 |                           |                                                                           |
@@ -11852,6 +12826,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i2_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i2_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i2_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i2_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i2_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i2_implementation"></a>7.1.2.3.1. Property `implementation`
 
@@ -12700,6 +13676,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i2_retriever"></a>7.1.2.3.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i2_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i2_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i2_retriever_implementation"></a>7.1.2.3.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i2_retriever_apu"></a>7.1.2.3.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i2_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i2_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i2_retriever_apu_anyOf_i0"></a>7.1.2.3.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i2_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i2_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i2_retriever_apu_anyOf_i0_implementation"></a>7.1.2.3.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i2_retriever_apu_anyOf_i1"></a>7.1.2.3.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i3"></a>7.1.2.4. Property `ConversationalAPU.json`
 
 |                           |                                                                           |
@@ -12722,6 +13771,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i3_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i3_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i3_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i3_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i3_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i3_implementation"></a>7.1.2.4.1. Property `implementation`
 
@@ -13570,6 +14621,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i3_retriever"></a>7.1.2.4.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i3_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i3_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i3_retriever_implementation"></a>7.1.2.4.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i3_retriever_apu"></a>7.1.2.4.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i3_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i3_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i3_retriever_apu_anyOf_i0"></a>7.1.2.4.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i3_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i3_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i3_retriever_apu_anyOf_i0_implementation"></a>7.1.2.4.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i3_retriever_apu_anyOf_i1"></a>7.1.2.4.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i4"></a>7.1.2.5. Property `GPT3.5-turbo.json`
 
 |                           |                                                                           |
@@ -13592,6 +14716,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i4_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i4_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i4_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i4_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i4_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i4_implementation"></a>7.1.2.5.1. Property `implementation`
 
@@ -14440,6 +15566,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i4_retriever"></a>7.1.2.5.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i4_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i4_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i4_retriever_implementation"></a>7.1.2.5.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i4_retriever_apu"></a>7.1.2.5.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i4_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i4_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i4_retriever_apu_anyOf_i0"></a>7.1.2.5.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i4_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i4_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i4_retriever_apu_anyOf_i0_implementation"></a>7.1.2.5.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i4_retriever_apu_anyOf_i1"></a>7.1.2.5.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i5"></a>7.1.2.6. Property `GPT4-turbo.json`
 
 |                           |                                                                           |
@@ -14462,6 +15661,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i5_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i5_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i5_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i5_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i5_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i5_implementation"></a>7.1.2.6.1. Property `implementation`
 
@@ -15310,6 +16511,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i5_retriever"></a>7.1.2.6.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i5_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i5_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i5_retriever_implementation"></a>7.1.2.6.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i5_retriever_apu"></a>7.1.2.6.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i5_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i5_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i5_retriever_apu_anyOf_i0"></a>7.1.2.6.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i5_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i5_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i5_retriever_apu_anyOf_i0_implementation"></a>7.1.2.6.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i5_retriever_apu_anyOf_i1"></a>7.1.2.6.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i6"></a>7.1.2.7. Property `GPT4o.json`
 
 |                           |                                                                           |
@@ -15332,6 +16606,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i6_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i6_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i6_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i6_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i6_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i6_implementation"></a>7.1.2.7.1. Property `implementation`
 
@@ -16180,6 +17456,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i6_retriever"></a>7.1.2.7.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i6_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i6_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i6_retriever_implementation"></a>7.1.2.7.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i6_retriever_apu"></a>7.1.2.7.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i6_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i6_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i6_retriever_apu_anyOf_i0"></a>7.1.2.7.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i6_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i6_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i6_retriever_apu_anyOf_i0_implementation"></a>7.1.2.7.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i6_retriever_apu_anyOf_i1"></a>7.1.2.7.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i7"></a>7.1.2.8. Property `Llamma3-8b.json`
 
 |                           |                                                                           |
@@ -16202,6 +17551,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i7_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i7_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i7_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i7_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i7_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i7_implementation"></a>7.1.2.8.1. Property `implementation`
 
@@ -17050,6 +18401,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i7_retriever"></a>7.1.2.8.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i7_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i7_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i7_retriever_implementation"></a>7.1.2.8.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i7_retriever_apu"></a>7.1.2.8.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i7_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i7_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i7_retriever_apu_anyOf_i0"></a>7.1.2.8.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i7_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i7_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i7_retriever_apu_anyOf_i0_implementation"></a>7.1.2.8.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i7_retriever_apu_anyOf_i1"></a>7.1.2.8.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i8"></a>7.1.2.9. Property `MistralLarge.json`
 
 |                           |                                                                           |
@@ -17072,6 +18496,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i8_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i8_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i8_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i8_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i8_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i8_implementation"></a>7.1.2.9.1. Property `implementation`
 
@@ -17920,6 +19346,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i8_retriever"></a>7.1.2.9.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i8_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i8_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i8_retriever_implementation"></a>7.1.2.9.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i8_retriever_apu"></a>7.1.2.9.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i8_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i8_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i8_retriever_apu_anyOf_i0"></a>7.1.2.9.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i8_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i8_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i8_retriever_apu_anyOf_i0_implementation"></a>7.1.2.9.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i8_retriever_apu_anyOf_i1"></a>7.1.2.9.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i9"></a>7.1.2.10. Property `MistralMedium.json`
 
 |                           |                                                                           |
@@ -17942,6 +19441,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i9_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i9_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i9_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i9_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i9_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i9_implementation"></a>7.1.2.10.1. Property `implementation`
 
@@ -18790,6 +20291,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i9_retriever"></a>7.1.2.10.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i9_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i9_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i9_retriever_implementation"></a>7.1.2.10.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i9_retriever_apu"></a>7.1.2.10.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [APU Reference](#apu_anyOf_i9_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i9_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i9_retriever_apu_anyOf_i0"></a>7.1.2.10.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i9_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i9_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i9_retriever_apu_anyOf_i0_implementation"></a>7.1.2.10.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i9_retriever_apu_anyOf_i1"></a>7.1.2.10.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 ##### <a name="apu_anyOf_i10"></a>7.1.2.11. Property `MistralSmall.json`
 
 |                           |                                                                           |
@@ -18812,6 +20386,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | - [record_conversation](#apu_anyOf_i10_record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
 | - [allow_tool_errors](#apu_anyOf_i10_allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
 | - [document_processor](#apu_anyOf_i10_document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#apu_anyOf_i10_retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#apu_anyOf_i10_retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ###### <a name="apu_anyOf_i10_implementation"></a>7.1.2.11.1. Property `implementation`
 
@@ -19660,6 +21236,79 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
+###### <a name="apu_anyOf_i10_retriever"></a>7.1.2.11.12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_retriever_implementation"></a>7.1.2.11.12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i10_retriever_apu"></a>7.1.2.11.13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                                         |
+| ------------------------------------------------------ |
+| [APU Reference](#apu_anyOf_i10_retriever_apu_anyOf_i0) |
+| [item 1](#apu_anyOf_i10_retriever_apu_anyOf_i1)        |
+
+###### <a name="apu_anyOf_i10_retriever_apu_anyOf_i0"></a>7.1.2.11.13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#apu_anyOf_i10_retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#apu_anyOf_i10_retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+###### <a name="apu_anyOf_i10_retriever_apu_anyOf_i0_implementation"></a>7.1.2.11.13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+###### <a name="apu_anyOf_i10_retriever_apu_anyOf_i1"></a>7.1.2.11.13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
 #### <a name="apus_items_default"></a>7.1.3. Property `default`
 
 **Title:** Default
@@ -19683,31 +21332,5 @@ Specific value: `"ToolCallLLMWrapper"`
 Must be one of:
 * "none"
 * "on_request"
-
-## <a name="doc_processor"></a>9. Property `doc_processor`
-
-**Title:** DocumentProcessor Reference
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"DocumentProcessor"`                                                     |
-
-| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#doc_processor_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#doc_processor_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="doc_processor_implementation"></a>9.1. Property `implementation`
-
-**Title:** Implementation
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-| **Default**  | `null`   |
 
 ----------------------------------------------------------------------------------------------------------------------------
