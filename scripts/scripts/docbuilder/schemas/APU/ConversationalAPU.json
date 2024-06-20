@@ -19,13 +19,13 @@
     "memory_unit": {
       "$ref": "file:../MemoryUnit/overview.json",
       "default": {
-        "implementation": "RawMemoryUnit"
+        "implementation": "MemoryUnit"
       }
     },
     "llm_unit": {
       "$ref": "file:../LLMUnit/overview.json",
       "default": {
-        "implementation": "OpenAIGPT"
+        "implementation": "LLMUnit"
       }
     },
     "logic_units": {
@@ -53,13 +53,13 @@
           "additionalProperties": true,
           "properties": {
             "implementation": {
-              "default": "ImageUnit",
+              "default": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
               "title": "Implementation",
               "type": "string"
             }
           },
           "reference_pointer": {
-            "default_impl": "ImageUnit",
+            "default_impl": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
             "type": "ImageUnit"
           },
           "title": "ImageUnit Reference",

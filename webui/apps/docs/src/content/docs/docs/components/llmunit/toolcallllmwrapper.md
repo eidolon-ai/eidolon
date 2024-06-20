@@ -37,9 +37,9 @@ Specific value: `"ToolCallLLMWrapper"`
 
 |              |                                                           |
 | ------------ | --------------------------------------------------------- |
-| **Type**     | `[Reference[LLMUnit]](/docs/components/llmunit/overview)` |
+| **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview) |
 | **Required** | No                                                        |
-| **Default**  | `{"implementation": "OpenAIGPT"}`                         |
+| **Default**  | `{"implementation": "LLMUnit"}`                           |
 
 **Description:** Overview of LLMUnit components
 
@@ -63,7 +63,7 @@ Specific value: `"ToolCallLLMWrapper"`
 
 |              |                                                             |
 | ------------ | ----------------------------------------------------------- |
-| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview)` |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
 | **Required** | No                                                          |
 
 **Description:** Overview of LLMModel components

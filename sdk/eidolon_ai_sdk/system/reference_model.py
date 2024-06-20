@@ -90,13 +90,10 @@ class Reference(BaseModel):
                 json_schema = handler(core_schema)
                 json_schema = handler.resolve_ref_schema(json_schema)
                 json_schema["title"] = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
-                impl = cls._transform({})['implementation']
-                if "." in impl:
-                    impl = impl.split(".")[-1]
-                json_schema['properties']['implementation']['default'] = impl
+                json_schema['properties']['implementation']['default'] = params[1]
                 json_schema['reference_pointer'] = {
                     'type': params[0] if isinstance(params[0], str) else params[0].__name__,
-                    'default_impl': impl
+                    'default_impl': params[1],
                 }
                 return json_schema
 
@@ -178,6 +175,8 @@ class Reference(BaseModel):
             else:
                 logging.warning(f'Unable to find Specable definition on "{reference_class}", skipping validation')
                 return None
+        elif issubclass(reference_class, BaseModel):
+            return reference_class
         return None
 
     def _get_reference_class(self):

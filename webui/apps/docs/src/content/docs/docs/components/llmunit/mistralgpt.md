@@ -29,9 +29,9 @@ Specific value: `"MistralGPT"`
 
 |              |                                                             |
 | ------------ | ----------------------------------------------------------- |
-| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview)` |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
 | **Required** | No                                                          |
-| **Default**  | `{"implementation": "LLMModel"}`                            |
+| **Default**  | `{"implementation": "mistral-large-latest"}`                |
 
 **Description:** Overview of LLMModel components
 

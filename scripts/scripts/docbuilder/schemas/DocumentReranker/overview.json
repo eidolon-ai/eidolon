@@ -3,6 +3,9 @@
   "description": "Overview of DocumentReranker components",
   "anyOf": [
     {
+      "$ref": "file:./DocumentReranker.json"
+    },
+    {
       "$ref": "file:./RAGFusionReranker.json"
     }
   ],

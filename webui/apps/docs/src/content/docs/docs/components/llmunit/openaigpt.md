@@ -29,9 +29,9 @@ Specific value: `"OpenAIGPT"`
 
 |              |                                                             |
 | ------------ | ----------------------------------------------------------- |
-| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview)` |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
 | **Required** | No                                                          |
-| **Default**  | `{"implementation": "LLMModel"}`                            |
+| **Default**  | `{"implementation": "gpt-4-turbo"}`                         |
 
 **Description:** Overview of LLMModel components
 
@@ -91,7 +91,7 @@ Specific value: `"OpenAIGPT"`
 
 |              |                                                                                           |
 | ------------ | ----------------------------------------------------------------------------------------- |
-| **Type**     | `[Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview)` |
+| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview) |
 | **Required** | No                                                                                        |
 | **Default**  | `{"implementation": "OpenAIConnectionHandler"}`                                           |
 

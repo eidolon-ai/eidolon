@@ -12,7 +12,7 @@
     "llm_unit": {
       "$ref": "file:../LLMUnit/overview.json",
       "default": {
-        "implementation": "OpenAIGPT"
+        "implementation": "LLMUnit"
       }
     },
     "model": {

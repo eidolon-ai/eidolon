@@ -7,13 +7,13 @@
     "parser": {
       "$ref": "file:../DocumentParser/overview.json",
       "default": {
-        "implementation": "AutoParser"
+        "implementation": "DocumentParser"
       }
     },
     "splitter": {
       "$ref": "file:../DocumentTransformer/overview.json",
       "default": {
-        "implementation": "AutoTransformer"
+        "implementation": "DocumentTransformer"
       }
     }
   },

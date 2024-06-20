@@ -19,7 +19,7 @@
     "loader": {
       "$ref": "file:../DocumentLoader/overview.json",
       "default": {
-        "implementation": "FilesystemLoader"
+        "implementation": "DocumentLoader"
       }
     },
     "doc_processor": {

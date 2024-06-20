@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "DocumentLoader",
+      "description": "DocumentLoader"
+    },
+    "root_dir": {
+      "title": "Root Dir",
+      "type": "string"
+    },
+    "pattern": {
+      "default": "**/*",
+      "title": "Pattern",
+      "type": "string"
+    }
+  },
+  "required": [
+    "root_dir"
+  ],
+  "title": "DocumentLoader",
+  "type": "object"
+}

@@ -7,13 +7,13 @@
     "embedder": {
       "$ref": "file:../Embedding/overview.json",
       "default": {
-        "implementation": "OpenAIEmbedding"
+        "implementation": "Embedding"
       }
     },
     "vector_store": {
       "$ref": "file:../VectorStore/overview.json",
       "default": {
-        "implementation": "ChromaVectorStore"
+        "implementation": "VectorStore"
       }
     }
   },

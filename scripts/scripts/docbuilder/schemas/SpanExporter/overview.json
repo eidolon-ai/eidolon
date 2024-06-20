@@ -3,6 +3,9 @@
   "description": "Interface for exporting spans.\n\n    Interface to be implemented by services that want to export spans recorded\n    in their own format.\n\n    To export data this MUST be registered to the :class`opentelemetry.sdk.trace.Tracer` using a\n    `SimpleSpanProcessor` or a `BatchSpanProcessor`.\n",
   "anyOf": [
     {
+      "$ref": "file:./SpanExporter.json"
+    },
+    {
       "$ref": "file:./NoopSpanExporter.json"
     },
     {

@@ -3,6 +3,9 @@
   "description": "Overview of LLMUnit components",
   "anyOf": [
     {
+      "$ref": "file:./LLMUnit.json"
+    },
+    {
       "$ref": "file:./AnthropicLLMUnit.json"
     },
     {

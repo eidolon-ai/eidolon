@@ -38,7 +38,7 @@ Specific value: `"OpenAIEmbedding"`
 
 |              |                                                                                           |
 | ------------ | ----------------------------------------------------------------------------------------- |
-| **Type**     | `[Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview)` |
+| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview) |
 | **Required** | No                                                                                        |
 | **Default**  | `{"implementation": "OpenAIConnectionHandler"}`                                           |
 

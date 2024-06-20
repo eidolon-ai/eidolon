@@ -48,7 +48,7 @@ Specific value: `"ClaudeSonnet"`
 
 |              |                                                         |
 | ------------ | ------------------------------------------------------- |
-| **Type**     | `[Reference[IOUnit]](/docs/components/iounit/overview)` |
+| **Type**     | [`Reference[IOUnit]`](/docs/components/iounit/overview) |
 | **Required** | No                                                      |
 | **Default**  | `{"implementation": "IOUnit"}`                          |
 
@@ -63,9 +63,9 @@ This can be overridden to provide custom IO handling.
 
 |              |                                                                 |
 | ------------ | --------------------------------------------------------------- |
-| **Type**     | `[Reference[MemoryUnit]](/docs/components/memoryunit/overview)` |
+| **Type**     | [`Reference[MemoryUnit]`](/docs/components/memoryunit/overview) |
 | **Required** | No                                                              |
-| **Default**  | `{"implementation": "RawMemoryUnit"}`                           |
+| **Default**  | `{"implementation": "MemoryUnit"}`                              |
 
 **Description:** Overview of MemoryUnit components
 
@@ -75,7 +75,7 @@ This can be overridden to provide custom IO handling.
 
 |              |                                                                               |
 | ------------ | ----------------------------------------------------------------------------- |
-| **Type**     | `[Reference[LLMUnit]](/docs/components/llmunit/overview)`                     |
+| **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview)                     |
 | **Required** | No                                                                            |
 | **Default**  | `{"implementation": "AnthropicLLMUnit", "model": "claude-3-sonnet-20240229"}` |
 
@@ -109,7 +109,7 @@ This can be overridden to provide custom IO handling.
 
 |              |                                                               |
 | ------------ | ------------------------------------------------------------- |
-| **Type**     | `[Reference[LogicUnit]](/docs/components/logicunit/overview)` |
+| **Type**     | [`Reference[LogicUnit]`](/docs/components/logicunit/overview) |
 | **Required** | No                                                            |
 
 **Description:** Overview of LogicUnit components
@@ -121,7 +121,7 @@ This can be overridden to provide custom IO handling.
 | **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
+| **Default**               | `"OpenAiSpeech"`                                                          |
 
 | Any of(Option)                    |
 | --------------------------------- |
@@ -134,7 +134,7 @@ This can be overridden to provide custom IO handling.
 
 |              |                                                               |
 | ------------ | ------------------------------------------------------------- |
-| **Type**     | `[Reference[AudioUnit]](/docs/components/audiounit/overview)` |
+| **Type**     | [`Reference[AudioUnit]`](/docs/components/audiounit/overview) |
 | **Required** | No                                                            |
 
 **Description:** Overview of AudioUnit components
@@ -153,7 +153,7 @@ This can be overridden to provide custom IO handling.
 | **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
+| **Default**               | `"OpenAIImageUnit"`                                                       |
 
 | Any of(Option)                              |
 | ------------------------------------------- |
@@ -179,11 +179,11 @@ This can be overridden to provide custom IO handling.
 
 **Title:** Implementation
 
-|              |               |
-| ------------ | ------------- |
-| **Type**     | `string`      |
-| **Required** | No            |
-| **Default**  | `"ImageUnit"` |
+|              |                                             |
+| ------------ | ------------------------------------------- |
+| **Type**     | `string`                                    |
+| **Required** | No                                          |
+| **Default**  | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"` |
 
 ### <a name="image_unit_anyOf_i1"></a>8.2. Property `item 1`
 
@@ -218,7 +218,7 @@ This can be overridden to provide custom IO handling.
 
 |              |                                                                               |
 | ------------ | ----------------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentProcessor]](/docs/components/documentprocessor/overview)` |
+| **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview) |
 | **Required** | No                                                                            |
 | **Default**  | `{"implementation": "DocumentProcessor"}`                                     |
 
@@ -230,7 +230,7 @@ This can be overridden to provide custom IO handling.
 
 |              |                                                               |
 | ------------ | ------------------------------------------------------------- |
-| **Type**     | `[Reference[Retriever]](/docs/components/retriever/overview)` |
+| **Type**     | [`Reference[Retriever]`](/docs/components/retriever/overview) |
 | **Required** | No                                                            |
 | **Default**  | `{"implementation": "Retriever"}`                             |
 

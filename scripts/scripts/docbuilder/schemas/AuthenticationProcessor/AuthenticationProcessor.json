@@ -1,0 +1,10 @@
+{
+  "title": "AuthenticationProcessor",
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "AuthenticationProcessor",
+      "description": "AuthenticationProcessor"
+    }
+  }
+}
