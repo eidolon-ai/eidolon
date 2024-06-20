@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Optional, Set, Annotated
+from typing import Optional, Set
 
-from pydantic import BaseModel, AfterValidator
+from pydantic import BaseModel
 from starlette.requests import Request
 
 from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor
