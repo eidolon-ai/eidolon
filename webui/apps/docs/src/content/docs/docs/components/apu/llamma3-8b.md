@@ -3,19 +3,21 @@ title: Llamma3-8b
 description: Description of Llamma3-8b component
 ---
 
-| Property                                             | Pattern | Type        | Deprecated | Definition                                 | Title/Description                                                                                                                                                                   |
-| ---------------------------------------------------- | ------- | ----------- | ---------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )                 | No      | const       | No         | -                                          | Llamma3-8b                                                                                                                                                                          |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer     | No         | -                                          | Max Num Function Calls                                                                                                                                                              |
-| - [io_unit](#io_unit )                               | No      | object      | No         | In [IOUnit](/docs/components/iounit/overview)            | <br />This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM<br /><br />This can be overridden to provide custom IO handling.<br /> |
-| - [memory_unit](#memory_unit )                       | No      | object      | No         | In [MemoryUnit](/docs/components/memoryunit/overview)        | Overview of MemoryUnit components                                                                                                                                                   |
-| - [llm_unit](#llm_unit )                             | No      | object      | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of LLMUnit components                                                                                                                                                      |
-| - [logic_units](#logic_units )                       | No      | array       | No         | -                                          | Logic Units                                                                                                                                                                         |
-| - [audio_unit](#audio_unit )                         | No      | Combination | No         | -                                          | -                                                                                                                                                                                   |
-| - [image_unit](#image_unit )                         | No      | Combination | No         | -                                          | -                                                                                                                                                                                   |
-| - [record_conversation](#record_conversation )       | No      | boolean     | No         | -                                          | Record Conversation                                                                                                                                                                 |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean     | No         | -                                          | Allow Tool Errors                                                                                                                                                                   |
-| - [document_processor](#document_processor )         | No      | object      | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components                                                                                                                                            |
+| Property                                             | Pattern | Type            | Deprecated | Definition                       | Title/Description                                                    |
+| ---------------------------------------------------- | ------- | --------------- | ---------- | -------------------------------- | -------------------------------------------------------------------- |
+| - [implementation](#implementation )                 | No      | const           | No         | -                                | Llamma3-8b                                                           |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -                                | Max Num Function Calls                                               |
+| - [io_unit](#io_unit )                               | No      | object          | No         | -                                | IOUnit Reference                                                     |
+| - [memory_unit](#memory_unit )                       | No      | object          | No         | -                                | MemoryUnit Reference                                                 |
+| - [llm_unit](#llm_unit )                             | No      | object          | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components |
+| - [logic_units](#logic_units )                       | No      | array of object | No         | -                                | Logic Units                                                          |
+| - [audio_unit](#audio_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
+| - [image_unit](#image_unit )                         | No      | Combination     | No         | -                                | -                                                                    |
+| - [record_conversation](#record_conversation )       | No      | boolean         | No         | -                                | Record Conversation                                                  |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean         | No         | -                                | Allow Tool Errors                                                    |
+| - [document_processor](#document_processor )         | No      | object          | No         | -                                | DocumentProcessor Reference                                          |
+| - [retriever](#retriever )                           | No      | object          | No         | -                                | Retriever Reference                                                  |
+| - [retriever_apu](#retriever_apu )                   | No      | Combination     | No         | -                                | -                                                                    |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -5937,5 +5939,78 @@ Specific value: `"AutoParser"`
 **Description:** AutoTransformer
 
 Specific value: `"AutoTransformer"`
+
+## <a name="retriever"></a>12. Property `retriever`
+
+**Title:** Retriever Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"Retriever"`                                                             |
+
+| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#retriever_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#retriever_additionalProperties )         | No      | object | No         | -          | -                 |
+
+### <a name="retriever_implementation"></a>12.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+## <a name="retriever_apu"></a>13. Property `retriever_apu`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)                           |
+| ---------------------------------------- |
+| [APU Reference](#retriever_apu_anyOf_i0) |
+| [item 1](#retriever_apu_anyOf_i1)        |
+
+### <a name="retriever_apu_anyOf_i0"></a>13.1. Property `APU Reference`
+
+**Title:** APU Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `"eidolon_ai_sdk.apu.apu.APU"`                                            |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#retriever_apu_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+
+#### <a name="retriever_apu_anyOf_i0_implementation"></a>13.1.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+### <a name="retriever_apu_anyOf_i1"></a>13.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
 
 ----------------------------------------------------------------------------------------------------------------------------

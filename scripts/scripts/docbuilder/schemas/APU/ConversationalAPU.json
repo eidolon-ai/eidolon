@@ -82,10 +82,51 @@
       "type": "boolean"
     },
     "document_processor": {
-      "$ref": "file:../DocumentProcessor/overview.json",
-      "default": {
-        "implementation": "DocumentProcessor"
-      }
+      "additionalProperties": true,
+      "default": "DocumentProcessor",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "DocumentProcessor Reference",
+      "type": "object"
+    },
+    "retriever": {
+      "additionalProperties": true,
+      "default": "Retriever",
+      "properties": {
+        "implementation": {
+          "default": null,
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "Retriever Reference",
+      "type": "object"
+    },
+    "retriever_apu": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "default": "eidolon_ai_sdk.apu.apu.APU",
+          "properties": {
+            "implementation": {
+              "default": null,
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "title": "APU Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "title": "ConversationalAPU",

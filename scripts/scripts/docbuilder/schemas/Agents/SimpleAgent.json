@@ -215,12 +215,6 @@
       ],
       "title": "Title Generation Mode",
       "type": "string"
-    },
-    "doc_processor": {
-      "$ref": "file:../DocumentProcessor/overview.json",
-      "default": {
-        "implementation": "DocumentProcessor"
-      }
     }
   },
   "title": "SimpleAgent",

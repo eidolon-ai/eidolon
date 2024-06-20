@@ -16,6 +16,7 @@ from vcr.request import Request as VcrRequest
 from vcr.stubs import httpx_stubs
 
 import eidolon_ai_sdk.system.process_file_system as process_file_system
+from eidolon_ai_sdk.agent.doc_manager.transformer import document_transformer
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.bin.agent_http_server import start_os, start_app
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
@@ -49,9 +50,9 @@ def app_builder(machine_manager):
         async def manage_lifecycle(_app: FastAPI):
             async with machine_manager() as _machine:
                 async with start_os(
-                    app=_app,
-                    resource_generator=[_machine, *resources] if _machine else resources,
-                    machine_name=_machine.metadata.name,
+                        app=_app,
+                        resource_generator=[_machine, *resources] if _machine else resources,
+                        machine_name=_machine.metadata.name,
                 ):
                     yield
                     print("done")
@@ -74,12 +75,12 @@ def port():
 @pytest.fixture(autouse=True)
 def vcr_config():
     def ignore_some_localhost(request: VcrRequest):
-        if (request.host == "0.0.0.0" or request.host=="localhost") and port != 11434:
+        if (request.host == "0.0.0.0" or request.host == "localhost") and port != 11434:
             return None
         return request
 
     return dict(
-        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None)],
+        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None), ("x-api-key", None)],
         filter_query_parameters=["cx", "key"], # google custom search engine id
         before_record_request=ignore_some_localhost,
         record_mode="once",
@@ -127,7 +128,7 @@ def run_app(app_builder, port):
         try:
             # Wait for the server to start
             while len(server_wrapper) == 0 or not (
-                server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started
+                    server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started
             ):
                 pass
             if server_wrapper[0] in {"aborted", "stopped"}:
@@ -341,23 +342,9 @@ def deterministic_process_ids(test_name):
     def patched_fid(*args, **kwargs):
         return next(fid_generator)
 
+    def patched_did(*args, **kwargs):
+        return next(fid_generator)
+
     with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(
-        process_file_system, "ObjectId", new=patched_fid
-    ):
-        yield
-
-
-@pytest.fixture()
-def deterministic_file_ids(test_name):
-    """
-    Tool call responses contain the process id, which means it does name make cache hits for vcr.
-    This method patches object id for processes so that it returns a deterministic id based on the test name.
-    """
-
-    id_generator = deterministic_id_generator(test_name)
-
-    def patched_ObjectId(*args, **kwargs):
-        return next(id_generator)
-
-    with patch.object(process_file_system.bson, "ObjectId", new=patched_ObjectId):
+            process_file_system, "ObjectId", new=patched_fid), patch.object(document_transformer, "ObjectId", new=patched_did):
         yield
