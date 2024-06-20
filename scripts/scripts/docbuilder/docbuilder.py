@@ -1,10 +1,13 @@
+import copy
 import json
 import os
 import shutil
 import textwrap
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Optional, Dict, Self
 
+import jsonref
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
@@ -134,12 +137,26 @@ def write_md(read_loc,
             title = obj.get('title', component)
             description = f"Description of {title} component"
 
-            # Generate HTML content
-            content = generate_from_schema(read_loc / k / (component + ".json"), config=GenerationConfiguration(
-                show_breadcrumbs=False,
-                template_name="md",
-                with_footer=False,
-            ))
+            with open(read_loc / k / (component + ".json"), 'r') as json_file:
+                original_schema = json.load(json_file)
+            fixed_schema = jsonref.replace_refs(original_schema, base_uri=f"file://{read_loc}/{k}/", jsonschema=True)
+            for key, property in fixed_schema.get("properties", {}).items():
+                if 'reference_group' in property:
+                    if "default" in original_schema['properties'][key]:
+                        property['default'] = original_schema['properties'][key]['default']
+            clean_ref_groups_for_md(fixed_schema)
+
+            with NamedTemporaryFile(prefix=component) as temp:
+                dumped = json.dumps(copy.deepcopy(fixed_schema))
+                temp.write(dumped.encode())
+                temp.flush()
+                # Generate HTML content
+                content = generate_from_schema(temp.name, config=GenerationConfiguration(
+                    show_breadcrumbs=False,
+                    template_name="md",
+                    with_footer=False,
+                ))
+
             content = content[(content.index(cut_after_str) + len(cut_after_str)):]
             write_astro_md_file(content, description, title, write_file_loc)
 
@@ -267,6 +284,23 @@ def inline_refs(schema, defs):
         return [inline_refs(i, defs) for i in schema]
     else:
         return schema
+
+
+def clean_ref_groups_for_md(schema):
+    if isinstance(schema, dict):
+        if "reference_group" in schema:
+            if "anyOf" in schema:
+                del schema['anyOf']
+                schema['type'] = "object"
+                schema['properties'] = {"implementation": {"type": "string"}}
+        else:
+            for v in schema.values():
+                clean_ref_groups_for_md(v)
+    elif isinstance(schema, list):
+        for i in schema:
+            clean_ref_groups_for_md(i)
+    else:
+        pass
 
 
 def url_safe(name: str) -> str:

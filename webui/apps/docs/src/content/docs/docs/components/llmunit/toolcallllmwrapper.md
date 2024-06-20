@@ -1,0 +1,102 @@
+---
+title: ToolCallLLMWrapper
+description: Description of ToolCallLLMWrapper component
+---
+
+| Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
+| ---------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------- |
+| - [implementation](#implementation )           | No      | const       | No         | -          | ToolCallLLMWrapper  |
+| - [tool_message_prompt](#tool_message_prompt ) | No      | string      | No         | -          | Tool Message Prompt |
+| - [llm_unit](#llm_unit )                       | No      | object      | No         | -          | LLMUnit             |
+| - [model](#model )                             | No      | Combination | No         | -          | -                   |
+
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** ToolCallLLMWrapper
+
+Specific value: `"ToolCallLLMWrapper"`
+
+## <a name="tool_message_prompt"></a>2. Property `tool_message_prompt`
+
+**Title:** Tool Message Prompt
+
+|              |                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**     | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
+
+## <a name="llm_unit"></a>3. Property `llm_unit`
+
+**Title:** LLMUnit
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{"implementation": "OpenAIGPT"}`                                         |
+
+**Description:** Overview of LLMUnit components
+
+| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#llm_unit_implementation ) | No      | string | No         | -          | -                 |
+
+### <a name="llm_unit_implementation"></a>3.1. Property `implementation`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="model"></a>4. Property `model`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Any of(Option)              |
+| --------------------------- |
+| [LLMModel](#model_anyOf_i0) |
+| [item 1](#model_anyOf_i1)   |
+
+### <a name="model_anyOf_i0"></a>4.1. Property `LLMModel`
+
+**Title:** LLMModel
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+
+**Description:** Overview of LLMModel components
+
+| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#model_anyOf_i0_implementation ) | No      | string | No         | -          | -                 |
+
+#### <a name="model_anyOf_i0_implementation"></a>4.1.1. Property `implementation`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="model_anyOf_i1"></a>4.2. Property `item 1`
+
+|              |        |
+| ------------ | ------ |
+| **Type**     | `null` |
+| **Required** | No     |
+
+----------------------------------------------------------------------------------------------------------------------------
