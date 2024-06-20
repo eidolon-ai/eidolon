@@ -25,9 +25,9 @@
     "safe_paths": {
       "default": [
         "/favicon.ico",
-        "/system/health",
         "/openapi.json",
-        "/docs"
+        "/docs",
+        "/system/health"
       ],
       "items": {
         "type": "string"

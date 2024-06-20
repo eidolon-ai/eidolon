@@ -66,7 +66,7 @@ Specific value: `"SecurityManagerImpl"`
 | ------------ | -------------------------------------------------------------- |
 | **Type**     | `array of string`                                              |
 | **Required** | No                                                             |
-| **Default**  | `["/favicon.ico", "/system/health", "/openapi.json", "/docs"]` |
+| **Default**  | `["/favicon.ico", "/openapi.json", "/docs", "/system/health"]` |
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
