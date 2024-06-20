@@ -13,7 +13,7 @@ Eidolon helps developers designing and deploying agent-based services.
 With Eidolon, agents are services, so there is no extra work when it comes time to deploy. The HTTP server is built in.
 
 ### 2. Simple agent-to-agent communication
-Since agents are services with well-defined interfaces, they easily communicate with tools dynamically generated from 
+Since agents are services with well-defined interfaces, they easilyaasdfasdf communicate with tools dynamically generated from 
 the openapi json schema defined by the agent services. 
 
 ### 3. Painless component customization and upgrade
