@@ -3,14 +3,14 @@ title: OpenAIGPT
 description: Description of OpenAIGPT component
 ---
 
-| Property                                     | Pattern | Type        | Deprecated | Definition | Title/Description       |
-| -------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )         | No      | const       | No         | -          | OpenAIGPT               |
-| - [model](#model )                           | No      | object      | No         | -          | LLMModel                |
-| - [temperature](#temperature )               | No      | number      | No         | -          | Temperature             |
-| - [force_json](#force_json )                 | No      | boolean     | No         | -          | Force Json              |
-| - [max_tokens](#max_tokens )                 | No      | Combination | No         | -          | Max Tokens              |
-| - [connection_handler](#connection_handler ) | No      | object      | No         | -          | OpenAIConnectionHandler |
+| Property                                     | Pattern | Type                                                                                    | Deprecated | Definition | Title/Description       |
+| -------------------------------------------- | ------- | --------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------- |
+| - [implementation](#implementation )         | No      | const                                                                                   | No         | -          | OpenAIGPT               |
+| - [model](#model )                           | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview)                               | No         | -          | LLMModel                |
+| - [temperature](#temperature )               | No      | number                                                                                  | No         | -          | Temperature             |
+| - [force_json](#force_json )                 | No      | boolean                                                                                 | No         | -          | Force Json              |
+| - [max_tokens](#max_tokens )                 | No      | Combination                                                                             | No         | -          | Max Tokens              |
+| - [connection_handler](#connection_handler ) | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | OpenAIConnectionHandler |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -27,25 +27,13 @@ Specific value: `"OpenAIGPT"`
 
 **Title:** LLMModel
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "LLMModel"}`                                          |
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview)` |
+| **Required** | No                                                          |
+| **Default**  | `{"implementation": "LLMModel"}`                            |
 
 **Description:** Overview of LLMModel components
-
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#model_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="model_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="temperature"></a>3. Property `temperature`
 
@@ -101,24 +89,12 @@ Specific value: `"OpenAIGPT"`
 
 **Title:** OpenAIConnectionHandler
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "OpenAIConnectionHandler"}`                           |
+|              |                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| **Type**     | `[Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview)` |
+| **Required** | No                                                                                        |
+| **Default**  | `{"implementation": "OpenAIConnectionHandler"}`                                           |
 
 **Description:** Overview of OpenAIConnectionHandler components
-
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#connection_handler_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="connection_handler_implementation"></a>6.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------

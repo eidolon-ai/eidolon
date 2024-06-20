@@ -3,11 +3,11 @@ title: OpenAIEmbedding
 description: Description of OpenAIEmbedding component
 ---
 
-| Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description       |
-| -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )         | No      | const  | No         | -          | OpenAIEmbedding         |
-| - [model](#model )                           | No      | string | No         | -          | Model                   |
-| - [connection_handler](#connection_handler ) | No      | object | No         | -          | OpenAIConnectionHandler |
+| Property                                     | Pattern | Type                                                                                    | Deprecated | Definition | Title/Description       |
+| -------------------------------------------- | ------- | --------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------- |
+| - [implementation](#implementation )         | No      | const                                                                                   | No         | -          | OpenAIEmbedding         |
+| - [model](#model )                           | No      | string                                                                                  | No         | -          | Model                   |
+| - [connection_handler](#connection_handler ) | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | OpenAIConnectionHandler |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -36,24 +36,12 @@ Specific value: `"OpenAIEmbedding"`
 
 **Title:** OpenAIConnectionHandler
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "OpenAIConnectionHandler"}`                           |
+|              |                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| **Type**     | `[Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview)` |
+| **Required** | No                                                                                        |
+| **Default**  | `{"implementation": "OpenAIConnectionHandler"}`                                           |
 
 **Description:** Overview of OpenAIConnectionHandler components
-
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#connection_handler_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="connection_handler_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------

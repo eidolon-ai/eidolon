@@ -24,10 +24,10 @@
     },
     "safe_paths": {
       "default": [
-        "/openapi.json",
         "/favicon.ico",
-        "/docs",
-        "/system/health"
+        "/system/health",
+        "/openapi.json",
+        "/docs"
       ],
       "items": {
         "type": "string"

@@ -158,6 +158,10 @@ def write_md(read_loc,
                 ))
 
             content = content[(content.index(cut_after_str) + len(cut_after_str)):]
+            for name in groups.keys():
+                content = content.replace(f"`[Reference[{name}]](/docs/components/apu/overview)`",
+                                          f"[`Reference[{name}]`](/docs/components/apu/overview)")
+
             write_astro_md_file(content, description, title, write_file_loc)
 
 
@@ -291,8 +295,7 @@ def clean_ref_groups_for_md(schema):
         if "reference_group" in schema:
             if "anyOf" in schema:
                 del schema['anyOf']
-                schema['type'] = "object"
-                schema['properties'] = {"implementation": {"type": "string"}}
+                schema['type'] = f"[Reference[{schema['reference_group']['type']}]](/docs/components/{url_safe(schema['reference_group']['type'])}/overview)"
         else:
             for v in schema.values():
                 clean_ref_groups_for_md(v)

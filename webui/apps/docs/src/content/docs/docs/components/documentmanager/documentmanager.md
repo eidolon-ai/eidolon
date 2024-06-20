@@ -6,14 +6,14 @@ description: Description of DocumentManager component
 **Description:** Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (
 provided by loader) into similarity memory where they can be searched.
 
-| Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )       | No      | const   | No         | -          | DocumentManager   |
-| + [name](#name )                           | No      | string  | No         | -          | Name              |
-| - [recheck_frequency](#recheck_frequency ) | No      | integer | No         | -          | Recheck Frequency |
-| - [loader](#loader )                       | No      | object  | No         | -          | DocumentLoader    |
-| - [doc_processor](#doc_processor )         | No      | object  | No         | -          | DocumentProcessor |
-| - [concurrency](#concurrency )             | No      | integer | No         | -          | Concurrency       |
+| Property                                   | Pattern | Type                                                                        | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | --------------------------------------------------------------------------- | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation )       | No      | const                                                                       | No         | -          | DocumentManager   |
+| + [name](#name )                           | No      | string                                                                      | No         | -          | Name              |
+| - [recheck_frequency](#recheck_frequency ) | No      | integer                                                                     | No         | -          | Recheck Frequency |
+| - [loader](#loader )                       | No      | [Reference[DocumentLoader]](/docs/components/documentloader/overview)       | No         | -          | DocumentLoader    |
+| - [doc_processor](#doc_processor )         | No      | [Reference[DocumentProcessor]](/docs/components/documentprocessor/overview) | No         | -          | DocumentProcessor |
+| - [concurrency](#concurrency )             | No      | integer                                                                     | No         | -          | Concurrency       |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -53,49 +53,25 @@ Specific value: `"DocumentManager"`
 
 **Title:** DocumentLoader
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "FilesystemLoader"}`                                  |
+|              |                                                                         |
+| ------------ | ----------------------------------------------------------------------- |
+| **Type**     | `[Reference[DocumentLoader]](/docs/components/documentloader/overview)` |
+| **Required** | No                                                                      |
+| **Default**  | `{"implementation": "FilesystemLoader"}`                                |
 
 **Description:** Overview of DocumentLoader components
-
-| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#loader_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="loader_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="doc_processor"></a>5. Property `doc_processor`
 
 **Title:** DocumentProcessor
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "DocumentProcessor"}`                                 |
+|              |                                                                               |
+| ------------ | ----------------------------------------------------------------------------- |
+| **Type**     | `[Reference[DocumentProcessor]](/docs/components/documentprocessor/overview)` |
+| **Required** | No                                                                            |
+| **Default**  | `{"implementation": "DocumentProcessor"}`                                     |
 
 **Description:** Overview of DocumentProcessor components
-
-| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#doc_processor_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="doc_processor_implementation"></a>5.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="concurrency"></a>6. Property `concurrency`
 

@@ -6,20 +6,20 @@ description: Description of RetrieverAgent component
 **Description:** A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.
 The agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.
 
-| Property                                         | Pattern | Type        | Deprecated | Definition | Title/Description    |
-| ------------------------------------------------ | ------- | ----------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const       | No         | -          | RetrieverAgent       |
-| - [max_num_results](#max_num_results )           | No      | integer     | No         | -          | Max Num Results      |
-| - [question_transformer](#question_transformer ) | No      | object      | No         | -          | QuestionTransformer  |
-| - [document_retriever](#document_retriever )     | No      | object      | No         | -          | DocumentRetriever    |
-| - [document_reranker](#document_reranker )       | No      | object      | No         | -          | DocumentReranker     |
-| - [result_summarizer](#result_summarizer )       | No      | object      | No         | -          | ResultSummarizer     |
-| + [name](#name )                                 | No      | string      | No         | -          | Name                 |
-| + [description](#description )                   | No      | string      | No         | -          | Description          |
-| - [loader_root_location](#loader_root_location ) | No      | Combination | No         | -          | Loader Root Location |
-| - [loader_pattern](#loader_pattern )             | No      | Combination | No         | -          | Loader Pattern       |
-| - [document_manager](#document_manager )         | No      | Combination | No         | -          | -                    |
-| - [apu](#apu )                                   | No      | object      | No         | -          | APU                  |
+| Property                                         | Pattern | Type                                                                            | Deprecated | Definition | Title/Description    |
+| ------------------------------------------------ | ------- | ------------------------------------------------------------------------------- | ---------- | ---------- | -------------------- |
+| - [implementation](#implementation )             | No      | const                                                                           | No         | -          | RetrieverAgent       |
+| - [max_num_results](#max_num_results )           | No      | integer                                                                         | No         | -          | Max Num Results      |
+| - [question_transformer](#question_transformer ) | No      | [Reference[QuestionTransformer]](/docs/components/questiontransformer/overview) | No         | -          | QuestionTransformer  |
+| - [document_retriever](#document_retriever )     | No      | [Reference[DocumentRetriever]](/docs/components/documentretriever/overview)     | No         | -          | DocumentRetriever    |
+| - [document_reranker](#document_reranker )       | No      | [Reference[DocumentReranker]](/docs/components/documentreranker/overview)       | No         | -          | DocumentReranker     |
+| - [result_summarizer](#result_summarizer )       | No      | [Reference[ResultSummarizer]](/docs/components/resultsummarizer/overview)       | No         | -          | ResultSummarizer     |
+| + [name](#name )                                 | No      | string                                                                          | No         | -          | Name                 |
+| + [description](#description )                   | No      | string                                                                          | No         | -          | Description          |
+| - [loader_root_location](#loader_root_location ) | No      | Combination                                                                     | No         | -          | Loader Root Location |
+| - [loader_pattern](#loader_pattern )             | No      | Combination                                                                     | No         | -          | Loader Pattern       |
+| - [document_manager](#document_manager )         | No      | Combination                                                                     | No         | -          | -                    |
+| - [apu](#apu )                                   | No      | [Reference[APU]](/docs/components/apu/overview)                                 | No         | -          | APU                  |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -48,97 +48,49 @@ Specific value: `"RetrieverAgent"`
 
 **Title:** QuestionTransformer
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "MultiQuestionTransformer"}`                          |
+|              |                                                                                   |
+| ------------ | --------------------------------------------------------------------------------- |
+| **Type**     | `[Reference[QuestionTransformer]](/docs/components/questiontransformer/overview)` |
+| **Required** | No                                                                                |
+| **Default**  | `{"implementation": "MultiQuestionTransformer"}`                                  |
 
 **Description:** Overview of QuestionTransformer components
-
-| Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#question_transformer_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="question_transformer_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="document_retriever"></a>4. Property `document_retriever`
 
 **Title:** DocumentRetriever
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "SimilarityMemoryRetriever"}`                         |
+|              |                                                                               |
+| ------------ | ----------------------------------------------------------------------------- |
+| **Type**     | `[Reference[DocumentRetriever]](/docs/components/documentretriever/overview)` |
+| **Required** | No                                                                            |
+| **Default**  | `{"implementation": "SimilarityMemoryRetriever"}`                             |
 
 **Description:** Overview of DocumentRetriever components
-
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#document_retriever_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="document_retriever_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="document_reranker"></a>5. Property `document_reranker`
 
 **Title:** DocumentReranker
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "RAGFusionReranker"}`                                 |
+|              |                                                                             |
+| ------------ | --------------------------------------------------------------------------- |
+| **Type**     | `[Reference[DocumentReranker]](/docs/components/documentreranker/overview)` |
+| **Required** | No                                                                          |
+| **Default**  | `{"implementation": "RAGFusionReranker"}`                                   |
 
 **Description:** Overview of DocumentReranker components
-
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#document_reranker_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="document_reranker_implementation"></a>5.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="result_summarizer"></a>6. Property `result_summarizer`
 
 **Title:** ResultSummarizer
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "ResultSummarizer"}`                                  |
+|              |                                                                             |
+| ------------ | --------------------------------------------------------------------------- |
+| **Type**     | `[Reference[ResultSummarizer]](/docs/components/resultsummarizer/overview)` |
+| **Required** | No                                                                          |
+| **Default**  | `{"implementation": "ResultSummarizer"}`                                    |
 
 **Description:** Overview of ResultSummarizer components
-
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#result_summarizer_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="result_summarizer_implementation"></a>6.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="name"></a>7. Property `name`
 
@@ -244,24 +196,12 @@ Specific value: `"RetrieverAgent"`
 
 **Title:** DocumentManager
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+|              |                                                                           |
+| ------------ | ------------------------------------------------------------------------- |
+| **Type**     | `[Reference[DocumentManager]](/docs/components/documentmanager/overview)` |
+| **Required** | No                                                                        |
 
 **Description:** Overview of DocumentManager components
-
-| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#document_manager_anyOf_i0_implementation ) | No      | string | No         | -          | -                 |
-
-#### <a name="document_manager_anyOf_i0_implementation"></a>11.1.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ### <a name="document_manager_anyOf_i1"></a>11.2. Property `item 1`
 
@@ -274,28 +214,16 @@ Specific value: `"RetrieverAgent"`
 
 **Title:** APU
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "ConversationalAPU"}`                                 |
+|              |                                                   |
+| ------------ | ------------------------------------------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
+| **Required** | No                                                |
+| **Default**  | `{"implementation": "ConversationalAPU"}`         |
 
 **Description:** 
 The APU is the main interface for the Agent to interact with the LLM.
 The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.
 
 To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).
-
-| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="apu_implementation"></a>12.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------

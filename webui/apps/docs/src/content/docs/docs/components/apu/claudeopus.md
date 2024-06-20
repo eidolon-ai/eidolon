@@ -3,21 +3,21 @@ title: ClaudeOpus
 description: Description of ClaudeOpus component
 ---
 
-| Property                                             | Pattern | Type            | Deprecated | Definition | Title/Description      |
-| ---------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------- |
-| - [implementation](#implementation )                 | No      | const           | No         | -          | ClaudeOpus             |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer         | No         | -          | Max Num Function Calls |
-| - [io_unit](#io_unit )                               | No      | object          | No         | -          | IOUnit                 |
-| - [memory_unit](#memory_unit )                       | No      | object          | No         | -          | MemoryUnit             |
-| - [llm_unit](#llm_unit )                             | No      | object          | No         | -          | LLMUnit                |
-| - [logic_units](#logic_units )                       | No      | array of object | No         | -          | Logic Units            |
-| - [audio_unit](#audio_unit )                         | No      | Combination     | No         | -          | -                      |
-| - [image_unit](#image_unit )                         | No      | Combination     | No         | -          | -                      |
-| - [record_conversation](#record_conversation )       | No      | boolean         | No         | -          | Record Conversation    |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean         | No         | -          | Allow Tool Errors      |
-| - [document_processor](#document_processor )         | No      | object          | No         | -          | DocumentProcessor      |
-| - [retriever](#retriever )                           | No      | object          | No         | -          | Retriever              |
-| - [retriever_apu](#retriever_apu )                   | No      | Combination     | No         | -          | -                      |
+| Property                                             | Pattern | Type                                                                        | Deprecated | Definition | Title/Description      |
+| ---------------------------------------------------- | ------- | --------------------------------------------------------------------------- | ---------- | ---------- | ---------------------- |
+| - [implementation](#implementation )                 | No      | const                                                                       | No         | -          | ClaudeOpus             |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer                                                                     | No         | -          | Max Num Function Calls |
+| - [io_unit](#io_unit )                               | No      | [Reference[IOUnit]](/docs/components/iounit/overview)                       | No         | -          | IOUnit                 |
+| - [memory_unit](#memory_unit )                       | No      | [Reference[MemoryUnit]](/docs/components/memoryunit/overview)               | No         | -          | MemoryUnit             |
+| - [llm_unit](#llm_unit )                             | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview)                     | No         | -          | LLMUnit                |
+| - [logic_units](#logic_units )                       | No      | array of [Reference[LogicUnit]](/docs/components/logicunit/overview)        | No         | -          | Logic Units            |
+| - [audio_unit](#audio_unit )                         | No      | Combination                                                                 | No         | -          | -                      |
+| - [image_unit](#image_unit )                         | No      | Combination                                                                 | No         | -          | -                      |
+| - [record_conversation](#record_conversation )       | No      | boolean                                                                     | No         | -          | Record Conversation    |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean                                                                     | No         | -          | Allow Tool Errors      |
+| - [document_processor](#document_processor )         | No      | [Reference[DocumentProcessor]](/docs/components/documentprocessor/overview) | No         | -          | DocumentProcessor      |
+| - [retriever](#retriever )                           | No      | [Reference[Retriever]](/docs/components/retriever/overview)                 | No         | -          | Retriever              |
+| - [retriever_apu](#retriever_apu )                   | No      | Combination                                                                 | No         | -          | -                      |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -46,86 +46,50 @@ Specific value: `"ClaudeOpus"`
 
 **Title:** IOUnit
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "IOUnit"}`                                            |
+|              |                                                         |
+| ------------ | ------------------------------------------------------- |
+| **Type**     | `[Reference[IOUnit]](/docs/components/iounit/overview)` |
+| **Required** | No                                                      |
+| **Default**  | `{"implementation": "IOUnit"}`                          |
 
 **Description:** 
 This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM
 
 This can be overridden to provide custom IO handling.
 
-| Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#io_unit_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="io_unit_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
 ## <a name="memory_unit"></a>4. Property `memory_unit`
 
 **Title:** MemoryUnit
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "RawMemoryUnit"}`                                     |
+|              |                                                                 |
+| ------------ | --------------------------------------------------------------- |
+| **Type**     | `[Reference[MemoryUnit]](/docs/components/memoryunit/overview)` |
+| **Required** | No                                                              |
+| **Default**  | `{"implementation": "RawMemoryUnit"}`                           |
 
 **Description:** Overview of MemoryUnit components
-
-| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#memory_unit_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="memory_unit_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="llm_unit"></a>5. Property `llm_unit`
 
 **Title:** LLMUnit
 
-|                           |                                                                             |
-| ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
-| **Required**              | No                                                                          |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.")   |
-| **Default**               | `{"implementation": "AnthropicLLMUnit", "model": "claude-3-opus-20240229"}` |
+|              |                                                                             |
+| ------------ | --------------------------------------------------------------------------- |
+| **Type**     | `[Reference[LLMUnit]](/docs/components/llmunit/overview)`                   |
+| **Required** | No                                                                          |
+| **Default**  | `{"implementation": "AnthropicLLMUnit", "model": "claude-3-opus-20240229"}` |
 
 **Description:** Overview of LLMUnit components
-
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#llm_unit_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="llm_unit_implementation"></a>5.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="logic_units"></a>6. Property `logic_units`
 
 **Title:** Logic Units
 
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-| **Default**  | `[]`              |
+|              |                                                                        |
+| ------------ | ---------------------------------------------------------------------- |
+| **Type**     | `array of [Reference[LogicUnit]](/docs/components/logicunit/overview)` |
+| **Required** | No                                                                     |
+| **Default**  | `[]`                                                                   |
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -143,24 +107,12 @@ This can be overridden to provide custom IO handling.
 
 **Title:** LogicUnit
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+|              |                                                               |
+| ------------ | ------------------------------------------------------------- |
+| **Type**     | `[Reference[LogicUnit]](/docs/components/logicunit/overview)` |
+| **Required** | No                                                            |
 
 **Description:** Overview of LogicUnit components
-
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#logic_units_items_implementation ) | No      | string | No         | -          | -                 |
-
-#### <a name="logic_units_items_implementation"></a>6.1.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="audio_unit"></a>7. Property `audio_unit`
 
@@ -180,24 +132,12 @@ This can be overridden to provide custom IO handling.
 
 **Title:** AudioUnit
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+|              |                                                               |
+| ------------ | ------------------------------------------------------------- |
+| **Type**     | `[Reference[AudioUnit]](/docs/components/audiounit/overview)` |
+| **Required** | No                                                            |
 
 **Description:** Overview of AudioUnit components
-
-| Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#audio_unit_anyOf_i0_implementation ) | No      | string | No         | -          | -                 |
-
-#### <a name="audio_unit_anyOf_i0_implementation"></a>7.1.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ### <a name="audio_unit_anyOf_i1"></a>7.2. Property `item 1`
 
@@ -276,49 +216,25 @@ This can be overridden to provide custom IO handling.
 
 **Title:** DocumentProcessor
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "DocumentProcessor"}`                                 |
+|              |                                                                               |
+| ------------ | ----------------------------------------------------------------------------- |
+| **Type**     | `[Reference[DocumentProcessor]](/docs/components/documentprocessor/overview)` |
+| **Required** | No                                                                            |
+| **Default**  | `{"implementation": "DocumentProcessor"}`                                     |
 
 **Description:** Overview of DocumentProcessor components
-
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#document_processor_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="document_processor_implementation"></a>11.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="retriever"></a>12. Property `retriever`
 
 **Title:** Retriever
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{"implementation": "Retriever"}`                                         |
+|              |                                                               |
+| ------------ | ------------------------------------------------------------- |
+| **Type**     | `[Reference[Retriever]](/docs/components/retriever/overview)` |
+| **Required** | No                                                            |
+| **Default**  | `{"implementation": "Retriever"}`                             |
 
 **Description:** Overview of Retriever components
-
-| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#retriever_implementation ) | No      | string | No         | -          | -                 |
-
-### <a name="retriever_implementation"></a>12.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="retriever_apu"></a>13. Property `retriever_apu`
 
@@ -338,28 +254,16 @@ This can be overridden to provide custom IO handling.
 
 **Title:** APU
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+|              |                                                   |
+| ------------ | ------------------------------------------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
+| **Required** | No                                                |
 
 **Description:** 
 The APU is the main interface for the Agent to interact with the LLM.
 The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.
 
 To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).
-
-| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#retriever_apu_anyOf_i0_implementation ) | No      | string | No         | -          | -                 |
-
-#### <a name="retriever_apu_anyOf_i0_implementation"></a>13.1.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ### <a name="retriever_apu_anyOf_i1"></a>13.2. Property `item 1`
 
