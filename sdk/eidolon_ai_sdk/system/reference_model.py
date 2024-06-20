@@ -155,15 +155,18 @@ class Reference(BaseModel):
     @model_validator(mode="after")
     def _validate(self):
         reference_class = self._get_reference_class()
-        spec_type = self.get_spec_type(reference_class)
-        if spec_type:
-            spec_type.model_validate(self.model_extra or {})
-        elif issubclass(reference_class, BaseModel):
-            reference_class.model_validate(self.model_extra or {})
+        spec = Reference.get_spec_type(reference_class)
+        if spec:
+            spec.model_validate(self.model_extra or {})
         return self
 
     @staticmethod
-    def get_spec_type(reference_class) -> Optional[Type[BaseModel]]:
+    def get_spec_type(reference_class):
+        specable = Reference.get_specable_type(reference_class)
+        return specable if specable else reference_class if issubclass(reference_class, BaseModel) else None
+
+    @staticmethod
+    def get_specable_type(reference_class) -> Optional[Type[BaseModel]]:
         if issubclass(reference_class, Specable):
             bases = getattr(reference_class, "__orig_bases__", [])
             specable = next(
@@ -175,8 +178,6 @@ class Reference(BaseModel):
             else:
                 logging.warning(f'Unable to find Specable definition on "{reference_class}", skipping validation')
                 return None
-        elif issubclass(reference_class, BaseModel):
-            return reference_class
         return None
 
     def _get_reference_class(self):
@@ -184,7 +185,7 @@ class Reference(BaseModel):
 
     def instantiate(self, *args, **kwargs):
         reference_class = self._get_reference_class()
-        spec_type = self.get_spec_type(reference_class)
+        spec_type = self.get_specable_type(reference_class)
         if spec_type:
             kwargs["spec"] = spec_type.model_validate(self.model_extra or {})
         else:
