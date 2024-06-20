@@ -12,7 +12,9 @@
     },
     "connection_handler": {
       "$ref": "file:../OpenAIConnectionHandler/overview.json",
-      "default": "OpenAIConnectionHandler"
+      "default": {
+        "implementation": "OpenAIConnectionHandler"
+      }
     }
   },
   "title": "OpenAIEmbedding",

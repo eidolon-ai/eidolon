@@ -36,23 +36,43 @@ Specific value: `"OpenAIEmbedding"`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
+| **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"OpenAIConnectionHandler"`                                               |
+| **Default**               | `{"implementation": "OpenAIConnectionHandler"}`                           |
 | **Defined in**            | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)                             |
 
 **Description:** Overview of OpenAIConnectionHandler components
 
-| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description            |
-| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------- |
-| - [implementation](#connection_handler_implementation )                   | No      | const           | No         | -          | AzureOpenAIConnectionHandler |
-| - [azure_ad_token_provider](#connection_handler_azure_ad_token_provider ) | No      | Combination     | No         | -          | -                            |
-| - [token_provider_scopes](#connection_handler_token_provider_scopes )     | No      | array of string | No         | -          | Token Provider Scopes        |
-| - [api_version](#connection_handler_api_version )                         | No      | string          | No         | -          | Api Version                  |
-| - [](#connection_handler_additionalProperties )                           | No      | object          | No         | -          | -                            |
+| Any of(Option)                                                    |
+| ----------------------------------------------------------------- |
+| [AzureOpenAIConnectionHandler.json](#connection_handler_anyOf_i0) |
 
-### <a name="connection_handler_implementation"></a>3.1. Property `implementation`
+### <a name="connection_handler_anyOf_i0"></a>3.1. Property `AzureOpenAIConnectionHandler.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./AzureOpenAIConnectionHandler.json                                  |
+
+**Description:** Automatically infers the values from environment variables for:
+    - `api_key` from `AZURE_OPENAI_API_KEY` (IFF `api_key` AND 'azure_ad_token_provider' is not provided)
+    - `organization` from `OPENAI_ORG_ID`
+    - `azure_ad_token` from `AZURE_OPENAI_AD_TOKEN`
+    - `api_version` from `OPENAI_API_VERSION`
+    - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
+
+| Property                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description            |
+| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------- |
+| - [implementation](#connection_handler_anyOf_i0_implementation )                   | No      | const           | No         | -          | AzureOpenAIConnectionHandler |
+| - [azure_ad_token_provider](#connection_handler_anyOf_i0_azure_ad_token_provider ) | No      | Combination     | No         | -          | -                            |
+| - [token_provider_scopes](#connection_handler_anyOf_i0_token_provider_scopes )     | No      | array of string | No         | -          | Token Provider Scopes        |
+| - [api_version](#connection_handler_anyOf_i0_api_version )                         | No      | string          | No         | -          | Api Version                  |
+| - [](#connection_handler_anyOf_i0_additionalProperties )                           | No      | object          | No         | -          | -                            |
+
+#### <a name="connection_handler_anyOf_i0_implementation"></a>3.1.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -63,7 +83,7 @@ Specific value: `"OpenAIEmbedding"`
 
 Specific value: `"AzureOpenAIConnectionHandler"`
 
-### <a name="connection_handler_azure_ad_token_provider"></a>3.2. Property `azure_ad_token_provider`
+#### <a name="connection_handler_anyOf_i0_azure_ad_token_provider"></a>3.1.2. Property `azure_ad_token_provider`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -71,12 +91,12 @@ Specific value: `"AzureOpenAIConnectionHandler"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-| Any of(Option)                                                    |
-| ----------------------------------------------------------------- |
-| [Reference](#connection_handler_azure_ad_token_provider_anyOf_i0) |
-| [item 1](#connection_handler_azure_ad_token_provider_anyOf_i1)    |
+| Any of(Option)                                                             |
+| -------------------------------------------------------------------------- |
+| [Reference](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0) |
+| [item 1](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i1)    |
 
-#### <a name="connection_handler_azure_ad_token_provider_anyOf_i0"></a>3.2.1. Property `Reference`
+##### <a name="connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0"></a>3.1.2.1. Property `Reference`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -106,12 +126,12 @@ Attributes:
 Methods:
     instantiate: This method is used to create an instance of the class that the reference points to.
 
-| Property                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#connection_handler_azure_ad_token_provider_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#connection_handler_azure_ad_token_provider_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| Property                                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-##### <a name="connection_handler_azure_ad_token_provider_anyOf_i0_implementation"></a>3.2.1.1. Property `implementation`
+###### <a name="connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_implementation"></a>3.1.2.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -121,14 +141,14 @@ Methods:
 | **Required** | No       |
 | **Default**  | `null`   |
 
-#### <a name="connection_handler_azure_ad_token_provider_anyOf_i1"></a>3.2.2. Property `item 1`
+##### <a name="connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i1"></a>3.1.2.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-### <a name="connection_handler_token_provider_scopes"></a>3.3. Property `token_provider_scopes`
+#### <a name="connection_handler_anyOf_i0_token_provider_scopes"></a>3.1.3. Property `token_provider_scopes`
 
 **Title:** Token Provider Scopes
 
@@ -146,18 +166,18 @@ Methods:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                | Description |
-| ------------------------------------------------------------------------------ | ----------- |
-| [token_provider_scopes items](#connection_handler_token_provider_scopes_items) | -           |
+| Each item of this array must be                                                         | Description |
+| --------------------------------------------------------------------------------------- | ----------- |
+| [token_provider_scopes items](#connection_handler_anyOf_i0_token_provider_scopes_items) | -           |
 
-#### <a name="autogenerated_heading_2"></a>3.3.1. token_provider_scopes items
+##### <a name="autogenerated_heading_2"></a>3.1.3.1. token_provider_scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="connection_handler_api_version"></a>3.4. Property `api_version`
+#### <a name="connection_handler_anyOf_i0_api_version"></a>3.1.4. Property `api_version`
 
 **Title:** Api Version
 

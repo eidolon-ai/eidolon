@@ -6,7 +6,9 @@
     },
     "model": {
       "$ref": "file:../LLMModel/overview.json",
-      "default": "llama3"
+      "default": {
+        "implementation": "llama3"
+      }
     },
     "temperature": {
       "default": 0.3,

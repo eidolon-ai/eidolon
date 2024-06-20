@@ -6,7 +6,9 @@
     },
     "apu": {
       "$ref": "file:../APU/overview.json",
-      "default": "ConversationalAPU"
+      "default": {
+        "implementation": "ConversationalAPU"
+      }
     },
     "keep_original": {
       "default": true,

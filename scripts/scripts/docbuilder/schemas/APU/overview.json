@@ -3,37 +3,37 @@
   "description": "\nThe APU is the main interface for the Agent to interact with the LLM.\nThe APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.\n\nTo learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).\n",
   "anyOf": [
     {
+      "$ref": "file:./ClaudeHaiku.json"
+    },
+    {
+      "$ref": "file:./ClaudeOpus.json"
+    },
+    {
+      "$ref": "file:./ClaudeSonnet.json"
+    },
+    {
       "$ref": "file:./ConversationalAPU.json"
     },
     {
       "$ref": "file:./GPT3.5-turbo.json"
     },
     {
-      "$ref": "file:./MistralLarge.json"
-    },
-    {
-      "$ref": "file:./MistralSmall.json"
-    },
-    {
-      "$ref": "file:./MistralMedium.json"
-    },
-    {
-      "$ref": "file:./Llamma3-8b.json"
+      "$ref": "file:./GPT4-turbo.json"
     },
     {
       "$ref": "file:./GPT4o.json"
     },
     {
-      "$ref": "file:./ClaudeHaiku.json"
+      "$ref": "file:./Llamma3-8b.json"
     },
     {
-      "$ref": "file:./ClaudeSonnet.json"
+      "$ref": "file:./MistralLarge.json"
     },
     {
-      "$ref": "file:./ClaudeOpus.json"
+      "$ref": "file:./MistralMedium.json"
     },
     {
-      "$ref": "file:./GPT4-turbo.json"
+      "$ref": "file:./MistralSmall.json"
     }
   ],
   "reference_group": {

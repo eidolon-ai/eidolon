@@ -27,17 +27,17 @@ Specific value: `"SimilarityMemoryImpl"`
 | **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"OpenAIEmbedding"`                                                       |
+| **Default**               | `{"implementation": "OpenAIEmbedding"}`                                   |
 | **Defined in**            | [Embedding](/docs/components/embedding/overview)                                           |
 
 **Description:** Overview of Embedding components
 
-| One of(Option)                             |
+| Any of(Option)                             |
 | ------------------------------------------ |
-| [NoopEmbedding.json](#embedder_oneOf_i0)   |
-| [OpenAIEmbedding.json](#embedder_oneOf_i1) |
+| [NoopEmbedding.json](#embedder_anyOf_i0)   |
+| [OpenAIEmbedding.json](#embedder_anyOf_i1) |
 
-### <a name="embedder_oneOf_i0"></a>2.1. Property `NoopEmbedding.json`
+### <a name="embedder_anyOf_i0"></a>2.1. Property `NoopEmbedding.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -48,9 +48,9 @@ Specific value: `"SimilarityMemoryImpl"`
 
 | Property                                               | Pattern | Type  | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#embedder_oneOf_i0_implementation ) | No      | const | No         | -          | NoopEmbedding     |
+| - [implementation](#embedder_anyOf_i0_implementation ) | No      | const | No         | -          | NoopEmbedding     |
 
-#### <a name="embedder_oneOf_i0_implementation"></a>2.1.1. Property `implementation`
+#### <a name="embedder_anyOf_i0_implementation"></a>2.1.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -61,7 +61,7 @@ Specific value: `"SimilarityMemoryImpl"`
 
 Specific value: `"NoopEmbedding"`
 
-### <a name="embedder_oneOf_i1"></a>2.2. Property `OpenAIEmbedding.json`
+### <a name="embedder_anyOf_i1"></a>2.2. Property `OpenAIEmbedding.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -72,11 +72,11 @@ Specific value: `"NoopEmbedding"`
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition                                       | Title/Description                              |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ---------------------------------------------- |
-| - [implementation](#embedder_oneOf_i1_implementation )         | No      | const  | No         | -                                                | OpenAIEmbedding                                |
-| - [model](#embedder_oneOf_i1_model )                           | No      | string | No         | -                                                | Model                                          |
-| - [connection_handler](#embedder_oneOf_i1_connection_handler ) | No      | object | No         | In [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) | Overview of OpenAIConnectionHandler components |
+| - [implementation](#embedder_anyOf_i1_implementation )         | No      | const  | No         | -                                                | OpenAIEmbedding                                |
+| - [model](#embedder_anyOf_i1_model )                           | No      | string | No         | -                                                | Model                                          |
+| - [connection_handler](#embedder_anyOf_i1_connection_handler ) | No      | object | No         | In [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) | Overview of OpenAIConnectionHandler components |
 
-#### <a name="embedder_oneOf_i1_implementation"></a>2.2.1. Property `implementation`
+#### <a name="embedder_anyOf_i1_implementation"></a>2.2.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -87,7 +87,7 @@ Specific value: `"NoopEmbedding"`
 
 Specific value: `"OpenAIEmbedding"`
 
-#### <a name="embedder_oneOf_i1_model"></a>2.2.2. Property `model`
+#### <a name="embedder_anyOf_i1_model"></a>2.2.2. Property `model`
 
 **Title:** Model
 
@@ -99,27 +99,47 @@ Specific value: `"OpenAIEmbedding"`
 
 **Description:** The name of the model to use.
 
-#### <a name="embedder_oneOf_i1_connection_handler"></a>2.2.3. Property `connection_handler`
+#### <a name="embedder_anyOf_i1_connection_handler"></a>2.2.3. Property `connection_handler`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `combining`                                                               |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{"implementation": "OpenAIConnectionHandler"}`                           |
+| **Defined in**            | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)                             |
+
+**Description:** Overview of OpenAIConnectionHandler components
+
+| Any of(Option)                                                                      |
+| ----------------------------------------------------------------------------------- |
+| [AzureOpenAIConnectionHandler.json](#embedder_anyOf_i1_connection_handler_anyOf_i0) |
+
+##### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0"></a>2.2.3.1. Property `AzureOpenAIConnectionHandler.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"OpenAIConnectionHandler"`                                               |
-| **Defined in**            | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)                             |
+| **Defined in**            | file:./AzureOpenAIConnectionHandler.json                                  |
 
-**Description:** Overview of OpenAIConnectionHandler components
+**Description:** Automatically infers the values from environment variables for:
+    - `api_key` from `AZURE_OPENAI_API_KEY` (IFF `api_key` AND 'azure_ad_token_provider' is not provided)
+    - `organization` from `OPENAI_ORG_ID`
+    - `azure_ad_token` from `AZURE_OPENAI_AD_TOKEN`
+    - `api_version` from `OPENAI_API_VERSION`
+    - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
 
-| Property                                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description            |
-| ------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------- |
-| - [implementation](#embedder_oneOf_i1_connection_handler_implementation )                   | No      | const           | No         | -          | AzureOpenAIConnectionHandler |
-| - [azure_ad_token_provider](#embedder_oneOf_i1_connection_handler_azure_ad_token_provider ) | No      | Combination     | No         | -          | -                            |
-| - [token_provider_scopes](#embedder_oneOf_i1_connection_handler_token_provider_scopes )     | No      | array of string | No         | -          | Token Provider Scopes        |
-| - [api_version](#embedder_oneOf_i1_connection_handler_api_version )                         | No      | string          | No         | -          | Api Version                  |
-| - [](#embedder_oneOf_i1_connection_handler_additionalProperties )                           | No      | object          | No         | -          | -                            |
+| Property                                                                                             | Pattern | Type            | Deprecated | Definition | Title/Description            |
+| ---------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------- |
+| - [implementation](#embedder_anyOf_i1_connection_handler_anyOf_i0_implementation )                   | No      | const           | No         | -          | AzureOpenAIConnectionHandler |
+| - [azure_ad_token_provider](#embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider ) | No      | Combination     | No         | -          | -                            |
+| - [token_provider_scopes](#embedder_anyOf_i1_connection_handler_anyOf_i0_token_provider_scopes )     | No      | array of string | No         | -          | Token Provider Scopes        |
+| - [api_version](#embedder_anyOf_i1_connection_handler_anyOf_i0_api_version )                         | No      | string          | No         | -          | Api Version                  |
+| - [](#embedder_anyOf_i1_connection_handler_anyOf_i0_additionalProperties )                           | No      | object          | No         | -          | -                            |
 
-##### <a name="embedder_oneOf_i1_connection_handler_implementation"></a>2.2.3.1. Property `implementation`
+###### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0_implementation"></a>2.2.3.1.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -130,7 +150,7 @@ Specific value: `"OpenAIEmbedding"`
 
 Specific value: `"AzureOpenAIConnectionHandler"`
 
-##### <a name="embedder_oneOf_i1_connection_handler_azure_ad_token_provider"></a>2.2.3.2. Property `azure_ad_token_provider`
+###### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider"></a>2.2.3.1.2. Property `azure_ad_token_provider`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -138,12 +158,12 @@ Specific value: `"AzureOpenAIConnectionHandler"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-| Any of(Option)                                                                      |
-| ----------------------------------------------------------------------------------- |
-| [Reference](#embedder_oneOf_i1_connection_handler_azure_ad_token_provider_anyOf_i0) |
-| [item 1](#embedder_oneOf_i1_connection_handler_azure_ad_token_provider_anyOf_i1)    |
+| Any of(Option)                                                                               |
+| -------------------------------------------------------------------------------------------- |
+| [Reference](#embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0) |
+| [item 1](#embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i1)    |
 
-###### <a name="embedder_oneOf_i1_connection_handler_azure_ad_token_provider_anyOf_i0"></a>2.2.3.2.1. Property `Reference`
+###### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0"></a>2.2.3.1.2.1. Property `Reference`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -173,12 +193,12 @@ Attributes:
 Methods:
     instantiate: This method is used to create an instance of the class that the reference points to.
 
-| Property                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#embedder_oneOf_i1_connection_handler_azure_ad_token_provider_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#embedder_oneOf_i1_connection_handler_azure_ad_token_provider_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| Property                                                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-###### <a name="embedder_oneOf_i1_connection_handler_azure_ad_token_provider_anyOf_i0_implementation"></a>2.2.3.2.1.1. Property `implementation`
+###### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_implementation"></a>2.2.3.1.2.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -188,14 +208,14 @@ Methods:
 | **Required** | No       |
 | **Default**  | `null`   |
 
-###### <a name="embedder_oneOf_i1_connection_handler_azure_ad_token_provider_anyOf_i1"></a>2.2.3.2.2. Property `item 1`
+###### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i1"></a>2.2.3.1.2.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-##### <a name="embedder_oneOf_i1_connection_handler_token_provider_scopes"></a>2.2.3.3. Property `token_provider_scopes`
+###### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0_token_provider_scopes"></a>2.2.3.1.3. Property `token_provider_scopes`
 
 **Title:** Token Provider Scopes
 
@@ -213,18 +233,18 @@ Methods:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                  | Description |
-| ------------------------------------------------------------------------------------------------ | ----------- |
-| [token_provider_scopes items](#embedder_oneOf_i1_connection_handler_token_provider_scopes_items) | -           |
+| Each item of this array must be                                                                           | Description |
+| --------------------------------------------------------------------------------------------------------- | ----------- |
+| [token_provider_scopes items](#embedder_anyOf_i1_connection_handler_anyOf_i0_token_provider_scopes_items) | -           |
 
-###### <a name="autogenerated_heading_2"></a>2.2.3.3.1. token_provider_scopes items
+###### <a name="autogenerated_heading_2"></a>2.2.3.1.3.1. token_provider_scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="embedder_oneOf_i1_connection_handler_api_version"></a>2.2.3.4. Property `api_version`
+###### <a name="embedder_anyOf_i1_connection_handler_anyOf_i0_api_version"></a>2.2.3.1.4. Property `api_version`
 
 **Title:** Api Version
 
@@ -241,17 +261,17 @@ Methods:
 | **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"ChromaVectorStore"`                                                     |
+| **Default**               | `{"implementation": "ChromaVectorStore"}`                                 |
 | **Defined in**            | [VectorStore](/docs/components/vectorstore/overview)                                         |
 
 **Description:** Overview of VectorStore components
 
-| One of(Option)                                   |
+| Any of(Option)                                   |
 | ------------------------------------------------ |
-| [ChromaVectorStore.json](#vector_store_oneOf_i0) |
-| [NoopVectorStore.json](#vector_store_oneOf_i1)   |
+| [ChromaVectorStore.json](#vector_store_anyOf_i0) |
+| [NoopVectorStore.json](#vector_store_anyOf_i1)   |
 
-### <a name="vector_store_oneOf_i0"></a>3.1. Property `ChromaVectorStore.json`
+### <a name="vector_store_anyOf_i0"></a>3.1. Property `ChromaVectorStore.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -262,11 +282,11 @@ Methods:
 
 | Property                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ---------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#vector_store_oneOf_i0_implementation )                   | No      | const  | No         | -          | ChromaVectorStore       |
-| - [root_document_directory](#vector_store_oneOf_i0_root_document_directory ) | No      | string | No         | -          | Root Document Directory |
-| - [url](#vector_store_oneOf_i0_url )                                         | No      | string | No         | -          | Url                     |
+| - [implementation](#vector_store_anyOf_i0_implementation )                   | No      | const  | No         | -          | ChromaVectorStore       |
+| - [root_document_directory](#vector_store_anyOf_i0_root_document_directory ) | No      | string | No         | -          | Root Document Directory |
+| - [url](#vector_store_anyOf_i0_url )                                         | No      | string | No         | -          | Url                     |
 
-#### <a name="vector_store_oneOf_i0_implementation"></a>3.1.1. Property `implementation`
+#### <a name="vector_store_anyOf_i0_implementation"></a>3.1.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -277,7 +297,7 @@ Methods:
 
 Specific value: `"ChromaVectorStore"`
 
-#### <a name="vector_store_oneOf_i0_root_document_directory"></a>3.1.2. Property `root_document_directory`
+#### <a name="vector_store_anyOf_i0_root_document_directory"></a>3.1.2. Property `root_document_directory`
 
 **Title:** Root Document Directory
 
@@ -289,7 +309,7 @@ Specific value: `"ChromaVectorStore"`
 
 **Description:** The root directory where the vector memory will store documents.
 
-#### <a name="vector_store_oneOf_i0_url"></a>3.1.3. Property `url`
+#### <a name="vector_store_anyOf_i0_url"></a>3.1.3. Property `url`
 
 **Title:** Url
 
@@ -301,7 +321,7 @@ Specific value: `"ChromaVectorStore"`
 
 **Description:** The url of the chroma database. Use http(s)://$HOST:$PORT?header1=value1&header2=value2 to pass headers to the database.Use file://$PATH to use a local file database.
 
-### <a name="vector_store_oneOf_i1"></a>3.2. Property `NoopVectorStore.json`
+### <a name="vector_store_anyOf_i1"></a>3.2. Property `NoopVectorStore.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -312,9 +332,9 @@ Specific value: `"ChromaVectorStore"`
 
 | Property                                                   | Pattern | Type  | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------- | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#vector_store_oneOf_i1_implementation ) | No      | const | No         | -          | NoopVectorStore   |
+| - [implementation](#vector_store_anyOf_i1_implementation ) | No      | const | No         | -          | NoopVectorStore   |
 
-#### <a name="vector_store_oneOf_i1_implementation"></a>3.2.1. Property `implementation`
+#### <a name="vector_store_anyOf_i1_implementation"></a>3.2.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |

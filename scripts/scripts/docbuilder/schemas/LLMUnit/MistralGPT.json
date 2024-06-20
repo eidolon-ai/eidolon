@@ -6,7 +6,9 @@
     },
     "model": {
       "$ref": "file:../LLMModel/overview.json",
-      "default": "LLMModel"
+      "default": {
+        "implementation": "LLMModel"
+      }
     },
     "temperature": {
       "default": 0.3,

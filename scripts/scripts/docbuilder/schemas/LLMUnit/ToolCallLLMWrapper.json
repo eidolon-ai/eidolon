@@ -11,13 +11,14 @@
     },
     "llm_unit": {
       "$ref": "file:../LLMUnit/overview.json",
-      "default": "OpenAIGPT"
+      "default": {
+        "implementation": "OpenAIGPT"
+      }
     },
     "model": {
       "anyOf": [
         {
-          "$ref": "file:../LLMModel/overview.json",
-          "default": "LLMModel"
+          "$ref": "file:../LLMModel/overview.json"
         },
         {
           "type": "null"

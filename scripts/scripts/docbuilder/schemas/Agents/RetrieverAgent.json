@@ -13,19 +13,27 @@
     },
     "question_transformer": {
       "$ref": "file:../QuestionTransformer/overview.json",
-      "default": "MultiQuestionTransformer"
+      "default": {
+        "implementation": "MultiQuestionTransformer"
+      }
     },
     "document_retriever": {
       "$ref": "file:../DocumentRetriever/overview.json",
-      "default": "SimilarityMemoryRetriever"
+      "default": {
+        "implementation": "SimilarityMemoryRetriever"
+      }
     },
     "document_reranker": {
       "$ref": "file:../DocumentReranker/overview.json",
-      "default": "RAGFusionReranker"
+      "default": {
+        "implementation": "RAGFusionReranker"
+      }
     },
     "result_summarizer": {
       "$ref": "file:../ResultSummarizer/overview.json",
-      "default": "ResultSummarizer"
+      "default": {
+        "implementation": "ResultSummarizer"
+      }
     },
     "name": {
       "description": "The name of the document store to use.",
@@ -66,8 +74,7 @@
     "document_manager": {
       "anyOf": [
         {
-          "$ref": "file:../DocumentManager/overview.json",
-          "default": "DocumentManager"
+          "$ref": "file:../DocumentManager/overview.json"
         },
         {
           "type": "null"

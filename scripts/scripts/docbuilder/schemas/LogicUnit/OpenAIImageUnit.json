@@ -18,7 +18,9 @@
     },
     "connection_handler": {
       "$ref": "file:../OpenAIConnectionHandler/overview.json",
-      "default": "OpenAIConnectionHandler"
+      "default": {
+        "implementation": "OpenAIConnectionHandler"
+      }
     },
     "image_to_text_model": {
       "default": "gpt-4-turbo",

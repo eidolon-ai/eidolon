@@ -6,22 +6,28 @@
     },
     "authentication_processor": {
       "$ref": "file:../AuthenticationProcessor/overview.json",
-      "default": "NoopAuthProcessor"
+      "default": {
+        "implementation": "NoopAuthProcessor"
+      }
     },
     "functional_authorizer": {
       "$ref": "file:../FunctionalAuthorizer/overview.json",
-      "default": "NoopFunctionalAuth"
+      "default": {
+        "implementation": "NoopFunctionalAuth"
+      }
     },
     "process_authorizer": {
       "$ref": "file:../ProcessAuthorizer/overview.json",
-      "default": "PrivateAuthorizer"
+      "default": {
+        "implementation": "PrivateAuthorizer"
+      }
     },
     "safe_paths": {
       "default": [
-        "/openapi.json",
         "/system/health",
-        "/favicon.ico",
-        "/docs"
+        "/openapi.json",
+        "/docs",
+        "/favicon.ico"
       ],
       "items": {
         "type": "string"

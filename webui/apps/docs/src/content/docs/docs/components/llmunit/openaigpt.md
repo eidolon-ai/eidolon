@@ -30,25 +30,25 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"LLMModel"`                                                              |
+| **Default**               | `{"implementation": "LLMModel"}`                                          |
 | **Defined in**            | [LLMModel](/docs/components/llmmodel/overview)                                            |
 
 **Description:** Overview of LLMModel components
 
-| One of(Option)                                   |
+| Any of(Option)                                   |
 | ------------------------------------------------ |
-| [claude-3-haiku-20240307.json](#model_oneOf_i0)  |
-| [claude-3-opus-20240229.json](#model_oneOf_i1)   |
-| [claude-3-sonnet-20240229.json](#model_oneOf_i2) |
-| [gpt-3.5-turbo.json](#model_oneOf_i3)            |
-| [gpt-4-turbo.json](#model_oneOf_i4)              |
-| [gpt-4o.json](#model_oneOf_i5)                   |
-| [llama3-8b.json](#model_oneOf_i6)                |
-| [mistral-large-latest.json](#model_oneOf_i7)     |
-| [mistral-medium-latest.json](#model_oneOf_i8)    |
-| [mistral-small-latest.json](#model_oneOf_i9)     |
+| [claude-3-haiku-20240307.json](#model_anyOf_i0)  |
+| [claude-3-opus-20240229.json](#model_anyOf_i1)   |
+| [claude-3-sonnet-20240229.json](#model_anyOf_i2) |
+| [gpt-3.5-turbo.json](#model_anyOf_i3)            |
+| [gpt-4-turbo.json](#model_anyOf_i4)              |
+| [gpt-4o.json](#model_anyOf_i5)                   |
+| [llama3-8b.json](#model_anyOf_i6)                |
+| [mistral-large-latest.json](#model_anyOf_i7)     |
+| [mistral-medium-latest.json](#model_anyOf_i8)    |
+| [mistral-small-latest.json](#model_anyOf_i9)     |
 
-### <a name="model_oneOf_i0"></a>2.1. Property `claude-3-haiku-20240307.json`
+### <a name="model_anyOf_i0"></a>2.1. Property `claude-3-haiku-20240307.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -59,16 +59,16 @@ Specific value: `"OpenAIGPT"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description       |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------- |
-| - [implementation](#model_oneOf_i0_implementation )             | No      | const   | No         | -          | claude-3-haiku-20240307 |
-| + [human_name](#model_oneOf_i0_human_name )                     | No      | string  | No         | -          | Human Name              |
-| + [name](#model_oneOf_i0_name )                                 | No      | string  | No         | -          | Name                    |
-| + [input_context_limit](#model_oneOf_i0_input_context_limit )   | No      | integer | No         | -          | Input Context Limit     |
-| + [output_context_limit](#model_oneOf_i0_output_context_limit ) | No      | integer | No         | -          | Output Context Limit    |
-| + [supports_tools](#model_oneOf_i0_supports_tools )             | No      | boolean | No         | -          | Supports Tools          |
-| + [supports_image_input](#model_oneOf_i0_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input    |
-| + [supports_audio_input](#model_oneOf_i0_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input    |
+| - [implementation](#model_anyOf_i0_implementation )             | No      | const   | No         | -          | claude-3-haiku-20240307 |
+| + [human_name](#model_anyOf_i0_human_name )                     | No      | string  | No         | -          | Human Name              |
+| + [name](#model_anyOf_i0_name )                                 | No      | string  | No         | -          | Name                    |
+| + [input_context_limit](#model_anyOf_i0_input_context_limit )   | No      | integer | No         | -          | Input Context Limit     |
+| + [output_context_limit](#model_anyOf_i0_output_context_limit ) | No      | integer | No         | -          | Output Context Limit    |
+| + [supports_tools](#model_anyOf_i0_supports_tools )             | No      | boolean | No         | -          | Supports Tools          |
+| + [supports_image_input](#model_anyOf_i0_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input    |
+| + [supports_audio_input](#model_anyOf_i0_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input    |
 
-#### <a name="model_oneOf_i0_implementation"></a>2.1.1. Property `implementation`
+#### <a name="model_anyOf_i0_implementation"></a>2.1.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -79,7 +79,7 @@ Specific value: `"OpenAIGPT"`
 
 Specific value: `"claude-3-haiku-20240307"`
 
-#### <a name="model_oneOf_i0_human_name"></a>2.1.2. Property `human_name`
+#### <a name="model_anyOf_i0_human_name"></a>2.1.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -88,7 +88,7 @@ Specific value: `"claude-3-haiku-20240307"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i0_name"></a>2.1.3. Property `name`
+#### <a name="model_anyOf_i0_name"></a>2.1.3. Property `name`
 
 **Title:** Name
 
@@ -97,7 +97,7 @@ Specific value: `"claude-3-haiku-20240307"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i0_input_context_limit"></a>2.1.4. Property `input_context_limit`
+#### <a name="model_anyOf_i0_input_context_limit"></a>2.1.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -106,7 +106,7 @@ Specific value: `"claude-3-haiku-20240307"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i0_output_context_limit"></a>2.1.5. Property `output_context_limit`
+#### <a name="model_anyOf_i0_output_context_limit"></a>2.1.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -115,7 +115,7 @@ Specific value: `"claude-3-haiku-20240307"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i0_supports_tools"></a>2.1.6. Property `supports_tools`
+#### <a name="model_anyOf_i0_supports_tools"></a>2.1.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -124,7 +124,7 @@ Specific value: `"claude-3-haiku-20240307"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i0_supports_image_input"></a>2.1.7. Property `supports_image_input`
+#### <a name="model_anyOf_i0_supports_image_input"></a>2.1.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -133,7 +133,7 @@ Specific value: `"claude-3-haiku-20240307"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i0_supports_audio_input"></a>2.1.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i0_supports_audio_input"></a>2.1.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -142,7 +142,7 @@ Specific value: `"claude-3-haiku-20240307"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i1"></a>2.2. Property `claude-3-opus-20240229.json`
+### <a name="model_anyOf_i1"></a>2.2. Property `claude-3-opus-20240229.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -153,16 +153,16 @@ Specific value: `"claude-3-haiku-20240307"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description      |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
-| - [implementation](#model_oneOf_i1_implementation )             | No      | const   | No         | -          | claude-3-opus-20240229 |
-| + [human_name](#model_oneOf_i1_human_name )                     | No      | string  | No         | -          | Human Name             |
-| + [name](#model_oneOf_i1_name )                                 | No      | string  | No         | -          | Name                   |
-| + [input_context_limit](#model_oneOf_i1_input_context_limit )   | No      | integer | No         | -          | Input Context Limit    |
-| + [output_context_limit](#model_oneOf_i1_output_context_limit ) | No      | integer | No         | -          | Output Context Limit   |
-| + [supports_tools](#model_oneOf_i1_supports_tools )             | No      | boolean | No         | -          | Supports Tools         |
-| + [supports_image_input](#model_oneOf_i1_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input   |
-| + [supports_audio_input](#model_oneOf_i1_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input   |
+| - [implementation](#model_anyOf_i1_implementation )             | No      | const   | No         | -          | claude-3-opus-20240229 |
+| + [human_name](#model_anyOf_i1_human_name )                     | No      | string  | No         | -          | Human Name             |
+| + [name](#model_anyOf_i1_name )                                 | No      | string  | No         | -          | Name                   |
+| + [input_context_limit](#model_anyOf_i1_input_context_limit )   | No      | integer | No         | -          | Input Context Limit    |
+| + [output_context_limit](#model_anyOf_i1_output_context_limit ) | No      | integer | No         | -          | Output Context Limit   |
+| + [supports_tools](#model_anyOf_i1_supports_tools )             | No      | boolean | No         | -          | Supports Tools         |
+| + [supports_image_input](#model_anyOf_i1_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input   |
+| + [supports_audio_input](#model_anyOf_i1_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input   |
 
-#### <a name="model_oneOf_i1_implementation"></a>2.2.1. Property `implementation`
+#### <a name="model_anyOf_i1_implementation"></a>2.2.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -173,7 +173,7 @@ Specific value: `"claude-3-haiku-20240307"`
 
 Specific value: `"claude-3-opus-20240229"`
 
-#### <a name="model_oneOf_i1_human_name"></a>2.2.2. Property `human_name`
+#### <a name="model_anyOf_i1_human_name"></a>2.2.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -182,7 +182,7 @@ Specific value: `"claude-3-opus-20240229"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i1_name"></a>2.2.3. Property `name`
+#### <a name="model_anyOf_i1_name"></a>2.2.3. Property `name`
 
 **Title:** Name
 
@@ -191,7 +191,7 @@ Specific value: `"claude-3-opus-20240229"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i1_input_context_limit"></a>2.2.4. Property `input_context_limit`
+#### <a name="model_anyOf_i1_input_context_limit"></a>2.2.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -200,7 +200,7 @@ Specific value: `"claude-3-opus-20240229"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i1_output_context_limit"></a>2.2.5. Property `output_context_limit`
+#### <a name="model_anyOf_i1_output_context_limit"></a>2.2.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -209,7 +209,7 @@ Specific value: `"claude-3-opus-20240229"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i1_supports_tools"></a>2.2.6. Property `supports_tools`
+#### <a name="model_anyOf_i1_supports_tools"></a>2.2.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -218,7 +218,7 @@ Specific value: `"claude-3-opus-20240229"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i1_supports_image_input"></a>2.2.7. Property `supports_image_input`
+#### <a name="model_anyOf_i1_supports_image_input"></a>2.2.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -227,7 +227,7 @@ Specific value: `"claude-3-opus-20240229"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i1_supports_audio_input"></a>2.2.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i1_supports_audio_input"></a>2.2.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -236,7 +236,7 @@ Specific value: `"claude-3-opus-20240229"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i2"></a>2.3. Property `claude-3-sonnet-20240229.json`
+### <a name="model_anyOf_i2"></a>2.3. Property `claude-3-sonnet-20240229.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -247,16 +247,16 @@ Specific value: `"claude-3-opus-20240229"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description        |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#model_oneOf_i2_implementation )             | No      | const   | No         | -          | claude-3-sonnet-20240229 |
-| + [human_name](#model_oneOf_i2_human_name )                     | No      | string  | No         | -          | Human Name               |
-| + [name](#model_oneOf_i2_name )                                 | No      | string  | No         | -          | Name                     |
-| + [input_context_limit](#model_oneOf_i2_input_context_limit )   | No      | integer | No         | -          | Input Context Limit      |
-| + [output_context_limit](#model_oneOf_i2_output_context_limit ) | No      | integer | No         | -          | Output Context Limit     |
-| + [supports_tools](#model_oneOf_i2_supports_tools )             | No      | boolean | No         | -          | Supports Tools           |
-| + [supports_image_input](#model_oneOf_i2_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input     |
-| + [supports_audio_input](#model_oneOf_i2_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input     |
+| - [implementation](#model_anyOf_i2_implementation )             | No      | const   | No         | -          | claude-3-sonnet-20240229 |
+| + [human_name](#model_anyOf_i2_human_name )                     | No      | string  | No         | -          | Human Name               |
+| + [name](#model_anyOf_i2_name )                                 | No      | string  | No         | -          | Name                     |
+| + [input_context_limit](#model_anyOf_i2_input_context_limit )   | No      | integer | No         | -          | Input Context Limit      |
+| + [output_context_limit](#model_anyOf_i2_output_context_limit ) | No      | integer | No         | -          | Output Context Limit     |
+| + [supports_tools](#model_anyOf_i2_supports_tools )             | No      | boolean | No         | -          | Supports Tools           |
+| + [supports_image_input](#model_anyOf_i2_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input     |
+| + [supports_audio_input](#model_anyOf_i2_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input     |
 
-#### <a name="model_oneOf_i2_implementation"></a>2.3.1. Property `implementation`
+#### <a name="model_anyOf_i2_implementation"></a>2.3.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -267,7 +267,7 @@ Specific value: `"claude-3-opus-20240229"`
 
 Specific value: `"claude-3-sonnet-20240229"`
 
-#### <a name="model_oneOf_i2_human_name"></a>2.3.2. Property `human_name`
+#### <a name="model_anyOf_i2_human_name"></a>2.3.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -276,7 +276,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i2_name"></a>2.3.3. Property `name`
+#### <a name="model_anyOf_i2_name"></a>2.3.3. Property `name`
 
 **Title:** Name
 
@@ -285,7 +285,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i2_input_context_limit"></a>2.3.4. Property `input_context_limit`
+#### <a name="model_anyOf_i2_input_context_limit"></a>2.3.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -294,7 +294,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i2_output_context_limit"></a>2.3.5. Property `output_context_limit`
+#### <a name="model_anyOf_i2_output_context_limit"></a>2.3.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -303,7 +303,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i2_supports_tools"></a>2.3.6. Property `supports_tools`
+#### <a name="model_anyOf_i2_supports_tools"></a>2.3.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -312,7 +312,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i2_supports_image_input"></a>2.3.7. Property `supports_image_input`
+#### <a name="model_anyOf_i2_supports_image_input"></a>2.3.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -321,7 +321,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i2_supports_audio_input"></a>2.3.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i2_supports_audio_input"></a>2.3.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -330,7 +330,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i3"></a>2.4. Property `gpt-3.5-turbo.json`
+### <a name="model_anyOf_i3"></a>2.4. Property `gpt-3.5-turbo.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -341,16 +341,16 @@ Specific value: `"claude-3-sonnet-20240229"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#model_oneOf_i3_implementation )             | No      | const   | No         | -          | gpt-3.5-turbo        |
-| + [human_name](#model_oneOf_i3_human_name )                     | No      | string  | No         | -          | Human Name           |
-| + [name](#model_oneOf_i3_name )                                 | No      | string  | No         | -          | Name                 |
-| + [input_context_limit](#model_oneOf_i3_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| + [output_context_limit](#model_oneOf_i3_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| + [supports_tools](#model_oneOf_i3_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| + [supports_image_input](#model_oneOf_i3_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| + [supports_audio_input](#model_oneOf_i3_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| - [implementation](#model_anyOf_i3_implementation )             | No      | const   | No         | -          | gpt-3.5-turbo        |
+| + [human_name](#model_anyOf_i3_human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#model_anyOf_i3_name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#model_anyOf_i3_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#model_anyOf_i3_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#model_anyOf_i3_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#model_anyOf_i3_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#model_anyOf_i3_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
-#### <a name="model_oneOf_i3_implementation"></a>2.4.1. Property `implementation`
+#### <a name="model_anyOf_i3_implementation"></a>2.4.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -361,7 +361,7 @@ Specific value: `"claude-3-sonnet-20240229"`
 
 Specific value: `"gpt-3.5-turbo"`
 
-#### <a name="model_oneOf_i3_human_name"></a>2.4.2. Property `human_name`
+#### <a name="model_anyOf_i3_human_name"></a>2.4.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -370,7 +370,7 @@ Specific value: `"gpt-3.5-turbo"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i3_name"></a>2.4.3. Property `name`
+#### <a name="model_anyOf_i3_name"></a>2.4.3. Property `name`
 
 **Title:** Name
 
@@ -379,7 +379,7 @@ Specific value: `"gpt-3.5-turbo"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i3_input_context_limit"></a>2.4.4. Property `input_context_limit`
+#### <a name="model_anyOf_i3_input_context_limit"></a>2.4.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -388,7 +388,7 @@ Specific value: `"gpt-3.5-turbo"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i3_output_context_limit"></a>2.4.5. Property `output_context_limit`
+#### <a name="model_anyOf_i3_output_context_limit"></a>2.4.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -397,7 +397,7 @@ Specific value: `"gpt-3.5-turbo"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i3_supports_tools"></a>2.4.6. Property `supports_tools`
+#### <a name="model_anyOf_i3_supports_tools"></a>2.4.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -406,7 +406,7 @@ Specific value: `"gpt-3.5-turbo"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i3_supports_image_input"></a>2.4.7. Property `supports_image_input`
+#### <a name="model_anyOf_i3_supports_image_input"></a>2.4.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -415,7 +415,7 @@ Specific value: `"gpt-3.5-turbo"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i3_supports_audio_input"></a>2.4.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i3_supports_audio_input"></a>2.4.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -424,7 +424,7 @@ Specific value: `"gpt-3.5-turbo"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i4"></a>2.5. Property `gpt-4-turbo.json`
+### <a name="model_anyOf_i4"></a>2.5. Property `gpt-4-turbo.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -435,16 +435,16 @@ Specific value: `"gpt-3.5-turbo"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#model_oneOf_i4_implementation )             | No      | const   | No         | -          | gpt-4-turbo          |
-| + [human_name](#model_oneOf_i4_human_name )                     | No      | string  | No         | -          | Human Name           |
-| + [name](#model_oneOf_i4_name )                                 | No      | string  | No         | -          | Name                 |
-| + [input_context_limit](#model_oneOf_i4_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| + [output_context_limit](#model_oneOf_i4_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| + [supports_tools](#model_oneOf_i4_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| + [supports_image_input](#model_oneOf_i4_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| + [supports_audio_input](#model_oneOf_i4_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| - [implementation](#model_anyOf_i4_implementation )             | No      | const   | No         | -          | gpt-4-turbo          |
+| + [human_name](#model_anyOf_i4_human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#model_anyOf_i4_name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#model_anyOf_i4_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#model_anyOf_i4_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#model_anyOf_i4_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#model_anyOf_i4_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#model_anyOf_i4_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
-#### <a name="model_oneOf_i4_implementation"></a>2.5.1. Property `implementation`
+#### <a name="model_anyOf_i4_implementation"></a>2.5.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -455,7 +455,7 @@ Specific value: `"gpt-3.5-turbo"`
 
 Specific value: `"gpt-4-turbo"`
 
-#### <a name="model_oneOf_i4_human_name"></a>2.5.2. Property `human_name`
+#### <a name="model_anyOf_i4_human_name"></a>2.5.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -464,7 +464,7 @@ Specific value: `"gpt-4-turbo"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i4_name"></a>2.5.3. Property `name`
+#### <a name="model_anyOf_i4_name"></a>2.5.3. Property `name`
 
 **Title:** Name
 
@@ -473,7 +473,7 @@ Specific value: `"gpt-4-turbo"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i4_input_context_limit"></a>2.5.4. Property `input_context_limit`
+#### <a name="model_anyOf_i4_input_context_limit"></a>2.5.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -482,7 +482,7 @@ Specific value: `"gpt-4-turbo"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i4_output_context_limit"></a>2.5.5. Property `output_context_limit`
+#### <a name="model_anyOf_i4_output_context_limit"></a>2.5.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -491,7 +491,7 @@ Specific value: `"gpt-4-turbo"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i4_supports_tools"></a>2.5.6. Property `supports_tools`
+#### <a name="model_anyOf_i4_supports_tools"></a>2.5.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -500,7 +500,7 @@ Specific value: `"gpt-4-turbo"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i4_supports_image_input"></a>2.5.7. Property `supports_image_input`
+#### <a name="model_anyOf_i4_supports_image_input"></a>2.5.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -509,7 +509,7 @@ Specific value: `"gpt-4-turbo"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i4_supports_audio_input"></a>2.5.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i4_supports_audio_input"></a>2.5.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -518,7 +518,7 @@ Specific value: `"gpt-4-turbo"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i5"></a>2.6. Property `gpt-4o.json`
+### <a name="model_anyOf_i5"></a>2.6. Property `gpt-4o.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -529,16 +529,16 @@ Specific value: `"gpt-4-turbo"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#model_oneOf_i5_implementation )             | No      | const   | No         | -          | gpt-4o               |
-| + [human_name](#model_oneOf_i5_human_name )                     | No      | string  | No         | -          | Human Name           |
-| + [name](#model_oneOf_i5_name )                                 | No      | string  | No         | -          | Name                 |
-| + [input_context_limit](#model_oneOf_i5_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| + [output_context_limit](#model_oneOf_i5_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| + [supports_tools](#model_oneOf_i5_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| + [supports_image_input](#model_oneOf_i5_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| + [supports_audio_input](#model_oneOf_i5_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| - [implementation](#model_anyOf_i5_implementation )             | No      | const   | No         | -          | gpt-4o               |
+| + [human_name](#model_anyOf_i5_human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#model_anyOf_i5_name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#model_anyOf_i5_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#model_anyOf_i5_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#model_anyOf_i5_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#model_anyOf_i5_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#model_anyOf_i5_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
-#### <a name="model_oneOf_i5_implementation"></a>2.6.1. Property `implementation`
+#### <a name="model_anyOf_i5_implementation"></a>2.6.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -549,7 +549,7 @@ Specific value: `"gpt-4-turbo"`
 
 Specific value: `"gpt-4o"`
 
-#### <a name="model_oneOf_i5_human_name"></a>2.6.2. Property `human_name`
+#### <a name="model_anyOf_i5_human_name"></a>2.6.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -558,7 +558,7 @@ Specific value: `"gpt-4o"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i5_name"></a>2.6.3. Property `name`
+#### <a name="model_anyOf_i5_name"></a>2.6.3. Property `name`
 
 **Title:** Name
 
@@ -567,7 +567,7 @@ Specific value: `"gpt-4o"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i5_input_context_limit"></a>2.6.4. Property `input_context_limit`
+#### <a name="model_anyOf_i5_input_context_limit"></a>2.6.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -576,7 +576,7 @@ Specific value: `"gpt-4o"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i5_output_context_limit"></a>2.6.5. Property `output_context_limit`
+#### <a name="model_anyOf_i5_output_context_limit"></a>2.6.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -585,7 +585,7 @@ Specific value: `"gpt-4o"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i5_supports_tools"></a>2.6.6. Property `supports_tools`
+#### <a name="model_anyOf_i5_supports_tools"></a>2.6.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -594,7 +594,7 @@ Specific value: `"gpt-4o"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i5_supports_image_input"></a>2.6.7. Property `supports_image_input`
+#### <a name="model_anyOf_i5_supports_image_input"></a>2.6.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -603,7 +603,7 @@ Specific value: `"gpt-4o"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i5_supports_audio_input"></a>2.6.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i5_supports_audio_input"></a>2.6.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -612,7 +612,7 @@ Specific value: `"gpt-4o"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i6"></a>2.7. Property `llama3-8b.json`
+### <a name="model_anyOf_i6"></a>2.7. Property `llama3-8b.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -623,16 +623,16 @@ Specific value: `"gpt-4o"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#model_oneOf_i6_implementation )             | No      | const   | No         | -          | llama3-8b            |
-| + [human_name](#model_oneOf_i6_human_name )                     | No      | string  | No         | -          | Human Name           |
-| + [name](#model_oneOf_i6_name )                                 | No      | string  | No         | -          | Name                 |
-| + [input_context_limit](#model_oneOf_i6_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| + [output_context_limit](#model_oneOf_i6_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| + [supports_tools](#model_oneOf_i6_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| + [supports_image_input](#model_oneOf_i6_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| + [supports_audio_input](#model_oneOf_i6_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| - [implementation](#model_anyOf_i6_implementation )             | No      | const   | No         | -          | llama3-8b            |
+| + [human_name](#model_anyOf_i6_human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#model_anyOf_i6_name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#model_anyOf_i6_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#model_anyOf_i6_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#model_anyOf_i6_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#model_anyOf_i6_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#model_anyOf_i6_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
-#### <a name="model_oneOf_i6_implementation"></a>2.7.1. Property `implementation`
+#### <a name="model_anyOf_i6_implementation"></a>2.7.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -643,7 +643,7 @@ Specific value: `"gpt-4o"`
 
 Specific value: `"llama3-8b"`
 
-#### <a name="model_oneOf_i6_human_name"></a>2.7.2. Property `human_name`
+#### <a name="model_anyOf_i6_human_name"></a>2.7.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -652,7 +652,7 @@ Specific value: `"llama3-8b"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i6_name"></a>2.7.3. Property `name`
+#### <a name="model_anyOf_i6_name"></a>2.7.3. Property `name`
 
 **Title:** Name
 
@@ -661,7 +661,7 @@ Specific value: `"llama3-8b"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i6_input_context_limit"></a>2.7.4. Property `input_context_limit`
+#### <a name="model_anyOf_i6_input_context_limit"></a>2.7.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -670,7 +670,7 @@ Specific value: `"llama3-8b"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i6_output_context_limit"></a>2.7.5. Property `output_context_limit`
+#### <a name="model_anyOf_i6_output_context_limit"></a>2.7.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -679,7 +679,7 @@ Specific value: `"llama3-8b"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i6_supports_tools"></a>2.7.6. Property `supports_tools`
+#### <a name="model_anyOf_i6_supports_tools"></a>2.7.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -688,7 +688,7 @@ Specific value: `"llama3-8b"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i6_supports_image_input"></a>2.7.7. Property `supports_image_input`
+#### <a name="model_anyOf_i6_supports_image_input"></a>2.7.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -697,7 +697,7 @@ Specific value: `"llama3-8b"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i6_supports_audio_input"></a>2.7.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i6_supports_audio_input"></a>2.7.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -706,7 +706,7 @@ Specific value: `"llama3-8b"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i7"></a>2.8. Property `mistral-large-latest.json`
+### <a name="model_anyOf_i7"></a>2.8. Property `mistral-large-latest.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -717,16 +717,16 @@ Specific value: `"llama3-8b"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#model_oneOf_i7_implementation )             | No      | const   | No         | -          | mistral-large-latest |
-| + [human_name](#model_oneOf_i7_human_name )                     | No      | string  | No         | -          | Human Name           |
-| + [name](#model_oneOf_i7_name )                                 | No      | string  | No         | -          | Name                 |
-| + [input_context_limit](#model_oneOf_i7_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| + [output_context_limit](#model_oneOf_i7_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| + [supports_tools](#model_oneOf_i7_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| + [supports_image_input](#model_oneOf_i7_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| + [supports_audio_input](#model_oneOf_i7_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| - [implementation](#model_anyOf_i7_implementation )             | No      | const   | No         | -          | mistral-large-latest |
+| + [human_name](#model_anyOf_i7_human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#model_anyOf_i7_name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#model_anyOf_i7_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#model_anyOf_i7_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#model_anyOf_i7_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#model_anyOf_i7_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#model_anyOf_i7_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
-#### <a name="model_oneOf_i7_implementation"></a>2.8.1. Property `implementation`
+#### <a name="model_anyOf_i7_implementation"></a>2.8.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -737,7 +737,7 @@ Specific value: `"llama3-8b"`
 
 Specific value: `"mistral-large-latest"`
 
-#### <a name="model_oneOf_i7_human_name"></a>2.8.2. Property `human_name`
+#### <a name="model_anyOf_i7_human_name"></a>2.8.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -746,7 +746,7 @@ Specific value: `"mistral-large-latest"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i7_name"></a>2.8.3. Property `name`
+#### <a name="model_anyOf_i7_name"></a>2.8.3. Property `name`
 
 **Title:** Name
 
@@ -755,7 +755,7 @@ Specific value: `"mistral-large-latest"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i7_input_context_limit"></a>2.8.4. Property `input_context_limit`
+#### <a name="model_anyOf_i7_input_context_limit"></a>2.8.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -764,7 +764,7 @@ Specific value: `"mistral-large-latest"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i7_output_context_limit"></a>2.8.5. Property `output_context_limit`
+#### <a name="model_anyOf_i7_output_context_limit"></a>2.8.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -773,7 +773,7 @@ Specific value: `"mistral-large-latest"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i7_supports_tools"></a>2.8.6. Property `supports_tools`
+#### <a name="model_anyOf_i7_supports_tools"></a>2.8.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -782,7 +782,7 @@ Specific value: `"mistral-large-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i7_supports_image_input"></a>2.8.7. Property `supports_image_input`
+#### <a name="model_anyOf_i7_supports_image_input"></a>2.8.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -791,7 +791,7 @@ Specific value: `"mistral-large-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i7_supports_audio_input"></a>2.8.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i7_supports_audio_input"></a>2.8.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -800,7 +800,7 @@ Specific value: `"mistral-large-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i8"></a>2.9. Property `mistral-medium-latest.json`
+### <a name="model_anyOf_i8"></a>2.9. Property `mistral-medium-latest.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -811,16 +811,16 @@ Specific value: `"mistral-large-latest"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description     |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------- |
-| - [implementation](#model_oneOf_i8_implementation )             | No      | const   | No         | -          | mistral-medium-latest |
-| + [human_name](#model_oneOf_i8_human_name )                     | No      | string  | No         | -          | Human Name            |
-| + [name](#model_oneOf_i8_name )                                 | No      | string  | No         | -          | Name                  |
-| + [input_context_limit](#model_oneOf_i8_input_context_limit )   | No      | integer | No         | -          | Input Context Limit   |
-| + [output_context_limit](#model_oneOf_i8_output_context_limit ) | No      | integer | No         | -          | Output Context Limit  |
-| + [supports_tools](#model_oneOf_i8_supports_tools )             | No      | boolean | No         | -          | Supports Tools        |
-| + [supports_image_input](#model_oneOf_i8_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input  |
-| + [supports_audio_input](#model_oneOf_i8_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input  |
+| - [implementation](#model_anyOf_i8_implementation )             | No      | const   | No         | -          | mistral-medium-latest |
+| + [human_name](#model_anyOf_i8_human_name )                     | No      | string  | No         | -          | Human Name            |
+| + [name](#model_anyOf_i8_name )                                 | No      | string  | No         | -          | Name                  |
+| + [input_context_limit](#model_anyOf_i8_input_context_limit )   | No      | integer | No         | -          | Input Context Limit   |
+| + [output_context_limit](#model_anyOf_i8_output_context_limit ) | No      | integer | No         | -          | Output Context Limit  |
+| + [supports_tools](#model_anyOf_i8_supports_tools )             | No      | boolean | No         | -          | Supports Tools        |
+| + [supports_image_input](#model_anyOf_i8_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input  |
+| + [supports_audio_input](#model_anyOf_i8_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input  |
 
-#### <a name="model_oneOf_i8_implementation"></a>2.9.1. Property `implementation`
+#### <a name="model_anyOf_i8_implementation"></a>2.9.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -831,7 +831,7 @@ Specific value: `"mistral-large-latest"`
 
 Specific value: `"mistral-medium-latest"`
 
-#### <a name="model_oneOf_i8_human_name"></a>2.9.2. Property `human_name`
+#### <a name="model_anyOf_i8_human_name"></a>2.9.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -840,7 +840,7 @@ Specific value: `"mistral-medium-latest"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i8_name"></a>2.9.3. Property `name`
+#### <a name="model_anyOf_i8_name"></a>2.9.3. Property `name`
 
 **Title:** Name
 
@@ -849,7 +849,7 @@ Specific value: `"mistral-medium-latest"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i8_input_context_limit"></a>2.9.4. Property `input_context_limit`
+#### <a name="model_anyOf_i8_input_context_limit"></a>2.9.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -858,7 +858,7 @@ Specific value: `"mistral-medium-latest"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i8_output_context_limit"></a>2.9.5. Property `output_context_limit`
+#### <a name="model_anyOf_i8_output_context_limit"></a>2.9.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -867,7 +867,7 @@ Specific value: `"mistral-medium-latest"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i8_supports_tools"></a>2.9.6. Property `supports_tools`
+#### <a name="model_anyOf_i8_supports_tools"></a>2.9.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -876,7 +876,7 @@ Specific value: `"mistral-medium-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i8_supports_image_input"></a>2.9.7. Property `supports_image_input`
+#### <a name="model_anyOf_i8_supports_image_input"></a>2.9.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -885,7 +885,7 @@ Specific value: `"mistral-medium-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i8_supports_audio_input"></a>2.9.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i8_supports_audio_input"></a>2.9.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -894,7 +894,7 @@ Specific value: `"mistral-medium-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="model_oneOf_i9"></a>2.10. Property `mistral-small-latest.json`
+### <a name="model_anyOf_i9"></a>2.10. Property `mistral-small-latest.json`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -905,16 +905,16 @@ Specific value: `"mistral-medium-latest"`
 
 | Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#model_oneOf_i9_implementation )             | No      | const   | No         | -          | mistral-small-latest |
-| + [human_name](#model_oneOf_i9_human_name )                     | No      | string  | No         | -          | Human Name           |
-| + [name](#model_oneOf_i9_name )                                 | No      | string  | No         | -          | Name                 |
-| + [input_context_limit](#model_oneOf_i9_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| + [output_context_limit](#model_oneOf_i9_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| + [supports_tools](#model_oneOf_i9_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| + [supports_image_input](#model_oneOf_i9_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| + [supports_audio_input](#model_oneOf_i9_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| - [implementation](#model_anyOf_i9_implementation )             | No      | const   | No         | -          | mistral-small-latest |
+| + [human_name](#model_anyOf_i9_human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#model_anyOf_i9_name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#model_anyOf_i9_input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#model_anyOf_i9_output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#model_anyOf_i9_supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#model_anyOf_i9_supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#model_anyOf_i9_supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
-#### <a name="model_oneOf_i9_implementation"></a>2.10.1. Property `implementation`
+#### <a name="model_anyOf_i9_implementation"></a>2.10.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -925,7 +925,7 @@ Specific value: `"mistral-medium-latest"`
 
 Specific value: `"mistral-small-latest"`
 
-#### <a name="model_oneOf_i9_human_name"></a>2.10.2. Property `human_name`
+#### <a name="model_anyOf_i9_human_name"></a>2.10.2. Property `human_name`
 
 **Title:** Human Name
 
@@ -934,7 +934,7 @@ Specific value: `"mistral-small-latest"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i9_name"></a>2.10.3. Property `name`
+#### <a name="model_anyOf_i9_name"></a>2.10.3. Property `name`
 
 **Title:** Name
 
@@ -943,7 +943,7 @@ Specific value: `"mistral-small-latest"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-#### <a name="model_oneOf_i9_input_context_limit"></a>2.10.4. Property `input_context_limit`
+#### <a name="model_anyOf_i9_input_context_limit"></a>2.10.4. Property `input_context_limit`
 
 **Title:** Input Context Limit
 
@@ -952,7 +952,7 @@ Specific value: `"mistral-small-latest"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i9_output_context_limit"></a>2.10.5. Property `output_context_limit`
+#### <a name="model_anyOf_i9_output_context_limit"></a>2.10.5. Property `output_context_limit`
 
 **Title:** Output Context Limit
 
@@ -961,7 +961,7 @@ Specific value: `"mistral-small-latest"`
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i9_supports_tools"></a>2.10.6. Property `supports_tools`
+#### <a name="model_anyOf_i9_supports_tools"></a>2.10.6. Property `supports_tools`
 
 **Title:** Supports Tools
 
@@ -970,7 +970,7 @@ Specific value: `"mistral-small-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i9_supports_image_input"></a>2.10.7. Property `supports_image_input`
+#### <a name="model_anyOf_i9_supports_image_input"></a>2.10.7. Property `supports_image_input`
 
 **Title:** Supports Image Input
 
@@ -979,7 +979,7 @@ Specific value: `"mistral-small-latest"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-#### <a name="model_oneOf_i9_supports_audio_input"></a>2.10.8. Property `supports_audio_input`
+#### <a name="model_anyOf_i9_supports_audio_input"></a>2.10.8. Property `supports_audio_input`
 
 **Title:** Supports Audio Input
 
@@ -1042,23 +1042,43 @@ Specific value: `"mistral-small-latest"`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
+| **Type**                  | `combining`                                                               |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"OpenAIConnectionHandler"`                                               |
+| **Default**               | `{"implementation": "OpenAIConnectionHandler"}`                           |
 | **Defined in**            | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)                             |
 
 **Description:** Overview of OpenAIConnectionHandler components
 
-| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description            |
-| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------- |
-| - [implementation](#connection_handler_implementation )                   | No      | const           | No         | -          | AzureOpenAIConnectionHandler |
-| - [azure_ad_token_provider](#connection_handler_azure_ad_token_provider ) | No      | Combination     | No         | -          | -                            |
-| - [token_provider_scopes](#connection_handler_token_provider_scopes )     | No      | array of string | No         | -          | Token Provider Scopes        |
-| - [api_version](#connection_handler_api_version )                         | No      | string          | No         | -          | Api Version                  |
-| - [](#connection_handler_additionalProperties )                           | No      | object          | No         | -          | -                            |
+| Any of(Option)                                                    |
+| ----------------------------------------------------------------- |
+| [AzureOpenAIConnectionHandler.json](#connection_handler_anyOf_i0) |
 
-### <a name="connection_handler_implementation"></a>6.1. Property `implementation`
+### <a name="connection_handler_anyOf_i0"></a>6.1. Property `AzureOpenAIConnectionHandler.json`
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:./AzureOpenAIConnectionHandler.json                                  |
+
+**Description:** Automatically infers the values from environment variables for:
+    - `api_key` from `AZURE_OPENAI_API_KEY` (IFF `api_key` AND 'azure_ad_token_provider' is not provided)
+    - `organization` from `OPENAI_ORG_ID`
+    - `azure_ad_token` from `AZURE_OPENAI_AD_TOKEN`
+    - `api_version` from `OPENAI_API_VERSION`
+    - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
+
+| Property                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description            |
+| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------- |
+| - [implementation](#connection_handler_anyOf_i0_implementation )                   | No      | const           | No         | -          | AzureOpenAIConnectionHandler |
+| - [azure_ad_token_provider](#connection_handler_anyOf_i0_azure_ad_token_provider ) | No      | Combination     | No         | -          | -                            |
+| - [token_provider_scopes](#connection_handler_anyOf_i0_token_provider_scopes )     | No      | array of string | No         | -          | Token Provider Scopes        |
+| - [api_version](#connection_handler_anyOf_i0_api_version )                         | No      | string          | No         | -          | Api Version                  |
+| - [](#connection_handler_anyOf_i0_additionalProperties )                           | No      | object          | No         | -          | -                            |
+
+#### <a name="connection_handler_anyOf_i0_implementation"></a>6.1.1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
@@ -1069,7 +1089,7 @@ Specific value: `"mistral-small-latest"`
 
 Specific value: `"AzureOpenAIConnectionHandler"`
 
-### <a name="connection_handler_azure_ad_token_provider"></a>6.2. Property `azure_ad_token_provider`
+#### <a name="connection_handler_anyOf_i0_azure_ad_token_provider"></a>6.1.2. Property `azure_ad_token_provider`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1077,12 +1097,12 @@ Specific value: `"AzureOpenAIConnectionHandler"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-| Any of(Option)                                                    |
-| ----------------------------------------------------------------- |
-| [Reference](#connection_handler_azure_ad_token_provider_anyOf_i0) |
-| [item 1](#connection_handler_azure_ad_token_provider_anyOf_i1)    |
+| Any of(Option)                                                             |
+| -------------------------------------------------------------------------- |
+| [Reference](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0) |
+| [item 1](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i1)    |
 
-#### <a name="connection_handler_azure_ad_token_provider_anyOf_i0"></a>6.2.1. Property `Reference`
+##### <a name="connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0"></a>6.1.2.1. Property `Reference`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1112,12 +1132,12 @@ Attributes:
 Methods:
     instantiate: This method is used to create an instance of the class that the reference points to.
 
-| Property                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#connection_handler_azure_ad_token_provider_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#connection_handler_azure_ad_token_provider_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| Property                                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-##### <a name="connection_handler_azure_ad_token_provider_anyOf_i0_implementation"></a>6.2.1.1. Property `implementation`
+###### <a name="connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i0_implementation"></a>6.1.2.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -1127,14 +1147,14 @@ Methods:
 | **Required** | No       |
 | **Default**  | `null`   |
 
-#### <a name="connection_handler_azure_ad_token_provider_anyOf_i1"></a>6.2.2. Property `item 1`
+##### <a name="connection_handler_anyOf_i0_azure_ad_token_provider_anyOf_i1"></a>6.1.2.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-### <a name="connection_handler_token_provider_scopes"></a>6.3. Property `token_provider_scopes`
+#### <a name="connection_handler_anyOf_i0_token_provider_scopes"></a>6.1.3. Property `token_provider_scopes`
 
 **Title:** Token Provider Scopes
 
@@ -1152,18 +1172,18 @@ Methods:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                | Description |
-| ------------------------------------------------------------------------------ | ----------- |
-| [token_provider_scopes items](#connection_handler_token_provider_scopes_items) | -           |
+| Each item of this array must be                                                         | Description |
+| --------------------------------------------------------------------------------------- | ----------- |
+| [token_provider_scopes items](#connection_handler_anyOf_i0_token_provider_scopes_items) | -           |
 
-#### <a name="autogenerated_heading_2"></a>6.3.1. token_provider_scopes items
+##### <a name="autogenerated_heading_2"></a>6.1.3.1. token_provider_scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="connection_handler_api_version"></a>6.4. Property `api_version`
+#### <a name="connection_handler_anyOf_i0_api_version"></a>6.1.4. Property `api_version`
 
 **Title:** Api Version
 

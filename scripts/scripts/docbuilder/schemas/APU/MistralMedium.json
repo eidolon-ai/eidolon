@@ -12,21 +12,27 @@
     },
     "io_unit": {
       "$ref": "file:../IOUnit/overview.json",
-      "default": "IOUnit"
+      "default": {
+        "implementation": "IOUnit"
+      }
     },
     "memory_unit": {
       "$ref": "file:../MemoryUnit/overview.json",
-      "default": "RawMemoryUnit"
+      "default": {
+        "implementation": "RawMemoryUnit"
+      }
     },
     "llm_unit": {
       "$ref": "file:../LLMUnit/overview.json",
-      "default": "OpenAIGPT"
+      "default": {
+        "implementation": "MistralGPT",
+        "model": "mistral-medium-latest"
+      }
     },
     "logic_units": {
       "default": [],
       "items": {
-        "$ref": "file:../LogicUnit/overview.json",
-        "default": "LogicUnit"
+        "$ref": "file:../LogicUnit/overview.json"
       },
       "title": "Logic Units",
       "type": "array"
@@ -34,8 +40,7 @@
     "audio_unit": {
       "anyOf": [
         {
-          "$ref": "file:../AudioUnit/overview.json",
-          "default": "AudioUnit"
+          "$ref": "file:../AudioUnit/overview.json"
         },
         {
           "type": "null"
@@ -79,7 +84,9 @@
     },
     "document_processor": {
       "$ref": "file:../DocumentProcessor/overview.json",
-      "default": "DocumentProcessor"
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
     }
   },
   "title": "MistralMedium",

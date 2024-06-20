@@ -123,8 +123,7 @@
           "title": "Title"
         },
         "apu": {
-          "$ref": "file:../APU/overview.json",
-          "default": "ConversationalAPU"
+          "$ref": "file:../APU/overview.json"
         },
         "default": {
           "type": "boolean",
@@ -196,7 +195,9 @@
     },
     "apu": {
       "$ref": "file:../APU/overview.json",
-      "default": "ConversationalAPU"
+      "default": {
+        "implementation": "ConversationalAPU"
+      }
     },
     "apus": {
       "default": [],
@@ -217,7 +218,9 @@
     },
     "doc_processor": {
       "$ref": "file:../DocumentProcessor/overview.json",
-      "default": "DocumentProcessor"
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
     }
   },
   "title": "SimpleAgent",

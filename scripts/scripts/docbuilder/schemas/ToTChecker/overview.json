@@ -1,7 +1,11 @@
 {
   "title": "ToTChecker",
   "description": "Overview of ToTChecker components",
-  "anyOf": [],
+  "anyOf": [
+    {
+      "$ref": "file:./ToTChecker.json"
+    }
+  ],
   "reference_group": {
     "type": "ToTChecker"
   }

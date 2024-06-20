@@ -18,11 +18,15 @@
     },
     "loader": {
       "$ref": "file:../DocumentLoader/overview.json",
-      "default": "FilesystemLoader"
+      "default": {
+        "implementation": "FilesystemLoader"
+      }
     },
     "doc_processor": {
       "$ref": "file:../DocumentProcessor/overview.json",
-      "default": "DocumentProcessor"
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
     },
     "concurrency": {
       "default": 8,

@@ -6,11 +6,15 @@
     },
     "embedder": {
       "$ref": "file:../Embedding/overview.json",
-      "default": "OpenAIEmbedding"
+      "default": {
+        "implementation": "OpenAIEmbedding"
+      }
     },
     "vector_store": {
       "$ref": "file:../VectorStore/overview.json",
-      "default": "ChromaVectorStore"
+      "default": {
+        "implementation": "ChromaVectorStore"
+      }
     }
   },
   "title": "SimilarityMemoryImpl",
