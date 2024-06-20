@@ -1,0 +1,12 @@
+{
+  "title": "Retriever",
+  "description": "Overview of Retriever components",
+  "anyOf": [
+    {
+      "$ref": "file:./RetrieverAgent.json"
+    }
+  ],
+  "reference_group": {
+    "type": "Retriever"
+  }
+}

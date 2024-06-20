@@ -211,6 +211,11 @@ def generate_json(write_base):
                     for k, v in spec.model_fields.items():
                         if v.annotation.__name__ == "_Reference" and v.default_factory:
                             schema_prop = json_schema['properties'][k]
+                            if "allOf" in schema_prop:
+                                if len(schema_prop["allOf"]) != 1 or len(schema_prop["allOf"][0]) != 1:
+                                    raise ValueError(f"Expected allOf to just be a json schema templating choice made by extra json properties, but that assumption is invalid")
+                                schema_prop.update(schema_prop["allOf"][0])
+
                             def_pointer = schema_prop['$ref'].replace("#/$defs/", "")
                             default_impl: dict = json_schema['$defs'][def_pointer]['reference_pointer']['default_impl']
                             default = overrides[k] if k in overrides else dict(implementation=default_impl)

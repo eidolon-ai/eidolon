@@ -4,12 +4,6 @@
       "const": "MultiQuestionTransformer",
       "description": "MultiQuestionTransformer"
     },
-    "apu": {
-      "$ref": "file:../APU/overview.json",
-      "default": {
-        "implementation": "ConversationalAPU"
-      }
-    },
     "keep_original": {
       "default": true,
       "description": "Whether to keep the original question in the output",
