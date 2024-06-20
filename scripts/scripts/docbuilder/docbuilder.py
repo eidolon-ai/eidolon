@@ -234,7 +234,7 @@ def generate_json(write_base):
                             schema_prop = json_schema['properties'][k]
                             if "allOf" in schema_prop:
                                 if len(schema_prop["allOf"]) != 1 or len(schema_prop["allOf"][0]) != 1:
-                                    raise ValueError(f"Expected allOf to just be a json schema templating choice made by extra json properties, but that assumption is invalid")
+                                    raise ValueError("Expected allOf to just be a json schema templating choice made by extra json properties, but that assumption is invalid")
                                 schema_prop.update(schema_prop["allOf"][0])
 
                             def_pointer = schema_prop['$ref'].replace("#/$defs/", "")

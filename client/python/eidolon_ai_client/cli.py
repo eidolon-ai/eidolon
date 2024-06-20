@@ -16,7 +16,6 @@ try:
     from rich.style import Style
     from rich.console import Console
     from rich.prompt import Prompt
-    from rich.panel import Panel
     from simple_term_menu import TerminalMenu
 except ImportError:
     print("The CLI dependencies are not installed. Please install with 'pip install eidolon_ai_client[cli]'.")
