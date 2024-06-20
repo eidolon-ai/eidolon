@@ -18,20 +18,15 @@
     },
     "loader": {
       "$ref": "file:../DocumentLoader/overview.json",
-      "default": "DocumentLoader"
+      "default": {
+        "implementation": "FilesystemLoader"
+      }
     },
     "doc_processor": {
-      "additionalProperties": true,
-      "default": "DocumentProcessor",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentProcessor Reference",
-      "type": "object"
+      "$ref": "file:../DocumentProcessor/overview.json",
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
     },
     "concurrency": {
       "default": 8,

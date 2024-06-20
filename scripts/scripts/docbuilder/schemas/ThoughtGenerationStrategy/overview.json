@@ -1,0 +1,12 @@
+{
+  "title": "ThoughtGenerationStrategy",
+  "description": "\nBase class for a thought generation strategy.\n",
+  "anyOf": [
+    {
+      "$ref": "file:./ProposePromptStrategy.json"
+    }
+  ],
+  "reference_group": {
+    "type": "ThoughtGenerationStrategy"
+  }
+}

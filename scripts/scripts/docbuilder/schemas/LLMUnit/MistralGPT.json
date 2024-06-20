@@ -5,17 +5,10 @@
       "description": "MistralGPT"
     },
     "model": {
-      "additionalProperties": true,
-      "default": "mistral-large-latest",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "LLMModel Reference",
-      "type": "object"
+      "$ref": "file:../LLMModel/overview.json",
+      "default": {
+        "implementation": "LLMModel"
+      }
     },
     "temperature": {
       "default": 0.3,

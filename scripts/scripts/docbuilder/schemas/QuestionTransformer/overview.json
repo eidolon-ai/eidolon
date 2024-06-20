@@ -1,0 +1,12 @@
+{
+  "title": "QuestionTransformer",
+  "description": "Overview of QuestionTransformer components",
+  "anyOf": [
+    {
+      "$ref": "file:./MultiQuestionTransformer.json"
+    }
+  ],
+  "reference_group": {
+    "type": "QuestionTransformer"
+  }
+}

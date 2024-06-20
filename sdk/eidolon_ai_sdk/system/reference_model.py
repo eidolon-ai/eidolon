@@ -4,10 +4,12 @@ import copy
 import logging
 from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 
-from pydantic import BaseModel, model_validator, Field, ConfigDict
+from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
+from pydantic.json_schema import JsonSchemaValue
 
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name, fqn
+from pydantic_core import core_schema as cs
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -81,12 +83,29 @@ class Reference(BaseModel):
             _bound = params[0]
             _default = params[1]
 
-            class Config:
-                title = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
-                json_schema_extra = {
-                    "type": f"Reference[{params[0] if isinstance(params[0], str) else params[0].__name__}]",
-                    "default": str(params[1]),
+            @classmethod
+            def __get_pydantic_json_schema__(
+                    cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
+            ) -> JsonSchemaValue:
+                json_schema = handler(core_schema)
+                json_schema = handler.resolve_ref_schema(json_schema)
+                json_schema["title"] = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
+                impl = cls._transform({})['implementation']
+                if "." in impl:
+                    impl = impl.split(".")[-1]
+                json_schema['properties']['implementation']['default'] = impl
+                json_schema['reference_pointer'] = {
+                    'type': params[0] if isinstance(params[0], str) else params[0].__name__,
+                    'default_impl': impl
                 }
+                return json_schema
+
+            @classmethod
+            def _transformed_impl(cls):
+                impl = cls._transform({})['implementation']
+                if "." in impl:
+                    impl = impl.split(".")[-1]
+                return impl
 
             @model_validator(mode="before")
             def _dump_ref(cls, value):

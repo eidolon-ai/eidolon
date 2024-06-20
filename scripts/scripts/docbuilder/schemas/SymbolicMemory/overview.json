@@ -8,5 +8,8 @@
     {
       "$ref": "file:./MongoSymbolicMemory.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "SymbolicMemory"
+  }
 }

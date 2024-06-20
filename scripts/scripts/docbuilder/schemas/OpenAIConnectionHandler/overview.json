@@ -1,0 +1,12 @@
+{
+  "title": "OpenAIConnectionHandler",
+  "description": "Overview of OpenAIConnectionHandler components",
+  "anyOf": [
+    {
+      "$ref": "file:./AzureOpenAIConnectionHandler.json"
+    }
+  ],
+  "reference_group": {
+    "type": "OpenAIConnectionHandler"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "title": "DocumentLoader",
-  "description": "Overview of <class 'eidolon_ai_sdk.agent.doc_manager.loaders.base_loader.DocumentLoader'> components",
+  "description": "Overview of DocumentLoader components",
   "anyOf": [
     {
       "$ref": "file:./FilesystemLoader.json"
@@ -11,5 +11,8 @@
     {
       "$ref": "file:./S3Loader.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "DocumentLoader"
+  }
 }

@@ -1,0 +1,12 @@
+{
+  "title": "SecurityManager",
+  "description": "Overview of SecurityManager components",
+  "anyOf": [
+    {
+      "$ref": "file:./SecurityManagerImpl.json"
+    }
+  ],
+  "reference_group": {
+    "type": "SecurityManager"
+  }
+}

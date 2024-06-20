@@ -5,30 +5,16 @@
       "description": "SimilarityMemoryImpl"
     },
     "embedder": {
-      "additionalProperties": true,
-      "default": "Embedding",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "Embedding Reference",
-      "type": "object"
+      "$ref": "file:../Embedding/overview.json",
+      "default": {
+        "implementation": "OpenAIEmbedding"
+      }
     },
     "vector_store": {
-      "additionalProperties": true,
-      "default": "VectorStore",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "VectorStore Reference",
-      "type": "object"
+      "$ref": "file:../VectorStore/overview.json",
+      "default": {
+        "implementation": "ChromaVectorStore"
+      }
     }
   },
   "title": "SimilarityMemoryImpl",

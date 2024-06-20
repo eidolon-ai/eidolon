@@ -1,0 +1,15 @@
+{
+  "title": "VectorStore",
+  "description": "Overview of VectorStore components",
+  "anyOf": [
+    {
+      "$ref": "file:./ChromaVectorStore.json"
+    },
+    {
+      "$ref": "file:./NoopVectorStore.json"
+    }
+  ],
+  "reference_group": {
+    "type": "VectorStore"
+  }
+}

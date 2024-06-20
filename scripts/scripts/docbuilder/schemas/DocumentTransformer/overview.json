@@ -1,0 +1,12 @@
+{
+  "title": "DocumentTransformer",
+  "description": "Overview of DocumentTransformer components",
+  "anyOf": [
+    {
+      "$ref": "file:./AutoTransformer.json"
+    }
+  ],
+  "reference_group": {
+    "type": "DocumentTransformer"
+  }
+}

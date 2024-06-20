@@ -123,8 +123,8 @@ export default defineConfig({
             {
               label: 'Agents', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/agents/overview'},
-                {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent'},
                 {label: 'RetrieverAgent', link: '/docs/components/agents/retrieveragent'},
+                {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent'},
               ]
             },
             {

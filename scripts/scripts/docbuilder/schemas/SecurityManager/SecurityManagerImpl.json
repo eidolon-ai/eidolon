@@ -1,0 +1,42 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "SecurityManagerImpl",
+      "description": "SecurityManagerImpl"
+    },
+    "authentication_processor": {
+      "$ref": "file:../AuthenticationProcessor/overview.json",
+      "default": {
+        "implementation": "NoopAuthProcessor"
+      }
+    },
+    "functional_authorizer": {
+      "$ref": "file:../FunctionalAuthorizer/overview.json",
+      "default": {
+        "implementation": "NoopFunctionalAuth"
+      }
+    },
+    "process_authorizer": {
+      "$ref": "file:../ProcessAuthorizer/overview.json",
+      "default": {
+        "implementation": "PrivateAuthorizer"
+      }
+    },
+    "safe_paths": {
+      "default": [
+        "/favicon.ico",
+        "/system/health",
+        "/openapi.json",
+        "/docs"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Safe Paths",
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "title": "SecurityManagerImpl",
+  "type": "object"
+}
