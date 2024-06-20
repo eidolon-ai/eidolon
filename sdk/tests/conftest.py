@@ -79,8 +79,13 @@ def vcr_config():
             return None
         return request
 
+    def filter_insanity(key, value, request):
+        if isinstance(request.body, dict):
+            return "application/json"
+        return value
+
     return dict(
-        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None), ("x-api-key", None)],
+        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None), ("x-api-key", None), ("Content-Type", filter_insanity)],
         filter_query_parameters=["cx", "key"], # google custom search engine id
         filter_post_data_parameters=["client_secret"],
         before_record_request=ignore_some_localhost,

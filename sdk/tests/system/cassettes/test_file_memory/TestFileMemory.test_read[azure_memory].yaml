@@ -13,7 +13,7 @@ interactions:
     uri: https://login.microsoftonline.com/c7234219-72c7-472d-be7f-916f745fce42/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyIsImtpZCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvYzcyMzQyMTktNzJjNy00NzJkLWJlN2YtOTE2Zjc0NWZjZTQyLyIsImlhdCI6MTcxODg5NTY4NiwibmJmIjoxNzE4ODk1Njg2LCJleHAiOjE3MTg4OTk1ODYsImFpbyI6IkUyZGdZSmpwK0Yyd2JQcXJ0bHEvNEU4T01rYTJBQT09IiwiYXBwaWQiOiI0MjhjNDJmNC04NmJiLTQzMzQtYjAzZC0xNDQ5MmY3OTVkNWIiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jNzIzNDIxOS03MmM3LTQ3MmQtYmU3Zi05MTZmNzQ1ZmNlNDIvIiwiaWR0eXAiOiJhcHAiLCJvaWQiOiI5MzEwZWI2My04MjYwLTQ0MmYtYTE2NC0wZDMwOWE5NWZlYTIiLCJyaCI6IjAuQWIwQUdVSWp4OGR5TFVlLWY1RnZkRl9PUW9HbUJ1VFU4NmhDa0xiQ3NDbEpldkhMQUFBLiIsInN1YiI6IjkzMTBlYjYzLTgyNjAtNDQyZi1hMTY0LTBkMzA5YTk1ZmVhMiIsInRpZCI6ImM3MjM0MjE5LTcyYzctNDcyZC1iZTdmLTkxNmY3NDVmY2U0MiIsInV0aSI6ImZGbnRRUl9DRFUyNUdJZWY0X2xGQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfaWRyZWwiOiI3IDE2In0.rEogSjvssYmi9A9oY6ByCvD_uuoZRhKKO7ePEkbmhpso0S2mGubiEa7s349r-BHizZ9T-__GZjTCLq02kxS-wR7_2wvOMVsdKe2uDn0MuOINEs-UimorVEdqAORocISmbpdCids5F-iP7NcWIk2AJTT-Swrj_S_nZQ7K9Qy_p7YJ3z9vgxp3q8I5F7FbuaZDdJNqbDEPeeFY8OFfvxiW9mcota9TREkbG0qgI4zwfTBIdYg4C19xm1ljp3_YdD-iwncIQzYiOg0uD0v2R3ks1MJQXvtK10a9fcxajS0W42Z9JdZo9BC71dS2re3TxwqBsBSDT6YJS2PuBJCb7l7TgA"}'
+      string: '{"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyIsImtpZCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvYzcyMzQyMTktNzJjNy00NzJkLWJlN2YtOTE2Zjc0NWZjZTQyLyIsImlhdCI6MTcxODg5NjM5NiwibmJmIjoxNzE4ODk2Mzk2LCJleHAiOjE3MTg5MDAyOTYsImFpbyI6IkUyZGdZTEJORmpMYm9CdjJXZjNsNUJXbjNrKzRBd0E9IiwiYXBwaWQiOiI0MjhjNDJmNC04NmJiLTQzMzQtYjAzZC0xNDQ5MmY3OTVkNWIiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jNzIzNDIxOS03MmM3LTQ3MmQtYmU3Zi05MTZmNzQ1ZmNlNDIvIiwiaWR0eXAiOiJhcHAiLCJvaWQiOiI5MzEwZWI2My04MjYwLTQ0MmYtYTE2NC0wZDMwOWE5NWZlYTIiLCJyaCI6IjAuQWIwQUdVSWp4OGR5TFVlLWY1RnZkRl9PUW9HbUJ1VFU4NmhDa0xiQ3NDbEpldkhMQUFBLiIsInN1YiI6IjkzMTBlYjYzLTgyNjAtNDQyZi1hMTY0LTBkMzA5YTk1ZmVhMiIsInRpZCI6ImM3MjM0MjE5LTcyYzctNDcyZC1iZTdmLTkxNmY3NDVmY2U0MiIsInV0aSI6IlpHTV85LTh1MFVXNVd5V1lPQlF3QUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfaWRyZWwiOiI3IDEyIn0.2Fi7AZNlZUI6aCYO42jjhEfaKPmOweSIpxggynQqGBs24hn63P1DhXYGrtey3YkAK6nDTHO2Oo-VKINxjuj1BAFi9QDIb8M1FOBdj8xacNcgjpLwjEpVrCEgwVpboTPo7zpJMAjezeEe52OXECRu37SFJ58s4PfQQAZFEHgXtvayTv6Ny2kXMEKg4fRMHEF1o4Y7QCBCfY9Amb_Bx7jfXQ52OOGCY-aJ0KcNve0UCEdgTYxJmBHawrK1f0R7eDX-DCHoQq_IS-KBLHh4SdRIc5Jwr5GewGB-QcMrpwevfiXn5BSuZ0Bpk_l5pgHsTDx3XiaRc1Zs18TvvMZDU6qKvQ"}'
     headers:
       Cache-Control:
       - no-store, no-cache
@@ -22,7 +22,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Thu, 20 Jun 2024 15:06:26 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       Expires:
       - '-1'
       P3P:
@@ -30,8 +30,8 @@ interactions:
       Pragma:
       - no-cache
       Set-Cookie:
-      - fpc=AmlubyL3vnxOmDNlg1fUUfeEXSKJAQAAAHI8Bt4OAAAA; expires=Sat, 20-Jul-2024
-        15:06:27 GMT; path=/; secure; HttpOnly; SameSite=None
+      - fpc=Am26aaPdqQtNkMB-v63aZhOEXSKJAQAAADc_Bt4OAAAA; expires=Sat, 20-Jul-2024
+        15:18:16 GMT; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       Strict-Transport-Security:
@@ -41,9 +41,9 @@ interactions:
       X-XSS-Protection:
       - '0'
       x-ms-ests-server:
-      - 2.1.18298.5 - WUS3 ProdSlices
+      - 2.1.18298.5 - NCUS ProdSlices
       x-ms-request-id:
-      - 41ed597c-c21f-4d0d-b918-879fe3f94500
+      - f73f6364-2eef-45d1-b95b-259838143000
       x-ms-srs:
       - 1.P
     status:
@@ -59,9 +59,9 @@ interactions:
       authorization:
       - XXXXXX
       x-ms-client-request-id:
-      - aa6c661a-2f16-11ef-8a32-aec083e7debc
+      - 5139a358-2f18-11ef-9cbc-aec083e7debc
       x-ms-date:
-      - Thu, 20 Jun 2024 15:06:26 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       x-ms-version:
       - '2024-05-04'
     method: GET
@@ -73,7 +73,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 20 Jun 2024 15:06:26 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       Etag:
       - '"0x8DC9136AFAD1ABE"'
       Last-Modified:
@@ -81,7 +81,7 @@ interactions:
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - aa6c661a-2f16-11ef-8a32-aec083e7debc
+      - 5139a358-2f18-11ef-9cbc-aec083e7debc
       x-ms-default-encryption-scope:
       - $account-encryption-key
       x-ms-deny-encryption-scope-override:
@@ -97,7 +97,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 6c3b2e7c-d01e-001e-5323-c33ee5000000
+      - 785326c5-601e-00ef-0625-c327c8000000
       x-ms-version:
       - '2024-05-04'
     status:
@@ -119,9 +119,9 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-client-request-id:
-      - aad295a2-2f16-11ef-8a32-aec083e7debc
+      - 51a1fbc4-2f18-11ef-9cbc-aec083e7debc
       x-ms-date:
-      - Thu, 20 Jun 2024 15:06:27 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       x-ms-version:
       - '2024-05-04'
     method: PUT
@@ -135,19 +135,19 @@ interactions:
       Content-MD5:
       - kBiQqOnIz21aGlQrIp/r/w==
       Date:
-      - Thu, 20 Jun 2024 15:06:27 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       Etag:
-      - '"0x8DC913A8F11C39F"'
+      - '"0x8DC913C35E12751"'
       Last-Modified:
-      - Thu, 20 Jun 2024 15:06:27 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - aad295a2-2f16-11ef-8a32-aec083e7debc
+      - 51a1fbc4-2f18-11ef-9cbc-aec083e7debc
       x-ms-content-crc64:
       - wtij308CLwo=
       x-ms-request-id:
-      - 6c3b2eac-d01e-001e-8023-c33ee5000000
+      - 785326e3-601e-00ef-1e25-c327c8000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -165,9 +165,9 @@ interactions:
       authorization:
       - XXXXXX
       x-ms-client-request-id:
-      - aadc3026-2f16-11ef-8a32-aec083e7debc
+      - 51ac68e8-2f18-11ef-9cbc-aec083e7debc
       x-ms-date:
-      - Thu, 20 Jun 2024 15:06:27 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -187,11 +187,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       Date:
-      - Thu, 20 Jun 2024 15:06:27 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       Etag:
-      - '"0x8DC913A8F11C39F"'
+      - '"0x8DC913C35E12751"'
       Last-Modified:
-      - Thu, 20 Jun 2024 15:06:27 GMT
+      - Thu, 20 Jun 2024 15:18:16 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -199,7 +199,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-client-request-id:
-      - aadc3026-2f16-11ef-8a32-aec083e7debc
+      - 51ac68e8-2f18-11ef-9cbc-aec083e7debc
       x-ms-creation-time:
       - Thu, 20 Jun 2024 14:38:44 GMT
       x-ms-lease-state:
@@ -207,7 +207,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 6c3b2ece-d01e-001e-2123-c33ee5000000
+      - 785326f9-601e-00ef-3025-c327c8000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
