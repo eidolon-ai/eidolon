@@ -14,7 +14,7 @@ With Eidolon, agents are services, so there is no extra work when it comes time 
 
 ### 2. Simple agent-to-agent communication
 Since agents are services with well-defined interfaces, they easily communicate with tools dynamically generated from 
-the openapi json schema defined by the agent services. 
+the openapi json schema defined by the agenvices. 
 
 ### 3. Painless component customization and upgrade
 With a focus on modularity, Eidolon makes it easy to swap out components. Grab an off the shelf llm, rag impl, tools, 
