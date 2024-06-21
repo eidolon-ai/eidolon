@@ -3,11 +3,10 @@ from abc import abstractmethod
 from functools import cached_property
 from typing import AsyncIterable, Literal, Optional, Union, Type
 
-import aiosqlite
-import psycopg
 from jinja2 import Environment, StrictUndefined, Template
-from mysql.connector.aio import connect
 from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy import create_engine, text
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent
 from eidolon_ai_client.util.logger import logger
@@ -25,71 +24,30 @@ class SqlClient(BaseModel):
         pass
 
 
-class SqlLiteClient(SqlClient):
-    protocol: Literal['sqlite3'] = 'sqlite3'
-    model_config = ConfigDict(extra='allow')
+class SqlAlchemy(SqlClient):
+    """
+    A client for executing SQL queries using SQLAlchemy.
+    See https://docs.sqlalchemy.org/ for connection configuration details.
 
-    file: str
+    Performs cursory checks when `select_only` is set to True. Additionally ensure user is restricted to allowed permissions.
+    """
 
-    async def execute(self, query: str):
-        async with aiosqlite.connect(self.file, **self.model_extra) as db:
-            async with db.execute(query) as cursor:
-                async for row in cursor:
-                    yield row
-
-
-class MySqlClient(SqlClient):
-    model_config = ConfigDict(extra='allow')
-    protocol: Literal['mysql'] = 'mysql'
-
-    host: Optional[str] = None
-    user: Optional[str] = 'root'
-    password: Optional[str] = Field(None,
-                                    description='Password string or environment variable name. IE, MYSQL_PASSWORD or secret123')
+    connection_string: str = "sqlite+pysqlite:///:memory:"
+    engine_kwargs: dict = {}
+    select_only: bool = False
 
     @cached_property
-    def templated_password(self):
-        if self.password:
-            password = os.environ.get(self.password, None)
-            if not password:
-                logger.debug(f"Password environment variable not found, using password as is")
-                return self.password
-            else:
-                return password
-        else:
-            return self.password
+    def _engine(self):
+        return create_async_engine(self.connection_string, **self.engine_kwargs)
 
-    async def execute(self, query: str):
-        kwargs = {}
-        if self.host is not None:
-            kwargs['host'] = self.host
-        if self.user is not None:
-            kwargs['user'] = self.user
-        if self.templated_password is not None:
-            kwargs['password'] = self.templated_password
-        async with await connect(**kwargs, **self.model_extra) as cnx:
-            async with await cnx.cursor() as cur:
-                await cur.execute(query)
-                async for row in cur:
-                    yield row
-
-
-class PostgresClient(SqlClient):
-    protocol: Literal['postgres'] = 'postgres'
-    model_config = ConfigDict(extra='allow')
-
-    conninfo: str = Field("",
-                          description="psycopg.connect conninfo. Can be templated with envars using jinja templates. IE 'user=username password={{DB_PASSWORD}}'")
-
-    @cached_property
-    def templated_conninfo(self):
-        return Environment(undefined=StrictUndefined).from_string(self.conninfo).render(**os.environ)
-
-    async def execute(self, query: str):
-        async with await psycopg.AsyncConnection.connect(self.conninfo, **self.model_extra) as aconn:
-            async with aconn.cursor() as acur:
-                async for record in acur:
-                    yield record
+    async def execute(self, query: str) -> AsyncIterable[tuple]:
+        async with self._engine.connect() as conn:
+            text_query = text(query)
+            if self.select_only and not text_query.is_select:
+                raise ValueError("Only SELECT queries are allowed")
+            resp = await conn.stream(text_query)
+            async for row in resp:
+                yield row
 
 
 class SqlAgentSpec(BaseModel):
