@@ -55,7 +55,7 @@ Specific value: `"OpenAIImageUnit"`
 
 |              |                                                                                           |
 | ------------ | ----------------------------------------------------------------------------------------- |
-| **Type**     | `[Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview)` |
+| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview) |
 | **Required** | No                                                                                        |
 | **Default**  | `{"implementation": "OpenAIConnectionHandler"}`                                           |
 

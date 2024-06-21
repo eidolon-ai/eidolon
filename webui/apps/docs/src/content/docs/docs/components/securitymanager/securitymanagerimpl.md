@@ -28,9 +28,9 @@ Specific value: `"SecurityManagerImpl"`
 
 |              |                                                                                           |
 | ------------ | ----------------------------------------------------------------------------------------- |
-| **Type**     | `[Reference[AuthenticationProcessor]](/docs/components/authenticationprocessor/overview)` |
+| **Type**     | [`Reference[AuthenticationProcessor]`](/docs/components/authenticationprocessor/overview) |
 | **Required** | No                                                                                        |
-| **Default**  | `{"implementation": "NoopAuthProcessor"}`                                                 |
+| **Default**  | `{"implementation": "AuthenticationProcessor"}`                                           |
 
 **Description:** Overview of AuthenticationProcessor components
 
@@ -40,9 +40,9 @@ Specific value: `"SecurityManagerImpl"`
 
 |              |                                                                                     |
 | ------------ | ----------------------------------------------------------------------------------- |
-| **Type**     | `[Reference[FunctionalAuthorizer]](/docs/components/functionalauthorizer/overview)` |
+| **Type**     | [`Reference[FunctionalAuthorizer]`](/docs/components/functionalauthorizer/overview) |
 | **Required** | No                                                                                  |
-| **Default**  | `{"implementation": "NoopFunctionalAuth"}`                                          |
+| **Default**  | `{"implementation": "FunctionalAuthorizer"}`                                        |
 
 **Description:** Overview of FunctionalAuthorizer components
 
@@ -52,9 +52,9 @@ Specific value: `"SecurityManagerImpl"`
 
 |              |                                                                               |
 | ------------ | ----------------------------------------------------------------------------- |
-| **Type**     | `[Reference[ProcessAuthorizer]](/docs/components/processauthorizer/overview)` |
+| **Type**     | [`Reference[ProcessAuthorizer]`](/docs/components/processauthorizer/overview) |
 | **Required** | No                                                                            |
-| **Default**  | `{"implementation": "PrivateAuthorizer"}`                                     |
+| **Default**  | `{"implementation": "ProcessAuthorizer"}`                                     |
 
 **Description:** Overview of ProcessAuthorizer components
 
@@ -66,7 +66,7 @@ Specific value: `"SecurityManagerImpl"`
 | ------------ | -------------------------------------------------------------- |
 | **Type**     | `array of string`                                              |
 | **Required** | No                                                             |
-| **Default**  | `["/system/health", "/favicon.ico", "/docs", "/openapi.json"]` |
+| **Default**  | `["/system/health", "/docs", "/favicon.ico", "/openapi.json"]` |
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |

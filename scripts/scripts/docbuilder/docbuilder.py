@@ -50,13 +50,8 @@ class Group(BaseModel):
         return self
 
     def get_components(self):
-        if self.components:
-            self.sort_components()
-            return self.components
-        elif self.root:
-            return [self.root]
-        else:
-            raise ValueError("No components found")
+        self.sort_components()
+        return [*([self.root] if self.root else []), *self.components]
 
 
 components_to_load: list[Group] = [
@@ -125,7 +120,7 @@ def write_md(read_loc,
         title = f"{k} Overview"
         description = f"Overview of {k} components"
         content = ["## Builtins"]
-        for name, clz, overrides in g.get_components():
+        for name, _, _ in g.get_components():
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
@@ -159,8 +154,8 @@ def write_md(read_loc,
 
             content = content[(content.index(cut_after_str) + len(cut_after_str)):]
             for name in groups.keys():
-                content = content.replace(f"`[Reference[{name}]](/docs/components/apu/overview)`",
-                                          f"[`Reference[{name}]`](/docs/components/apu/overview)")
+                content = content.replace(f"`[Reference[{name}]](/docs/components/{url_safe(name)}/overview)`",
+                                          f"[`Reference[{name}]`](/docs/components/{url_safe(name)}/overview)")
 
             write_astro_md_file(content, description, title, write_file_loc)
 
@@ -225,8 +220,6 @@ def generate_json(write_base):
         for name, clz, overrides in group.get_components():
             if hasattr(clz, "model_json_schema"):
                 json_schema = clz.model_json_schema()
-
-                defaults: Dict[str, dict] = {}
                 spec = Reference.get_spec_type(clz)
                 if spec:
                     for k, v in spec.model_fields.items():
@@ -234,13 +227,13 @@ def generate_json(write_base):
                             schema_prop = json_schema['properties'][k]
                             if "allOf" in schema_prop:
                                 if len(schema_prop["allOf"]) != 1 or len(schema_prop["allOf"][0]) != 1:
-                                    raise ValueError(f"Expected allOf to just be a json schema templating choice made by extra json properties, but that assumption is invalid")
+                                    raise ValueError("Expected allOf to just be a json schema templating choice made by extra json properties, but that assumption is invalid")
                                 schema_prop.update(schema_prop["allOf"][0])
 
                             def_pointer = schema_prop['$ref'].replace("#/$defs/", "")
                             default_impl: dict = json_schema['$defs'][def_pointer]['reference_pointer']['default_impl']
-                            default = overrides[k] if k in overrides else dict(implementation=default_impl)
-                            defaults[def_pointer] = default
+                            if k not in overrides:
+                                overrides[k] = dict(implementation=default_impl)
 
                 defs = dict()
                 for k, v in list(json_schema.get("$defs", {}).items()):
@@ -256,13 +249,18 @@ def generate_json(write_base):
                             defs[k]['type'] = "object"
                         del json_schema['$defs'][k]
 
-                        if k in defaults:
-                            defs[k]['default'] = defaults[k]
-
                 json_schema = inline_refs(json_schema, defs)
                 if "$defs" in json_schema and not json_schema["$defs"]:
                     del json_schema["$defs"]
                 json_schema['title'] = name
+
+                for k, v in overrides.items():
+                    json_schema['properties'][k]['default'] = v
+                if 'required' in json_schema:
+                    json_schema['required'] = [k for k in json_schema['required'] if k not in overrides]
+                    if not json_schema['required']:
+                        del json_schema['required']
+
             else:
                 json_schema = {
                     "title": name,

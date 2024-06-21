@@ -3,6 +3,9 @@
   "description": "Interface which allows hooks for SDK's `Span` start and end method\n    invocations.\n\n    Span processors can be registered directly using\n    :func:`TracerProvider.add_span_processor` and they are invoked\n    in the same order as they were registered.\n",
   "anyOf": [
     {
+      "$ref": "file:./SpanProcessor.json"
+    },
+    {
       "$ref": "file:./BatchSpanProcessor.json"
     }
   ],

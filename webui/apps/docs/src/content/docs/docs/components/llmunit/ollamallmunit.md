@@ -29,7 +29,7 @@ Specific value: `"OllamaLLMUnit"`
 
 |              |                                                             |
 | ------------ | ----------------------------------------------------------- |
-| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview)` |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
 | **Required** | No                                                          |
 | **Default**  | `{"implementation": "llama3"}`                              |
 

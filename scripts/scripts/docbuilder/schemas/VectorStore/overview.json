@@ -3,6 +3,9 @@
   "description": "Overview of VectorStore components",
   "anyOf": [
     {
+      "$ref": "file:./VectorStore.json"
+    },
+    {
       "$ref": "file:./ChromaVectorStore.json"
     },
     {

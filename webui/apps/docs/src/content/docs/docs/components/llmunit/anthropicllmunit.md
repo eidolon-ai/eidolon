@@ -28,9 +28,9 @@ Specific value: `"AnthropicLLMUnit"`
 
 |              |                                                             |
 | ------------ | ----------------------------------------------------------- |
-| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview)` |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
 | **Required** | No                                                          |
-| **Default**  | `{"implementation": "LLMModel"}`                            |
+| **Default**  | `{"implementation": "claude-3-opus-20240229"}`              |
 
 **Description:** Overview of LLMModel components
 

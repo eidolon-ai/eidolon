@@ -1,0 +1,11 @@
+{
+  "title": "SpanProcessor",
+  "type": "object",
+  "description": "Batch span processor implementation.\n\n    `BatchSpanProcessor` is an implementation of `SpanProcessor` that\n    batches ended spans and pushes them to the configured `SpanExporter`.\n\n    `BatchSpanProcessor` is configurable with the following environment\n    variables which correspond to constructor parameters:\n\n    - :envvar:`OTEL_BSP_SCHEDULE_DELAY`\n    - :envvar:`OTEL_BSP_MAX_QUEUE_SIZE`\n    - :envvar:`OTEL_BSP_MAX_EXPORT_BATCH_SIZE`\n    - :envvar:`OTEL_BSP_EXPORT_TIMEOUT`\n",
+  "properties": {
+    "implementation": {
+      "const": "SpanProcessor",
+      "description": "SpanProcessor"
+    }
+  }
+}

@@ -125,7 +125,7 @@
         "apu": {
           "$ref": "file:../APU/overview.json",
           "default": {
-            "implementation": "ConversationalAPU"
+            "implementation": "APU"
           }
         },
         "default": {
@@ -199,7 +199,7 @@
     "apu": {
       "$ref": "file:../APU/overview.json",
       "default": {
-        "implementation": "ConversationalAPU"
+        "implementation": "APU"
       }
     },
     "apus": {

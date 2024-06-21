@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "DocumentReranker",
+      "description": "DocumentReranker"
+    },
+    "k": {
+      "default": 60,
+      "description": "The rerank factor.",
+      "title": "K",
+      "type": "integer"
+    }
+  },
+  "title": "DocumentReranker",
+  "type": "object"
+}

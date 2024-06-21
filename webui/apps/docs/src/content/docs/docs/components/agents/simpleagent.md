@@ -400,7 +400,7 @@ Specific value: `"str"`
 | ------------ | ------------------------------------------------- |
 | **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
 | **Required** | No                                                |
-| **Default**  | `{"implementation": "ConversationalAPU"}`         |
+| **Default**  | `{"implementation": "APU"}`                       |
 
 **Description:** 
 The APU is the main interface for the Agent to interact with the LLM.
@@ -485,7 +485,7 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | ------------ | ------------------------------------------------- |
 | **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
 | **Required** | No                                                |
-| **Default**  | `{"implementation": "ConversationalAPU"}`         |
+| **Default**  | `{"implementation": "APU"}`                       |
 
 **Description:** 
 The APU is the main interface for the Agent to interact with the LLM.

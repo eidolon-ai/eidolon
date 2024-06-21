@@ -55,9 +55,9 @@ Specific value: `"DocumentManager"`
 
 |              |                                                                         |
 | ------------ | ----------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentLoader]](/docs/components/documentloader/overview)` |
+| **Type**     | [`Reference[DocumentLoader]`](/docs/components/documentloader/overview) |
 | **Required** | No                                                                      |
-| **Default**  | `{"implementation": "FilesystemLoader"}`                                |
+| **Default**  | `{"implementation": "DocumentLoader"}`                                  |
 
 **Description:** Overview of DocumentLoader components
 
@@ -67,7 +67,7 @@ Specific value: `"DocumentManager"`
 
 |              |                                                                               |
 | ------------ | ----------------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentProcessor]](/docs/components/documentprocessor/overview)` |
+| **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview) |
 | **Required** | No                                                                            |
 | **Default**  | `{"implementation": "DocumentProcessor"}`                                     |
 

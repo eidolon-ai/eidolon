@@ -50,9 +50,9 @@ Specific value: `"RetrieverAgent"`
 
 |              |                                                                                   |
 | ------------ | --------------------------------------------------------------------------------- |
-| **Type**     | `[Reference[QuestionTransformer]](/docs/components/questiontransformer/overview)` |
+| **Type**     | [`Reference[QuestionTransformer]`](/docs/components/questiontransformer/overview) |
 | **Required** | No                                                                                |
-| **Default**  | `{"implementation": "MultiQuestionTransformer"}`                                  |
+| **Default**  | `{"implementation": "QuestionTransformer"}`                                       |
 
 **Description:** Overview of QuestionTransformer components
 
@@ -62,9 +62,9 @@ Specific value: `"RetrieverAgent"`
 
 |              |                                                                               |
 | ------------ | ----------------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentRetriever]](/docs/components/documentretriever/overview)` |
+| **Type**     | [`Reference[DocumentRetriever]`](/docs/components/documentretriever/overview) |
 | **Required** | No                                                                            |
-| **Default**  | `{"implementation": "SimilarityMemoryRetriever"}`                             |
+| **Default**  | `{"implementation": "DocumentRetriever"}`                                     |
 
 **Description:** Overview of DocumentRetriever components
 
@@ -74,9 +74,9 @@ Specific value: `"RetrieverAgent"`
 
 |              |                                                                             |
 | ------------ | --------------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentReranker]](/docs/components/documentreranker/overview)` |
+| **Type**     | [`Reference[DocumentReranker]`](/docs/components/documentreranker/overview) |
 | **Required** | No                                                                          |
-| **Default**  | `{"implementation": "RAGFusionReranker"}`                                   |
+| **Default**  | `{"implementation": "DocumentReranker"}`                                    |
 
 **Description:** Overview of DocumentReranker components
 
@@ -86,7 +86,7 @@ Specific value: `"RetrieverAgent"`
 
 |              |                                                                             |
 | ------------ | --------------------------------------------------------------------------- |
-| **Type**     | `[Reference[ResultSummarizer]](/docs/components/resultsummarizer/overview)` |
+| **Type**     | [`Reference[ResultSummarizer]`](/docs/components/resultsummarizer/overview) |
 | **Required** | No                                                                          |
 | **Default**  | `{"implementation": "ResultSummarizer"}`                                    |
 
@@ -198,7 +198,7 @@ Specific value: `"RetrieverAgent"`
 
 |              |                                                                           |
 | ------------ | ------------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentManager]](/docs/components/documentmanager/overview)` |
+| **Type**     | [`Reference[DocumentManager]`](/docs/components/documentmanager/overview) |
 | **Required** | No                                                                        |
 
 **Description:** Overview of DocumentManager components
@@ -218,7 +218,7 @@ Specific value: `"RetrieverAgent"`
 | ------------ | ------------------------------------------------- |
 | **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
 | **Required** | No                                                |
-| **Default**  | `{"implementation": "ConversationalAPU"}`         |
+| **Default**  | `{"implementation": "APU"}`                       |
 
 **Description:** 
 The APU is the main interface for the Agent to interact with the LLM.

@@ -6,42 +6,40 @@
     },
     "human_name": {
       "title": "Human Name",
-      "type": "string"
+      "type": "string",
+      "default": "Mistral Medium"
     },
     "name": {
       "title": "Name",
-      "type": "string"
+      "type": "string",
+      "default": "mistral-medium-latest"
     },
     "input_context_limit": {
       "title": "Input Context Limit",
-      "type": "integer"
+      "type": "integer",
+      "default": 32000
     },
     "output_context_limit": {
       "title": "Output Context Limit",
-      "type": "integer"
+      "type": "integer",
+      "default": 4096
     },
     "supports_tools": {
       "title": "Supports Tools",
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "supports_image_input": {
       "title": "Supports Image Input",
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "supports_audio_input": {
       "title": "Supports Audio Input",
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     }
   },
-  "required": [
-    "human_name",
-    "name",
-    "input_context_limit",
-    "output_context_limit",
-    "supports_tools",
-    "supports_image_input",
-    "supports_audio_input"
-  ],
   "title": "mistral-medium-latest",
   "type": "object"
 }
