@@ -3,6 +3,9 @@
   "description": "Overview of LLMModel components",
   "anyOf": [
     {
+      "$ref": "file:./LLMModel.json"
+    },
+    {
       "$ref": "file:./claude-3-haiku-20240307.json"
     },
     {

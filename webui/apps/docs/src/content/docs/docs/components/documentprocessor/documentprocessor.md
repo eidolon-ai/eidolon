@@ -26,9 +26,9 @@ Specific value: `"DocumentProcessor"`
 
 |              |                                                                         |
 | ------------ | ----------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentParser]](/docs/components/documentparser/overview)` |
+| **Type**     | [`Reference[DocumentParser]`](/docs/components/documentparser/overview) |
 | **Required** | No                                                                      |
-| **Default**  | `{"implementation": "AutoParser"}`                                      |
+| **Default**  | `{"implementation": "DocumentParser"}`                                  |
 
 **Description:** Overview of DocumentParser components
 
@@ -38,9 +38,9 @@ Specific value: `"DocumentProcessor"`
 
 |              |                                                                                   |
 | ------------ | --------------------------------------------------------------------------------- |
-| **Type**     | `[Reference[DocumentTransformer]](/docs/components/documenttransformer/overview)` |
+| **Type**     | [`Reference[DocumentTransformer]`](/docs/components/documenttransformer/overview) |
 | **Required** | No                                                                                |
-| **Default**  | `{"implementation": "AutoTransformer"}`                                           |
+| **Default**  | `{"implementation": "DocumentTransformer"}`                                       |
 
 **Description:** Overview of DocumentTransformer components
 

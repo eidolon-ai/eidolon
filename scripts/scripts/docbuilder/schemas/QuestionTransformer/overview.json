@@ -3,6 +3,9 @@
   "description": "Overview of QuestionTransformer components",
   "anyOf": [
     {
+      "$ref": "file:./QuestionTransformer.json"
+    },
+    {
       "$ref": "file:./MultiQuestionTransformer.json"
     }
   ],

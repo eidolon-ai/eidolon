@@ -26,9 +26,9 @@ Specific value: `"SimilarityMemoryImpl"`
 
 |              |                                                               |
 | ------------ | ------------------------------------------------------------- |
-| **Type**     | `[Reference[Embedding]](/docs/components/embedding/overview)` |
+| **Type**     | [`Reference[Embedding]`](/docs/components/embedding/overview) |
 | **Required** | No                                                            |
-| **Default**  | `{"implementation": "OpenAIEmbedding"}`                       |
+| **Default**  | `{"implementation": "Embedding"}`                             |
 
 **Description:** Overview of Embedding components
 
@@ -38,9 +38,9 @@ Specific value: `"SimilarityMemoryImpl"`
 
 |              |                                                                   |
 | ------------ | ----------------------------------------------------------------- |
-| **Type**     | `[Reference[VectorStore]](/docs/components/vectorstore/overview)` |
+| **Type**     | [`Reference[VectorStore]`](/docs/components/vectorstore/overview) |
 | **Required** | No                                                                |
-| **Default**  | `{"implementation": "ChromaVectorStore"}`                         |
+| **Default**  | `{"implementation": "VectorStore"}`                               |
 
 **Description:** Overview of VectorStore components
 

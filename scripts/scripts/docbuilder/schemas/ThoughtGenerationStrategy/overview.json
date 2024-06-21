@@ -3,6 +3,9 @@
   "description": "\nBase class for a thought generation strategy.\n",
   "anyOf": [
     {
+      "$ref": "file:./ThoughtGenerationStrategy.json"
+    },
+    {
       "$ref": "file:./ProposePromptStrategy.json"
     }
   ],

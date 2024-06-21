@@ -1,0 +1,10 @@
+{
+  "title": "SpanExporter",
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "SpanExporter",
+      "description": "SpanExporter"
+    }
+  }
+}

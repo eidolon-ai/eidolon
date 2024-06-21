@@ -7,26 +7,26 @@
     "authentication_processor": {
       "$ref": "file:../AuthenticationProcessor/overview.json",
       "default": {
-        "implementation": "NoopAuthProcessor"
+        "implementation": "AuthenticationProcessor"
       }
     },
     "functional_authorizer": {
       "$ref": "file:../FunctionalAuthorizer/overview.json",
       "default": {
-        "implementation": "NoopFunctionalAuth"
+        "implementation": "FunctionalAuthorizer"
       }
     },
     "process_authorizer": {
       "$ref": "file:../ProcessAuthorizer/overview.json",
       "default": {
-        "implementation": "PrivateAuthorizer"
+        "implementation": "ProcessAuthorizer"
       }
     },
     "safe_paths": {
       "default": [
         "/system/health",
-        "/favicon.ico",
         "/docs",
+        "/favicon.ico",
         "/openapi.json"
       ],
       "items": {

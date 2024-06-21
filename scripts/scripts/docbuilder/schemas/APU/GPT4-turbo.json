@@ -19,7 +19,7 @@
     "memory_unit": {
       "$ref": "file:../MemoryUnit/overview.json",
       "default": {
-        "implementation": "RawMemoryUnit"
+        "implementation": "MemoryUnit"
       }
     },
     "llm_unit": {
@@ -46,7 +46,7 @@
           "type": "null"
         }
       ],
-      "default": null
+      "default": "OpenAiSpeech"
     },
     "image_unit": {
       "anyOf": [
@@ -54,13 +54,13 @@
           "additionalProperties": true,
           "properties": {
             "implementation": {
-              "default": "ImageUnit",
+              "default": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
               "title": "Implementation",
               "type": "string"
             }
           },
           "reference_pointer": {
-            "default_impl": "ImageUnit",
+            "default_impl": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
             "type": "ImageUnit"
           },
           "title": "ImageUnit Reference",
@@ -70,7 +70,7 @@
           "type": "null"
         }
       ],
-      "default": null
+      "default": "OpenAIImageUnit"
     },
     "record_conversation": {
       "default": true,

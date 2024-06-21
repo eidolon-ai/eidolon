@@ -14,19 +14,19 @@
     "question_transformer": {
       "$ref": "file:../QuestionTransformer/overview.json",
       "default": {
-        "implementation": "MultiQuestionTransformer"
+        "implementation": "QuestionTransformer"
       }
     },
     "document_retriever": {
       "$ref": "file:../DocumentRetriever/overview.json",
       "default": {
-        "implementation": "SimilarityMemoryRetriever"
+        "implementation": "DocumentRetriever"
       }
     },
     "document_reranker": {
       "$ref": "file:../DocumentReranker/overview.json",
       "default": {
-        "implementation": "RAGFusionReranker"
+        "implementation": "DocumentReranker"
       }
     },
     "result_summarizer": {
@@ -85,7 +85,7 @@
     "apu": {
       "$ref": "file:../APU/overview.json",
       "default": {
-        "implementation": "ConversationalAPU"
+        "implementation": "APU"
       }
     }
   },
