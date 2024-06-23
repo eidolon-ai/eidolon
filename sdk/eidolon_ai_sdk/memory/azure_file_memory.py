@@ -34,36 +34,47 @@ class AzureFileMemory(FileMemoryBase, Specable[AzureFileMemorySpec]):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
 
+    async def _get_container(self):
+        if not self._container:
+            provider = None
+            if self.spec.azure_ad_token_provider:
+                provider = self.spec.azure_ad_token_provider.instantiate()
+            self._client = BlobServiceClient(account_url=self.spec.account_url, credential=provider)
+            self._container = self._client.get_container_client(self.spec.container)
+            if self.spec.create_container_on_startup and not await self._container.exists():
+                await self._container.create_container()
+
+        return self._container
+
     async def start(self):
-        provider = None
-        if self.spec.azure_ad_token_provider:
-            provider = self.spec.azure_ad_token_provider.instantiate()
-        self._client = BlobServiceClient(account_url=self.spec.account_url, credential=provider)
-        self._container = self._client.get_container_client(self.spec.container)
-        if self.spec.create_container_on_startup and not await self._container.exists():
-            await self._container.create_container()
+        pass
 
     async def stop(self):
         if self._client:
             await self._client.close()
 
     async def read_file(self, file_path: str) -> bytes:
-        blob = await self._container.download_blob(file_path)
+        container = await self._get_container()
+        blob = await container.download_blob(file_path)
         return await blob.readall()
 
     async def write_file(self, file_path: str, file_contents: bytes) -> None:
-        await self._container.upload_blob(file_path, file_contents, overwrite=True)
+        container = await self._get_container()
+        await container.upload_blob(file_path, file_contents, overwrite=True)
 
     async def delete_file(self, file_path: str) -> None:
-        await self._container.delete_blob(file_path)
+        container = await self._get_container()
+        await container.delete_blob(file_path)
 
     async def mkdir(self, directory: str, exist_ok: bool = False):
         pass
 
     async def exists(self, file_name: str):
-        return await self._container.get_blob_client(file_name).exists()
+        container = await self._get_container()
+        return await container.get_blob_client(file_name).exists()
 
     async def glob(self, pattern: str) -> AsyncIterable[FileMetadata]:
-        async for blob in self._container.list_blobs(include="metadata"):
+        container = await self._get_container()
+        async for blob in container.list_blobs(include="metadata"):
             if fnmatch.fnmatch(blob.name, pattern):
                 yield FileMetadata(file_path=blob.name, hash=blob.etag, updated=blob.last_modified)

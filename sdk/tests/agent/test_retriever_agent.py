@@ -1,8 +1,10 @@
+import os
 from os import environ
 
 import pytest
 
 from eidolon_ai_client.client import Agent
+from eidolon_ai_sdk.agent.doc_manager.loaders.azure_loader import AzureLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.s3_loader import S3Loader
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.system.reference_model import Reference
@@ -62,8 +64,32 @@ class TestRetrieverAgent:
         )
 
     @pytest.fixture(scope="class")
-    async def agent(self, retriever, retrieverNoStore, retrieverS3, run_app) -> Agent:
-        async with run_app(retriever, retrieverNoStore, retrieverS3):
+    def retrieverAzure(self, test_dir):
+        os.environ.setdefault("AZURE_TENANT_ID", "secret_not_needed_with_saved_cassettes")
+        os.environ.setdefault("AZURE_CLIENT_SECRET", "key_not_needed_with_saved_cassettes")
+        os.environ.setdefault("AZURE_CLIENT_ID", "key_not_needed_with_saved_cassettes")
+        return AgentResource(
+            apiVersion="eidolon/v1",
+            metadata=Metadata(name="RetrieverAgentAzure"),
+            spec=Reference(
+                implementation=fqn(RetrieverAgent),
+                name="azureretriever",
+                description="A test retriever agent no store",
+                document_manager=dict(
+                    recheck_frequency=0,
+                    loader=dict(
+                        implementation=AzureLoader.__name__,
+                        container="rag-search-test",
+                        account_url="https://eidolon.blob.core.windows.net",
+                        create_container_on_startup=False
+                    )
+                )
+            ),
+        )
+
+    @pytest.fixture(scope="class")
+    async def agent(self, retriever, retrieverNoStore, retrieverS3, retrieverAzure, run_app) -> Agent:
+        async with run_app(retriever, retrieverNoStore, retrieverS3, retrieverAzure):
             yield Agent.get("RetrieverAgentWithStore")
 
     async def test_list_files(self, agent):
@@ -104,6 +130,21 @@ class TestRetrieverAgent:
 
     async def test_s3_cached_results(self, agent):
         s3_agent = Agent.get("RetrieverAgentS3")
+        process = await s3_agent.create_process()
+        await process.action("search", body={"question": "how do I make a pdf?"})
+
+        #  will error if there is an issue with syncing docs
+        process = await s3_agent.create_process()
+        await process.action("search", body={"question": "what about a .exe"})
+
+    async def test_azure(self, agent):
+        s3_agent = Agent.get("RetrieverAgentAzure")
+        process = await s3_agent.create_process()
+        found = await process.action("search", body={"question": "how do I make a pdf?"})
+        assert "Get_Started_With_Smallpdf" in str(found.data)
+
+    async def test_azure_cached_results(self, agent):
+        s3_agent = Agent.get("RetrieverAgentAzure")
         process = await s3_agent.create_process()
         await process.action("search", body={"question": "how do I make a pdf?"})
 
