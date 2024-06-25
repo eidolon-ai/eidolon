@@ -16,6 +16,7 @@ from eidolon_ai_sdk.agent.browser.search_agent import WebSearchAgent
 from eidolon_ai_sdk.agent.browser.web_researcher import WebResearcher
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
+from eidolon_ai_sdk.agent.doc_manager.loaders.azure_loader import AzureLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
@@ -56,6 +57,7 @@ from eidolon_ai_sdk.apu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.apu.tool_call_unit import ToolCallLLMWrapper
+from eidolon_ai_sdk.memory.azure_file_memory import AzureFileMemory
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
@@ -168,6 +170,7 @@ def named_builtins() -> List[ReferenceResource]:
         (FileMemory, LocalFileMemory),
         LocalFileMemory,
         S3FileMemory,
+        AzureFileMemory,
         (SimilarityMemory, SimilarityMemoryImpl),
         SimilarityMemoryImpl,
         (Embedding, OpenAIEmbedding),
@@ -211,6 +214,7 @@ def named_builtins() -> List[ReferenceResource]:
         FilesystemLoader,
         GitHubLoader,
         S3Loader,
+        AzureLoader,
         ToTChecker,
         (AudioUnit, OpenAiSpeech),
         OpenAiSpeech,

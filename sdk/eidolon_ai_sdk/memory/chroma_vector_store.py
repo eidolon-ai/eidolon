@@ -1,3 +1,5 @@
+import threading
+
 from eidolon_ai_sdk.util.async_wrapper import make_async
 
 try:
@@ -61,6 +63,7 @@ class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
 class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]):
     spec: ChromaVectorStoreConfig
     client: chromadb.Client
+    lock = threading.Lock()
 
     def __init__(self, spec: ChromaVectorStoreConfig):
         super().__init__(spec)
@@ -89,13 +92,14 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         pass
 
     def _get_collection(self, name: str) -> Collection:
-        if not self.client:
-            self.connect()
+        with ChromaVectorStore.lock:
+            if not self.client:
+                self.connect()
 
-        try:
-            return self.client.get_or_create_collection(name=name)
-        except BaseException as e:
-            raise RuntimeError(f"Failed to get collection {name}") from e
+            try:
+                return self.client.get_or_create_collection(name=name)
+            except BaseException as e:
+                raise RuntimeError(f"Failed to get collection {name}") from e
 
     @make_async
     def add_embedding(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):

@@ -1,6 +1,8 @@
+import functools
 import os
 import pathlib
 import threading
+import urllib.parse
 from contextlib import asynccontextmanager
 from typing import Iterable
 from unittest.mock import patch
@@ -13,7 +15,7 @@ from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
-from vcr.stubs import httpx_stubs
+from vcr.stubs import httpx_stubs, aiohttp_stubs
 
 import eidolon_ai_sdk.system.process_file_system as process_file_system
 from eidolon_ai_sdk.agent.doc_manager.transformer import document_transformer
@@ -38,9 +40,35 @@ PosthogConfig.enabled = False
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "run_app" in i.fixturenames, items):
-        item.add_marker(pytest.mark.vcr)
         item.fixturenames.append("patched_vcr_object_handling")
         item.fixturenames.append("deterministic_process_ids")
+        item.add_marker(pytest.mark.vcr)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def patched_vcr_aiohttp_url_encoded():
+    """
+    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
+    even the fake test client requests, so we need to pipe the body through ourselves
+    """
+
+    original = aiohttp_stubs.vcr_request
+    def my_custom_function(cassette, real_request):
+        fn = original(cassette, real_request)
+
+        @functools.wraps(real_request)
+        async def new_request(self, method, url, **kwargs):
+            data = kwargs.get("data")
+            if "Content-Type" in kwargs.get("headers", {}):
+                if "application/x-www-form-urlencoded" in kwargs["headers"]["Content-Type"] and isinstance(data, dict):
+                    # url encode the data
+                    kwargs["data"] = urllib.parse.urlencode(data)
+
+            return await fn(self, method, url, **kwargs)
+        return new_request
+
+    with patch.object(aiohttp_stubs, "vcr_request", new=my_custom_function):
+        yield
 
 
 @pytest.fixture(scope="module")
@@ -82,6 +110,7 @@ def vcr_config():
     return dict(
         filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None), ("x-api-key", None)],
         filter_query_parameters=["cx", "key"], # google custom search engine id
+        filter_post_data_parameters=["client_secret"],
         before_record_request=ignore_some_localhost,
         record_mode="once",
         match_on=["method", "scheme", "host", "port", "path", "query", "body"],

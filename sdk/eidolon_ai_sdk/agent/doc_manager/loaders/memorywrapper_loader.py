@@ -47,6 +47,9 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
         super().__init__(spec, **kwargs)
         self.memory = spec.memory.instantiate()
 
+    async def start(self):
+        await self.memory.start()
+
     async def list_files(self) -> AsyncIterator[str]:
         async for file in self.memory.glob(self.spec.pattern):
             yield file.file_path

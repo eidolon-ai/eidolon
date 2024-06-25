@@ -69,6 +69,9 @@ posthog = "^3.5.0"
 ollama = "^0.2.0"
 pymupdf = "^1.24.5"
 jsonpath-ng = "^1.6.1"
+azure-storage-blob = "^12.20.0"
+aiohttp = "^3.9.5"
+aiodns = "^3.2.0"
 
 [tool.pytest.ini_options]
 pythonpath = "project"
