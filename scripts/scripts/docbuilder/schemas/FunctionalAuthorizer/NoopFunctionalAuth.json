@@ -1,0 +1,10 @@
+{
+  "title": "NoopFunctionalAuth",
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "NoopFunctionalAuth",
+      "description": "NoopFunctionalAuth"
+    }
+  }
+}

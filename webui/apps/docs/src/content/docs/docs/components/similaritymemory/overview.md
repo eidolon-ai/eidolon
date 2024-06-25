@@ -2,6 +2,7 @@
 title: SimilarityMemory Overview
 description: Overview of SimilarityMemory components
 ---
-Overview of <class 'eidolon_ai_sdk.agent_os_interfaces.SimilarityMemory'> components
+Overview of SimilarityMemory components
 ## Builtins
+* [SimilarityMemory](/docs/components/similaritymemory/similaritymemory/)
 * [SimilarityMemoryImpl](/docs/components/similaritymemory/similaritymemoryimpl/)

@@ -110,7 +110,7 @@ def create_agent():
         agent_resource = agent_resources[kind]
         agent_class = agent_resource.clazz
 
-    spec_type = Reference.get_spec_type(agent_class)
+    spec_type = Reference.get_specable_type(agent_class)
     if spec_type:
         if confirm("Would you like to modify the spec?", default=False):
             try:
@@ -224,7 +224,7 @@ def build_reference(field_info):
     impl_value = prompt_with_completer("implementation", fqn_completer, default=default_impl, value_proc=impl_proc)
     if impl_value != default_impl:
         ref_object["implementation"] = impl_value
-    spec_type = Reference.get_spec_type(for_name(impl_value, object))
+    spec_type = Reference.get_specable_type(for_name(impl_value, object))
     if spec_type:
         if spec_type and confirm("Would you like to modify the spec?", default=False):
             with indented():

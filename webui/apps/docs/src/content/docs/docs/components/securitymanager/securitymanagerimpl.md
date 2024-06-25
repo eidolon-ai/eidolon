@@ -1,0 +1,90 @@
+---
+title: SecurityManagerImpl
+description: Description of SecurityManagerImpl component
+---
+
+| Property                                                 | Pattern | Type                                                                                    | Deprecated | Definition | Title/Description       |
+| -------------------------------------------------------- | ------- | --------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------- |
+| - [implementation](#implementation )                     | No      | const                                                                                   | No         | -          | SecurityManagerImpl     |
+| - [authentication_processor](#authentication_processor ) | No      | [Reference[AuthenticationProcessor]](/docs/components/authenticationprocessor/overview) | No         | -          | AuthenticationProcessor |
+| - [functional_authorizer](#functional_authorizer )       | No      | [Reference[FunctionalAuthorizer]](/docs/components/functionalauthorizer/overview)       | No         | -          | FunctionalAuthorizer    |
+| - [process_authorizer](#process_authorizer )             | No      | [Reference[ProcessAuthorizer]](/docs/components/processauthorizer/overview)             | No         | -          | ProcessAuthorizer       |
+| - [safe_paths](#safe_paths )                             | No      | array of string                                                                         | No         | -          | Safe Paths              |
+
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** SecurityManagerImpl
+
+Specific value: `"SecurityManagerImpl"`
+
+## <a name="authentication_processor"></a>2. Property `authentication_processor`
+
+**Title:** AuthenticationProcessor
+
+|              |                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| **Type**     | [`Reference[AuthenticationProcessor]`](/docs/components/authenticationprocessor/overview) |
+| **Required** | No                                                                                        |
+| **Default**  | `{"implementation": "AuthenticationProcessor"}`                                           |
+
+**Description:** Overview of AuthenticationProcessor components
+
+## <a name="functional_authorizer"></a>3. Property `functional_authorizer`
+
+**Title:** FunctionalAuthorizer
+
+|              |                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------- |
+| **Type**     | [`Reference[FunctionalAuthorizer]`](/docs/components/functionalauthorizer/overview) |
+| **Required** | No                                                                                  |
+| **Default**  | `{"implementation": "FunctionalAuthorizer"}`                                        |
+
+**Description:** Overview of FunctionalAuthorizer components
+
+## <a name="process_authorizer"></a>4. Property `process_authorizer`
+
+**Title:** ProcessAuthorizer
+
+|              |                                                                               |
+| ------------ | ----------------------------------------------------------------------------- |
+| **Type**     | [`Reference[ProcessAuthorizer]`](/docs/components/processauthorizer/overview) |
+| **Required** | No                                                                            |
+| **Default**  | `{"implementation": "ProcessAuthorizer"}`                                     |
+
+**Description:** Overview of ProcessAuthorizer components
+
+## <a name="safe_paths"></a>5. Property `safe_paths`
+
+**Title:** Safe Paths
+
+|              |                                                                |
+| ------------ | -------------------------------------------------------------- |
+| **Type**     | `array of string`                                              |
+| **Required** | No                                                             |
+| **Default**  | `["/system/health", "/docs", "/favicon.ico", "/openapi.json"]` |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | True               |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be       | Description |
+| ------------------------------------- | ----------- |
+| [safe_paths items](#safe_paths_items) | -           |
+
+### <a name="autogenerated_heading_2"></a>5.1. safe_paths items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+----------------------------------------------------------------------------------------------------------------------------

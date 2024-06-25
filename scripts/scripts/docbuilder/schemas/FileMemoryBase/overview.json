@@ -11,5 +11,8 @@
     {
       "$ref": "file:./S3FileMemory.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "FileMemoryBase"
+  }
 }

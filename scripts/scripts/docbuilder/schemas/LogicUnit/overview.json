@@ -1,6 +1,6 @@
 {
   "title": "LogicUnit",
-  "description": "Overview of <class 'eidolon_ai_sdk.apu.logic_unit.LogicUnit'> components",
+  "description": "Overview of LogicUnit components",
   "anyOf": [
     {
       "$ref": "file:./ApiLogicUnit.json"
@@ -23,5 +23,8 @@
     {
       "$ref": "file:./WebSearch.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "LogicUnit"
+  }
 }

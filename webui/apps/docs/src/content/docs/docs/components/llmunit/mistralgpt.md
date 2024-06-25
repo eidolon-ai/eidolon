@@ -3,14 +3,14 @@ title: MistralGPT
 description: Description of MistralGPT component
 ---
 
-| Property                             | Pattern | Type        | Deprecated | Definition | Title/Description  |
-| ------------------------------------ | ------- | ----------- | ---------- | ---------- | ------------------ |
-| - [implementation](#implementation ) | No      | const       | No         | -          | MistralGPT         |
-| - [model](#model )                   | No      | object      | No         | -          | LLMModel Reference |
-| - [temperature](#temperature )       | No      | number      | No         | -          | Temperature        |
-| - [force_json](#force_json )         | No      | boolean     | No         | -          | Force Json         |
-| - [max_tokens](#max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
-| - [client_args](#client_args )       | No      | object      | No         | -          | Client Args        |
+| Property                             | Pattern | Type                                                      | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | --------------------------------------------------------- | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const                                                     | No         | -          | MistralGPT        |
+| - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | LLMModel          |
+| - [temperature](#temperature )       | No      | number                                                    | No         | -          | Temperature       |
+| - [force_json](#force_json )         | No      | boolean                                                   | No         | -          | Force Json        |
+| - [max_tokens](#max_tokens )         | No      | Combination                                               | No         | -          | Max Tokens        |
+| - [client_args](#client_args )       | No      | object                                                    | No         | -          | Client Args       |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -25,29 +25,15 @@ Specific value: `"MistralGPT"`
 
 ## <a name="model"></a>2. Property `model`
 
-**Title:** LLMModel Reference
+**Title:** LLMModel
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"mistral-large-latest"`                                                  |
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
+| **Required** | No                                                          |
+| **Default**  | `{"implementation": "mistral-large-latest"}`                |
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#model_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#model_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="model_implementation"></a>2.1. Property `implementation`
-
-**Title:** Implementation
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-| **Default**  | `null`   |
+**Description:** Overview of LLMModel components
 
 ## <a name="temperature"></a>3. Property `temperature`
 

@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "ProposePromptStrategy",
+      "description": "ProposePromptStrategy"
+    },
+    "preamble": {
+      "default": "You are an intelligent agent that is generating one thought at a time in a tree of thoughts setting.",
+      "title": "Preamble",
+      "type": "string"
+    },
+    "thoughts": {
+      "default": "{% if thoughts %}\nTHOUGHTS\n\n{% for thought in thoughts %}\n{{ thought }}\n{% endfor %}\n{% endif %}",
+      "title": "Thoughts",
+      "type": "string"
+    },
+    "post_amble": {
+      "default": "{% if thoughts %}\nPlease generate {{ n }} valid thoughts based on the last valid thought\n{% else %}\nPlease generate {{ n }} valid thoughts based on the question\n{%- endif -%}",
+      "title": "Post Amble",
+      "type": "string"
+    },
+    "num_children": {
+      "default": 3,
+      "description": "The number of thoughts to generate.",
+      "title": "Num Children",
+      "type": "integer"
+    }
+  },
+  "title": "ProposePromptStrategy",
+  "type": "object"
+}

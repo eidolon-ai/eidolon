@@ -1466,7 +1466,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.26"
+version = "0.1.27"
 description = "Eidolon python client and CLI"
 optional = false
 python-versions = ">=3.11,<3.13"
@@ -1507,7 +1507,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.81"
+version = "0.1.84"
 description = "An open source sgent service SDK"
 optional = false
 python-versions = ">=3.11,<3.13"
@@ -1524,7 +1524,7 @@ boto3 = "^1.34.74"
 boto3-stubs = {version = "^1.34.74", extras = ["essential"]}
 chromadb = ">=0.4.18"
 dill = "^0.3.8"
-eidolon-ai-client = "^0.1.26"
+eidolon-ai-client = "^0.1.27"
 eidolon-ai-mistralai = "^0.1.6a"
 eidolon-ai-usage-client = "^0.1.7"
 esprima = "^4.0.1"
@@ -6595,4 +6595,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "244ba952e023d299cd4c94df67fadcf44936172f8f7dc36a479970ef4734ee92"
+content-hash = "8d405a1e9262eac5f3660ae4954409bfd616402893e232f8a181845df847ee45"

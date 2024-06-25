@@ -1,0 +1,12 @@
+{
+  "title": "UsageClient",
+  "description": "Overview of UsageClient components",
+  "anyOf": [
+    {
+      "$ref": "file:./UsageClient.json"
+    }
+  ],
+  "reference_group": {
+    "type": "UsageClient"
+  }
+}

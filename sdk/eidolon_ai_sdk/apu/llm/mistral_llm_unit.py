@@ -161,16 +161,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 )
 
                 for tool_call in message.tool_calls or []:
-                    index = tool_call.index
-                    if index == len(tools_to_call):
-                        tools_to_call.append({"id": "", "name": "", "arguments": ""})
-                    if tool_call.id:
-                        tools_to_call[index]["id"] = tool_call.id
-                    if tool_call.function:
-                        if tool_call.function.name:
-                            tools_to_call[index]["name"] = tool_call.function.name
-                        if tool_call.function.arguments:
-                            tools_to_call[index]["arguments"] += tool_call.function.arguments
+                    tools_to_call.append(dict(id=tool_call.id, name=tool_call.function.name, arguments=tool_call.function.arguments))
 
                 if message.content:
                     if can_stream_message:
@@ -188,11 +179,15 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                     yield LLMToolCallRequestEvent(tool_call=tool_call)
             if not can_stream_message:
                 logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
-                if not self.spec.force_json:
+                if not self.spec.force_json or tools:
                     # message format looks like json```{...}```, parse content and pull out the json
                     complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
-
-                content = json.loads(complete_message) if complete_message else {}
+                try:
+                    content = json.loads(complete_message) if complete_message else {}
+                except json.JSONDecodeError as e:
+                    logger.error(f"Error decoding response JSON from Mistral: {complete_message}")
+                    logger.exception(e)
+                    raise HTTPException(502, "Error decoding response JSON from Mistral") from e
                 yield ObjectOutputEvent(content=content)
         except MistralConnectionException as e:
             raise HTTPException(429, f"Mistral Connection Error: {e.message}") from e
@@ -216,8 +211,8 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
             force_json_msg = (
                 f"Your response MUST be valid JSON satisfying the following JSON schema:\n{json.dumps(output_format)}"
             )
-            if not self.spec.force_json:
-                force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
+            if not self.spec.force_json or tools:
+                force_json_msg += "\nThe response MUST be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties and the response should match the provided schema"
             else:
                 request["response_format"] = ResponseFormat(type=ResponseFormats.json_object)
 

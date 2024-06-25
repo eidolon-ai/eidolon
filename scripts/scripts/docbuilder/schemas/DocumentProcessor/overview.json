@@ -1,0 +1,12 @@
+{
+  "title": "DocumentProcessor",
+  "description": "Overview of DocumentProcessor components",
+  "anyOf": [
+    {
+      "$ref": "file:./DocumentProcessor.json"
+    }
+  ],
+  "reference_group": {
+    "type": "DocumentProcessor"
+  }
+}

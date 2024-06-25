@@ -1,0 +1,15 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "ProcessFileSystem",
+      "description": "ProcessFileSystem"
+    },
+    "root": {
+      "default": "processes",
+      "title": "Root",
+      "type": "string"
+    }
+  },
+  "title": "ProcessFileSystem",
+  "type": "object"
+}

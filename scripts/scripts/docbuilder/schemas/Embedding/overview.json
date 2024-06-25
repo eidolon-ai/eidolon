@@ -1,0 +1,18 @@
+{
+  "title": "Embedding",
+  "description": "Overview of Embedding components",
+  "anyOf": [
+    {
+      "$ref": "file:./Embedding.json"
+    },
+    {
+      "$ref": "file:./NoopEmbedding.json"
+    },
+    {
+      "$ref": "file:./OpenAIEmbedding.json"
+    }
+  ],
+  "reference_group": {
+    "type": "Embedding"
+  }
+}
