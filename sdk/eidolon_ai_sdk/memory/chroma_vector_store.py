@@ -74,12 +74,10 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         pass
 
     def connect(self):
-        print("******** connecting")
         url = urlparse(self.spec.url)
         if url.scheme == "file":
             path = url.path
             self.client = chromadb.PersistentClient(path)
-            print("******** connecting *** done")
         else:
             host = url.hostname
             port = url.port or "8000"

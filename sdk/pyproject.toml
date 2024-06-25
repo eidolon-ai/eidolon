@@ -100,7 +100,3 @@ develop = true
 [tool.poetry.group.dev.dependencies.eidolon-ai-usage-client]
 path = "../usage-service/usage-client"
 develop = true
-
-[tool.poetry.group.speedups.dependencies]
-aiohttp = "^3.9.5"
-
