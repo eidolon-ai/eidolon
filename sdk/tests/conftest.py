@@ -52,6 +52,7 @@ def app_builder(machine_manager):
                     app=_app,
                     resource_generator=[_machine, *resources] if _machine else resources,
                     machine_name=_machine.metadata.name,
+                    fail_on_agent_start_error=True,
                 ):
                     yield
                     print("done")
