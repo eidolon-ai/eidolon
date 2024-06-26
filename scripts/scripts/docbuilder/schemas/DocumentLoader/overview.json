@@ -6,6 +6,9 @@
       "$ref": "file:./DocumentLoader.json"
     },
     {
+      "$ref": "file:./AzureLoader.json"
+    },
+    {
       "$ref": "file:./FilesystemLoader.json"
     },
     {

@@ -117,6 +117,7 @@ export default defineConfig({
             {
               label: 'FileMemoryBase', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/filememorybase/overview'},
+                {label: 'AzureFileMemory', link: '/docs/components/filememorybase/azurefilememory'},
                 {label: 'FileMemory', link: '/docs/components/filememorybase/filememory'},
                 {label: 'LocalFileMemory', link: '/docs/components/filememorybase/localfilememory'},
                 {label: 'S3FileMemory', link: '/docs/components/filememorybase/s3filememory'},
@@ -195,6 +196,7 @@ export default defineConfig({
               label: 'DocumentLoader', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/documentloader/overview'},
                 {label: 'DocumentLoader', link: '/docs/components/documentloader/documentloader'},
+                {label: 'AzureLoader', link: '/docs/components/documentloader/azureloader'},
                 {label: 'FilesystemLoader', link: '/docs/components/documentloader/filesystemloader'},
                 {label: 'GitHubLoader', link: '/docs/components/documentloader/githubloader'},
                 {label: 'S3Loader', link: '/docs/components/documentloader/s3loader'},

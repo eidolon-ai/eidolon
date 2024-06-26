@@ -6,6 +6,9 @@
       "$ref": "file:./FileMemory.json"
     },
     {
+      "$ref": "file:./AzureFileMemory.json"
+    },
+    {
       "$ref": "file:./LocalFileMemory.json"
     },
     {

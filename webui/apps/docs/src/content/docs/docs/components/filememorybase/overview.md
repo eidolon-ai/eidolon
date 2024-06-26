@@ -14,6 +14,7 @@ that provides the specific logic for handling file operations related to the
 agent's memory.
 
 ## Builtins
+* [AzureFileMemory](/docs/components/filememorybase/azurefilememory/)
 * [FileMemory](/docs/components/filememorybase/filememory/)
 * [LocalFileMemory](/docs/components/filememorybase/localfilememory/)
 * [S3FileMemory](/docs/components/filememorybase/s3filememory/)
