@@ -48,4 +48,4 @@ async def test_sql_agent(process):
                              ['playlist_track'],
                              ['tracks'],
                              ['sqlite_stat1']]
-    assert response.state == "terminated"
+    assert response.state == "idle"

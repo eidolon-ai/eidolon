@@ -1,12 +1,12 @@
 from abc import abstractmethod
 from functools import cached_property
-from typing import AsyncIterable, Literal, Optional, cast
+from typing import AsyncIterable, Literal, Optional, cast, Any
 
 from fastapi import Body
 from jinja2 import Environment, StrictUndefined, Template
 from pydantic import BaseModel, model_validator
-from sqlalchemy import text, make_url
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy import text, make_url, Row, MetaData, create_engine, Engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 
 from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent
 from eidolon_ai_client.util.logger import logger
@@ -24,6 +24,9 @@ class SqlClient(BaseModel):
 
     @abstractmethod
     def execute(self, query: str) -> AsyncIterable[tuple]:
+        pass
+
+    async def get_schema(self) -> dict:
         pass
 
 
@@ -47,8 +50,16 @@ class SqlAlchemy(SqlClient):
         return self
 
     @cached_property
-    def _engine(self):
+    def _engine(self) -> AsyncEngine:
         return create_async_engine(self.connection_string, **self.engine_kwargs)
+
+    def sync_engine(self) -> Engine:
+        return create_engine(self.connection_string, **self.engine_kwargs)
+
+    async def get_schema(self) -> dict:
+        md = MetaData()
+        md.reflect(bind=self._sync_engine)
+        return {}
 
     async def execute(self, query: str) -> AsyncIterable[tuple]:
         async with self._engine.connect() as conn:
@@ -57,7 +68,7 @@ class SqlAlchemy(SqlClient):
                 raise ValueError("Only SELECT queries are allowed")
             resp = await conn.stream(text_query)
             async for row in resp:
-                yield [c for c in row]
+                yield [c for c in cast(row, Row[tuple[Any, ...]])]
 
 
 class SqlLogicUnit(LogicUnit):
@@ -179,9 +190,16 @@ class SqlAgent(Specable[SqlAgentSpec]):
         if response.response_type == "execute":
             try:
                 logger.info(f"Executing query: {response.query}")
+                submitted_metadata = False
                 async for row in self._client.execute(response.query):
-                    yield ObjectOutputEvent(content=row)
-                yield AgentStateEvent(state="terminated")
+                    if not submitted_metadata:
+                        yield ObjectOutputEvent(content=dict(
+                            kind="metadata",
+                            query=response.query
+                        ))
+                        submitted_metadata = True
+                    yield ObjectOutputEvent(content=dict(kind="row", data=row))
+                yield AgentStateEvent(state="idle")
             except Exception as e:
                 if num_reties > 0:
                     yield StartStreamContextEvent(context_id='error', title='Error')
