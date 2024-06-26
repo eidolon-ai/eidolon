@@ -286,14 +286,14 @@ def llm(test_dir, module_identifier):
 
 @pytest.fixture()
 def dog(test_dir):
-    loc = str(test_dir / "images" / "dog.png")
+    loc = str(test_dir / "resources" / "dog.png")
     with open(loc, "rb") as f:
         yield f
 
 
 @pytest.fixture()
 def cat(test_dir):
-    loc = str(test_dir / "images" / "cat.png")
+    loc = str(test_dir / "resources" / "cat.png")
     with open(loc, "rb") as f:
         yield f
 

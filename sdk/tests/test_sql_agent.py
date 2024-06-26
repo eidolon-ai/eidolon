@@ -7,14 +7,17 @@ from eidolon_ai_sdk.util.class_utils import fqn
 
 
 @pytest.fixture(scope="module", autouse=True)
-async def server(run_app):
+async def server(run_app, test_dir):
     async with run_app(Resource(
             apiVersion="eidolon/v1",
             kind="Agent",
             metadata=Metadata(name="SqlAgent"),
-            spec=dict(implementation=fqn(SqlAgent), **dict(
-
-            ))
+            spec=dict(
+                implementation=fqn(SqlAgent),
+                client=dict(
+                    connection_string=f"sqlite+aiosqlite:///{str(test_dir / 'resources' / 'chinook.db')}",
+                )
+            )
     )) as ra:
         yield ra
     print("done...")
