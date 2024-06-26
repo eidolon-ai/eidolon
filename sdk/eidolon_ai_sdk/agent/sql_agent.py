@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from functools import cached_property
-from typing import AsyncIterable, Literal, Optional, Union, Type
+from typing import AsyncIterable, Literal, Optional, cast
 
 from fastapi import Body
 from jinja2 import Environment, StrictUndefined, Template
@@ -9,11 +9,14 @@ from sqlalchemy import text, make_url
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import register_program, register_action
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_sdk.apu.apu import APU
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
+from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
-from eidolon_ai_sdk.util.stream_collector import stream_manager, StreamCollector
+from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
 class SqlClient(BaseModel):
@@ -33,7 +36,7 @@ class SqlAlchemy(SqlClient):
     """
 
     protocol: str = None
-    connection_string: str = "sqlite+pysqlite:///:memory:"
+    connection_string: str = "sqlite+aiosqlite:///:memory:"
     engine_kwargs: dict = {}
     select_only: bool = False
 
@@ -57,18 +60,48 @@ class SqlAlchemy(SqlClient):
                 yield row
 
 
+class SqlLogicUnit(LogicUnit):
+    def __init__(self, client: SqlClient, apu: ProcessingUnitLocator, limit: int = 10):
+        super().__init__(apu)
+        self.client = client
+        self.limit = limit
+
+    @llm_function()
+    async def peek(self, query: str) -> dict:
+        """
+        Execute a query and see return the first few rows of a query.
+        """
+        to_yield = self.limit
+        rows = []
+        async for row in self.client.execute(query):
+            rows.append(row)
+            if len(rows) >= to_yield:
+                break
+
+        return dict(rows=rows)
+
+
 class SqlAgentSpec(BaseModel):
     client: AnnotatedReference[SqlClient]
     apu: AnnotatedReference[APU]
     description: str = "An agent for interacting with data. Can respond to queries provided in natural language."
-    system_prompt: str = "Please provide the SQL query you would like to execute"
+    system_prompt: str = """
+    You are a helpful assistant that is a sql expert and helps a user query a {{ protocol }} database and analyse the response.
+    
+    Use your tools to investigate the database with the goal of providing the user with the query that they need.
+    
+    Think carefully.
+    """
     system_prompt_suffix: str = ""
     query_prompt: str = "{{ body }}"
-    clarification_prompt: Optional[str] = "{{ body }}"
-    summarization_prompt: Optional[str] = "Provide a summary of the results"
-    execution_prompt: Optional[str] = "What query should be run?"
+    clarification_prompt: Optional[str] = "What clarifying information do you need? Phrase your response as an explicit question or several questions."
     error_prompt: str = "An error occurred executing the query \"{{ query }}\": {{ error }}"
     num_retries: int = 3
+
+
+class AgentResponse(BaseModel):
+    response_type: Literal['execute', 'clarify']
+    query: Optional[str] = None
 
 
 class SqlAgent(Specable[SqlAgentSpec]):
@@ -77,84 +110,108 @@ class SqlAgent(Specable[SqlAgentSpec]):
     _system_prompt: Template
     _query_prompt: Template
     _clarification_prompt: Optional[Template]
-    _summarization_prompt: Optional[Template]
-    _type: Type[Literal['execute', 'clarify', 'summary']]
+    _type: dict
     _error_prompt: Template
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._client = self.spec.client.instantiate()
         self._apu = self.spec.apu.instantiate()
+
+        if hasattr(self._apu, "logic_units"):
+            self._apu.logic_units.append(SqlLogicUnit(client=self._client, apu=cast(self._apu, ProcessingUnitLocator)))
+        else:
+            raise ValueError("APU does not have logic units")
+
         environment = Environment(undefined=StrictUndefined)
         self._error_prompt = environment.from_string(self.spec.error_prompt)
         self._system_prompt = environment.from_string(self.spec.system_prompt)
         self._query_prompt = environment.from_string(self.spec.query_prompt)
         self._clarification_prompt = environment.from_string(
             self.spec.clarification_prompt) if self.spec.clarification_prompt else None
-        self._summarization_prompt = environment.from_string(
-            self.spec.summarization_prompt) if self.spec.summarization_prompt else None
-        type_args = []
+        query_response_type = dict(
+            type="object",
+            properties=dict(
+                response_type=dict(const="execute"),
+                query=dict(type="string")),
+            required=["response_type", "query"]
+        )
         if self._clarification_prompt:
-            type_args.append(Literal["clarify"])
-        if self.spec.execution_prompt:
-            type_args.append(Literal["execute"])
-        if self.spec.summarization_prompt:
-            type_args.append(Literal["summary"])
-        self._type = Union[tuple(type_args)]
+            clarification_response_type = dict(
+                type="object",
+                properties=dict(response_type=dict(const="clarify")),
+                required=["response_type"]
+            )
+            self._type = dict(anyOf=[query_response_type, clarification_response_type])
+        else:
+            self._type = query_response_type
 
     @register_program()
-    async def query(self, process_id, body: Body("", media_type="text/plain")):
+    async def query(self, process_id, body: str = Body("", media_type="text/plain")):
+        kwargs = dict(body=body)
+
         t = await self._apu.main_thread(process_id)
-        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self._system_prompt.render(protocol=self._client.protocol, **kwargs))])
+        await t.set_boot_messages(
+            prompts=[SystemAPUMessage(prompt=self._system_prompt.render(protocol=self._client.protocol, **kwargs))])
         message = UserTextAPUMessage(prompt=self._query_prompt.render(protocol=self._client.protocol, **kwargs))
-        async for e in self.cycle(t, message, self.spec.num_retries, body=body):
+        async for e in self.cycle(t, message, self.spec.num_retries):
             yield e
 
     @register_action("clarify")
-    async def clarify(self, process_id, **kwargs):
-        message = UserTextAPUMessage(prompt=self._clarification_prompt.render(protocol=self._client.protocol, **kwargs))
+    async def clarify(self, process_id, body: str = Body("", media_type="text/plain")):
+        message = UserTextAPUMessage(prompt=body)
         t = await self._apu.main_thread(process_id)
-        async for e in self.cycle(t, message, self.spec.num_retries, kwargs):
+        async for e in self.cycle(t, message, self.spec.num_retries):
             yield e
 
-    async def cycle(self, thread, message, num_reties, kwargs):
-        kwargs = dict(protocol=self._client.protocol, **kwargs)
+    async def cycle(self, thread, message, num_reties):
+        last_event = None
+        async for e in self.thinking(message, thread):
+            if isinstance(e, ObjectOutputEvent):
+                last_event = e
+            yield e
+        if not last_event:
+            raise ValueError("No response from llm")
+        try:
+            response = AgentResponse(**last_event.content)
+        except Exception:
+            raise ValueError(f"Unexpected response from llm: {last_event}")
+        if response.response_type == "execute":
+            try:
+                logger.info(f"Executing query: {response.query}")
+                async for row in self._client.execute(response.query):
+                    yield ObjectOutputEvent(content=row)
+                yield AgentStateEvent(state="terminated")
+            except Exception as e:
+                if num_reties > 0:
+                    yield StartStreamContextEvent(context_id='error', title='Error')
+                    yield ObjectOutputEvent(content=dict(query=response.query, error=str(e)), stream_context='error')
+                    yield EndStreamContextEvent(context_id='error')
+                    message = UserTextAPUMessage(prompt=self._error_prompt.render(error=str(e), query=response.query))
+                    async for e in self.cycle(thread, message, num_reties - 1):
+                        yield e
+                else:
+                    raise
+        elif response.response_type == "clarify":
+            prompt = UserTextAPUMessage(prompt=self._clarification_prompt.render(protocol=self._client.protocol))
+            async for e in thread.stream_request(prompts=[prompt]):
+                yield e
+            yield AgentStateEvent(state="clarify")
+        else:
+            raise ValueError(f"Unexpected response type from llm: {response.type}")
+
+    async def thinking(self, message, thread):
         thinking_stream = thread.stream_request(
             prompts=[message],
             output_format=self._type
         )
-        thinking_stream = StreamCollector(stream=thinking_stream)
         async for e in stream_manager(thinking_stream,
                                       StartStreamContextEvent(context_id='thinking', title='Thinking')):
             yield e
-        resp = thinking_stream.get_content()[-1]
-        if resp == "summary":
-            async for event in thread.stream_request(
-                    prompts=[UserTextAPUMessage(prompt=self._summarization_prompt.render(**kwargs))]):
-                yield event
-        elif resp == "clarify":
-            async for event in thread.stream_request(
-                    prompts=[UserTextAPUMessage(prompt=self._clarification_prompt.render(**kwargs))]):
-                yield event
-            yield AgentStateEvent(state='clarify')
-        elif resp == "execute":
-            gen_req = thread.stream_request(prompts=[UserTextAPUMessage(prompt=self._clarification_prompt.render(**kwargs))])
-            gen_req = StreamCollector(stream=gen_req)
-            async for e in stream_manager(gen_req, StartStreamContextEvent(context_id='generating_sql', title='Generating SQL')):
-                yield e
-            query = gen_req.get_content()[-1]
-            try:
-                async for row in self._client.execute(query):
-                    yield ObjectOutputEvent(content=row)
-            except Exception as e:
-                if num_reties > 0:
-                    yield StartStreamContextEvent(context_id='error', title='Error')
-                    yield ObjectOutputEvent(content=dict(query=query, error=str(e)), context_id='error')
-                    yield EndStreamContextEvent(context_id='error')
-                    message = UserTextAPUMessage(prompt=self._error_prompt.render(error=str(e), query=query, **kwargs))
-                    async for e in self.cycle(thread, message, num_reties - 1, kwargs):
-                        yield e
-                else:
-                    raise e
-        else:
-            raise ValueError(f"Unexpected response from llm: {resp}")
+
+
+class QueryError(Exception):
+    def __init__(self, query, error):
+        self.query = query
+        self.error = error
+        super().__init__(f"Error executing query {query}: {error}")

@@ -31,7 +31,6 @@ async def process(agent):
 
 
 async def test_sql_agent(process):
-    response = await process.action("query", "what databases do I have available?")
-    assert response.data == ""
-    assert response.state == "terminated"
-
+    response = await process.action("query", "what tables are accessible?")
+    assert response.data == "It appears that there are no tables in the current database. If you believe this is incorrect, please ensure the database is correctly loaded or specify another database to query."
+    assert response.state == "clarify"

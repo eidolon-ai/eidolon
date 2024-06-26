@@ -195,7 +195,6 @@ class AgentController:
             )
         else:
             # run the program synchronously
-
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
@@ -488,21 +487,6 @@ class AgentController:
 
         await ProcessDoc.delete(_id=process_id)
         return num_deleted + 1
-
-    def doc_to_response(self, latest_record: ProcessDoc, data: typing.Any):
-        return JSONResponse(
-            SyncStateResponse(
-                process_id=latest_record.record_id,
-                state=latest_record.state,
-                data=data,
-                available_actions=self.get_available_actions(latest_record.state),
-                agent=self.name,
-                title=latest_record.title,
-                created=latest_record.created,
-                updated=latest_record.updated,
-            ).model_dump(),
-            200,
-        )
 
     def get_available_actions(self, state):
         return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]

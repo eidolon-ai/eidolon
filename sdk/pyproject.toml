@@ -70,6 +70,7 @@ ollama = "^0.2.0"
 pymupdf = "^1.24.5"
 jsonpath-ng = "^1.6.1"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
+aiosqlite = "^0.20.0"
 
 [tool.pytest.ini_options]
 pythonpath = "project"
