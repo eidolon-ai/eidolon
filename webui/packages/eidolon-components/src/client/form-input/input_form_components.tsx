@@ -116,6 +116,8 @@ export function CopilotInputForm({machineUrl, processId, isProcessing, copilotPa
       {!isProcessing && (
         <Button
           variant={'text'}
+          type="submit"
+          id="submit-input-text"
           onClick={handleAction}><ArrowCircleUpRounded
           style={{fontSize: 36}}
           sx={{padding: "0px"}}

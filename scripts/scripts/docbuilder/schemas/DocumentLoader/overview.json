@@ -1,0 +1,21 @@
+{
+  "title": "DocumentLoader",
+  "description": "Overview of DocumentLoader components",
+  "anyOf": [
+    {
+      "$ref": "file:./DocumentLoader.json"
+    },
+    {
+      "$ref": "file:./FilesystemLoader.json"
+    },
+    {
+      "$ref": "file:./GitHubLoader.json"
+    },
+    {
+      "$ref": "file:./S3Loader.json"
+    }
+  ],
+  "reference_group": {
+    "type": "DocumentLoader"
+  }
+}

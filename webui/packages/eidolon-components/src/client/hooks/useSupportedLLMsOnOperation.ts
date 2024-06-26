@@ -8,8 +8,8 @@ export function useSupportedLLMsOnOperation(machineURL: string, copilotParams: C
 
   function updateSelectedLLM(opInfo: OperationInfo) {
     const schema = opInfo.schema
-    if (schema?.properties?.execute_on_cpu) {
-      let property = schema?.properties?.execute_on_cpu as Record<string, any>
+    if (schema?.properties?.execute_on_apu) {
+      let property = schema?.properties?.execute_on_apu as Record<string, any>
       if (property?.default) {
         setSelectedLLM(property.default)
       } else {

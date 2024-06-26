@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "FilesystemLoader",
+      "description": "FilesystemLoader"
+    },
+    "root_dir": {
+      "title": "Root Dir",
+      "type": "string"
+    },
+    "pattern": {
+      "default": "**/*",
+      "title": "Pattern",
+      "type": "string"
+    }
+  },
+  "required": [
+    "root_dir"
+  ],
+  "title": "FilesystemLoader",
+  "type": "object"
+}

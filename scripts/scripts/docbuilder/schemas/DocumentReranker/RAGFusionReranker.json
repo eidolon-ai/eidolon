@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "RAGFusionReranker",
+      "description": "RAGFusionReranker"
+    },
+    "k": {
+      "default": 60,
+      "description": "The rerank factor.",
+      "title": "K",
+      "type": "integer"
+    }
+  },
+  "title": "RAGFusionReranker",
+  "type": "object"
+}

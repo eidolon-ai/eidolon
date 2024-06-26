@@ -8,6 +8,7 @@ from eidolon_ai_sdk.agent.retriever_agent.document_retriever import DocumentRetr
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer, DocSummary
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 
 
@@ -36,15 +37,17 @@ class Retriever(Specable[RetrieverSpec]):
         self.document_retriever = self.spec.document_retriever.instantiate()
         self.result_summarizer = self.spec.result_summarizer.instantiate()
 
-    async def search(self, vector_collection_name: str, question: str) -> AsyncIterable[DocSummary]:
+    async def do_search(self, vector_collection_name: str, apu: APU, process_id: str, question: str) -> AsyncIterable[DocSummary]:
         """
         Process the question by searching the document store.
+        :param process_id:
+        :param apu:
         :param vector_collection_name:
         :param question: The question to process
-        :return: The response from the cpu
+        :return: The response from the apu
         """
         if self.question_transformer:
-            questions = await self.question_transformer.transform(question)
+            questions = await self.question_transformer.transform(apu, process_id, question)
         else:
             questions = [question]
         _docs = await asyncio.gather(*(self._embed_question(vector_collection_name, question) for question in questions))

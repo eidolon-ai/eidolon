@@ -1,0 +1,214 @@
+name: Test Python
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  pull_request_target:
+    types: [ opened, synchronize ]
+
+jobs:
+  lock-files-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: make lock
+      - name: Checking if lock files are out of date, (run "make lock" to fix)
+        run: |
+          git status
+          git diff --quiet
+
+  examples-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    steps:
+#     https://michaelheap.com/access-secrets-from-forks/
+#     Allow contributors to run the tests with secret access if it is kicked off by a maintainer
+      - name: Get User Permission
+        id: checkAccess
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check User Permission
+        if: steps.checkAccess.outputs.require-result == 'false'
+        run: |
+          echo "${{ github.triggering_actor }} does not have permissions on this repo."
+          echo "Current permission level is ${{ steps.checkAccess.outputs.user-permission }}"
+          echo "Job originally triggered by ${{ github.actor }}"
+          exit 1
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{  github.event.pull_request.head.sha }} # This is dangerous without the first access check
+
+      - name: Check secrets
+        run: |
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
+            echo "Error: OPENAI_API_KEY is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.AZURE_AD_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_AD_TENANT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_TEST_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}" ]; then
+            echo "Error: One or more Azure secrets are not set"
+            exit 1
+          fi
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: examples
+      - run: poetry run playwright install
+        working-directory: examples
+      - run: poetry run ruff format .
+        working-directory: examples
+      - run: poetry run ruff check .
+        working-directory: examples
+      - run: mkdir -p /tmp/eidolon
+        working-directory: examples
+      - run: poetry run pytest
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          EIDOLON_DATA_DIR: /tmp/eidolon
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          AZURE_AD_TEST_CLIENT_ID: ${{ secrets.AZURE_AD_TEST_CLIENT_ID }}
+          AZURE_AD_TEST_CLIENT_SECRET: ${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}
+        working-directory: examples
+      - uses: actions/upload-artifact@v4
+        if: ${{ !success() }}
+        with:
+          name: server-logs
+          path: /tmp/eidolon_test_logs/
+
+  test-quickstart-no-mongodb:
+    runs-on: ubuntu-latest
+    steps:
+      #     https://michaelheap.com/access-secrets-from-forks/
+      #     Allow contributors to run the tests with secret access if it is kicked off by a maintainer
+      - name: Get User Permission
+        id: checkAccess
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check User Permission
+        if: steps.checkAccess.outputs.require-result == 'false'
+        run: |
+          echo "${{ github.triggering_actor }} does not have permissions on this repo."
+          echo "Current permission level is ${{ steps.checkAccess.outputs.user-permission }}"
+          echo "Job originally triggered by ${{ github.actor }}"
+          exit 1
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{  github.event.pull_request.head.sha }} # This is dangerous without the first access check
+
+      - name: Check secrets
+        run: |
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
+            echo "Error: OPENAI_API_KEY is not set"
+            exit 1
+          fi
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: examples
+      - run: poetry run pytest tests/test_quickstart.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        working-directory: examples
+
+  sdk-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: sdk
+      - run: poetry run playwright install
+        working-directory: sdk
+      - run: poetry run ruff format .
+        working-directory: sdk
+      - run: poetry run ruff check .
+        working-directory: sdk
+      - run: poetry run pytest
+        env:
+          OPENAI_API_KEY: intentionally_unused
+        working-directory: sdk
+
+  sdk-test-local-memory:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry ${{ matrix.python-version }}
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: sdk
+      - run: poetry run playwright install
+        working-directory: sdk
+      - run: poetry run pytest --symbolic_memory local
+        env:
+          OPENAI_API_KEY: intentionally_unused
+        working-directory: sdk
+
+  usage-service-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: usage-service/usage-server
+      - run: poetry run ruff format .
+        working-directory: usage-service/usage-server
+      - run: poetry run ruff check .
+        working-directory: usage-service/usage-server
+      - run: poetry run pytest
+        working-directory: usage-service/usage-server

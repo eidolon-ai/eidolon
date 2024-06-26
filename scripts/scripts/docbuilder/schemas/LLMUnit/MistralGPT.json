@@ -1,0 +1,43 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "MistralGPT",
+      "description": "MistralGPT"
+    },
+    "model": {
+      "$ref": "file:../LLMModel/overview.json",
+      "default": {
+        "implementation": "mistral-large-latest"
+      }
+    },
+    "temperature": {
+      "default": 0.3,
+      "title": "Temperature",
+      "type": "number"
+    },
+    "force_json": {
+      "default": true,
+      "title": "Force Json",
+      "type": "boolean"
+    },
+    "max_tokens": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Tokens"
+    },
+    "client_args": {
+      "default": {},
+      "title": "Client Args",
+      "type": "object"
+    }
+  },
+  "title": "MistralGPT",
+  "type": "object"
+}

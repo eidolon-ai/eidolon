@@ -1,0 +1,44 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "OpenAIGPT",
+      "description": "OpenAIGPT"
+    },
+    "model": {
+      "$ref": "file:../LLMModel/overview.json",
+      "default": {
+        "implementation": "gpt-4-turbo"
+      }
+    },
+    "temperature": {
+      "default": 0.3,
+      "title": "Temperature",
+      "type": "number"
+    },
+    "force_json": {
+      "default": true,
+      "title": "Force Json",
+      "type": "boolean"
+    },
+    "max_tokens": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Tokens"
+    },
+    "connection_handler": {
+      "$ref": "file:../OpenAIConnectionHandler/overview.json",
+      "default": {
+        "implementation": "OpenAIConnectionHandler"
+      }
+    }
+  },
+  "title": "OpenAIGPT",
+  "type": "object"
+}

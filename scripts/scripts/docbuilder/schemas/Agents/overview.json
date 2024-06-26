@@ -1,0 +1,15 @@
+{
+  "title": "Agents",
+  "description": "Overview of Agents components",
+  "anyOf": [
+    {
+      "$ref": "file:./RetrieverAgent.json"
+    },
+    {
+      "$ref": "file:./SimpleAgent.json"
+    }
+  ],
+  "reference_group": {
+    "type": "Agents"
+  }
+}

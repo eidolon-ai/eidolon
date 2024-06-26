@@ -1,0 +1,215 @@
+interactions:
+- request:
+    body: client_id=428c42f4-86bb-4334-b03d-14492f795d5b&grant_type=client_credentials&scope=https%3A%2F%2Fstorage.azure.com%2F.default
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.17.0 Python/3.11.8 (macOS-14.4.1-arm64-arm-64bit)
+    method: POST
+    uri: https://login.microsoftonline.com/c7234219-72c7-472d-be7f-916f745fce42/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyIsImtpZCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvYzcyMzQyMTktNzJjNy00NzJkLWJlN2YtOTE2Zjc0NWZjZTQyLyIsImlhdCI6MTcxODkwOTkxNywibmJmIjoxNzE4OTA5OTE3LCJleHAiOjE3MTg5MTM4MTcsImFpbyI6IkUyZGdZRGorL29WMjUwemxtdHE5dFFLcmIxaDZBd0E9IiwiYXBwaWQiOiI0MjhjNDJmNC04NmJiLTQzMzQtYjAzZC0xNDQ5MmY3OTVkNWIiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jNzIzNDIxOS03MmM3LTQ3MmQtYmU3Zi05MTZmNzQ1ZmNlNDIvIiwiaWR0eXAiOiJhcHAiLCJvaWQiOiI5MzEwZWI2My04MjYwLTQ0MmYtYTE2NC0wZDMwOWE5NWZlYTIiLCJyaCI6IjAuQWIwQUdVSWp4OGR5TFVlLWY1RnZkRl9PUW9HbUJ1VFU4NmhDa0xiQ3NDbEpldkhMQUFBLiIsInN1YiI6IjkzMTBlYjYzLTgyNjAtNDQyZi1hMTY0LTBkMzA5YTk1ZmVhMiIsInRpZCI6ImM3MjM0MjE5LTcyYzctNDcyZC1iZTdmLTkxNmY3NDVmY2U0MiIsInV0aSI6IktXbGdMREotNUVXVWlEYnd6dUF5QUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfaWRyZWwiOiI3IDI2In0.QJzVD2tDgsZ3jOlhcFqFiw0_DazOZVGUYVSaCK9ZKliYvI7MQ0VQrj7inOfLMN2KuU0Nabt75qlkhzaVWmAZww-dYszcapmDEMLtnYz1ppi3Hv9qA85lXOAxlF_WCJuPwF5q2Czw6SW5AiltFQzcUW3Ck1zCHKCDGTBlF7lVP8LIa7J9mYkOYYZwhBO18pwRkQR7AX8kCEM2E5Zdj_l_ONQx085OJyVX37nJfIH800RUAuprP6cB8OHk_l7k1NUrXPQJnyOicOZZKlrvHyDS2Uca0WXB8AwWZY4BYL7JNeiKnEeswIsoEDzVE-V80ge_SOktPfIi7O9fdelpuk20vg"}'
+    headers:
+      Cache-Control:
+      - no-store, no-cache
+      Content-Length:
+      - '1360'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 20 Jun 2024 19:03:37 GMT
+      Expires:
+      - '-1'
+      P3P:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      Pragma:
+      - no-cache
+      Set-Cookie:
+      - fpc=AuH_uLamILlCiuEEvrEN0aqEXSKJAQAAAAh0Bt4OAAAA; expires=Sat, 20-Jul-2024
+        19:03:37 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '0'
+      x-ms-ests-server:
+      - 2.1.18298.5 - SCUS ProdSlices
+      x-ms-request-id:
+      - 2c606929-7e32-45e4-9488-36f0cee03200
+      x-ms-srs:
+      - 1.P
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.4.1-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-client-request-id:
+      - cc81e2d6-2f37-11ef-98f5-aec083e7debc
+      x-ms-date:
+      - Thu, 20 Jun 2024 19:03:37 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: GET
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-createazure-memory?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 20 Jun 2024 19:03:37 GMT
+      Etag:
+      - '"0x8DC9136AF19DF3D"'
+      Last-Modified:
+      - Thu, 20 Jun 2024 14:38:43 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - cc81e2d6-2f37-11ef-98f5-aec083e7debc
+      x-ms-default-encryption-scope:
+      - $account-encryption-key
+      x-ms-deny-encryption-scope-override:
+      - 'false'
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-immutable-storage-with-versioning-enabled:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 78f12e66-601e-00ef-6644-c327c8000000
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: FOO
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.4.1-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - cce8e8f0-2f37-11ef-98f5-aec083e7debc
+      x-ms-date:
+      - Thu, 20 Jun 2024 19:03:37 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: PUT
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-createazure-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - kBiQqOnIz21aGlQrIp/r/w==
+      Date:
+      - Thu, 20 Jun 2024 19:03:37 GMT
+      Etag:
+      - '"0x8DC915BB12AF407"'
+      Last-Modified:
+      - Thu, 20 Jun 2024 19:03:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - cce8e8f0-2f37-11ef-98f5-aec083e7debc
+      x-ms-content-crc64:
+      - wtij308CLwo=
+      x-ms-request-id:
+      - 78f12ecd-601e-00ef-4844-c327c8000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.4.1-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-client-request-id:
+      - ccf24012-2f37-11ef-98f5-aec083e7debc
+      x-ms-date:
+      - Thu, 20 Jun 2024 19:03:37 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: HEAD
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-createazure-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '3'
+      Content-MD5:
+      - kBiQqOnIz21aGlQrIp/r/w==
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Thu, 20 Jun 2024 19:03:37 GMT
+      Etag:
+      - '"0x8DC915BB12AF407"'
+      Last-Modified:
+      - Thu, 20 Jun 2024 19:03:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - ccf24012-2f37-11ef-98f5-aec083e7debc
+      x-ms-creation-time:
+      - Thu, 20 Jun 2024 14:38:43 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 78f12ef6-601e-00ef-7044-c327c8000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 200
+      message: OK
+version: 1

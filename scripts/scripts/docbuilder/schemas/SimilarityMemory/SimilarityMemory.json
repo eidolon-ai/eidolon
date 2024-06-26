@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "SimilarityMemory",
+      "description": "SimilarityMemory"
+    },
+    "embedder": {
+      "$ref": "file:../Embedding/overview.json",
+      "default": {
+        "implementation": "Embedding"
+      }
+    },
+    "vector_store": {
+      "$ref": "file:../VectorStore/overview.json",
+      "default": {
+        "implementation": "VectorStore"
+      }
+    }
+  },
+  "title": "SimilarityMemory",
+  "type": "object"
+}

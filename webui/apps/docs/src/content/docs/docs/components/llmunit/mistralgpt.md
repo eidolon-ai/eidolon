@@ -3,25 +3,39 @@ title: MistralGPT
 description: Description of MistralGPT component
 ---
 
-| Property                       | Pattern | Type                | Deprecated | Definition | Title/Description  |
-| ------------------------------ | ------- | ------------------- | ---------- | ---------- | ------------------ |
-| - [model](#model )             | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview/) | No         | -          | LLMModel Reference |
-| - [temperature](#temperature ) | No      | number              | No         | -          | Temperature        |
-| - [force_json](#force_json )   | No      | boolean             | No         | -          | Force Json         |
-| - [max_tokens](#max_tokens )   | No      | Combination         | No         | -          | Max Tokens         |
-| - [client_args](#client_args ) | No      | object              | No         | -          | Client Args        |
+| Property                             | Pattern | Type                                                      | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | --------------------------------------------------------- | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const                                                     | No         | -          | MistralGPT        |
+| - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | LLMModel          |
+| - [temperature](#temperature )       | No      | number                                                    | No         | -          | Temperature       |
+| - [force_json](#force_json )         | No      | boolean                                                   | No         | -          | Force Json        |
+| - [max_tokens](#max_tokens )         | No      | Combination                                               | No         | -          | Max Tokens        |
+| - [client_args](#client_args )       | No      | object                                                    | No         | -          | Client Args       |
 
-## <a name="model"></a>1. Property `model`
+## <a name="implementation"></a>1. Property `implementation`
 
-**Title:** LLMModel Reference
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
 
-|              |                          |
-| ------------ | ------------------------ |
-| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview/)`    |
-| **Required** | No                       |
-| **Default**  | `"mistral-large-latest"` |
+**Description:** MistralGPT
 
-## <a name="temperature"></a>2. Property `temperature`
+Specific value: `"MistralGPT"`
+
+## <a name="model"></a>2. Property `model`
+
+**Title:** LLMModel
+
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
+| **Required** | No                                                          |
+| **Default**  | `{"implementation": "mistral-large-latest"}`                |
+
+**Description:** Overview of LLMModel components
+
+## <a name="temperature"></a>3. Property `temperature`
 
 **Title:** Temperature
 
@@ -31,7 +45,7 @@ description: Description of MistralGPT component
 | **Required** | No       |
 | **Default**  | `0.3`    |
 
-## <a name="force_json"></a>3. Property `force_json`
+## <a name="force_json"></a>4. Property `force_json`
 
 **Title:** Force Json
 
@@ -41,7 +55,7 @@ description: Description of MistralGPT component
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="max_tokens"></a>4. Property `max_tokens`
+## <a name="max_tokens"></a>5. Property `max_tokens`
 
 **Title:** Max Tokens
 
@@ -57,21 +71,21 @@ description: Description of MistralGPT component
 | [item 0](#max_tokens_anyOf_i0) |
 | [item 1](#max_tokens_anyOf_i1) |
 
-### <a name="max_tokens_anyOf_i0"></a>4.1. Property `item 0`
+### <a name="max_tokens_anyOf_i0"></a>5.1. Property `item 0`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
 | **Required** | No        |
 
-### <a name="max_tokens_anyOf_i1"></a>4.2. Property `item 1`
+### <a name="max_tokens_anyOf_i1"></a>5.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-## <a name="client_args"></a>5. Property `client_args`
+## <a name="client_args"></a>6. Property `client_args`
 
 **Title:** Client Args
 

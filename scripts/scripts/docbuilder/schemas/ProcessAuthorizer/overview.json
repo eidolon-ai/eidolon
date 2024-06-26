@@ -1,0 +1,15 @@
+{
+  "title": "ProcessAuthorizer",
+  "description": "Overview of ProcessAuthorizer components",
+  "anyOf": [
+    {
+      "$ref": "file:./ProcessAuthorizer.json"
+    },
+    {
+      "$ref": "file:./PrivateAuthorizer.json"
+    }
+  ],
+  "reference_group": {
+    "type": "ProcessAuthorizer"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "title": "LLMModel",
+  "description": "Overview of LLMModel components",
+  "anyOf": [
+    {
+      "$ref": "file:./LLMModel.json"
+    },
+    {
+      "$ref": "file:./claude-3-haiku-20240307.json"
+    },
+    {
+      "$ref": "file:./claude-3-opus-20240229.json"
+    },
+    {
+      "$ref": "file:./claude-3-sonnet-20240229.json"
+    },
+    {
+      "$ref": "file:./gpt-3.5-turbo.json"
+    },
+    {
+      "$ref": "file:./gpt-4-turbo.json"
+    },
+    {
+      "$ref": "file:./gpt-4o.json"
+    },
+    {
+      "$ref": "file:./llama3-8b.json"
+    },
+    {
+      "$ref": "file:./mistral-large-latest.json"
+    },
+    {
+      "$ref": "file:./mistral-medium-latest.json"
+    },
+    {
+      "$ref": "file:./mistral-small-latest.json"
+    }
+  ],
+  "reference_group": {
+    "type": "LLMModel"
+  }
+}

@@ -1,3 +1,7 @@
+import threading
+
+from eidolon_ai_sdk.util.async_wrapper import make_async
+
 try:
     __import__("pysqlite3")
     import sys
@@ -14,7 +18,7 @@ from typing import List, Dict, Any, Optional
 from urllib.parse import urlparse, parse_qs
 
 from eidolon_ai_sdk.memory.document import EmbeddedDocument
-from eidolon_ai_sdk.memory.file_system_vector_store import FileSystemVectorStore, FileSystemVectorStoreSpec
+from eidolon_ai_sdk.memory.file_system_vector_store import FileSystemVectorStore, FileSystemVectorStoreSpec, tracer
 from eidolon_ai_sdk.memory.vector_store import QueryItem
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
@@ -59,6 +63,7 @@ class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
 class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]):
     spec: ChromaVectorStoreConfig
     client: chromadb.Client
+    lock = threading.Lock()
 
     def __init__(self, spec: ChromaVectorStoreConfig):
         super().__init__(spec)
@@ -87,30 +92,36 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         pass
 
     def _get_collection(self, name: str) -> Collection:
-        if not self.client:
-            self.connect()
+        with ChromaVectorStore.lock:
+            if not self.client:
+                self.connect()
 
-        try:
-            return self.client.get_or_create_collection(name=name)
-        except BaseException as e:
-            raise RuntimeError(f"Failed to get collection {name}") from e
+            try:
+                return self.client.get_or_create_collection(name=name)
+            except BaseException as e:
+                raise RuntimeError(f"Failed to get collection {name}") from e
 
-    async def add_embedding(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
-        collection = self._get_collection(name=collection)
-        doc_ids = [doc.id for doc in docs]
-        embeddings = [doc.embedding for doc in docs]
-        metadata = [doc.metadata for doc in docs]
-        collection.upsert(embeddings=embeddings, ids=doc_ids, metadatas=metadata, **add_kwargs)
+    @make_async
+    def add_embedding(self, collection: str, docs: List[EmbeddedDocument], **add_kwargs: Any):
+        with tracer.start_as_current_span("add embedding"):
+            collection = self._get_collection(name=collection)
+            doc_ids = [doc.id for doc in docs]
+            embeddings = [doc.embedding for doc in docs]
+            metadata = [doc.metadata for doc in docs]
+            collection.upsert(embeddings=embeddings, ids=doc_ids, metadatas=metadata, **add_kwargs)
 
-    async def delete_embedding(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
+    @make_async
+    def delete_embedding(self, collection: str, doc_ids: List[str], **delete_kwargs: Any):
         collection = self._get_collection(name=collection)
         collection.delete(ids=doc_ids, **delete_kwargs)
 
-    async def get_metadata(self, collection: str, doc_ids: List[str]):
+    @make_async
+    def get_metadata(self, collection: str, doc_ids: List[str]):
         collection = self._get_collection(name=collection)
         return collection.get(ids=doc_ids, include=["metadatas"])["metadatas"]
 
-    async def query_embedding(
+    @make_async
+    def query_embedding(
         self,
         collection: str,
         query: List[float],

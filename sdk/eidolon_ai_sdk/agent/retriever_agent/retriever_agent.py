@@ -9,8 +9,9 @@ from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import DocSummary
 from eidolon_ai_sdk.agent.retriever_agent.retriever import RetrieverSpec, Retriever
+from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.system.fn_handler import FnHandler
-from eidolon_ai_sdk.system.reference_model import Specable, Reference
+from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
@@ -34,6 +35,8 @@ class RetrieverAgentSpec(RetrieverSpec):
 
     loader_pattern: Optional[str] = Field(default="**/*", description="The search pattern to use when loading files.")
     document_manager: Optional[Reference[DocumentManager]] = None
+
+    apu: AnnotatedReference[APU] = Field(description="The APU to use for question transformation.")
 
     # noinspection PyMethodParameters
     @model_validator(mode="before")
@@ -64,9 +67,14 @@ class RetrieverAgentSpec(RetrieverSpec):
 
 
 class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
+    apu: APU
+    document_manager: DocumentManager
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
+
+        self.apu = self.spec.apu.instantiate()
 
         if self.spec.document_manager:
             self.document_manager = self.spec.document_manager.instantiate()
@@ -76,7 +84,7 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
     async def list_files(self) -> AgentState[List[str]]:
         """
         List the files in the document store.
-        :return: The response from the cpu
+        :return: The response from the apu
         """
         if self.document_manager:
             files = [item async for item in await self.document_manager.list_files()]
@@ -86,15 +94,15 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
 
     @register_program(description=make_description)
     async def search(
-        self, question: Annotated[str, Body(description="The question to search for", embed=True)]
+        self, process_id, question: Annotated[str, Body(description="The question to search for", embed=True)]
     ) -> List[DocSummary]:
         """
         Process the question by searching the document store.
         :param question: The question to process
-        :return: The response from the cpu
+        :return: The response from the apu
         """
         if hasattr(self, "document_manager") and self.document_manager:
             await self.document_manager.sync_docs()
 
-        results = await super().search(f"doc_contents_{self.spec.name}", question)
+        results = await super().do_search(f"doc_contents_{self.spec.name}", self.apu, process_id, question)
         return [doc async for doc in results]

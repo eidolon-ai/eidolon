@@ -13,13 +13,15 @@ from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, Simil
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
 from .agent_controller import AgentController
+from .kernel import AgentOSKernel
 from .process_file_system import ProcessFileSystem
 from .processes import ProcessDoc
 from .reference_model import AnnotatedReference, Specable
+from .resource_load_error_handler import register_instantiate_error, register_agent_start_error
 from .resources.agent_resource import AgentResource
 from .resources.resources_base import Resource
 from ..agent_os import AgentOS
-from ..cpu.agent_call_history import AgentCallHistory
+from ..apu.agent_call_history import AgentCallHistory
 from ..security.permissions import PermissionException
 
 
@@ -31,6 +33,7 @@ class MachineSpec(BaseModel):
     process_file_system: AnnotatedReference[ProcessFileSystem] = Field(
         description="The Process File System implementation. Used to store files related to processes."
     )
+    fail_on_agent_start_error: bool = Field(False, description="If true, the machine will fail to start if an agent fails to start. Default: False")
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
@@ -54,9 +57,12 @@ class AgentMachine(Specable[MachineSpec]):
         super().__init__(spec)
         self.memory = self.spec.get_agent_memory()
         agents = {}
-        for name, r in AgentOS.get_resources(AgentResource).items():
+        for name, r in AgentOSKernel.get_resources(AgentResource).items():
             with _error_wrapper(r):
-                agents[name] = r.spec.instantiate()
+                try:
+                    agents[name] = r.spec.instantiate()
+                except Exception as e:
+                    register_instantiate_error(name, r.kind, e)
         self.memory = self.spec.get_agent_memory()
         self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
         self.app = None
@@ -142,7 +148,10 @@ class AgentMachine(Specable[MachineSpec]):
 
         # Add the routes for the agent controllers
         for program in self.agent_controllers:
-            await program.start(app)
+            try:
+                await program.start(app)
+            except Exception as e:
+                register_agent_start_error(program.name, e)
         await self.memory.start()
         self.app = app
 
@@ -160,12 +169,12 @@ class AgentMachine(Specable[MachineSpec]):
         return None
 
     async def upload_file(
-        self,
-        process_id: str,
-        mime_type: Annotated[str | None, Header()] = None,
-        file_bytes=Body(
-            description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream"
-        ),
+            self,
+            process_id: str,
+            mime_type: Annotated[str | None, Header()] = None,
+            file_bytes=Body(
+                description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream"
+            ),
     ):
         """
         Upload a file for this process
@@ -220,11 +229,11 @@ class AgentMachine(Specable[MachineSpec]):
         return JSONResponse(content=response, status_code=200)
 
     async def list_processes(
-        self,
-        request: Request,
-        skip: int = 0,
-        limit: Annotated[int, Field(ge=1, le=100)] = 100,
-        sort: Literal["ascending", "descending"] = "ascending",
+            self,
+            request: Request,
+            skip: int = 0,
+            limit: Annotated[int, Field(ge=1, le=100)] = 100,
+            sort: Literal["ascending", "descending"] = "ascending",
     ):
         """
         List all processes. Supports paging and sorting
@@ -233,7 +242,7 @@ class AgentMachine(Specable[MachineSpec]):
         child_pids = await AgentCallHistory.get_child_pids()
         processes_acc = []
         async for process_ in ProcessDoc.find(
-            query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
+                query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
         ):
             process_ = cast(ProcessDoc, process_)
             try:
@@ -355,4 +364,4 @@ def error_logger(filename: str = None):
 
 
 def _error_wrapper(resource: Resource):
-    return error_logger(AgentOS.get_resource_source(resource.kind, resource.metadata.name))
+    return error_logger(AgentOSKernel.get_resource_source(resource.kind, resource.metadata.name))

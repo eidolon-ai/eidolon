@@ -1,6 +1,6 @@
 import pytest
 
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.replay import replayable, ReplayConfig, replay, default_serializer
@@ -24,18 +24,18 @@ def side_effect_manager():
 
 @pytest.fixture
 def enabled_resume_point_config(machine, request):
-    AgentOS.register_resource(
+    AgentOSKernel.register_resource(
         ReferenceResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name=ReplayConfig.__name__),
             spec=dict(save_loc=f"resume_points/{request.node.name}"),
         )
     )
-    return AgentOS.get_instance(ReplayConfig)
+    return AgentOSKernel.get_instance(ReplayConfig)
 
 
 def test_default_resume_point_config(machine):
-    assert AgentOS.get_instance(ReplayConfig).save_loc is None
+    assert AgentOSKernel.get_instance(ReplayConfig).save_loc is None
 
 
 def test_resume_point_enabled(enabled_resume_point_config):

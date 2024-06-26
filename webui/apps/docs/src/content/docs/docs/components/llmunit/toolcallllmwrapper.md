@@ -3,13 +3,25 @@ title: ToolCallLLMWrapper
 description: Description of ToolCallLLMWrapper component
 ---
 
-| Property                                       | Pattern | Type               | Deprecated | Definition | Title/Description   |
-| ---------------------------------------------- | ------- | ------------------ | ---------- | ---------- | ------------------- |
-| - [tool_message_prompt](#tool_message_prompt ) | No      | string             | No         | -          | Tool Message Prompt |
-| - [llm_unit](#llm_unit )                       | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview/) | No         | -          | LLMUnit Reference   |
-| - [model](#model )                             | No      | Combination        | No         | -          | -                   |
+| Property                                       | Pattern | Type                                                    | Deprecated | Definition | Title/Description   |
+| ---------------------------------------------- | ------- | ------------------------------------------------------- | ---------- | ---------- | ------------------- |
+| - [implementation](#implementation )           | No      | const                                                   | No         | -          | ToolCallLLMWrapper  |
+| - [tool_message_prompt](#tool_message_prompt ) | No      | string                                                  | No         | -          | Tool Message Prompt |
+| - [llm_unit](#llm_unit )                       | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview) | No         | -          | LLMUnit             |
+| - [model](#model )                             | No      | Combination                                             | No         | -          | -                   |
 
-## <a name="tool_message_prompt"></a>1. Property `tool_message_prompt`
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+**Description:** ToolCallLLMWrapper
+
+Specific value: `"ToolCallLLMWrapper"`
+
+## <a name="tool_message_prompt"></a>2. Property `tool_message_prompt`
 
 **Title:** Tool Message Prompt
 
@@ -19,17 +31,19 @@ description: Description of ToolCallLLMWrapper component
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Default**  | `"You must follow these instructions:\nYou can select zero or more of the above tools based on the user query\nIf there are multiple tools required, make sure a list of tools are returned in a JSON array.\nIf there is no tool that match the user request or you have already answered the question, you will respond with empty json array for the tools.\nYou can also add any additional notes or explanations in the notes field."` |
 
-## <a name="llm_unit"></a>2. Property `llm_unit`
+## <a name="llm_unit"></a>3. Property `llm_unit`
 
-**Title:** LLMUnit Reference
+**Title:** LLMUnit
 
-|              |                      |
-| ------------ | -------------------- |
-| **Type**     | `[Reference[LLMUnit]](/docs/components/llmunit/overview/)` |
-| **Required** | No                   |
-| **Default**  | `"LLMUnit"`          |
+|              |                                                           |
+| ------------ | --------------------------------------------------------- |
+| **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview) |
+| **Required** | No                                                        |
+| **Default**  | `{"implementation": "LLMUnit"}`                           |
 
-## <a name="model"></a>3. Property `model`
+**Description:** Overview of LLMUnit components
+
+## <a name="model"></a>4. Property `model`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -38,22 +52,23 @@ description: Description of ToolCallLLMWrapper component
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `null`                                                                    |
 
-| Any of(Option)                        |
-| ------------------------------------- |
-| [LLMModel Reference](#model_anyOf_i0) |
-| [item 1](#model_anyOf_i1)             |
+| Any of(Option)              |
+| --------------------------- |
+| [LLMModel](#model_anyOf_i0) |
+| [item 1](#model_anyOf_i1)   |
 
-### <a name="model_anyOf_i0"></a>3.1. Property `LLMModel Reference`
+### <a name="model_anyOf_i0"></a>4.1. Property `LLMModel`
 
-**Title:** LLMModel Reference
+**Title:** LLMModel
 
-|              |                                          |
-| ------------ | ---------------------------------------- |
-| **Type**     | `[Reference[LLMModel]](/docs/components/llmmodel/overview/)`                    |
-| **Required** | No                                       |
-| **Default**  | `"eidolon_ai_sdk.cpu.llm_unit.LLMModel"` |
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
+| **Required** | No                                                          |
 
-### <a name="model_anyOf_i1"></a>3.2. Property `item 1`
+**Description:** Overview of LLMModel components
+
+### <a name="model_anyOf_i1"></a>4.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |

@@ -1,16 +1,15 @@
-import uuid
-from jinja2 import Environment, StrictUndefined
-from pydantic import Field, BaseModel
 from typing import List
 
+from jinja2 import Environment, StrictUndefined
+from pydantic import Field, BaseModel
+
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformerSpec, QuestionTransformer
-from eidolon_ai_sdk.cpu.apu import APU
-from eidolon_ai_sdk.cpu.agent_io import UserTextAPUMessage
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage
+from eidolon_ai_sdk.apu.apu import APU
+from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class MultiQuestionTransformerSpec(QuestionTransformerSpec):
-    apu: AnnotatedReference[APU]
     keep_original: bool = Field(default=True, description="Whether to keep the original question in the output")
     number_to_generate: int = Field(default=3, description="The number of questions to generate")
     prompt: str = Field(
@@ -29,11 +28,9 @@ class QuestionList(BaseModel):
 class MultiQuestionTransformer(QuestionTransformer, Specable[MultiQuestionTransformerSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.apu = self.spec.apu.instantiate()
-        self.apu.record_memory = False
 
-    async def transform(self, question: str) -> List[str]:
-        thread = await self.apu.main_thread(str(uuid.uuid4()))
+    async def transform(self, apu: APU, process_id: str, question: str) -> List[str]:
+        thread = await apu.new_thread(process_id)
         env = Environment(undefined=StrictUndefined)
         userPrompt = env.from_string(self.spec.prompt).render(
             question=question, number_to_generate=self.spec.number_to_generate

@@ -26,9 +26,20 @@ python-dotenv = "^1.0.1"
 ref-resolver = "^1.0.3"
 jsonschema = "^4.22.0"
 json-schema-for-humans = {version = "^1.0.2", optional = true}
+jsonref = "^1.1.0"
 
 [tool.poetry.dependencies.eidolon-ai-sdk]
 path = "../sdk"
+develop = true
+optional = true
+
+[tool.poetry.group.dev.dependencies.eidolon-ai-usage-client]
+path = "../usage-service/usage-client"
+develop = true
+optional = true
+
+[tool.poetry.group.dev.dependencies.eidolon-ai-client]
+path = "../client/python"
 develop = true
 optional = true
 
@@ -36,7 +47,7 @@ optional = true
 ruff = "^0.1.7"
 
 [tool.poetry.extras]
-docbuilder = [ "eidolon-ai-sdk", "json-schema-for-humans"]
+docbuilder = [ "eidolon-ai-sdk", "eidolon-ai-client", "eidolon-ai-usage-client", "json-schema-for-humans"]
 
 [build-system]
 requires = ["poetry-core"]

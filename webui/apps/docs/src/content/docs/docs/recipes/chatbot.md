@@ -26,8 +26,8 @@ src="https://www.youtube.com/embed/8GOsbX8Hs50">
 </iframe>
 
 ## Core Concepts
-###### [Customizing the AgentProcessingUnit](http://localhost:4321/docs/references/pluggable)
-###### [Running the UI](/docs/references/webui)
+###### [Customizing the AgentProcessingUnit](/docs/howto/customize_builtins)
+###### [Running the UI](/docs/howto/webui)
 
 ## Agents
 ### [Conversational Agent](https://github.com/eidolon-ai/eidolon-chatbot/blob/main/resources/conversational_agent.yaml)
@@ -58,7 +58,7 @@ We did not need to make any customization to support multimedia within the APU, 
 ## Try it out!
 First let's fork for Eidolon's chatbot repository, clone it to your local machine, and start your server.
 ```bash
-gh repo fork eidolon-ai/eidolon-chatbot --clone=true
+git clone https://github.com/eidolon-ai/eidolon-chatbot.git
 cd eidolon-chatbot
 make serve-dev
 ```

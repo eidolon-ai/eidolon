@@ -35,13 +35,14 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import SecurityManager
-from eidolon_ai_sdk.cpu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.apu.agent_call_history import AgentCallHistory
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,
     DeleteProcessResponse,
 )
 from eidolon_ai_sdk.system.fn_handler import FnHandler, get_handlers
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -60,6 +61,12 @@ class AgentController:
         self.name = name
         self.actions = {}
         self.agent = agent
+
+    async def start(self, app: FastAPI):
+        logger.info(f"Starting agent '{self.name}'")
+        if hasattr(self.agent, "start"):
+            await self.agent.start()
+
         for handler in get_handlers(self.agent):
             if handler.name in self.actions:
                 self.actions[handler.name].extra["allowed_states"] = (
@@ -69,8 +76,6 @@ class AgentController:
             else:
                 self.actions[handler.name] = handler
 
-    async def start(self, app: FastAPI):
-        logger.info(f"Starting agent '{self.name}'")
         self.security = AgentOS.security_manager
 
         app.add_api_route(
@@ -116,10 +121,10 @@ class AgentController:
         pass
 
     async def run_program(
-        self,
-        handler: FnHandler,
-        process_id: str,
-        **kwargs,
+            self,
+            handler: FnHandler,
+            process_id: str,
+            **kwargs,
     ):
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
         RequestContext.set("process_id", process_id)
@@ -283,10 +288,10 @@ class AgentController:
                     ended = event.is_root_end_event()
                     transitioned = event.is_root_and_type(AgentStateEvent)
                     if (
-                        isinstance(event, StringOutputEvent)
-                        and events_to_store
-                        and isinstance(events_to_store[-1], StringOutputEvent)
-                        and event.stream_context == events_to_store[-1].stream_context
+                            isinstance(event, StringOutputEvent)
+                            and events_to_store
+                            and isinstance(events_to_store[-1], StringOutputEvent)
+                            and event.stream_context == events_to_store[-1].stream_context
                     ):
                         events_to_store[-1].content += event.content
                     else:
@@ -312,7 +317,7 @@ class AgentController:
                 await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
-        self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
+            self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         seen_end = False
@@ -380,7 +385,11 @@ class AgentController:
         elif not isEndpointAProgram:
             params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
 
-        del params["self"]
+        if "self" in params:
+            del params["self"]
+
+        if "_self" in params:
+            del params["_self"]
 
         params["__request"] = Parameter("__request", Parameter.KEYWORD_ONLY, annotation=Request)
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]
@@ -462,11 +471,11 @@ class AgentController:
         await AgentCallHistory.delete(query={"parent_process_id": process_id})
         logger.info(f"Successfully deleted child processes for process {process_id}")
 
-        references = AgentOS.get_resources(ReferenceResource).values()
-        agents = AgentOS.get_resources(AgentResource).values()
+        references = AgentOSKernel.get_resources(ReferenceResource).values()
+        agents = AgentOSKernel.get_resources(AgentResource).values()
         for r in (*agents, *references):
             implementation = to_jsonable_python(r.spec)["implementation"]
-            is_root = not AgentOS.get_resource(ReferenceResource, implementation, default=None)
+            is_root = not AgentOSKernel.get_resource(ReferenceResource, implementation, default=None)
             if is_root:
                 resource_class = for_name(implementation)
                 if hasattr(resource_class, "delete_process"):

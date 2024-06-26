@@ -9,12 +9,18 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler
 
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent.api_agent import APIAgent
 from eidolon_ai_sdk.agent.audio_agent import AutonomousSpeechAgent
+from eidolon_ai_sdk.agent.browser.scraping_agent import WebScrapingAgent
+from eidolon_ai_sdk.agent.browser.search_agent import WebSearchAgent
+from eidolon_ai_sdk.agent.browser.web_researcher import WebResearcher
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
+from eidolon_ai_sdk.agent.doc_manager.loaders.azure_loader import AzureLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader import FilesystemLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoader
+from eidolon_ai_sdk.agent.doc_manager.loaders.s3_loader import S3Loader
 from eidolon_ai_sdk.agent.doc_manager.parsers.auto_parser import AutoParser
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
@@ -34,21 +40,24 @@ from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
+from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
-from eidolon_ai_sdk.cpu.agent_io import IOUnit
-from eidolon_ai_sdk.cpu.apu import APU
-from eidolon_ai_sdk.cpu.audio_unit import AudioUnit
-from eidolon_ai_sdk.cpu.conversation_memory_unit import RawMemoryUnit
-from eidolon_ai_sdk.cpu.conversational_apu import ConversationalAPU
-from eidolon_ai_sdk.cpu.llm.anthropic_llm_unit import AnthropicLLMUnit
-from eidolon_ai_sdk.cpu.llm.mistral_llm_unit import MistralGPT
-from eidolon_ai_sdk.cpu.llm.open_ai_connection_handler import OpenAIConnectionHandler, AzureOpenAIConnectionHandler
-from eidolon_ai_sdk.cpu.llm.open_ai_image_unit import OpenAIImageUnit
-from eidolon_ai_sdk.cpu.llm.open_ai_llm_unit import OpenAIGPT
-from eidolon_ai_sdk.cpu.llm.open_ai_speech import OpenAiSpeech
-from eidolon_ai_sdk.cpu.llm_unit import LLMUnit, LLMModel
-from eidolon_ai_sdk.cpu.memory_unit import MemoryUnit
-from eidolon_ai_sdk.cpu.tool_call_unit import ToolCallLLMWrapper
+from eidolon_ai_sdk.apu.agent_io import IOUnit
+from eidolon_ai_sdk.apu.apu import APU
+from eidolon_ai_sdk.apu.audio_unit import AudioUnit
+from eidolon_ai_sdk.apu.conversation_memory_unit import RawMemoryUnit
+from eidolon_ai_sdk.apu.conversational_apu import ConversationalAPU
+from eidolon_ai_sdk.apu.llm.anthropic_llm_unit import AnthropicLLMUnit
+from eidolon_ai_sdk.apu.llm.mistral_llm_unit import MistralGPT
+from eidolon_ai_sdk.apu.llm.ollama_llm_unit import OllamaLLMUnit
+from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler, AzureOpenAIConnectionHandler
+from eidolon_ai_sdk.apu.llm.open_ai_image_unit import OpenAIImageUnit
+from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
+from eidolon_ai_sdk.apu.llm.open_ai_speech import OpenAiSpeech
+from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
+from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
+from eidolon_ai_sdk.apu.tool_call_unit import ToolCallLLMWrapper
+from eidolon_ai_sdk.memory.azure_file_memory import AzureFileMemory
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
 from eidolon_ai_sdk.security.google_auth import GoogleJWTProcessor
@@ -131,15 +140,16 @@ def named_builtins() -> List[ReferenceResource]:
         TreeOfThoughtsAgent,
         RetrieverAgent,
         AutonomousSpeechAgent,
-        # cpu
+        # apu
         (APU, ConversationalAPU),
         ConversationalAPU,
-        # cpu components
+        # apu components
         IOUnit,
         (LLMUnit, OpenAIGPT),
         OpenAIGPT,
         MistralGPT,
         AnthropicLLMUnit,
+        OllamaLLMUnit,
         ToolCallLLMWrapper,
         LLMModel,
         (MemoryUnit, RawMemoryUnit),
@@ -148,6 +158,11 @@ def named_builtins() -> List[ReferenceResource]:
         Search,
         Browser,
         Retriever,
+        WebScrapingAgent,
+        WebSearchAgent,
+        WebResearcher,
+        ApiLogicUnit,
+        APIAgent,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
         MongoSymbolicMemory,
@@ -155,6 +170,7 @@ def named_builtins() -> List[ReferenceResource]:
         (FileMemory, LocalFileMemory),
         LocalFileMemory,
         S3FileMemory,
+        AzureFileMemory,
         (SimilarityMemory, SimilarityMemoryImpl),
         SimilarityMemoryImpl,
         (Embedding, OpenAIEmbedding),
@@ -197,6 +213,8 @@ def named_builtins() -> List[ReferenceResource]:
         DocumentManager,
         FilesystemLoader,
         GitHubLoader,
+        S3Loader,
+        AzureLoader,
         ToTChecker,
         (AudioUnit, OpenAiSpeech),
         OpenAiSpeech,

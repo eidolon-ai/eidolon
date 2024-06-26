@@ -1,0 +1,111 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "GPT4-turbo",
+      "description": "GPT4-turbo"
+    },
+    "max_num_function_calls": {
+      "default": 10,
+      "description": "The maximum number of function calls to make in a single request.",
+      "title": "Max Num Function Calls",
+      "type": "integer"
+    },
+    "io_unit": {
+      "$ref": "file:../IOUnit/overview.json",
+      "default": {
+        "implementation": "IOUnit"
+      }
+    },
+    "memory_unit": {
+      "$ref": "file:../MemoryUnit/overview.json",
+      "default": {
+        "implementation": "MemoryUnit"
+      }
+    },
+    "llm_unit": {
+      "$ref": "file:../LLMUnit/overview.json",
+      "default": {
+        "implementation": "OpenAIGPT",
+        "model": "gpt-4-turbo"
+      }
+    },
+    "logic_units": {
+      "default": [],
+      "items": {
+        "$ref": "file:../LogicUnit/overview.json"
+      },
+      "title": "Logic Units",
+      "type": "array"
+    },
+    "audio_unit": {
+      "anyOf": [
+        {
+          "$ref": "file:../AudioUnit/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "OpenAiSpeech"
+    },
+    "image_unit": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "properties": {
+            "implementation": {
+              "default": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "reference_pointer": {
+            "default_impl": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
+            "type": "ImageUnit"
+          },
+          "title": "ImageUnit Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "OpenAIImageUnit"
+    },
+    "record_conversation": {
+      "default": true,
+      "title": "Record Conversation",
+      "type": "boolean"
+    },
+    "allow_tool_errors": {
+      "default": true,
+      "title": "Allow Tool Errors",
+      "type": "boolean"
+    },
+    "document_processor": {
+      "$ref": "file:../DocumentProcessor/overview.json",
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
+    },
+    "retriever": {
+      "$ref": "file:../Retriever/overview.json",
+      "default": {
+        "implementation": "Retriever"
+      }
+    },
+    "retriever_apu": {
+      "anyOf": [
+        {
+          "$ref": "file:../APU/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "GPT4-turbo",
+  "type": "object"
+}

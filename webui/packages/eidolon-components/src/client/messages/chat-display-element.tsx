@@ -30,7 +30,6 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
   switch (rawElement.type) {
     case "agent-start": {
       const element = rawElement as AgentStartElement
-      console.log(element.agentName, element.callName, element.title, element.sub_title)
       let title: string
       let subTitle: string
       if (element.title) {

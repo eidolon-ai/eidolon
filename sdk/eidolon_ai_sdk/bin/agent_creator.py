@@ -2,13 +2,13 @@ import importlib.metadata
 import inspect
 import os
 import pkgutil
-import readline
-import sys
 import tempfile
 from contextlib import contextmanager
 from functools import cache
 from typing import Type, get_origin
 
+import readline
+import sys
 import typer
 import yaml
 from click import Choice, BadParameter
@@ -17,7 +17,7 @@ from pydantic_core import PydanticUndefinedType
 from rich import print as richprint
 from rich.syntax import Syntax
 
-from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.util.class_utils import for_name, fqn
@@ -90,7 +90,7 @@ def fqn_completer(text, state):
 
 
 def create_agent():
-    agent_resources = AgentOS.get_resources(AgentResource)
+    agent_resources = AgentOSKernel.get_resources(AgentResource)
     agents = [a for a in agent_resources.keys() if a != "Agent"] + ["Custom"]
 
     name = prompt("What is the name of the agent?", default="NewAgent")
@@ -110,7 +110,7 @@ def create_agent():
         agent_resource = agent_resources[kind]
         agent_class = agent_resource.clazz
 
-    spec_type = Reference.get_spec_type(agent_class)
+    spec_type = Reference.get_specable_type(agent_class)
     if spec_type:
         if confirm("Would you like to modify the spec?", default=False):
             try:
@@ -224,7 +224,7 @@ def build_reference(field_info):
     impl_value = prompt_with_completer("implementation", fqn_completer, default=default_impl, value_proc=impl_proc)
     if impl_value != default_impl:
         ref_object["implementation"] = impl_value
-    spec_type = Reference.get_spec_type(for_name(impl_value, object))
+    spec_type = Reference.get_specable_type(for_name(impl_value, object))
     if spec_type:
         if spec_type and confirm("Would you like to modify the spec?", default=False):
             with indented():

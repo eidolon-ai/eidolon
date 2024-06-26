@@ -5,6 +5,7 @@ import pytest
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
+from eidolon_ai_sdk.apu.agent_io import FileHandleWithInclude
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 
@@ -36,6 +37,7 @@ async def server(run_app):
 async def test_text_file_include():
     process = await Agent.get("simple").create_process()
     file_handle = await process.upload_file("This is a sample text file".encode("utf-8"))
+    await process.set_metadata(file_handle.file_id, dict(mime_type="text/plain", filename="sample.txt"))
     resp = await process.action(
         "converse", body=dict(body="What is in the attached file?", attached_files=[file_handle])
     )
@@ -48,6 +50,17 @@ async def test_text_file_include_and_follow_up_messages():
     await process.action("converse", body=dict(body="What is in the attached file?", attached_files=[file_handle]))
     resp = await process.action("converse", body=dict(body="how many words are in the file?"))
     assert "6" in resp.data
+
+
+async def test_text_file_search():
+    process = await Agent.get("simple").create_process()
+    file_handle = await process.upload_file("This is a sample text file".encode("utf-8"))
+    await process.set_metadata(file_handle.file_id, dict(mime_type="text/plain", filename="sample.txt"))
+    file_handle_with_include = FileHandleWithInclude(include_directly=False, **file_handle.model_dump())
+    resp = await process.action(
+        "converse", body=dict(body="What is in the attached file?", attached_files=[file_handle_with_include])
+    )
+    assert "This is a sample text file" in resp.data
 
 
 async def test_pdf_file_include(test_dir):
@@ -71,7 +84,6 @@ async def test_image_file_include(test_dir):
     with open(docs_loc / "logo.png", "rb") as f:
         file_handle = await process.upload_file(f.read())
         result = await process.action("converse", body=dict(body="What is in the image?", attached_files=[file_handle]))
-        print(result)
         assert "logo" in result.data
 
 

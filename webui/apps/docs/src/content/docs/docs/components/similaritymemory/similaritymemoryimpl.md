@@ -3,29 +3,45 @@ title: SimilarityMemoryImpl
 description: Description of SimilarityMemoryImpl component
 ---
 
-| Property                         | Pattern | Type                   | Deprecated | Definition | Title/Description     |
-| -------------------------------- | ------- | ---------------------- | ---------- | ---------- | --------------------- |
-| - [embedder](#embedder )         | No      | Reference[Embedding]   | No         | -          | Embedding Reference   |
-| - [vector_store](#vector_store ) | No      | Reference[VectorStore] | No         | -          | VectorStore Reference |
+| Property                             | Pattern | Type                                                            | Deprecated | Definition | Title/Description    |
+| ------------------------------------ | ------- | --------------------------------------------------------------- | ---------- | ---------- | -------------------- |
+| - [implementation](#implementation ) | No      | const                                                           | No         | -          | SimilarityMemoryImpl |
+| - [embedder](#embedder )             | No      | [Reference[Embedding]](/docs/components/embedding/overview)     | No         | -          | Embedding            |
+| - [vector_store](#vector_store )     | No      | [Reference[VectorStore]](/docs/components/vectorstore/overview) | No         | -          | VectorStore          |
 
-## <a name="embedder"></a>1. Property `embedder`
+## <a name="implementation"></a>1. Property `implementation`
 
-**Title:** Embedding Reference
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
 
-|              |                        |
-| ------------ | ---------------------- |
-| **Type**     | `Reference[Embedding]` |
-| **Required** | No                     |
-| **Default**  | `"Embedding"`          |
+**Description:** SimilarityMemoryImpl
 
-## <a name="vector_store"></a>2. Property `vector_store`
+Specific value: `"SimilarityMemoryImpl"`
 
-**Title:** VectorStore Reference
+## <a name="embedder"></a>2. Property `embedder`
 
-|              |                          |
-| ------------ | ------------------------ |
-| **Type**     | `Reference[VectorStore]` |
-| **Required** | No                       |
-| **Default**  | `"VectorStore"`          |
+**Title:** Embedding
+
+|              |                                                               |
+| ------------ | ------------------------------------------------------------- |
+| **Type**     | [`Reference[Embedding]`](/docs/components/embedding/overview) |
+| **Required** | No                                                            |
+| **Default**  | `{"implementation": "Embedding"}`                             |
+
+**Description:** Overview of Embedding components
+
+## <a name="vector_store"></a>3. Property `vector_store`
+
+**Title:** VectorStore
+
+|              |                                                                   |
+| ------------ | ----------------------------------------------------------------- |
+| **Type**     | [`Reference[VectorStore]`](/docs/components/vectorstore/overview) |
+| **Required** | No                                                                |
+| **Default**  | `{"implementation": "VectorStore"}`                               |
+
+**Description:** Overview of VectorStore components
 
 ----------------------------------------------------------------------------------------------------------------------------

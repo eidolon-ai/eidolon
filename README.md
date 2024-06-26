@@ -3,7 +3,7 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/v/eidolon-ai-sdk?style=flat&label=eidolon-ai-sdk)](https://pypi.org/project/eidolon-ai-sdk/)
 [![PyPI - Downloads](https://img.shields.io/pypi/v/eidolon-ai-client?style=flat&label=eidolon-ai-client)](https://pypi.org/project/eidolon-ai-client)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/eidolon-ai-sdk)](https://pypistats.org/packages/eidolon-ai-sdk)
-[![Tests - Status](https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test.yml?style=flat&label=test)](https://github.com/eidolon-ai/eidolon/actions/workflows/test.yml?query=branch%3Amain)
+[![Tests - Status](https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&label=test)](https://github.com/eidolon-ai/eidolon/actions/workflows/test_python.yml?query=branch%3Amain)
 
 
 Eidolon helps developers designing and deploying agent-based services.
@@ -25,7 +25,7 @@ developers will not be able to adapt their agents to the rapidly changing AI lan
 
 Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 
-## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/prereq/)
+## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/quickstart)
 
 ### Running the AgentMachine
 ```bash
@@ -59,11 +59,11 @@ Believe it or not, you are already up and running with a simple agent! 🎉
 Now that you have a running agent machine with a simple agent. Let's start customizing!
 
 - [ ] Add new capabilities via logic units (tools)
-- [ ] Enable [agent-to-agent communication](/docs/references/communication)
-- [ ] [Swap out components](/docs/references/pluggable) (like the underlying llm)
+- [ ] Enable [agent-to-agent communication](/docs/howto/communication)
+- [ ] [Swap out components](/docs/howto/customize_builtins) (like the underlying llm)
 - [ ] Use [structured inputs](/docs/components/simple_agent#defining-actions) for prompt templating
 - [ ] Leverage your agent's [state machine](/docs/components/simple_agent#defining-actions)
-- [ ] Launch [Eidolon's UI](/docs/references/webui)
+- [ ] Launch [Eidolon's UI](/docs/howto/webui)
 
 
 ## Support ⭐️

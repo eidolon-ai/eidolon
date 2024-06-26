@@ -2,12 +2,18 @@ import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from ".
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
 import {ChatEvent} from "@eidolon/client";
 
+const getLastStreamContext = (stream_context: string) => {
+  const contextChain: string[] = stream_context.split(".")
+  return contextChain[contextChain.length - 1]!
+}
+
 const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
   const element = makeElement(event)
   if (element) {
     let lastElement: DisplayElement | undefined
     if (event.stream_context) {
-      const parent = elements.lookup[event.stream_context]!
+      const lastContext = getLastStreamContext(event.stream_context)
+      const parent = elements.lookup[lastContext]!
       lastElement = parent.children[parent.children.length - 1]
     } else {
       lastElement = elements.elements[elements.elements.length - 1]
@@ -22,7 +28,8 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
         elements.lookup[element.contextId]!.is_active = false
       }
       if (event.stream_context) {
-        const parent = elements.lookup[event.stream_context]!
+        const lastContext = getLastStreamContext(event.stream_context)
+        const parent = elements.lookup[lastContext]!
         parent.children.push(element)
       } else {
         elements.elements.push(element)

@@ -14,6 +14,7 @@ from srsly.ruamel_yaml.scalarstring import walk_tree
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.util.str_utils import log_stack_trace
 
 
@@ -46,12 +47,14 @@ async def default_parser(resp):
 def replayable(
     fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
-    config = AgentOS.get_instance(ReplayConfig)
+    config = AgentOSKernel.get_instance(ReplayConfig)
 
     async def maybe_save_args(*args, **kwargs):
         if config.save_loc:
             try:
-                existing_dirs = [os.path.split(d)[-1] for d in await AgentOS.file_memory.glob(config.save_loc + "/*")]
+                existing_dirs = [
+                    os.path.split(d.file_path)[-1] async for d in AgentOS.file_memory.glob(config.save_loc + "/*")
+                ]
                 dir_number = [int(d.split("_")[0]) for d in existing_dirs]
                 top = max(0, *dir_number) if dir_number else -1
                 next_ = str(top + 1)

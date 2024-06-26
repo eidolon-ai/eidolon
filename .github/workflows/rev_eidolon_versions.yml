@@ -1,7 +1,7 @@
 name: Rev and Publish Python Projects
 on:
   workflow_run:
-    workflows: ["Test"]  # The name of the test workflow
+    workflows: ["Test Python"]  # The name of the test workflow
     types:
       - completed
     branches:
@@ -34,6 +34,7 @@ jobs:
         run: |
           make version
           echo "TAGGING_MESSAGE=$(make -C scripts -s run get_tags)" >> $GITHUB_ENV
+      - run: make lock
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "bumping versions"
@@ -44,6 +45,8 @@ jobs:
     needs: rev
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v5
@@ -60,6 +63,8 @@ jobs:
     needs: rev
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -68,20 +73,6 @@ jobs:
       - name: "Versioning Eidolon Dependencies"
         run: make maybe_docker_push
         working-directory: sdk
-
-  docker_examples:
-    runs-on: ubuntu-latest
-    needs: [rev, docker_sdk]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: "Versioning Eidolon Dependencies"
-        run: make maybe_docker_push
-        working-directory: examples
 
   docker_webui:
     runs-on: ubuntu-latest
