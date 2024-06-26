@@ -57,7 +57,7 @@ class SqlAlchemy(SqlClient):
                 raise ValueError("Only SELECT queries are allowed")
             resp = await conn.stream(text_query)
             async for row in resp:
-                yield row
+                yield [c for c in row]
 
 
 class SqlLogicUnit(LogicUnit):

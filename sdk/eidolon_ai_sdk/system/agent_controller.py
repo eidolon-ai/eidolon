@@ -206,13 +206,17 @@ class AgentController:
     async def send_response(self, handler: FnHandler, process: ProcessDoc, last_state: str, **kwargs) -> JSONResponse:
         state_change_event = None
         final_event = None
-        result_object = None
-        string_result = ""
+        results = []
+        last_result_type = None
         async for event in self.agent_event_stream(handler, process, last_state, **kwargs):
             if event.is_root_and_type(StringOutputEvent):
-                string_result += event.content
+                last_result_type = StringOutputEvent
+                if last_result_type == StringOutputEvent:
+                    results[-1] += event.content
+                else:
+                    results.append(event.content)
             elif event.is_root_and_type(ObjectOutputEvent):
-                result_object = event.content
+                results.append(event.content)
             elif event.is_root_and_type(AgentStateEvent):
                 state_change_event = event
             elif event.is_root_and_type(EndStreamEvent):
@@ -230,7 +234,7 @@ class AgentController:
             data = final_event.reason
             status_code = final_event.details.get("status_code", 500)
         else:
-            data = result_object if result_object else string_result
+            data = None if not results else results[0] if len(results) == 1 else results
             status_code = 200
         return JSONResponse(
             SyncStateResponse(
