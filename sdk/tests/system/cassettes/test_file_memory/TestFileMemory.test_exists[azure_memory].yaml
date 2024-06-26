@@ -1,64 +1,17 @@
 interactions:
 - request:
-    body: client_id=428c42f4-86bb-4334-b03d-14492f795d5b&grant_type=client_credentials&scope=https%3A%2F%2Fstorage.azure.com%2F.default
-    headers:
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-identity/1.17.0 Python/3.11.8 (macOS-14.4.1-arm64-arm-64bit)
-    method: POST
-    uri: https://login.microsoftonline.com/c7234219-72c7-472d-be7f-916f745fce42/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyIsImtpZCI6InE3UDFOdnh1R1F3RE4yVGFpTW92alo4YVp3cyJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvYzcyMzQyMTktNzJjNy00NzJkLWJlN2YtOTE2Zjc0NWZjZTQyLyIsImlhdCI6MTcxODkwOTg5MywibmJmIjoxNzE4OTA5ODkzLCJleHAiOjE3MTg5MTM3OTMsImFpbyI6IkUyZGdZSmlzRTk4Y1lPMjFVMFJhcG43N0d2bHRBQT09IiwiYXBwaWQiOiI0MjhjNDJmNC04NmJiLTQzMzQtYjAzZC0xNDQ5MmY3OTVkNWIiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jNzIzNDIxOS03MmM3LTQ3MmQtYmU3Zi05MTZmNzQ1ZmNlNDIvIiwiaWR0eXAiOiJhcHAiLCJvaWQiOiI5MzEwZWI2My04MjYwLTQ0MmYtYTE2NC0wZDMwOWE5NWZlYTIiLCJyaCI6IjAuQWIwQUdVSWp4OGR5TFVlLWY1RnZkRl9PUW9HbUJ1VFU4NmhDa0xiQ3NDbEpldkhMQUFBLiIsInN1YiI6IjkzMTBlYjYzLTgyNjAtNDQyZi1hMTY0LTBkMzA5YTk1ZmVhMiIsInRpZCI6ImM3MjM0MjE5LTcyYzctNDcyZC1iZTdmLTkxNmY3NDVmY2U0MiIsInV0aSI6ImhQbU9CNGU2Z1VXbWNLdUI0ODAxQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfaWRyZWwiOiIxNiA3In0.mI5JHJAza2oYqC51CSNAwosXPL5F-oTDKh2Yuob15M-GFlVB0-yUBcCGG4F9JHkjH0l7UqGvCvAl-hnr1WRqeVCTX2gsxqwN3gmHUkAaWsMTUEthqNQW6sbUixQlpbm4saqgX2jpW1qy9hvM4UhYM1GFwCzRyfmaqm_08E7M05sXhcTIQSYpnq4iOXOz9_uTPqCiKg06VbROdj-ZYcaXAfoeePMsQ8SK_VHK06L9Ju7YK1gQondjBWtYQG_8kBvVHDNSfxzSS0aTtvux362iKQi_Wwtpt88WX9axUjo9KXhq6t-rFWtySpDEmqMuoWdWGnkGy4VW5sE1L-0ooyk5-A"}'
-    headers:
-      Cache-Control:
-      - no-store, no-cache
-      Content-Length:
-      - '1360'
-      Content-Type:
-      - application/json; charset=utf-8
-      Date:
-      - Thu, 20 Jun 2024 19:03:12 GMT
-      Expires:
-      - '-1'
-      P3P:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      Pragma:
-      - no-cache
-      Set-Cookie:
-      - fpc=App__7F05ChHszaQMFg-7fqEXSKJAQAAAPBzBt4OAAAA; expires=Sat, 20-Jul-2024
-        19:03:13 GMT; path=/; secure; HttpOnly; SameSite=None
-      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
-      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains
-      X-Content-Type-Options:
-      - nosniff
-      X-XSS-Protection:
-      - '0'
-      x-ms-ests-server:
-      - 2.1.18298.5 - SCUS ProdSlices
-      x-ms-request-id:
-      - 078ef984-ba87-4581-a670-ab81e3cd3500
-      x-ms-srs:
-      - 1.P
-    status:
-      code: 200
-      message: OK
-- request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.4.1-arm64-arm-64bit)
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
       authorization:
       - XXXXXX
       x-ms-client-request-id:
-      - be19eb58-2f37-11ef-92ab-aec083e7debc
+      - 6ad174fe-33e5-11ef-9f4d-aec083e7debd
       x-ms-date:
-      - Thu, 20 Jun 2024 19:03:13 GMT
+      - Wed, 26 Jun 2024 17:56:30 GMT
       x-ms-version:
       - '2024-05-04'
     method: GET
@@ -70,7 +23,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 20 Jun 2024 19:03:13 GMT
+      - Wed, 26 Jun 2024 17:56:30 GMT
       Etag:
       - '"0x8DC91367B075D8C"'
       Last-Modified:
@@ -78,7 +31,7 @@ interactions:
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - be19eb58-2f37-11ef-92ab-aec083e7debc
+      - 6ad174fe-33e5-11ef-9f4d-aec083e7debd
       x-ms-default-encryption-scope:
       - $account-encryption-key
       x-ms-deny-encryption-scope-override:
@@ -94,7 +47,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 80413f63-f01e-00d2-4e44-c351d3000000
+      - 718dc32d-f01e-007b-67f2-c790a1000000
       x-ms-version:
       - '2024-05-04'
     status:
@@ -106,13 +59,13 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.4.1-arm64-arm-64bit)
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
       authorization:
       - XXXXXX
       x-ms-client-request-id:
-      - be9de034-2f37-11ef-92ab-aec083e7debc
+      - 6b8a4538-33e5-11ef-9f4d-aec083e7debd
       x-ms-date:
-      - Thu, 20 Jun 2024 19:03:13 GMT
+      - Wed, 26 Jun 2024 17:56:31 GMT
       x-ms-version:
       - '2024-05-04'
     method: HEAD
@@ -122,17 +75,17 @@ interactions:
       string: ''
     headers:
       Date:
-      - Thu, 20 Jun 2024 19:03:13 GMT
+      - Wed, 26 Jun 2024 17:56:30 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
       x-ms-client-request-id:
-      - be9de034-2f37-11ef-92ab-aec083e7debc
+      - 6b8a4538-33e5-11ef-9f4d-aec083e7debd
       x-ms-error-code:
       - BlobNotFound
       x-ms-request-id:
-      - 80413f82-f01e-00d2-6944-c351d3000000
+      - 718dc35d-f01e-007b-13f2-c790a1000000
       x-ms-version:
       - '2024-05-04'
     status:
