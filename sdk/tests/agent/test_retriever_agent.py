@@ -1,4 +1,3 @@
-import os
 from os import environ
 
 import pytest
@@ -65,9 +64,6 @@ class TestRetrieverAgent:
 
     @pytest.fixture(scope="class")
     def retrieverAzure(self, test_dir):
-        os.environ.setdefault("AZURE_TENANT_ID", "secret_not_needed_with_saved_cassettes")
-        os.environ.setdefault("AZURE_CLIENT_SECRET", "key_not_needed_with_saved_cassettes")
-        os.environ.setdefault("AZURE_CLIENT_ID", "key_not_needed_with_saved_cassettes")
         return AgentResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name="RetrieverAgentAzure"),

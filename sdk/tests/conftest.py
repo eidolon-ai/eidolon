@@ -105,6 +105,8 @@ def vcr_config():
     def ignore_some_localhost(request: VcrRequest):
         if (request.host == "0.0.0.0" or request.host == "localhost") and port != 11434:
             return None
+        elif request.host == "login.microsoftonline.com":
+            return None
         return request
 
     return dict(
