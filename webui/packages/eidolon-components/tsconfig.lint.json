@@ -16,6 +16,6 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"],
+  "include": ["src", "tsup.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }
