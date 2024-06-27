@@ -21,6 +21,7 @@ WORKDIR /app/packages/eidolon-components
 COPY packages/eidolon-components .
 COPY packages/eidolon-client /app/packages/eidolon-client
 COPY packages/typescript-config /app/packages/typescript-config
+COPY packages /app/packages
 RUN pnpm install
 RUN pnpm run build
 
