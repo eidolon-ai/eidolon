@@ -15,9 +15,15 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 RUN pnpm install
 
+# Build eidolon-components first
+FROM base_installer as eidolon_components_builder
+WORKDIR /app/packages/eidolon-components
+RUN pnpm run build
+
 # Build from our project, which will be constant cache misses
 FROM base_installer as installer
 COPY --from=builder /app/out/full/ .
+COPY --from=eidolon_components_builder /app/packages/eidolon-components/dist /app/packages/eidolon-components/dist
 COPY .eslintrc.js .eslintrc.js
 RUN pnpm --prefix apps/eidolon-ui2 run build
 
