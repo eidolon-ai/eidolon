@@ -53,7 +53,8 @@ class SqlAlchemy(SqlClient):
     def _engine(self) -> AsyncEngine:
         return create_async_engine(self.connection_string, **self.engine_kwargs)
 
-    def sync_engine(self) -> Engine:
+    @cached_property
+    def _sync_engine(self) -> Engine:
         return create_engine(self.connection_string, **self.engine_kwargs)
 
     async def get_schema(self) -> dict:
@@ -159,6 +160,8 @@ class SqlAgent(Specable[SqlAgentSpec]):
 
     @register_program()
     async def query(self, process_id, body: str = Body("", media_type="text/plain")):
+        schema = await self._client.get_schema()
+
         kwargs = dict(body=body)
 
         t = await self._apu.main_thread(process_id)
