@@ -19,6 +19,9 @@ RUN pnpm install
 FROM base_installer as eidolon_components_builder
 WORKDIR /app/packages/eidolon-components
 COPY packages/eidolon-components .
+COPY packages/eidolon-client /app/packages/eidolon-client
+COPY packages/typescript-config /app/packages/typescript-config
+RUN pnpm install
 RUN pnpm run build
 
 # Build from our project, which will be constant cache misses
@@ -37,7 +40,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/eidolon-ui2/next.config.js .
+COPY --from=installer /app/apps/eidolon-ui2/next.config.mjs .
 COPY --from=installer /app/apps/eidolon-ui2/package.json .
 # Leverage standalone output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
