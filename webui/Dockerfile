@@ -28,7 +28,7 @@ FROM eidolon_client_builder as eidolon_components_builder
 WORKDIR /app/packages/eidolon-components
 COPY packages/eidolon-components .
 COPY packages/typescript-config /app/packages/typescript-config
-COPY packages/eidolon-client/dist /app/packages/eidolon-client/dist
+COPY --from=eidolon_client_builder /app/packages/eidolon-client/dist /app/packages/eidolon-client/dist
 RUN pnpm install
 RUN pnpm run build
 
