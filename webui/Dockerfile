@@ -18,6 +18,7 @@ RUN pnpm install
 # Build eidolon-components first
 FROM base_installer as eidolon_components_builder
 WORKDIR /app/packages/eidolon-components
+COPY packages/eidolon-components .
 RUN pnpm run build
 
 # Build from our project, which will be constant cache misses
