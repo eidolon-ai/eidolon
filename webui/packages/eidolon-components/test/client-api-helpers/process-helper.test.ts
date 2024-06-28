@@ -1,7 +1,7 @@
 import {describe, expect, test} from "@jest/globals"
 import autoSetupPolly from "../polly_helper"
 import {fail} from "node:assert";
-import {getRootProcesses, getProcessStatus} from "../../src/client/index";
+import {getRootProcesses, getProcessStatus} from "../../src/client/client-api-helpers/process-helper";
 
 describe('process client helper', () => {
   autoSetupPolly()
