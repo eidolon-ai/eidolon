@@ -164,6 +164,8 @@ class AgentController:
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
             kwargs["process_id"] = process_id
+        if "agent_state" in parameters:
+            kwargs["agent_state"] = last_state
         if "request" in parameters and parameters["request"].annotation == Request:
             kwargs["request"] = request
 
@@ -388,6 +390,8 @@ class AgentController:
                 params["process_id"] = replace
         elif not isEndpointAProgram:
             params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
+        if "agent_state" in params:
+            del params["agent_state"]
 
         if "self" in params:
             del params["self"]

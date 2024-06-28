@@ -3,12 +3,13 @@ from functools import cached_property
 from typing import AsyncIterable, Literal, Optional, cast, Any, List, Self
 
 from jinja2 import Environment, StrictUndefined, Template
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, validator, Field
 from sqlalchemy import text, make_url, Row, MetaData
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 
-from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent
+from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent, \
+    UserInputEvent, StringOutputEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import register_program, register_action
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage
@@ -45,7 +46,7 @@ class SqlAlchemy(SqlClient):
     """
 
     protocol: str = None
-    connection_string: str = "sqlite+aiosqlite:///:memory:"
+    connection_string: str = Field("sqlite+aiosqlite:///:memory:", description="SQLAlchemy connection string. See https://docs.sqlalchemy.org/en/20/core/engines.html for more information.")
     engine_kwargs: dict = {}
     select_only: bool = False
     metadata: List[MetadataAttribute] = [MetadataAttribute(
@@ -54,6 +55,7 @@ class SqlAlchemy(SqlClient):
             name="columns",
             attributes=["name", "type", "nullable", "default", "autoincrement", "primary_key", "foreign_keys", "constraints"]
     )])]
+    protocol: str = None
 
     @model_validator(mode="after")
     def _set_protocol(self):
@@ -104,21 +106,19 @@ class SqlAlchemyEngineError(Exception):
 
 
 class SqlLogicUnit(LogicUnit):
-    def __init__(self, client: SqlClient, apu: ProcessingUnitLocator, limit: int = 10):
+    def __init__(self, client: SqlClient, apu: ProcessingUnitLocator):
         super().__init__(apu)
         self.client = client
-        self.limit = limit
 
     @llm_function()
-    async def peek(self, query: str) -> dict:
+    async def peek(self, query: str, row_limit: int = 10) -> dict:
         """
         Execute a query and see return the first few rows of a query.
         """
-        to_yield = self.limit
         rows = []
         async for row in self.client.execute(query):
             rows.append(row)
-            if len(rows) >= to_yield:
+            if len(rows) >= row_limit:
                 break
 
         return dict(rows=rows)
@@ -138,7 +138,7 @@ class SqlAgentSpec(BaseModel):
     
     Think carefully.
     """
-    query_prompt: str = "{{ question }}"
+    user_prompt: str = "{{ message }}"
     clarification_prompt: str = "What clarifying information do you need? Phrase your response as an explicit question or several questions."
     response_prompt: str = "What is your response? Be explicit and concise."
     error_prompt: str = "An error occurred executing the query \"{{ query }}\": {{ error }}"
@@ -150,25 +150,15 @@ class AgentResponse(BaseModel):
     query: Optional[str] = None
 
 
-class _SqlBodyBase(BaseModel):
-    allow_clarification: bool = True
-    allow_summarization: bool = True
-    terminate_conversation_on_answer: bool = False
-
-
-class Clarification(_SqlBodyBase):
-    clarification: str
-
-
-class Question(_SqlBodyBase):
-    question: str
-
+class SqlRequestBody(BaseModel):
+    message: str
+    allow_conversation: bool = True
 
 class SqlAgent(Specable[SqlAgentSpec]):
     _client: SqlClient
     _apu: APU
     _system_prompt: Template
-    _query_prompt: Template
+    _user_prompt: Template
     _clarification_prompt: Template
     _error_prompt: Template
 
@@ -185,30 +175,25 @@ class SqlAgent(Specable[SqlAgentSpec]):
         environment = Environment(undefined=StrictUndefined)
         self._error_prompt = environment.from_string(self.spec.error_prompt)
         self._system_prompt = environment.from_string(self.spec.system_prompt)
-        self._query_prompt = environment.from_string(self.spec.query_prompt)
+        self._user_prompt = environment.from_string(self.spec.user_prompt)
         self._clarification_prompt = environment.from_string(self.spec.clarification_prompt)
         self._response_prompt = environment.from_string(self.spec.response_prompt)
 
     @register_program()
-    async def query(self, process_id, body: Question):
+    @register_action("idle")
+    async def query(self, process_id, agent_state, body: SqlRequestBody):
         schema = await self._client.get_schema()
         kwargs = dict(**body.model_dump(), metadata=schema, protocol=self._client.protocol)
-
         t = await self._apu.main_thread(process_id)
-        await t.set_boot_messages(
-            prompts=[SystemAPUMessage(prompt=self._system_prompt.render(**kwargs))])
-        message = UserTextAPUMessage(prompt=self._query_prompt.render(**kwargs))
+        if agent_state == "initialized":
+            await t.set_boot_messages(
+                prompts=[SystemAPUMessage(prompt=self._system_prompt.render(**kwargs))])
+        message = UserTextAPUMessage(prompt=self._user_prompt.render(**kwargs))
+        yield UserInputEvent(input=body.message)
         async for e in self.cycle(t, message, self.spec.num_retries, body=body):
             yield e
 
-    @register_action("clarify")
-    async def clarify(self, process_id, body: Clarification):
-        message = UserTextAPUMessage(prompt=body.clarification)
-        t = await self._apu.main_thread(process_id)
-        async for e in self.cycle(t, message, self.spec.num_retries, body=body):
-            yield e
-
-    async def cycle(self, thread, message, num_reties, body: _SqlBodyBase):
+    async def cycle(self, thread, message, num_reties, body: SqlRequestBody):
         last_event = None
         thinking_stream = thread.stream_request(
             prompts=[message],
@@ -228,40 +213,42 @@ class SqlAgent(Specable[SqlAgentSpec]):
         if response.response_type == "execute":
             try:
                 logger.info(f"Executing query: {response.query}")
-                submitted_metadata = False
+                num_rows = 0
                 async for row in self._client.execute(response.query):
-                    if not submitted_metadata:
-                        yield ObjectOutputEvent(content=dict(
-                            kind="metadata",
-                            query=response.query
-                        ))
-                        submitted_metadata = True
-                    yield ObjectOutputEvent(content=dict(kind="row", data=row))
-                yield AgentStateEvent(state="idle")
+                    yield ObjectOutputEvent(content=row)
+                    num_rows += 1
+                if num_rows == 0:
+                    raise ValueError("No data returned from query")
+                yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
             except Exception as e:
                 if num_reties > 0:
                     yield StartStreamContextEvent(context_id='error', title='Error')
                     yield ObjectOutputEvent(content=dict(query=response.query, error=str(e)), stream_context='error')
                     yield EndStreamContextEvent(context_id='error')
                     message = UserTextAPUMessage(prompt=self._error_prompt.render(error=str(e), query=response.query))
+                    yield UserInputEvent(input=message.prompt)
                     async for e in self.cycle(thread, message, num_reties - 1, body=body):
                         yield e
                 else:
-                    raise
+                    if body.allow_clarification:
+                        yield StringOutputEvent(content="I'm sorry, I'm having trouble executing a query. Can you provide more information?")
+                        yield AgentStateEvent(state="idle")
+                    else:
+                        raise
         elif response.response_type == "clarify":
             prompt = UserTextAPUMessage(prompt=self._clarification_prompt.render(protocol=self._client.protocol))
             async for e in thread.stream_request(prompts=[prompt]):
                 yield e
-            yield AgentStateEvent(state="clarify")
+            yield AgentStateEvent(state="idle")
         elif response.response_type == "respond":
             prompt = UserTextAPUMessage(prompt=self._response_prompt.render(protocol=self._client.protocol))
             async for e in thread.stream_request(prompts=[prompt]):
                 yield e
-            yield AgentStateEvent(state="idle")
+            yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
         else:
             raise ValueError(f"Unexpected response type from llm: {response.response_type}")
 
-    def get_response_object(self, body: _SqlBodyBase):
+    def get_response_object(self, body: SqlRequestBody):
         responses = [dict(
             type="object",
             description="Respond to the user with the data returned after executing the provided query",
@@ -270,17 +257,15 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 query=dict(type="string")),
             required=["response_type", "query"],
         )]
-        if body.allow_summarization:
+        if body.allow_conversation:
             responses.append(dict(
                 type="object",
-                description="A response that directly answers the provided question",
+                description="A response that directly answers the provided question.",
                 properties=dict(
                     response_type=dict(const="respond"),
-                    response=dict(type="string"),
                 ),
-                required=["response_type", "response"],
+                required=["response_type"],
             ))
-        if body.allow_clarification:
             responses.append(dict(
                 type="object",
                 description="More information is required from the user to answer the provided question.",
@@ -290,8 +275,10 @@ class SqlAgent(Specable[SqlAgentSpec]):
 
         if len(responses) > 1:
             return dict(anyOf=responses)
-        else:
+        elif len(responses) == 1:
             return responses[0]
+        else:
+            raise ValueError("No valid response types")  # this should not be possible due to validation in SqlRequestBody
 
 
 class QueryError(Exception):

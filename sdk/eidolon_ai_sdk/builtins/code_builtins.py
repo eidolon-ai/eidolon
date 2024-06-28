@@ -152,7 +152,6 @@ def named_builtins() -> List[ReferenceResource]:
         MistralGPT,
         AnthropicLLMUnit,
         OllamaLLMUnit,
-        ToolCallLLMWrapper,
         LLMModel,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,

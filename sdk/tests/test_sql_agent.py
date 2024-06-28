@@ -42,7 +42,7 @@ async def process(agent):
 
 
 async def test_sql_agent(process):
-    response = await process.action("query", dict(question="what tables are accessible?"))
+    response = await process.action("query", dict(message="what tables are accessible?"))
     assert "albums" in response.data
     assert "artists" in response.data
     assert "customers" in response.data
@@ -58,15 +58,13 @@ async def test_sql_agent(process):
 
 
 async def test_sql_agent_data_query(process):
-    response = await process.action("query", dict(question="how may albums are in the database?"))
-    assert response.data == [{'kind': 'metadata',
-                              'query': 'SELECT COUNT(*) AS NumberOfAlbums FROM albums;'},
-                             {'data': [347], 'kind': 'row'}]
+    response = await process.action("query", dict(message="how may albums are in the database?", allow_conversation=False))
+    assert response.data == [347]
 
 
 async def test_sync_connection_error():
     agent = Agent.get("BrokenSqlAgent")
     process = await agent.create_process()
     with pytest.raises(Exception) as e:
-        await process.action("query", dict(question="how may albums are in the database?"))
+        await process.action("query", dict(message="how may albums are in the database?"))
     assert "invalid connection_string" in e.value.message
