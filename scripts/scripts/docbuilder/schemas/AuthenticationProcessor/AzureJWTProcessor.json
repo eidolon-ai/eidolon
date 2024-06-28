@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "AzureJWTProcessor",
+      "description": "AzureJWTProcessor"
+    },
+    "client_id": {
+      "default": null,
+      "description": "Your azure client or application ID. Defaults to the environment variable AZURE_CLIENT_ID",
+      "title": "Client Id",
+      "type": "string"
+    },
+    "tenant_id": {
+      "default": null,
+      "description": "The tenant id of the JWT. Defaults to the environment variable AZURE_TENANT_ID",
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "issuer_prefix": {
+      "default": "https://sts.windows.net",
+      "description": "The issuer prefix of the JWT. Defaults to sts.windows.net.  The tenant id will be appended to this value.  For example, sts.windows.net/your_tenant_id",
+      "title": "Issuer Prefix",
+      "type": "string"
+    }
+  },
+  "title": "AzureJWTProcessor",
+  "type": "object"
+}

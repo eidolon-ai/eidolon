@@ -35,21 +35,7 @@ def posthog_enabled():
 def distinct_id():
     if not posthog_enabled():
         return "disabled"
-    file_path = '/tmp/eidolon/posthog_info.json'
-    try:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as file:
-                data = json.load(file)
-                return data.get('distinct_id')
-        distinct_id_ = str(uuid.uuid4())
-        with open(file_path, 'w') as file:
-            json.dump({'distinct_id': distinct_id_}, file)
-        return distinct_id_
-
-    except Exception:
-        logger.debug("Error creating or reading the file", exc_info=True)
-        return "r_" + str(uuid.uuid4())
+    return str(uuid.getnode())
 
 
 @cache

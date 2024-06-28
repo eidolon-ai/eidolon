@@ -1,0 +1,21 @@
+{
+  "title": "AuthenticationProcessor",
+  "description": "Overview of AuthenticationProcessor components",
+  "anyOf": [
+    {
+      "$ref": "file:./AuthenticationProcessor.json"
+    },
+    {
+      "$ref": "file:./AzureJWTProcessor.json"
+    },
+    {
+      "$ref": "file:./GoogleJWTProcessor.json"
+    },
+    {
+      "$ref": "file:./NoopAuthProcessor.json"
+    }
+  ],
+  "reference_group": {
+    "type": "AuthenticationProcessor"
+  }
+}

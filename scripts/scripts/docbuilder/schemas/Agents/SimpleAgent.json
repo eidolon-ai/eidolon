@@ -124,7 +124,9 @@
         },
         "apu": {
           "$ref": "file:../APU/overview.json",
-          "default": "APU"
+          "default": {
+            "implementation": "APU"
+          }
         },
         "default": {
           "type": "boolean",
@@ -196,7 +198,9 @@
     },
     "apu": {
       "$ref": "file:../APU/overview.json",
-      "default": "APU"
+      "default": {
+        "implementation": "APU"
+      }
     },
     "apus": {
       "default": [],
@@ -214,19 +218,6 @@
       ],
       "title": "Title Generation Mode",
       "type": "string"
-    },
-    "doc_processor": {
-      "additionalProperties": true,
-      "default": "DocumentProcessor",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentProcessor Reference",
-      "type": "object"
     }
   },
   "title": "SimpleAgent",

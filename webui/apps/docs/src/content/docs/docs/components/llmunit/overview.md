@@ -2,8 +2,9 @@
 title: LLMUnit Overview
 description: Overview of LLMUnit components
 ---
-Overview of <class 'eidolon_ai_sdk.apu.llm_unit.LLMUnit'> components
+Overview of LLMUnit components
 ## Builtins
+* [LLMUnit](/docs/components/llmunit/llmunit/)
 * [AnthropicLLMUnit](/docs/components/llmunit/anthropicllmunit/)
 * [MistralGPT](/docs/components/llmunit/mistralgpt/)
 * [OllamaLLMUnit](/docs/components/llmunit/ollamallmunit/)

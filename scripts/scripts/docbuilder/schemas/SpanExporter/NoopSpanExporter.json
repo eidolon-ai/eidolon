@@ -1,0 +1,10 @@
+{
+  "title": "NoopSpanExporter",
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "NoopSpanExporter",
+      "description": "NoopSpanExporter"
+    }
+  }
+}

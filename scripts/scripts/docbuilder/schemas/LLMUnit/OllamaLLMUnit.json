@@ -5,17 +5,10 @@
       "description": "OllamaLLMUnit"
     },
     "model": {
-      "additionalProperties": true,
-      "default": "llama3",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "LLMModel Reference",
-      "type": "object"
+      "$ref": "file:../LLMModel/overview.json",
+      "default": {
+        "implementation": "llama3"
+      }
     },
     "temperature": {
       "default": 0.3,

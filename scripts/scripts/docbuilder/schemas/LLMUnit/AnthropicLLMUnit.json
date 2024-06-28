@@ -5,17 +5,10 @@
       "description": "AnthropicLLMUnit"
     },
     "model": {
-      "additionalProperties": true,
-      "default": "claude-3-opus-20240229",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "LLMModel Reference",
-      "type": "object"
+      "$ref": "file:../LLMModel/overview.json",
+      "default": {
+        "implementation": "claude-3-opus-20240229"
+      }
     },
     "temperature": {
       "default": 0.3,

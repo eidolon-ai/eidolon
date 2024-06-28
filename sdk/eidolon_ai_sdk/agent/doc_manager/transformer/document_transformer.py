@@ -4,7 +4,7 @@ import copy
 import logging
 from abc import ABC, abstractmethod
 from typing import Any, List, Callable, Optional, Iterable
-from uuid import uuid4
+from bson import ObjectId
 
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -69,7 +69,7 @@ class TextSplitter(DocumentTransformer, ABC, Specable[TextSplitterSpec]):
                 metadata = copy.deepcopy(doc.metadata)
                 index = doc.page_content.find(chunk, index + 1)
                 metadata["start_index"] = index
-                yield Document(id=uuid4().hex, page_content=chunk, metadata=metadata)
+                yield Document(id=str(ObjectId()), page_content=chunk, metadata=metadata)
 
     def _join_docs(self, docs: List[str], separator: str) -> Optional[str]:
         text = separator.join(docs)

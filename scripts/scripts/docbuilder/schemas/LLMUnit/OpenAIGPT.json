@@ -5,17 +5,10 @@
       "description": "OpenAIGPT"
     },
     "model": {
-      "additionalProperties": true,
-      "default": "gpt-4-turbo",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "LLMModel Reference",
-      "type": "object"
+      "$ref": "file:../LLMModel/overview.json",
+      "default": {
+        "implementation": "gpt-4-turbo"
+      }
     },
     "temperature": {
       "default": 0.3,
@@ -40,17 +33,10 @@
       "title": "Max Tokens"
     },
     "connection_handler": {
-      "additionalProperties": true,
-      "default": "OpenAIConnectionHandler",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "OpenAIConnectionHandler Reference",
-      "type": "object"
+      "$ref": "file:../OpenAIConnectionHandler/overview.json",
+      "default": {
+        "implementation": "OpenAIConnectionHandler"
+      }
     }
   },
   "title": "OpenAIGPT",

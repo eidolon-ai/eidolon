@@ -24,5 +24,5 @@ Web UI.
 
 🚨 Make sure you have an Eidolon machine running locally on port 8080. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/docs/introduction/)
 
-🚨 We publish several apps tht depend on different types of agents. Our [⭐dev-tool app⭐](http://localhost:3000/eidolon-apps/dev-tool)️ is a great place to start, and will 
+🚨 We publish several apps that depend on different types of agents. Our [⭐dev-tool app⭐](http://localhost:3000/eidolon-apps/dev-tool)️ is a great place to start, and will 
 work for all agents. 

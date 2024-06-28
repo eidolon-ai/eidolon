@@ -13,10 +13,9 @@ from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputE
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.agent.agent import register_action
-from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor
-from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage
+from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage, FileHandleWithInclude
 from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
+from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -91,7 +90,7 @@ class ActionDefinition(BaseModel):
             required.append("body")
 
         if self.allow_file_upload:
-            properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandle.model_json_schema())
+            properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandleWithInclude.model_json_schema())
 
         if agent.spec.apus:
             apu_names = [apu.title for apu in agent.spec.apus]
@@ -131,7 +130,6 @@ class SimpleAgentSpec(BaseModel):
     apu: AnnotatedReference[APU] = None
     apus: List[NamedAPU] = []
     title_generation_mode: Literal["none", "on_request"] = "on_request"
-    doc_processor: AnnotatedReference[DocumentProcessor]
 
     @model_validator(mode="before")
     def validate_apu(cls, value):
@@ -248,9 +246,12 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         attached_files_messages = []
         if isinstance(request_body, dict) and "attached_files" in request_body:
             # add a new file handle message
-            attached_files = request_body.pop("attached_files") or []
-            for file in attached_files:
-                attached_files_messages.append(AttachedFileMessage(file=file, include_directly=True))
+            attached_files_list = request_body.pop("attached_files") or []
+            for file in attached_files_list:
+                include_directly = file.pop("include_directly", False)
+                fh = FileHandle(**file)
+                attached_files_messages.append(AttachedFileMessage(file=fh, include_directly=include_directly))
+                attached_files.append(fh)
 
         body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
         if isinstance(request_body, dict):

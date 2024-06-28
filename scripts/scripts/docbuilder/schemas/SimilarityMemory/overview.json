@@ -1,9 +1,15 @@
 {
   "title": "SimilarityMemory",
-  "description": "Overview of <class 'eidolon_ai_sdk.agent_os_interfaces.SimilarityMemory'> components",
+  "description": "Overview of SimilarityMemory components",
   "anyOf": [
+    {
+      "$ref": "file:./SimilarityMemory.json"
+    },
     {
       "$ref": "file:./SimilarityMemoryImpl.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "SimilarityMemory"
+  }
 }

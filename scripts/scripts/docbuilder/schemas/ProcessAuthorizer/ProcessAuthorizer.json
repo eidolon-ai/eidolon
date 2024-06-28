@@ -1,0 +1,10 @@
+{
+  "title": "ProcessAuthorizer",
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "ProcessAuthorizer",
+      "description": "ProcessAuthorizer"
+    }
+  }
+}
