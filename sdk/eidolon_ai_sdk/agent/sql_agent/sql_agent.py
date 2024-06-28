@@ -1,127 +1,24 @@
-from abc import abstractmethod
-from functools import cached_property
-from typing import AsyncIterable, Literal, Optional, cast, Any, List, Self
+from typing import Literal, Optional, cast
 
 from jinja2 import Environment, StrictUndefined, Template
-from pydantic import BaseModel, model_validator, validator, Field
-from sqlalchemy import text, make_url, Row, MetaData
-from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
+from pydantic import BaseModel
 
 from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent, \
     UserInputEvent, StringOutputEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import register_program, register_action
+from eidolon_ai_sdk.agent.sql_agent.sql_client import SqlClient
+from eidolon_ai_sdk.agent.sql_agent.sql_logic_unit import SqlLogicUnit
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
 from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
-class SqlClient(BaseModel):
-    protocol: str
-
-    @abstractmethod
-    def execute(self, query: str) -> AsyncIterable[tuple]:
-        pass
-
-    async def get_schema(self) -> dict:
-        pass
-
-
-class MetadataAttribute(BaseModel):
-    name: str
-    metadata: List[Self | str] = []
-    remove_falsy_metadata: bool = True
-
-
-class SqlAlchemy(SqlClient):
-    """
-    A client for executing SQL queries using SQLAlchemy.
-    See https://docs.sqlalchemy.org/ for connection configuration details.
-
-    Performs cursory checks when `select_only` is set to True. Additionally ensure user is restricted to allowed permissions.
-    """
-
-    protocol: str = None
-    connection_string: str = Field("sqlite+aiosqlite:///:memory:", description="SQLAlchemy connection string. See https://docs.sqlalchemy.org/en/20/core/engines.html for more information.")
-    engine_kwargs: dict = {}
-    select_only: bool = False
-    metadata: List[MetadataAttribute] = [MetadataAttribute(
-        name="tables",
-        atributes=[MetadataAttribute(
-            name="columns",
-            attributes=["name", "type", "nullable", "default", "autoincrement", "primary_key", "foreign_keys", "constraints"]
-    )])]
-    protocol: str = None
-
-    @model_validator(mode="after")
-    def _set_protocol(self):
-        if not self.protocol:
-            self.protocol = make_url(self.connection_string).get_dialect().name
-        return self
-
-    @cached_property
-    def _engine(self) -> AsyncEngine:
-        try:
-            return create_async_engine(self.connection_string, **self.engine_kwargs)
-        except InvalidRequestError as e:
-            raise ValueError(f"Error creating engine due to invalid connection_string or engine_kwargs: {e}")
-
-    def _md(self, obj, md_attrs: List[MetadataAttribute | str]):
-        rtn = {}
-        for md_attr in (MetadataAttribute(name=md) if isinstance(md, str) else md for md in md_attrs):
-            key, value = md_attr.name, getattr(obj, md_attr.name, None)
-            if value and md_attr.metadata:
-                value = self._md(value, md_attr.metadata)
-            if md_attr.remove_falsy_metadata and not value:
-                continue
-            else:
-                rtn[key] = value
-        return rtn
-
-    def _md_wrapper(self, conn):
-        metadata = MetaData()
-        metadata.reflect(bind=conn)
-        return self._md(metadata, self.metadata)
-
-    async def get_schema(self) -> dict:
-        async with self._engine.connect() as conn:
-            return await conn.run_sync(self._md_wrapper)
-
-    async def execute(self, query: str) -> AsyncIterable[tuple]:
-        async with self._engine.connect() as conn:
-            text_query = text(query)
-            if self.select_only and not text_query.is_select:
-                raise ValueError("Only SELECT queries are allowed")
-            resp = await conn.stream(text_query)
-            async for row in resp:
-                yield [c for c in cast(Row[tuple[Any, ...]], row)]
-
-
-class SqlAlchemyEngineError(Exception):
-    pass
-
-
-class SqlLogicUnit(LogicUnit):
-    def __init__(self, client: SqlClient, apu: ProcessingUnitLocator):
-        super().__init__(apu)
-        self.client = client
-
-    @llm_function()
-    async def peek(self, query: str, row_limit: int = 10) -> dict:
-        """
-        Execute a query and see return the first few rows of a query.
-        """
-        rows = []
-        async for row in self.client.execute(query):
-            rows.append(row)
-            if len(rows) >= row_limit:
-                break
-
-        return dict(rows=rows)
+class SqlRequestBody(BaseModel):
+    message: str
+    allow_conversation: bool = True
 
 
 class SqlAgentSpec(BaseModel):
@@ -144,15 +41,6 @@ class SqlAgentSpec(BaseModel):
     error_prompt: str = "An error occurred executing the query \"{{ query }}\": {{ error }}"
     num_retries: int = 3
 
-
-class AgentResponse(BaseModel):
-    response_type: Literal['execute', 'clarify', 'respond']
-    query: Optional[str] = None
-
-
-class SqlRequestBody(BaseModel):
-    message: str
-    allow_conversation: bool = True
 
 class SqlAgent(Specable[SqlAgentSpec]):
     _client: SqlClient
@@ -195,10 +83,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
 
     async def cycle(self, thread, message, num_reties, body: SqlRequestBody):
         last_event = None
-        thinking_stream = thread.stream_request(
-            prompts=[message],
-            output_format=self.get_response_object(body)
-        )
+        thinking_stream = thread.stream_request(prompts=[message], output_format=self.get_response_object(body))
         async for e in stream_manager(thinking_stream, StartStreamContextEvent(context_id='thinking', title='Thinking')):
             if isinstance(e, ObjectOutputEvent):
                 last_event = e
@@ -207,7 +92,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
         if not last_event:
             raise ValueError("No response from llm")
         try:
-            response = AgentResponse(**last_event.content)
+            response = _AgentResponse(**last_event.content)
         except Exception:
             raise ValueError(f"Unexpected response from llm: {last_event}")
         if response.response_type == "execute":
@@ -281,8 +166,6 @@ class SqlAgent(Specable[SqlAgentSpec]):
             raise ValueError("No valid response types")  # this should not be possible due to validation in SqlRequestBody
 
 
-class QueryError(Exception):
-    def __init__(self, query, error):
-        self.query = query
-        self.error = error
-        super().__init__(f"Error executing query {query}: {error}")
+class _AgentResponse(BaseModel):
+    response_type: Literal['execute', 'clarify', 'respond']
+    query: Optional[str] = None

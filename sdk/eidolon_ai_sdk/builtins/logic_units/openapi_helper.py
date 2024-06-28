@@ -1,7 +1,7 @@
-from typing import List, Optional, Tuple, Any, Annotated, Callable
+from typing import List, Optional, Tuple, Any, Callable
 
 from jsonref import replace_refs
-from pydantic import BaseModel, SkipValidation, Field
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json
