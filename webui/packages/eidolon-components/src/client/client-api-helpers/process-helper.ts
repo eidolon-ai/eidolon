@@ -65,7 +65,7 @@ export async function getRootProcesses(machineUrl: string): Promise<ProcessStatu
 
 }
 
-async function getProcessesFromServer(machineUrl: string): Promise<ProcessStatus[]> {
+export async function getProcessesFromServer(machineUrl: string): Promise<ProcessStatus[]> {
   return fetch(`/api/eidolon/process?machineURL=${machineUrl}`
   ).then(resp => {
     if (resp.status !== 200) {

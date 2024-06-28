@@ -1,11 +1,7 @@
 import {describe, expect, test} from "@jest/globals"
-import {ProcessesHandler} from "../../src/server/processes-server-handler"
 import autoSetupPolly from "../polly_helper"
-import {getProcessStatus, getRootProcesses} from "../../src/client-api-helpers/process-helper";
-import {HttpException} from "@eidolon/client";
 import {fail} from "node:assert";
-
-const processesHandler = new ProcessesHandler(async () => '')
+import {getRootProcesses, getProcessStatus} from "../../src/client/index";
 
 describe('process client helper', () => {
   autoSetupPolly()

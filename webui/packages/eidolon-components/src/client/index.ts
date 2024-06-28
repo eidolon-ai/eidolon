@@ -1,5 +1,5 @@
 export { ProcessList, type ProcessListProps } from 'src/client/process-list/process-list.js';
-export * from 'src/client/client-api-helpers/process-helper.js';
+export { type ProcessStatusWithChildren, getProcessStatus, createProcess, deleteProcess, getRootProcesses, getProcessesFromServer, getAppPathFromPath } from 'src/client/client-api-helpers/process-helper.js';
 export { EidolonEvents, type EidolonEventProps } from 'src/client/messages/eidolon-events.js';
 export { AgentProcess } from 'src/client/form-input/agent-process.js';
 export { EidolonMarkdown } from 'src/client/messages/eidolon-markdown.js';
