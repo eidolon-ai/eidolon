@@ -8,19 +8,27 @@ from eidolon_ai_sdk.util.class_utils import fqn
 
 @pytest.fixture(scope="module", autouse=True)
 async def server(run_app, test_dir):
-    async with run_app(Resource(
-            apiVersion="eidolon/v1",
-            kind="Agent",
-            metadata=Metadata(name="SqlAgent"),
-            spec=dict(
-                implementation=fqn(SqlAgent),
-                client=dict(
-                    connection_string=f"sqlite+aiosqlite:///{str(test_dir / 'resources' / 'chinook.db')}",
-                )
-            )
-    )) as ra:
+    async with run_app(
+            sqlagent(
+                "SqlAgent",
+                client=dict(connection_string=f"sqlite+aiosqlite:///{str(test_dir / 'resources' / 'chinook.db')}")
+            ),
+            sqlagent(
+                "BrokenSqlAgent",
+                client=dict(connection_string=f"sqlite:///{str(test_dir / 'resources' / 'chinook.db')}")
+            ),
+    ) as ra:
         yield ra
     print("done...")
+
+
+def sqlagent(name: str, **kwargs):
+    return Resource(
+        apiVersion="eidolon/v1",
+        kind="Agent",
+        metadata=Metadata(name=name),
+        spec=dict(implementation=fqn(SqlAgent), **kwargs)
+    )
 
 
 @pytest.fixture()
@@ -54,3 +62,11 @@ async def test_sql_agent_data_query(process):
     assert response.data == [{'kind': 'metadata',
                               'query': 'SELECT COUNT(*) AS NumberOfAlbums FROM albums;'},
                              {'data': [347], 'kind': 'row'}]
+
+
+async def test_sync_connection_error():
+    agent = Agent.get("BrokenSqlAgent")
+    process = await agent.create_process()
+    with pytest.raises(Exception) as e:
+        await process.action("query", dict(question="how may albums are in the database?"))
+    assert "invalid connection_string" in e.value.message

@@ -4,7 +4,8 @@ from typing import AsyncIterable, Literal, Optional, cast, Any, List, Self
 
 from jinja2 import Environment, StrictUndefined, Template
 from pydantic import BaseModel, model_validator
-from sqlalchemy import text, make_url, Row, MetaData, create_engine, Engine
+from sqlalchemy import text, make_url, Row, MetaData
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 
 from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent
@@ -62,11 +63,10 @@ class SqlAlchemy(SqlClient):
 
     @cached_property
     def _engine(self) -> AsyncEngine:
-        return create_async_engine(self.connection_string, **self.engine_kwargs)
-
-    @cached_property
-    def _sync_engine(self) -> Engine:
-        return create_engine(self.connection_string, **self.engine_kwargs)
+        try:
+            return create_async_engine(self.connection_string, **self.engine_kwargs)
+        except InvalidRequestError as e:
+            raise ValueError(f"Error creating engine due to invalid connection_string or engine_kwargs: {e}")
 
     def _md(self, obj, md_attrs: List[MetadataAttribute | str]):
         rtn = {}
@@ -97,6 +97,10 @@ class SqlAlchemy(SqlClient):
             resp = await conn.stream(text_query)
             async for row in resp:
                 yield [c for c in cast(Row[tuple[Any, ...]], row)]
+
+
+class SqlAlchemyEngineError(Exception):
+    pass
 
 
 class SqlLogicUnit(LogicUnit):
