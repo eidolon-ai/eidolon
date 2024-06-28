@@ -210,13 +210,14 @@ class AgentController:
         last_result_type = None
         async for event in self.agent_event_stream(handler, process, last_state, **kwargs):
             if event.is_root_and_type(StringOutputEvent):
-                last_result_type = StringOutputEvent
                 if last_result_type == StringOutputEvent:
                     results[-1] += event.content
                 else:
                     results.append(event.content)
+                last_result_type = StringOutputEvent
             elif event.is_root_and_type(ObjectOutputEvent):
                 results.append(event.content)
+                last_result_type = ObjectOutputEvent
             elif event.is_root_and_type(AgentStateEvent):
                 state_change_event = event
             elif event.is_root_and_type(EndStreamEvent):

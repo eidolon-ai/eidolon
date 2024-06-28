@@ -34,18 +34,23 @@ async def process(agent):
 
 
 async def test_sql_agent(process):
-    response = await process.action("query", "what tables are accessible?")
-    assert response.data == [['albums'],
-                             ['sqlite_sequence'],
-                             ['artists'],
-                             ['customers'],
-                             ['employees'],
-                             ['genres'],
-                             ['invoices'],
-                             ['invoice_items'],
-                             ['media_types'],
-                             ['playlists'],
-                             ['playlist_track'],
-                             ['tracks'],
-                             ['sqlite_stat1']]
+    response = await process.action("query", dict(question="what tables are accessible?"))
+    assert "albums" in response.data
+    assert "artists" in response.data
+    assert "customers" in response.data
+    assert "employees" in response.data
+    assert "genres" in response.data
+    assert "invoice_items" in response.data
+    assert "invoices" in response.data
+    assert "media_types" in response.data
+    assert "tracks" in response.data
+    assert "playlist_track" in response.data
+    assert "playlists" in response.data
     assert response.state == "idle"
+
+
+async def test_sql_agent_data_query(process):
+    response = await process.action("query", dict(question="how may albums are in the database?"))
+    assert response.data == [{'kind': 'metadata',
+                              'query': 'SELECT COUNT(*) AS NumberOfAlbums FROM albums;'},
+                             {'data': [347], 'kind': 'row'}]
