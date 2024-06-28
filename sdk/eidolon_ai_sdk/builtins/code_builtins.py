@@ -37,6 +37,7 @@ from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
+from eidolon_ai_sdk.apu.llm.gemini_llm_unit import GeminiLLMUnit
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
@@ -147,6 +148,7 @@ def named_builtins() -> List[ReferenceResource]:
         OpenAIGPT,
         MistralGPT,
         AnthropicLLMUnit,
+        GeminiLLMUnit,
         OllamaLLMUnit,
         ToolCallLLMWrapper,
         LLMModel,

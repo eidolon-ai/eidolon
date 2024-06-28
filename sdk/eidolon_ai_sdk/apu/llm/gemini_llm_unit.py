@@ -1,108 +1,145 @@
 import base64
 import json
 import logging
+import os
+from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 import yaml
-
+from PIL import Image
+from google.generativeai import GenerativeModel
+import google.generativeai as genai
+from google.generativeai.types import Tool, FunctionDeclaration, FunctionLibrary
+from fastapi import HTTPException
+from google.generativeai.types import BrokenResponseError, GenerateContentResponse
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
     ObjectOutputEvent,
-    LLMToolCallRequestEvent,
-    ToolCall,
+    ToolCall, LLMToolCallRequestEvent,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
     AssistantMessage,
     ToolResponseMessage,
     UserMessage,
     SystemMessage,
-    UserMessageText,
-    UserMessageImage,
 )
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
-from eidolon_ai_sdk.util.image_utils import scale_image
+from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
 
 
-async def convert_to_openai(message: LLMMessage, process_id: str):
+def scale_dimensions(width, height, max_size=2048, min_size=768):
+    # Check if the dimensions are less than or equal to max_size.
+    # If so, adjust the dimensions according to the max_size.
+    if width > max_size or height > max_size:
+        # Calculate the scaling ratio
+        scale_ratio = max_size / max(width, height)
+
+        # Calculate the new dimensions while keeping aspect ratio
+        width = int(width * scale_ratio)
+        height = int(height * scale_ratio)
+
+    # Check if the minimum dimension is still greater than the min_size.
+    # If so, adjust the dimensions according to the min_size.
+    if min(width, height) > min_size:
+        # Calculate the scaling ratio
+        scale_ratio = min_size / min(width, height)
+
+        # Calculate the new dimensions
+        width = int(width * scale_ratio)
+        height = int(height * scale_ratio)
+
+    return width, height
+
+
+def scale_image(image_bytes):
+    # Load the image from bytes
+    image = Image.open(BytesIO(image_bytes))
+
+    # Get the dimensions of the image
+    width, height = image.size
+
+    logger.info(f"Original image size: {width}x{height}")
+    new_width, new_height = scale_dimensions(width, height)
+    logger.info(f"New image size: {new_width}x{new_height}")
+
+    # Resize and return the image
+    scaled_image = image.resize((new_width, new_height))
+    output = BytesIO()
+    scaled_image.save(output, format="PNG")
+    return output.getvalue()
+
+
+async def convert_to_llm(message: LLMMessage):
     if isinstance(message, SystemMessage):
-        return {"role": "system", "content": message.content}
+        return {"role": "user", "parts": [message.content]}
     elif isinstance(message, UserMessage):
         content = message.content
         if not isinstance(content, str):
             content = []
             for part in message.content:
-                if isinstance(part, UserMessageText):
-                    content.append({"type": "text", "text": part.text})
-                elif isinstance(part, UserMessageImage):
-                    data = await part.getBytes(process_id=process_id)
-                    # scale the image such that the max size of the shortest size is at most 768px
-                    data = scale_image(data)
-                    # base64 encode the data
-                    base64_image = base64.b64encode(data).decode("utf-8")
-                    content.append(
-                        {
-                            "type": "image_url",
-                            "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
-                        }
-                    )
-                else:
-                    raise ValueError(f"Unknown user message part type {part.type}")
+                if part.type == "text":
+                    if part.text:
+                        content.append(part.text)
+                # else:
+                #     # retrieve the image from the file system
+                #     data = await AgentOS.file_memory.read_file(part.image_url)
+                #     # scale the image such that the max size of the shortest size is at most 768px
+                #     data = scale_image(data)
+                #     # base64 encode the data
+                #     base64_image = base64.b64encode(data).decode("utf-8")
+                #     content.append(ImageBlockParam(source=Source(data = base64_image, media_type="image/png", type="base64" ), type="image"))
+        else:
+            content = [content]
 
-        return {"role": "user", "content": content}
+        return {"role": "user", "parts": content}
     elif isinstance(message, AssistantMessage):
-        ret = {"role": "assistant", "content": str(message.content)}
+        content = [message.content]
         if message.tool_calls and len(message.tool_calls) > 0:
-            ret["tool_calls"] = [
-                {
-                    "id": tool_call.tool_call_id,
-                    "type": "function",
-                    "function": {
-                        "name": tool_call.name,
-                        "arguments": str(tool_call.arguments),
-                    },
-                }
-                for tool_call in message.tool_calls
-            ]
-        return ret
+            for tool_call in message.tool_calls:
+                pass
+                # content.append(ToolUseBlockParam(type="tool_use", id=tool_call.tool_call_id, name=tool_call.name, input=tool_call.arguments))
+        return {"role": "model", "parts": content}
     elif isinstance(message, ToolResponseMessage):
         # tool_call_id, content
-        return {
-            "role": "tool",
-            "tool_call_id": message.tool_call_id,
-            "content": json.dumps(message.result),
+        data = json.dumps(message.result)
+        content = [data]
+        return {"role": "user", "parts": [{
+            "type": "tool_result",
+            "tool_use_id": message.tool_call_id,
+            "content": content
         }
+        ]}
     else:
         raise ValueError(f"Unknown message type {message.type}")
 
 
-gpt_4 = "gpt-4-turbo"
+gemini = "gemini-1.5-flash"
 
 
-class OpenAiGPTSpec(LLMUnitSpec):
-    model: AnnotatedReference[LLMModel, gpt_4]
+class GeminiLLMUnitSpec(LLMUnitSpec):
+    model: AnnotatedReference[LLMModel, gemini]
     temperature: float = 0.3
-    force_json: bool = True
     max_tokens: Optional[int] = None
-    connection_handler: AnnotatedReference[OpenAIConnectionHandler]
 
 
-class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
+class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
     temperature: float
-    connection_handler: OpenAIConnectionHandler
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
+
         self.temperature = self.spec.temperature
-        self.connection_handler = self.spec.connection_handler.instantiate()
+        genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
     async def execute_llm(
             self,
@@ -111,70 +148,68 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             tools: List[LLMCallFunction],
             output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
-        can_stream_message, request = await self._build_request(call_context, messages, tools, output_format)
-        request["stream"] = True
+        can_stream_message, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-
+        llm_request = replayable(fn=_llm_request(), name_override="gemini_completion", parser=_raw_parser)
         complete_message = ""
         tools_to_call = []
-        completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
-        async for m_chunk in completion:
-            chunk = cast(ChatCompletionChunk, m_chunk)
-            if not chunk.choices:
-                logger.info("open ai llm chunk has no choices, skipping")
-                continue
-            message = chunk.choices[0].delta
+        generative_args = {
+            "model_name": self.model.name,
+            "generation_config": {
+                "maxOutputTokens": self.spec.max_tokens or 4000,
+                "temperature": self.temperature,
+                "candidateCount": 1,
+            },
+        }
+        if "systemInstruction" in request:
+            generative_args["system_instruction"] = request["systemInstruction"]
+            del request["systemInstruction"]
+        try:
+            async for in_message in llm_request(client_args=generative_args, **request):
+                print(in_message)
+                message = cast(GenerateContentResponse, in_message).text
+                # message = cast(MessageStreamEvent, in_message)
+                #         complete_message += content
 
-            logger.debug(
-                f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
-                extra=dict(content=message.content, tool_calls=message.tool_calls),
-            )
+                if message:
+                    if can_stream_message:
+                        logger.debug(
+                            f"gemini llm stream response: {message}", extra=dict(content=message)
+                        )
+                        yield StringOutputEvent(content=message)
+                    else:
+                        complete_message += message
 
-            for tool_call in message.tool_calls or []:
-                index = tool_call.index
-                if index == len(tools_to_call):
-                    tools_to_call.append({"id": "", "name": "", "arguments": ""})
-                if tool_call.id:
-                    tools_to_call[index]["id"] = tool_call.id
-                if tool_call.function:
-                    if tool_call.function.name:
-                        tools_to_call[index]["name"] = tool_call.function.name
-                    if tool_call.function.arguments:
-                        tools_to_call[index]["arguments"] += tool_call.function.arguments
 
-            if message.content:
-                if can_stream_message:
-                    logger.debug(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
-                    yield StringOutputEvent(content=message.content)
-                else:
-                    complete_message += message.content
+            if len(tools_to_call) > 0:
+                logger.info(f"gemini llm tool calls: {tools_to_call}", extra=dict(tool_calls=tools_to_call))
+                for tool in tools_to_call:
+                    yield LLMToolCallRequestEvent(tool_call=tool)
 
-        logger.info(f"open ai llm tool calls: {json.dumps(tools_to_call)}", extra=dict(tool_calls=tools_to_call))
-        if len(tools_to_call) > 0:
-            for tool in tools_to_call:
-                tool_call = _convert_tool_call(tool)
-                yield LLMToolCallRequestEvent(tool_call=tool_call)
-        if not can_stream_message:
-            logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
-            if not self.spec.force_json:
+            if not can_stream_message:
+                logger.debug(f"gemini llm object response: {complete_message}", extra=dict(content=complete_message))
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
 
-            if complete_message or len(tools_to_call) == 0:
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
+        except Exception as e:
+            logger.exception(e)
+            raise HTTPException(502, f"Gemini Error: {e}") from e
+        # except APIConnectionError as e:
+        #     raise HTTPException(502, f"Anthropic Error: {e.message}") from e
+        # except RateLimitError as e:
+        #     raise HTTPException(429, "Anthropic Rate Limit Exceeded") from e
+        # except BrokenResponseError as e:
+        #     raise HTTPException(502, f"Anthropic Status Error: {e.message}") from e
 
-    async def _build_request(self, call_context: CallContext, inMessages, inTools, output_format):
+    async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
-        messages = [await convert_to_openai(message, call_context.process_id) for message in inMessages]
-        request = {
-            "messages": messages,
-            "model": self.model.name,
-            "temperature": self.temperature,
-        }
+        system_prompt = "\n".join([message.content for message in inMessages if isinstance(message, SystemMessage)])
+        messages = [await convert_to_llm(message) for message in inMessages if not isinstance(message, SystemMessage)]
         if output_format == "str" or output_format["type"] == "string":
             is_string = True
         else:
@@ -182,45 +217,72 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             force_json_msg = (
                 f"Your response MUST be valid JSON satisfying the following JSON schema:\n{json.dumps(output_format)}"
             )
-            if not self.spec.force_json:
-                force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
-            else:
-                request["response_format"] = ResponseFormat(type="json_object")
+            force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
 
             # add response rules to original system message for this call only
-            if messages[0]["role"] == "system":
-                messages[0]["content"] += f"\n\n{force_json_msg}"
+            messages.insert(0, {"role": "user", "parts": [force_json_msg]})
+
+        # combine messages such that no two user messages are consecutive
+        last_message = None
+        new_messages = []
+        for message in messages:
+            if message["role"] == "user":
+                if last_message and last_message["role"] == "user":
+                    content = message["parts"]
+                    last_message["parts"].extend(content)
+                else:
+                    new_messages.append(message)
             else:
-                messages.insert(0, {"role": "system", "content": force_json_msg})
-        logger.debug(messages)
+                new_messages.append(message)
+            last_message = message
+
+        # request = {
+        #     "messages": new_messages,
+        #     "model": self.model.name,
+        #     "temperature": self.temperature,
+        # }
+        request = {"contents": new_messages}
+        if system_prompt:
+            request["systemInstruction"] = {"role": "user", "parts": [system_prompt]}
+
+        logger.debug(new_messages)
         if len(tools) > 0:
             request["tools"] = tools
-        if self.spec.max_tokens:
-            request["max_tokens"] = self.spec.max_tokens
         return is_string, request
 
     async def _build_tools(self, inTools):
         tools = []
         for tool in inTools:
-            tools.append(
-                ChatCompletionToolParam(
-                    **{
-                        "type": "function",
-                        "function": {
-                            "name": tool.name,
-                            "description": tool.description,
-                            "parameters": tool.parameters,
-                        },
-                    }
-                )
-            )
+            # del tool.parameters["$defs"]
+            # remove_key_from_dict(tool.parameters, "title")
+            # remove_key_from_dict(tool.parameters, "default")
+            # remove_key_from_dict(tool.parameters, "anyOf")
+            print(tool.parameters)
+            tools.append(Tool([dict(name=tool.name, description=tool.description, parameters=tool.parameters)]))
         return tools
 
 
-def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
-    name = tool["name"]
-    try:
-        loads = json.loads(tool["arguments"])
-    except json.JSONDecodeError as e:
-        raise RuntimeError(f"Error decoding response function arguments for tool {name}") from e
-    return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
+def remove_key_from_dict(d, key_to_remove):
+    if isinstance(d, dict):
+        if key_to_remove in d:
+            del d[key_to_remove]
+        for value in d.values():
+            remove_key_from_dict(value, key_to_remove)
+    elif isinstance(d, list):
+        for item in d:
+            remove_key_from_dict(item, key_to_remove)
+
+def _llm_request():
+    async def fn(client_args: dict = None, **kwargs):
+        client = GenerativeModel(**(client_args or {}))
+        async for e in await client.generate_content_async(**kwargs, stream=True):
+            print(e)
+            yield e
+
+    return fn
+
+
+async def _raw_parser(resp):
+    async for in_message in resp:
+        message = cast(GenerateContentResponse, in_message)
+        yield message.text
