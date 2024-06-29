@@ -2,7 +2,7 @@
 publishDate: 2024-06-23T00:00:00Z
 author: 'Dave Brewster (dave@augustdata.ai)'
 category: 'Architecture'
-title: 'A historical view of transformational technologies'
+title: 'Part 1: A historical view of web based computing'
 excerpt: "A history view from the web through the genAI revolution."
 image: ~/assets/images/dev-timeline.png
 tags:
@@ -12,6 +12,16 @@ tags:
 metadata:
   canonical: https://www.eidolonai.com/dev_history
 ---
+This article is a two part series. The intent of the articles is to describe the new software stack of tomorrow, from an LLM perspective.
+
+The first part is an explanation of how we got here, what technologies were important to the creation of an LLM. It's very much centered
+around my career, what I was exposed to, and what I helped build. I'm a systems engineer, and it's very centered around that perspective.
+I highly reccommend you skip to the second part of the series if this type of history doesn't interest you.
+
+The second part of the series can be found here [Part 2: The Agent stack](/agent_stack).
+
+<hr/>
+
 Throughout my career I've had the privilege to work in companies that defined computing, architecture, and programming as we know it today.
 Spanning the early days of adoption of the web through the latest genAI craze, I helped create, explore, and refine some of the software, APIs 
 and specifications that have shaped programming languages, architecture, testing methodologies, runtime environments, and platforms that are in
@@ -19,24 +29,16 @@ wide use today.
 
 I consider myself a talented engineer, but by no means am I taking credit for any or all of what I'm going to discus in this blog post. 
 Simply put, I've worked with some of the most talented people in the business and I intend to give them full credit in this post. The folks
-that you surround yourself with defines the texture of your career. Talented people + good culture + good idea + timing == success. That equation 
-defines the success of a startup, big or small. Some parts of the equation give rise to monetary success, some parts make the journey
-much more enjoyable, some parts are just plain luck; however, all parts contribute to success. Create or join a company that does poorly
-in one of these areas and your chances of a good exit decreases dramatically. Some people prefer monetary success, so they will put up with
-a lot of BS to make a dime. Others prefer to focus on the people and are ok with a moderate outcome.
+that you surround yourself with defines the texture of your career. Talented people + good culture + good idea + timing == success. 
 
-I've created or have been part of seven startups over my career, from 1994 - today. For the most part, except for one,
-I've stuck with them through the good and bad times. All of these companies would be considered enterprise software companies. 
-I've been a founder 2 times, hire #1 once, hired through an acquisition once, and employee < 30 the rest. I, clearly, prefer the startup
-environment. I love the risk, but most importantly I love to create.
-
-Over the years I've seen three major shifts in computing that have changed the way we think about applications, architecture, and
+I've created or have been part of seven startups over my career, from 1994 - today. Over the years I've seen three major shifts in computing that have changed the way we think about applications, architecture, and
 programming. These shifts are:
 1. The move from desktop computing to web computing.
 1. The move from custom services to the use of public API based services.
 1. The move from on-premise computing to cloud computing.
 
-These three fundamental shifts in compute have led to amazing advances in how applications are delivered, how they are architected, how they
+There have definitaly been more advances that these; however, these three fundamental shifts in compute have led to amazing advances 
+in how applications are delivered, how they are architected, how they
 are implemented, and how they are accessed. They have let us developers dream, create, and maintain applications that have a much larger 
 footprint, much more efficiently than every before, with the ability to scale teams to sizes unthinkable in the past.
 
@@ -62,7 +64,7 @@ My job was to allow this to be accessed by any of the Mac's available on campus.
 wouldn't have taken the job if I had to code in 16 bit Winblows land.
 
 To achieve this we had to:
-1. Emulate vt-100 over ethernet, anyone remember VSAM and VTAM, so it could be accessible from other computers. 
+1. Emulate vt-100 over ethernet, anyone remember VSAM and VTAM, so our library catalog could be accessible from other computers. 
 1. Add ethernet adapters (and re-cable the whole library as it had a token-ring network and not ethernet) to our Mac's.
 1. Write server software that would serve up data on the internet based on a "query" given by the user, either using search or GUI actions.
 1. Write a client that would allow the user to interact with the catalog + other tools, basically implementing a client-server application.
@@ -113,7 +115,7 @@ final set of names were given to a group of leaders from around the company. As 
 getting more and more anxious. As we started approaching the selection of a name that I'm sure would have been horrible, that marketing
 member had enough. In a classic valley way, she burst into the conversation and asked two basic questions.
 
-"What do people create with our product?", she said. Everyone looking confused, me included, replied "Web applications."
+"What do people create with our product?", she said. Everyone looking confused, me included, we replied "Web applications."
 
 "What do those applications run on?", she asked.
 
@@ -138,16 +140,16 @@ The time was extremely rewarding, a ton of fun, and an extreme amount of work. I
 bonded in this environment. I am very blessed to have been part of that team and I am extremely proud of the groundbreaking work
 that we produced. Don't get me wrong, there were other companies that took the space much farther than we imagined, but we were the first.
 
-From 1996 to 2001 there was clear a revolution in how developers **thought** about applications, architecture and application
+From 1996 to 2001 there was clear revolution in how developers **thought** about applications, architecture and application
 delivery mechanisms. At the start of that time period apps were mono-lithologically designed. No differentiation between the 
-"presentation layer" and the "server layer". It was called "three tiered development" at the time, UI, server, and database. We extended
-the concept of "database" to be generically "any data providing service", allowing us to integrate with other data sources, like 
-transactional applications, directly. Think SAP and People Soft.
+"presentation layer" and the "server layer". We introduced what was later called "three tiered development" at the time, 
+UI, server, and database. We extended the concept of "database" to be generically "any data providing service", 
+allowing us to integrate with other data sources, like transactional applications, directly. Think SAP and People Soft.
 
 It wasn't the best architecture pattern, but it was a start.
 
 ## APIs and Data Services ##
-In 2003, I joined a small startup called "Guidewire Systems". Guidewire is an insurance platform that is used by most insurance companies
+In 2003, I joined a small startup called "Guidewire Software". Guidewire is an insurance platform that is used by most insurance companies
 large and small. Guidewire is (was) known for its ability to adapt to the complex environment of an insurance company with code / config
 that can be customized by the customer. Every part of the application was customizable, from the UI, through service, DB schema, etc...
 
@@ -184,34 +186,60 @@ the hell out of that farm and it was very efficient. We could run a full test su
 Running this workload on the cloud would be very expensive and a lot slower, I thought. What I didn't realize at the time was
 just how many nodes we could scale our workloads to in the cloud, well, and how awesome of a test harness we had built.
 
-I left Guidewire in 2010 and started a company with 3 other called "Paxata". Paxata was a data preparation platform that allowed
+I left Guidewire in 2010 and co-founded a company called "Paxata". Paxata was a data preparation platform that allowed
 users to clean, transform, and enrich data in a spreadsheet like interface. We were the first to market with this concept and
 we were the first to market with a cloud-based solution. This is where we learned the power of the cloud.
 
 The Paxata server could easily scale to 1 billion rows of data in a single spreadsheet like view. We achieved this by modifying
 Spark to 1) be online, meaning we were running a single job for the entire time the user was in the spreadsheet, and 2) we
 created a new node level cache that stored the user operations in a way that could be replayed on the data. But, we needed nodes
-to scale to this level. We needed a lot of nodes. We needed a lot of nodes that could be spun up and down quickly.
+to scale to this level. We needed a lot of nodes that could be spun up and down quickly.
 
-I'm sure this level of online processing could not have been achieved without the cloud. We could have done it on-prem, but
+I'm sure this level of online processing could have been achieved without the cloud. We could have done it on-prem, but
 it would have been a lot more expensive and a lot more difficult to manage. The cloud made it easy to scale to the level we needed
 to scale to.
 
 The cloud has changed the way we think about compute. It's changed the way we think about storage. It's changed the way we think
 about data. It's changed the way we think about applications. It's changed the way we think about architecture. Creating applications
-that need to scale to 1000's of nodes is now a reality and that changes everything.
+that need to scale to 1000's of nodes is now a reality and that changes everything. Creating models that need to scale 100's of GPUs
+is also a reality and that changed the world.
 
 ## The genAI revolution ##
 In 2017 a paper was released by Google that described a new way to create AI models. This paper was called "Attention is all you need".
 This paper described a new way to approach token based neural networks that was much more efficient than the current state of the art.
 Instead of using RNN's or LSTMs, the paper described a new way to create a neural network where the processing could be done
-in parallel instead of the sequential nature of RNN's and LSTMs using multiple groups of self-attention networks that rely solely
+in parallel, instead of the sequential nature of RNN's and LSTMs, using multiple groups of self-attention networks that rely solely
 on attention. This paper was the start of the genAI revolution.
 
-Instead of the sequential nature of Recurrent and Convolutional Neural Networks, we now had a way to scale the processing of
+Instead of the sequential nature of recurrent and Cconvolutional Neural Networks, we now had a way to scale the processing of
 neural networks to 1000's of nodes. This was a game changer. This allowed us to create ever increasingly complex models that
 could be trained in a fraction of the time.
 
 As the size of the models grew, researchers started to realize that the models were learning more than just the data they were
 trained on. They were learning the structure of the data, the structure of the language, the structure of the world. They started
 to exhibit emergent properties that were not expected.
+
+The rest is history, as they say, and fast-forward a few short years we now have multi-modal models that exhibit behaviors that
+we could only dream of before then.
+
+Now we live in a world where the intersection between human languages and computer programs are very blurred. In the near future,
+we wil no longer be stymied by complex user interfaces that noone can understand. All you need to do is describe the problem in a prompt, or by
+speaking it, and a series of agents will execute your task. Want something planned, an agent can do that for you. Want to learn
+the insights that are embedded in your data, an agent can do that for you.  
+
+But this revolution will require a whole new software stack. Our current software stacks are designed for statically defined resources.
+They are designed around data pipelines. They are too low level and don't expose the building blocks needed by autonomous agents. 
+And, quite frankly, agent frameworks today involve too much coding.
+
+The new stack needs to:
+* allow agents to run anywhere
+* allow agents to easily, and automatically, be able to communicate with each other
+* be fully expressible in a declarative manner, not by code, but by simple deployment descriptors
+* be easily deployable and have deployment as a first-class citizen of the runtime environment and toolkit
+* include higher-order building blocks that are useful in both the multi-modal world we live in and the fixed-schema world of computers and data
+* be composable, both within an agent and across multiple agents
+* have the ability to autonomously plan, schedule, and execute commands
+* be modular and pluggable so that the programmer, or another agent, can swap out components as needed, without changing any of the agents
+* be easy to create by the "new" class of programmers of tomorrow.
+
+In the next section, [Part 2: The Agent stack](/agent_stack), I will go over what that new stack might look like, the components and how they work with each other.
