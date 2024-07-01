@@ -2,9 +2,11 @@ import argparse
 import asyncio
 import logging.config
 import pathlib
+import typing
 from collections import deque
 from contextlib import asynccontextmanager
 from importlib.metadata import version, PackageNotFoundError
+from typing import Literal
 
 import dotenv
 import time
@@ -15,7 +17,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, BaseModel, Field
 from starlette import status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
@@ -32,6 +34,7 @@ from eidolon_ai_sdk.system import resource_load_error_handler
 from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.dynamic_middleware import DynamicMiddleware
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
+from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
@@ -51,6 +54,22 @@ try:
     EIDOLON_SDK_VERSION = version("eidolon-ai-sdk")
 except PackageNotFoundError:
     EIDOLON_SDK_VERSION = "unknown"
+
+
+class ResourceStatus(BaseModel):
+    resource_name: str = Field(description="The name of the resource.")
+    resource_status: Literal["initialized", "starting", "running", "stopped", "error"] = Field(
+        description="The status of the resource."
+    )
+    errors: typing.List[str] = Field(default=[], description="Any errors that occurred while starting the resource.")
+
+
+class MachineStatus(BaseModel):
+    machine_status: str = Field(description="The status of the machine.")
+    machine_name: str = Field(description="The name of the machine.")
+    machine_version: str = Field(description="The version of the machine.")
+    resources: typing.Dict[str, ResourceStatus] = Field(description="Resources available on this machine.")
+    agents: typing.Dict[str, ResourceStatus] = Field(description="Agents running on this machine.")
 
 
 def parse_args():
@@ -146,10 +165,30 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
     logging.config.fileConfig(conf_)
     logger.setLevel(log_level)
 
+    _status = "starting"
+
     # add system level endpoints
     @app.get(path="/system/health", tags=["system"], description="Health check")
     async def health():
-        return {"status": "ok"}
+        resource_status = {}
+        agent_status = {}
+        for res in AgentOSKernel.get_resources(ReferenceResource):
+            errors = resource_load_error_handler.load_errors.get(res, []) + resource_load_error_handler.start_errors.get(res, [])
+            resource_status[res] = ResourceStatus(
+                resource_name=res, resource_status="error" if errors else "running", errors=errors
+            )
+        for res in AgentOSKernel.get_resources(AgentResource):
+            errors = resource_load_error_handler.load_errors.get(res, []) + resource_load_error_handler.start_errors.get(res, [])
+            agent_status[res] = ResourceStatus(
+                resource_name=res, resource_status="error" if errors else "running", errors=errors
+            )
+        return MachineStatus(
+            machine_status=_status,
+            machine_name=machine_name,
+            machine_version=EIDOLON_SDK_VERSION,
+            resources=resource_status,
+            agents=agent_status,
+        )
 
     # noinspection PyShadowingNames
     @app.get("/system/version", tags=["system"], description="Get the version of the EIDOS SDK")
@@ -186,6 +225,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
             time_to_start = time.perf_counter() - t0
             report_server_started(time_to_start, len(machine.agent_controllers), False)
             logger.info(f"Server Started in {time_to_start:.2f}s")
+            _status = "running"
             yield
         finally:
             await open_tele.stop()
@@ -197,6 +237,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         logger.exception("Failed to start AgentOS")
         raise
     finally:
+        _status = "stopped"
         AgentOSKernel.reset()
 
 
