@@ -177,7 +177,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             "model": self.model.name,
             "temperature": self.temperature,
         }
-        if output_format == "str" or output_format["type"] == "string":
+        if output_format == "str" or output_format.get("type") == "string":
             is_string = True
         else:
             is_string = False

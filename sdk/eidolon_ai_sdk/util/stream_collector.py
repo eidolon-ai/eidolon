@@ -52,9 +52,6 @@ class StreamCollector(AsyncIterator[StreamEvent]):
         else:
             return self._content
 
-    def get_content_as_string(self):
-        pass
-
     async def __anext__(self):
         event = await self.stream.__anext__()
         self.process_event(event)
