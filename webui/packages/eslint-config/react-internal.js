@@ -47,7 +47,8 @@ module.exports = {
         "node_modules/",
         "dist/",
         "test/",
-        "coverage/"
+        "coverage/",
+        "turbo/"
     ],
     overrides: [
         // Force ESLint to detect .tsx files

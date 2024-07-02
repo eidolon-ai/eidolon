@@ -1,6 +1,6 @@
 import {ProcessWithListLayout} from "../../../../components/ProcessWithListLayout";
 import {getApp} from "@/utils/eidolon-apps";
-import {ProcessProvider} from "@eidolon/components";
+import {ProcessProvider} from "@eidolon/components/client";
 
 interface ChatbotLayoutProps {
   params: {
