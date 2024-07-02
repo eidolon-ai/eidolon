@@ -1,0 +1,245 @@
+---
+publishDate: 2024-06-23T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'Architecture'
+title: 'Part 1: A historical view of web based computing'
+excerpt: "A history view from the web through the genAI revolution."
+image: ~/assets/images/dev-timeline.png
+tags:
+  - LLM App Development
+  - Architecture
+  - History
+metadata:
+  canonical: https://www.eidolonai.com/dev_history
+---
+This article is a two part series. The intent of the articles is to describe the new software stack of tomorrow, from an LLM perspective.
+
+The first part is an explanation of how we got here, what technologies were important to the creation of an LLM. It's very much centered
+around my career, what I was exposed to, and what I helped build. I'm a systems engineer, and it's very centered around that perspective.
+I highly reccommend you skip to the second part of the series if this type of history doesn't interest you.
+
+The second part of the series can be found here [Part 2: The Agent stack](/agent_stack).
+
+<hr/>
+
+Throughout my career I've had the privilege to work in companies that defined computing, architecture, and programming as we know it today.
+Spanning the early days of adoption of the web through the latest genAI craze, I helped create, explore, and refine some of the software, APIs 
+and specifications that have shaped programming languages, architecture, testing methodologies, runtime environments, and platforms that are in
+wide use today.
+
+I consider myself a talented engineer, but by no means am I taking credit for any or all of what I'm going to discus in this blog post. 
+Simply put, I've worked with some of the most talented people in the business and I intend to give them full credit in this post. The folks
+that you surround yourself with defines the texture of your career. Talented people + good culture + good idea + timing == success. 
+
+I've created or have been part of seven startups over my career, from 1994 - today. Over the years I've seen three major shifts in computing that have changed the way we think about applications, architecture, and
+programming. These shifts are:
+1. The move from desktop computing to web computing.
+1. The move from custom services to the use of public API based services.
+1. The move from on-premise computing to cloud computing.
+
+There have definitaly been more advances that these; however, these three fundamental shifts in compute have led to amazing advances 
+in how applications are delivered, how they are architected, how they
+are implemented, and how they are accessed. They have let us developers dream, create, and maintain applications that have a much larger 
+footprint, much more efficiently than every before, with the ability to scale teams to sizes unthinkable in the past.
+
+The genAI revolution will have a far greater impact than any one of these. It will change the way we program, the way we think about
+applications, the way we think about architecture, and the way we think about data. It will fundamentally change the building
+blocks of computing.
+
+In this blog post I will go over the previous three generational shifts in computing as well as describe what and why the genAI 
+revolution will outpace all of them.
+
+## Before the web ##
+I entered university in 1988. Computing at that time was going through a revolution from mainframes to "desktop computing". Today we would 
+split desktop computing into two categories, server software and client software; however, at that time a PC was generally as fast as
+a server computer. There were some extreme examples, for instance HP and Sun Microsystems released boxes that had non-intel CPUs that were
+better at IO and faster than end user boxes, but generally they were the same.
+
+My first "real" job was for Ohio State's library division where I create client software that augmented their library catalog system.
+Yes, the technology to read a book was to pick up the book itself. The library catalog was a highly advanced system, at that time, 
+that let you search and see abstracts of a book before you went searching for it. That software ran on an IBM mainframe, 
+was created in cobol, and was only available on a "green screen" terminal device (vt-102 for you screen scraping aficionados out there).
+
+My job was to allow this to be accessed by any of the Mac's available on campus. Thankfully OSU bet on Apple way before it was cool. I probably 
+wouldn't have taken the job if I had to code in 16 bit Winblows land.
+
+To achieve this we had to:
+1. Emulate vt-100 over ethernet, anyone remember VSAM and VTAM, so our library catalog could be accessible from other computers. 
+1. Add ethernet adapters (and re-cable the whole library as it had a token-ring network and not ethernet) to our Mac's.
+1. Write server software that would serve up data on the internet based on a "query" given by the user, either using search or GUI actions.
+1. Write a client that would allow the user to interact with the catalog + other tools, basically implementing a client-server application.
+
+We did all of this without the cloud, without the concept of services, REST, **even HTTP**. We ended up creating "user scraping sessions",
+as we called them, to differentiate between sessions. The main server was a process that listened on a port for incoming connections.
+Once a connection was established, and verified, the connection was handed off to a process that handled all incoming requests
+over the socket and responded accordingly. A "command" to the server, REST endpoint today, would process the request and turn that into
+a series of scraping operations, using the best vt-100 session we could negotiate. Think moving the cursor manually to a part of the screen,
+entering data by simulating typing, activating an action, scraping the result, and returning the data to the user. All done manually in 
+C++.
+
+The project was ton of fun and I would do again today in a heartbeat; however, it taught me a few lessons:
+1. Don't release a product to 20,000+ incoming freshmen without load testing it first, lol.
+1. What it means to create a protocol and have other use it.
+1. The concept of a "session". This would come in handy in the web server days.
+1. Server side programming, albeit mostly framework programming.
+1. Last, but not least, the importance of standards and the difference between good standard v/s a poor-overly bloated standard.
+
+## Revolution #1: Programming for the Web ##
+In 1994 I moved to the Bay Area and entered to world of startups. It was an extremely exciting time. HTTP / HTML was just getting started.
+Netscape was just released two years earlier and some very, very ugly web pages were being produced. Most things were static, plain ole HTML.
+Server side programming for the web was just getting started and I found it very familiar given the prior project I worked on.
+
+I also found it very limiting. The only "dynamic" tool was the ability to launch a process directly from the webserver with the 
+information carried over HTTP pass as input to the process. Later a "standard" emerged called `cgi-bin` that at least put some 
+standardization around what that input looked like. However, in my previous project we implemented much more advanced features
+like sessions, security, and a programming framework that managed all of this for you. I knew I wanted to work on this and
+I felt like this was a unique time in history, so I asked a recruiter to "find me a job in this new web thing". Enter 
+"Spider Technologies", later renamed NetDynamics.
+
+At NetDynamics, our mission was simple:
+1. Implement a server that made it easy to put dynamic content on the web.
+1. Couple that with backend services that made it easy to access any database.
+1. Implement a set of API's that allowed one to "dynamically create HTML content".
+1. Implement an IDE that put all of this together.
+
+We were the first to use Java on the server, we started using it before its 1.0 release. We were the first to have a Java Debugger
+in our IDE, not a fun experience. We were the first "web framework" to render HTML. There were a lot of firsts.
+
+But perhaps that biggest of all is that we were the first application server to market, and we held the market leader position for quite some time.
+In fact the phrase "Application Server" was created at ND. By this point our product had matured to the point that there was a 
+real server process, users could create applications in their IDE, and deploy them to dev and production environments using command line tools.
+
+So, at some point before the release, marketing held an internal "contest" to name our new 4.0 product. What type of beast had we created
+and what name shall be given to it. Lots and lots of "cute" names were given by everyone in the company. The presentation of the
+final set of names were given to a group of leaders from around the company. As I sat there listening, I noticed someone from marketing was
+getting more and more anxious. As we started approaching the selection of a name that I'm sure would have been horrible, that marketing
+member had enough. In a classic valley way, she burst into the conversation and asked two basic questions.
+
+"What do people create with our product?", she said. Everyone looking confused, me included, we replied "Web applications."
+
+"What do those applications run on?", she asked.
+
+"Um, er, linux boxes.", we said.
+
+"No, what software do they run on!", she said getting more impatient.
+
+"Servers", said everyone trying not to look dumb.
+
+"So..." she said. "Put it together...".
+
+"Web Application Server?????". We all said dumbfounded. "Who is this marketing person dumbing down our creative naming ideas", we all thought.
+
+That was clearly the right answer. I learned another lesson that day, when marking holds a "contest" to name a product, they aren't looking for
+the name of the product. They are looking for **what not** to call the product. lol.
+
+So we went on to pioneer the "Web Application Server". We were eventually acquired by Sun Microsystems in late 1998 where the people from
+the team, myself included, went on to advance many technologies inside of Sun including things like JDBC, the Sun One server, as well as
+many other technologies.
+
+The time was extremely rewarding, a ton of fun, and an extreme amount of work. I met some of my closest friends there and many of us
+bonded in this environment. I am very blessed to have been part of that team and I am extremely proud of the groundbreaking work
+that we produced. Don't get me wrong, there were other companies that took the space much farther than we imagined, but we were the first.
+
+From 1996 to 2001 there was clear revolution in how developers **thought** about applications, architecture and application
+delivery mechanisms. At the start of that time period apps were mono-lithologically designed. No differentiation between the 
+"presentation layer" and the "server layer". We introduced what was later called "three tiered development" at the time, 
+UI, server, and database. We extended the concept of "database" to be generically "any data providing service", 
+allowing us to integrate with other data sources, like transactional applications, directly. Think SAP and People Soft.
+
+It wasn't the best architecture pattern, but it was a start.
+
+## APIs and Data Services ##
+In 2003, I joined a small startup called "Guidewire Software". Guidewire is an insurance platform that is used by most insurance companies
+large and small. Guidewire is (was) known for its ability to adapt to the complex environment of an insurance company with code / config
+that can be customized by the customer. Every part of the application was customizable, from the UI, through service, DB schema, etc...
+
+One of the key innovations we adopted at Guidewire was the growing concept of "services" or "Service Oriented Architecture" as it was known
+at the time. The SOA "spec" was overly prescriptive, IMO, but the base concepts were spot on. 
+
+At Guidewire I was hired as the Chief Architect of the platform. There we, and I stress **we**, created one of best integrated, cleanest,
+and easy to use enterprise platform every created. It wasn't / isn't the best, but it was damn powerful and ultra-cool. The platform team at 
+Guidewire was the most talented group I've ever worked with. The first 30 engineers hired, largely, could have easily started their own
+company. Luckily for GW 2003-2006 was one of the worst times for companies to get started. We had the ability to recruit the best 
+engineers in the valley.
+
+We all learned lots at GW, like how to write tests, what TDD was, how to write a programming language, we wrote our own web framework, we had 
+our own ORM layer that implemented auto-upgrade triggers that actually worked and performed, we had our data oriented keywords
+in the language, etc... It was very challenging and fun, from a technical standpoint, I learned a lot of what to do. Unfortunately it was
+my first manager job. There I learned a lot of what **not** to do. lol.
+
+It was in this time period that the second major innovation of the web world is accessible APIs and the surrounding standards. 
+Basic things like REST, gRPC, heck even protobuf, were all created during this period. These are the basic, fundamentals of 
+services that we take for granted today. There was a time before these and I can tell you it was a much more difficult 
+time to create "services".
+
+These standards all us developers to create services that are interoperable, self-describing, and easy to use. The concept of
+interoperable, self-describing services has changed the world. Want compute, it's an API call. Want to store something,
+it's an API call. Want to start a long-running pipeline, it's an API call. Everything today is accessible using an API call.
+
+This is a huge shift in how we think about applications. It's a shift from "I need to write this code" to "I need to find
+a service that does this". This is a game changer in how we think about applications and how we think about architecture.
+
+## Cloud Computing ##
+While at Guidewire I was introduced to the concept of "cloud computing". I was very skeptical at first. By that time we had
+already built a testing farm of about 100 machines and a testing framework that could run 1000's of tests in parallel. We optimized
+the hell out of that farm and it was very efficient. We could run a full test suite of about 100,000 tests in around 30 minutes.
+Running this workload on the cloud would be very expensive and a lot slower, I thought. What I didn't realize at the time was
+just how many nodes we could scale our workloads to in the cloud, well, and how awesome of a test harness we had built.
+
+I left Guidewire in 2010 and co-founded a company called "Paxata". Paxata was a data preparation platform that allowed
+users to clean, transform, and enrich data in a spreadsheet like interface. We were the first to market with this concept and
+we were the first to market with a cloud-based solution. This is where we learned the power of the cloud.
+
+The Paxata server could easily scale to 1 billion rows of data in a single spreadsheet like view. We achieved this by modifying
+Spark to 1) be online, meaning we were running a single job for the entire time the user was in the spreadsheet, and 2) we
+created a new node level cache that stored the user operations in a way that could be replayed on the data. But, we needed nodes
+to scale to this level. We needed a lot of nodes that could be spun up and down quickly.
+
+I'm sure this level of online processing could have been achieved without the cloud. We could have done it on-prem, but
+it would have been a lot more expensive and a lot more difficult to manage. The cloud made it easy to scale to the level we needed
+to scale to.
+
+The cloud has changed the way we think about compute. It's changed the way we think about storage. It's changed the way we think
+about data. It's changed the way we think about applications. It's changed the way we think about architecture. Creating applications
+that need to scale to 1000's of nodes is now a reality and that changes everything. Creating models that need to scale 100's of GPUs
+is also a reality and that changed the world.
+
+## The genAI revolution ##
+In 2017 a paper was released by Google that described a new way to create AI models. This paper was called "Attention is all you need".
+This paper described a new way to approach token based neural networks that was much more efficient than the current state of the art.
+Instead of using RNN's or LSTMs, the paper described a new way to create a neural network where the processing could be done
+in parallel, instead of the sequential nature of RNN's and LSTMs, using multiple groups of self-attention networks that rely solely
+on attention. This paper was the start of the genAI revolution.
+
+Instead of the sequential nature of recurrent and Cconvolutional Neural Networks, we now had a way to scale the processing of
+neural networks to 1000's of nodes. This was a game changer. This allowed us to create ever increasingly complex models that
+could be trained in a fraction of the time.
+
+As the size of the models grew, researchers started to realize that the models were learning more than just the data they were
+trained on. They were learning the structure of the data, the structure of the language, the structure of the world. They started
+to exhibit emergent properties that were not expected.
+
+The rest is history, as they say, and fast-forward a few short years we now have multi-modal models that exhibit behaviors that
+we could only dream of before then.
+
+Now we live in a world where the intersection between human languages and computer programs are very blurred. In the near future,
+we wil no longer be stymied by complex user interfaces that noone can understand. All you need to do is describe the problem in a prompt, or by
+speaking it, and a series of agents will execute your task. Want something planned, an agent can do that for you. Want to learn
+the insights that are embedded in your data, an agent can do that for you.  
+
+But this revolution will require a whole new software stack. Our current software stacks are designed for statically defined resources.
+They are designed around data pipelines. They are too low level and don't expose the building blocks needed by autonomous agents. 
+And, quite frankly, agent frameworks today involve too much coding.
+
+The new stack needs to:
+* allow agents to run anywhere
+* allow agents to easily, and automatically, be able to communicate with each other
+* be fully expressible in a declarative manner, not by code, but by simple deployment descriptors
+* be easily deployable and have deployment as a first-class citizen of the runtime environment and toolkit
+* include higher-order building blocks that are useful in both the multi-modal world we live in and the fixed-schema world of computers and data
+* be composable, both within an agent and across multiple agents
+* have the ability to autonomously plan, schedule, and execute commands
+* be modular and pluggable so that the programmer, or another agent, can swap out components as needed, without changing any of the agents
+* be easy to create by the "new" class of programmers of tomorrow.
+
+In the next section, [Part 2: The Agent stack](/agent_stack), I will go over what that new stack might look like, the components and how they work with each other.

@@ -13,8 +13,14 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-const result = await unfurl(url);
-const image = result?.open_graph?.images?.[0]?.url || result?.twitter_card?.images?.[0]?.url;
+let image = undefined
+let result = undefined
+try {
+  result = await unfurl(url);
+  image = result?.open_graph?.images?.[0]?.url || result?.twitter_card?.images?.[0]?.url;
+} catch (e) {
+  // ignore
+}
 const {
   container: containerClass = "max-w-3xl",
   title: titleClass = "text-l md:text-xl href-link hover:underline",
@@ -24,7 +30,7 @@ const {
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto py-1 md:py-1 lg:py-1`} bg={bg}>
   <a
-    href={result.canonical_url}
+    href={result?.canonical_url}
     class={twMerge("md:mx-auto", classes?.container ?? '')}
   >
     <div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24 w-full">
@@ -40,12 +46,12 @@ const {
         "font-bold leading-tighter tracking-tighter font-heading",
         titleClass
       )}
-      set:html={result.title}
+      set:html={result?.title || ""}
     />
 
     <p
       class={twMerge("mt-2 mb-2 text-muted", subtitleClass)}
-      set:html={result.description}
+      set:html={result?.description || ""}
     />
   </a>
 </WidgetWrapper>

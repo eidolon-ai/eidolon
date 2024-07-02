@@ -1,0 +1,95 @@
+---
+publishDate: 2024-06-27T00:00:00Z
+author: 'Dave Brewster (dave@augustdata.ai)'
+category: 'Architecture'
+title: 'Part 2: The Agent stack'
+excerpt: "A description of the new LLM-based Autonomous Agent stack"
+image: ~/assets/images/dev-timeline.png
+tags:
+  - LLM App Development
+  - Architecture
+metadata:
+  canonical: https://www.eidolonai.com/agent_stack
+---
+This article is a two part series. The intent of the articles is to describe the new software stack of tomorrow, from an LLM perspective.
+
+In [Part 2: The Agent stack](/agent_stack) I went over a brief history of computing and how we are now able to build large scale
+agent systems that rely on huge LLM models.
+
+It this part I will describe the new software stack that is required to create the army of autonomous agents of tomorrow
+
+<hr/>
+
+In other articles on this blog, I've described what an agent is and how to build them in eidolon; however, I've yet to describe
+what type of environment on or more agents need to run in. I've yet to describe how they will be deployed and how they will interact
+with other agents to solve a business need.
+
+I this article I will define a new software stack for the agentic application environment. 
+
+## Requirements ##
+Autonomous agents have the potential to change how we interact with computers. They will likely change how we do our jobs and
+quite possibly completely change how applications are programmed. In order to achieve this, agents needs a toolkit and
+runtime environment that exhibit the following characteristics.
+
+An agentic runtime environment needs to:
+* allow agents to run anywhere
+* allow agents to easily, and automatically, be able to communicate with each other
+* be fully expressible in a declarative manner, not only by code, but also by simple deployment descriptors
+* allow custom code when needed and only when needed
+* include higher-order building blocks that are useful in both the multi-modal world we live in and the fixed-schema world of computers and data
+* be composable, both within an agent and across multiple agents
+* have the ability to autonomously plan, schedule, and execute commands
+* be modular and pluggable so that the programmer, or another agent, can swap out components as needed, without changing any of the agents
+* be expandable to handle the unknown of tomorrow, including new model architectures
+* be easy to create by the "new" class of programmers of tomorrow.
+* be easily deployable and have deployment as a first-class citizen of the runtime environment and toolkit
+
+Not only is it important to **build** agents, it is just as important to put them into production as well. By definition, a computer agent is
+"A program that provides agency to a human or another agent". An agent that isn't running doesn't provide agency.
+
+### An Example ###
+
+The implementation of an agent will be composed of higher-order building blocks, provided by the toolkit, that take 
+can utilize the power of the many types LLMs, whether foundational or custom models. The implementation can be thought of as the assembly
+of lego blocks were each block is a high level technology provided by the toolkit. 
+
+For example, let's say we are building customer service application for a software company. The application would automatically amend
+log file, resource utilization, and code reference it can find related to a reported bug.
+
+The implementation of this agent could be built by assembling a hierarchy of other agents.  For example, the application could start with 
+a **Router Agent** that uses an **API Agent** to watch for new or changing tickets. When a ticket arrives it would then decide how to 
+handle the ticket. For instance, maybe the ticket is a new ticket reporting a bug in an application. The **Router Agent** would then hand off
+the ticket to a **New Bug Agent** that uses the **API Agent** to fetch the details of the ticket. The **New Bug Agent** might decide it needs
+the log files for the time period of the bug. It might span a new instance of a **Log Processor Agent** to fetch the logs using
+another instance of an **API Agent** to talk to the log management system, fetch the logs from that time period and store them in a file system.
+The **Log Processor Agent** would then use a **RAG Agent** to search the logs for relevant errors for that user.
+
+In parallel, the **New Bug Agent** might also ask a **Machine Resource Agent** to find any anomalous activity during the same time period.
+The **Machine Resource Agent** might use another instance of a **SQL Agent** to query the resource management system for anomalous activity.
+
+Let's assume the **New Bug Agent** found anomalous activity in one of the services of the application. The **New Bug Agent** could then
+use a **Code Search Agent** to find the log entries associated with the bug in the source code, find the call paths to these lines,
+and capture the relevant code that *could* point to this bug.
+
+The **New Bug Agent** would then gather the relevant bits from each of these sub-agents and amend the ticket with the information, gathering links
+for each. The amount of time this agent would save in debugging would be invaluable, making the CS contact more productive, making the developer
+more productive, thus making the customer happy.
+
+### Higher-order building blocks ###
+So what do we exactly mean by **higher-order building blocks**? Well, components that provide a service that can be called and
+used autonomously by an LLM. The interface to these components can be structured, defined by json schema, or unstructured,
+defined as a simple string.
+
+The building blocks of this application are quite simple:
+1. an **API Agent** that can autonomously talk to any restful (or gRPC, etc...) endpoint.
+1. a **RAG Agent** that can index and search unstructured data
+1. a **SQL Agent** that can search structured data
+1. a **Planning Agent**, or a hard-coded workflow, that can execute the steps needed for an agent.
+1. an **Agentic Framework** that ties everything together
+
+I would propose that an application like this would require **little or no code** to achieve, given the correct building blocks. I'm
+not saying there wouldn't be code involve, quite the opposite, I'm saying that given the right level of modularity that code could
+be hidden by the developer of this application.
+
+Sounds crazy, right?!?! Not at all given a toolkit and runtime environment that is designed for the new LLM world.
+
