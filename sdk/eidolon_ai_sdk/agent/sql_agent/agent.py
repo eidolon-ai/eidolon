@@ -8,8 +8,8 @@ from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent,
     UserInputEvent, StringOutputEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import register_program, register_action
-from eidolon_ai_sdk.agent.sql_agent.sql_client import SqlClient
-from eidolon_ai_sdk.agent.sql_agent.sql_logic_unit import SqlLogicUnit
+from eidolon_ai_sdk.agent.sql_agent.client import SqlClient
+from eidolon_ai_sdk.agent.sql_agent.logic_unit import SqlLogicUnit
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator

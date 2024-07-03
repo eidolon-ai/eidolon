@@ -1,4 +1,4 @@
-from eidolon_ai_sdk.agent.sql_agent.sql_client import SqlClient
+from eidolon_ai_sdk.agent.sql_agent.client import SqlClient
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator
 
