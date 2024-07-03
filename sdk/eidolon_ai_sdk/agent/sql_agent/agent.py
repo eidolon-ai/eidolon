@@ -69,6 +69,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 self._apu.logic_units.append(SqlLogicUnit(client=self._client, apu=cast(self._apu, ProcessingUnitLocator)))
             else:
                 raise ValueError("APU does not have logic units")
+            self.spec.num_retries = 0
 
         environment = Environment(undefined=StrictUndefined)
         self._error_prompt = environment.from_string(self.spec.error_prompt)
@@ -123,7 +124,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 # todo, validating data if allowing thought
                 yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
             except Exception as e:
-                if num_reties > 0 and self.spec.allow_thought:
+                if num_reties > 0:
                     yield StartStreamContextEvent(context_id='error', title='Error')
                     yield ObjectOutputEvent(content=dict(query=response.query, error=str(e)), stream_context='error')
                     yield EndStreamContextEvent(context_id='error')

@@ -3,7 +3,7 @@ import json
 import os
 import shutil
 from pathlib import Path
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Literal
 
 import typer
 from pydantic import BaseModel, computed_field
@@ -34,6 +34,8 @@ class ResourcesMetadata(BaseModel):
     sql_match: int = 0
     data_match: int = 0
     better_or_equal_query: int = 0
+    strictly_better: int = 0
+    strictly_worse_scenarios: List[str] = []
     extra: dict = {}
 
     @computed_field
@@ -56,6 +58,18 @@ class ResourcesMetadata(BaseModel):
         if self.run_testcases == 0:
             return 0
         return self.better_or_equal_query / self.run_testcases * 100
+
+    @computed_field
+    @property
+    def strictly_worse(self) -> int:
+        return self.run_testcases - self.better_or_equal_query
+
+    @computed_field
+    @property
+    def outperform_rate(self) -> float:
+        if self.strictly_better == 0 and self.strictly_worse == 0:
+            return -1.0
+        return self.strictly_better / (self.strictly_better + self.strictly_worse) * 100
 
 
 @app.command()
@@ -128,7 +142,9 @@ def results(loc: Path = Path("dist") / "sql_baseline", write: Path = None):
     metadata.run_testcases = len(results_)
     metadata.sql_match = len([r for r in results_.values() if r.query_matches])
     metadata.data_match = len([r for r in results_.values() if r.data_matches])
-    metadata.better_or_equal_query = len([r for r in results_.values() if r.same_or_better])
+    metadata.better_or_equal_query = len([r for r in results_.values() if r.comparison in {"better", "equal"}])
+    metadata.strictly_better = len([r for r in results_.values() if r.comparison == "better"])
+    metadata.strictly_worse_scenarios = [k for k, r in results_.items() if r.comparison == "worse"],
     console.log(metadata.model_dump(exclude={"total_testcases", "testcases", "databases", "failures"}))
 
     with open(loc / "metadata.json", "w") as f:
@@ -169,15 +185,10 @@ class BenchmarkResult(BaseModel):
     db_id: str
     question: str
     expected_query: str
-    actual_query: Optional[str] = None
-    data_matches: Optional[bool] = None
-    same_or_better: Optional[bool] = None
+    query_matches: bool = False
+    data_matches: bool = False
+    comparison: Literal["worse", "equal", "better"] = "worse"
     extra: dict = {}
-
-    @computed_field
-    @property
-    def query_matches(self) -> bool:
-        return self.expected_query == self.actual_query
 
 
 def normalize_sql(statement: str):
@@ -196,25 +207,25 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
     try:
         actual_rows = []
         output_events = []
+        actual_query: Optional[str] = None
         async for output_event in process.stream_action("query", dict(message=testcase.question, allow_conversation=False)):
             output_events.append(output_event)
             if isinstance(output_event, ObjectOutputEvent):
                 if "response_type" in output_event.content and output_event.content["response_type"] == "execute":
-                    result.actual_query = output_event.content["query"]
-                    if result.actual_query == testcase.query:
+                    actual_query = output_event.content["query"]
+                    result.extra['actual_query'] = actual_query
+                    if actual_query == testcase.query:
+                        result.query_matches = True
+                        result.data_matches = True
+                        result.comparison = "equal"
                         break
             if output_event.is_root_and_type(OutputEvent):
                 actual_rows.append(output_event.content)
 
-        if not result.actual_query:
+        if not actual_query:
             result.extra['output_events'] = [e.model_dump() for e in output_events]
             result.extra['error'] = 'No query was returned'
-            return result
-
-        if result.actual_query == testcase.query:
-            result.same_or_better = True
-            result.data_matches = True
-        else:
+        elif not result.query_matches:
             expected_rows = []
             async for row in SqlAlchemy(connection_string=f"sqlite+aiosqlite:///{db_loc}").execute(result.expected_query):
                 expected_rows.append(row)
@@ -250,8 +261,15 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
             )
             response = await process.action("compare_queries", body)
             response_data: dict = response.data
-            result.same_or_better = response_data["better_query"] in ["query2", "equal"]
-
+            if response_data["better_query"] == "query1":
+                result.comparison = "worse"
+            elif response_data["better_query"] == "query2":
+                result.comparison = "better"
+            elif response_data["better_query"] == "equal":
+                result.comparison = "equal"
+            else:
+                err_console.print(f"Invalid response from query comparer: {response_data}")
+                raise ValueError(f"Invalid response from query comparer: {response_data}")
     except Exception as e:
         result.extra['error'] = str(e)
     return result
