@@ -164,8 +164,6 @@ class AgentController:
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
             kwargs["process_id"] = process_id
-        if "agent_state" in parameters:
-            kwargs["agent_state"] = last_state
         if "request" in parameters and parameters["request"].annotation == Request:
             kwargs["request"] = request
 
@@ -197,6 +195,7 @@ class AgentController:
             )
         else:
             # run the program synchronously
+
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
@@ -208,18 +207,13 @@ class AgentController:
     async def send_response(self, handler: FnHandler, process: ProcessDoc, last_state: str, **kwargs) -> JSONResponse:
         state_change_event = None
         final_event = None
-        results = []
-        last_result_type = None
+        result_object = None
+        string_result = ""
         async for event in self.agent_event_stream(handler, process, last_state, **kwargs):
             if event.is_root_and_type(StringOutputEvent):
-                if last_result_type == StringOutputEvent:
-                    results[-1] += event.content
-                else:
-                    results.append(event.content)
-                last_result_type = StringOutputEvent
+                string_result += event.content
             elif event.is_root_and_type(ObjectOutputEvent):
-                results.append(event.content)
-                last_result_type = ObjectOutputEvent
+                result_object = event.content
             elif event.is_root_and_type(AgentStateEvent):
                 state_change_event = event
             elif event.is_root_and_type(EndStreamEvent):
@@ -237,7 +231,7 @@ class AgentController:
             data = final_event.reason
             status_code = final_event.details.get("status_code", 500)
         else:
-            data = None if not results else results[0] if len(results) == 1 else results
+            data = result_object if result_object else string_result
             status_code = 200
         return JSONResponse(
             SyncStateResponse(
@@ -390,8 +384,6 @@ class AgentController:
                 params["process_id"] = replace
         elif not isEndpointAProgram:
             params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
-        if "agent_state" in params:
-            del params["agent_state"]
 
         if "self" in params:
             del params["self"]
@@ -496,6 +488,21 @@ class AgentController:
 
         await ProcessDoc.delete(_id=process_id)
         return num_deleted + 1
+
+    def doc_to_response(self, latest_record: ProcessDoc, data: typing.Any):
+        return JSONResponse(
+            SyncStateResponse(
+                process_id=latest_record.record_id,
+                state=latest_record.state,
+                data=data,
+                available_actions=self.get_available_actions(latest_record.state),
+                agent=self.name,
+                title=latest_record.title,
+                created=latest_record.created,
+                updated=latest_record.updated,
+            ).model_dump(),
+            200,
+        )
 
     def get_available_actions(self, state):
         return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]

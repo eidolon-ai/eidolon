@@ -151,16 +151,14 @@ class Thread:
     def stream_request(
         self, prompts: List[APUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
     ) -> AsyncIterator[StreamEvent]:
-        if isinstance(output_format, str) and output_format != "str":
-            raise ValueError(f"Unknown output format {output_format}")
-        if isinstance(output_format, (dict, str)):
-            s = self._apu.schedule_request(self._call_context, prompts, output_format)
-        else:
+        if isinstance(output_format, type):
             model = TypeAdapter(output_format)
             schema = model.json_schema()
             s = convert_output_object(
                 self._apu.schedule_request(self._call_context, prompts, schema), cast(Type[T], output_format)
             )
+        else:
+            s = self._apu.schedule_request(self._call_context, prompts, output_format)
 
         return s
 

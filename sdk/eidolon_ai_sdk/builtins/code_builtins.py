@@ -34,8 +34,6 @@ from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummari
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
-from eidolon_ai_sdk.agent.sql_agent.sql_agent import SqlAgent
-from eidolon_ai_sdk.agent.sql_agent.sql_client import SqlClient, SqlAlchemy
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
@@ -142,7 +140,6 @@ def named_builtins() -> List[ReferenceResource]:
         TreeOfThoughtsAgent,
         RetrieverAgent,
         AutonomousSpeechAgent,
-        SqlAgent,
         # apu
         (APU, ConversationalAPU),
         ConversationalAPU,
@@ -153,6 +150,7 @@ def named_builtins() -> List[ReferenceResource]:
         MistralGPT,
         AnthropicLLMUnit,
         OllamaLLMUnit,
+        ToolCallLLMWrapper,
         LLMModel,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
@@ -197,8 +195,6 @@ def named_builtins() -> List[ReferenceResource]:
         (ProcessFileSystem, ProcessFileSystemImpl),
         ProcessFileSystemImpl,
         # sub components
-        (SqlClient, SqlAlchemy),
-        SqlAlchemy,
         (DocumentParser, AutoParser),
         AutoParser,
         (DocumentTransformer, AutoTransformer),
