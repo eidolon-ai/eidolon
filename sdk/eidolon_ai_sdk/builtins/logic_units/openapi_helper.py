@@ -1,7 +1,7 @@
-from typing import List, Optional, Tuple, Any, Callable
+from typing import List, Optional, Tuple, Any, Annotated
 
 from jsonref import replace_refs
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, SkipValidation, Field
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json
@@ -27,7 +27,8 @@ class Action(BaseModel):
     name: str
     action_schema: dict
     description: str
-    tool_call: Callable[..., Any]
+
+    tool_call: Annotated[callable, SkipValidation]
 
 
 def build_actions(operations_to_expose: List[Operation], schema: dict, title: str,

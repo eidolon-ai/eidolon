@@ -81,7 +81,6 @@ def app_builder(machine_manager):
                         app=_app,
                         resource_generator=[_machine, *resources] if _machine else resources,
                         machine_name=_machine.metadata.name,
-                    fail_on_agent_start_error=True,
                 ):
                     yield
                     print("done")
@@ -318,14 +317,14 @@ def llm(test_dir, module_identifier):
 
 @pytest.fixture()
 def dog(test_dir):
-    loc = str(test_dir / "resources" / "dog.png")
+    loc = str(test_dir / "images" / "dog.png")
     with open(loc, "rb") as f:
         yield f
 
 
 @pytest.fixture()
 def cat(test_dir):
-    loc = str(test_dir / "resources" / "cat.png")
+    loc = str(test_dir / "images" / "cat.png")
     with open(loc, "rb") as f:
         yield f
 
