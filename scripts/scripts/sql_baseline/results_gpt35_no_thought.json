@@ -1,0 +1,14 @@
+{
+  "apu_override": "GPT3.5-turbo",
+  "run_testcases": 100,
+  "sql_match": 5,
+  "data_match": 70,
+  "better_or_equal_query": 93,
+  "extra": {
+    "apu": "GPT3.5-turbo",
+    "allow_thought": false
+  },
+  "sql_match_rate": 5.0,
+  "data_match_rate": 70.0,
+  "better_query_rate": 93.0
+}

@@ -14,7 +14,7 @@ from sqlalchemy.dialects import sqlite
 
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import BaseStreamEvent, ObjectOutputEvent, OutputEvent
-from eidolon_ai_sdk.agent.sql_agent.sql_client import SqlAlchemy
+from eidolon_ai_sdk.agent.sql_agent.client import SqlAlchemy
 from scripts.sql_baseline.construct_resources import build_resources
 from scripts.sql_baseline.dev_dp import load_testcases, TestCase
 
@@ -34,6 +34,7 @@ class ResourcesMetadata(BaseModel):
     sql_match: int = 0
     data_match: int = 0
     better_or_equal_query: int = 0
+    extra: dict = {}
 
     @computed_field
     @property
@@ -59,7 +60,7 @@ class ResourcesMetadata(BaseModel):
 
 @app.command()
 def create_resources(testcases: Path, databases: Optional[Path] = None,
-                     write_loc: Path = Path("dist") / "sql_baseline", apu: str = None):
+                     write_loc: Path = Path("dist") / "sql_baseline", apu: str = None, allow_thought: bool = None):
     print("Creating resources...")
     resources_loc = write_loc / "resources"
     testcases = testcases.expanduser()
@@ -81,13 +82,21 @@ def create_resources(testcases: Path, databases: Optional[Path] = None,
     extra = {}
     if apu:
         extra["apu"] = apu
+    if allow_thought is not None:
+        extra["allow_thought"] = allow_thought
     build_resources(databases, dbs, resources_loc, **extra)
     with open(write_loc / "metadata.json", "w") as f:
-        f.write(ResourcesMetadata(testcases=testcases, databases=databases, total_testcases=len(dbs), apu_override=apu).model_dump_json(indent=2))
+        f.write(ResourcesMetadata(
+            testcases=testcases,
+            databases=databases,
+            total_testcases=len(dbs),
+            apu_override=apu,
+            extra=extra,
+        ).model_dump_json(indent=2))
 
 
 @app.command()
-def benchmark(loc: Path = Path("dist") / "sql_baseline", test_case: List[str] = None, recalculate: bool = False, parallel: int = 20, limit: Optional[int] = None):
+def benchmark(loc: Path = Path("dist") / "sql_baseline", test_case: List[str] = None, recalculate: bool = False, parallel: int = 20, limit: Optional[int] = None, output_loc: Path = None):
     with open(loc / "metadata.json", "r") as f:
         metadata = ResourcesMetadata(**json.load(f))
     read_loc = metadata.testcases
@@ -102,7 +111,7 @@ def benchmark(loc: Path = Path("dist") / "sql_baseline", test_case: List[str] = 
     try:
         asyncio.run(_benchmark(testcases, write_loc, recalculate, metadata, parallel))
     finally:
-        results(loc)
+        results(loc, output_loc)
 
 
 @app.command()

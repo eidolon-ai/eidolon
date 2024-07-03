@@ -32,7 +32,7 @@ class SqlAgentSpec(BaseModel):
     Here is the database schema:
     {{ metadata }}
     
-    Use your as needed tools to investigate the database with the goal of providing the user with the query that they need.
+    Use tools as needed tools to investigate the database with the goal of providing the user with the query that they need.
     
     Think carefully.
     """
@@ -41,6 +41,8 @@ class SqlAgentSpec(BaseModel):
     response_prompt: str = "What is your response? Be explicit and concise."
     error_prompt: str = "An error occurred executing the query \"{{ query }}\": {{ error }}"
     num_retries: int = 3
+    allow_thought: bool = True
+    simplify_apu: bool = True
 
 
 class SqlAgent(Specable[SqlAgentSpec]):
@@ -54,12 +56,19 @@ class SqlAgent(Specable[SqlAgentSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._client = self.spec.client.instantiate()
+
+        if self.spec.simplify_apu:
+            if hasattr(self.spec.apu, "audio_unit"):
+                self.spec.apu.audio_unit = None
+            if hasattr(self.spec.apu, "image_unit"):
+                self.spec.apu.image_unit = None
         self._apu = self.spec.apu.instantiate()
 
-        if hasattr(self._apu, "logic_units"):
-            self._apu.logic_units.append(SqlLogicUnit(client=self._client, apu=cast(self._apu, ProcessingUnitLocator)))
-        else:
-            raise ValueError("APU does not have logic units")
+        if self.spec.allow_thought:
+            if hasattr(self._apu, "logic_units"):
+                self._apu.logic_units.append(SqlLogicUnit(client=self._client, apu=cast(self._apu, ProcessingUnitLocator)))
+            else:
+                raise ValueError("APU does not have logic units")
 
         environment = Environment(undefined=StrictUndefined)
         self._error_prompt = environment.from_string(self.spec.error_prompt)
@@ -111,11 +120,10 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 async for row in self._client.execute(response.query):
                     yield ObjectOutputEvent(content=row)
                     num_rows += 1
-                if num_rows == 0 and not response.allow_empty_response:
-                    raise ValueError("No data returned from query")
+                # todo, validating data if allowing thought
                 yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
             except Exception as e:
-                if num_reties > 0:
+                if num_reties > 0 and self.spec.allow_thought:
                     yield StartStreamContextEvent(context_id='error', title='Error')
                     yield ObjectOutputEvent(content=dict(query=response.query, error=str(e)), stream_context='error')
                     yield EndStreamContextEvent(context_id='error')
