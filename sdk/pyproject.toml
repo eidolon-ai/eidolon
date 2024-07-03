@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-ai-sdk"
-version = "0.1.87"
+version = "0.1.88"
 description = "An open source sgent service SDK"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -15,7 +15,7 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "sdk"
-last-update-hash = "f364aa2ca90b13c30d4323510f8c45572c270135"
+last-update-hash = "85f460f3c2edcab333f746cce3c2736efc7ba5de"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
@@ -72,11 +72,14 @@ azure-storage-blob = "^12.20.0"
 aiohttp = "^3.9.5"
 aiodns = "^3.2.0"
 lxml = ">=4.9.3,<6.0.0"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
 aiosqlite = "^0.20.0"
 
 [tool.pytest.ini_options]
 pythonpath = "project"
+
+[tool.poetry.dependencies.sqlalchemy]
+extras = [ "asyncio",]
+version = "^2.0.31"
 
 [tool.poetry.dependencies.typer]
 extras = [ "all",]
