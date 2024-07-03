@@ -21,6 +21,10 @@ jobs:
         run: |
           git status
           git diff --quiet
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: always()
+        with:
+          commit_message: "updating lock"
 
   sdk-test:
     runs-on: ubuntu-latest
