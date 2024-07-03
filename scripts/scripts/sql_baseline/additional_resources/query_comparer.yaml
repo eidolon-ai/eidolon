@@ -1,0 +1,31 @@
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  annotations: []
+  labels: []
+  name: query_comparer
+spec:
+  system_prompt: You are a helpful assistant who compares two queries that were created in response to a question.
+  actions:
+    - name: compare_queries
+      user_prompt: |
+        question: {{ question }}
+        
+        query1: {{ query1 }}
+        
+        query2: {{ query2 }}
+        
+        Are these queries reasonable answers to the question?
+      output_schema:
+        type: object
+        properties:
+          query1_reasonable:
+            type: boolean
+            description: Whether the query1 is reasonable.
+          query2_reasonable:
+            type: boolean
+            description: Whether the query2 is reasonable.
+          better_query:
+            type: string
+            enum: [ "query1", "query2", "equal" ]
+            description: Which query is better. If both are similar then no_preference.

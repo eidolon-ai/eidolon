@@ -102,7 +102,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 async for row in self._client.execute(response.query):
                     yield ObjectOutputEvent(content=row)
                     num_rows += 1
-                if num_rows == 0:
+                if num_rows == 0 and not response.allow_empty_response:
                     raise ValueError("No data returned from query")
                 yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
             except Exception as e:
@@ -115,7 +115,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
                     async for e in self.cycle(thread, message, num_reties - 1, body=body):
                         yield e
                 else:
-                    if body.allow_clarification:
+                    if body.allow_conversation:
                         yield StringOutputEvent(content="I'm sorry, I'm having trouble executing a query. Can you provide more information?")
                         yield AgentStateEvent(state="idle")
                     else:
@@ -139,7 +139,13 @@ class SqlAgent(Specable[SqlAgentSpec]):
             description="Respond to the user with the data returned after executing the provided query",
             properties=dict(
                 response_type=dict(const="execute"),
-                query=dict(type="string")),
+                query=dict(type="string"),
+                allow_empty_response=dict(
+                    type="boolean",
+                    description="Whether to allow a response with no rows",
+                    default=False,
+                ),
+            ),
             required=["response_type", "query"],
         )]
         if body.allow_conversation:
@@ -169,3 +175,4 @@ class SqlAgent(Specable[SqlAgentSpec]):
 class _AgentResponse(BaseModel):
     response_type: Literal['execute', 'clarify', 'respond']
     query: Optional[str] = None
+    allow_empty_response: bool = False

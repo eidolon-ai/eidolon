@@ -27,6 +27,8 @@ ref-resolver = "^1.0.3"
 jsonschema = "^4.22.0"
 json-schema-for-humans = {version = "^1.0.2", optional = true}
 jsonref = "^1.1.0"
+pyyaml = "^6.0.1"
+typer = "^0.9.0"
 
 [tool.poetry.dependencies.eidolon-ai-sdk]
 path = "../sdk"
