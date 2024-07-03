@@ -1,0 +1,13 @@
+{
+  "testcases": "/Users/lukelalor/Downloads/spider/test_data/dev.json",
+  "databases": "/Users/lukelalor/Downloads/spider/test_database",
+  "total_testcases": 2147,
+  "apu_override": "GPT3.5-turbo",
+  "run_testcases": 164,
+  "sql_match": 7,
+  "data_match": 116,
+  "better_or_equal_query": 146,
+  "sql_match_rate": 4.2682926829268295,
+  "data_match_rate": 70.73170731707317,
+  "better_query_rate": 89.02439024390245
+}

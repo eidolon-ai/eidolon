@@ -6,26 +6,41 @@ metadata:
   name: query_comparer
 spec:
   system_prompt: You are a helpful assistant who compares two queries that were created in response to a question.
+  apu: GPT4o
   actions:
     - name: compare_queries
       user_prompt: |
-        question: {{ question }}
+        Which of the following queries is a better response to the following question?
         
-        query1: {{ query1 }}
+        Question: {{ question }}
         
-        query2: {{ query2 }}
+        < query1 >
+        query
+        {{ query1 }}
         
-        Are these queries reasonable answers to the question?
+        num_rows
+        {{ len1 }}
+        
+        preview:
+        {{ preview1 }}
+        
+        </ query1 >
+        
+        < query2 >
+        query
+        {{ query2 }}
+        
+        num_rows
+        {{ len2 }}
+        
+        preview:
+        {{ preview2 }}
+        
+        </ query2 >
       output_schema:
         type: object
         properties:
-          query1_reasonable:
-            type: boolean
-            description: Whether the query1 is reasonable.
-          query2_reasonable:
-            type: boolean
-            description: Whether the query2 is reasonable.
           better_query:
             type: string
             enum: [ "query1", "query2", "equal" ]
-            description: Which query is better. If both are similar then no_preference.
+            description: Which query is better. If both are similar then equal.

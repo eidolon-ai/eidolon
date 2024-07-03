@@ -7,7 +7,7 @@ from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from scripts.sql_baseline.dev_dp import TestCase
 
 
-def sqlagent(db_loc: Path, name: str):
+def sqlagent(db_loc: Path, name: str, **kwargs):
     db_loc = str(db_loc / name / f'{name}.sqlite')
     if not Path(db_loc).exists():
         raise FileNotFoundError(f"Database file not found: {db_loc}")
@@ -17,15 +17,16 @@ def sqlagent(db_loc: Path, name: str):
         metadata=Metadata(name=name),
         spec=dict(
             implementation="SqlAgent",
-            client=dict(connection_string=f"sqlite+aiosqlite:///{db_loc}")
+            client=dict(connection_string=f"sqlite+aiosqlite:///{db_loc}"),
+            **kwargs
         )
     )
 
 
-def build_resources(db_loc: Path, devdb: List[TestCase], write_loc: Path):
+def build_resources(db_loc: Path, devdb: List[TestCase], write_loc: Path, **kwargs):
     for db_id in {db.db_id for db in devdb}:
         try:
-            resource = sqlagent(db_loc, db_id)
+            resource = sqlagent(db_loc, db_id, **kwargs)
             with open(Path(write_loc) / f"{resource.metadata.name}.yaml", "w") as f:
                 yaml.dump(resource.model_dump(), f)
         except FileNotFoundError as e:

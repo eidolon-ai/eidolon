@@ -29,6 +29,7 @@ class ResourcesMetadata(BaseModel):
     testcases: Path
     databases: Path
     total_testcases: int
+    apu_override: Optional[str] = None
     run_testcases: int = 0
     sql_match: int = 0
     data_match: int = 0
@@ -58,7 +59,7 @@ class ResourcesMetadata(BaseModel):
 
 @app.command()
 def create_resources(testcases: Path, databases: Optional[Path] = None,
-                     write_loc: Path = Path("dist") / "sql_baseline"):
+                     write_loc: Path = Path("dist") / "sql_baseline", apu: str = None):
     print("Creating resources...")
     resources_loc = write_loc / "resources"
     testcases = testcases.expanduser()
@@ -77,9 +78,12 @@ def create_resources(testcases: Path, databases: Optional[Path] = None,
             spider_loc = spider_loc.parent
         databases = spider_loc / "test_database"
 
-    build_resources(databases, dbs, resources_loc)
+    extra = {}
+    if apu:
+        extra["apu"] = apu
+    build_resources(databases, dbs, resources_loc, **extra)
     with open(write_loc / "metadata.json", "w") as f:
-        f.write(ResourcesMetadata(testcases=testcases, databases=databases, total_testcases=len(dbs)).model_dump_json(indent=2))
+        f.write(ResourcesMetadata(testcases=testcases, databases=databases, total_testcases=len(dbs), apu_override=apu).model_dump_json(indent=2))
 
 
 @app.command()
@@ -147,7 +151,8 @@ async def _test(metadata, recalculate, testcase, write_loc):
         result = await run_benchmark(testcase, db_loc)
         with open(write_loc / identifier, "w") as f:
             f.write(result.model_dump_json(indent=2))
-        if result.extra:
+        if 'error' in result.extra:
+            err_console.print(f"{identifier} error: {result.extra['error']}")
             console.print(result)
 
 
@@ -181,7 +186,9 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
     result = BenchmarkResult(db_id=testcase.db_id, question=testcase.question, expected_query=testcase.query)
     try:
         actual_rows = []
+        output_events = []
         async for output_event in process.stream_action("query", dict(message=testcase.question, allow_conversation=False)):
+            output_events.append(output_event)
             if isinstance(output_event, ObjectOutputEvent):
                 if "response_type" in output_event.content and output_event.content["response_type"] == "execute":
                     result.actual_query = output_event.content["query"]
@@ -189,6 +196,11 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
                         break
             if output_event.is_root_and_type(OutputEvent):
                 actual_rows.append(output_event.content)
+
+        if not result.actual_query:
+            result.extra['output_events'] = [e.model_dump() for e in output_events]
+            result.extra['error'] = 'No query was returned'
+            return result
 
         if result.actual_query == testcase.query:
             result.same_or_better = True
@@ -218,7 +230,15 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
                 result.data_matches = matches
 
             process = await Agent.get("query_comparer").create_process()
-            body = dict(query1=result.expected_query, query2=result.actual_query)
+            body = dict(
+                question=testcase.question,
+                query1=result.expected_query,
+                len1=str(len(expected_rows)),
+                preview1=str(expected_rows[0:5]),
+                query2=result.actual_query,
+                len2=str(len(actual_rows)),
+                preview2=str(actual_rows[0:5]),
+            )
             response = await process.action("compare_queries", body)
             response_data: dict = response.data
             result.same_or_better = response_data["better_query"] in ["query2", "equal"]

@@ -1,3 +1,4 @@
+import json
 from typing import Literal, Optional, cast
 
 from jinja2 import Environment, StrictUndefined, Template
@@ -83,7 +84,8 @@ class SqlAgent(Specable[SqlAgentSpec]):
 
     async def cycle(self, thread, message, num_reties, body: SqlRequestBody):
         last_event = None
-        thinking_stream = thread.stream_request(prompts=[message], output_format=self.get_response_object(body))
+        output_format = self.get_response_object(body)
+        thinking_stream = thread.stream_request(prompts=[message], output_format=output_format)
         async for e in stream_manager(thinking_stream, StartStreamContextEvent(context_id='thinking', title='Thinking')):
             if isinstance(e, ObjectOutputEvent):
                 last_event = e
@@ -93,8 +95,15 @@ class SqlAgent(Specable[SqlAgentSpec]):
             raise ValueError("No response from llm")
         try:
             response = _AgentResponse(**last_event.content)
-        except Exception:
-            raise ValueError(f"Unexpected response from llm: {last_event}")
+        except Exception as err:
+            if num_reties > 0:
+                logger.warning(f"Invalid response from llm: {last_event.content}")
+                message = UserTextAPUMessage(prompt=f"Error parsing response, your response next response MUST match the following json schema: {json.dumps(output_format)}")
+                async for e in self.cycle(thread, message, num_reties - 1, body=body):
+                    yield e
+                return
+            else:
+                raise err
         if response.response_type == "execute":
             try:
                 logger.info(f"Executing query: {response.query}")
