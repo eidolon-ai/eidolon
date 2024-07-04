@@ -12,9 +12,9 @@ spec:
       user_prompt: |
         Which of the following queries is a better response to the following question?
         
-        A query is considered better if it does a better job answering the provided question, would have better perf, or is substantially easier to read (in that order).
+        A query is considered better if it does a better job answering the provided question, would have substantially better performance.
         
-        If both queries answer the provided question, perform the same, and are reasonably readable, consider them equal.
+        If both queries answer the provided question, perform roughly same, and are reasonably readable, consider them equal.
         
         Question: {{ question }}
         

@@ -110,7 +110,7 @@ def create_resources(testcases: Path, databases: Optional[Path] = None,
 
 
 @app.command()
-def benchmark(loc: Path = Path("dist") / "sql_baseline", test_case: List[str] = None, recalculate: bool = False, parallel: int = 20, limit: Optional[int] = None, output_loc: Path = None):
+def benchmark(loc: Path = Path("dist") / "sql_baseline", test_case: List[str] = None, force: bool = False, parallel: int = 20, limit: Optional[int] = None, output_loc: Path = None):
     with open(loc / "metadata.json", "r") as f:
         metadata = ResourcesMetadata(**json.load(f))
     read_loc = metadata.testcases
@@ -123,7 +123,7 @@ def benchmark(loc: Path = Path("dist") / "sql_baseline", test_case: List[str] = 
     if limit:
         testcases = testcases[:limit]
     try:
-        asyncio.run(_benchmark(testcases, write_loc, recalculate, metadata, parallel))
+        asyncio.run(_benchmark(testcases, write_loc, force, metadata, parallel))
     finally:
         results(loc, output_loc)
 
@@ -144,7 +144,7 @@ def results(loc: Path = Path("dist") / "sql_baseline", write: Path = None):
     metadata.data_match = len([r for r in results_.values() if r.data_matches])
     metadata.better_or_equal_query = len([r for r in results_.values() if r.comparison in {"better", "equal"}])
     metadata.strictly_better = len([r for r in results_.values() if r.comparison == "better"])
-    metadata.strictly_worse_scenarios = [k for k, r in results_.items() if r.comparison == "worse"],
+    metadata.strictly_worse_scenarios = [k for k, r in results_.items() if r.comparison == "worse"]
     console.log(metadata.model_dump(exclude={"total_testcases", "testcases", "databases", "failures"}))
 
     with open(loc / "metadata.json", "w") as f:
@@ -246,7 +246,7 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
                         break
                 result.data_matches = matches
             if not result.data_matches:
-                results.extra['data'] = dict(
+                result.extra['data'] = dict(
                     expected=expected_rows,
                     actual=actual_rows,
                 )
@@ -257,7 +257,7 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
                 query1=result.expected_query,
                 len1=str(len(expected_rows)),
                 preview1=str(expected_rows[0:5]),
-                query2=result.actual_query,
+                query2=actual_query,
                 len2=str(len(actual_rows)),
                 preview2=str(actual_rows[0:5]),
             )

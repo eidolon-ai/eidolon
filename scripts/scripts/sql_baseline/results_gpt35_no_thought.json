@@ -1,16 +1,20 @@
 {
   "apu_override": "GPT3.5-turbo",
-  "run_testcases": 100,
-  "sql_match": 5,
-  "data_match": 71,
-  "better_or_equal_query": 92,
-  "strictly_outperformed": 50,
+  "run_testcases": 10,
+  "sql_match": 4,
+  "data_match": 9,
+  "better_or_equal_query": 9,
+  "strictly_better": 0,
+  "strictly_worse_scenarios": [
+    "645f641d387669ae3ebf6ea187762d57"
+  ],
   "extra": {
     "apu": "GPT3.5-turbo",
     "allow_thought": false
   },
-  "sql_match_rate": 5.0,
-  "data_match_rate": 71.0,
-  "better_query_rate": 92.0,
-  "outperform_rate": 86.20689655172413
+  "sql_match_rate": 40.0,
+  "data_match_rate": 90.0,
+  "better_query_rate": 90.0,
+  "strictly_worse": 1,
+  "outperform_rate": 0.0
 }
