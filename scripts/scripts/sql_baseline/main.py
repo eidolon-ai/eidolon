@@ -221,7 +221,6 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
                         break
             if output_event.is_root_and_type(OutputEvent):
                 actual_rows.append(output_event.content)
-
         if not actual_query:
             result.extra['output_events'] = [e.model_dump() for e in output_events]
             result.extra['error'] = 'No query was returned'
@@ -232,9 +231,7 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
 
             if len(expected_rows) != len(actual_rows):
                 result.data_matches = False
-                result.extra['data_mismatch'] = 'actual returned different number of rows than expected query.'
-                result.extra['expected_rows'] = len(expected_rows)
-                result.extra['actual_rows'] = len(actual_rows)
+                result.extra['data_mismatch'] = f'actual returned different number of rows than expected query (expected {len(expected_rows)} found {len(actual_rows)})'
             else:
                 matches = True
                 while expected_rows:
@@ -248,6 +245,11 @@ async def run_benchmark(testcase: TestCase, db_loc) -> BenchmarkResult:
                         matches = False
                         break
                 result.data_matches = matches
+            if not result.data_matches:
+                results.extra['data'] = dict(
+                    expected=expected_rows,
+                    actual=actual_rows,
+                )
 
             process = await Agent.get("query_comparer").create_process()
             body = dict(
