@@ -39,6 +39,7 @@ rules:
   resources:
   - events
   - pods
+  - services
   - configmaps
   verbs:
   - get

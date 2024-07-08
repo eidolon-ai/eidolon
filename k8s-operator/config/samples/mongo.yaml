@@ -63,14 +63,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-service
+  name: mongo
   labels:
     app: mongo
 spec:
-  type: NodePort
   ports:
   - port: 27017          # Port exposed within the cluster
     targetPort: 27017  # Port on the pods
-    nodePort: 32017   # Port accessible externally on each node
   selector:
     app: mongo

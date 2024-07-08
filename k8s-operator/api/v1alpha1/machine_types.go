@@ -30,6 +30,26 @@ type MachineSpec struct {
 	// Image is the container image to use for the Machine
 	Image string `json:"image"`
 
+	// Image pull policy.
+	// One of Always, Never, IfNotPresent.
+	// Defaults to Always if :latest tag is specified, or IfNotPresent otherwise.
+	// Cannot be updated.
+	// More info: https://kubernetes.io/docs/concepts/containers/images#updating-images
+	// +optional
+	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty" protobuf:"bytes,14,opt,name=imagePullPolicy,casttype=PullPolicy"`
+
+	// SecurityContext holds pod-level security attributes and common container settings.
+	// Optional: Defaults to empty.  See type description for default values of each field.
+	// +optional
+	SecurityContext *corev1.PodSecurityContext `json:"securityContext,omitempty" protobuf:"bytes,14,opt,name=securityContext"`
+
+	// ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images
+	// in pods that reference this ServiceAccount. ImagePullSecrets are distinct from Secrets because Secrets
+	// can be mounted in the pod, but ImagePullSecrets are only accessed by the kubelet.
+	// More info: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+	// +optional
+	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets,omitempty" protobuf:"bytes,3,rep,name=imagePullSecrets"`
+
 	// Replicas is the number of desired replicas
 	// +optional
 	Replicas *int32 `json:"replicas,omitempty"`
@@ -63,27 +83,27 @@ type MachineSpec struct {
 }
 
 func (in *MachineSpec) UnmarshalJSON(data []byte) error {
-    // Create a type alias to avoid recursive calls to UnmarshalJSON
-    type MachineSpecAlias MachineSpec
+	// Create a type alias to avoid recursive calls to UnmarshalJSON
+	type MachineSpecAlias MachineSpec
 
-    // Create a temporary struct with MachineSpecAlias and a map for additional fields
-    temp := struct {
-        *MachineSpecAlias
-        AdditionalFields map[string]interface{} `json:"-"`
-    }{
-        MachineSpecAlias: (*MachineSpecAlias)(in),
-        AdditionalFields: make(map[string]interface{}),
-    }
+	// Create a temporary struct with MachineSpecAlias and a map for additional fields
+	temp := struct {
+		*MachineSpecAlias
+		AdditionalFields map[string]interface{} `json:"-"`
+	}{
+		MachineSpecAlias: (*MachineSpecAlias)(in),
+		AdditionalFields: make(map[string]interface{}),
+	}
 
-    // Unmarshal data into the temporary struct
-    if err := json.Unmarshal(data, &temp); err != nil {
-        return err
-    }
+	// Unmarshal data into the temporary struct
+	if err := json.Unmarshal(data, &temp); err != nil {
+		return err
+	}
 
-    // Unmarshal data into the AdditionalFields map
-    if err := json.Unmarshal(data, &temp.AdditionalFields); err != nil {
-        return err
-    }
+	// Unmarshal data into the AdditionalFields map
+	if err := json.Unmarshal(data, &temp.AdditionalFields); err != nil {
+		return err
+	}
 
 	// Remove known fields
 	delete(temp.AdditionalFields, "image")
@@ -108,39 +128,38 @@ func (in *MachineSpec) UnmarshalJSON(data []byte) error {
 }
 
 func (in *MachineSpec) MarshalJSON() ([]byte, error) {
-   // Convert the MachineSpec to a map
-    specMap := make(map[string]interface{})
+	// Convert the MachineSpec to a map
+	specMap := make(map[string]interface{})
 
-    // Marshal the MachineSpec to JSON, then unmarshal to a map to get all fields
-    specData, err := json.Marshal(*in)
-    if err != nil {
-        return nil, err
-    }
-    if err := json.Unmarshal(specData, &specMap); err != nil {
-        return nil, err
-    }
+	// Marshal the MachineSpec to JSON, then unmarshal to a map to get all fields
+	specData, err := json.Marshal(*in)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(specData, &specMap); err != nil {
+		return nil, err
+	}
 
-    // If there are additional fields, unmarshal them into the map
-    if len(in.AdditionalFields.Raw) > 0 {
-        var additionalFields map[string]interface{}
-        if err := json.Unmarshal(in.AdditionalFields.Raw, &additionalFields); err != nil {
-            return nil, err
-        }
-        // Add additional fields to the map, potentially overwriting any duplicates
-        for k, v := range additionalFields {
-            specMap[k] = v
-        }
-    }
+	// If there are additional fields, unmarshal them into the map
+	if len(in.AdditionalFields.Raw) > 0 {
+		var additionalFields map[string]interface{}
+		if err := json.Unmarshal(in.AdditionalFields.Raw, &additionalFields); err != nil {
+			return nil, err
+		}
+		// Add additional fields to the map, potentially overwriting any duplicates
+		for k, v := range additionalFields {
+			specMap[k] = v
+		}
+	}
 
-    // Remove the AdditionalFields key from the map as we don't want it in the final JSON
-    delete(specMap, "AdditionalFields")
+	// Remove the AdditionalFields key from the map as we don't want it in the final JSON
+	delete(specMap, "AdditionalFields")
 
-    // Marshal the combined map back to JSON
+	// Marshal the combined map back to JSON
 	marshal, err := json.Marshal(specMap)
 
 	return marshal, err
 }
-
 
 // MachineStatus defines the observed state of Machine
 type MachineStatus struct {

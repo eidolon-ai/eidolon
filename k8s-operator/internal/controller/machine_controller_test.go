@@ -127,7 +127,7 @@ spec:
 			// Create the Machine
 			Expect(k8sClient.Create(ctx, machine)).Should(Succeed())
 
-			deploymentLookupKey := types.NamespacedName{Name: MachineName + "-deployment", Namespace: MachineNamespace}
+			deploymentLookupKey := types.NamespacedName{Name: "eidolon-deployment", Namespace: MachineNamespace}
 			createdDeployment := &appsv1.Deployment{}
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, deploymentLookupKey, createdDeployment)
@@ -136,13 +136,27 @@ spec:
 			Expect(*createdDeployment.Spec.Replicas).Should(Equal(int32(1)))
 			Expect(createdDeployment.Spec.Template.Spec.Containers[0].Image).Should(Equal("test-image:v1"))
 
-			configMapLookupKey := types.NamespacedName{Name: MachineName + "-machine-cm", Namespace: MachineNamespace}
+			configMapLookupKey := types.NamespacedName{Name: "eidolon-machine-cm", Namespace: MachineNamespace}
 			createdConfigMap := &corev1.ConfigMap{}
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, configMapLookupKey, createdConfigMap)
 				return err == nil
 			}, timeout, interval).Should(BeTrue())
 			Expect(createdConfigMap.Data["machine.yaml"]).Should(ContainSubstring("nestedField: nestedValue"))
+		})
+		It("Should create a Service", func() {
+			ctx := context.Background()
+
+			serviceLookupKey := types.NamespacedName{Name: "eidolon-service", Namespace: MachineNamespace}
+			createdService := &corev1.Service{}
+			Eventually(func() bool {
+				err := k8sClient.Get(ctx, serviceLookupKey, createdService)
+				return err == nil
+			}, timeout, interval).Should(BeTrue())
+
+			Expect(createdService.Spec.Ports).To(HaveLen(1))
+			Expect(createdService.Spec.Ports[0].Port).To(Equal(int32(8080)))
+			Expect(createdService.Spec.Selector).To(HaveKeyWithValue("app", "eidolon"))
 		})
 	})
 
@@ -155,7 +169,7 @@ spec:
 			machine.Spec.Replicas = int32Ptr(3)
 			Expect(k8sClient.Update(ctx, machine)).Should(Succeed())
 
-			deploymentLookupKey := types.NamespacedName{Name: MachineName + "-deployment", Namespace: MachineNamespace}
+			deploymentLookupKey := types.NamespacedName{Name: "eidolon-deployment", Namespace: MachineNamespace}
 			updatedDeployment := &appsv1.Deployment{}
 			Eventually(func() int32 {
 				err := k8sClient.Get(ctx, deploymentLookupKey, updatedDeployment)
@@ -174,7 +188,7 @@ spec:
 			machine.Spec.Image = "test-image:v2"
 			Expect(k8sClient.Update(ctx, machine)).Should(Succeed())
 
-			deploymentLookupKey := types.NamespacedName{Name: MachineName + "-deployment", Namespace: MachineNamespace}
+			deploymentLookupKey := types.NamespacedName{Name: "eidolon-deployment", Namespace: MachineNamespace}
 			updatedDeployment := &appsv1.Deployment{}
 			Eventually(func() string {
 				err := k8sClient.Get(ctx, deploymentLookupKey, updatedDeployment)
@@ -216,7 +230,7 @@ spec:
 			// Check if the Deployment was updated
 			updatedDeployment := &appsv1.Deployment{}
 			Eventually(func() bool {
-				err := k8sClient.Get(ctx, types.NamespacedName{Name: MachineName + "-deployment", Namespace: MachineNamespace}, updatedDeployment)
+				err := k8sClient.Get(ctx, types.NamespacedName{Name: "eidolon-deployment", Namespace: MachineNamespace}, updatedDeployment)
 				if err != nil {
 					return false
 				}
@@ -227,7 +241,7 @@ spec:
 			// Check if the ConfigMap was updated
 			updatedConfigMap := &corev1.ConfigMap{}
 			Eventually(func() bool {
-				err := k8sClient.Get(ctx, types.NamespacedName{Name: MachineName + "-machine-cm", Namespace: MachineNamespace}, updatedConfigMap)
+				err := k8sClient.Get(ctx, types.NamespacedName{Name: "eidolon-machine-cm", Namespace: MachineNamespace}, updatedConfigMap)
 				if err != nil {
 					return false
 				}
@@ -248,13 +262,13 @@ spec:
 					Namespace: MachineNamespace,
 				},
 				Data: map[string]string{
-					"agent.yaml": "initial: data",
+					"agents.yaml": "initial: data",
 				},
 			}
 			Expect(k8sClient.Create(ctx, agentCM)).Should(Succeed())
 
 			// Wait for the Deployment to be updated with the agent ConfigMap
-			deploymentLookupKey := types.NamespacedName{Name: MachineName + "-deployment", Namespace: MachineNamespace}
+			deploymentLookupKey := types.NamespacedName{Name: "eidolon-deployment", Namespace: MachineNamespace}
 			updatedDeployment := &appsv1.Deployment{}
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, deploymentLookupKey, updatedDeployment)
@@ -265,7 +279,7 @@ spec:
 			}, timeout, interval).Should(BeTrue())
 
 			// Update the agent ConfigMap
-			agentCM.Data["agent.yaml"] = "updated: data"
+			agentCM.Data["agents.yaml"] = "updated: data"
 			Expect(k8sClient.Update(ctx, agentCM)).Should(Succeed())
 
 			// Check if the Deployment is updated with the new ConfigMap version
@@ -292,7 +306,7 @@ spec:
 			Expect(k8sClient.Create(ctx, referenceCM)).Should(Succeed())
 
 			// Wait for the Deployment to be updated with the reference ConfigMap
-			deploymentLookupKey := types.NamespacedName{Name: MachineName + "-deployment", Namespace: MachineNamespace}
+			deploymentLookupKey := types.NamespacedName{Name: "eidolon-deployment", Namespace: MachineNamespace}
 			updatedDeployment := &appsv1.Deployment{}
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, deploymentLookupKey, updatedDeployment)
@@ -325,13 +339,19 @@ spec:
 
 			Expect(k8sClient.Delete(ctx, machine)).Should(Succeed())
 
-			deploymentLookupKey := types.NamespacedName{Name: MachineName + "-deployment", Namespace: MachineNamespace}
+			serviceLookupKey := types.NamespacedName{Name: "eidolon-service", Namespace: MachineNamespace}
+			Eventually(func() bool {
+				err := k8sClient.Get(ctx, serviceLookupKey, &corev1.Service{})
+				return errors.IsNotFound(err)
+			}, timeout, interval).Should(BeTrue())
+
+			deploymentLookupKey := types.NamespacedName{Name: "eidolon-deployment", Namespace: MachineNamespace}
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, deploymentLookupKey, &appsv1.Deployment{})
 				return errors.IsNotFound(err)
 			}, timeout, interval).Should(BeTrue())
 
-			configMapLookupKey := types.NamespacedName{Name: MachineName + "-machine-cm", Namespace: MachineNamespace}
+			configMapLookupKey := types.NamespacedName{Name: "eidolon-machine-cm", Namespace: MachineNamespace}
 			Eventually(func() bool {
 				err := k8sClient.Get(ctx, configMapLookupKey, &corev1.ConfigMap{})
 				return errors.IsNotFound(err)

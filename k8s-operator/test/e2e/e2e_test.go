@@ -27,7 +27,7 @@ import (
 	"github.com/eidolon-ai/eidolon/k8s-operator/test/utils"
 )
 
-const namespace = "k8s-operator-system"
+const namespace = "eidolon-operator-system"
 
 var _ = Describe("controller", Ordered, func() {
 	BeforeAll(func() {

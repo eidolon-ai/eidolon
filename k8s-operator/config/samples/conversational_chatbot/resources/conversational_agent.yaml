@@ -1,10 +1,10 @@
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
-  name: conversational_agent
+  name: conversational-agent
 spec:
   agent_refs:
-    - research_agent
+    - research-agent
   system_prompt:
     You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio.
     Only generate images or speach if directly asked by the user.

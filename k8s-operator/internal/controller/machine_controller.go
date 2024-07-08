@@ -2,13 +2,13 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	serverv1alpha1 "github.com/eidolon-ai/eidolon/k8s-operator/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -29,29 +29,29 @@ func (r *MachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	logger := log.FromContext(ctx)
 	machine := &serverv1alpha1.Machine{}
 
-    err := r.Get(ctx, req.NamespacedName, machine)
-    if err != nil {
-        if client.IgnoreNotFound(err) != nil {
-            logger.Error(err, "Unable to fetch Machine")
-            return ctrl.Result{}, err
-        }
-        // Machine resource not found, likely already deleted
-        return ctrl.Result{}, nil
-    }
+	err := r.Get(ctx, req.NamespacedName, machine)
+	if err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			logger.Error(err, "Unable to fetch Machine")
+			return ctrl.Result{}, err
+		}
+		// Machine resource not found, likely already deleted
+		return ctrl.Result{}, nil
+	}
 
-    // Check if the Machine is being deleted
-    if !machine.ObjectMeta.DeletionTimestamp.IsZero() {
-        return r.handleDeletion(ctx, machine)
-    }
+	// Check if the Machine is being deleted
+	if !machine.ObjectMeta.DeletionTimestamp.IsZero() {
+		return r.handleDeletion(ctx, machine)
+	}
 
-    // Add finalizer if it doesn't exist
-    if !controllerutil.ContainsFinalizer(machine, machineFinalizer) {
-        controllerutil.AddFinalizer(machine, machineFinalizer)
-        err = r.Update(ctx, machine)
-        if err != nil {
-            return ctrl.Result{}, err
-        }
-    }
+	// Add finalizer if it doesn't exist
+	if !controllerutil.ContainsFinalizer(machine, machineFinalizer) {
+		controllerutil.AddFinalizer(machine, machineFinalizer)
+		err = r.Update(ctx, machine)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+	}
 
 	// Create or update the ConfigMap for additional fields
 	if err := r.reconcileConfigMap(ctx, machine); err != nil {
@@ -63,12 +63,46 @@ func (r *MachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, err
 	}
 
+	if err := r.reconcileService(ctx, machine); err != nil {
+		return ctrl.Result{}, err
+	}
+
 	return ctrl.Result{}, nil
+}
+
+func (r *MachineReconciler) reconcileService(ctx context.Context, machine *serverv1alpha1.Machine) error {
+	svc := &corev1.Service{}
+	svc.Name = "eidolon-service"
+	svc.Namespace = machine.Namespace
+
+	op, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+		if svc.Labels == nil {
+			svc.Labels = make(map[string]string)
+		}
+		svc.Labels["app"] = "eidolon"
+
+		svc.Spec.Selector = map[string]string{"app": "eidolon"}
+		svc.Spec.Ports = []corev1.ServicePort{
+			{
+				Port:       8080,
+				TargetPort: intstr.FromInt32(8080),
+			},
+		}
+
+		return controllerutil.SetControllerReference(machine, svc, r.Scheme)
+	})
+
+	if err != nil {
+		return err
+	}
+
+	log.FromContext(ctx).Info("Service reconciled", "operation", op)
+	return nil
 }
 
 func (r *MachineReconciler) reconcileConfigMap(ctx context.Context, machine *serverv1alpha1.Machine) error {
 	cm := &corev1.ConfigMap{}
-	cm.Name = fmt.Sprintf("%s-machine-cm", machine.Name)
+	cm.Name = "eidolon-machine-cm"
 	cm.Namespace = machine.Namespace
 
 	op, err := ctrl.CreateOrUpdate(ctx, r.Client, cm, func() error {
@@ -128,7 +162,7 @@ func extractAdditionalFields(spec serverv1alpha1.MachineSpec) (map[string]interf
 
 func (r *MachineReconciler) reconcileDeployment(ctx context.Context, machine *serverv1alpha1.Machine) error {
 	deploy := &appsv1.Deployment{}
-	deploy.Name = fmt.Sprintf("%s-deployment", machine.Name)
+	deploy.Name = "eidolon-deployment"
 	deploy.Namespace = machine.Namespace
 
 	op, err := ctrl.CreateOrUpdate(ctx, r.Client, deploy, func() error {
@@ -138,7 +172,7 @@ func (r *MachineReconciler) reconcileDeployment(ctx context.Context, machine *se
 				VolumeSource: corev1.VolumeSource{
 					ConfigMap: &corev1.ConfigMapVolumeSource{
 						LocalObjectReference: corev1.LocalObjectReference{
-							Name: fmt.Sprintf("%s-machine-cm", machine.Name),
+							Name: "eidolon-machine-cm",
 						},
 					},
 				},
@@ -191,24 +225,27 @@ func (r *MachineReconciler) reconcileDeployment(ctx context.Context, machine *se
 		deploy.Spec = appsv1.DeploymentSpec{
 			Replicas: machine.Spec.Replicas,
 			Selector: &metav1.LabelSelector{
-				MatchLabels: map[string]string{"app": machine.Name},
+				MatchLabels: map[string]string{"app": "eidolon"},
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{"app": machine.Name},
+					Labels: map[string]string{"app": "eidolon"},
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Name:         "eidolon-server",
-							Image:        machine.Spec.Image,
-							EnvFrom:      machine.Spec.EnvFrom,
-							Ports:        machine.Spec.Ports,
-							VolumeMounts: volumeMounts,
-							Args:         r.generateArgs(ctx, machine),
+							Name:            "eidolon",
+							Image:           machine.Spec.Image,
+							ImagePullPolicy: machine.Spec.ImagePullPolicy,
+							EnvFrom:         machine.Spec.EnvFrom,
+							Ports:           machine.Spec.Ports,
+							VolumeMounts:    volumeMounts,
+							Args:            r.generateArgs(ctx, machine),
 						},
 					},
-					Volumes: volumes,
+					Volumes:          volumes,
+					ImagePullSecrets: machine.Spec.ImagePullSecrets,
+					SecurityContext:  machine.Spec.SecurityContext,
 				},
 			},
 		}
@@ -242,10 +279,10 @@ func (r *MachineReconciler) getConfigMap(ctx context.Context, name, namespace st
 }
 
 func (r *MachineReconciler) generateArgs(ctx context.Context, machine *serverv1alpha1.Machine) []string {
-	args := []string{"/etc/eidolon/resources/machine/machine.yaml"}
+	args := []string{"-m", machine.Name, "/etc/eidolon/resources/machine/machine.yaml"}
 
 	if r.configMapExists(ctx, "eidolon-agent-cm", machine.Namespace) {
-		args = append(args, "/etc/eidolon/resources/agents/agent.yaml")
+		args = append(args, "/etc/eidolon/resources/agents/agents.yaml")
 	}
 
 	if r.configMapExists(ctx, "eidolon-reference-cm", machine.Namespace) {
@@ -264,53 +301,68 @@ func (r *MachineReconciler) configMapExists(ctx context.Context, name, namespace
 const machineFinalizer = "server.eidolon.ai/finalizer"
 
 func (r *MachineReconciler) handleDeletion(ctx context.Context, machine *serverv1alpha1.Machine) (ctrl.Result, error) {
-    logger := log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
-    // Check if the Machine has our finalizer
-    if !controllerutil.ContainsFinalizer(machine, machineFinalizer) {
-        // Our finalizer is not present, so the Machine can be deleted
-        return ctrl.Result{}, nil
-    }
+	// Check if the Machine has our finalizer
+	if !controllerutil.ContainsFinalizer(machine, machineFinalizer) {
+		// Our finalizer is not present, so the Machine can be deleted
+		return ctrl.Result{}, nil
+	}
 
-    // Perform cleanup
-    if err := r.deleteConfigMap(ctx, machine); err != nil {
-        logger.Error(err, "Failed to delete ConfigMap")
-        return ctrl.Result{}, err
-    }
+	// Perform cleanup
+	if err := r.deleteConfigMap(ctx, machine); err != nil {
+		logger.Error(err, "Failed to delete ConfigMap")
+		return ctrl.Result{}, err
+	}
 
-    if err := r.deleteDeployment(ctx, machine); err != nil {
-        logger.Error(err, "Failed to delete Deployment")
-        return ctrl.Result{}, err
-    }
+	if err := r.deleteDeployment(ctx, machine); err != nil {
+		logger.Error(err, "Failed to delete Deployment")
+		return ctrl.Result{}, err
+	}
 
-    // Remove our finalizer from the list and update it
-    controllerutil.RemoveFinalizer(machine, machineFinalizer)
-    if err := r.Update(ctx, machine); err != nil {
-        return ctrl.Result{}, err
-    }
+	if err := r.deleteService(ctx, machine); err != nil {
+		logger.Error(err, "Failed to delete Service")
+		return ctrl.Result{}, err
+	}
 
-    logger.Info("Successfully deleted Machine")
-    return ctrl.Result{}, nil
+	// Remove our finalizer from the list and update it
+	controllerutil.RemoveFinalizer(machine, machineFinalizer)
+	if err := r.Update(ctx, machine); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	logger.Info("Successfully deleted Machine")
+	return ctrl.Result{}, nil
+}
+
+func (r *MachineReconciler) deleteService(ctx context.Context, machine *serverv1alpha1.Machine) error {
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "eidolon-service",
+			Namespace: machine.Namespace,
+		},
+	}
+	return client.IgnoreNotFound(r.Delete(ctx, svc))
 }
 
 func (r *MachineReconciler) deleteConfigMap(ctx context.Context, machine *serverv1alpha1.Machine) error {
-    cm := &corev1.ConfigMap{
-        ObjectMeta: metav1.ObjectMeta{
-            Name:      fmt.Sprintf("%s-machine-cm", machine.Name),
-            Namespace: machine.Namespace,
-        },
-    }
-    return client.IgnoreNotFound(r.Delete(ctx, cm))
+	cm := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "eidolon-machine-cm",
+			Namespace: machine.Namespace,
+		},
+	}
+	return client.IgnoreNotFound(r.Delete(ctx, cm))
 }
 
 func (r *MachineReconciler) deleteDeployment(ctx context.Context, machine *serverv1alpha1.Machine) error {
-    deploy := &appsv1.Deployment{
-        ObjectMeta: metav1.ObjectMeta{
-            Name:      fmt.Sprintf("%s-deployment", machine.Name),
-            Namespace: machine.Namespace,
-        },
-    }
-    return client.IgnoreNotFound(r.Delete(ctx, deploy))
+	deploy := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "eidolon-deployment",
+			Namespace: machine.Namespace,
+		},
+	}
+	return client.IgnoreNotFound(r.Delete(ctx, deploy))
 }
 
 func (r *MachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -338,6 +390,7 @@ func (r *MachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&serverv1alpha1.Machine{}).
 		Owns(&corev1.ConfigMap{}). // For the machine-specific ConfigMap
 		Owns(&appsv1.Deployment{}).
+		Owns(&corev1.Service{}).
 		Watches(
 			&corev1.ConfigMap{},
 			handler.EnqueueRequestsFromMapFunc(mapConfigMapToMachine),
