@@ -42,6 +42,7 @@ jobs:
         with:
           commit_message: "Bump k8 version"
           tagging_message: k8-op/${{ env.K8_VERSION }}
+          force_with_lease: true
       - name: "build"
         run: make build docker-build docker-push
         working-directory: k8s-operator
