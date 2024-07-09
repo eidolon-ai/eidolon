@@ -288,7 +288,12 @@ def inline_refs(schema, defs):
         return schema
 
 
-def clean_ref_groups_for_md(schema):
+def clean_ref_groups_for_md(schema, seen=None):
+    seen = seen or set()
+    if id(schema) in seen:
+        return
+    else:
+        seen.add(id(schema))
     if isinstance(schema, dict):
         if "reference_group" in schema:
             if "anyOf" in schema:
@@ -296,10 +301,10 @@ def clean_ref_groups_for_md(schema):
                 schema['type'] = f"[Reference[{schema['reference_group']['type']}]](/docs/components/{url_safe(schema['reference_group']['type'])}/overview)"
         else:
             for v in schema.values():
-                clean_ref_groups_for_md(v)
+                clean_ref_groups_for_md(v, seen)
     elif isinstance(schema, list):
         for i in schema:
-            clean_ref_groups_for_md(i)
+            clean_ref_groups_for_md(i, seen)
     else:
         pass
 
