@@ -34,15 +34,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.PUSH_APP_ID }}
+          private_key: ${{ secrets.PUSH_APP_PRIVATE_KEY }}
       - name: version
         run: |
           make -s -C scripts run "version_k8s"
           echo K8_VERSION=$(node -p "require('./k8s-operator/env.json')['version']") >> $GITHUB_ENV
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
-          commit_message: "Bump k8 version"
-          tagging_message: k8-op/${{ env.K8_VERSION }}
-          force_with_lease: true
+          github_token: ${{ steps.generate_token.outputs.token }}
+          branch: ${{ github.ref }}
       - name: "build"
         run: make build docker-build docker-push
         working-directory: k8s-operator
