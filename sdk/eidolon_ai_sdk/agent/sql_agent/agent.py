@@ -1,5 +1,5 @@
 import json
-from typing import Literal, Optional, cast
+from typing import Literal, Optional, AsyncIterable, cast
 
 from jinja2 import Environment, StrictUndefined, Template
 from pydantic import BaseModel
@@ -30,9 +30,7 @@ class SqlAgentSpec(BaseModel):
     You are a helpful assistant that is a sql expert and helps a user query a {{ protocol }} database and analyse the response.
     
     Here is the database schema:
-    {{ metadata }}
-    
-    Use tools as needed tools to investigate the database with the goal of providing the user with the query that they need.
+    {{ metadata }} 
     
     Think carefully.
     """
@@ -40,7 +38,7 @@ class SqlAgentSpec(BaseModel):
     clarification_prompt: str = "What clarifying information do you need? Phrase your response as an explicit question or several questions."
     response_prompt: str = "What is your response? Be explicit and concise."
     error_prompt: str = "An error occurred executing the query \"{{ query }}\": {{ error }}"
-    num_retries: int = 3
+    num_retries: int = 9
     allow_thought: bool = True
     simplify_apu: bool = True
 
@@ -69,6 +67,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 self._apu.logic_units.append(SqlLogicUnit(client=self._client, apu=cast(self._apu, ProcessingUnitLocator)))
             else:
                 raise ValueError("APU does not have logic units")
+        else:
             self.spec.num_retries = 0
 
         environment = Environment(undefined=StrictUndefined)
@@ -92,9 +91,9 @@ class SqlAgent(Specable[SqlAgentSpec]):
         async for e in self.cycle(t, message, self.spec.num_retries, body=body):
             yield e
 
-    async def cycle(self, thread, message, num_reties, body: SqlRequestBody):
+    async def cycle(self, thread, message, num_reties, body: SqlRequestBody, data_stream: Optional[AsyncIterable] = None):
         last_event = None
-        output_format = self.get_response_object(body)
+        output_format = self.get_response_object(body, include_validate=data_stream is not None)
         thinking_stream = thread.stream_request(prompts=[message], output_format=output_format)
         async for e in stream_manager(thinking_stream, StartStreamContextEvent(context_id='thinking', title='Thinking')):
             if isinstance(e, ObjectOutputEvent):
@@ -114,15 +113,29 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 return
             else:
                 raise err
-        if response.response_type == "execute":
+        if data_stream and response.response_type != "confirm_query":
+            num_reties -= 1
+
+        if response.response_type == "confirm_query":
+            if not data_stream:
+                raise ValueError("No data stream provided to confirm")
+            async for row in data_stream:
+                yield ObjectOutputEvent(content=row)
+            yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
+        elif response.response_type == "execute":
             try:
                 logger.info(f"Executing query: {response.query}")
-                num_rows = 0
-                async for row in self._client.execute(response.query):
-                    yield ObjectOutputEvent(content=row)
-                    num_rows += 1
-                # todo, validating data if allowing thought
-                yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
+                first_row = None
+                rows_generator = self._client.execute(response.query)
+                async for row in rows_generator:
+                    first_row = row
+                    break
+                if first_row:
+                    prompt = UserTextAPUMessage(prompt=f"I've executed the query and received following row is the first result:\n{first_row}\n\nIs this correct? Or is there a better query I should execute to more directly answer my question?")
+                else:
+                    prompt = UserTextAPUMessage(prompt="I've executed the query and received no results. Is this correct? Or is there a better query I should execute to more directly answer my question?")
+                async for e in self.cycle(thread, prompt, num_reties, body=body,data_stream=stream(first_row, rows_generator)):
+                    yield e
             except Exception as e:
                 if num_reties > 0:
                     yield StartStreamContextEvent(context_id='error', title='Error')
@@ -134,7 +147,8 @@ class SqlAgent(Specable[SqlAgentSpec]):
                         yield e
                 else:
                     if body.allow_conversation:
-                        yield StringOutputEvent(content="I'm sorry, I'm having trouble executing a query. Can you provide more information?")
+                        yield StringOutputEvent(
+                            content="I'm sorry, I'm having trouble executing a query. Can you provide more information?")
                         yield AgentStateEvent(state="idle")
                     else:
                         raise
@@ -151,25 +165,20 @@ class SqlAgent(Specable[SqlAgentSpec]):
         else:
             raise ValueError(f"Unexpected response type from llm: {response.response_type}")
 
-    def get_response_object(self, body: SqlRequestBody):
+    def get_response_object(self, body: SqlRequestBody, include_validate=False):
         responses = [dict(
             type="object",
-            description="Respond to the user with the data returned after executing the provided query",
+            description="Suggest a query for the user to execute.",
             properties=dict(
                 response_type=dict(const="execute"),
                 query=dict(type="string"),
-                allow_empty_response=dict(
-                    type="boolean",
-                    description="Whether to allow a response with no rows",
-                    default=False,
-                ),
             ),
             required=["response_type", "query"],
         )]
         if body.allow_conversation:
             responses.append(dict(
                 type="object",
-                description="A response that directly answers the provided question.",
+                description="A query that will produce data that directly answers the provided question.",
                 properties=dict(
                     response_type=dict(const="respond"),
                 ),
@@ -181,16 +190,32 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 properties=dict(response_type=dict(const="clarify")),
                 required=["response_type"],
             ))
+        if include_validate:
+            responses.append(dict(
+                type="object",
+                description="The data provided is the proper response to the user's query.",
+                properties=dict(
+                    response_type=dict(const="confirm_query"),
+                ),
+                required=["response_type"],
+            ))
 
         if len(responses) > 1:
             return dict(anyOf=responses)
         elif len(responses) == 1:
             return responses[0]
         else:
-            raise ValueError("No valid response types")  # this should not be possible due to validation in SqlRequestBody
+            raise ValueError(
+                "No valid response types")  # this should not be possible due to validation in SqlRequestBody
 
 
 class _AgentResponse(BaseModel):
-    response_type: Literal['execute', 'clarify', 'respond']
+    response_type: Literal['execute', 'clarify', 'respond', 'confirm_query']
     query: Optional[str] = None
-    allow_empty_response: bool = False
+
+
+async def stream(maybe_first: Optional, rest: AsyncIterable):
+    if maybe_first:
+        yield maybe_first
+    async for e in rest:
+        yield e

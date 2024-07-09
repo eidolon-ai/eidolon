@@ -29,7 +29,9 @@ class ResourcesMetadata(BaseModel):
     testcases: Path
     databases: Path
     total_testcases: int
-    apu_override: Optional[str] = None
+
+
+class Results(BaseModel):
     run_testcases: int = 0
     sql_match: int = 0
     data_match: int = 0
@@ -104,7 +106,6 @@ def create_resources(testcases: Path, databases: Optional[Path] = None,
             testcases=testcases,
             databases=databases,
             total_testcases=len(dbs),
-            apu_override=apu,
             extra=extra,
         ).model_dump_json(indent=2))
 
@@ -125,33 +126,33 @@ def benchmark(loc: Path = Path("dist") / "sql_baseline", test_case: List[str] = 
     try:
         asyncio.run(_benchmark(testcases, write_loc, force, metadata, parallel))
     finally:
-        results(loc, output_loc)
+        results(loc, output_loc or loc)
 
 
 @app.command()
-def results(loc: Path = Path("dist") / "sql_baseline", write: Path = None):
-    results_loc = loc / "results"
+def results(test_results_loc, write_loc: Path):
+    results_loc = test_results_loc / "results"
     results_: Dict[str, BenchmarkResult] = {}
     for file in results_loc.iterdir():
         with open(file, "r") as f:
             data = json.load(f)
             results_[file.name] = BenchmarkResult(**data)
 
-    with open(loc / "metadata.json", "r") as f:
-        metadata = ResourcesMetadata(**json.load(f))
-    metadata.run_testcases = len(results_)
-    metadata.sql_match = len([r for r in results_.values() if r.query_matches])
-    metadata.data_match = len([r for r in results_.values() if r.data_matches])
-    metadata.better_or_equal_query = len([r for r in results_.values() if r.comparison in {"better", "equal"}])
-    metadata.strictly_better = len([r for r in results_.values() if r.comparison == "better"])
-    metadata.strictly_worse_scenarios = [k for k, r in results_.items() if r.comparison == "worse"]
-    console.log(metadata.model_dump(exclude={"total_testcases", "testcases", "databases", "failures"}))
+    aggregate = Results()
+    aggregate.run_testcases = len(results_)
+    aggregate.sql_match = len([r for r in results_.values() if r.query_matches])
+    aggregate.data_match = len([r for r in results_.values() if r.data_matches])
+    aggregate.better_or_equal_query = len([r for r in results_.values() if r.comparison in {"better", "equal"}])
+    aggregate.strictly_better = len([r for r in results_.values() if r.comparison == "better"])
+    aggregate.strictly_worse_scenarios = [k for k, r in results_.items() if r.comparison == "worse"]
+    console.log(aggregate.model_dump(exclude={"strictly_worse_scenarios"}))
 
-    with open(loc / "metadata.json", "w") as f:
-        f.write(metadata.model_dump_json(indent=2))
-    if write:
-        with open(write, "w") as f:
-            f.write(metadata.model_dump_json(indent=2, exclude={"testcases", "databases", "total_testcases"}))
+    os.makedirs(write_loc / "failures", exist_ok=True)
+    with open(write_loc / "results.json", "w") as f:
+        f.write(aggregate.model_dump_json(indent=2, exclude={"strictly_worse_scenarios"}))
+    for scenario in aggregate.strictly_worse_scenarios:
+        with open(write_loc / "failures" / scenario, "w") as f:
+            f.write(results_[scenario].model_dump_json(indent=2))
 
 
 async def _benchmark(testcases: List[TestCase], write_loc: Path, recalculate: bool, metadata: ResourcesMetadata, parallel: int):
@@ -169,7 +170,7 @@ async def _benchmark(testcases: List[TestCase], write_loc: Path, recalculate: bo
 
 
 async def _test(metadata, recalculate, testcase, write_loc):
-    identifier = testcase.identifier()
+    identifier = testcase.identifier() + ".json"
     if not (write_loc / identifier).exists() or recalculate:
         dim_console.print(f"{identifier}: running...")
         db_loc = metadata.databases / testcase.db_id / f"{testcase.db_id}.sqlite"
