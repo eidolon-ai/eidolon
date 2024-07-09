@@ -1,0 +1,53 @@
+name: Bump Version and Release K8 Operator
+on:
+  workflow_run:
+    workflows: [ "Test K8 Operator" ]  # The name of the test workflow
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  rev_and_release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.x'
+          cache-dependency-path: k8s-operator/go.sum
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: version
+        run: |
+          make -s -C scripts run "version_k8s"
+          echo K8_VERSION=$(node -p "require('./k8s-operator/env.json')['version']") >> $GITHUB_ENV
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Bump k8 version"
+          tagging_message: k8-op/${{ env.K8_VERSION }}
+      - name: "build"
+        run: make build docker-build docker-push
+        working-directory: k8s-operator
+      - name: "bundle"
+        run: make bundle bundle-build bundle-push
+        working-directory: k8s-operator
+      - name: "catalog"
+        run: make catalog-build catalog-push
+        working-directory: k8s-operator

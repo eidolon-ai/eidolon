@@ -1,5 +1,8 @@
-name: Go
-on: [push]
+name: Test K8 Operator
+on:
+  push:
+    paths:
+      - k8s-operator/**
 
 jobs:
   build:
