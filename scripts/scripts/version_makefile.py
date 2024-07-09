@@ -1,12 +1,10 @@
 import argparse
 import json
 import os
+from pydantic import validate_call
 from typing import Literal
 
-from git import Repo
-from pydantic import validate_call
-
-from scripts.version_poetry_project import changed_since_commit, rev_version
+from scripts.version_poetry_project import rev_version
 
 
 @validate_call
@@ -16,16 +14,11 @@ def update_path_deps(version: Literal['major', 'minor', 'patch']):
     os.chdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
     with open(os.path.join(loc, 'env.json')) as f:
         data = json.load(f)
-
-    if changed_since_commit(data.setdefault('eidolon', {}).get('last-update-hash'), loc):
-        data['eidolon']['last-update-hash'] = Repo(".").head.commit.hexsha
         updated_version = rev_version(data['version'], version)
         data['version'] = updated_version
         with open(os.path.join(loc, 'env.json'), 'w') as f:
             json.dump(data, f, indent=2)
         print(f"Updated version to {updated_version}")
-    else:
-        print("No changes detected")
 
 
 def main():
