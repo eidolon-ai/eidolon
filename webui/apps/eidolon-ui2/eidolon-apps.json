@@ -32,26 +32,6 @@
     "type": "dev",
     "params": {}
   },
-  "fireworks": {
-    "name": "Fireworks",
-    "description": "A collection of autonomous agents that research venture backed companies.",
-    "version": "0.1.0",
-    "image": "image.webp",
-    "location": "http://localhost:8080",
-    "type": "copilot",
-    "params": {
-      "addBtnText": "Add Thesis",
-      "newItemText": "New Thesis",
-      "custom_page": "/fireworks",
-      "agent": "venture_copilot",
-      "operation": "converse",
-      "inputLabel": "How can I help you?",
-      "titleOperationName": "generate_title",
-      "allowSpeech": true,
-      "speechAgent": "speech_agent",
-      "speechOperation": "speech_to_text"
-    }
-  },
   "git-search": {
     "name": "Explore Github docs",
     "description": "A tool to explore the Github documentation using GPT-4-latest and RAG",

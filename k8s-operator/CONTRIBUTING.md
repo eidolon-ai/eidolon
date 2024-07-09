@@ -106,7 +106,7 @@ kubectl apply -f config/samples/conversational_chatbot/resources
 To build the bundle and release it, you can use the following commands:
 
 ```sh
-make docker-build docker-push bundle bundle-build bundle-push
+make build docker-build docker-push bundle bundle-build bundle-push
 ```
 
 ## To build a catalog for the bundle
