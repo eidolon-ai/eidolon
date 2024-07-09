@@ -1,0 +1,22 @@
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:
+  name: search-agent
+spec:
+  implementation: WebSearchAgent
+---
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:
+  name: scraping-agent
+spec:
+  implementation: WebScrapingAgent
+---
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:
+  name: research-agent
+spec:
+  implementation: WebResearcher
+  search_agent: search_agent
+  scraping_agent: scraping_agent

@@ -18,6 +18,7 @@ RUN pip install /tmp/eidolon_ai_sdk/*.whl
 FROM sdk_base as runner
 RUN addgroup --system --gid 1001 eidolon
 RUN adduser --system --uid 1001 eidolon
+RUN chmod 755 /usr/local/bin/eidolon-server
 USER eidolon
 EXPOSE 8080
 ENV PYTHONUNBUFFERED 1
