@@ -76,7 +76,7 @@ CONTAINER_TOOL ?= docker
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
-UPDATE_VERSION ?= ./bin/update_version
+UPDATE_VERSION ?= ./update_version
 
 .PHONY: all
 all: build
