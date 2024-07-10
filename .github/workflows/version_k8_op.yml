@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -50,7 +52,7 @@ jobs:
           github_token: ${{ steps.generate_token.outputs.token }}
           branch: ${{ github.ref }}
       - name: "build"
-        run: make build docker-build docker-push
+        run: make build docker-buildx
         working-directory: k8s-operator
       - name: "bundle"
         run: make bundle bundle-build bundle-push

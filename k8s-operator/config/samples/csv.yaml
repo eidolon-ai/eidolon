@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: eidolon-catalog
+  namespace: operators
+spec:
+  sourceType: grpc
+  image: eidolonai/controller-catalog:v0.0.4
+  displayName: Eidolon Catalog
+  publisher: dave@augustdata.ai
+  updateStrategy:
+    registryPoll:
+      interval: 10m
