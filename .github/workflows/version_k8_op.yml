@@ -1,7 +1,7 @@
 name: Bump Version and Release K8 Operator
 on:
   workflow_run:
-    workflows: [ "Test K8 Operator" ]  # The name of the test workflow
+    workflows: [ "Test K8 Operator" ]
     types:
       - completed
     branches:
@@ -21,6 +21,11 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          check-name: 'Test Python'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate token
         id: generate_token
         uses: tibdex/github-app-token@v1
