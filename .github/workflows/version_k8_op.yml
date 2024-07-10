@@ -92,7 +92,7 @@ jobs:
         run: make build docker-buildx
         working-directory: k8s-operator
       - name: "bundle"
-        run: make bundle bundle-buildx
+        run: make bundle bundle-build bundle-push
         working-directory: k8s-operator
 #      - name: "catalog"
 #        run: make catalog-build catalog-push
