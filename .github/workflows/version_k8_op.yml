@@ -21,11 +21,6 @@ jobs:
           fetch-depth: 0
       - uses: lewagon/wait-on-check-action@v1.3.4
         with:
-          check-name: CodeQL
-          ref: ${{ github.ref }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: lewagon/wait-on-check-action@v1.3.4
-        with:
           check-name: examples-test
           ref: ${{ github.ref }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
