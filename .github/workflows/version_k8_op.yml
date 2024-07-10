@@ -65,12 +65,6 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - name: Generate token
-        id: generate_token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.PUSH_APP_ID }}
-          private_key: ${{ secrets.PUSH_APP_PRIVATE_KEY }}
       - name: Increment version
         id: increment_version
         working-directory: k8s-operator
@@ -79,17 +73,10 @@ jobs:
       - name: Get current version
         id: get_version
         run: echo "version=$(cat k8s-operator/VERSION)" >> $GITHUB_OUTPUT
-      - name: Commit changes
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add k8s-operator/VERSION
-          git commit -m "Bump version to $(cat k8s-operator/VERSION)"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ steps.generate_token.outputs.token }}
-          branch: ${{ github.ref }}
+          commit_message: "bumping versions"
+          tagging_message: ${{ env.TAGGING_MESSAGE }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Setup Go
