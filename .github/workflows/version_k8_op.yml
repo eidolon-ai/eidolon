@@ -71,29 +71,20 @@ jobs:
         with:
           app_id: ${{ secrets.PUSH_APP_ID }}
           private_key: ${{ secrets.PUSH_APP_PRIVATE_KEY }}
+      - name: Increment version
+        id: increment_version
+        working-directory: k8s-operator
+        run: |
+          make increment-patch
       - name: Get current version
         id: get_version
         run: echo "version=$(cat k8s-operator/VERSION)" >> $GITHUB_OUTPUT
-
-      - name: Increment version
-        uses: anothrNick/github-tag-action@1.35.0
-        id: increment_version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch
-          WITH_V: false
-          RELEASE_BRANCHES: main
-          CUSTOM_TAG: ${{ steps.get_version.outputs.version }}
-      - name: Update version in file
-        run: |
-          new_version=${{ steps.increment_version.outputs.new_tag }}
-          echo "$new_version" > k8s-operator/VERSION
       - name: Commit changes
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add k8s-operator/VERSION
-          git commit -m "Bump version to ${{ steps.increment_version.outputs.new_tag }}"
+          git commit -m "Bump version to $(cat k8s-operator/VERSION)"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
