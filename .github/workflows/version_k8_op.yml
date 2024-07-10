@@ -46,6 +46,11 @@ jobs:
         run: |
           make -s -C scripts run "version_k8s"
           echo K8_VERSION=$(node -p "require('./k8s-operator/env.json')['version']") >> $GITHUB_ENV
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "Add changes"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
