@@ -56,7 +56,6 @@ jobs:
 #          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   rev_and_release:
-    needs: wait_for_tests
     permissions:
       contents: write
     runs-on: ubuntu-latest
