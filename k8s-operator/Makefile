@@ -1,13 +1,9 @@
-define GetFromPkg
-$(shell node -p "require('./env.json').$(1)")
-endef
-
 # VERSION defines the project version for the bundle.
 # Update this value when you upgrade the version of your project.
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= $(call GetFromPkg,version)
+VERSION ?= $(shell cat VERSION)
 
 DEFAULT_CHANNEL ?= alpha
 CHANNELS ?= alpha
