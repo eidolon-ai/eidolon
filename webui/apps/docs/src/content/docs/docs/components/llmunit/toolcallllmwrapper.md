@@ -3,12 +3,12 @@ title: ToolCallLLMWrapper
 description: Description of ToolCallLLMWrapper component
 ---
 
-| Property                                       | Pattern | Type               | Deprecated | Definition                       | Title/Description              |
-| ---------------------------------------------- | ------- | ------------------ | ---------- | -------------------------------- | ------------------------------ |
-| - [implementation](#implementation )           | No      | const              | No         | -                                | ToolCallLLMWrapper             |
-| - [tool_message_prompt](#tool_message_prompt ) | No      | string             | No         | -                                | Tool Message Prompt            |
-| - [llm_unit](#llm_unit )                       | No      | Reference[LLMUnit] | No         | In [LLMUnit](/docs/components/llmunit/overview) | Overview of LLMUnit components |
-| - [model](#model )                             | No      | Combination        | No         | -                                | -                              |
+| Property                                       | Pattern | Type                | Deprecated | Definition                        | Title/Description               |
+| ---------------------------------------------- | ------- | ------------------- | ---------- | --------------------------------- | ------------------------------- |
+| - [implementation](#implementation )           | No      | const               | No         | -                                 | ToolCallLLMWrapper              |
+| - [tool_message_prompt](#tool_message_prompt ) | No      | string              | No         | -                                 | Tool Message Prompt             |
+| - [llm_unit](#llm_unit )                       | No      | Reference[LLMUnit]  | No         | In [LLMUnit](/docs/components/llmunit/overview)  | Overview of LLMUnit components  |
+| - [model](#model )                             | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -44,33 +44,13 @@ Specific value: `"ToolCallLLMWrapper"`
 
 ## <a name="model"></a>4. Property `model`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                   |
-| -------------------------------- |
-| [overview.json](#model_anyOf_i0) |
-| [item 1](#model_anyOf_i1)        |
-
-### <a name="model_anyOf_i0"></a>4.1. Property `overview.json`
-
 |                |                                |
 | -------------- | ------------------------------ |
 | **Type**       | `Reference[LLMModel]`          |
 | **Required**   | No                             |
+| **Default**    | `null`                         |
 | **Defined in** | [LLMModel](/docs/components/llmmodel/overview) |
 
 **Description:** Overview of LLMModel components
-
-### <a name="model_anyOf_i1"></a>4.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -16,9 +16,9 @@ The agent will dynamically load and embed files, so it is not performant for loa
 | - [result_summarizer](#result_summarizer )       | No      | Reference[ResultSummarizer]    | No         | In [ResultSummarizer](/docs/components/resultsummarizer/overview)    | Overview of ResultSummarizer components                                                                                                                                                                                                                                                                                                                                                             |
 | + [name](#name )                                 | No      | string                         | No         | -                                            | Name                                                                                                                                                                                                                                                                                                                                                                                                |
 | + [description](#description )                   | No      | string                         | No         | -                                            | Description                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [loader_root_location](#loader_root_location ) | No      | Combination                    | No         | -                                            | Loader Root Location                                                                                                                                                                                                                                                                                                                                                                                |
+| - [loader_root_location](#loader_root_location ) | No      | string                         | No         | -                                            | Loader Root Location                                                                                                                                                                                                                                                                                                                                                                                |
 | - [loader_pattern](#loader_pattern )             | No      | Combination                    | No         | -                                            | Loader Pattern                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [document_manager](#document_manager )         | No      | Combination                    | No         | -                                            | -                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [document_manager](#document_manager )         | No      | Reference[DocumentManager]     | No         | In [DocumentManager](/docs/components/documentmanager/overview)     | Overview of DocumentManager components                                                                                                                                                                                                                                                                                                                                                              |
 | - [apu](#apu )                                   | No      | Reference[APU]                 | No         | In [APU](/docs/components/apu/overview)                 | <br />The APU is the main interface for the Agent to interact with the LLM.<br />The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.<br /><br />To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).<br /> |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -114,33 +114,13 @@ Specific value: `"RetrieverAgent"`
 
 **Title:** Loader Root Location
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-**Description:** A URL specifying the root location of the loader.
-
-| Any of(Option)                           |
-| ---------------------------------------- |
-| [item 0](#loader_root_location_anyOf_i0) |
-| [item 1](#loader_root_location_anyOf_i1) |
-
-### <a name="loader_root_location_anyOf_i0"></a>9.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+| **Default**  | `null`   |
 
-### <a name="loader_root_location_anyOf_i1"></a>9.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+**Description:** A URL specifying the root location of the loader.
 
 ## <a name="loader_pattern"></a>10. Property `loader_pattern`
 
@@ -176,34 +156,14 @@ Specific value: `"RetrieverAgent"`
 
 ## <a name="document_manager"></a>11. Property `document_manager`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                              |
-| ------------------------------------------- |
-| [overview.json](#document_manager_anyOf_i0) |
-| [item 1](#document_manager_anyOf_i1)        |
-
-### <a name="document_manager_anyOf_i0"></a>11.1. Property `overview.json`
-
 |                |                                       |
 | -------------- | ------------------------------------- |
 | **Type**       | `Reference[DocumentManager]`          |
 | **Required**   | No                                    |
+| **Default**    | `null`                                |
 | **Defined in** | [DocumentManager](/docs/components/documentmanager/overview) |
 
 **Description:** Overview of DocumentManager components
-
-### <a name="document_manager_anyOf_i1"></a>11.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
 
 ## <a name="apu"></a>12. Property `apu`
 

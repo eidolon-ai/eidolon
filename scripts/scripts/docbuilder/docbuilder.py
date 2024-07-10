@@ -1,18 +1,15 @@
-import copy
+import json
 import json
 import os
 import shutil
 import textwrap
 from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
 from typing import Optional, Dict, Self
 
-import jsonref
 from jinja2 import Environment, StrictUndefined
-from json_schema_for_humans.generate import generate_from_schema, generate_schemas_doc
+from json_schema_for_humans.generate import generate_from_schema
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
-from json_schema_for_humans.schema.schema_importer import get_schemas_to_render
-from json_schema_for_humans.template_renderer import TemplateRenderer
 from pydantic import BaseModel, model_validator
 
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
@@ -290,7 +287,11 @@ def clean_ref_groups_for_md(schema, seen=None):
     seen = seen or set()
     if id(schema) in seen:
         return
-    if isinstance(schema, dict):
+    if isinstance(schema, dict):  # inline optional types for easier to read markdown
+        if "anyOf" in schema and len(schema['anyOf']) == 2 and [s for s in schema['anyOf'] if len(s) == 1 and s.get("type") == "null"] and schema.get('default') is None:
+            any_of = schema.pop('anyOf')
+            object_type = [s for s in any_of if not (len(s) == 1 and s.get("type") == "null")][0]
+            schema.update(object_type)
         if "reference_group" in schema:
             if "anyOf" in schema:
                 del schema['anyOf']

@@ -10,7 +10,7 @@ range of actions based on its configuration.
 | Property                                           | Pattern | Type             | Deprecated | Definition                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                   |
 | -------------------------------------------------- | ------- | ---------------- | ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [implementation](#implementation )               | No      | const            | No         | -                            | SimpleAgent                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [description](#description )                     | No      | Combination      | No         | -                            | Description                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [description](#description )                     | No      | string           | No         | -                            | Description                                                                                                                                                                                                                                                                                                                                                                                         |
 | - [system_prompt](#system_prompt )                 | No      | string           | No         | -                            | System Prompt                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [agent_refs](#agent_refs )                       | No      | array of string  | No         | -                            | Agent Refs                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [actions](#actions )                             | No      | array            | No         | -                            | Actions                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -34,31 +34,11 @@ Specific value: `"SimpleAgent"`
 
 **Title:** Description
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                  |
-| ------------------------------- |
-| [item 0](#description_anyOf_i0) |
-| [item 1](#description_anyOf_i1) |
-
-### <a name="description_anyOf_i0"></a>2.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-### <a name="description_anyOf_i1"></a>2.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`   |
 
 ## <a name="system_prompt"></a>3. Property `system_prompt`
 
@@ -133,9 +113,9 @@ Specific value: `"SimpleAgent"`
 | Property                                                       | Pattern | Type            | Deprecated | Definition | Title/Description    |
 | -------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------- |
 | - [name](#actions_items_name )                                 | No      | string          | No         | -          | Name                 |
-| - [title](#actions_items_title )                               | No      | Combination     | No         | -          | Title                |
-| - [sub_title](#actions_items_sub_title )                       | No      | Combination     | No         | -          | Sub Title            |
-| - [description](#actions_items_description )                   | No      | Combination     | No         | -          | Description          |
+| - [title](#actions_items_title )                               | No      | string          | No         | -          | Title                |
+| - [sub_title](#actions_items_sub_title )                       | No      | string          | No         | -          | Sub Title            |
+| - [description](#actions_items_description )                   | No      | string          | No         | -          | Description          |
 | - [user_prompt](#actions_items_user_prompt )                   | No      | string          | No         | -          | User Prompt          |
 | - [input_schema](#actions_items_input_schema )                 | No      | object          | No         | -          | Input Schema         |
 | - [output_schema](#actions_items_output_schema )               | No      | Combination     | No         | -          | Output Schema        |
@@ -159,91 +139,31 @@ Specific value: `"SimpleAgent"`
 
 **Title:** Title
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                          |
-| --------------------------------------- |
-| [item 0](#actions_items_title_anyOf_i0) |
-| [item 1](#actions_items_title_anyOf_i1) |
-
-##### <a name="actions_items_title_anyOf_i0"></a>5.1.2.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-##### <a name="actions_items_title_anyOf_i1"></a>5.1.2.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`   |
 
 #### <a name="actions_items_sub_title"></a>5.1.3. Property `sub_title`
 
 **Title:** Sub Title
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                              |
-| ------------------------------------------- |
-| [item 0](#actions_items_sub_title_anyOf_i0) |
-| [item 1](#actions_items_sub_title_anyOf_i1) |
-
-##### <a name="actions_items_sub_title_anyOf_i0"></a>5.1.3.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-##### <a name="actions_items_sub_title_anyOf_i1"></a>5.1.3.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`   |
 
 #### <a name="actions_items_description"></a>5.1.4. Property `description`
 
 **Title:** Description
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                                |
-| --------------------------------------------- |
-| [item 0](#actions_items_description_anyOf_i0) |
-| [item 1](#actions_items_description_anyOf_i1) |
-
-##### <a name="actions_items_description_anyOf_i0"></a>5.1.4.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-##### <a name="actions_items_description_anyOf_i1"></a>5.1.4.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`   |
 
 #### <a name="actions_items_user_prompt"></a>5.1.5. Property `user_prompt`
 
@@ -439,7 +359,7 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 
 | Property                                | Pattern | Type           | Deprecated | Definition                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------- | ------- | -------------- | ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [title](#apus_items_title )           | No      | Combination    | No         | -                            | Title                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [title](#apus_items_title )           | No      | string         | No         | -                            | Title                                                                                                                                                                                                                                                                                                                                                                                               |
 | - [apu](#apus_items_apu )               | No      | Reference[APU] | No         | In [APU](/docs/components/apu/overview) | <br />The APU is the main interface for the Agent to interact with the LLM.<br />The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.<br /><br />To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).<br /> |
 | - [default](#apus_items_default )       | No      | boolean        | No         | -                            | Default                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [](#apus_items_additionalProperties ) | No      | object         | No         | -                            | -                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -448,31 +368,11 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 
 **Title:** Title
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                       |
-| ------------------------------------ |
-| [item 0](#apus_items_title_anyOf_i0) |
-| [item 1](#apus_items_title_anyOf_i1) |
-
-##### <a name="apus_items_title_anyOf_i0"></a>7.1.1.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-##### <a name="apus_items_title_anyOf_i1"></a>7.1.1.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`   |
 
 #### <a name="apus_items_apu"></a>7.1.2. Property `apu`
 

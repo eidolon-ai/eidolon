@@ -89,13 +89,13 @@ Specific value: `"ApiLogicUnit"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | #/$defs/Operation                                                         |
 
-| Property                                                        | Pattern | Type        | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
-| + [name](#operations_to_expose_items_name )                     | No      | string      | No         | -          | Name              |
-| - [description](#operations_to_expose_items_description )       | No      | Combination | No         | -          | Description       |
-| + [path](#operations_to_expose_items_path )                     | No      | string      | No         | -          | Path              |
-| + [method](#operations_to_expose_items_method )                 | No      | string      | No         | -          | Method            |
-| - [result_filters](#operations_to_expose_items_result_filters ) | No      | Combination | No         | -          | Result Filters    |
+| Property                                                        | Pattern | Type            | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| + [name](#operations_to_expose_items_name )                     | No      | string          | No         | -          | Name              |
+| - [description](#operations_to_expose_items_description )       | No      | string          | No         | -          | Description       |
+| + [path](#operations_to_expose_items_path )                     | No      | string          | No         | -          | Path              |
+| + [method](#operations_to_expose_items_method )                 | No      | string          | No         | -          | Method            |
+| - [result_filters](#operations_to_expose_items_result_filters ) | No      | array of string | No         | -          | Result Filters    |
 
 #### <a name="operations_to_expose_items_name"></a>5.1.1. Property `name`
 
@@ -112,33 +112,13 @@ Specific value: `"ApiLogicUnit"`
 
 **Title:** Description
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-**Description:** Description of the operation
-
-| Any of(Option)                                             |
-| ---------------------------------------------------------- |
-| [item 0](#operations_to_expose_items_description_anyOf_i0) |
-| [item 1](#operations_to_expose_items_description_anyOf_i1) |
-
-##### <a name="operations_to_expose_items_description_anyOf_i0"></a>5.1.2.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+| **Default**  | `null`   |
 
-##### <a name="operations_to_expose_items_description_anyOf_i1"></a>5.1.2.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+**Description:** Description of the operation
 
 #### <a name="operations_to_expose_items_path"></a>5.1.3. Property `path`
 
@@ -166,26 +146,13 @@ Specific value: `"ApiLogicUnit"`
 
 **Title:** Result Filters
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-**Description:** Filters to apply to the result of the operation per json ref spec
-
-| Any of(Option)                                                |
-| ------------------------------------------------------------- |
-| [item 0](#operations_to_expose_items_result_filters_anyOf_i0) |
-| [item 1](#operations_to_expose_items_result_filters_anyOf_i1) |
-
-##### <a name="operations_to_expose_items_result_filters_anyOf_i0"></a>5.1.5.1. Property `item 0`
-
 |              |                   |
 | ------------ | ----------------- |
 | **Type**     | `array of string` |
 | **Required** | No                |
+| **Default**  | `null`            |
+
+**Description:** Filters to apply to the result of the operation per json ref spec
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -195,23 +162,16 @@ Specific value: `"ApiLogicUnit"`
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                           | Description |
-| ------------------------------------------------------------------------- | ----------- |
-| [item 0 items](#operations_to_expose_items_result_filters_anyOf_i0_items) | -           |
+| Each item of this array must be                                          | Description |
+| ------------------------------------------------------------------------ | ----------- |
+| [result_filters items](#operations_to_expose_items_result_filters_items) | -           |
 
-###### <a name="autogenerated_heading_3"></a>5.1.5.1.1. item 0 items
+##### <a name="autogenerated_heading_3"></a>5.1.5.1. result_filters items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-##### <a name="operations_to_expose_items_result_filters_anyOf_i1"></a>5.1.5.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
 
 ## <a name="extra_header_params"></a>6. Property `extra_header_params`
 

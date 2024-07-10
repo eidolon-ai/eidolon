@@ -3,21 +3,21 @@ title: ConversationalAPU
 description: Description of ConversationalAPU component
 ---
 
-| Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                   |
-| ---------------------------------------------------- | ------- | ---------------------------- | ---------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )                 | No      | const                        | No         | -                                          | ConversationalAPU                                                                                                                                                                   |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer                      | No         | -                                          | Max Num Function Calls                                                                                                                                                              |
-| - [io_unit](#io_unit )                               | No      | Reference[IOUnit]            | No         | In [IOUnit](/docs/components/iounit/overview)            | <br />This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM<br /><br />This can be overridden to provide custom IO handling.<br /> |
-| - [memory_unit](#memory_unit )                       | No      | Reference[MemoryUnit]        | No         | In [MemoryUnit](/docs/components/memoryunit/overview)        | Overview of MemoryUnit components                                                                                                                                                   |
-| - [llm_unit](#llm_unit )                             | No      | Reference[LLMUnit]           | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of LLMUnit components                                                                                                                                                      |
-| - [logic_units](#logic_units )                       | No      | array                        | No         | -                                          | Logic Units                                                                                                                                                                         |
-| - [audio_unit](#audio_unit )                         | No      | Combination                  | No         | -                                          | -                                                                                                                                                                                   |
-| - [image_unit](#image_unit )                         | No      | Combination                  | No         | -                                          | -                                                                                                                                                                                   |
-| - [record_conversation](#record_conversation )       | No      | boolean                      | No         | -                                          | Record Conversation                                                                                                                                                                 |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean                      | No         | -                                          | Allow Tool Errors                                                                                                                                                                   |
-| - [document_processor](#document_processor )         | No      | Reference[DocumentProcessor] | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components                                                                                                                                            |
-| - [retriever](#retriever )                           | No      | Reference[Retriever]         | No         | In [Retriever](/docs/components/retriever/overview)         | Overview of Retriever components                                                                                                                                                    |
-| - [retriever_apu](#retriever_apu )                   | No      | Combination                  | No         | -                                          | -                                                                                                                                                                                   |
+| Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------- | ------- | ---------------------------- | ---------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )                 | No      | const                        | No         | -                                          | ConversationalAPU                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer                      | No         | -                                          | Max Num Function Calls                                                                                                                                                                                                                                                                                                                                                                              |
+| - [io_unit](#io_unit )                               | No      | Reference[IOUnit]            | No         | In [IOUnit](/docs/components/iounit/overview)            | <br />This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM<br /><br />This can be overridden to provide custom IO handling.<br />                                                                                                                                                                                                                 |
+| - [memory_unit](#memory_unit )                       | No      | Reference[MemoryUnit]        | No         | In [MemoryUnit](/docs/components/memoryunit/overview)        | Overview of MemoryUnit components                                                                                                                                                                                                                                                                                                                                                                   |
+| - [llm_unit](#llm_unit )                             | No      | Reference[LLMUnit]           | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of LLMUnit components                                                                                                                                                                                                                                                                                                                                                                      |
+| - [logic_units](#logic_units )                       | No      | array                        | No         | -                                          | Logic Units                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [audio_unit](#audio_unit )                         | No      | Reference[AudioUnit]         | No         | In [AudioUnit](/docs/components/audiounit/overview)         | Overview of AudioUnit components                                                                                                                                                                                                                                                                                                                                                                    |
+| - [image_unit](#image_unit )                         | No      | object                       | No         | -                                          | ImageUnit Reference                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [record_conversation](#record_conversation )       | No      | boolean                      | No         | -                                          | Record Conversation                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean                      | No         | -                                          | Allow Tool Errors                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [document_processor](#document_processor )         | No      | Reference[DocumentProcessor] | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components                                                                                                                                                                                                                                                                                                                                                            |
+| - [retriever](#retriever )                           | No      | Reference[Retriever]         | No         | In [Retriever](/docs/components/retriever/overview)         | Overview of Retriever components                                                                                                                                                                                                                                                                                                                                                                    |
+| - [retriever_apu](#retriever_apu )                   | No      | Reference[APU]               | No         | In [APU](/docs/components/apu/overview)               | <br />The APU is the main interface for the Agent to interact with the LLM.<br />The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.<br /><br />To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).<br /> |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -112,50 +112,16 @@ This can be overridden to provide custom IO handling.
 
 ## <a name="audio_unit"></a>7. Property `audio_unit`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                        |
-| ------------------------------------- |
-| [overview.json](#audio_unit_anyOf_i0) |
-| [item 1](#audio_unit_anyOf_i1)        |
-
-### <a name="audio_unit_anyOf_i0"></a>7.1. Property `overview.json`
-
 |                |                                 |
 | -------------- | ------------------------------- |
 | **Type**       | `Reference[AudioUnit]`          |
 | **Required**   | No                              |
+| **Default**    | `null`                          |
 | **Defined in** | [AudioUnit](/docs/components/audiounit/overview) |
 
 **Description:** Overview of AudioUnit components
 
-### <a name="audio_unit_anyOf_i1"></a>7.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
-
 ## <a name="image_unit"></a>8. Property `image_unit`
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                              |
-| ------------------------------------------- |
-| [ImageUnit Reference](#image_unit_anyOf_i0) |
-| [item 1](#image_unit_anyOf_i1)              |
-
-### <a name="image_unit_anyOf_i0"></a>8.1. Property `ImageUnit Reference`
 
 **Title:** ImageUnit Reference
 
@@ -164,13 +130,14 @@ This can be overridden to provide custom IO handling.
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
 
-| Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#image_unit_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#image_unit_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
+| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#image_unit_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#image_unit_additionalProperties )         | No      | object | No         | -          | -                 |
 
-#### <a name="image_unit_anyOf_i0_implementation"></a>8.1.1. Property `implementation`
+### <a name="image_unit_implementation"></a>8.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -179,13 +146,6 @@ This can be overridden to provide custom IO handling.
 | **Type**     | `string`                                    |
 | **Required** | No                                          |
 | **Default**  | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"` |
-
-### <a name="image_unit_anyOf_i1"></a>8.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
 
 ## <a name="record_conversation"></a>9. Property `record_conversation`
 
@@ -231,24 +191,11 @@ This can be overridden to provide custom IO handling.
 
 ## <a name="retriever_apu"></a>13. Property `retriever_apu`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                           |
-| ---------------------------------------- |
-| [overview.json](#retriever_apu_anyOf_i0) |
-| [item 1](#retriever_apu_anyOf_i1)        |
-
-### <a name="retriever_apu_anyOf_i0"></a>13.1. Property `overview.json`
-
 |                |                           |
 | -------------- | ------------------------- |
 | **Type**       | `Reference[APU]`          |
 | **Required**   | No                        |
+| **Default**    | `null`                    |
 | **Defined in** | [APU](/docs/components/apu/overview) |
 
 **Description:** 
@@ -256,12 +203,5 @@ The APU is the main interface for the Agent to interact with the LLM.
 The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.
 
 To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).
-
-### <a name="retriever_apu_anyOf_i1"></a>13.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
 
 ----------------------------------------------------------------------------------------------------------------------------
