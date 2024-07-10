@@ -25,6 +25,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           check-name: 'Test Python'
+          ref: ${{ github.ref }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate token
         id: generate_token
