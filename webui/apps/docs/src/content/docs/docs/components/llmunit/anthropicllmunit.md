@@ -3,13 +3,13 @@ title: AnthropicLLMUnit
 description: Description of AnthropicLLMUnit component
 ---
 
-| Property                             | Pattern | Type                                                      | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | --------------------------------------------------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const                                                     | No         | -          | AnthropicLLMUnit  |
-| - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | LLMModel          |
-| - [temperature](#temperature )       | No      | number                                                    | No         | -          | Temperature       |
-| - [max_tokens](#max_tokens )         | No      | Combination                                               | No         | -          | Max Tokens        |
-| - [client_args](#client_args )       | No      | object                                                    | No         | -          | Client Args       |
+| Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |
+| ------------------------------------ | ------- | ------------------- | ---------- | --------------------------------- | ------------------------------- |
+| - [implementation](#implementation ) | No      | const               | No         | -                                 | AnthropicLLMUnit                |
+| - [model](#model )                   | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
+| - [temperature](#temperature )       | No      | number              | No         | -                                 | Temperature                     |
+| - [max_tokens](#max_tokens )         | No      | Combination         | No         | -                                 | Max Tokens                      |
+| - [client_args](#client_args )       | No      | object              | No         | -                                 | Client Args                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -24,13 +24,12 @@ Specific value: `"AnthropicLLMUnit"`
 
 ## <a name="model"></a>2. Property `model`
 
-**Title:** LLMModel
-
-|              |                                                             |
-| ------------ | ----------------------------------------------------------- |
-| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
-| **Required** | No                                                          |
-| **Default**  | `{"implementation": "claude-3-opus-20240229"}`              |
+|                |                                                |
+| -------------- | ---------------------------------------------- |
+| **Type**       | `Reference[LLMModel]`                          |
+| **Required**   | No                                             |
+| **Default**    | `{"implementation": "claude-3-opus-20240229"}` |
+| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)                 |
 
 **Description:** Overview of LLMModel components
 

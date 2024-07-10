@@ -7,17 +7,17 @@ description: Description of SimpleAgent component
 agent is designed to be a flexible, modular component that can interact with various processing units and perform a
 range of actions based on its configuration.
 
-| Property                                           | Pattern | Type                                            | Deprecated | Definition | Title/Description     |
-| -------------------------------------------------- | ------- | ----------------------------------------------- | ---------- | ---------- | --------------------- |
-| - [implementation](#implementation )               | No      | const                                           | No         | -          | SimpleAgent           |
-| - [description](#description )                     | No      | Combination                                     | No         | -          | Description           |
-| - [system_prompt](#system_prompt )                 | No      | string                                          | No         | -          | System Prompt         |
-| - [agent_refs](#agent_refs )                       | No      | array of string                                 | No         | -          | Agent Refs            |
-| - [actions](#actions )                             | No      | array of object                                 | No         | -          | Actions               |
-| - [apu](#apu )                                     | No      | [Reference[APU]](/docs/components/apu/overview) | No         | -          | APU                   |
-| - [apus](#apus )                                   | No      | array of object                                 | No         | -          | Apus                  |
-| - [title_generation_mode](#title_generation_mode ) | No      | enum (of string)                                | No         | -          | Title Generation Mode |
-| - [](#additionalProperties )                       | No      | object                                          | No         | -          | -                     |
+| Property                                           | Pattern | Type             | Deprecated | Definition                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------------- | ------- | ---------------- | ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )               | No      | const            | No         | -                            | SimpleAgent                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [description](#description )                     | No      | Combination      | No         | -                            | Description                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [system_prompt](#system_prompt )                 | No      | string           | No         | -                            | System Prompt                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [agent_refs](#agent_refs )                       | No      | array of string  | No         | -                            | Agent Refs                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [actions](#actions )                             | No      | array            | No         | -                            | Actions                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [apu](#apu )                                     | No      | Reference[APU]   | No         | In [APU](/docs/components/apu/overview) | <br />The APU is the main interface for the Agent to interact with the LLM.<br />The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.<br /><br />To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).<br /> |
+| - [apus](#apus )                                   | No      | array            | No         | -                            | Apus                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [title_generation_mode](#title_generation_mode ) | No      | enum (of string) | No         | -                            | Title Generation Mode                                                                                                                                                                                                                                                                                                                                                                               |
+| - [](#additionalProperties )                       | No      | object           | No         | -                            | -                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -105,7 +105,7 @@ Specific value: `"SimpleAgent"`
 
 |              |                                                                                                                                                                                                                                                                                                   |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**     | `array of object`                                                                                                                                                                                                                                                                                 |
+| **Type**     | `array`                                                                                                                                                                                                                                                                                           |
 | **Required** | No                                                                                                                                                                                                                                                                                                |
 | **Default**  | `[{"name": "converse", "title": null, "sub_title": null, "description": null, "user_prompt": "{{ body }}", "input_schema": {}, "output_schema": "str", "allow_file_upload": false, "supported_mime_types": [], "allowed_states": ["initialized", "idle", "http_error"], "output_state": "idle"}]` |
 
@@ -123,13 +123,12 @@ Specific value: `"SimpleAgent"`
 
 ### <a name="autogenerated_heading_3"></a>5.1. ActionDefinition
 
-**Title:** ActionDefinition
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/$defs/ActionDefinition                                                  |
 
 | Property                                                       | Pattern | Type            | Deprecated | Definition | Title/Description    |
 | -------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------- |
@@ -394,13 +393,12 @@ Specific value: `"str"`
 
 ## <a name="apu"></a>6. Property `apu`
 
-**Title:** APU
-
-|              |                                                   |
-| ------------ | ------------------------------------------------- |
-| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
-| **Required** | No                                                |
-| **Default**  | `{"implementation": "APU"}`                       |
+|                |                             |
+| -------------- | --------------------------- |
+| **Type**       | `Reference[APU]`            |
+| **Required**   | No                          |
+| **Default**    | `{"implementation": "APU"}` |
+| **Defined in** | [APU](/docs/components/apu/overview)   |
 
 **Description:** 
 The APU is the main interface for the Agent to interact with the LLM.
@@ -412,11 +410,11 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 
 **Title:** Apus
 
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-| **Default**  | `[]`              |
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+| **Default**  | `[]`    |
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -432,20 +430,19 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 
 ### <a name="autogenerated_heading_6"></a>7.1. NamedAPU
 
-**Title:** NamedAPU
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/$defs/NamedAPU                                                          |
 
-| Property                                | Pattern | Type                                            | Deprecated | Definition | Title/Description |
-| --------------------------------------- | ------- | ----------------------------------------------- | ---------- | ---------- | ----------------- |
-| - [title](#apus_items_title )           | No      | Combination                                     | No         | -          | Title             |
-| - [apu](#apus_items_apu )               | No      | [Reference[APU]](/docs/components/apu/overview) | No         | -          | APU               |
-| - [default](#apus_items_default )       | No      | boolean                                         | No         | -          | Default           |
-| - [](#apus_items_additionalProperties ) | No      | object                                          | No         | -          | -                 |
+| Property                                | Pattern | Type           | Deprecated | Definition                   | Title/Description                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------- | ------- | -------------- | ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [title](#apus_items_title )           | No      | Combination    | No         | -                            | Title                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [apu](#apus_items_apu )               | No      | Reference[APU] | No         | In [APU](/docs/components/apu/overview) | <br />The APU is the main interface for the Agent to interact with the LLM.<br />The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.<br /><br />To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).<br /> |
+| - [default](#apus_items_default )       | No      | boolean        | No         | -                            | Default                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [](#apus_items_additionalProperties ) | No      | object         | No         | -                            | -                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 #### <a name="apus_items_title"></a>7.1.1. Property `title`
 
@@ -479,13 +476,12 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 
 #### <a name="apus_items_apu"></a>7.1.2. Property `apu`
 
-**Title:** APU
-
-|              |                                                   |
-| ------------ | ------------------------------------------------- |
-| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
-| **Required** | No                                                |
-| **Default**  | `{"implementation": "APU"}`                       |
+|                |                             |
+| -------------- | --------------------------- |
+| **Type**       | `Reference[APU]`            |
+| **Required**   | No                          |
+| **Default**    | `{"implementation": "APU"}` |
+| **Defined in** | [APU](/docs/components/apu/overview)   |
 
 **Description:** 
 The APU is the main interface for the Agent to interact with the LLM.

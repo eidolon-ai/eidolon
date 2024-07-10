@@ -3,11 +3,11 @@ title: SimilarityMemory
 description: Description of SimilarityMemory component
 ---
 
-| Property                             | Pattern | Type                                                            | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | --------------------------------------------------------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const                                                           | No         | -          | SimilarityMemory  |
-| - [embedder](#embedder )             | No      | [Reference[Embedding]](/docs/components/embedding/overview)     | No         | -          | Embedding         |
-| - [vector_store](#vector_store )     | No      | [Reference[VectorStore]](/docs/components/vectorstore/overview) | No         | -          | VectorStore       |
+| Property                             | Pattern | Type                   | Deprecated | Definition                           | Title/Description                  |
+| ------------------------------------ | ------- | ---------------------- | ---------- | ------------------------------------ | ---------------------------------- |
+| - [implementation](#implementation ) | No      | const                  | No         | -                                    | SimilarityMemory                   |
+| - [embedder](#embedder )             | No      | Reference[Embedding]   | No         | In [Embedding](/docs/components/embedding/overview)   | Overview of Embedding components   |
+| - [vector_store](#vector_store )     | No      | Reference[VectorStore] | No         | In [VectorStore](/docs/components/vectorstore/overview) | Overview of VectorStore components |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -22,25 +22,23 @@ Specific value: `"SimilarityMemory"`
 
 ## <a name="embedder"></a>2. Property `embedder`
 
-**Title:** Embedding
-
-|              |                                                               |
-| ------------ | ------------------------------------------------------------- |
-| **Type**     | [`Reference[Embedding]`](/docs/components/embedding/overview) |
-| **Required** | No                                                            |
-| **Default**  | `{"implementation": "Embedding"}`                             |
+|                |                                   |
+| -------------- | --------------------------------- |
+| **Type**       | `Reference[Embedding]`            |
+| **Required**   | No                                |
+| **Default**    | `{"implementation": "Embedding"}` |
+| **Defined in** | [Embedding](/docs/components/embedding/overview)   |
 
 **Description:** Overview of Embedding components
 
 ## <a name="vector_store"></a>3. Property `vector_store`
 
-**Title:** VectorStore
-
-|              |                                                                   |
-| ------------ | ----------------------------------------------------------------- |
-| **Type**     | [`Reference[VectorStore]`](/docs/components/vectorstore/overview) |
-| **Required** | No                                                                |
-| **Default**  | `{"implementation": "VectorStore"}`                               |
+|                |                                     |
+| -------------- | ----------------------------------- |
+| **Type**       | `Reference[VectorStore]`            |
+| **Required**   | No                                  |
+| **Default**    | `{"implementation": "VectorStore"}` |
+| **Defined in** | [VectorStore](/docs/components/vectorstore/overview)   |
 
 **Description:** Overview of VectorStore components
 

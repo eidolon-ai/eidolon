@@ -37,13 +37,12 @@ Specific value: `"AzureFileMemory"`
 
 ### <a name="azure_ad_token_provider_anyOf_i0"></a>2.1. Property `Reference`
 
-**Title:** Reference
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/$defs/Reference                                                         |
 
 **Description:** Used to create references to other classes. t is designed to be used with two type variables, `B` and `D` which are
 the type bound and default type respectively. Neither are required, and if only one type is provided it is assumed
