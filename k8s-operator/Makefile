@@ -40,7 +40,7 @@ IMAGE_TAG_BASE ?= eidolonai/controller
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
-BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
+BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:$(VERSION)
 
 # BUNDLE_GEN_FLAGS are the flags passed to the operator-sdk generate bundle command
 BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
@@ -277,6 +277,16 @@ bundle-push: ## Push the bundle image.
 bundle-push: ## Push the bundle image.
 	$(MAKE) docker-push IMG=$(BUNDLE_IMG)
 
+.PHONY: bundle-buildx
+bundle-buildx: ## Build and push docker image for the manager for cross-platform support
+	# copy existing Dockerfile and insert --platform=${BUILDPLATFORM} into Dockerfile.cross, and preserve the original Dockerfile
+	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' bundle.Dockerfile > bundle.Dockerfile.cross
+	- $(CONTAINER_TOOL) buildx create --name project-v3-builder
+	$(CONTAINER_TOOL) buildx use project-v3-builder
+	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f bundle.Dockerfile.cross .
+	- $(CONTAINER_TOOL) buildx rm project-v3-builder
+	rm bundle.Dockerfile.cross
+
 .PHONY: opm
 OPM = $(LOCALBIN)/opm
 opm: ## Download opm locally if necessary.
@@ -299,7 +309,7 @@ endif
 BUNDLE_IMGS ?= $(BUNDLE_IMG)
 
 # The image tag given to the resulting catalog image (e.g. make catalog-build CATALOG_IMG=example.com/operator-catalog:v0.2.0).
-CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:v$(VERSION)
+CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:latest
 
 # Set CATALOG_BASE_IMG to an existing catalog image tag to add $BUNDLE_IMGS to that image.
 ifneq ($(origin CATALOG_BASE_IMG), undefined)

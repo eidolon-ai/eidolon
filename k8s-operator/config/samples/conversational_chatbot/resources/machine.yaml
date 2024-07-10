@@ -3,7 +3,8 @@ kind: Machine
 metadata:
   name: machine-sample
 spec:
-  image: docker.io/eidolonai/sdk:0.1.88
+  image: docker.io/eidolonai/sdk:latest
+  imagePullPolicy: Always
   envFrom:
     - secretRef:
         name: eidolon
