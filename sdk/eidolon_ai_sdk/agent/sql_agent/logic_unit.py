@@ -9,14 +9,12 @@ class SqlLogicUnit(LogicUnit):
         self.client = client
 
     @llm_function()
-    async def peek(self, query: str, row_limit: int = 10) -> dict:
+    async def research(self, query: str) -> dict:
         """
-        Execute a query and see return the first few rows of a query.
+        Execute a query against the sql db.
         """
         rows = []
         async for row in self.client.execute(query):
             rows.append(row)
-            if len(rows) >= row_limit:
-                break
 
-        return dict(rows=rows)
+        return dict(first_10_rows=rows[:10], num_rows=len(rows))

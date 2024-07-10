@@ -64,6 +64,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
 
         if self.spec.allow_thought:
             if hasattr(self._apu, "logic_units"):
+                self.spec.system_prompt += "\n\nUse your \"SqlLogicUnit_research\" tool as needed to determine intermediate results needed to answer user questions."
                 self._apu.logic_units.append(SqlLogicUnit(client=self._client, apu=cast(self._apu, ProcessingUnitLocator)))
             else:
                 raise ValueError("APU does not have logic units")
@@ -91,7 +92,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
         async for e in self.cycle(t, message, self.spec.num_retries, body=body):
             yield e
 
-    async def cycle(self, thread, message, num_reties, body: SqlRequestBody, data_stream: Optional[AsyncIterable] = None):
+    async def cycle(self, thread, message, num_retries, body: SqlRequestBody, data_stream: Optional[AsyncIterable] = None):
         last_event = None
         output_format = self.get_response_object(body, include_validate=data_stream is not None)
         thinking_stream = thread.stream_request(prompts=[message], output_format=output_format)
@@ -105,17 +106,14 @@ class SqlAgent(Specable[SqlAgentSpec]):
         try:
             response = _AgentResponse(**last_event.content)
         except Exception as err:
-            if num_reties > 0:
+            if num_retries > 0:
                 logger.warning(f"Invalid response from llm: {last_event.content}")
-                message = UserTextAPUMessage(prompt=f"Error parsing response, your response next response MUST match the following json schema: {json.dumps(output_format)}")
-                async for e in self.cycle(thread, message, num_reties - 1, body=body):
+                message = SystemAPUMessage(prompt=f"Error parsing response, your response next response MUST match the following json schema: {json.dumps(output_format)}")
+                async for e in self.cycle(thread, message, num_retries - 1, body=body):
                     yield e
                 return
             else:
                 raise err
-        if data_stream and response.response_type != "confirm_query":
-            num_reties -= 1
-
         if response.response_type == "confirm_query":
             if not data_stream:
                 raise ValueError("No data stream provided to confirm")
@@ -130,20 +128,25 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 async for row in rows_generator:
                     first_row = row
                     break
-                if first_row:
-                    prompt = UserTextAPUMessage(prompt=f"I've executed the query and received following row is the first result:\n{first_row}\n\nIs this correct? Or is there a better query I should execute to more directly answer my question?")
+                if num_retries > 0:
+                    if first_row:
+                        prompt = UserTextAPUMessage(prompt=f"I've executed the query and received following row is the first result:\n{first_row}\n\nIs this correct and will this data answer my question?")
+                    else:
+                        prompt = UserTextAPUMessage(prompt="I've executed the query and received no results. Is this query correctly written? Should I execute a different query to answer my question? You may perform additional research if needed.")
+                    async for e in self.cycle(thread, prompt, num_retries - 1, body=body, data_stream=stream(first_row, rows_generator)):
+                        yield e
                 else:
-                    prompt = UserTextAPUMessage(prompt="I've executed the query and received no results. Is this correct? Or is there a better query I should execute to more directly answer my question?")
-                async for e in self.cycle(thread, prompt, num_reties, body=body,data_stream=stream(first_row, rows_generator)):
-                    yield e
+                    async for row in stream(first_row, rows_generator):
+                        yield ObjectOutputEvent(content=row)
+                    yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
             except Exception as e:
-                if num_reties > 0:
+                if num_retries > 0:
                     yield StartStreamContextEvent(context_id='error', title='Error')
                     yield ObjectOutputEvent(content=dict(query=response.query, error=str(e)), stream_context='error')
                     yield EndStreamContextEvent(context_id='error')
                     message = UserTextAPUMessage(prompt=self._error_prompt.render(error=str(e), query=response.query))
                     yield UserInputEvent(input=message.prompt)
-                    async for e in self.cycle(thread, message, num_reties - 1, body=body):
+                    async for e in self.cycle(thread, message, num_retries - 1, body=body):
                         yield e
                 else:
                     if body.allow_conversation:
@@ -168,7 +171,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
     def get_response_object(self, body: SqlRequestBody, include_validate=False):
         responses = [dict(
             type="object",
-            description="Suggest a query for the user to execute.",
+            description="Suggest a query for the user to execute.The first row will be confirmed with the assistant before the query is fully executed.",
             properties=dict(
                 response_type=dict(const="execute"),
                 query=dict(type="string"),
@@ -178,7 +181,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
         if body.allow_conversation:
             responses.append(dict(
                 type="object",
-                description="A query that will produce data that directly answers the provided question.",
+                description="This response indication the assistant would like to answer the user question with natural language rather than a query suggestion.",
                 properties=dict(
                     response_type=dict(const="respond"),
                 ),
@@ -193,7 +196,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
         if include_validate:
             responses.append(dict(
                 type="object",
-                description="The data provided is the proper response to the user's query.",
+                description="This response indicates that the query and the data it returns answer the user's question.",
                 properties=dict(
                     response_type=dict(const="confirm_query"),
                 ),

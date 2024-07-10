@@ -1,3 +1,6 @@
+import logging
+from copy import copy
+from json import JSONDecodeError
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional
 
 from fastapi import HTTPException
@@ -17,7 +20,7 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import DocSummary
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.apu.agent_io import IOUnit, APUMessageTypes
+from eidolon_ai_sdk.apu.agent_io import IOUnit, APUMessageTypes, UserTextAPUMessage, SystemAPUMessage
 from eidolon_ai_sdk.apu.apu import APU, APUSpec, Thread, APUException, APUCapabilities
 from eidolon_ai_sdk.apu.audio_unit import AudioUnit
 from eidolon_ai_sdk.apu.call_context import CallContext
@@ -28,7 +31,7 @@ from eidolon_ai_sdk.apu.llm_message import (
     UserMessageAudio,
     UserMessageImage,
     UserMessageText,
-    UserMessage,
+    UserMessage, AssistantMessage,
 )
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, LLMToolWrapper, llm_function
@@ -52,6 +55,7 @@ class ConversationalAPUSpec(APUSpec):
     document_processor: AnnotatedReference[DocumentProcessor]
     retriever: AnnotatedReference[Retriever]
     retriever_apu: Optional[Reference[APU]] = None
+    json_retries: int = 3
 
 
 class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLocator):
@@ -121,24 +125,43 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         conversation_messages = await self.io_unit.process_request(call_context, boot_messages)
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
-    async def schedule_request(
+    def schedule_request(
             self,
             call_context: CallContext,
             prompts: List[APUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
-    ) -> AsyncIterator[StreamEvent]:
+            output_format: Union[Literal["str"], Dict[str, Any]] = "str"
+    ):
+        return self._schedule_request(call_context, prompts, output_format)
+
+    async def _schedule_request(self, call_context: CallContext, prompts: List[APUMessageTypes],
+                                output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+                                additional_messages: List[LLMMessage] = None, json_retries: int = None) -> \
+    AsyncIterator[StreamEvent]:
+        additional_messages = additional_messages or []
+        json_retries = self.spec.json_retries if json_retries is None else json_retries
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
+            conversation.extend(additional_messages)
             conversation_messages = await self.io_unit.process_request(call_context, prompts)
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, conversation_messages)
             conversation.extend(conversation_messages)
-            async for event in self._llm_execution_cycle(call_context, output_format, conversation):
+            async for event in self._llm_execution_cycle(call_context, output_format, conversation, self.spec.json_retries):
                 yield event
         except HTTPException as e:
             raise e
         except APUException as e:
             raise e
+        except JSONDecodeError as e:
+            if json_retries > 0:
+                logger.warning(f"Error decoding JSON: {e}. Retrying", exc_info=logger.isEnabledFor(logging.DEBUG))
+                prompts = copy(prompts)
+                prompts.append(SystemAPUMessage(prompt="Error decoding JSON: " + str(e)))
+                async for event in self._schedule_request(call_context, prompts, output_format, [
+                    self.llm_unit.create_assistant_message(call_context, e.doc, [])], json_retries - 1):
+                    yield event
+            else:
+                raise APUException(f"Error decoding JSON: {e}")
         except Exception as e:
             logger.exception(e)
             raise APUException(f"{e.__class__.__name__} while processing request") from e
@@ -148,6 +171,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             call_context: CallContext,
             output_format: Union[Literal["str"], Dict[str, Any]],
             conversation: List[LLMMessage],
+            retries: int,
     ) -> AsyncIterator[StreamEvent]:
         # first convert the conversation to fill in file data
         num_files = 0
@@ -204,7 +228,8 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
                     streams = [
-                        self._call_tool(call_context, tce, tool_defs, converted_conversation) for tce in tool_call_events
+                        self._call_tool(call_context, tce, tool_defs, converted_conversation) for tce in
+                        tool_call_events
                     ]
                     async for e in merge_streams(streams):
                         yield e
