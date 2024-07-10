@@ -126,6 +126,7 @@ export default defineConfig({
             {
               label: 'Agents', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/agents/overview'},
+                {label: 'APIAgent', link: '/docs/components/agents/apiagent'},
                 {label: 'RetrieverAgent', link: '/docs/components/agents/retrieveragent'},
                 {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent'},
               ]

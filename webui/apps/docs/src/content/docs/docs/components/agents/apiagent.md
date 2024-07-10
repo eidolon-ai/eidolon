@@ -1,11 +1,11 @@
 ---
-title: ApiLogicUnit
-description: Description of ApiLogicUnit component
+title: APIAgent
+description: Description of APIAgent component
 ---
 
 | Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const  | No         | -          | ApiLogicUnit         |
+| - [implementation](#implementation )             | No      | const  | No         | -          | APIAgent             |
 | + [title](#title )                               | No      | string | No         | -          | Title                |
 | + [root_call_url](#root_call_url )               | No      | string | No         | -          | Root Call Url        |
 | + [open_api_location](#open_api_location )       | No      | string | No         | -          | Open Api Location    |
@@ -20,9 +20,9 @@ description: Description of ApiLogicUnit component
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** ApiLogicUnit
+**Description:** APIAgent
 
-Specific value: `"ApiLogicUnit"`
+Specific value: `"APIAgent"`
 
 ## <a name="title"></a>2. Property `title`
 

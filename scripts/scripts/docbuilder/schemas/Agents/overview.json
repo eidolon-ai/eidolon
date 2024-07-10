@@ -3,6 +3,9 @@
   "description": "Overview of Agents components",
   "anyOf": [
     {
+      "$ref": "file:./APIAgent.json"
+    },
+    {
       "$ref": "file:./RetrieverAgent.json"
     },
     {
