@@ -7,7 +7,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-file=$(dirname $0)/../VERSION
+file=$(dirname $0)/VERSION
 update_type=$1
 
 # Validate update type
