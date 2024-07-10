@@ -285,7 +285,7 @@ bundle-buildx: ## Build and push docker image for the manager for cross-platform
 	$(CONTAINER_TOOL) buildx use project-v3-builder
 	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f bundle.Dockerfile.cross .
 	- $(CONTAINER_TOOL) buildx rm project-v3-builder
-	rm Dockerfile.cross
+	rm bundle.Dockerfile.cross
 
 .PHONY: opm
 OPM = $(LOCALBIN)/opm
