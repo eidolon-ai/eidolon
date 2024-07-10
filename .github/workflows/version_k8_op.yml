@@ -12,9 +12,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  rev_and_release:
-    permissions:
-      contents: write
+  wait_for_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +22,21 @@ jobs:
       - name: Wait for tests to succeed
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
-          check-name: 'Test Python'
+          running-workflow-name: 'Test Python'
           ref: ${{ github.ref }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
+  rev_and_release:
+    needs: wait_for_tests
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
       - name: Generate token
         id: generate_token
         uses: tibdex/github-app-token@v1
