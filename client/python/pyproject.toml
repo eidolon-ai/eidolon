@@ -20,7 +20,7 @@ last-update-hash = "c4da0c35da209019c9dab7c44159bbea29a55f77"
 eidolon-cli = "eidolon_ai_client.cli:app"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.8,<3.13"
 setuptools = ">=69.0.2"
 jsonref = "^1.1.0"
 pydantic = ">=2.6.1"

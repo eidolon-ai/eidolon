@@ -27,7 +27,7 @@ replay = "eidolon_ai_sdk.bin.replay:app"
 
 [tool.poetry.dependencies]
 setuptools = ">=69.0.2"
-python = ">=3.11,<3.13"
+python = ">=3.9,<3.13"
 fastapi = ">=0.109.0"
 pyyaml = "^6.0.1"
 jsonschema = "^4.21.1"
