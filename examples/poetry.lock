@@ -1501,7 +1501,7 @@ name = "eidolon-ai-client"
 version = "0.1.27"
 description = "Eidolon python client and CLI"
 optional = false
-python-versions = ">=3.11,<3.13"
+python-versions = ">=3.8,<3.13"
 files = []
 develop = true
 
@@ -1542,7 +1542,7 @@ name = "eidolon-ai-sdk"
 version = "0.1.90"
 description = "An open source sgent service SDK"
 optional = false
-python-versions = ">=3.11,<3.13"
+python-versions = ">=3.9,<3.13"
 files = []
 develop = true
 
@@ -1606,7 +1606,7 @@ name = "eidolon-ai-usage-client"
 version = "0.1.7"
 description = ""
 optional = false
-python-versions = ">=3.11,<3.13"
+python-versions = ">=3.8,<3.13"
 files = []
 develop = true
 
