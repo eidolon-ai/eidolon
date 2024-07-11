@@ -73,6 +73,7 @@ aiohttp = "^3.9.5"
 aiodns = "^3.2.0"
 lxml = ">=4.9.3,<6.0.0"
 aiosqlite = "^0.20.0"
+eval-type-backport = "^0.2.0"
 
 [tool.pytest.ini_options]
 pythonpath = "project"
