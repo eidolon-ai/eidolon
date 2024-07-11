@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from functools import cached_property
-from typing import AsyncIterable, List, cast, Any, Self
+from typing import AsyncIterable, List, cast, Any, TypeVar, Type
 
 from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import make_url, MetaData, text, Row
@@ -19,9 +19,13 @@ class SqlClient(BaseModel):
         pass
 
 
+# Define a TypeVar to reference the class itself
+T = TypeVar('T', bound='MetadataAttribute')
+
+
 class MetadataAttribute(BaseModel):
     name: str
-    metadata: List[Self | str] = []
+    metadata: List[Type[T] | str] = []
     remove_falsy_metadata: bool = True
 
 
