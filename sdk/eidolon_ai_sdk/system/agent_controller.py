@@ -7,6 +7,7 @@ import typing
 import uuid
 from collections.abc import AsyncIterator
 from inspect import Parameter
+from textwrap import dedent
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, HTTPException
@@ -200,7 +201,14 @@ class AgentController:
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
-        process = await ProcessDoc.create(agent=self.name, **kwargs, _id=str(ObjectId()))
+        try:
+            process = await ProcessDoc.create(agent=self.name, **kwargs, _id=str(ObjectId()))
+        except Exception as e:
+            logger.error(dedent(f"""
+            Unable to create process. This is likely due to a misconfigured or unreachable database.
+            If you are developing locally consider using LocalSymbolicMemory (-m local_dev)
+            {type(e).__name__}: {e}""").strip())
+            raise HTTPException(status_code=503, detail=f"{type(e).__name__} while creating process. See server logs for more details.")
         if hasattr(self.agent, "create_process"):
             await self.agent.create_process(process.record_id)
         return process
