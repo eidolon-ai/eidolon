@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-ai-client"
-version = "0.1.27"
+version = "0.1.28"
 description = "Eidolon python client and CLI"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -14,7 +14,7 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "client"
-last-update-hash = "c4da0c35da209019c9dab7c44159bbea29a55f77"
+last-update-hash = "6ea9d0847262846f50aa8d32a779194d0e8897a8"
 
 [tool.poetry.scripts]
 eidolon-cli = "eidolon_ai_client.cli:app"
