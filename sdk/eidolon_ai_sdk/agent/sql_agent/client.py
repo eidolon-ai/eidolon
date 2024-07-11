@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 from functools import cached_property
 from typing import AsyncIterable, List, cast, Any, TypeVar, Type
@@ -19,14 +21,14 @@ class SqlClient(BaseModel):
         pass
 
 
-# Define a TypeVar to reference the class itself
-T = TypeVar('T', bound='MetadataAttribute')
-
-
 class MetadataAttribute(BaseModel):
     name: str
     metadata: List[Type[T] | str] = []
     remove_falsy_metadata: bool = True
+
+
+# Define a TypeVar to reference the class itself
+T = TypeVar('T', bound='MetadataAttribute')
 
 
 class SqlAlchemy(SqlClient):
