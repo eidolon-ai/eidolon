@@ -14,7 +14,6 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.params import Body, Param
 from pydantic import BaseModel, Field, create_model
 from pydantic_core import PydanticUndefined, to_jsonable_python
-from pymongo.errors import ServerSelectionTimeoutError
 from sse_starlette import EventSourceResponse, ServerSentEvent
 from starlette.responses import JSONResponse
 
