@@ -199,7 +199,7 @@ spec:
 			}, timeout, interval).Should(Equal("test-image:v2"))
 		})
 
-		It("Should update the ConfigMap when changing additional fields", func() {
+		It("Should update the ConfigMap and bump deployment annotation when changing additional fields", func() {
 			ctx := context.Background()
 
 			updatedMachineYAML := `
@@ -250,6 +250,7 @@ spec:
 			Expect(updatedConfigMap.Data["machine.yaml"]).Should(ContainSubstring("additionalField1: updatedValue1"))
 			Expect(updatedConfigMap.Data["machine.yaml"]).Should(ContainSubstring("additionalField3: newValue"))
 			Expect(updatedConfigMap.Data["machine.yaml"]).ShouldNot(ContainSubstring("additionalField2:"))
+			Expect(updatedDeployment.Spec.Template.ObjectMeta.Annotations["machine-cm-version"]).Should(Equal(updatedConfigMap.ResourceVersion))
 		})
 	})
 

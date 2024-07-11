@@ -259,6 +259,10 @@ func (r *MachineReconciler) reconcileDeployment(ctx context.Context, machine *se
 			annotations["reference-cm-version"] = referenceCM.ResourceVersion
 		}
 
+		if machineCM, err := r.getConfigMap(ctx, "eidolon-machine-cm", machine.Namespace); err == nil {
+			annotations["machine-cm-version"] = machineCM.ResourceVersion
+		}
+
 		deploy.Spec.Template.ObjectMeta.Annotations = annotations
 
 		return controllerutil.SetControllerReference(machine, deploy, r.Scheme)
