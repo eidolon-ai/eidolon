@@ -3,11 +3,11 @@ title: Embedding
 description: Description of Embedding component
 ---
 
-| Property                                     | Pattern | Type                                                                                    | Deprecated | Definition | Title/Description       |
-| -------------------------------------------- | ------- | --------------------------------------------------------------------------------------- | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )         | No      | const                                                                                   | No         | -          | Embedding               |
-| - [model](#model )                           | No      | string                                                                                  | No         | -          | Model                   |
-| - [connection_handler](#connection_handler ) | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | OpenAIConnectionHandler |
+| Property                                     | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |
+| -------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------------ | ---------------------------------------------- |
+| - [implementation](#implementation )         | No      | const                              | No         | -                                                | Embedding                                      |
+| - [model](#model )                           | No      | string                             | No         | -                                                | Model                                          |
+| - [connection_handler](#connection_handler ) | No      | Reference[OpenAIConnectionHandler] | No         | In [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) | Overview of OpenAIConnectionHandler components |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -34,13 +34,12 @@ Specific value: `"Embedding"`
 
 ## <a name="connection_handler"></a>3. Property `connection_handler`
 
-**Title:** OpenAIConnectionHandler
-
-|              |                                                                                           |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview) |
-| **Required** | No                                                                                        |
-| **Default**  | `{"implementation": "OpenAIConnectionHandler"}`                                           |
+|                |                                                 |
+| -------------- | ----------------------------------------------- |
+| **Type**       | `Reference[OpenAIConnectionHandler]`            |
+| **Required**   | No                                              |
+| **Default**    | `{"implementation": "OpenAIConnectionHandler"}` |
+| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)   |
 
 **Description:** Overview of OpenAIConnectionHandler components
 

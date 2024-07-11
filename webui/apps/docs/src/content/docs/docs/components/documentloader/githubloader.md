@@ -12,10 +12,10 @@ unless a TOKEN is provided
 | + [owner](#owner )                   | No      | string      | No         | -          | Owner             |
 | + [repo](#repo )                     | No      | string      | No         | -          | Repo              |
 | - [client_args](#client_args )       | No      | object      | No         | -          | Client Args       |
-| - [root_path](#root_path )           | No      | Combination | No         | -          | Root Path         |
+| - [root_path](#root_path )           | No      | string      | No         | -          | Root Path         |
 | - [pattern](#pattern )               | No      | Combination | No         | -          | Pattern           |
 | - [exclude](#exclude )               | No      | Combination | No         | -          | Exclude           |
-| - [token](#token )                   | No      | Combination | No         | -          | Token             |
+| - [token](#token )                   | No      | string      | No         | -          | Token             |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -61,31 +61,11 @@ Specific value: `"GitHubLoader"`
 
 **Title:** Root Path
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                |
-| ----------------------------- |
-| [item 0](#root_path_anyOf_i0) |
-| [item 1](#root_path_anyOf_i1) |
-
-### <a name="root_path_anyOf_i0"></a>5.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-### <a name="root_path_anyOf_i1"></a>5.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`   |
 
 ## <a name="pattern"></a>6. Property `pattern`
 
@@ -189,31 +169,11 @@ Specific value: `"GitHubLoader"`
 
 **Title:** Token
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-
-**Description:** Github token, can also be set via envar 'GITHUB_TOKEN'
-
-| Any of(Option)            |
-| ------------------------- |
-| [item 0](#token_anyOf_i0) |
-| [item 1](#token_anyOf_i1) |
-
-### <a name="token_anyOf_i0"></a>8.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="token_anyOf_i1"></a>8.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+**Description:** Github token, can also be set via envar 'GITHUB_TOKEN'
 
 ----------------------------------------------------------------------------------------------------------------------------

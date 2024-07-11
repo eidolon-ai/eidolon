@@ -57,12 +57,6 @@ In this walkthrough we use will use Poetry to manage our venv.
 pipx install poetry
 ```
 
-##### Python VENV
-```bash
-apt install python3.11-venv
-python3 -m venv eidolon_venv # Create VENV
-source eidolon_venv/bin/activate # Activate VENV
-```
 ##### [OpenAI API Key](https://platform.openai.com/account/api-keys "Create an OpenAI key") 
 You should have an envrionment variable OPENAI_API_KEY set to your OpenAI API.
 Create a new key on [openai.com](https://platform.openai.com/api-keys) if you don't have one already.

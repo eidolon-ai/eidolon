@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: docker.io/eidolonai/controller
-  newTag: 0.0.3
+  newTag: 0.0.8

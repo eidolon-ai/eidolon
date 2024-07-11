@@ -1,7 +1,7 @@
 name: Bump Version and Release K8 Operator
 on:
   workflow_run:
-    workflows: [ "Test K8 Operator" ]  # The name of the test workflow
+    workflows: [ "Test K8 Operator" ]
     types:
       - completed
     branches:
@@ -12,42 +12,88 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+#  wait_for_tests:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          persist-credentials: false
+#          fetch-depth: 0
+#      - uses: lewagon/wait-on-check-action@v1.3.4
+#        with:
+#          check-name: examples-test
+#          ref: ${{ github.ref }}
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#      - uses: lewagon/wait-on-check-action@v1.3.4
+#        with:
+#          check-name: test-quickstart-no-mongodb
+#          ref: ${{ github.ref }}
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#      - uses: lewagon/wait-on-check-action@v1.3.4
+#        with:
+#          check-name: test-webui
+#          ref: ${{ github.ref }}
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#      - uses: lewagon/wait-on-check-action@v1.3.4
+#        with:
+#          check-name: sdk-test-local-memory (3.11)
+#          ref: ${{ github.ref }}
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#      - uses: lewagon/wait-on-check-action@v1.3.4
+#        with:
+#          check-name: sdk-test-local-memory (3.12)
+#          ref: ${{ github.ref }}
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#      - uses: lewagon/wait-on-check-action@v1.3.4
+#        with:
+#          check-name: test-webui-build
+#          ref: ${{ github.ref }}
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#      - uses: lewagon/wait-on-check-action@v1.3.4
+#        with:
+#          check-name: usage-service-test
+#          ref: ${{ github.ref }}
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
   rev_and_release:
     permissions:
       contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0
+      - name: Increment version
+        id: increment_version
+        working-directory: k8s-operator
+        run: |
+          make increment-patch
+      - name: Get current version
+        id: get_version
+        run: echo "version=$(cat k8s-operator/VERSION)" >> $GITHUB_OUTPUT
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "bumping versions"
+          tagging_message: ${{ env.TAGGING_MESSAGE }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21.x'
           cache-dependency-path: k8s-operator/go.sum
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'poetry'
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: version
-        run: |
-          make -s -C scripts run "version_k8s"
-          echo K8_VERSION=$(node -p "require('./k8s-operator/env.json')['version']") >> $GITHUB_ENV
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Bump k8 version"
-          tagging_message: k8-op/${{ env.K8_VERSION }}
       - name: "build"
-        run: make build docker-build docker-push
+        run: make build docker-buildx
         working-directory: k8s-operator
       - name: "bundle"
         run: make bundle bundle-build bundle-push
         working-directory: k8s-operator
-      - name: "catalog"
-        run: make catalog-build catalog-push
-        working-directory: k8s-operator
+#      - name: "catalog"
+#        run: make catalog-build catalog-push
+#        working-directory: k8s-operator
