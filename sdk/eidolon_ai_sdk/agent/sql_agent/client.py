@@ -23,12 +23,8 @@ class SqlClient(BaseModel):
 
 class MetadataAttribute(BaseModel):
     name: str
-    metadata: List[Type[T] | str] = []
+    metadata: List['MetadataAttribute'] | List[str] = []
     remove_falsy_metadata: bool = True
-
-
-# Define a TypeVar to reference the class itself
-T = TypeVar('T', bound='MetadataAttribute')
 
 
 class SqlAlchemy(SqlClient):
