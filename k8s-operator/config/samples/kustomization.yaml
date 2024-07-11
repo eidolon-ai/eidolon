@@ -1,0 +1,8 @@
+## Append samples of your project ##
+resources:
+- conversational_chatbot/resources/machine.yaml
+- conversational_chatbot/resources/speech_agent.yaml
+- conversational_chatbot/resources/web_researcher.yaml
+- conversational_chatbot/resources/conversational_agent.yaml
+- ingress.yaml
+#+kubebuilder:scaffold:manifestskustomizesamples

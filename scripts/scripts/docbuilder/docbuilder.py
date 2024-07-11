@@ -5,15 +5,15 @@ import os
 import shutil
 import textwrap
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 from typing import Optional, Dict, Self
 
-import jsonref
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
 from pydantic import BaseModel, model_validator
 
+from eidolon_ai_sdk.agent.api_agent import APIAgent
 from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
@@ -65,6 +65,7 @@ components_to_load: list[Group] = [
     Group(base="Agents", default="SimpleAgent", components=[
         ("SimpleAgent", SimpleAgent, {}),
         ("RetrieverAgent", RetrieverAgent, {}),
+        ("APIAgent", APIAgent, {}),
     ]),
     Group(base=APU),
     Group(base=LLMUnit),
@@ -149,40 +150,36 @@ def write_md(read_loc,
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
-    for k, g in groups.items():
-        for component, _, _ in g.get_components():
-            write_file_loc = write_loc / url_safe(k) / (url_safe(component.replace(".json", "")) + ".md")
-            with open(read_loc / k / (component + ".json"), 'r') as json_file:
-                obj = json.load(json_file)
-            title = obj.get('title', component)
-            description = f"Description of {title} component"
+    with TemporaryDirectory() as tempdir:
+        tempdir = Path(tempdir)
+        shutil.copytree(read_loc, tempdir, dirs_exist_ok=True)
+        for root, dirs, files in os.walk(tempdir):
+            for file in files:
+                with open(os.path.join(root, file), 'r') as json_file:
+                    obj = json.load(json_file)
+                    clean_ref_groups_for_md(obj)
+                with open(os.path.join(root, file), 'w') as json_file:
+                    json.dump(obj, json_file, indent=2)
 
-            with open(read_loc / k / (component + ".json"), 'r') as json_file:
-                original_schema = json.load(json_file)
-            fixed_schema = jsonref.replace_refs(original_schema, base_uri=f"file://{read_loc}/{k}/", jsonschema=True)
-            for key, property in fixed_schema.get("properties", {}).items():
-                if 'reference_group' in property:
-                    if "default" in original_schema['properties'][key]:
-                        property['default'] = original_schema['properties'][key]['default']
-            clean_ref_groups_for_md(fixed_schema)
-
-            with NamedTemporaryFile(prefix=component) as temp:
-                dumped = json.dumps(copy.deepcopy(fixed_schema))
-                temp.write(dumped.encode())
-                temp.flush()
-                # Generate HTML content
-                content = generate_from_schema(temp.name, config=GenerationConfiguration(
+        for k, g in groups.items():
+            for component, _, _ in g.get_components():
+                write_file_loc = write_loc / url_safe(k) / (url_safe(component.replace(".json", "")) + ".md")
+                with open(tempdir / k / (component + ".json"), 'r') as json_file:
+                    obj = json.load(json_file)
+                    title = obj.get('title', component)
+                    description = f"Description of {title} component"
+                content = generate_from_schema(tempdir / k / (component + ".json"), config=GenerationConfiguration(
                     show_breadcrumbs=False,
                     template_name="md",
                     with_footer=False,
                 ))
 
-            content = content[(content.index(cut_after_str) + len(cut_after_str)):]
-            for name in groups.keys():
-                content = content.replace(f"`[Reference[{name}]](/docs/components/{url_safe(name)}/overview)`",
-                                          f"[`Reference[{name}]`](/docs/components/{url_safe(name)}/overview)")
+                content = content[(content.index(cut_after_str) + len(cut_after_str)):]
+                # for name in groups.keys():
+                #     content = content.replace(f"`[Reference[{name}]](/docs/components/{url_safe(name)}/overview)`",
+                #                               f"[`Reference[{name}]`](/docs/components/{url_safe(name)}/overview)")
 
-            write_astro_md_file(content, description, title, write_file_loc)
+                write_astro_md_file(content, description, title, write_file_loc)
 
 
 def write_astro_md_file(content, description, title, write_file_loc):
@@ -314,18 +311,25 @@ def inline_refs(schema, defs):
         return schema
 
 
-def clean_ref_groups_for_md(schema):
-    if isinstance(schema, dict):
+def clean_ref_groups_for_md(schema, seen=None):
+    seen = seen or set()
+    if id(schema) in seen:
+        return
+    if isinstance(schema, dict):  # inline optional types for easier to read markdown
+        if "anyOf" in schema and len(schema['anyOf']) == 2 and [s for s in schema['anyOf'] if len(s) == 1 and s.get("type") == "null"] and schema.get('default') is None:
+            any_of = schema.pop('anyOf')
+            object_type = [s for s in any_of if not (len(s) == 1 and s.get("type") == "null")][0]
+            schema.update(object_type)
         if "reference_group" in schema:
             if "anyOf" in schema:
                 del schema['anyOf']
-                schema['type'] = f"[Reference[{schema['reference_group']['type']}]](/docs/components/{url_safe(schema['reference_group']['type'])}/overview)"
+                schema['type'] = f"Reference[{schema['reference_group']['type']}]"
         else:
             for v in schema.values():
-                clean_ref_groups_for_md(v)
+                clean_ref_groups_for_md(v, {id(schema), *seen})
     elif isinstance(schema, list):
         for i in schema:
-            clean_ref_groups_for_md(i)
+            clean_ref_groups_for_md(i, {id(schema), *seen})
     else:
         pass
 

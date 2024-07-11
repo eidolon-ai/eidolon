@@ -12,6 +12,10 @@ from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
 class APIAgentSpec(BaseModel):
+    """
+    An Agent that can call rest endpoints documented via OpenAPI (Swagger).
+    """
+
     title: str = Field(description="Title of the API")
     root_call_url: str = Field(description="Root URL of the API to call")
     open_api_location: str = Field(description="Location of the OpenAPI schema")

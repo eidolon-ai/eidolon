@@ -1,0 +1,66 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: k8s-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Agent is the Schema for the agents API
+      displayName: Agent
+      kind: Agent
+      name: agents.server.eidolonai.com
+      version: v1alpha1
+    - description: Machine is the Schema for the machines API
+      displayName: Machine
+      kind: Machine
+      name: machines.server.eidolonai.com
+      statusDescriptors:
+      - displayName: Conditions
+        path: conditions
+      version: v1alpha1
+    - description: Reference is the Schema for the references API
+      displayName: Reference
+      kind: Reference
+      name: references.server.eidolonai.com
+      version: v1alpha1
+  description: CRDs and operator runtime for the Eidolon platform
+  displayName: Eidolon
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - eidolon
+  - llm
+  - agents
+  links:
+  - name: K8s Operator
+    url: https://k8s-operator.domain
+  maintainers:
+  - email: dave@augustdata.ai
+    name: Dave Brewster
+  - email: luke@augustdata.ai
+    name: Luke Lalor
+  maturity: alpha
+  minKubeVersion: 1.16.0
+  provider:
+    name: EidolonAI
+    url: https://www.eidolonai.com
+  version: 0.0.0

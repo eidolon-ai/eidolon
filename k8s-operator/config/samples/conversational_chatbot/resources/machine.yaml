@@ -1,0 +1,14 @@
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Machine
+metadata:
+  name: machine-sample
+spec:
+  image: docker.io/eidolonai/sdk:latest
+  imagePullPolicy: Always
+  envFrom:
+    - secretRef:
+        name: eidolon
+  symbolic_memory:
+    implementation: "eidolon_ai_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory"
+    mongo_database_name: "eidolon"
+    mongo_connection_string: "mongodb://mongo:27017/eidolon"

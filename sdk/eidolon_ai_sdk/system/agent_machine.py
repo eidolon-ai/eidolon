@@ -27,7 +27,7 @@ from ..security.permissions import PermissionException
 
 class MachineSpec(BaseModel):
     symbolic_memory: AnnotatedReference[SymbolicMemory] = Field(description="The Symbolic Memory implementation.")
-    file_memory: AnnotatedReference[FileMemory] = Field(desciption="The File Memory implementation.")
+    file_memory: AnnotatedReference[FileMemory] = Field(description="The File Memory implementation.")
     similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
     security_manager: AnnotatedReference[SecurityManager] = Field(description="The Security Manager implementation.")
     process_file_system: AnnotatedReference[ProcessFileSystem] = Field(
