@@ -1,0 +1,31 @@
+# permissions for end users to edit references.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: reference-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: k8s-operator
+    app.kubernetes.io/part-of: k8s-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: reference-editor-role
+rules:
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - references
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - references/status
+  verbs:
+  - get

@@ -81,6 +81,7 @@ def app_builder(machine_manager):
                         app=_app,
                         resource_generator=[_machine, *resources] if _machine else resources,
                         machine_name=_machine.metadata.name,
+                    fail_on_agent_start_error=True,
                 ):
                     yield
                     print("done")
@@ -104,6 +105,8 @@ def port():
 def vcr_config():
     def ignore_some_localhost(request: VcrRequest):
         if (request.host == "0.0.0.0" or request.host == "localhost") and port != 11434:
+            return None
+        elif request.host == "login.microsoftonline.com":
             return None
         return request
 
@@ -315,14 +318,14 @@ def llm(test_dir, module_identifier):
 
 @pytest.fixture()
 def dog(test_dir):
-    loc = str(test_dir / "images" / "dog.png")
+    loc = str(test_dir / "resources" / "dog.png")
     with open(loc, "rb") as f:
         yield f
 
 
 @pytest.fixture()
 def cat(test_dir):
-    loc = str(test_dir / "images" / "cat.png")
+    loc = str(test_dir / "resources" / "cat.png")
     with open(loc, "rb") as f:
         yield f
 

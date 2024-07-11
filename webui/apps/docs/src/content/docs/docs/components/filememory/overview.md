@@ -15,5 +15,6 @@ agent's memory.
 
 ## Builtins
 * [FileMemory](/docs/components/filememory/filememory/)
+* [AzureFileMemory](/docs/components/filememory/azurefilememory/)
 * [LocalFileMemory](/docs/components/filememory/localfilememory/)
 * [S3FileMemory](/docs/components/filememory/s3filememory/)

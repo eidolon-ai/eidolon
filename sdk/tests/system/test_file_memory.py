@@ -19,9 +19,6 @@ def s3_memory(test_name, **kwargs):
 
 
 def azure_memory(test_name, **kwargs):
-    os.environ.setdefault("AZURE_TENANT_ID", "secret_not_needed_with_saved_cassettes")
-    os.environ.setdefault("AZURE_CLIENT_SECRET", "key_not_needed_with_saved_cassettes")
-    os.environ.setdefault("AZURE_CLIENT_ID", "key_not_needed_with_saved_cassettes")
     return AzureFileMemory(spec=AzureFileMemorySpec(
         account_url="https://eidolon.blob.core.windows.net",
         container="eidolon-test-file-" + test_name.replace("_", "-").replace("[", "").replace("]", ""),
