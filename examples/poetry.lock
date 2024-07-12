@@ -1501,7 +1501,7 @@ name = "eidolon-ai-client"
 version = "0.1.28"
 description = "Eidolon python client and CLI"
 optional = false
-python-versions = ">=3.11,<3.13"
+python-versions = ">=3.8,<3.13"
 files = []
 develop = true
 
@@ -1542,7 +1542,7 @@ name = "eidolon-ai-sdk"
 version = "0.1.91"
 description = "An open source sgent service SDK"
 optional = false
-python-versions = ">=3.11,<3.13"
+python-versions = ">=3.10,<3.13"
 files = []
 develop = true
 
@@ -1562,6 +1562,7 @@ eidolon-ai-client = "^0.1.28"
 eidolon-ai-mistralai = "^0.1.6a"
 eidolon-ai-usage-client = "^0.1.7"
 esprima = "^4.0.1"
+eval-type-backport = "^0.2.0"
 fastapi = ">=0.109.0"
 filetype = "^1.2.0"
 httpx = "^0.27.0"
@@ -1606,7 +1607,7 @@ name = "eidolon-ai-usage-client"
 version = "0.1.7"
 description = ""
 optional = false
-python-versions = ">=3.11,<3.13"
+python-versions = ">=3.8,<3.13"
 files = []
 develop = true
 
@@ -1645,6 +1646,20 @@ python-versions = "*"
 files = [
     {file = "esprima-4.0.1.tar.gz", hash = "sha256:08db1a876d3c2910db9cfaeb83108193af5411fc3a3a66ebefacd390d21323ee"},
 ]
+
+[[package]]
+name = "eval-type-backport"
+version = "0.2.0"
+description = "Like `typing._eval_type`, but lets older Python versions use newer typing features."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "eval_type_backport-0.2.0-py3-none-any.whl", hash = "sha256:ac2f73d30d40c5a30a80b8739a789d6bb5e49fdffa66d7912667e2015d9c9933"},
+    {file = "eval_type_backport-0.2.0.tar.gz", hash = "sha256:68796cfbc7371ebf923f03bdf7bef415f3ec098aeced24e054b253a0e78f7b37"},
+]
+
+[package.extras]
+tests = ["pytest"]
 
 [[package]]
 name = "fastapi"
