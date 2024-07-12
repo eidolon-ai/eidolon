@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from functools import cached_property
-from typing import AsyncIterable, List, cast, Any, TypeVar, Type
+from typing import AsyncIterable, List, cast, Any
 
 from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import make_url, MetaData, text, Row
