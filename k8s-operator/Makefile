@@ -326,7 +326,13 @@ catalog-push: ## Push a catalog image.
 
 .PHONY: eidolon-chart
 eidolon-chart: manifests kustomize ## Generate Helm chart.
-	$(LOCALBIN)/kustomize build config/crd > eidolon-chart/crds.yaml
-	$(LOCALBIN)/kustomize build config/rbac > eidolon-chart/rbac.yaml
+	@rm -f eidolon-chart/charts/*
+	$(LOCALBIN)/kustomize build config/crd > eidolon-chart/templates/crds.yaml
+	$(LOCALBIN)/kustomize build config/rbac > eidolon-chart/templates/rbac.yaml
 	@sed 's/appVersion: .*/appVersion: "$(VERSION)"/' ./eidolon-chart/Chart.template.yaml > ./eidolon-chart/Chart.yaml
+	@sed 's/tag: .*/tag: "$(VERSION)"/' ./eidolon-chart/values.template.yaml > ./eidolon-chart/values.yaml
+	@sed 's/namespace: system/namespace: {{ .Release.Namespace }}/' ./eidolon-chart/templates/rbac.yaml > ./eidolon-chart/templates/rbac.yaml.tmp
+	@sed 's/name: controller-manager/name: {{ include "eidolon-operator-chart.fullname" . }}/' ./eidolon-chart/templates/rbac.yaml.tmp > ./eidolon-chart/templates/rbac.yaml
 	helm package eidolon-chart --version $(VERSION) -d eidolon-chart/charts
+	helm repo index eidolon-chart/charts --url http://localhost:4321/charts # https://eidolonai.com/charts
+	@cp eidolon-chart/charts/* ../webui/apps/docs/public/charts/

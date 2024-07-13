@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: eidolonai/eidolon-operator
+  repository: eidolonai/controller
   pullPolicy: IfNotPresent
   tag: "latest"  # Set this to your operator version
 
@@ -45,3 +45,14 @@ crds:
 # RBAC
 rbac:
   create: true
+
+autoscaling:
+  enabled: false
+
+ingress:
+  enabled: false
+
+service:
+  type: None
+
+namespace: ""
