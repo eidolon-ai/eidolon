@@ -323,3 +323,10 @@ catalog-build: opm ## Build a catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
+
+.PHONY: eidolon-chart
+eidolon-chart: manifests kustomize ## Generate Helm chart.
+	$(LOCALBIN)/kustomize build config/crd > eidolon-chart/crds.yaml
+	$(LOCALBIN)/kustomize build config/rbac > eidolon-chart/rbac.yaml
+	@sed 's/appVersion: .*/appVersion: "$(VERSION)"/' ./eidolon-chart/Chart.template.yaml > ./eidolon-chart/Chart.yaml
+	helm package eidolon-chart --version $(VERSION) -d eidolon-chart/charts
