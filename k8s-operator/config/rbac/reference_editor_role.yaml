@@ -6,8 +6,8 @@ metadata:
     app.kubernetes.io/name: clusterrole
     app.kubernetes.io/instance: reference-editor-role
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: k8s-operator
-    app.kubernetes.io/part-of: k8s-operator
+    app.kubernetes.io/created-by: eidolon-operator
+    app.kubernetes.io/part-of: eidolon-operator
     app.kubernetes.io/managed-by: kustomize
   name: reference-editor-role
 rules:

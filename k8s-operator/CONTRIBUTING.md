@@ -47,7 +47,9 @@ However, typically this will be a secret with the following keys:
 - `ANTHROPIC_API_KEY` - your Anthropic API key if you are using Anthropic.
 
 If you already have a .env file with these keys, you can create the secret with the following command:
-- `kubectl create secret generic eidolon --from-env-file=<location of your env file>/.env`
+```sh
+kubectl create secret generic eidolon --from-env-file=<location of your env file>/.env
+```
 
 ### Development
 If you are developing the operator, you will need to rebuild a few things if you modify the CRD or the controller.

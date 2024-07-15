@@ -4,7 +4,7 @@ metadata:
   annotations:
     alm-examples: '[]'
     capabilities: Basic Install
-  name: k8s-operator.v0.0.0
+  name: eidolon-operator.v0.0.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -52,7 +52,7 @@ spec:
   - agents
   links:
   - name: K8s Operator
-    url: https://k8s-operator.domain
+    url: https://www.eidolonai.com
   maintainers:
   - email: dave@augustdata.ai
     name: Dave Brewster
