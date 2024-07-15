@@ -10,6 +10,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   rev_and_release:
@@ -49,9 +50,9 @@ jobs:
       - name: "build"
         run: make build docker-buildx
         working-directory: k8s-operator
-      - name: "bundle"
-        run: make bundle bundle-build bundle-push
-        working-directory: k8s-operator
+#      - name: "bundle"
+#        run: make bundle bundle-build bundle-push
+#        working-directory: k8s-operator
       - name: "eidolon-chart"
         run: make eidolon-chart
         working-directory: k8s-operator
