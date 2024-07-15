@@ -187,7 +187,7 @@ docker-buildx: ## Build and push docker image for the manager for cross-platform
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
 	- $(CONTAINER_TOOL) buildx create --name project-v3-builder
 	$(CONTAINER_TOOL) buildx use project-v3-builder
-	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
+	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag docker.io/${IMAGE_TAG_BASE}:${VERSION} --tag docker.io/${IMAGE_TAG_BASE} -f Dockerfile.cross .
 	- $(CONTAINER_TOOL) buildx rm project-v3-builder
 	rm Dockerfile.cross
 
@@ -334,5 +334,5 @@ eidolon-chart: manifests kustomize ## Generate Helm chart.
 	@sed 's/namespace: system/namespace: {{ .Release.Namespace }}/' ./eidolon-chart/templates/rbac.yaml > ./eidolon-chart/templates/rbac.yaml.tmp
 	@sed 's/name: controller-manager/name: {{ include "eidolon-operator-chart.fullname" . }}/' ./eidolon-chart/templates/rbac.yaml.tmp > ./eidolon-chart/templates/rbac.yaml
 	helm package eidolon-chart --version $(VERSION) -d eidolon-chart/charts
-	helm repo index eidolon-chart/charts --url http://localhost:4321/charts # https://eidolonai.com/charts
+	helm repo index eidolon-chart/charts --url https://eidolonai.com/charts
 	@cp eidolon-chart/charts/* ../webui/apps/docs/public/charts/

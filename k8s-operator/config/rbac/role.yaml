@@ -31,14 +31,20 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - events
+  - services
   verbs:
   - create
+  - delete
+  - get
+  - list
   - patch
+  - update
+  - watch
 - apiGroups:
   - server.eidolonai.com
   resources:
   - machines
+  - agents
   verbs:
   - create
   - delete
@@ -51,18 +57,20 @@ rules:
   - server.eidolonai.com
   resources:
   - machines/finalizers
+  - agents/finalizers
   verbs:
   - update
 - apiGroups:
   - server.eidolonai.com
   resources:
   - machines/status
+  - agents/status
   verbs:
   - get
   - patch
   - update
 - apiGroups:
-  - server.yourdomain.com
+  - server.eidolonai.com
   resources:
   - references
   verbs:
@@ -74,13 +82,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - server.yourdomain.com
+  - server.eidolonai.com
   resources:
   - references/finalizers
   verbs:
   - update
 - apiGroups:
-  - server.yourdomain.com
+  - server.eidolonai.com
   resources:
   - references/status
   verbs:
