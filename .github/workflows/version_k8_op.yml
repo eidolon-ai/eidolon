@@ -1,11 +1,11 @@
 name: Bump Version and Release K8 Operator
 on:
-  workflow_run:
-    workflows: [ "Test K8 Operator" ]
-    types:
-      - completed
-    branches:
-      - main
+#  workflow_run:
+#    workflows: [ "Test K8 Operator" ]
+#    types:
+#      - completed
+#    branches:
+#      - main
   workflow_dispatch:
 
 concurrency:
