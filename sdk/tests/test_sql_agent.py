@@ -19,7 +19,6 @@ async def server(run_app, test_dir):
             ),
     ) as ra:
         yield ra
-    print("done...")
 
 
 def sqlagent(name: str, **kwargs):

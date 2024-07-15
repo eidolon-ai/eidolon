@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 from functools import cached_property
-from typing import AsyncIterable, List, cast, Any, Self
+from typing import AsyncIterable, List, cast, Any
 
 from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import make_url, MetaData, text, Row
@@ -21,7 +23,7 @@ class SqlClient(BaseModel):
 
 class MetadataAttribute(BaseModel):
     name: str
-    metadata: List[Self | str] = []
+    metadata: List['MetadataAttribute'] | List[str] = []
     remove_falsy_metadata: bool = True
 
 

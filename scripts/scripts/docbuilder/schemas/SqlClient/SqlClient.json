@@ -7,19 +7,22 @@
           "type": "string"
         },
         "metadata": {
-          "default": [],
-          "items": {
-            "anyOf": [
-              {
+          "anyOf": [
+            {
+              "items": {
                 "$ref": "#/$defs/MetadataAttribute"
               },
-              {
+              "type": "array"
+            },
+            {
+              "items": {
                 "type": "string"
-              }
-            ]
-          },
-          "title": "Metadata",
-          "type": "array"
+              },
+              "type": "array"
+            }
+          ],
+          "default": [],
+          "title": "Metadata"
         },
         "remove_falsy_metadata": {
           "default": true,
