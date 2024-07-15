@@ -31,7 +31,6 @@ Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 ```bash
 git clone https://github.com/eidolon-ai/eidolon-quickstart.git
 cd eidolon-quickstart
-make check
 make serve-dev
 ```
 
