@@ -2,8 +2,14 @@ name: Test Python
 on:
   push:
     branches: [main]
+    paths:
+      - '!k8s-operator/**'
+      - '!webui/**'
   workflow_dispatch:
   pull_request:
+    paths:
+      - '!k8s-operator/**'
+      - '!webui/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

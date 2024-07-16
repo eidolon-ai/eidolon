@@ -2,8 +2,12 @@ name: Test Web UI
 on:
   push:
     branches: [main]
+    paths:
+      - webui/**
   pull_request:
   workflow_dispatch:
+    paths:
+      - webui/**
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

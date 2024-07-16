@@ -335,5 +335,5 @@ eidolon-chart: manifests kustomize ## Generate Helm chart.
 	@sed 's/name: controller-manager/name: {{ include "eidolon-operator-chart.fullname" . }}/' ./eidolon-chart/templates/rbac.yaml.tmp > ./eidolon-chart/templates/rbac.yaml
 	helm package eidolon-chart --version $(VERSION) -d eidolon-chart/charts
 	helm repo index eidolon-chart/charts --url https://eidolonai.com/charts
-	@mkdir ../webui/apps/docs/public/charts
 	@cp eidolon-chart/charts/* ../webui/apps/docs/public/charts/
+	git add ../webui/apps/docs/public/charts/
