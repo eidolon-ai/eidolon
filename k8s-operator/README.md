@@ -45,5 +45,31 @@ We develop on a Mac, so we have the following instructions for Mac users.  If yo
   If you already have a .env file with these keys, you can create the secret with the following command:
   - `kubectl create secret generic eidolon --from-env-file=<location of your env file>/.env`
 
+* Install the eidolon operator
+    ```sh
+    helm repo add eidolon-operator https://eidolonai.com/charts 
+    helm install eidolon-operator eidolon-operator/eidolon-operator-chart --namespace eidolon-operator-system --create-namespace
+    ```
 
-*TODO* - once we are accepted on operatorhub.io
+    If you already have added the repo and you want to update it:
+    ```sh
+    helm repo update
+    helm uninstall eidolon-operator -n eidolon-operator-system                  
+    helm install eidolon-operator eidolon-operator/eidolon-operator-chart --namespace eidolon-operator-system --create-namespace
+    ```
+
+### Development
+Now you can deploy your resources in your k8s cluster. To apply your machine resource:
+```sh
+kubectl apply -f <your machine location>.<your machine>.yaml
+```
+Just like any other k8s resource, you can apply the machine to any namespace. Use the -n flag on kubectl to specify the namespace.
+
+**NOTE: Only one machine can run per namespace**
+
+Now you can apply your agent resource:
+```sh
+kubectl apply -f <your agent location>.<your agent>.yaml
+```
+
+Make sure to apply the agent to the same namespace as the machine.
