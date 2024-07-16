@@ -4,9 +4,11 @@ on:
   push:
     branches: [main]
     paths:
+      - '**'
       - '!k8s-operator/**'
   pull_request:
     paths:
+      - '**'
       - '!k8s-operator/**'
 
 jobs:
