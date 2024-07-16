@@ -12,5 +12,4 @@ Visit [eidolonai.com](https://www.eidolonai.com/) for more details.
 
 ## Thanks for your support
 
-Eidolon is completely open source and free to use. [Star 🌟 it on GitHub](https://github.com/eidolon-ai/eidolon) to show 
-your support!
+Eidolon is completely open source and free to use. [Star 🌟 it on GitHub](https://github.com/eidolon-ai/eidolon) to show your support!
