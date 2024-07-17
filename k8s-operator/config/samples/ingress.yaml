@@ -7,7 +7,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - http:
+    - host: server.eidolonai.test
+      http:
         paths:
           - path: /.*
             pathType: ImplementationSpecific
@@ -16,3 +17,13 @@ spec:
                 name: eidolon-service
                 port:
                   number: 8080
+    - host: www.eidolonai.test
+      http:
+        paths:
+          - path: /.*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: eidolon-ui-service
+                port:
+                  number: 3000
