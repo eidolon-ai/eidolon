@@ -42,7 +42,7 @@ if (providerTypes.includes('azure')) {
   )
 }
 
-if (providerTypes.length === 0) {
+if (providerTypes.includes('password')) {
   providers.push(CredentialsProvider({
     credentials: {
       username: {label: "Username", type: "text", placeholder: "system"},
@@ -146,7 +146,7 @@ const nextAuth = NextAuth({
 
       const parsedParams = qs.parse(currentURL.search, {ignoreQueryPrefix: true})
 
-      const shouldAuth = pathname.startsWith("/eidolon-apps")
+      const shouldAuth = providers.length > 0 && pathname.startsWith("/eidolon-apps")
       let authenticated = !!auth
 
       if (authenticated && pathname.startsWith("/signin") && "callbackUrl" in parsedParams) {

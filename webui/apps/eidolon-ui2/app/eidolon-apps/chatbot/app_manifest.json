@@ -6,12 +6,12 @@
   "location": "http://localhost:8080",
   "type": "copilot",
   "params": {
-    "agent": "conversational_agent",
+    "agent": "conversational-agent",
     "operation": "converse",
     "inputLabel": "How can I help you?",
     "titleOperationName": "generate_title",
     "allowSpeech": true,
-    "speechAgent": "speech_agent",
+    "speechAgent": "speech-agent",
     "speechOperation": "speech_to_text"
   }
 }

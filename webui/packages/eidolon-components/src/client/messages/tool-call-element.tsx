@@ -3,7 +3,7 @@ import {Avatar, Card, CardContent, CardHeader, CircularProgress, Collapse, Divid
 import {ExpandMore} from "@mui/icons-material";
 import {ChatDisplayElement} from "./chat-display-element.tsx";
 import {useState} from "react";
-import BuildCircleIcon from '@mui/icons-material/BuildCircle.js';
+import {BuildCircle} from '@mui/icons-material';
 import {EidolonMarkdown} from "./eidolon-markdown.tsx";
 
 interface ExpandMoreDivProps extends IconButtonProps {
@@ -40,7 +40,7 @@ export const ToolCall = ({machineUrl, element, agentName}: ToolCallElementProps)
         avatar={
           element.is_agent
             ? <Avatar sx={{height: "24px", width: "24px"}} src="/img/eidolon_with_gradient.png"/>
-            : <Avatar sx={{height: "24px", width: "24px"}}><BuildCircleIcon/></Avatar>
+            : <Avatar sx={{height: "24px", width: "24px"}}><BuildCircle/></Avatar>
         }
         onClick={handleExpandClick}
         action={

@@ -58,36 +58,34 @@ export const ProcessProvider = ({children}: { children: JSX.Element }) => {
         fetchError: fetchError
       }
 
-      return navigator.locks.request("process_status", async () => {
-        const innerApp = (await getApps())[appName]
+      const innerApp = (await getApps())[appName]
 
-        if (!innerApp) {
-          ret.fetchError = new HttpException(`App ${appName} not found`, 404)
-        } else {
-          ret.app = innerApp
-          ret.processStatus = await getProcessStatus(innerApp.location, processId)
-          if (innerApp.type === "copilot") {
-            const operations = await getOperations(ret.processStatus!.machine, ret.processStatus!.agent)
-            const options = innerApp.params as CopilotParams
-            const operation = operations.find((o) => o.name === options.operation)
-            if (!operation) {
-              ret.fetchError = new HttpException(`Operation ${options.operation} not found`, 404)
-            } else {
-              options.operationInfo = operation
-              if (operation.schema?.properties?.execute_on_apu) {
-                const property = operation.schema?.properties?.execute_on_apu as Record<string, any>
-                options.supportedLLMs = property?.["enum"] as string[]
-                options.defaultLLM = property?.default as string
-              }
+      if (!innerApp) {
+        ret.fetchError = new HttpException(`App ${appName} not found`, 404)
+      } else {
+        ret.app = innerApp
+        ret.processStatus = await getProcessStatus(innerApp.location, processId)
+        if (innerApp.type === "copilot") {
+          const operations = await getOperations(ret.processStatus!.machine, ret.processStatus!.agent)
+          const options = innerApp.params as CopilotParams
+          const operation = operations.find((o) => o.name === options.operation)
+          if (!operation) {
+            ret.fetchError = new HttpException(`Operation ${options.operation} not found`, 404)
+          } else {
+            options.operationInfo = operation
+            if (operation.schema?.properties?.execute_on_apu) {
+              const property = operation.schema?.properties?.execute_on_apu as Record<string, any>
+              options.supportedLLMs = property?.["enum"] as string[]
+              options.defaultLLM = property?.default as string
             }
           }
         }
+      }
 
-        setProcessStatus(ret.processStatus)
-        setApp(ret.app)
-        setFetchError(ret.fetchError)
-        return ret
-      })
+      setProcessStatus(ret.processStatus)
+      setApp(ret.app)
+      setFetchError(ret.fetchError)
+      return ret
     }
   }
 

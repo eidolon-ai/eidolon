@@ -2,10 +2,10 @@ import {useEffect, useState} from "react";
 import {createProcess, deleteProcess} from "../client-api-helpers/process-helper.ts";
 import {executeOperation} from "../client-api-helpers/process-event-helper.ts";
 import {Button, Tooltip} from "@mui/material";
-import StopIcon from '@mui/icons-material/Stop.js';
+import {Stop} from '@mui/icons-material';
 import {uploadFile} from "../client-api-helpers/files-helper.ts";
-import MicIcon from '@mui/icons-material/Mic.js';
-import MicOffIcon from '@mui/icons-material/MicOff.js';
+import {Mic} from '@mui/icons-material';
+import {MicOff} from '@mui/icons-material';
 
 interface RecorderProps {
   machineUrl: string;
@@ -89,13 +89,13 @@ export default function Recorder({machineUrl, agent, operation, setText}: Record
     <>
       {recordingDeviceError && (
         <Tooltip title={"Please allow access to the microphone in your browser."}>
-          <Button color={"secondary"} sx={{padding: "0", minWidth: "12px", marginTop: "8px"}} variant={'text'}><MicOffIcon style={{fontSize: 28}}/></Button>
+          <Button color={"secondary"} sx={{padding: "0", minWidth: "12px", marginTop: "8px"}} variant={'text'}><MicOff style={{fontSize: 28}}/></Button>
         </Tooltip>
       )}
       {!recordingDeviceError && !recording && (
-        <Button color={"secondary"} sx={{padding: "0", minWidth: "12px", marginTop: "8px"}} variant={'text'} onClick={startRecording}><MicIcon style={{fontSize: 28}}/></Button>)}
+        <Button color={"secondary"} sx={{padding: "0", minWidth: "12px", marginTop: "8px"}} variant={'text'} onClick={startRecording}><Mic style={{fontSize: 28}}/></Button>)}
       {!recordingDeviceError && recording && (
-        <Button color={"secondary"} sx={{padding: "0", minWidth: "12px", marginTop: "8px"}} variant={'text'} onClick={stopRecording}><StopIcon style={{fontSize: 28}}/></Button>)}
+        <Button color={"secondary"} sx={{padding: "0", minWidth: "12px", marginTop: "8px"}} variant={'text'} onClick={stopRecording}><Stop style={{fontSize: 28}}/></Button>)}
     </>
   )
 }

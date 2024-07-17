@@ -2,7 +2,7 @@
 
 import {ChangeEvent, useRef, useState} from "react";
 import {Box, CircularProgress, CircularProgressProps, IconButton, Typography} from '@mui/material';
-import AttachFileIcon from '@mui/icons-material/AttachFile.js';
+import {AttachFile} from '@mui/icons-material';
 import {setMetadata, uploadFile} from "../client-api-helpers/files-helper.ts";
 import {FileHandle} from "@eidolon/client";
 
@@ -102,7 +102,7 @@ export function FileUpload({machineUrl, process_id, addUploadedFiles}: FileUploa
           onClick={handleButtonClick}
           sx={{padding: "0", justifySelf: "center", minWidth: "12px", marginTop: "8px"}}
         >
-          <AttachFileIcon style={{fontSize: 28}}/>
+          <AttachFile style={{fontSize: 28}}/>
         </IconButton>
       )}
     </Box>

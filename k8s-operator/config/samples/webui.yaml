@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eidolon-webui-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webui
+  template:
+    metadata:
+      labels:
+        app: webui
+    spec:
+      containers:
+      - name: webui
+        image: docker.io/eidolonai/webui:1.0.50
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: NEXTAUTH_SECRET
+            value: "mysecret"
+          - name: EIDOLON_SERVER
+            value: "http://eidolon-server:8080"
+        envFrom:
+          - secretRef:
+              name: eidolon-webui
+              optional: true
+          - configMapRef:
+              name: eidolon-webui-config
+              optional: true
