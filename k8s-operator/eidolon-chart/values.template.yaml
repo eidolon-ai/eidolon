@@ -1,0 +1,58 @@
+replicaCount: 1
+
+image:
+  repository: eidolonai/controller
+  pullPolicy: IfNotPresent
+  tag: "latest"  # Set this to your operator version
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Operator-specific configurations
+config:
+  logLevel: info
+  watchNamespace: ""  # Set to a specific namespace or leave empty for cluster-wide
+
+# CRDs
+crds:
+  create: true
+
+# RBAC
+rbac:
+  create: true
+
+autoscaling:
+  enabled: false
+
+ingress:
+  enabled: false
+
+service:
+  type: None
+
+namespace: ""

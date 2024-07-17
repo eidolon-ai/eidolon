@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Check if file and update type are provided
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <update_type>"
+    echo "Update type must be one of: major, minor, patch"
+    exit 1
+fi
+
+file=$(dirname $0)/VERSION
+update_type=$1
+
+# Validate update type
+if [[ ! $update_type =~ ^(major|minor|patch)$ ]]; then
+    echo "Error: Update type must be one of: major, minor, patch"
+    exit 1
+fi
+
+# Source the version file to get the current version
+VERSION=$(cat $file)
+
+echo "$(cat $file)"
+
+echo "Current version: $VERSION"
+
+# Split version into components
+IFS='.' read -ra version_parts <<< "$VERSION"
+major=${version_parts[0]}
+minor=${version_parts[1]}
+patch=${version_parts[2]}
+
+echo "Current version: $VERSION"
+
+# Update version based on update type
+case $update_type in
+    major)
+        major=$((major + 1))
+        minor=0
+        patch=0
+        ;;
+    minor)
+        minor=$((minor + 1))
+        patch=0
+        ;;
+    patch)
+        patch=$((patch + 1))
+        ;;
+esac
+
+# Construct new version
+new_version="$major.$minor.$patch"
+
+# Update version file
+echo "$new_version" > "$file"
+
+echo "Version updated from $VERSION to $new_version"

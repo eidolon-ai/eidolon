@@ -1,0 +1,65 @@
+name: Bump Version and Release K8 Operator
+on:
+  workflow_run:
+    workflows: [ "Test K8 Operator" ]
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rev_and_release:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0
+      - name: Increment version
+        id: increment_version
+        working-directory: k8s-operator
+        run: |
+          make increment-patch
+      - name: Get current version
+        id: get_version
+        run: echo "version=$(cat k8s-operator/VERSION)" >> $GITHUB_OUTPUT
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "bumping versions for k8s operator"
+          tagging_message: ${{ env.TAGGING_MESSAGE }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.x'
+          cache-dependency-path: k8s-operator/go.sum
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: "build"
+        run: make build docker-buildx
+        working-directory: k8s-operator
+#      - name: "bundle"
+#        run: make bundle bundle-build bundle-push
+#        working-directory: k8s-operator
+      - name: "eidolon-chart"
+        run: make eidolon-chart
+        working-directory: k8s-operator
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Committing docs and chart updates"
+          tagging_message: ${{ env.TAGGING_MESSAGE }}
+#      - name: "catalog"
+#        run: make catalog-build catalog-push
+#        working-directory: k8s-operator

@@ -6,6 +6,8 @@ from functools import wraps
 from subprocess import call
 from typing import Optional, Annotated
 
+from httpx import ConnectError
+
 from eidolon_ai_client.client import Agent, Process, Machine, ProcessStatus
 from eidolon_ai_client.events import StringOutputEvent, ObjectOutputEvent, LLMToolCallRequestEvent, \
     AgentStateEvent
@@ -18,7 +20,7 @@ try:
     from rich.prompt import Prompt
     from simple_term_menu import TerminalMenu
 except ImportError:
-    print("The CLI dependencies are not installed. Please install with 'pip install eidolon_ai_client[cli]'.")
+    print("The CLI dependencies are not installed. Please install with \"pip install -U 'eidolon_ai_client[cli]'\".")
     exit(1)
 
 app = typer.Typer()
@@ -39,6 +41,10 @@ def coro(f):
             return asyncio.run(f(*args, **kwargs))
         except AgentError as e:
             err_console.print("Agent Error:", e)
+            exit(1)
+        except ConnectError:
+            err_console.print(f"Connection Error: unable to connect to {server_loc}. Verify the server is running.")
+            dim_console.print("To specify a different server location, set the EIDOLON_SERVER environment variable.")
             exit(1)
 
     return wrapper

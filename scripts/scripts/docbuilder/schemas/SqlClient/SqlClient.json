@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "MetadataAttribute": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/MetadataAttribute"
+              },
+              "type": "array"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "default": [],
+          "title": "Metadata"
+        },
+        "remove_falsy_metadata": {
+          "default": true,
+          "title": "Remove Falsy Metadata",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MetadataAttribute",
+      "type": "object"
+    }
+  },
+  "description": "A client for executing SQL queries using SQLAlchemy.\nSee https://docs.sqlalchemy.org/ for connection configuration details.\n\nPerforms cursory checks when `select_only` is set to True. Additionally ensure user is restricted to allowed permissions.",
+  "properties": {
+    "implementation": {
+      "const": "SqlClient",
+      "description": "SqlClient"
+    },
+    "protocol": {
+      "default": null,
+      "title": "Protocol",
+      "type": "string"
+    },
+    "connection_string": {
+      "default": "sqlite+aiosqlite:///:memory:",
+      "description": "SQLAlchemy connection string. See https://docs.sqlalchemy.org/en/20/core/engines.html for more information.",
+      "title": "Connection String",
+      "type": "string"
+    },
+    "engine_kwargs": {
+      "default": {},
+      "title": "Engine Kwargs",
+      "type": "object"
+    },
+    "select_only": {
+      "default": false,
+      "title": "Select Only",
+      "type": "boolean"
+    },
+    "metadata": {
+      "default": [
+        {
+          "name": "tables",
+          "metadata": [],
+          "remove_falsy_metadata": true
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/MetadataAttribute"
+      },
+      "title": "Metadata",
+      "type": "array"
+    }
+  },
+  "title": "SqlClient",
+  "type": "object"
+}
