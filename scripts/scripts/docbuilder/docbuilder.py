@@ -1,4 +1,5 @@
-import json
+import argparse
+import copy
 import json
 import os
 import shutil
@@ -22,8 +23,10 @@ from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
+from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
 
@@ -55,6 +58,7 @@ class Group(BaseModel):
 
 
 components_to_load: list[Group] = [
+    Group(base=AgentMachine),
     Group(base=SymbolicMemory),
     Group(base=SimilarityMemory),
     Group(base=FileMemoryBase),
@@ -74,7 +78,28 @@ groups: Dict[str, Group] = {g.base if isinstance(g.base, str) else g.base.__name
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
 
+def parse_args():
+    # Set up the argument parser
+    parser = argparse.ArgumentParser(description="Build component docs.")
+    parser.add_argument(
+        "-j",
+        "--json-only",
+        type=str,
+        default=None,
+        help="Build only the json files",
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
+    if args.json_only:
+        print("Generating json...")
+        generate_groups()
+        generate_json(Path(args.json_only))
+        print("Done")
+        return
+
     print("Generating docs...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
     shutil.rmtree(dist_component_schemas, ignore_errors=True)
@@ -174,8 +199,9 @@ def template(template_file, **kwargs):
 
 
 def generate_groups():
+    all_resources = list(AgentOSKernel.get_resources(ReferenceResource).values()) + list(AgentOSKernel.get_resources(MachineResource).values())
     # Get all groups. Groups are any Reference base used by registered component
-    for r in AgentOSKernel.get_resources(ReferenceResource).values():
+    for r in all_resources:
         overrides = Reference[object, r.metadata.name]._transform(r.spec)
         pointer = overrides.pop("implementation")
         clz = for_name(pointer, object)
@@ -187,7 +213,7 @@ def generate_groups():
                     groups[v._bound.__name__] = Group(base=v._bound, document_in_sidebar=False)
 
     # check all components to see which group they are in and add them to the group
-    for r in AgentOSKernel.get_resources(ReferenceResource).values():
+    for r in all_resources:
         key = r.metadata.name
         overrides = Reference[object, key]._transform(r.spec)
         pointer = overrides.pop("implementation")
