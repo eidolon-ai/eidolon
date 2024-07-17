@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import List, Literal, Optional, TypeVar, Type, Dict
+from typing import Optional, TypeVar, Type
 
 import yaml
 from pydantic import BaseModel
@@ -10,17 +10,15 @@ from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.system.resource_load_error_handler import register_load_error
 
 
-class Metadata(BaseModel):
+class Metadata(BaseModel, extra="allow"):
     name: str = "DEFAULT"
-    annotations: List[Dict[str, str]] = []
-    labels: List[str] = []
 
 
 T = TypeVar("T", bound=BaseModel)
 
 
 class Resource(BaseModel, extra="allow"):
-    apiVersion: Literal["eidolon/v1"]
+    apiVersion: str
     kind: str
     metadata: Metadata = Metadata()
 

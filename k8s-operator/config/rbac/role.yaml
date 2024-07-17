@@ -1,0 +1,97 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - machines
+  - agents
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - machines/finalizers
+  - agents/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - machines/status
+  - agents/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - references
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - references/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - references/status
+  verbs:
+  - get
+  - patch
+  - update
