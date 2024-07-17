@@ -19,7 +19,7 @@ from starlette import status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
@@ -79,7 +79,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         if app.openapi_schema:
             return app.openapi_schema
         openapi_schema = get_openapi(
-            title="Custom API",
+            title="Agent Machine",
             version=EIDOLON_SDK_VERSION,
             routes=app.routes,
         )
@@ -137,6 +137,10 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
     @app.get("/system/version", tags=["system"], description="Get the version of the EIDOS SDK")
     async def version():
         return {"version": EIDOLON_SDK_VERSION}
+
+    @app.get("/", include_in_schema=False)
+    async def root():
+        return RedirectResponse("/docs")
 
     try:
         for resource_or_tuple in resource_generator:
@@ -212,7 +216,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 # noinspection PyTypeChecker
 def start_app(lifespan):
     try:
-        _app = FastAPI(lifespan=lifespan)
+        _app = FastAPI(lifespan=lifespan, title="Agent Machine")
         _app.add_exception_handler(RequestValidationError, validation_exception_handler)
         _app.add_middleware(DynamicMiddleware)
         _app.add_middleware(ContextMiddleware)
