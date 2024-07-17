@@ -28,7 +28,6 @@ We develop on a Mac, so we have the following instructions for Mac users.  If yo
     minikube start --driver qemu --network socket_vmnet  —disk 100g
     alias kubectl="minikube kubectl --"   
     eval $(minikube docker-env)
-    minikube addons enable ingress 
     ```
 
 * Install your secrets
@@ -73,3 +72,19 @@ kubectl apply -f <your agent location>.<your agent>.yaml
 ```
 
 Make sure to apply the agent to the same namespace as the machine.
+
+### Exposing a machine locally
+There are many ways to expose a minikube service locally. 
+One way is to create a load balancer service which will then be exposed on your local computer. 
+
+To create a load balancer service for the eidolon server:
+```sh
+kubectl expose deployment eidolon-deployment --type=LoadBalancer --name=eidolon-server --port 8080
+```
+
+To get the IP address of the eidolon server service:
+```sh
+minikube service eidolon-server --url
+```
+
+You can use this URL to access your eidolon server.

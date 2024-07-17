@@ -29,8 +29,20 @@ alias kubectl="minikube kubectl --"
 eval $(minikube docker-env)
 minikube addons enable ingress 
 ```
+2. Install the minikub ingress and ingress dns addons
+```sh
+minikube addons enable ingress
+minikube addons enable ingress-dns
 
-2. Install the operator-sdk
+sudo tee -a /etc/resolver/minikube-eidolon > /dev/null << EOT
+domain test
+nameserver $(minikube ip)
+search_order 1
+timeout 5
+EOT
+```
+
+4. Install the operator-sdk
 ```sh
 brew install operator-sdk
 ```
