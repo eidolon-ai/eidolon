@@ -1,5 +1,3 @@
-import argparse
-import asyncio
 import logging.config
 import pathlib
 import typing
@@ -10,7 +8,6 @@ from typing import Literal
 
 import dotenv
 import time
-import uvicorn
 import yaml
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
@@ -37,8 +34,8 @@ from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.system.resources.resources_base import load_resources, Resource
-from eidolon_ai_sdk.util.posthog import report_server_started, PosthogConfig
+from eidolon_ai_sdk.system.resources.resources_base import Resource
+from eidolon_ai_sdk.util.posthog import report_server_started
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()
