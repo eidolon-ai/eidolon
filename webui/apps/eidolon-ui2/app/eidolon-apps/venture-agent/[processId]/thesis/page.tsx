@@ -3,8 +3,8 @@
 import * as React from "react";
 import {useEffect} from "react";
 import {Box} from "@mui/material";
-import {executeOperation, streamOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
-import {CopilotParams, useProcess} from "@eidolon/components";
+import {executeOperation, streamOperation} from "@eidolon/components/client";
+import {CopilotParams, useProcess} from "@eidolon/components/client";
 import {CompanyImageList} from "./CompanyImageList";
 import {Company} from "../../types";
 import CompanyDetailChat from "./company-detail-chat";

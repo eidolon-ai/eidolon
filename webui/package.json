@@ -1,5 +1,9 @@
 {
   "name": "eidolon-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "version": "1.0.50",
   "scripts": {
     "build": "turbo build",
@@ -11,13 +15,15 @@
     "docker_build": "docker build -t docker.io/eidolonai/webui -t docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') .",
     "predocker_push": "npm run docker_build",
     "docker_push": "docker push docker.io/eidolonai/webui:$(npm pkg get version | tr -d '\"') &&  docker push docker.io/eidolonai/webui:latest",
-    "maybe_docker_push": "VERSION=$(npm pkg get version | tr -d '\"') &&  docker manifest inspect docker.io/eidolonai/webui:$VERSION >/dev/null && echo 'Image exists' || npm run docker_push"
+    "maybe_docker_push": "VERSION=$(npm pkg get version | tr -d '\"') &&  docker manifest inspect docker.io/eidolonai/webui:$VERSION >/dev/null && echo 'Image exists' || npm run docker_push",
+    "publish-packages": "turbo run build lint test && changeset version && changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.7",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "prettier": "^3.3.2",
-    "turbo": "^1.13.4"
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.7"
   },
   "packageManager": "pnpm@9.1.4",
   "engines": {

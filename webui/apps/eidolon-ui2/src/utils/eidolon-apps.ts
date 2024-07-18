@@ -1,5 +1,5 @@
-import _appRegistry from 'eidolon-apps.json'
-import {CopilotParams, EidolonApp} from "@eidolon/components";
+import _appRegistry from '../../eidolon-apps.json'
+import {CopilotParams, EidolonApp} from "@eidolon/components/client";
 import * as fs from "fs";
 import {notFound} from "next/navigation";
 
