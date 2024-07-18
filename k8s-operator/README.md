@@ -43,6 +43,13 @@ We develop on a Mac, so we have the following instructions for Mac users.  If yo
 
   If you already have a .env file with these keys, you can create the secret with the following command:
   - `kubectl create secret generic eidolon --from-env-file=<location of your env file>/.env`
+  
+  ⚠️ To use the secret in your deployment, you need to add the following to your deployment yaml file's `spec`:
+  ```yaml
+  envFrom:
+    - secretRef:
+        name: eidolon
+  ```
 
 * Install the eidolon operator
     ```sh
