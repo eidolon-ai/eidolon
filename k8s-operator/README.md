@@ -32,24 +32,26 @@ We develop on a Mac, so we have the following instructions for Mac users.  If yo
 
 * Install your secrets
 
-  A secret with the needed credentials for your Eidolon deployment. The name of the secret is `eidolon`.
+    A secret with the needed credentials for your Eidolon deployment. The name of the secret is `eidolon`.
 
-  See the [Eidolon documentation](https://www.eidolonai.com) for more information on what keys you need. 
-  However, typically this will be a secret with the following keys:
-  - `OLLAMA_URL` - the URL for your Ollama deployment if you are using ollama.
-  - `OPENAI_API_KEY` - your OpenAI API key if you are using OpenAI.
-  - `MISTRAL_API_KEY` - your Mistral API key if you are using Mistral.
-  - `ANTHROPIC_API_KEY` - your Anthropic API key if you are using Anthropic.
+    See the [Eidolon documentation](https://www.eidolonai.com) for more information on what keys you need. 
+    However, typically this will be a secret with the following keys:
+    - `OLLAMA_URL` - the URL for your Ollama deployment if you are using ollama.
+    - `OPENAI_API_KEY` - your OpenAI API key if you are using OpenAI.
+    - `MISTRAL_API_KEY` - your Mistral API key if you are using Mistral.
+    - `ANTHROPIC_API_KEY` - your Anthropic API key if you are using Anthropic.
 
-  If you already have a .env file with these keys, you can create the secret with the following command:
-  - `kubectl create secret generic eidolon --from-env-file=<location of your env file>/.env`
-  
-  ⚠️ To use the secret in your deployment, you need to add the following to your deployment yaml file's `spec`:
-  ```yaml
-  envFrom:
-    - secretRef:
-        name: eidolon
-  ```
+    If you already have a .env file with these keys, you can create the secret with the following command:
+    ```sh
+    kubectl create secret generic eidolon --from-env-file=<location of your env file>/.env
+    ```
+
+    ⚠️ To use the secret in your deployment, you need to add the following to your deployment yaml file's `spec`:
+    ```yaml
+    envFrom:
+      - secretRef:
+          name: eidolon
+    ```
 
 * Install the eidolon operator
     ```sh
@@ -95,3 +97,23 @@ minikube service eidolon-server --url
 ```
 
 You can use this URL to access your eidolon server.
+
+### Running the web UI
+To start the webui, you can use the following command:
+```sh
+kubectl apply -f config/samples/webui.yaml
+```
+
+To expose the webui service we need to create a load balancer service, get the URL, and update the nextjs config map with the URL.:
+```sh
+# Get the URL from minikube
+API_URL=$(minikube service eidolon-webui --url)
+
+# Update the ConfigMap
+kubectl create configmap eidolon-webui-config --from-literal=NEXT_PUBLIC_API_URL=$API_URL -o yaml --dry-run=client | kubectl apply -f -
+
+# Restart the deployment to pick up the new ConfigMap value
+kubectl rollout restart deployment eidolon-webui-deployment
+
+echo "Web UI is available at $API_URL"
+```

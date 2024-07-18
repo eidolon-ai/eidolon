@@ -2,7 +2,7 @@
 
 import {Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/material";
 import {useRouter} from "next/navigation";
-import {EidolonApp} from "@eidolon/components";
+import {EidolonApp} from "@eidolon/components/client";
 
 export interface EidolonAppItemProps {
   path: string;
