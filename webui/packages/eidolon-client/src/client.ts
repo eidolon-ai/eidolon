@@ -1,6 +1,6 @@
 import {OpenAPIV3_1} from "openapi-types";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
-import {HttpException} from "./exceptions";
+import {HttpException} from "./exceptions.ts";
 
 // Disable SSR for @readme/openapi-parser due to Turbopack incompatibility
 const initializeParser = async () => {

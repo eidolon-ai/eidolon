@@ -31,7 +31,7 @@ Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 ```bash
 git clone https://github.com/eidolon-ai/eidolon-quickstart.git
 cd eidolon-quickstart
-make serve-dev
+make docker-serve
 ```
 
 If your AgentMachine successfully started, you should see the following logs in your terminal.

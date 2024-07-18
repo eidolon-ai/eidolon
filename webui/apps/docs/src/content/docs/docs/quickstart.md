@@ -90,7 +90,7 @@ spec:
 
 Now that your server is running, let's open a new terminal window and interact with it.
 
-#### 1. First download the Ediolon CLI
+#### 1. First download the Eidolon CLI
 ```bash
 pip install 'eidolon-ai-client[cli]' -U
 ```
