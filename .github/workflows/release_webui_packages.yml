@@ -53,9 +53,7 @@ jobs:
         working-directory: webui
 
       - name: Publish Packages
-        run: |
-          pnpm --filter @eidolon/client changeset publish --no-git-checks
-          pnpm --filter @eidolon/components changeset publish --no-git-checks
+        run: pnpm changeset publish --no-git-checks
         working-directory: webui
 
       - name: Push Tags to GitHub
@@ -64,7 +62,9 @@ jobs:
 
       - name: Create Release Pull Request
         id: changesets
-        run: changesets/action@v1
+        uses: changesets/action@v1
+        with:
+          setupGitUser: true
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: webui
