@@ -1,16 +1,21 @@
 {
   "name": "@eidolon/client",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "tsup": {
-    "entry": ["./index.ts"],
+    "entry": [
+      "./index.ts"
+    ],
     "splitting": false,
     "clean": true,
-    "format": ["cjs", "esm"],
+    "format": [
+      "cjs",
+      "esm"
+    ],
     "dts": {
       "resolve": true,
       "entry": "./index.ts"

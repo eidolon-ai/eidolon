@@ -21,33 +21,50 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install Dependencies
         run: pnpm install
-        working-directory: eidolon/webui
+        working-directory: webui
 
       - name: Build Packages
         run: pnpm build
-        working-directory: eidolon/webui
+        working-directory: webui
 
       - name: Version Packages
         run: pnpm changeset version
-        working-directory: eidolon/webui
+        working-directory: webui
 
       - name: Publish Packages
         run: |
           pnpm --filter @eidolon/client changeset publish --no-git-checks
           pnpm --filter @eidolon/components changeset publish --no-git-checks
-        working-directory: eidolon/webui
+        working-directory: webui
 
       - name: Push Tags to GitHub
         run: git push --follow-tags
-        working-directory: eidolon/webui
+        working-directory: webui
 
       - name: Create Release Pull Request
         id: changesets
-        uses: changesets/action@v1
+        run: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: webui
