@@ -15,9 +15,9 @@ last-update-hash = "ee7ee6937020e63dfb01fc126b4c2e9ee24fb853"
 [tool.poetry.dependencies]
 python = ">=3.8,<3.13"
 pydantic = "^2.6.4"
-setuptools = "^69.2.0"
+setuptools = "^70.0.0"
 httpx = "^0.27.0"
 
 [tool.poetry.group.dev.dependencies]
-setuptools = "^69.2.0"
+setuptools = "^70.0.0"
 ruff = "^0.3.3"
