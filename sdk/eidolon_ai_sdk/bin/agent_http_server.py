@@ -90,17 +90,20 @@ app = start_app(
 
 def main():
     # Run the server
-    path_ = [os.path.dirname(p) for p in args.yaml_path]
-    path_.append(".")
+    kwargs = {}
+    if args.reload:
+        kwargs["reload"] = True
+        kwargs["reload_dirs"] = [".", *(os.path.dirname(p) for p in args.yaml_path)]
+        kwargs["reload_includes"] = ["*.yml", "*.yaml", "*.py"]
+
     uvicorn.run(
         "eidolon_ai_sdk.bin.agent_http_server:app",
         host="0.0.0.0",
         port=args.port,
         log_level=log_level_str,
-        reload=args.reload,
-        reload_dirs=path_,
-        reload_includes=["*.yml", "*.yaml", "*.py"],
+        **kwargs
     )
+
 
 if __name__ == "__main__":
     main()
