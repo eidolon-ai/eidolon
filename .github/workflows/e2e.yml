@@ -37,6 +37,13 @@ jobs:
       CI: true
 
     steps:
+      - name: Check for OPENAI_API_KEY
+        run: |
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
+            echo "OPENAI_API_KEY is not set. Failing the job."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v3
 
