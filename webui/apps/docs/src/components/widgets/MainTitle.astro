@@ -1,0 +1,77 @@
+---
+import Image from '~/components/common/Image.astro';
+import type {CallToAction} from '~/types';
+import Button from '~/components/ui/Button.astro';
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  content?: string;
+  actions?: string | CallToAction[];
+  image?: string | any; // TODO: find HTMLElementProps
+}
+
+const {
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+  content = await Astro.slots.render('content'),
+  actions = await Astro.slots.render('actions'),
+  image = await Astro.slots.render('image'),
+} = Astro.props;
+---
+
+<section class="relative md:-mt-[76px] not-prose">
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
+    <div class="py-12 md:py-20 lg:py-0 lg:flex lg:items-center flex-col ">
+      <div class="lg:mt-20 pointer-events-none">
+        {
+          tagline && (
+            <p
+              class="text-3xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 dark:text-gray-200 text-center"
+              set:html={tagline}
+            />
+          )
+        }
+      </div>
+      <div class="items-center mx-auto">
+        <p
+          class="md:text-2xl text-gray-500 dark:text-gray-200 text-center pointer-events-none"
+          set:html={content}
+        />
+        <div class="flex text-center mt-7 mb-14 gap-7 justify-center">
+          <a href="https://pypi.org/project/eidolon-ai-sdk/">
+            <img style="display: inline-block;" alt="PyPI - Version" src="https://img.shields.io/pypi/v/eidolon-ai-sdk?style=flat&label=eidolon-ai-sdk">
+          </a>
+          <a href="https://pypistats.org/packages/eidolon-ai-sdk">
+            <img style="display: inline-block" alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/eidolon-ai-sdk">
+          </a>
+          <a href="https://github.com/eidolon-ai/eidolon/actions/workflows/test_python.yml?query=branch%3Amain">
+            <img style="display: inline-block;" alt="GitHub Test Status"
+                 src="https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&logo=github&label=test">
+          </a>
+        </div>
+        <div class="mx-auto max-w-none">
+          {
+            <div class="flex flex-nowrap flex-row justify-center items-center gap-4 m-0 w-full">
+              {Array.isArray(actions) ? (
+                actions.map((action) => {
+                  const textClass = `text-${action.color} dark:text-${action.color}`;
+                  const borderClass = `border-${action.color} dark:border-${action.color}`;
+                  return (
+                    <Button {...(action || {})} class=`${textClass} ${borderClass} rounded-md pl-5 pr-4 pt-1 pb-1 text-lg`/>
+                  )
+                })
+              ) : (
+                <Fragment set:html={actions}/>
+              )}
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

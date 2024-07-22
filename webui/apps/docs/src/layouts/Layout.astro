@@ -41,7 +41,7 @@ const { language, textDirection } = I18N;
   </head>
 
   <body class="antialiased text-default bg-page tracking-tight">
-    <slot />
+  <slot />
 
     <BasicScripts />
 
@@ -50,5 +50,6 @@ const { language, textDirection } = I18N;
         content-visibility: auto;
       }
     </style>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
   </body>
 </html>

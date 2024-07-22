@@ -1,0 +1,84 @@
+---
+import WidgetWrapper from "../ui/WidgetWrapper.astro";
+
+type duration = 'duration-0' | 'duration-50' | 'duration-100' | 'duration-150' | 'duration-200' | 'duration-300' | 'duration-500' | 'duration-700' | 'duration-1000';
+const {
+  duration: duration = 'duration-700',
+  interval = 5000,
+  bgColor = 'bg-stone-200',
+  bgColorDark = 'bg-black',
+  height = 'h-96',
+
+  id,
+  isDark = false,
+  classes = {
+    container: ''
+  },
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <!--<carousel-element data-id={id} data-items={JSON.stringify(items)}>-->
+  <div id={id + "-carousel"} class={"relative w-full " + bgColor + " dark:!" + bgColorDark} data-carousel="slide" data-carousel-interval={interval}>
+    <!-- Carousel wrapper -->
+    <div class={"carousel-content relative overflow-hidden rounded-lg " + height}>
+      <slot />
+    </div>
+    <!-- Slider indicators -->
+    <div class="carousel-slider absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+    </div>
+    <!-- Slider controls -->
+    <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+        <span
+          class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+            <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+            </svg>
+            <span class="sr-only">Previous</span>
+        </span>
+    </button>
+    <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+        <span
+          class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+            <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+            </svg>
+            <span class="sr-only">Next</span>
+        </span>
+    </button>
+  </div>
+</WidgetWrapper>
+
+<script define:vars={{ id, duration }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const carouselWrapper = document.querySelector(`#${id}-carousel .carousel-content`);
+    if (carouselWrapper) {
+      const children = Array.from(carouselWrapper.children);
+      children.forEach((child, index) => {
+        const itemDuration = child.getAttribute('data-duration') || duration;
+        const wrapper = document.createElement('div');
+        wrapper.className = `hidden ease-in-out ${itemDuration}`;
+        wrapper.setAttribute('data-carousel-item', '');
+        
+        const innerWrapper = document.createElement('div');
+        innerWrapper.className = 'absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 text-white flex justify-center';
+        
+        child.parentNode.insertBefore(wrapper, child);
+        wrapper.appendChild(innerWrapper);
+        innerWrapper.appendChild(child);
+        
+        const carouselSlider = document.querySelector(`#${id}-carousel .carousel-slider`);
+        if (carouselSlider) {
+          const slot = document.createElement('button');
+          slot.className = `w-3 h-3 rounded-full`;
+          slot.type = 'button';
+          slot.setAttribute('aria-current', 'false');
+          slot.setAttribute('aria-label', "Slide " + index);
+          slot.setAttribute('data-carousel-slide-to', "" + index);
+          
+          carouselSlider.appendChild(slot);
+        }
+      });
+    }
+  });
+</script>
