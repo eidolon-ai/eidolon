@@ -68,9 +68,6 @@ export default defineConfig({
         'x.com': 'https://twitter.com/AgentSDK',
       },
       sidebar: [
-        {
-          label: 'Introduction', link: '/docs/introduction'
-        },
         {label: 'Quickstart', link: '/docs/quickstart'},
         {
           label: 'How To',
@@ -205,6 +202,9 @@ export default defineConfig({
             },
             // ### End Components ###
           ]
+        },
+        {
+          label: 'FAQ', link: '/docs/introduction'
         },
         {
           label: 'Architecture',

@@ -3,16 +3,28 @@ import {getAsset, getBlogPermalink} from './utils/permalinks';
 export const headerData = {
     links: [
       {
-        text: 'Docs',
-        href: '/docs/introduction',
+        text: 'Home',
+        href: '/',
+      },
+      {
+        text: 'Examples',
+        href: '/docs/recipes/chatbot',
+      },
+      {
+        text: 'Documentation',
+        href: '/docs/quickstart',
       },
       {
         text: 'Blog',
         href: getBlogPermalink(),
       },
       {
-        text: 'Events',
-        href: '#events',
+        text: 'FAQ',
+        href: '/docs/introduction',
+      },
+      {
+        text: 'Videos',
+        href: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
       }
     ],
     actions: [
@@ -23,19 +35,6 @@ export const headerData = {
 
 export const footerData = {
   links: [
-    {
-      title: 'Product',
-      links: [
-        {text: 'Features', href: '#features'},
-        {text: 'Documentation', href: '/docs/introduction'},
-      ],
-    },
-    {
-      title: 'Project',
-      links: [
-        {text: 'About', href: '/about'},
-      ],
-    },
   ],
   /*
     secondaryLinks: [
