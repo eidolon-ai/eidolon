@@ -10,6 +10,8 @@ import compress from 'astro-compress';
 import astrowind from './src/integration';
 import {readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin} from './src/utils/frontmatter.mjs';
 import starlight from "@astrojs/starlight";
+import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
+import astroExpressiveCode from 'astro-expressive-code'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const hasExternalScripts = false;
@@ -46,6 +48,9 @@ export default defineConfig({
     Logger: 1
   }),
     astrowind(),
+    astroExpressiveCode({
+      frames: {},
+    }),
     starlight({
       title: "Introduction",
       disable404Route: true,
