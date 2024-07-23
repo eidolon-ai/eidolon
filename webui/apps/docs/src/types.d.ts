@@ -296,7 +296,13 @@ export interface ImageTab {
   title: string,
   src: string,
   alt: string,
-  [key: string]: any,
+  width?: number;
+  height?: number;
+  aspectRatio?: number;
+  objectFit?: string;
+  objectPosition?: string;
+  layout?: string;
+  background?: string;
 }
 
 export interface MarkdownTab {
