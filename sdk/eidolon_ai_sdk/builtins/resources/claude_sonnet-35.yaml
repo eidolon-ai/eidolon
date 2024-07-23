@@ -1,0 +1,28 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: ClaudeSonnet35
+  annotations:
+    - title: "Claude Sonnet 3.5"
+spec:
+  implementation: APU
+  audio_unit: OpenAiSpeech
+  image_unit: OpenAIImageUnit
+  llm_unit:
+    implementation: AnthropicLLMUnit
+    model: claude-3-5-sonnet-20240620
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: claude-3-5-sonnet-20240620
+spec:
+  implementation: LLMModel
+  human_name: Claude Sonnet
+  name: claude-3-5-sonnet-20240620
+  input_context_limit: 200000
+  output_context_limit: 4096
+  supports_tools: False
+  supports_image_input: True
+  supports_audio_input: False
