@@ -72,56 +72,119 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   <ContentWithTabs
     bullets={[
       {
-        title: 'Add retrieval agents to any application',
-        description: `Easily integrate a retrieval agent into your application.  The Eidolon retrieval agent is a pluggable component that can be used with any backend vector store.`,
+        title: 'Choose from a variety of pre-built agents or define your own',
+        description:
+          "Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.",
       },
       {
-        title: 'Customize with pluggable embeddings, chunking, and storage',
-        description:
-          'Add RAG storage to any application using simple services. Eidolon provides the flexibility to customize RAG to fit your needs.',
+        title: 'Define agents with declarative YAML',
+        description: "Eidolon's simple declarative YAML syntax makes it easy to define agents. Agents can be as simple as a single line or as complex as needed.",
       },
       {
-        title: 'Secure data using multiple agents and RBAC',
+        title: 'Build agents that work together',
         description:
-          "Easily secure agents using role-based access control (RBAC) ensuring that only the right agents have access to the right data.",
+          "Add RAG storage to any application using simple services. Eidolon provides the flexibility to customize RAG to fit your needs.",
       },
     ]}
     tabs={[
       {
-        title: "Option 1",
-        src: "~/assets/images/agent_machine.png",
-        alt: "RAG",
-      },
-      {
-        title: "Option 2",
+        title: "Multi-Model Chatbot",
         language: 'yaml',
         code: `apiVersion: eidolon/v1
 kind: Agent
 metadata:
-  name: doc_producer
+  name: multi-model-chatbot
+
+spec:
+  system_prompt:
+    You are a helpful assistant. Output all multi-media content as embedded content including image, video, and audio. Only generate images or speach if directly asked by the user.
+  apus:
+    - { apu: GPT4-turbo, title: GPT4 Turbo, default: true }
+    - { apu: MistralLarge, title: Mistral Large }
+    - { apu: Llamma3-8b, title: Llamma3 8b }
+    - { apu: ClaudeOpus, title: Claude Opus }
+    - { apu: ClaudeSonnet, title: Claude Sonnet }
+`
+      },
+      {
+        title: "RAG",
+        language: 'yaml',
+        code: `---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: agent
 
 spec:
   description: An agent that searches the eidolon code and documentation
-  agent_refs: ["SearchCode", "SearchDocs"]
+  agent_refs: ["doc-search"]
+  system_prompt: You are a software expert responsible for answering questions about a code base.
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: doc-search
+
+spec:
+  implementation: RetrieverAgent
+  description: "Search the Eidolon github repository for code, examples, and documentation"
+  document_manager:
+    loader:
+      implementation: GitHubLoader
+      owner: "eidolon-ai"
+      repo: "eidolon"
+      pattern: [ "**/*.md", "**/*.py" ]
+      exclude: "**/test/**/*"
+`
+      },
+      {
+        title: "Agent-Agent Communication",
+        language: 'yaml',
+        code: `---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: manager
+
+spec:
   system_prompt:
-    You are a software documentation expert responsible for maintaining a project and trying to prove yourself. Your job is to
-    write documentation for the project including how to use it, what each component does, and the details of each part of the code.
-    You should write the documentation in a way that is easy to understand and follow. Remember, you are a professional and you should write the
-    documentation in a professional manner similar to other documentation you have seen.
-    You have available tools that can search for code, documentation, and list files. You can use these tools to help you write the documentation.
-    Think step-by-step about how you want to create the documentation. Reason about the documentation and call tools to help you create the documentation.
-  actions:
-    - user_prompt:
-        Follow the instructions below. Remember to search for code and documentation to help you write the documentation.
-        {{ body }}
+    You are a tech manager servicing user requests. You manage a team of engineers and qa workers. Work with your team as needed to answer user questions.
+  agent_refs: ["engineer", "qa"]
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: manager
+
+spec:
+  system_prompt:
+    You are a tech manager servicing user requests. You manage a team of engineers and qa workers. Work with your team as needed to answer user questions.
+  agent_refs: ["engineer", "qa"]
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: engineer
+
+spec:
+  system_prompt:
+    You are an engineer. Your manager (user) will come to with questions. Work with the qa team as needed to answer user questions.
+  agent_refs: ["qa"] 
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: qa
+
+spec:
+  system_prompt: You are a qa engineer. Quality is your top concern.
 `
       }
-      
     ]}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Retrieval-augmented generation</h3>
-      Build RAG applications fast and easy.
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">1. Build</h3>
+      Defining agents is fast and easy.
     </Fragment>
 
     <Fragment slot="bg">
@@ -135,58 +198,37 @@ spec:
     isReversed
     bullets={[
       {
-        title: 'Build agents that work together',
+        title: 'Deploy directly to Kubernetes',
         description:
-          'Eidolon\'s modular framework enables easy integration of agents with other agents or into any application. Agents are designed to be easily swapped or upgraded.',
+          'Agents are infrastructure and should be deployed as such. Deploy directly using your organizations Kubernetes management tools / pipeline.',
       },
       {
         title: 'Scale agents as needed',
         description:
-          'Agents are stateless and can be scaled horizontally as needed. You choose how to scale to meet your needs.',
+          'Agents are stateless and scale horizontally to meet your needs.',
       },
       {
-        title: 'Run agents anywhere',
+        title: 'Build safely with ENFORCEABLE policies',
         description:
-          'Eidolon agents are designed to be run in any cloud or on-prem. You choose where your agents run and how they are deployed.',
+          'With kubernetes deployment, you can enforce policies to ensure your agents are deployed with access only to the resources they need.',
       },
     ]}
     tabs={[
       {
-        language: 'yaml',
-        code: `apiVersion: eidolon/v1
-kind: Agent
-metadata:
-  name: conversational_agent
-spec:
-  agent_refs:
-    - research_agent
-  system_prompt:
-    You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio.
-    Only generate images or speach if directly asked by the user.
-
-  actions:
-    - name: "converse"
-      description: "A copilot that engages with the user."
-      allow_file_upload: true
-  apus:
-    - apu: MistralLarge
-      title: Mistral Large
-    - apu: Llamma3-8b
-      title: Llamma3 8b
-    - apu: GPT4-turbo
-      title: GPT4 Turbo
-      default: true
-    - apu: ClaudeOpus
-      title: Claude Opus
-    - apu: ClaudeSonnet
-      title: Claude Sonnet
-`
+        language: 'bash',
+        code: `
+% helm repo add eidolon https://eidolonai.com/charts
+... 
+% helm install eidolon eidolon-operator/eidolon-operator-chart
+...
+% kubectl apply -f agent.yaml
+agent.server.eidolonai.com/agent created`
       }
     ]}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Multi-agent ready</h3>
-      Harness the power of multiple agents to create your next super-agent. Eidolon makes it easy to create agents that work together.
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">2. Deploy</h3>
+      What good is an agent that can't be deployed?
     </Fragment>
 
     <Fragment slot="bg">
@@ -197,59 +239,32 @@ spec:
   <ContentWithTabs
     bullets={[
       {
-        title: 'Create a simple chatbot',
+        title: 'Build a gui with React components',
         description:
-          'The Eidolon copilot agent can be used out of the box against any LLM and supports multi-media and RAG using configuration files - all without code.',
+          'Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.',
       },
       {
-        title: 'Front a complex agent',
+        title: 'Run actions directly through HTTP REST API',
         description:
-          'Use the built-in Eidolon copilot as your human interface to complex agents. The power of Eidolon\'s agents-as-a-service allows easy integration with any backend agent.',
+          'At the end of the day, agents are just http services. You can run actions directly through the REST API or use the Eidolon webui to interact with your agents.',
       },
       {
-        title: 'Use our React components or roll your own',
+        title: 'Hack away with the CLI',
         description:
-          'Eidolon publishes configurable React components that can be used in any application. You can use these components as is, customize them to fit your needs, or completely roll your own - you decide.',
+          'Eidolon provides a CLI to help you interact with your agents in a more ad-hoc manner. The CLI is a powerful tool to help you experiment with your agents quickly.',
       },
     ]}
     tabs={[
       {
-        language: 'yaml',
-        code: `apiVersion: eidolon/v1
-kind: Agent
-metadata:
-  name: conversational_agent
-spec:
-  agent_refs:
-    - research_agent
-  system_prompt:
-    You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio.
-    Only generate images or speach if directly asked by the user.
-
-  actions:
-    - name: "converse"
-      description: "A copilot that engages with the user."
-      allow_file_upload: true
-  apus:
-    - apu: MistralLarge
-      title: Mistral Large
-    - apu: Llamma3-8b
-      title: Llamma3 8b
-    - apu: GPT4-turbo
-      title: GPT4 Turbo
-      default: true
-    - apu: ClaudeOpus
-      title: Claude Opus
-    - apu: ClaudeSonnet
-      title: Claude Sonnet
-`
+        title: "Option 1",
+        src: "~/assets/images/agent_machine.png",
+        alt: "RAG",
       }
     ]}
-    codeLanguage="yaml"
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Copilot interface</h3>
-      Build copilot functionality into your application with ease.
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">3. Consume</h3>
+      GenAI applications need to consume agents in a diverse set of ways.
     </Fragment>
 
     <Fragment slot="bg">
