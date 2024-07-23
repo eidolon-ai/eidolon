@@ -9,11 +9,12 @@ import WidgetWrapper from "../components/ui/WidgetWrapper.astro";
 import Item from "../components/blog/GridItem.astro";
 import LinkUnfurl from "../components/widgets/LinkUnfurl.astro";
 import SpeedInsights from "@vercel/speed-insights/astro"
-import ContentWithCode from "../components/widgets/ContentWithCode.astro";
+import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
 import Carousel from "../components/widgets/Carousel.astro";
 import MainTitle from "../components/widgets/MainTitle.astro";
 import {findImage} from "../utils/images";
 import {astroAsseetsOptimizer, getImagesOptimized} from "../utils/images-optimization";
+import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
 
 const metadata = {
   title: 'Eidolon -- Build LLM Agents as Services',
@@ -68,8 +69,8 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   <div class="mb-16"/>
   <!-- Content Widget **************** -->
 
-  <ContentWithCode
-    items={[
+  <ContentWithTabs
+    bullets={[
       {
         title: 'Add retrieval agents to any application',
         description: `Easily integrate a retrieval agent into your application.  The Eidolon retrieval agent is a pluggable component that can be used with any backend vector store.`,
@@ -85,38 +86,11 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
           "Easily secure agents using role-based access control (RBAC) ensuring that only the right agents have access to the right data.",
       },
     ]}
-    codeItems={[
+    tabs={[
       {
         title: "Option 1",
-        language: 'yaml',
-        code: `apiVersion: eidolon/v1
-kind: Agent
-metadata:
-  name: conversational_agent
-spec:
-  agent_refs:
-    - research_agent
-  system_prompt:
-    You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio.
-    Only generate images or speach if directly asked by the user.
-
-  actions:
-    - name: "converse"
-      description: "A copilot that engages with the user."
-      allow_file_upload: true
-  apus:
-    - apu: MistralLarge
-      title: Mistral Large
-    - apu: Llamma3-8b
-      title: Llamma3 8b
-    - apu: GPT4-turbo
-      title: GPT4 Turbo
-      default: true
-    - apu: ClaudeOpus
-      title: Claude Opus
-    - apu: ClaudeSonnet
-      title: Claude Sonnet
-`
+        src: "~/assets/images/agent_machine.png",
+        alt: "RAG",
       },
       {
         title: "Option 2",
@@ -153,13 +127,13 @@ spec:
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-gray-100 dark:bg-blue-950"></div>
     </Fragment>
-  </ContentWithCode>
+  </ContentWithTabs>
 
   <!-- Content Widget **************** -->
 
-  <ContentWithCode
+  <ContentWithTabs
     isReversed
-    items={[
+    bullets={[
       {
         title: 'Build agents that work together',
         description:
@@ -176,7 +150,7 @@ spec:
           'Eidolon agents are designed to be run in any cloud or on-prem. You choose where your agents run and how they are deployed.',
       },
     ]}
-    codeItems={[
+    tabs={[
       {
         language: 'yaml',
         code: `apiVersion: eidolon/v1
@@ -218,10 +192,10 @@ spec:
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-white dark:bg-transparent"></div>
     </Fragment>
-  </ContentWithCode>
+  </ContentWithTabs>
 
-  <ContentWithCode
-    items={[
+  <ContentWithTabs
+    bullets={[
       {
         title: 'Create a simple chatbot',
         description:
@@ -238,7 +212,7 @@ spec:
           'Eidolon publishes configurable React components that can be used in any application. You can use these components as is, customize them to fit your needs, or completely roll your own - you decide.',
       },
     ]}
-    codeItems={[
+    tabs={[
       {
         language: 'yaml',
         code: `apiVersion: eidolon/v1
@@ -281,7 +255,7 @@ spec:
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-gray-50 dark:bg-blue-950"></div>
     </Fragment>
-  </ContentWithCode>
+  </ContentWithTabs>
 
   <!-- Steps Widget ****************** -->
 

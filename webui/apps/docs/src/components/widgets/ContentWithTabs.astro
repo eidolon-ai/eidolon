@@ -1,11 +1,12 @@
 ---
-import type {Content as Props} from '~/types';
+import type {ContentWithTabs as Props} from '~/types';
 import Headline from '../ui/Headline.astro';
 import WidgetWrapper from '../ui/WidgetWrapper.astro';
 import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
 import ItemGrid from '../ui/ItemGrid.astro';
 import { Code } from 'astro-expressive-code/components'
+import TabItem from "./TabItem.astro";
 
 let {
   title = await Astro.slots.render('title'),
@@ -13,10 +14,10 @@ let {
   tagline,
   content = await Astro.slots.render('content'),
   callToAction,
-  items = [],
+  items: bullets = [],
   columns,
 
-  codeItems = [],
+  tabs = [],
 
   isReversed = false,
   isAfterContent = false,
@@ -63,7 +64,7 @@ if (!id) {
         }
 
         <ItemGrid
-          items={items}
+          items={bullets}
           columns={columns}
           defaultIcon="tabler:check"
           classes={{
@@ -78,15 +79,15 @@ if (!id) {
       </div>
 
       <div class="md:basis-1/2">
-        {codeItems.length == 1 && (
+        {tabs.length == 1 && (
           <div class="relative m-auto mt-8 md:mt-0">
-            <Code code={codeItems[0].code} lang={codeItems[0].language} wrap="true"/>
+            <TabItem {...tabs[0]}/>
           </div>
         )}
-        {codeItems.length > 1 && (
+        {tabs.length > 1 && (
           <div class="mb-2">
             <ul class="flex flex-wrap text-sm font-medium text-center" id=`${id}-tab` data-tabs-toggle=`#${id}-tab-content` role="tablist">
-              {codeItems.map((item, index) => (
+              {tabs.map((item, index) => (
                 <li class="me-2" role="presentation">
                   <button
                     class={`inline-block p-4 border-b-2 rounded-t-lg`}
@@ -104,10 +105,10 @@ if (!id) {
             </ul>
           </div>
           <div id=`#${id}-tab-content`>
-            {codeItems.map((item, index) => (
+            {tabs.map((item, index) => (
               <div class="hidden" id={`${id}-${index}-content`} role="tabpanel" aria-labelledby={`${id}-${index}-tab`}>
                 <div class="relative m-auto">
-                  <Code code={item.code} lang={item.language} wrap="true"/>
+                  <TabItem {...item}/>
                 </div>
               </div>
             ))}
