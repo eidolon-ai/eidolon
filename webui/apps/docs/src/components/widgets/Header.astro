@@ -10,6 +10,8 @@ import {trimSlash} from "~/utils/permalinks";
 import type {CallToAction} from "~/types";
 import Image from "../common/Image.astro";
 
+import '@docsearch/css';
+
 interface Link {
   text?: string;
   href?: string;
@@ -85,7 +87,7 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
         </div>
       )}
     </div>
-      
+
     <nav class="items-center w-full md:w-auto hidden md:flex text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:mx-5">
       <ul
         class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium"
@@ -150,10 +152,12 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
             ""
           )
         }
+        <div id="docsearchbtn" class="mr-2"/>
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
           {
             <Button href="https://github.com/eidolon-ai/eidolon" variant="link" class="py-2.5 px-2.0 font-semibold shadow-none hover:underline text-sm w-auto capitalize"
-            ><div set:html={githubText}></div>
+            >
+              <div set:html={githubText}></div>
             </Button>
           }
         </div>
@@ -173,3 +177,17 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
     </div>
   </div>
 </header>
+
+<script>
+  import '@docsearch/css';
+  import docsearch from '@docsearch/js';
+  import "./search.css"
+
+  docsearch({
+    appId: "EEA60PZVA2",
+    apiKey: "6bbd9d76e8fc77e3e7744c572534d1dd",
+    indexName: "eidolonai",
+    container: '#docsearchbtn',
+    placeholder: 'Search documentation',
+  });
+</script>

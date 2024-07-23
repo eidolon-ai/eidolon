@@ -35,7 +35,7 @@ if (!id) {
 <WidgetWrapper
   id={id}
   isDark={isDark}
-  containerClass={`max-w-7xl mx-auto ${isAfterContent ? 'pt-0 md:pt-0 lg:pt-0' : ''} ${classes?.container ?? ''}`}
+  containerClass={`mx-auto ${isAfterContent ? 'pt-0 md:pt-0 lg:pt-0' : 'pt-2 md:pt-4 lg:pt-8'} ${classes?.container ?? ''}`}
   bg={bg}
 >
   <Headline
@@ -48,7 +48,7 @@ if (!id) {
       subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400',
     }}
   />
-  <div class="mx-auto max-w-7xl p-4 md:px-8">
+  <div class="mx-auto p-4 md:px-8">
     <div class={`md:flex ${isReversed ? 'md:flex-row-reverse' : ''} md:gap-16`}>
       <div class="md:basis-1/2 md:w-1/2">
         {content &&
@@ -79,13 +79,13 @@ if (!id) {
 
       <div class="md:basis-1/2">
         {codeItems.length == 1 && (
-          <div class="relative m-auto max-w-4xl">
+          <div class="relative m-auto mt-8 md:mt-0">
             <Code code={codeItems[0].code} lang={codeItems[0].language} wrap="true"/>
           </div>
         )}
         {codeItems.length > 1 && (
-          <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
-            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id=`${id}-tab` data-tabs-toggle=`#${id}-tab-content` role="tablist">
+          <div class="mb-2">
+            <ul class="flex flex-wrap text-sm font-medium text-center" id=`${id}-tab` data-tabs-toggle=`#${id}-tab-content` role="tablist">
               {codeItems.map((item, index) => (
                 <li class="me-2" role="presentation">
                   <button
@@ -105,8 +105,8 @@ if (!id) {
           </div>
           <div id=`#${id}-tab-content`>
             {codeItems.map((item, index) => (
-              <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id={`${id}-${index}-content`} role="tabpanel" aria-labelledby={`${id}-${index}-tab`}>
-                <div class="relative m-auto max-w-4xl">
+              <div class="hidden" id={`${id}-${index}-content`} role="tabpanel" aria-labelledby={`${id}-${index}-tab`}>
+                <div class="relative m-auto">
                   <Code code={item.code} lang={item.language} wrap="true"/>
                 </div>
               </div>
