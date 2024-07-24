@@ -4,7 +4,7 @@
   "workspaces": [
     "packages/*"
   ],
-  "version": "1.0.51",
+  "version": "1.0.52",
   "scripts": {
     "build": "turbo build",
     "start": "npm --prefix apps/eidolon-ui2 run start",
@@ -33,6 +33,6 @@
     "next": "14.1.3"
   },
   "eidolon": {
-    "last-update-hash": "0d088af1fe8420b393b625192a75a02ec1ab92fe"
+    "last-update-hash": "04fa2d9351016683d8cc1c56e6007645f007aa3e"
   }
 }

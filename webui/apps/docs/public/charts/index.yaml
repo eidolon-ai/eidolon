@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   eidolon-operator-chart:
   - apiVersion: v2
-    appVersion: 0.0.51
-    created: "2024-07-17T14:14:57.688434235Z"
+    appVersion: 0.0.54
+    created: "2024-07-24T14:32:51.209572925Z"
     description: A Helm chart for Kubernetes
-    digest: facc6a2272759aef6a6c3993d0f8df594f7a8a4cbf44107850a201f715ab488f
+    digest: cae63d6df36b66ad0e43f810bc212d77fffa0cd02215ed98834a90cbf97e848c
     name: eidolon-operator-chart
     type: application
     urls:
-    - https://eidolonai.com/charts/eidolon-operator-chart-0.0.51.tgz
-    version: 0.0.51
-generated: "2024-07-17T14:14:57.687494324Z"
+    - https://eidolonai.com/charts/eidolon-operator-chart-0.0.54.tgz
+    version: 0.0.54
+generated: "2024-07-24T14:32:51.208564422Z"
