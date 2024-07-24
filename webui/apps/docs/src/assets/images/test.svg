@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="terminal" baseProfile="full" viewBox="0 0 640 427" width="640" version="1.1">
+    <defs>
+        <termtosvg:template_settings xmlns:termtosvg="https://github.com/nbedos/termtosvg">
+            <termtosvg:screen_geometry columns="80" rows="25"/>
+            <termtosvg:animation type="css"/>
+        </termtosvg:template_settings>
+        <style type="text/css" id="generated-style"><![CDATA[#screen {
+                font-family: 'DejaVu Sans Mono', monospace;
+                font-style: normal;
+                font-size: 14px;
+            }
+
+        text {
+            dominant-baseline: text-before-edge;
+            white-space: pre;
+        }
+    
+            :root {
+                --animation-duration: 10849ms;
+            }
+
+            @keyframes roll {
+                0.000%{transform:translateY(0px)}
+3.309%{transform:translateY(-442px)}
+4.747%{transform:translateY(-884px)}
+5.337%{transform:translateY(-1326px)}
+6.563%{transform:translateY(-1768px)}
+8.213%{transform:translateY(-2210px)}
+12.232%{transform:translateY(-2652px)}
+14.149%{transform:translateY(-3094px)}
+15.264%{transform:translateY(-3536px)}
+16.767%{transform:translateY(-3978px)}
+18.241%{transform:translateY(-4420px)}
+27.145%{transform:translateY(-4862px)}
+28.344%{transform:translateY(-5304px)}
+29.496%{transform:translateY(-5746px)}
+30.897%{transform:translateY(-6188px)}
+31.551%{transform:translateY(-6630px)}
+33.238%{transform:translateY(-7072px)}
+38.870%{transform:translateY(-7514px)}
+39.764%{transform:translateY(-7956px)}
+39.782%{transform:translateY(-8398px)}
+44.115%{transform:translateY(-8840px)}
+45.801%{transform:translateY(-9282px)}
+46.290%{transform:translateY(-9724px)}
+47.562%{transform:translateY(-10166px)}
+49.157%{transform:translateY(-10608px)}
+50.456%{transform:translateY(-11050px)}
+54.374%{transform:translateY(-11492px)}
+55.443%{transform:translateY(-11934px)}
+56.300%{transform:translateY(-12376px)}
+58.936%{transform:translateY(-12818px)}
+60.595%{transform:translateY(-13260px)}
+62.033%{transform:translateY(-13702px)}
+63.149%{transform:translateY(-14144px)}
+64.218%{transform:translateY(-14586px)}
+65.628%{transform:translateY(-15028px)}
+66.025%{transform:translateY(-15470px)}
+67.167%{transform:translateY(-15912px)}
+70.301%{transform:translateY(-16354px)}
+71.085%{transform:translateY(-16796px)}
+71.103%{transform:translateY(-17238px)}
+71.113%{transform:translateY(-17680px)}
+90.783%{transform:translateY(-18122px)}
+100.000%{transform:translateY(-18122px)}
+            }
+
+            #screen_view {
+                animation-duration: 10849ms;
+                animation-iteration-count:infinite;
+                animation-name:roll;
+                animation-timing-function: steps(1,end);
+                animation-fill-mode: forwards;
+            }
+        ]]></style>
+        <style type="text/css" id="user-style">
+            /* The colors defined below are the default 16 colors used for rendering text of the terminal. Adjust
+               them as needed.
+               PowerShell colors based on https://en.wikipedia.org/wiki/ANSI_escape_code#Colors */
+            .foreground {fill: #cccccc;}
+            .background {fill: #0c0c0c;}
+            .color0 {fill: #0c0c0c;}
+            .color1 {fill: #c50f1f;}
+            .color2 {fill: #13a10e;}
+            .color3 {fill: #c19c00;}
+            .color4 {fill: #0037da;}
+            .color5 {fill: #881798;}
+            .color6 {fill: #3a96dd;}
+            .color7 {fill: #cccccc;}
+            .color8 {fill: #767676;}
+            .color9 {fill: #e74856;}
+            .color10 {fill: #16c60c;}
+            .color11 {fill: #f9f1a5;}
+            .color12 {fill: #3b78ff;}
+            .color13 {fill: #b4009e;}
+            .color14 {fill: #61d6d6;}
+            .color15 {fill: #f2f2f2;}
+        </style>
+    </defs>
+    <svg id="screen" width="640" height="425" viewBox="0 0 640 425" preserveAspectRatio="xMidYMin slice">
+    <rect class="background" height="100%" width="100%" x="0" y="0"/><defs><g id="g1"><text x="0" textLength="272" class="foreground">lukelalor@MacBook-Pro resources % </text><text x="272" textLength="8" class="background"> </text><text x="280" textLength="360" class="foreground">                                             </text></g><g id="g2"><text x="0" textLength="280" class="foreground">lukelalor@MacBook-Pro resources % k</text><text x="280" textLength="8" class="background"> </text><text x="288" textLength="352" class="foreground">                                            </text></g><g id="g3"><text x="0" textLength="288" class="foreground">lukelalor@MacBook-Pro resources % ku</text><text x="288" textLength="8" class="background"> </text><text x="296" textLength="344" class="foreground">                                           </text></g><g id="g4"><text x="0" textLength="296" class="foreground">lukelalor@MacBook-Pro resources % kub</text><text x="296" textLength="8" class="background"> </text><text x="304" textLength="336" class="foreground">                                          </text></g><g id="g5"><text x="0" textLength="304" class="foreground">lukelalor@MacBook-Pro resources % kube</text><text x="304" textLength="8" class="background"> </text><text x="312" textLength="328" class="foreground">                                         </text></g><g id="g6"><text x="0" textLength="328" class="foreground">lukelalor@MacBook-Pro resources % kubectl</text><text x="328" textLength="8" class="background"> </text><text x="336" textLength="304" class="foreground">                                      </text></g><g id="g7"><text x="0" textLength="336" class="foreground">lukelalor@MacBook-Pro resources % kubectl </text><text x="336" textLength="8" class="background"> </text><text x="344" textLength="296" class="foreground">                                     </text></g><g id="g8"><text x="0" textLength="344" class="foreground">lukelalor@MacBook-Pro resources % kubectl a</text><text x="344" textLength="8" class="background"> </text><text x="352" textLength="288" class="foreground">                                    </text></g><g id="g9"><text x="0" textLength="352" class="foreground">lukelalor@MacBook-Pro resources % kubectl ap</text><text x="352" textLength="8" class="background"> </text><text x="360" textLength="280" class="foreground">                                   </text></g><g id="g10"><text x="0" textLength="360" class="foreground">lukelalor@MacBook-Pro resources % kubectl app</text><text x="360" textLength="8" class="background"> </text><text x="368" textLength="272" class="foreground">                                  </text></g><g id="g11"><text x="0" textLength="376" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply</text><text x="376" textLength="8" font-weight="bold" class="foreground"> </text><text x="384" textLength="8" class="background"> </text><text x="392" textLength="248" class="foreground">                               </text></g><g id="g12"><text x="0" textLength="392" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply -</text><text x="392" textLength="8" class="background"> </text><text x="400" textLength="240" class="foreground">                              </text></g><g id="g13"><text x="0" textLength="400" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply -f</text><text x="400" textLength="8" class="background"> </text><text x="408" textLength="232" class="foreground">                             </text></g><g id="g14"><text x="0" textLength="408" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply -f </text><text x="408" textLength="8" class="background"> </text><text x="416" textLength="224" class="foreground">                            </text></g><g id="g15"><text x="0" textLength="416" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply -f c</text><text x="416" textLength="8" class="background"> </text><text x="424" textLength="216" class="foreground">                           </text></g><g id="g16"><text x="0" textLength="424" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply -f ch</text><text x="424" textLength="8" class="background"> </text><text x="432" textLength="208" class="foreground">                          </text></g><g id="g17"><text x="0" textLength="504" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply -f chatbot.yaml</text><text x="504" textLength="8" font-weight="bold" class="foreground"> </text><text x="512" textLength="8" class="background"> </text><text x="520" textLength="120" class="foreground">               </text></g><g id="g18"><text x="0" textLength="640" class="foreground">lukelalor@MacBook-Pro resources % kubectl apply -f chatbot.yaml                 </text></g><g id="g19"><text x="0" textLength="8" class="background"> </text></g><g id="g20"><text x="0" textLength="336" class="foreground">agent.server.eidolonai.com/chatbot created</text></g><g id="g21"><text x="0" textLength="312" class="foreground">lukelalor@MacBook-Pro resources % kubec</text><text x="312" textLength="8" class="background"> </text><text x="320" textLength="320" class="foreground">                                        </text></g><g id="g22"><text x="0" textLength="344" class="foreground">lukelalor@MacBook-Pro resources % kubectl g</text><text x="344" textLength="8" class="background"> </text><text x="352" textLength="288" class="foreground">                                    </text></g><g id="g23"><text x="0" textLength="352" class="foreground">lukelalor@MacBook-Pro resources % kubectl ge</text><text x="352" textLength="8" class="background"> </text><text x="360" textLength="280" class="foreground">                                   </text></g><g id="g24"><text x="0" textLength="360" class="foreground">lukelalor@MacBook-Pro resources % kubectl get</text><text x="360" textLength="8" class="background"> </text><text x="368" textLength="272" class="foreground">                                  </text></g><g id="g25"><text x="0" textLength="368" class="foreground">lukelalor@MacBook-Pro resources % kubectl get </text><text x="368" textLength="8" class="background"> </text><text x="376" textLength="264" class="foreground">                                 </text></g><g id="g26"><text x="0" textLength="376" class="foreground">lukelalor@MacBook-Pro resources % kubectl get a</text><text x="376" textLength="8" class="background"> </text><text x="384" textLength="256" class="foreground">                                </text></g><g id="g27"><text x="0" textLength="384" class="foreground">lukelalor@MacBook-Pro resources % kubectl get ag</text><text x="384" textLength="8" class="background"> </text><text x="392" textLength="248" class="foreground">                               </text></g><g id="g28"><text x="0" textLength="392" class="foreground">lukelalor@MacBook-Pro resources % kubectl get age</text><text x="392" textLength="8" class="background"> </text><text x="400" textLength="240" class="foreground">                              </text></g><g id="g29"><text x="0" textLength="400" class="foreground">lukelalor@MacBook-Pro resources % kubectl get agen</text><text x="400" textLength="8" class="background"> </text><text x="408" textLength="232" class="foreground">                             </text></g><g id="g30"><text x="0" textLength="408" class="foreground">lukelalor@MacBook-Pro resources % kubectl get agent</text><text x="408" textLength="8" class="background"> </text><text x="416" textLength="224" class="foreground">                            </text></g><g id="g31"><text x="0" textLength="416" class="foreground">lukelalor@MacBook-Pro resources % kubectl get agents</text><text x="416" textLength="8" class="background"> </text><text x="424" textLength="216" class="foreground">                           </text></g><g id="g32"><text x="0" textLength="640" class="foreground">lukelalor@MacBook-Pro resources % kubectl get agents                            </text></g><g id="g33"><text x="0" textLength="104" class="foreground">NAME      AGE</text></g><g id="g34"><text x="0" textLength="96" class="foreground">chatbot   3s</text></g><g id="g35"><text x="0" textLength="8" class="background"> </text><text x="8" textLength="632" class="foreground">                                                                               </text></g><g id="g36"><text x="0" textLength="640" class="foreground">lukelalor@MacBook-Pro resources %                                               </text></g></defs><g id="screen_view"><g><rect x="272" y="0" width="8" height="17" class="foreground"/><use xlink:href="#g1" y="0"/></g><g><rect x="280" y="442" width="8" height="17" class="foreground"/><use xlink:href="#g2" y="442"/></g><g><rect x="288" y="884" width="8" height="17" class="foreground"/><use xlink:href="#g3" y="884"/></g><g><rect x="296" y="1326" width="8" height="17" class="foreground"/><use xlink:href="#g4" y="1326"/></g><g><rect x="304" y="1768" width="8" height="17" class="foreground"/><use xlink:href="#g5" y="1768"/></g><g><rect x="328" y="2210" width="8" height="17" class="foreground"/><use xlink:href="#g6" y="2210"/></g><g><rect x="336" y="2652" width="8" height="17" class="foreground"/><use xlink:href="#g7" y="2652"/></g><g><rect x="344" y="3094" width="8" height="17" class="foreground"/><use xlink:href="#g8" y="3094"/></g><g><rect x="352" y="3536" width="8" height="17" class="foreground"/><use xlink:href="#g9" y="3536"/></g><g><rect x="360" y="3978" width="8" height="17" class="foreground"/><use xlink:href="#g10" y="3978"/></g><g><rect x="384" y="4420" width="8" height="17" class="foreground"/><use xlink:href="#g11" y="4420"/></g><g><rect x="392" y="4862" width="8" height="17" class="foreground"/><use xlink:href="#g12" y="4862"/></g><g><rect x="400" y="5304" width="8" height="17" class="foreground"/><use xlink:href="#g13" y="5304"/></g><g><rect x="408" y="5746" width="8" height="17" class="foreground"/><use xlink:href="#g14" y="5746"/></g><g><rect x="416" y="6188" width="8" height="17" class="foreground"/><use xlink:href="#g15" y="6188"/></g><g><rect x="424" y="6630" width="8" height="17" class="foreground"/><use xlink:href="#g16" y="6630"/></g><g><rect x="512" y="7072" width="8" height="17" class="foreground"/><use xlink:href="#g17" y="7072"/></g><g><use xlink:href="#g18" y="7514"/><rect x="0" y="7531" width="8" height="17" class="foreground"/><use xlink:href="#g19" y="7531"/></g><g><use xlink:href="#g18" y="7956"/><use xlink:href="#g20" y="7973"/><rect x="0" y="7990" width="8" height="17" class="foreground"/><use xlink:href="#g19" y="7990"/></g><g><use xlink:href="#g18" y="8398"/><use xlink:href="#g20" y="8415"/><rect x="272" y="8432" width="8" height="17" class="foreground"/><use xlink:href="#g1" y="8432"/></g><g><use xlink:href="#g18" y="8840"/><use xlink:href="#g20" y="8857"/><rect x="280" y="8874" width="8" height="17" class="foreground"/><use xlink:href="#g2" y="8874"/></g><g><use xlink:href="#g18" y="9282"/><use xlink:href="#g20" y="9299"/><rect x="288" y="9316" width="8" height="17" class="foreground"/><use xlink:href="#g3" y="9316"/></g><g><use xlink:href="#g18" y="9724"/><use xlink:href="#g20" y="9741"/><rect x="296" y="9758" width="8" height="17" class="foreground"/><use xlink:href="#g4" y="9758"/></g><g><use xlink:href="#g18" y="10166"/><use xlink:href="#g20" y="10183"/><rect x="304" y="10200" width="8" height="17" class="foreground"/><use xlink:href="#g5" y="10200"/></g><g><use xlink:href="#g18" y="10608"/><use xlink:href="#g20" y="10625"/><rect x="312" y="10642" width="8" height="17" class="foreground"/><use xlink:href="#g21" y="10642"/></g><g><use xlink:href="#g18" y="11050"/><use xlink:href="#g20" y="11067"/><rect x="328" y="11084" width="8" height="17" class="foreground"/><use xlink:href="#g6" y="11084"/></g><g><use xlink:href="#g18" y="11492"/><use xlink:href="#g20" y="11509"/><rect x="336" y="11526" width="8" height="17" class="foreground"/><use xlink:href="#g7" y="11526"/></g><g><use xlink:href="#g18" y="11934"/><use xlink:href="#g20" y="11951"/><rect x="344" y="11968" width="8" height="17" class="foreground"/><use xlink:href="#g22" y="11968"/></g><g><use xlink:href="#g18" y="12376"/><use xlink:href="#g20" y="12393"/><rect x="352" y="12410" width="8" height="17" class="foreground"/><use xlink:href="#g23" y="12410"/></g><g><use xlink:href="#g18" y="12818"/><use xlink:href="#g20" y="12835"/><rect x="360" y="12852" width="8" height="17" class="foreground"/><use xlink:href="#g24" y="12852"/></g><g><use xlink:href="#g18" y="13260"/><use xlink:href="#g20" y="13277"/><rect x="368" y="13294" width="8" height="17" class="foreground"/><use xlink:href="#g25" y="13294"/></g><g><use xlink:href="#g18" y="13702"/><use xlink:href="#g20" y="13719"/><rect x="376" y="13736" width="8" height="17" class="foreground"/><use xlink:href="#g26" y="13736"/></g><g><use xlink:href="#g18" y="14144"/><use xlink:href="#g20" y="14161"/><rect x="384" y="14178" width="8" height="17" class="foreground"/><use xlink:href="#g27" y="14178"/></g><g><use xlink:href="#g18" y="14586"/><use xlink:href="#g20" y="14603"/><rect x="392" y="14620" width="8" height="17" class="foreground"/><use xlink:href="#g28" y="14620"/></g><g><use xlink:href="#g18" y="15028"/><use xlink:href="#g20" y="15045"/><rect x="400" y="15062" width="8" height="17" class="foreground"/><use xlink:href="#g29" y="15062"/></g><g><use xlink:href="#g18" y="15470"/><use xlink:href="#g20" y="15487"/><rect x="408" y="15504" width="8" height="17" class="foreground"/><use xlink:href="#g30" y="15504"/></g><g><use xlink:href="#g18" y="15912"/><use xlink:href="#g20" y="15929"/><rect x="416" y="15946" width="8" height="17" class="foreground"/><use xlink:href="#g31" y="15946"/></g><g><use xlink:href="#g18" y="16354"/><use xlink:href="#g20" y="16371"/><use xlink:href="#g32" y="16388"/><rect x="0" y="16405" width="8" height="17" class="foreground"/><use xlink:href="#g19" y="16405"/></g><g><use xlink:href="#g18" y="16796"/><use xlink:href="#g20" y="16813"/><use xlink:href="#g32" y="16830"/><use xlink:href="#g33" y="16847"/><use xlink:href="#g34" y="16864"/><rect x="0" y="16881" width="8" height="17" class="foreground"/><use xlink:href="#g19" y="16881"/></g><g><use xlink:href="#g18" y="17238"/><use xlink:href="#g20" y="17255"/><use xlink:href="#g32" y="17272"/><use xlink:href="#g33" y="17289"/><use xlink:href="#g34" y="17306"/><rect x="0" y="17323" width="8" height="17" class="foreground"/><use xlink:href="#g35" y="17323"/></g><g><use xlink:href="#g18" y="17680"/><use xlink:href="#g20" y="17697"/><use xlink:href="#g32" y="17714"/><use xlink:href="#g33" y="17731"/><use xlink:href="#g34" y="17748"/><rect x="272" y="17765" width="8" height="17" class="foreground"/><use xlink:href="#g1" y="17765"/></g><g><use xlink:href="#g18" y="18122"/><use xlink:href="#g20" y="18139"/><use xlink:href="#g32" y="18156"/><use xlink:href="#g33" y="18173"/><use xlink:href="#g34" y="18190"/><use xlink:href="#g36" y="18207"/><rect x="0" y="18224" width="8" height="17" class="foreground"/><use xlink:href="#g19" y="18224"/></g></g></svg>
+</svg>

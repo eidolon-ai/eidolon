@@ -15,6 +15,8 @@ import MainTitle from "../components/widgets/MainTitle.astro";
 import {findImage} from "../utils/images";
 import {astroAsseetsOptimizer, getImagesOptimized} from "../utils/images-optimization";
 import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
+import { readFileSync } from 'fs';
+
 
 const metadata = {
   title: 'Eidolon -- Build LLM Agents as Services',
@@ -70,7 +72,7 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   <!-- Content Widget **************** -->
 
   <ContentWithTabs
-    bullets={[
+    items={[
       {
         title: 'Choose from a variety of pre-built agents or define your own',
         description:
@@ -196,7 +198,7 @@ spec:
 
   <ContentWithTabs
     isReversed
-    bullets={[
+    items={[
       {
         title: 'Deploy directly to Kubernetes',
         description:
@@ -208,7 +210,7 @@ spec:
           'Agents are stateless and scale horizontally to meet your needs.',
       },
       {
-        title: 'Build safely with ENFORCEABLE policies',
+        title: 'Build safely with enforceable policies',
         description:
           'With kubernetes deployment, you can enforce policies to ensure your agents are deployed with access only to the resources they need.',
       },
@@ -222,7 +224,10 @@ spec:
 % helm install eidolon eidolon-operator/eidolon-operator-chart
 ...
 % kubectl apply -f agent.yaml
-agent.server.eidolonai.com/agent created`
+agent.server.eidolonai.com/agent created
+% kubectl get agents
+NAME      AGE
+chatbot   3s`
       }
     ]}
   >
@@ -237,7 +242,7 @@ agent.server.eidolonai.com/agent created`
   </ContentWithTabs>
 
   <ContentWithTabs
-    bullets={[
+    items={[
       {
         title: 'Build a gui with React components',
         description:
@@ -256,10 +261,30 @@ agent.server.eidolonai.com/agent created`
     ]}
     tabs={[
       {
-        title: "Option 1",
-        src: "~/assets/images/agent_machine.png",
+        title: "WebUI",
+        src: "~/assets/images/cli.svg",
         alt: "RAG",
-      }
+      },
+      {
+        title: "React Components",
+        src: "~/assets/images/cli.svg",
+        alt: "RAG",
+      },
+      {
+        title: "Typescript",
+        src: "~/assets/images/cli.svg",
+        alt: "RAG",
+      },
+      {
+        title: "Python",
+        src: "~/assets/images/cli.svg",
+        alt: "RAG",
+      },
+      {
+        title: "CLI",
+        src: "~/assets/images/cli.svg",
+        alt: "RAG",
+      },
     ]}
   >
     <Fragment slot="content">
