@@ -15,7 +15,11 @@ import MainTitle from "../components/widgets/MainTitle.astro";
 import {findImage} from "../utils/images";
 import {astroAsseetsOptimizer, getImagesOptimized} from "../utils/images-optimization";
 import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
-import { readFileSync } from 'fs';
+import {readFileSync} from 'fs';
+import CallToAction from "../components/widgets/CallToAction.astro";
+import Features from "../components/widgets/Features.astro";
+import Testimonials from "../components/widgets/Testimonials.astro";
+import Tabs from "../components/widgets/Tabs.astro";
 
 
 const metadata = {
@@ -71,6 +75,27 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   <div class="mb-16"/>
   <!-- Content Widget **************** -->
 
+  <div class="">
+    <Steps
+      title="Bring your enterprise into the genAI revolution in three easy steps"
+      horizontal
+      items={[
+        {
+          title: 'Step 1: <span class="font-medium">Build</span>',
+          icon: 'tabler:package',
+        },
+        {
+          title: 'Step 2: <span class="font-medium">Deploy</span>',
+          icon: 'tabler:letter-case',
+        },
+        {
+          title: 'Step 3: <span class="font-medium">Consume</span>',
+          icon: 'tabler:paint',
+        },
+      ]}
+    />
+  </div>
+  <hr/>
   <ContentWithTabs
     bullets={[
       {
@@ -195,6 +220,7 @@ spec:
   </ContentWithTabs>
 
   <!-- Content Widget **************** -->
+  <hr/>
 
   <ContentWithTabs
     isReversed
@@ -240,6 +266,7 @@ chatbot   3s`
       <div class="absolute inset-0 bg-white dark:bg-transparent"></div>
     </Fragment>
   </ContentWithTabs>
+  <hr/>
 
   <ContentWithTabs
     bullets={[
@@ -305,6 +332,7 @@ expect(response).toContain("supportive community")`,
       //   language: 'ts',
       //   code: `todo`,
       // },
+
     ]}
   >
     <Fragment slot="content">
@@ -317,6 +345,54 @@ expect(response).toContain("supportive community")`,
     </Fragment>
   </ContentWithTabs>
 
+  <hr/>
+
+  <Tabs
+    title="Getting started with Eidolon"
+    vertical
+    tabs={[
+      {
+        title: "Quickstart",
+        slot: "quickstart",
+      },
+      {
+        title: "Chatbot",
+        slot: "chatbot",
+      },
+      {
+        title: "Git Search",
+        slot: "git-search",
+      },
+      {
+        title: "S3 document search",
+        slot: "s3-doc-search",
+      },
+      {
+        title: "Web Researcher",
+        slot: "web-researcher",
+      },
+    ]}
+  >
+    <Fragment slot="quickstart">
+      Quickstart
+    </Fragment>
+
+    <Fragment slot="chatbot">
+      Multi-LLM, Multi-modal Chatbot
+    </Fragment>
+
+    <Fragment slot="git-search">
+      Git-search
+    </Fragment>
+
+    <Fragment slot="s3-doc-search">
+      S3 doc search
+    </Fragment>
+
+    <Fragment slot="web-researcher">
+      Web researcher
+    </Fragment>
+  </Tabs>
   <!-- Steps Widget ****************** -->
 
   <!--<Steps-->
@@ -414,32 +490,6 @@ expect(response).toContain("supportive community")`,
         <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
       </Fragment>
     </Features2>
-  -->
-
-  <!-- HighlightedPosts Widget ******* -->
-  <!--
-    <WidgetWrapper isDark={false} bg={bg} id="events">
-      <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
-        <div class="md:max-w-sm">
-          <h2
-            class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
-            set:html={"Events"}
-          />
-          &lt;!&ndash;
-                      {APP_BLOG.list.isEnabled && linkText && linkUrl && (
-                        <Button variant="link" href={linkUrl}> {linkText} »</Button>
-                      )}
-          &ndash;&gt;
-        </div>
-      </div>
-  
-      <div class="grid gap-6 row-gap-5 md:grid-cols-2 lg:grid-cols-3 -mb-6">
-        <LinkUnfurl url="https://lu.ma/2qud1jh1"/>
-        <LinkUnfurl url="https://lu.ma/z2kghncv"/>
-        <LinkUnfurl url="https://lu.ma/127rux39"/>
-      </div>
-      &lt;!&ndash;<Grid posts={posts}/>&ndash;&gt;
-    </WidgetWrapper>
   -->
 
   <!-- Stats Widget ****************** -->

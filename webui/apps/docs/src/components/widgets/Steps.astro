@@ -12,6 +12,7 @@ const {
   items = [],
   image = await Astro.slots.render('image'),
   isReversed = false,
+  horizontal = false,
 
   id,
   isDark = false,
@@ -22,18 +23,18 @@ const {
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-5xl ${classes?.container ?? ''}`} bg={bg}>
   <div class:list={['flex flex-col gap-8 md:gap-12', { 'md:flex-row-reverse': isReversed }, { 'md:flex-row': image}]}>
-    <div class:list={["md:py-4 md:self-center", { 'md:basis-1/2': image }, { "w-full": !image}]}>
+    <div class:list={["md:self-center", { 'md:basis-1/2': image }, { "w-full": !image}]}>
       <Headline
         title={title}
         subtitle={subtitle}
         tagline={tagline}
         classes={{
           container: 'text-left rtl:text-right',
-          title: 'text-3xl lg:text-4xl',
+          title: 'text-xl lg:text-2xl',
           ...((classes?.headline as {}) ?? {}),
         }}
       />
-      <Timeline items={items} classes={classes?.items as {}} />
+      <Timeline horizontal={horizontal} items={items} classes={classes?.items as {}} />
     </div>
     {
       image && (
