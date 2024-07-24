@@ -261,30 +261,50 @@ chatbot   3s`
     ]}
     tabs={[
       {
+        title: "CLI",
+        src: "~/assets/images/cli.svg",
+        alt: "CLI",
+      },
+      {
+        title: "Python",
+        language: 'py',
+        code: `from eidolon_ai_client.client import Agent
+
+agent = Agent.get("HelloWorld")
+process = await agent.create_process()
+body = "Why should I use Eidolon?"
+response = await process.action("converse", body)
+
+assert "fast iteration times" in response.data
+assert "extensible agent mesh" in response.data
+assert "supportive community" in response.data`
+      },
+      {
+        title: "Typescript",
+        language: 'ts',
+        code: `import {EidolonClient} from "../src/client";
+
+const client = new EidolonClient()
+const {process: p1} = await client.createProcess("HelloWorld")
+const process = client.process(p1.process_id)
+const agent = process.agent("HelloWorld")
+const body = "Why should I use Eidolon?"
+const response = await agent.action("converse", body)
+
+expect(response).toContain("fast iteration times")
+expect(response).toContain("extensible agent mesh")
+expect(response).toContain("supportive community")`,
+      },
+      {
         title: "WebUI",
         src: "~/assets/images/webui.gif",
         alt: "RAG",
       },
-      {
-        title: "React",
-        src: "~/assets/images/cli.svg",
-        alt: "RAG",
-      },
-      {
-        title: "Typescript",
-        src: "~/assets/images/cli.svg",
-        alt: "RAG",
-      },
-      {
-        title: "Python",
-        src: "~/assets/images/cli.svg",
-        alt: "RAG",
-      },
-      {
-        title: "CLI",
-        src: "~/assets/images/cli.svg",
-        alt: "RAG",
-      },
+      // {
+      //   title: "React",
+      //   language: 'ts',
+      //   code: `todo`,
+      // },
     ]}
   >
     <Fragment slot="content">
