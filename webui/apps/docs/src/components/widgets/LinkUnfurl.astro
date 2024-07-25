@@ -22,30 +22,28 @@ const {
 } = classes;
 ---
 
-<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto py-1 md:py-1 lg:py-1`} bg={bg}>
-  <a
-    href={result.canonical_url}
-    class={twMerge("md:mx-auto", classes?.container ?? '')}
-  >
-    <div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24 w-full">
-      {image && (
-        <div class="flex justify-center col-span-1 my-2 rounded-md dark:bg-gray-200">
-          <img src={image} alt={''} width="100%" object-fit="cover"/>
-        </div>
-      )
-      }
-    </div>
-    <div
-      class={twMerge(
-        "font-bold leading-tighter tracking-tighter font-heading",
-        titleClass
-      )}
-      set:html={result.title}
-    />
+<a
+  href={result.canonical_url}
+  class={twMerge("md:mx-auto", classes?.container ?? '')}
+>
+  <div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24 w-full">
+    {image && (
+      <div class="flex justify-center col-span-1 my-2 rounded-md dark:bg-gray-200">
+        <img src={image} alt={''} width="100%" object-fit="cover"/>
+      </div>
+    )
+    }
+  </div>
+  <div
+    class={twMerge(
+      "font-bold leading-tighter tracking-tighter font-heading",
+      titleClass
+    )}
+    set:html={result.title}
+  />
 
-    <p
-      class={twMerge("mt-2 mb-2 text-muted", subtitleClass)}
-      set:html={result.description}
-    />
-  </a>
-</WidgetWrapper>
+  <p
+    class={twMerge("mt-2 mb-2 text-muted", subtitleClass)}
+    set:html={result.description}
+  />
+</a>
