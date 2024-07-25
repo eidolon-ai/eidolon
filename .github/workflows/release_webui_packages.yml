@@ -64,8 +64,9 @@ jobs:
         run: git push --follow-tags
         working-directory: webui
 
-      - name: Create Release Pull Request
-        id: changesets
-        uses: changesets/action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# todo, we don't have changesets yet
+#      - name: Create Release Pull Request
+#        id: changesets
+#        uses: changesets/action@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
