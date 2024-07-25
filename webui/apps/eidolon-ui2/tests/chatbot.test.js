@@ -12,7 +12,7 @@ test('Chatbot should respond to input', async ({ page }) => {
     // Add a chat
     const addChatButton = await page.locator('text=Add Chat');
     await addChatButton.click();
-    const inputField = await page.locator('textarea.MuiInputBase-input.MuiInput-input.MuiInputBase-inputMultiline.css-10oer18[aria-invalid="false"]');
+    const inputField = await page.locator('textarea[aria-invalid="false"]');
     await inputField.waitFor();
     // Fill the input field with a message
     await inputField.fill('Hello, how are you? Type "Hello!" if you are there!');
