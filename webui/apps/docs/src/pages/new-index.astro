@@ -84,20 +84,24 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
         {
           title: '<span class="font-medium">1. Build</span>',
           icon: 'tabler:hammer',
+          link: '#build'
         },
         {
           title: '<span class="font-medium">2. Deploy</span>',
           icon: 'tabler:package',
+          link: '#deploy'
         },
         {
           title: '<span class="font-medium">3. Consume</span>',
           icon: 'tabler:rocket',
+          link: '#consume'
         },
       ]}
     />
   </div>
   <hr/>
   <ContentWithTabs
+    id="build"
     bullets={[
       {
         title: 'Choose from a variety of pre-built agents or define your own',
@@ -224,6 +228,7 @@ spec:
   <hr/>
 
   <ContentWithTabs
+    id="deploy"
     isReversed
     bullets={[
       {
@@ -277,6 +282,7 @@ chatbot   3s`
   <hr/>
 
   <ContentWithTabs
+    id="consume"
     bullets={[
       {
         title: 'Build a GUI with React components',
