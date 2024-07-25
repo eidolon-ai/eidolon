@@ -20,6 +20,7 @@ import CallToAction from "../components/widgets/CallToAction.astro";
 import Features from "../components/widgets/Features.astro";
 import Testimonials from "../components/widgets/Testimonials.astro";
 import Tabs from "../components/widgets/Tabs.astro";
+import { Icon } from "astro-icon/components";
 
 
 const metadata = {
@@ -81,16 +82,16 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
       horizontal
       items={[
         {
-          title: 'Step 1: <span class="font-medium">Build</span>',
+          title: '<span class="font-medium">1. Build</span>',
+          icon: 'tabler:hammer',
+        },
+        {
+          title: '<span class="font-medium">2. Deploy</span>',
           icon: 'tabler:package',
         },
         {
-          title: 'Step 2: <span class="font-medium">Deploy</span>',
-          icon: 'tabler:letter-case',
-        },
-        {
-          title: 'Step 3: <span class="font-medium">Consume</span>',
-          icon: 'tabler:paint',
+          title: '<span class="font-medium">3. Consume</span>',
+          icon: 'tabler:rocket',
         },
       ]}
     />
@@ -243,6 +244,7 @@ spec:
     ]}
     tabs={[
       {
+        title: "Kubernetes",
         language: 'bash',
         code: `
 % helm repo add eidolon https://eidolonai.com/charts
@@ -254,7 +256,13 @@ agent.server.eidolonai.com/agent created
 % kubectl get agents
 NAME      AGE
 chatbot   3s`
+      },
+      {
+        title: "Local Dev",
+        src: "~/assets/images/make_docker_serve.svg",
+        alt: "CLI",
       }
+
     ]}
   >
     <Fragment slot="content">
@@ -324,7 +332,7 @@ expect(response).toContain("supportive community")`,
       },
       {
         title: "WebUI",
-        src: "~/assets/images/webui2.gif",
+        src: "~/assets/images/webui.gif",
         alt: "RAG",
       },
       // {
