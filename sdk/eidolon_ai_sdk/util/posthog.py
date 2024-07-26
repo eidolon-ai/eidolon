@@ -1,8 +1,9 @@
 import asyncio
+import hashlib
 import json
 import logging
 import os
-import uuid
+import socket
 from functools import wraps, cache
 from importlib import metadata
 from platform import python_version, uname
@@ -33,10 +34,10 @@ def posthog_enabled():
 
 
 @cache
-def distinct_id():
+def distinct_id() -> str:
     if not posthog_enabled():
         return "disabled"
-    return str(uuid.getnode())
+    return os.environ.get('POSTHOG_ID') or hashlib.md5(socket.gethostname().encode()).hexdigest()
 
 
 @cache
