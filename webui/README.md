@@ -15,7 +15,7 @@ docker run -e "EIDOLON_SERVER=http://host.docker.internal:8080" -p 3000:3000 eid
 docker run -e "EIDOLON_SERVER=http://172.17.0.1:8080" -p 3000:3000 eidolonai/webui:latest
 ```
 
-🚨 Make sure you have an Eidolon machine running locally on port 8080. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/docs/introduction/)
+🚨 Make sure you have an Eidolon machine running locally on port 8080. For instructions on how to run a machine, see our [getting quickstart guide](https://www.eidolonai.com/docs/quickstart)
 
 ## Development Environment
 
@@ -41,7 +41,7 @@ Alternatively, you can check the [official Turbo Repo installation guide](https:
 
 ### Running Eidolon Machine
 
-You will also need a running Eidolon Machine. For instructions on how to run a machine, see our [getting started guide](https://www.eidolonai.com/docs/introduction/)
+You will also need a running Eidolon Machine. For instructions on how to run a machine, see our [quickstart guide](https://www.eidolonai.com/docs/quickstart)
 
 ### Setting Up Your Environment
 
