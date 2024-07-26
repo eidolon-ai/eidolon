@@ -88,3 +88,7 @@
 .dd *:first-child {
   margin-top: 0;
 }
+
+.frame.is-terminal figcaption + pre {
+  margin-top: 0;
+}

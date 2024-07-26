@@ -26,58 +26,60 @@ const {
     <div class={containerClass}>
       {items.map(
         (
-          { title, description, icon, classes: itemClasses = {} },
+          { title, description, icon, classes: itemClasses = {}, link },
           index = 0
-        ) => (
-          <div class={twMerge("flex", panelClass, itemClasses?.panel)}>
-            <div class="flex flex-col items-center mr-4 rtl:mr-0 rtl:ml-4">
-              <div>
-                <div class="flex items-center justify-center">
-                  {(icon || defaultIcon) && (
-                    <Icon
-                      name={icon || defaultIcon}
-                      class={twMerge(
-                        "w-10 h-10 p-2 rounded-full border-2",
-                        defaultIconClass,
-                        itemClasses?.icon
-                      )}
-                    />
-                  )}
+        ) => {
+          const content = (
+            <div class={twMerge("flex", panelClass, itemClasses?.panel)}>
+              <div class="flex flex-col items-center mr-4 rtl:mr-0 rtl:ml-4">
+                <div>
+                  <div class="flex items-center justify-center">
+                    {(icon || defaultIcon) && (
+                      <Icon
+                        name={icon || defaultIcon}
+                        class={twMerge(
+                          "w-10 h-10 p-2 rounded-full border-2",
+                          defaultIconClass,
+                          itemClasses?.icon
+                        )}
+                      />
+                    )}
+                  </div>
                 </div>
+                {!horizontal && index !== items.length - 1 && (
+                  <div class="w-px h-full bg-black/10 dark:bg-slate-400/50"/>
+                )}
               </div>
-              {!horizontal && index !== items.length - 1 && (
-                <div class="w-px h-full bg-black/10 dark:bg-slate-400/50" />
-              )}
+              <div
+                class={`pt-1 ${
+                  index !== items.length - 1 ? "pb-8" : ""
+                }`}
+              >
+                {title && (
+                  <p
+                    class={twMerge(
+                      "text-xl font-bold",
+                      titleClass,
+                      itemClasses?.title
+                    )}
+                    set:html={title}
+                  />
+                )}
+                {description && (
+                  <p
+                    class={twMerge(
+                      "text-muted mt-2",
+                      descriptionClass,
+                      itemClasses?.description
+                    )}
+                    set:html={description}
+                  />
+                )}
+              </div>
             </div>
-            <div
-              class={`pt-1 ${
-                index !== items.length - 1 ? "pb-8" : ""
-              }`}
-            >
-              {title && (
-                <p
-                  class={twMerge(
-                    "text-xl font-bold",
-                    titleClass,
-                    itemClasses?.title
-                  )}
-                  set:html={title}
-                />
-              )}
-              {description && (
-                <p
-                  class={twMerge(
-                    "text-muted mt-2",
-                    descriptionClass,
-                    itemClasses?.description
-                  )}
-                  set:html={description}
-                />
-              )}
-            </div>
-          </div>
-        )
-      )}
+          );
+          return link ? <a href={link}>{content}</a> : content;
+        })}
     </div>
   )
 }

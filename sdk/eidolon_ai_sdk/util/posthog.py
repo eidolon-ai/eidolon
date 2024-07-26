@@ -1,7 +1,9 @@
 import asyncio
+import hashlib
 import json
+import logging
 import os
-import uuid
+import socket
 from functools import wraps, cache
 from importlib import metadata
 from platform import python_version, uname
@@ -32,10 +34,10 @@ def posthog_enabled():
 
 
 @cache
-def distinct_id():
+def distinct_id() -> str:
     if not posthog_enabled():
         return "disabled"
-    return str(uuid.getnode())
+    return os.environ.get('POSTHOG_ID') or hashlib.md5(socket.gethostname().encode()).hexdigest()
 
 
 @cache
@@ -49,13 +51,19 @@ def properties():
         "platform.machine": machine,
         "platform.processor": processor,
     }
-    toml_loc = os.path.join(os.path.dirname(os.path.dirname((os.path.dirname(__file__)))), 'metrics.json')
-    with open(toml_loc, 'r') as file:
-        metrics = json.load(file)
-    rtn.update(metrics)
+    metrics_loc = os.path.join(os.path.dirname(os.path.dirname((os.path.dirname(__file__)))), 'metrics.json')
+
+    try:
+        with open("metrics.json", 'r') as file:
+            metrics = json.load(file)
+        rtn.update(metrics)
+    except FileNotFoundError:
+        logger.warning(f"Failed to load metrics from {metrics_loc}", exc_info=logger.isEnabledFor(logging.DEBUG))
+        pass
     try:
         rtn['eidolon version'] = metadata.version("eidolon-ai-sdk")
     except metadata.PackageNotFoundError:
+        logger.warning("Failed to load eidolon version", exc_info=logger.isEnabledFor(logging.DEBUG))
         pass
 
     return {k: v for k, v in rtn.items() if v != "" and v is not None}
@@ -64,9 +72,12 @@ def properties():
 def metric(fn):
     def with_logging(*args, **kwargs):
         try:
-            return fn(*args, **kwargs)
+            if posthog_enabled():
+                fn(*args, **kwargs)
+            else:
+                logger.debug(f"Metrics disabled, not reporting {fn.__name__}")
         except Exception:
-            logger.debug(f"Error reporting metrics {fn.__name__}", exc_info=1)
+            logger.warning(f"Error reporting metrics {fn.__name__}", exc_info=logger.isEnabledFor(logging.DEBUG))
 
     @wraps(fn)
     def second_wrapper(*args, **kwargs):
@@ -78,12 +89,14 @@ def metric(fn):
 # below is a decorator that wraps a function with a try catch and logs with the fn name if exception is thrown
 @metric
 def report_server_started(time_to_start: float, number_of_agents: int, error: bool):
-    PosthogConfig.client.capture(distinct_id(), event='server_started', properties={
+    kwargs = dict(distinct_id=distinct_id(), event='server_started', properties={
         'time_to_start': time_to_start,
         'number_of_agents': number_of_agents,
         'error': error,
         **properties()
     })
+    PosthogConfig.client.capture(**kwargs)
+    logger.debug("Server started reported with %s", kwargs)
 
 
 @metric

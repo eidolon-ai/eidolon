@@ -78,7 +78,7 @@ const contentClasses = vertical ? "p-6 md:ml-8 bg-gray-50 text-medium text-gray-
           data-tabs-inactive-classes={inactiveClasses} 
       >
         {tabs.map((item, index) => (
-          <li class="" role="presentation">
+          <li class="" role="presentation" style="cursor:pointer;">
             <a 
               id={`${id}-${index}-tab`} 
               data-tabs-target={`#${id}-${index}-content`} 
