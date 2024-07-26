@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import os
 import uuid
 from functools import wraps, cache
@@ -49,13 +50,19 @@ def properties():
         "platform.machine": machine,
         "platform.processor": processor,
     }
-    toml_loc = os.path.join(os.path.dirname(os.path.dirname((os.path.dirname(__file__)))), 'metrics.json')
-    with open(toml_loc, 'r') as file:
-        metrics = json.load(file)
-    rtn.update(metrics)
+    metrics_loc = os.path.join(os.path.dirname(os.path.dirname((os.path.dirname(__file__)))), 'metrics.json')
+
+    try:
+        with open("metrics.json", 'r') as file:
+            metrics = json.load(file)
+        rtn.update(metrics)
+    except FileNotFoundError:
+        logger.warning(f"Failed to load metrics from {metrics_loc}", exc_info=logger.isEnabledFor(logging.DEBUG))
+        pass
     try:
         rtn['eidolon version'] = metadata.version("eidolon-ai-sdk")
     except metadata.PackageNotFoundError:
+        logger.warning("Failed to load eidolon version", exc_info=logger.isEnabledFor(logging.DEBUG))
         pass
 
     return {k: v for k, v in rtn.items() if v != "" and v is not None}
@@ -64,9 +71,12 @@ def properties():
 def metric(fn):
     def with_logging(*args, **kwargs):
         try:
-            return fn(*args, **kwargs)
+            if posthog_enabled():
+                fn(*args, **kwargs)
+            else:
+                logger.debug(f"Metrics disabled, not reporting {fn.__name__}")
         except Exception:
-            logger.debug(f"Error reporting metrics {fn.__name__}", exc_info=1)
+            logger.warning(f"Error reporting metrics {fn.__name__}", exc_info=logger.isEnabledFor(logging.DEBUG))
 
     @wraps(fn)
     def second_wrapper(*args, **kwargs):
