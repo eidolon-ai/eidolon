@@ -93,7 +93,7 @@ def main():
     kwargs = {}
     if args.reload:
         kwargs["reload"] = True
-        kwargs["reload_dirs"] = [".", *(os.path.dirname(p) for p in args.yaml_path)]
+        kwargs["reload_dirs"] = [".", *(p if os.path.isdir(p) else os.path.dirname(p) for p in args.yaml_path)]
         kwargs["reload_includes"] = ["*.yml", "*.yaml", "*.py"]
 
     uvicorn.run(
