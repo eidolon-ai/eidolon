@@ -4,7 +4,7 @@ import {ChangeEvent, useRef, useState} from "react";
 import {Box, CircularProgress, CircularProgressProps, IconButton, Typography} from '@mui/material';
 import {AttachFile} from '@mui/icons-material';
 import {setMetadata, uploadFile} from "../client-api-helpers/files-helper.ts";
-import {FileHandle} from "@eidolon/client";
+import {FileHandle} from "@eidolon-ai/client";
 
 function CircularProgressWithLabel(
   props: CircularProgressProps & { value: number },

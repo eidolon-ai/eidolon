@@ -1,6 +1,6 @@
 ---
-"@eidolon/components": major
-"@eidolon/client": major
+"@eidolon-ai/components": major
+"@eidolon-ai/client": major
 ---
 
 Initial release

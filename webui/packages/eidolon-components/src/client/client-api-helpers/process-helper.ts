@@ -1,5 +1,5 @@
 import {DateTime} from "luxon";
-import {HttpException, ProcessStatus} from "@eidolon/client";
+import {HttpException, ProcessStatus} from "@eidolon-ai/client";
 
 export interface ProcessStatusWithChildren extends ProcessStatus {
   children?: ProcessStatus[]

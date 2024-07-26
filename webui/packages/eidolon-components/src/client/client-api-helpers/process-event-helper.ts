@@ -1,6 +1,6 @@
 import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements.ts";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
-import {ChatEvent} from "@eidolon/client";
+import {ChatEvent} from "@eidolon-ai/client";
 
 const getLastStreamContext = (stream_context: string) => {
   const contextChain: string[] = stream_context.split(".")

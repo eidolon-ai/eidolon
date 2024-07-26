@@ -1,4 +1,4 @@
-import {EidolonClient, HttpException} from "@eidolon/client";
+import {EidolonClient, HttpException} from "@eidolon-ai/client";
 
 export function processResponse(promise: Promise<any>) {
   return convertException(promise.then(Response.json))

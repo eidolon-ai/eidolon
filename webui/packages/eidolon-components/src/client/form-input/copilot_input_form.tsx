@@ -7,7 +7,7 @@ import {useProcesses} from "../hooks/processes_context.tsx";
 import {executeOperation} from "../client-api-helpers/process-event-helper.ts";
 import {CopilotParams} from "../lib/util.ts";
 import {CopilotInputForm, ProcessError, ProcessLoading, ProcessTerminated} from "./input_form_components.tsx";
-import {FileHandle, ProcessStatus} from "@eidolon/client";
+import {FileHandle, ProcessStatus} from "@eidolon-ai/client";
 import {ArticleOutlined} from '@mui/icons-material';
 import {useEffect, useState} from "react";
 import {getOperations} from "../client-api-helpers/machine-helper.ts";

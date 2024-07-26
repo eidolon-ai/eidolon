@@ -1,15 +1,15 @@
 'use client'
 
-import {CopilotParams, createProcess, EidolonApp, ProcessList} from "@eidolon/components/client";
+import {CopilotParams, createProcess, EidolonApp, ProcessList} from "@eidolon-ai/components/client";
 import {usePathname, useRouter} from "next/navigation";
-import {ProcessStatus} from "@eidolon/client";
+import {ProcessStatus} from "@eidolon-ai/client";
 import * as React from "react";
 import {useState} from "react";
 import {StartProgramDialog} from "../app/eidolon-apps/dev-tool/components/start-program-dialog";
 import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
-import {useProcesses} from "@eidolon/components/client";
+import {useProcesses} from "@eidolon-ai/components/client";
 import {TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT} from "@/layout/config";
 import {useOnMobile} from "@/hooks/index";
 

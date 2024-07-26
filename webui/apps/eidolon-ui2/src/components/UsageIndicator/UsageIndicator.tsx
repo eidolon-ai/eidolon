@@ -1,9 +1,9 @@
 import {Box, LinearProgress, Typography} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {OpenAPI, UsageService, UsageSummary} from "@eidolon/usage-client"
+import {OpenAPI, UsageService, UsageSummary} from "@eidolon-ai/usage-client"
 import {useSession} from "next-auth/react";
-import {useEidolonContext} from "@eidolon/components/client";
+import {useEidolonContext} from "@eidolon-ai/components/client";
 
 export const revalidate=1
 

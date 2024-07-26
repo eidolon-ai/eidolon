@@ -1,4 +1,4 @@
-import {HttpException, OperationInfo} from "@eidolon/client";
+import {HttpException, OperationInfo} from "@eidolon-ai/client";
 import {EidolonApp} from "../lib/util.ts";
 
 export async function getAgents(machineUrl: string) {

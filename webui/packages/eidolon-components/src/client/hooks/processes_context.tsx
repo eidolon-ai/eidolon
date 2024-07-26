@@ -3,7 +3,7 @@
 import {createContext, useContext, useState} from "react";
 import {groupProcessesByUpdateDate} from "../process-list/group-processes.ts";
 import {getRootProcesses} from "../client-api-helpers/process-helper.ts";
-import {HttpException, ProcessStatus} from "@eidolon/client";
+import {HttpException, ProcessStatus} from "@eidolon-ai/client";
 
 const EidolonProcessesContext = createContext<{
   processes: Record<string, ProcessStatus[]>

@@ -2,7 +2,7 @@
 
 import {AgentInputForm} from "./agent-input-form.tsx";
 import {useState} from "react";
-import {OperationInfo, ProcessStatus} from "@eidolon/client";
+import {OperationInfo, ProcessStatus} from "@eidolon-ai/client";
 import {AddCircleRounded, ArrowCircleUpRounded, CancelRounded, RemoveCircleRounded} from '@mui/icons-material';
 import {Button, Paper, Skeleton} from "@mui/material";
 import {ButtonScrollToBottom} from "./button-scroll-to-bottom.tsx";
