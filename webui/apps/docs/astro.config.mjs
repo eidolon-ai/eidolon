@@ -206,7 +206,7 @@ export default defineConfig({
           ]
         },
         {
-          label: 'FAQ', link: '/docs/introduction'
+          label: 'FAQ', link: '/docs/faq'
         },
         {
           label: 'Architecture',

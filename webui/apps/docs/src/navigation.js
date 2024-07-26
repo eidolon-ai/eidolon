@@ -20,7 +20,7 @@ export const headerData = {
       },
       {
         text: 'FAQ',
-        href: '/docs/introduction',
+        href: '/docs/faq',
       },
       {
         text: 'Videos',
