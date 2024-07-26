@@ -1,6 +1,6 @@
 ---
 title: FAQ
-description: This page gives a broad overview of Eidolon and the documentation
+description: Frequently Asked Questions
 ---
 
 ### What is an Agent?
