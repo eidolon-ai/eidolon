@@ -78,12 +78,14 @@ def metric(fn):
 # below is a decorator that wraps a function with a try catch and logs with the fn name if exception is thrown
 @metric
 def report_server_started(time_to_start: float, number_of_agents: int, error: bool):
-    PosthogConfig.client.capture(distinct_id(), event='server_started', properties={
+    kwargs = dict(distinct_id=distinct_id(), event='server_started', properties={
         'time_to_start': time_to_start,
         'number_of_agents': number_of_agents,
         'error': error,
         **properties()
     })
+    PosthogConfig.client.capture(**kwargs)
+    logger.debug("Server started reported with %s", kwargs)
 
 
 @metric
