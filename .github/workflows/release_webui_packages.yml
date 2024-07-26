@@ -56,8 +56,8 @@ jobs:
 
       - name: Publish Packages
         run: |
-          pnpm --filter @eidolon/client changeset publish --no-git-checks
-          pnpm --filter @eidolon/components changeset publish --no-git-checks
+          pnpm --filter @eidolon-ai/client changeset publish --no-git-checks
+          pnpm --filter @eidolon-ai/components changeset publish --no-git-checks
         working-directory: webui
 
       - name: Push Tags to GitHub

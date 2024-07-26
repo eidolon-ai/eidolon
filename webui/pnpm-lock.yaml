@@ -166,13 +166,13 @@ importers:
 
   apps/eidolon-ui2:
     dependencies:
-      '@eidolon/client':
+      '@eidolon-ai/client':
         specifier: workspace:*
         version: link:../../packages/eidolon-client
-      '@eidolon/components':
+      '@eidolon-ai/components':
         specifier: workspace:*
         version: link:../../packages/eidolon-components
-      '@eidolon/usage-client':
+      '@eidolon-ai/usage-client':
         specifier: workspace:*
         version: link:../../packages/usage-client
       '@emotion/cache':
@@ -360,7 +360,7 @@ importers:
 
   packages/eidolon-components:
     dependencies:
-      '@eidolon/client':
+      '@eidolon-ai/client':
         specifier: workspace:*
         version: link:../eidolon-client
       '@mui/icons-material':
@@ -436,7 +436,7 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.24.1
         version: 7.24.1(@babel/core@7.24.9)
-      '@eidolon/usage-client':
+      '@eidolon-ai/usage-client':
         specifier: workspace:*
         version: link:../usage-client
       '@jest/globals':
