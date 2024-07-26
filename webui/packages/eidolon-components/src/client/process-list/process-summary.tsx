@@ -3,7 +3,7 @@
 import {Collapse, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText, Typography} from "@mui/material";
 import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {Delete} from '@mui/icons-material';
-import {ProcessStatus} from "@eidolon/client";
+import {ProcessStatus} from "@eidolon-ai/client";
 import {ProcessStatusWithChildren} from "../client-api-helpers/process-helper.ts";
 import {useState} from "react";
 

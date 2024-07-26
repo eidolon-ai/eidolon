@@ -1,5 +1,5 @@
 import {DateTime, Interval} from "luxon";
-import {ProcessStatus} from "@eidolon/client";
+import {ProcessStatus} from "@eidolon-ai/client";
 
 export const groupProcessesByUpdateDate = async (processes: ProcessStatus[]) => {
   return processes.reduce((collector, item) => {

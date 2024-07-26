@@ -1,5 +1,5 @@
 {
-  "name": "@eidolon/components",
+  "name": "@eidolon-ai/components",
   "version": "0.0.0",
   "private": false,
   "type": "module",
@@ -25,7 +25,7 @@
     }
   },
   "dependencies": {
-    "@eidolon/client": "workspace:*",
+    "@eidolon-ai/client": "workspace:*",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@mui/material-nextjs": "^5.15.11",
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.24.4",
     "@babel/preset-typescript": "^7.24.1",
-    "@eidolon/usage-client": "workspace:*",
+    "@eidolon-ai/usage-client": "workspace:*",
     "@jest/globals": "^29.7.0",
     "@pollyjs/adapter-fetch": "^6.0.6",
     "@pollyjs/adapter-node-http": "^6.0.6",

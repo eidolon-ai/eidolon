@@ -37,9 +37,9 @@
     "build-eidolon": "node eidolon-app.build.js"
   },
   "dependencies": {
-    "@eidolon/client": "workspace:*",
-    "@eidolon/components": "workspace:*",
-    "@eidolon/usage-client": "workspace:*",
+    "@eidolon-ai/client": "workspace:*",
+    "@eidolon-ai/components": "workspace:*",
+    "@eidolon-ai/usage-client": "workspace:*",
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
     "@emotion/server": "latest",

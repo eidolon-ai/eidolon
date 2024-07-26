@@ -3,8 +3,8 @@
 import * as React from "react";
 import {useEffect} from "react";
 import {Box} from "@mui/material";
-import {executeOperation} from "@eidolon/components/client";
-import {CopilotPanel, CopilotParams, useProcess, useProcesses} from "@eidolon/components/client";
+import {executeOperation} from "@eidolon-ai/components/client";
+import {CopilotPanel, CopilotParams, useProcess, useProcesses} from "@eidolon-ai/components/client";
 import EnhancedTable from "./company_list";
 import {useRouter} from "next/navigation";
 import {Company, Thesis} from "../../types";

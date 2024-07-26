@@ -1,4 +1,4 @@
-import {HttpException, OperationInfo} from "@eidolon/client";
+import {HttpException, OperationInfo} from "@eidolon-ai/client";
 
 export interface EidolonApp {
   name: string;

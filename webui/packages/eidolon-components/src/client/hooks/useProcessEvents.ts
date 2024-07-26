@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState} from "react";
-import {ProcessStatus} from "@eidolon/client";
+import {ProcessStatus} from "@eidolon-ai/client";
 import {ElementsAndLookup} from "../lib/display-elements.ts";
 import {executeServerOperation, getChatEventInUI} from "../client-api-helpers/process-event-helper.ts";
 import {getProcessStatus} from "../client-api-helpers/process-helper.ts";

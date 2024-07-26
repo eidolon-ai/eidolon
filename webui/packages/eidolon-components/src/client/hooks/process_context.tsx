@@ -2,7 +2,7 @@
 
 import {createContext, useContext, useState} from "react";
 import {getProcessStatus} from "../client-api-helpers/process-helper.ts";
-import {HttpException, ProcessStatus} from "@eidolon/client";
+import {HttpException, ProcessStatus} from "@eidolon-ai/client";
 import {getApps, getOperations} from "../client-api-helpers/machine-helper.ts";
 import {CopilotParams, EidolonApp} from "../lib/util.ts";
 

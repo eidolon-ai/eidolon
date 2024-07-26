@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react"
-import {OperationInfo} from "@eidolon/client"
+import {OperationInfo} from "@eidolon-ai/client"
 import {CopilotParams} from "../lib/util.ts"
 import {getOperations} from "../client-api-helpers/machine-helper.ts"
 

@@ -1,4 +1,4 @@
-import {FileHandle} from "@eidolon/client";
+import {FileHandle} from "@eidolon-ai/client";
 
 export async function uploadFile(machineUrl: string, process_id: string, file: Blob) {
   return fetch(`/api/eidolon/process/${process_id}/files?machineURL=${machineUrl}`, {

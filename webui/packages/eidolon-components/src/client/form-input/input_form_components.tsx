@@ -4,7 +4,7 @@ import {ArrowCircleUpRounded, CancelRounded} from "@mui/icons-material";
 import {CopilotParams} from "../lib/util.ts";
 import {useState} from "react";
 import {FileUpload} from "../file-upload/FileUpload.tsx";
-import {FileHandle} from "@eidolon/client";
+import {FileHandle} from "@eidolon-ai/client";
 import {CircularProgressWithContent} from "../lib/circular-progress-with-content.tsx";
 
 export function ProcessTerminated() {

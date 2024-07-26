@@ -3,7 +3,7 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Typography} from "@mui/material";
 import * as React from "react";
 import {usePathname, useRouter} from "next/navigation";
-import {ChooseAgentForm, getAppPathFromPath} from "@eidolon/components/client";
+import {ChooseAgentForm, getAppPathFromPath} from "@eidolon-ai/components/client";
 
 export function StartProgramDialog({open, onClose, machineUrl}: { machineUrl: string, open: boolean, onClose: (wasCanceled: boolean) => void }) {
   const router = useRouter()

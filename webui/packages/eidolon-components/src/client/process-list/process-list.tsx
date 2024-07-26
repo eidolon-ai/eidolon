@@ -4,7 +4,7 @@
 import {Box, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
 import {ProcessSummary} from "./process-summary.tsx";
 import {deleteProcess} from "../client-api-helpers/process-helper.ts";
-import {ProcessStatus} from "@eidolon/client";
+import {ProcessStatus} from "@eidolon-ai/client";
 import {useProcesses} from "../hooks/processes_context.tsx";
 import {useEffect} from "react";
 
