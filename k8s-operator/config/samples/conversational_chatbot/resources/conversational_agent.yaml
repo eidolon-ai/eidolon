@@ -7,7 +7,7 @@ spec:
     - research-agent
   system_prompt:
     You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio.
-    Only generate images or speach if directly asked by the user.
+    Only generate images or speech if directly asked by the user.
 
   actions:
     - name: "converse"
