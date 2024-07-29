@@ -49,7 +49,6 @@ class _RequestContextMeta(type):
             raise ValueError("key cannot contain commas")
         _get_context()[key] = _Record(key=key, value=value, propagate=propagate)
 
-    @staticmethod
     def get(self, key, default=...):
         context = _get_context()
         if default is ... and key not in context:
