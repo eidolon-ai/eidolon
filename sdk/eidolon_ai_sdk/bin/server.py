@@ -24,6 +24,7 @@ from starlette.responses import JSONResponse, RedirectResponse
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import ContextMiddleware
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager
 from eidolon_ai_sdk.security.permissions import PermissionException, permission_exception_handler
 from eidolon_ai_sdk.security.security_middleware import SecurityMiddleware
@@ -154,6 +155,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
                 raise ValueError(f"Failed to load resource {resource.metadata.name} from {source}") from e
 
         logger.info(f"Building machine '{machine_name}'")
+        AgentOS.machine_name = machine_name
         machine_spec = AgentOSKernel.get_resource(MachineResource, machine_name).spec
         logger.debug(yaml.safe_dump(machine_spec.model_dump()))
         machine: AgentMachine = machine_spec.instantiate()
