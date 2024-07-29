@@ -17,6 +17,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
@@ -79,6 +80,15 @@ class HelloWorld:
             yield e
         async for e in _m(_s(5, 6, after=_m(_s(7, 8), context="c3")), context="c2"):
             yield e
+
+    @register_program()
+    async def get_agent_os_context(self):
+        return dict(
+            machine_name=AgentOS.machine_name,
+            agent_name=AgentOS.current_agent_name(),
+            user=AgentOS.current_user().model_dump(),
+            process=AgentOS.current_process_id(),
+        )
 
 
 async def _s(*_args, after=None):
@@ -252,6 +262,14 @@ class TestHelloWorld:
         assert middle["parent"]["span"] in middle["traceparent"]
         assert inner["parent"]["trace"] in inner["traceparent"]
         assert inner["parent"]["span"] in inner["traceparent"]
+
+    async def test_get_agent_os_context(self, agent):
+        process = await agent.create_process()
+        resp = await process.action("get_agent_os_context")
+        assert resp.data["machine_name"] == "test_machine"
+        assert resp.data["agent_name"] == "HelloWorld"
+        assert resp.data["user"]["name"] == "noop default user"
+        assert resp.data["process"] == process.process_id
 
 
 class StateMachine:
