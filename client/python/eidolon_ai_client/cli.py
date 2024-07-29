@@ -147,9 +147,8 @@ async def run(
                     body = file.read()
     try:
         body = json.loads(body)
-    except json.JSONDecodeError as e:
-        if isinstance(body, str) and "{" in body or "[" in body:  # likely intended to be json
-            err_console.print("JSONDecodeError while parsing body:", e)
+    except json.JSONDecodeError:
+        pass
     except TypeError:
         pass
 
