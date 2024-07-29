@@ -23,13 +23,13 @@ const {
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-5xl ${classes?.container ?? ''}`} bg={bg}>
   <div class:list={['flex flex-col gap-8 md:gap-12', { 'md:flex-row-reverse': isReversed }, { 'md:flex-row': image}]}>
-    <div class:list={["md:self-center", { 'md:basis-1/2': image }, { "w-full": !image}]}>
+    <div class:list={["flex flex-col items-center md:self-center", { 'md:basis-1/2': image }, { "w-full": !image}]}>
       <Headline
         title={title}
         subtitle={subtitle}
         tagline={tagline}
         classes={{
-          container: 'text-left rtl:text-right',
+          container: 'text-left rtl:text-right mb-4 md:mb-4',
           title: 'text-xl lg:text-2xl',
           ...((classes?.headline as {}) ?? {}),
         }}
