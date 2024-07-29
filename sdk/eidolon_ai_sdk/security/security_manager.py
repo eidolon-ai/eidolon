@@ -5,7 +5,6 @@ from typing import Optional, Set
 from pydantic import BaseModel
 from starlette.requests import Request
 
-from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.security.authentication_processor import AuthenticationProcessor
 from eidolon_ai_sdk.security.functional_authorizer import FunctionalAuthorizer
 from eidolon_ai_sdk.agent_os_interfaces import Permission, SecurityManager
