@@ -1,16 +1,11 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 
-import Hero2 from '~/components/widgets/Hero2.astro';
-import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
-import Content from '~/components/widgets/Content.astro';
-import FAQs from '~/components/widgets/FAQs.astro';
-import WidgetWrapper from "../components/ui/WidgetWrapper.astro";
-import Item from "../components/blog/GridItem.astro";
-import LinkUnfurl from "../components/widgets/LinkUnfurl.astro";
-import Testimonials from "../components/widgets/Testimonials.astro";
-import  SpeedInsights  from "@vercel/speed-insights/astro"
+import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
+import MainTitle from "../components/widgets/MainTitle.astro";
+import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
+
 
 const metadata = {
   title: 'Eidolon -- Build LLM Agents as Services',
@@ -19,483 +14,321 @@ const metadata = {
 
 const bg = await Astro.slots.render("bg")
 
-// const data = await fetch("https://api.github.com/repos/eidolon-ai/eidolon").then((response) => response.json())
+const githubIcon = `<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" 
+d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" 
+fill="currentColor"/></svg>`
 
-// const numStars = data.stargazers_count || " "
-const githubText = `Star on GitHub ⭐`
+const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&nbsp;&nbsp;Star on GitHub`
 ---
 
 <Layout metadata={metadata}>
-  <SpeedInsights/>
   <!-- Hero Widget ******************* -->
 
-  <Hero2
+  <MainTitle
     actions={[
       {
-        variant: 'secondary',
+        color: 'secondary',
         text: githubText,
         href: 'https://github.com/eidolon-ai/eidolon',
         target: '_blank',
       },
-      {text: 'Quickstart', href: '/docs/quickstart'},
+      {text: 'Quickstart', href: '/docs/quickstart', color: 'primary'},
     ]}
-    image={{src: '~/assets/images/k8s.webp', width: '600px', height: '600px', alt: 'Eidolon'}}
   >
     <Fragment slot="tagline">
-      <span class="text-center flex">
-      Let's build trusted genAI together
-      </span>
-      <div class="text-center">
-        <a href="https://pypi.org/project/eidolon-ai-sdk/">
-          <img style="display: inline-block;" alt="PyPI - Version" src="https://img.shields.io/pypi/v/eidolon-ai-sdk?style=flat&label=eidolon-ai-sdk">
-        </a>
-        <a href="https://pypistats.org/packages/eidolon-ai-sdk">
-          <img style="display: inline-block" alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/eidolon-ai-sdk">
-        </a>
-        <a href="https://github.com/eidolon-ai/eidolon/actions/workflows/test_python.yml?query=branch%3Amain">
-          <img style="display: inline-block;" alt="GitHub Test Status" src="https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&logo=github&label=test">
-        </a>
-      </div>
-    </Fragment>
-    <Fragment slot="title">
-      <span class="block">
-      <span class="mb-3 font-bold text-3xl"><span class="text-blue-500">Eidolon</span>
-        is an open source SDK for AI agents
-      </span>
-        </span>
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      <span style="text-align: left" class="-left-2">
-        <span class="block">
-          Infrastructure empowering developers to rapidly build trusted, modular, multi-modal agents for genAI apps.
-        </span>
+      <span class="text-center">
+      AI Agent Server for the Enterprise
       </span>
     </Fragment>
-  </Hero2>
-
- <Testimonials
-    title="What our users say?"
-    testimonials={[
-      {
-        testimonial: `The LLM execution pattern and tool call pattern with other solutions, like LangChain, is too rigid and can’t be customized. With your project I get a way less proscriptive design that is flexible enough to meet all my needs.`,
-        name: 'Sr. Software Engineer',
-        job: 'Enterprise Company',
-        image: {
-          src: '~/assets/images/person.png',
-          alt: 'Sr. Software Engineer',
-        },
-      },
-      {
-        testimonial: `Devs don’t need to write 100s of lines of code to do what Eidolon has already done for you. The builtin agents are easy to use and can be customized to fit your needs... and deployment was a breeze.`,
-        name: 'Software Architect',
-        job: 'Startup',
-        image: {
-          src: '~/assets/images/person.png',
-          alt: 'Software Architect',
-        },
-      },
-      {
-        testimonial:
-          'As a green field developer, Eidolon lets me easily build applications. I was able to throw a demo together in a week and I don\'t know s**t about AI',
-        name: 'Game Developer',
-        job: 'Indie Game Dev',
-        image: {
-          src: '~/assets/images/person.png',
-          alt: 'Game Developer',
-        },
-      },
-    ]}
-  />
-  
-  <!-- Features Widget *************** -->
-
-  <Features
-    id="features"
-    tagline=""
-    title="What you get with Eidolon"
-    subtitle="Simple, modular, and scalable: Eidolon is the best choice for your next project."
-    items={[
-      {
-        title: 'Easy to deploy',
-        description:
-          "With Eidolon, agents are services, so there is no extra work when it comes time to deploy; the HTTP server is built in.",
-        icon: 'tabler:list-check',
-      },
-      {
-        title: 'Start simple, with power to grow',
-        description:
-          'Create agents using only specification or customize with your own code. Eidolon provides the power when needed, and the flexibility to customize when desired.',
-        icon: 'tabler:api-app',
-      },
-      {
-        title: 'Simple agent-to-agent communication',
-        description:
-          'Because agents are services, and with well-defined interfaces, they easily communicate with tools dynamically generated from the OpenAPI JSON schema, as defined by the agent services.',
-        icon: 'tabler:components',
-      },
-      {
-        title: 'No vendor lock-in',
-        description:
-          'Eidolon is open source and designed to be run in any cloud or on-prem.  We are an open source tool built by developers, for developers.',
-        icon: 'tabler:arrows-right-left',
-      },
-      {
-        title: 'Painless component customization and upgrade',
-        description:
-          'With a focus on modularity, Eidolon makes it easy to swap out components. Grab an off the shelf LLM, RAG impl, tools, etc., or just define your own.',
-        icon: 'tabler:bulb',
-      },
-      {
-        title: 'Trust built-in',
-        description:
-          'Built-in support for enterprise grade security including multiple authentication methods as well as RBAC support for every agent type. Pluggable interfaces allow developers to choose how their agents are secured.',
-        icon: 'tabler:lock',
-      },
-    ]}
-  />
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    tagline=""
-    title="Eidolon's built-in Agents make creating applications a breeze!"
-    items={[
-      {
-        title: 'Create a simple chatbot',
-        description:
-          'The Eidolon copilot agent can be used out of the box against any LLM and supports multi-media and RAG using configuration files - all without code.',
-      },
-      {
-        title: 'Front a complex agent',
-        description:
-          'Use the built-in Eidolon copilot as your human interface to complex agents. The power of Eidolon\'s agents-as-a-service allows easy integration with any backend agent.',
-      },
-      {
-        title: 'Use our React components or roll your own',
-        description:
-          'Eidolon publishes configurable React components that can be used in any application. You can use these components as is, customize them to fit your needs, or completely roll your own - you decide.',
-      },
-    ]}
-    image={{
-      src: '~/assets/images/chatbot.webp',
-      alt: 'Colorful Image',
-    }}
-  >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Copilot interface</h3>
-      Build copilot functionality into your application with ease.
+      <span class="text-center leading-8">
+        <span class="text-2xl md:text-3xl">Open source framework to rapidly build and deploy genAI apps</span>
+        <br/>
+        <span class="text-sm font-semibold tracking-tighter md:text-2xl">Maintain control | Reduce complexity | Increase accuracy</span>
+      </span>
     </Fragment>
+  </MainTitle>
 
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
+  <div class="mb-16"/>
   <!-- Content Widget **************** -->
 
-  <Content
-    isAfterContent
-    items={[
+  <div class="">
+    <Steps
+      title="Bring your enterprise into the genAI revolution in three easy steps"
+      horizontal
+      classes = {{container: "pb-2 md:pb-2 lg:pb-2"}}
+      items={[
+        {
+          title: '<span class="font-medium">1. Build</span>',
+          icon: 'tabler:hammer',
+          link: '#build'
+        },
+        {
+          title: '<span class="font-medium">2. Deploy</span>',
+          icon: 'tabler:package',
+          link: '#deploy'
+        },
+        {
+          title: '<span class="font-medium">3. Consume</span>',
+          icon: 'tabler:rocket',
+          link: '#consume'
+        },
+      ]}
+    />
+  </div>
+  <hr/>
+  <ContentWithTabs
+    id="build"
+    bullets={[
       {
-        title: 'Add retrieval agents to any application',
-        description: `Easily integrate a retrieval agent into your application.  The Eidolon retrieval agent is a pluggable component that can be used with any backend vector store.`,
-      },
-      {
-        title: 'Customize with pluggable embeddings, chunking, and storage',
+        title: 'Choose from a variety of pre-built agents or define your own',
         description:
-          'Add RAG storage to any application using simple services. Eidolon provides the flexibility to customize RAG to fit your needs.',
+          "Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.",
       },
       {
-        title: 'Secure data using multiple agents and RBAC',
-        description:
-          "Easily secure agents using role-based access control (RBAC) ensuring that only the right agents have access to the right data.",
+        title: 'Define agents with declarative YAML',
+        description: "Eidolon's simple declarative YAML syntax makes it easy to define agents. Agents can be as simple as a single line or as complex as needed.",
       },
-    ]}
-    image={{
-      src: '~/assets/images/doc-search.webp',
-      alt: 'RAG applications',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Retrieval-augmented generation</h3>
-      Build RAG applications fast and easy.
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    isAfterContent
-    items={[
       {
         title: 'Build agents that work together',
         description:
-          'Eidolon\'s modular framework enables easy integration of agents with other agents or into any application. Agents are designed to be easily swapped or upgraded.',
+          "Add RAG storage to any application using simple services. Eidolon provides the flexibility to customize RAG to fit your needs.",
+      },
+    ]}
+    tabs={[
+      {
+        title: "Multi-Model Chatbot",
+        language: 'yaml',
+        code: `apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: multi-model-chatbot
+
+spec:
+  system_prompt:
+    You are a helpful assistant. Output all multi-media content as embedded content including image, video, and audio. Only generate images or speech if directly asked by the user.
+  apus:
+    - { apu: GPT4-turbo, title: GPT4 Turbo, default: true }
+    - { apu: MistralLarge, title: Mistral Large }
+    - { apu: Llama3-8b, title: Llama3 8b }
+    - { apu: ClaudeOpus, title: Claude Opus }
+    - { apu: ClaudeSonnet, title: Claude Sonnet }
+`
+      },
+      {
+        title: "RAG",
+        language: 'yaml',
+        code: `---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: agent
+
+spec:
+  description: An agent that searches the eidolon code and documentation
+  agent_refs: ["doc-search"]
+  system_prompt: You are a software expert responsible for answering questions about a code base.
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: doc-search
+
+spec:
+  implementation: RetrieverAgent
+  description: "Search the Eidolon github repository for code, examples, and documentation"
+  document_manager:
+    loader:
+      implementation: GitHubLoader
+      owner: "eidolon-ai"
+      repo: "eidolon"
+      pattern: [ "**/*.md", "**/*.py" ]
+      exclude: "**/test/**/*"
+`
+      },
+      {
+        title: "Agent-Agent Communication",
+        language: 'yaml',
+        code: `---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: manager
+
+spec:
+  system_prompt:
+    You are a tech manager servicing user requests. You manage a team of engineers and qa workers. Work with your team as needed to answer user questions.
+  agent_refs: ["engineer", "qa"]
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: manager
+
+spec:
+  system_prompt:
+    You are a tech manager servicing user requests. You manage a team of engineers and qa workers. Work with your team as needed to answer user questions.
+  agent_refs: ["engineer", "qa"]
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: engineer
+
+spec:
+  system_prompt:
+    You are an engineer. Your manager (user) will come to with questions. Work with the qa team as needed to answer user questions.
+  agent_refs: ["qa"] 
+---
+apiVersion: eidolon/v1
+kind: Agent
+metadata:
+  name: qa
+
+spec:
+  system_prompt: You are a qa engineer. Quality is your top concern.
+`
+      }
+    ]}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">1. Build</h3>
+      Defining agents is fast and easy.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-gray-100 dark:bg-blue-950"></div>
+    </Fragment>
+  </ContentWithTabs>
+
+  <!-- Content Widget **************** -->
+  <hr/>
+
+  <ContentWithTabs
+    id="deploy"
+    isReversed
+    bullets={[
+      {
+        title: 'Deploy directly to Kubernetes',
+        description:
+          'Agents are infrastructure and should be deployed as such. Deploy directly using your organizations Kubernetes management tools / pipeline.',
       },
       {
         title: 'Scale agents as needed',
         description:
-          'Agents are stateless and can be scaled horizontally as needed. You choose how to scale to meet your needs.',
+          'Agents are stateless and scale horizontally to meet your needs.',
       },
       {
-        title: 'Run agents anywhere',
+        title: 'Build safely with enforceable policies',
         description:
-          'Eidolon agents are designed to be run in any cloud or on-prem. You choose where your agents run and how they are deployed.',
+          'With kubernetes deployment, you can enforce policies to ensure your agents are deployed with access only to the resources they need.',
       },
     ]}
-    image={{
-      src: '~/assets/images/k8s.webp',
-      alt: 'K8s Image',
-    }}
+    tabs={[
+      {
+        title: "Kubernetes",
+        language: 'bash',
+        code: `
+% helm repo add eidolon https://eidolonai.com/charts
+... 
+% helm install eidolon eidolon-operator/eidolon-operator-chart
+...
+% kubectl apply -f agent.yaml
+agent.server.eidolonai.com/agent created
+% kubectl get agents
+NAME      AGE
+chatbot   3s`
+      },
+      {
+        title: "Local Dev",
+        src: "~/assets/images/make_docker_serve.svg",
+        alt: "CLI",
+      }
+
+    ]}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Multi-agent ready</h3>
-      Harness the power of multiple agents to create your next super-agent. Eidolon makes it easy to create agents that work together.
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">2. Deploy</h3>
+      What good is an agent that can't be deployed?
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+      <div class="absolute inset-0 bg-white dark:bg-transparent"></div>
     </Fragment>
-  </Content>
+  </ContentWithTabs>
+  <hr/>
 
-  <!-- Steps Widget ****************** -->
-
-  <Steps
-    title="Build genAI apps in no time with Eidolon."
-    items={[
+  <ContentWithTabs
+    id="consume"
+    bullets={[
       {
-        title: 'Step 1: <span class="font-medium">Install Eidolon SDK\n</span>',
-        description: "Download and install the Eidolon SDK from <a href='https://pypi.org/project/eidolon-ai-sdk/'><u>PYPI</u></a> or get started with a <a href='https://github.com/eidolon-ai/agent_machine'><u>Template Repository</u></a>.",
-        icon: 'tabler:package',
-      },
-      {
-        title: 'Step 2: <span class="font-medium">Create your Agents</span>',
+        title: 'Build a GUI with React components',
         description:
-          "Build agent using our out of the box components. Customize them or build new components as needed!",
-        icon: 'tabler:letter-case',
+          'Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.',
       },
       {
-        title: 'Step 3: <span class="font-medium">Integrate your App</span>',
+        title: 'Run actions directly through HTTP REST API',
         description:
-          "Agents are http services, so you can integrate them into your app with ease or leverage Eidolon's <a href='https://github.com/eidolon-ai/eidolon/tree/main/webui'><u>built-in webui</u></a> to deploy a chatbot interface.",
-        icon: 'tabler:paint',
+          'At the end of the day, agents are just http services. You can run actions directly through the REST API or use the Eidolon webui to interact with your agents.',
       },
       {
-        title: 'Ready!',
-        icon: 'tabler:check',
+        title: 'Hack away with the CLI',
+        description:
+          'Eidolon provides a CLI to help you interact with your agents in a more ad-hoc manner. The CLI is a powerful tool to help you experiment with your agents quickly.',
       },
     ]}
-    image={{
-      src: '~/assets/images/clock.webp',
-      alt: 'Steps image',
-    }}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <!--
-    <Features2
-      title="Most used widgets"
-      subtitle="Provides frequently used components for building websites using Tailwind CSS"
-      tagline="Components"
-      items={[
-        {
-          title: 'Headers',
-          description: "Ever tried driving without GPS? Boom! That's why websites need headers for direction.",
-          icon: 'flat-color-icons:template',
-        },
-        {
-          title: 'Heros',
-          description:
-            "Picture a superhero landing – epic, right? That's the job of a Hero section, making grand entrances!",
-          icon: 'flat-color-icons:gallery',
-        },
-        {
-          title: 'Features',
-          description:
-            'Where websites strut their stuff and show off superpowers. No holding back on the bragging rights here!',
-          icon: 'flat-color-icons:approval',
-        },
-        {
-          title: 'Content',
-          description:
-            "Dive into the meat and potatoes of a site; without it, you'd just be window shopping. Content is king.",
-          icon: 'flat-color-icons:document',
-        },
-        {
-          title: 'Call-to-Action',
-          description:
-            'That enthusiastic friend who\'s always urging, "Do it! Do it!"? Yeah, that\'s this button nudging you towards adventure.',
-          icon: 'flat-color-icons:advertising',
-        },
-        {
-          title: 'Pricing',
-          description: 'Behold the dessert menu of the website world. Tempting choices await, can you resist?',
-          icon: 'flat-color-icons:currency-exchange',
-        },
-        {
-          title: 'Testimonial',
-          description: 'Step into the gossip corner! Here, other visitors spill the beans and share the juicy details.',
-          icon: 'flat-color-icons:voice-presentation',
-        },
-        {
-          title: 'Contact',
-          description:
-            'Like a digital mailbox, but faster! Drop a line, ask a question, or send a virtual high-five. Ding! Message in.',
-          icon: 'flat-color-icons:business-contact',
-        },
-        {
-          title: 'Footers',
-          description: "The footer's like the credits of a movie but sprinkled with easter eggs. Time to hunt!",
-          icon: 'flat-color-icons:database',
-        },
-      ]}
-    >
-      <Fragment slot="bg">
-        <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-      </Fragment>
-    </Features2>
-  -->
-
-  <!-- HighlightedPosts Widget ******* -->
-  <WidgetWrapper isDark={false} bg={bg} id="events">
-    <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
-      <div class="md:max-w-sm">
-        <h2
-          class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
-          set:html={"Events"}
-        />
-        <!--
-                    {APP_BLOG.list.isEnabled && linkText && linkUrl && (
-                      <Button variant="link" href={linkUrl}> {linkText} »</Button>
-                    )}
-        -->
-      </div>
-    </div>
-
-    <div class="grid gap-6 row-gap-5 md:grid-cols-2 lg:grid-cols-3 -mb-6">
-      <LinkUnfurl url="https://lu.ma/2qud1jh1"/>
-      <LinkUnfurl url="https://lu.ma/z2kghncv"/>
-      <LinkUnfurl url="https://lu.ma/127rux39"/>
-    </div>
-    <!--<Grid posts={posts}/>-->
-  </WidgetWrapper>
-
-  <WidgetWrapper isDark={false} bg={bg}>
-    <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
-      <div class="md:max-w-sm">
-        <h2
-          class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
-          set:html={"Find out more..."}
-        />
-        <!--
-                    {APP_BLOG.list.isEnabled && linkText && linkUrl && (
-                      <Button variant="link" href={linkUrl}> {linkText} »</Button>
-                    )}
-        -->
-      </div>
-    </div>
-
-    <div class="grid gap-6 row-gap-5 md:grid-cols-2 lg:grid-cols-4 -mb-6">
-      <Item post={{
-        title: "Publications",
-        excerpt: "Read about agentic computing and learn the possible.",
-        image: "~/assets/images/documents.webp",
-        permalink: "/blog"
-      }}/>
-      <Item post={{
-        title: "Videos",
-        excerpt: "Check out our videos on YouTube to see what is possible with Eidolon.",
-        image: "~/assets/images/youtube.png",
-        permalink: "https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg"
-      }}/>
-      <Item post={{
-        title: "Discord",
-        excerpt: "Come join our community on Discord.",
-        image: "~/assets/images/discord.png",
-        permalink: "https://discord.gg/6kVQrHpeqG"
-      }}/>
-      <Item post={{
-        title: "Learn more about Eidolon",
-        excerpt: "While easy to get started, Eidolon is quite powerful.  This page provides documentation on some of the more intricate parts.",
-        image: "~/assets/images/learn-more.webp",
-        permalink: "/docs/introduction"
-      }}/>
-    </div>
-    <!--<Grid posts={posts}/>-->
-  </WidgetWrapper>
-
-  <!-- FAQs Widget ******************* -->
-
-  <FAQs
-    title="Frequently Asked Questions"
-    subtitle=""
-    tagline="FAQs"
-    classes={{container: 'max-w-6xl'}}
-    items={[
+    tabs={[
       {
-        title: 'What is an Agent?',
-        description:
-          "An Agent is an AI system that goes beyond simple text production. It uses a large language model (LLM) as its central computational engine, allowing it to carry on conversations, do tasks, reason, and display a degree of autonomy. These agents accept prompts in natural language, reason out the necessary tasks, and utilize the LLM to compose a response, rather than simply executing a direct command.",
+        title: "CLI",
+        src: "~/assets/images/cli.svg",
+        alt: "CLI",
       },
       {
-        title: 'What is Eidolon?',
-        description:
-          "Eidolon is an open-source, service-oriented framework that enables developers to create modular and flexible agents that collaborate and cooperate. It aims to shift the focus from direct LLM interaction to goal-oriented, productivity-enhancing agent development. With a focus on modularity, Eidolon makes it easy to swap out components. Grab an off the shelf LLM, RAG impl, tools, etc., or just define your own."
+        title: "Python",
+        language: 'py',
+        code: `from eidolon_ai_client.client import Agent
+
+agent = Agent.get("HelloWorld")
+process = await agent.create_process()
+body = "Why should I use Eidolon?"
+response = await process.action("converse", body)
+
+assert "fast iteration times" in response.data
+assert "extensible agent mesh" in response.data
+assert "supportive community" in response.data`
       },
       {
-        title: 'Why do you need an Agent Services Framework?',
-        description:
-          'For generative AI applications, multiple agents are required to solve complex tasks. An Agent Services Framework enables agents to operate both independently and cooperatively across different domains, while providing a consistent development environment for building sophisticated AI-powered tools and resources.'
+        title: "Typescript",
+        language: 'ts',
+        code: `import {EidolonClient} from "@eidolon-ai/client";
+
+const client = new EidolonClient()
+const {process: p1} = await client.createProcess("HelloWorld")
+const process = client.process(p1.process_id)
+const agent = process.agent("HelloWorld")
+const body = "Why should I use Eidolon?"
+const response = await agent.action("converse", body)
+
+expect(response).toContain("fast iteration times")
+expect(response).toContain("extensible agent mesh")
+expect(response).toContain("supportive community")`,
       },
       {
-        title: "Why Eidolon?",
-        description:
-          "Eidolon facilitates an organized and efficient development process, allowing for easier modification and adaptation as requirements evolve. Ultimately, Eidolon empowers developers to move beyond prompt-and-response interactions and create sophisticated, adaptable AI-powered tools.",
+        title: "WebUI",
+        src: "~/assets/images/webui.gif",
+        alt: "RAG",
       },
     ]}
-  />
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">3. Consume</h3>
+      GenAI applications need to consume agents in a diverse set of ways.
+    </Fragment>
 
-  <!-- Stats Widget ****************** -->
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-gray-50 dark:bg-blue-950"></div>
+    </Fragment>
+  </ContentWithTabs>
 
-  <!--
-    <Stats
-      stats={[
-        {title: 'Downloads', amount: '132K'},
-        {title: 'Stars', amount: '24.8K'},
-        {title: 'Forks', amount: '10.3K'},
-        {title: 'Users', amount: '48.4K'},
-      ]}
-    />
-  -->
-
-  <!-- CallToAction Widget *********** -->
-
-  <!--  <CallToAction
-      actions={[
-        {
-          variant: 'primary',
-          text: 'Get template',
-          href: 'https://github.com/eidolon-ai/eidolon',
-          target: '_blank',
-          icon: 'tabler:download',
-        },
-      ]}
-    >
-      <Fragment slot="title">
-        Astro&nbsp;+&nbsp;<br class="block sm:hidden"/><span class="sm:whitespace-nowrap">Tailwind CSS</span>
-      </Fragment>
-  
-      <Fragment slot="subtitle">
-        Be very surprised by these huge fake numbers you are seeing on this page. <br class="hidden md:inline"/>Don't
-        waste more time! :P
-      </Fragment>
-    </CallToAction>-->
+  <hr/>
 </Layout>
