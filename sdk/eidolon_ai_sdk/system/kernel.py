@@ -36,6 +36,7 @@ class AgentOSKernel:
         AgentOS.similarity_memory = machine.memory.similarity_memory
         AgentOS.security_manager = machine.security_manager
         AgentOS.process_file_system = machine.process_file_system
+        AgentOS.machine_name = machine.spec.name
         resource_load_error_handler.fail_on_agent_start_error = machine.spec.fail_on_agent_start_error
 
     @classmethod

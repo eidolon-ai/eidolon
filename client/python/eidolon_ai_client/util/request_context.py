@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from contextvars import ContextVar
 from typing import Any, Dict
 from urllib.request import Request
@@ -27,14 +28,17 @@ def _get_context() -> Dict[str, _Record]:
 
 
 class _RequestContextMeta(type):
+    def __contains__(self, item):
+        return item in _get_context()
+
+    def __setitem__(self, key, value):
+        return self.set(key, value, propagate=False)
+
     def __getitem__(self, key):
         return _get_context()[key].value
 
     def __repr__(self):
         return repr(_get_context())
-
-    def __delitem__(self, key):
-        del _get_context()[key]
 
     @staticmethod
     def set(key: str, value: str | Any, propagate=False):
@@ -45,11 +49,12 @@ class _RequestContextMeta(type):
             raise ValueError("key cannot contain commas")
         _get_context()[key] = _Record(key=key, value=value, propagate=propagate)
 
+    @staticmethod
     def get(self, key, default=...):
         context = _get_context()
         if default is ... and key not in context:
             raise KeyError(key)
-        return self[key] if key in context else default
+        return copy.deepcopy(self[key]) if key in context else default
 
     @property
     def headers(self):
