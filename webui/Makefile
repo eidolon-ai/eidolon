@@ -9,10 +9,6 @@ version:
 docker:
 	docker build -t ${PROJECT}/webui -t ${PROJECT}/webui:${VERSION} .
 
-push_image: docker
-	docker push ${PROJECT}/webui
-	docker push ${PROJECT}/webui:${VERSION}
-
 PLATFORMS ?= linux/arm64,linux/amd64
 CONTAINER_TOOL ?= docker
 

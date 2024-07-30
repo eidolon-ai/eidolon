@@ -7,12 +7,6 @@ docker:
 	docker build --target sdk_base -t ${PROJECT}/sdk_base -t ${PROJECT}/sdk_base:${VERSION} -f ../Dockerfile ..
 	docker build -t ${PROJECT}/sdk -t ${PROJECT}/sdk:${VERSION} -f ../Dockerfile ..
 
-push_image: docker
-	docker push ${PROJECT}/sdk_base
-	docker push ${PROJECT}/sdk_base:${VERSION}
-	docker push ${PROJECT}/sdk
-	docker push ${PROJECT}/sdk:${VERSION}
-
 PLATFORMS ?= linux/arm64,linux/amd64
 CONTAINER_TOOL ?= docker
 
