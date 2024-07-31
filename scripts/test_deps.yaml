@@ -1,0 +1,14 @@
+projects:
+  examples:
+    locs: ["examples/**"]
+    tests: ["Test Python with Secrets"]
+    deps: [sdk]
+  webui:
+    locs: ["webui/apps/eidolon-ui2/**"]
+    deps: [sdk]
+  sdk:
+    tests: ["Test Python"]
+    deps: [client, usage]
+  client:
+
+  usage:
