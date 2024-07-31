@@ -87,5 +87,5 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: "Versioning Eidolon Dependencies"
-        run: npm run maybe_docker_push
+        run: make maybe_docker_push
         working-directory: webui

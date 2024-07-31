@@ -128,7 +128,8 @@ class AgentController:
             **kwargs,
     ):
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
-        RequestContext.set("process_id", process_id)
+        RequestContext["agent_name"] = self.name
+        RequestContext["process_id"] = process_id
         request = typing.cast(Request, kwargs.pop("__request"))
         process = await self.get_latest_process_event(process_id)
         if not process:
