@@ -18,7 +18,7 @@ dockerx:
 	- $(CONTAINER_TOOL) buildx build --platform=$(PLATFORMS) --push -f ../Dockerfile.cross --target sdk_base -t ${PROJECT}/sdk_base -t ${PROJECT}/sdk_base:${VERSION}  ..
 	- $(CONTAINER_TOOL) buildx build --platform=$(PLATFORMS) --push -f ../Dockerfile.cross -t ${PROJECT}/sdk -t ${PROJECT}/sdk:${VERSION} ..
 	- $(CONTAINER_TOOL) buildx rm project-v3-builder
-	rm Dockerfile.cross
+	rm ../Dockerfile.cross
 
 maybe_docker_push:
 	@docker manifest inspect $(PROJECT)/sdk:$(VERSION) >/dev/null && echo "Image exists" || $(MAKE) dockerx
