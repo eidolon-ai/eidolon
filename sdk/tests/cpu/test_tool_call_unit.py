@@ -28,13 +28,8 @@ class TestLLMUnit(LLMUnit):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    async def execute_llm(
-        self,
-        call_context: CallContext,
-        messages: List[LLMMessage],
-        tools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AsyncIterator[StreamEvent]:
+    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
+                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[StreamEvent]:
         return self.fn(call_context, messages, tools, output_format)
 
 

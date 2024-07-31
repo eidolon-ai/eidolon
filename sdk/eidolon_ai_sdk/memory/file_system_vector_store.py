@@ -56,9 +56,8 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
 
     async def add(self, collection: str, docs: Sequence[Document]):
         await AgentOS.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
-        # Asynchronously collect embedded documents
-        embeddedDocs = []
-        async for embeddedDoc in AgentOS.similarity_memory.embed(docs):
+        embeddedDocs = [EmbeddedDocument(id=doc.id, embedding=doc.embedding, metadata=doc.metadata) for doc in docs if doc.embedding]
+        async for embeddedDoc in AgentOS.similarity_memory.embed([d for d in docs if not d.embedding]):
             embeddedDocs.append(embeddedDoc)
         await self.add_embedding(collection, embeddedDocs)
         with tracer.start_as_current_span("add documents"):

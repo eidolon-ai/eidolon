@@ -65,12 +65,12 @@ class UserMessageFileHandle(BaseModel):
 class UserMessageImage(UserMessageFileHandle):
     type: Literal["image"] = "image"
 
-    async def getBytes(self, process_id: str) -> bytes:
-        data, _metadata = await AgentOS.process_file_system.read_file(process_id, self.file.file_id)
+    async def getBytes(self) -> bytes:
+        data, _metadata = await AgentOS.process_file_system.read_file(AgentOS.current_process_id(), self.file.file_id)
         return data
 
-    async def getB64(self, process_id: str):
-        data = await self.getBytes(process_id)
+    async def getB64(self):
+        data = await self.getBytes()
         return base64.b64encode(data).decode("utf-8")
 
 
