@@ -95,6 +95,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/TheSheepGoesBa"><img src="https://avatars.githubusercontent.com/u/54458170?v=4?s=100" width="100px;" alt="Eric Brewster"/><br /><sub><b>Eric Brewster</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=TheSheepGoesBa" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://luislaffitte.netlify.app/"><img src="https://avatars.githubusercontent.com/u/133073175?v=4?s=100" width="100px;" alt="Luis Laffitte"/><br /><sub><b>Luis Laffitte</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=Wizzerrd" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/harivmasoor"><img src="https://avatars.githubusercontent.com/u/22420711?v=4?s=100" width="100px;" alt="harivmasoor"/><br /><sub><b>harivmasoor</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=harivmasoor" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://speakerdeck.com/eltociear"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt="Ikko Eltociear Ashimine"/><br /><sub><b>Ikko Eltociear Ashimine</b></sub></a><br /><a href="#content-eltociear" title="Content">🖋</a></td>
     </tr>
   </tbody>
   <tfoot>
