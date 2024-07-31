@@ -93,6 +93,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dbrewster"><img src="https://avatars.githubusercontent.com/u/399676?v=4?s=100" width="100px;" alt="Dave Brewster"/><br /><sub><b>Dave Brewster</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=dbrewster" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jahabeebs"><img src="https://avatars.githubusercontent.com/u/47253537?v=4?s=100" width="100px;" alt="Jacob Habib"/><br /><sub><b>Jacob Habib</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=jahabeebs" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/TheSheepGoesBa"><img src="https://avatars.githubusercontent.com/u/54458170?v=4?s=100" width="100px;" alt="Eric Brewster"/><br /><sub><b>Eric Brewster</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=TheSheepGoesBa" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://luislaffitte.netlify.app/"><img src="https://avatars.githubusercontent.com/u/133073175?v=4?s=100" width="100px;" alt="Luis Laffitte"/><br /><sub><b>Luis Laffitte</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=Wizzerrd" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
