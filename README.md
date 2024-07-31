@@ -99,6 +99,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ravieidolon"><img src="https://avatars.githubusercontent.com/u/157836102?v=4?s=100" width="100px;" alt="ravieidolon"/><br /><sub><b>ravieidolon</b></sub></a><br /><a href="#content-ravieidolon" title="Content">🖋</a> <a href="#eventOrganizing-ravieidolon" title="Event Organizing">📋</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Calebc00"><img src="https://avatars.githubusercontent.com/u/92338044?v=4?s=100" width="100px;" alt="Caleb Casey"/><br /><sub><b>Caleb Casey</b></sub></a><br /><a href="#tutorial-Calebc00" title="Tutorials">✅</a></td>
     </tr>
   </tbody>
   <tfoot>
