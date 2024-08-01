@@ -1,5 +1,7 @@
 import asyncio
 import json
+from functools import wraps
+from types import SimpleNamespace
 from typing import cast, List
 
 from bson import ObjectId
@@ -108,7 +110,7 @@ class Mem0VectorDB(VectorStoreBase):
         payloads = payloads or [None] * len(vectors)
         ids = ids or [ObjectId() for _ in range(len(vectors))]
         docs = [
-            Document(id=str(vector_id), embedding=vector, page_content=json.dumps(payload))
+            Document(id=str(vector_id), embedding=vector, metadata={k:v for k, v in payload.items() if k != 'data'}, page_content=payload["data"])
             for vector, payload, vector_id in zip(vectors, payloads, ids)
         ]
         return await self.vs.add(collection=name, docs=docs)
@@ -122,7 +124,7 @@ class Mem0VectorDB(VectorStoreBase):
             ScoredPoint(
                 id=doc.id,
                 score=doc.score,
-                payload=json.loads(self.similarity_memory.vector_store.get_page_content(name, doc.id)),
+                payload=doc.metadata,
                 vector=doc.embedding
             )
             for doc in found
@@ -146,7 +148,11 @@ class Mem0VectorDB(VectorStoreBase):
 
     async def _get(self, name, vector_id):
         async for doc in self.vs.get_docs(collection=name, doc_ids=[str(vector_id)]):
-            return doc
+            doc.metadata['data'] = doc.page_content
+            return SimpleNamespace(
+                id=doc.id,
+                payload=doc.metadata,
+            )
 
     def list_cols(self):
         ...
