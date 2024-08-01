@@ -86,7 +86,7 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
         )
 
     @abstractmethod
-    async def execute_llm(
+    def execute_llm(
         self,
             messages: List[LLMMessage],
             tools: List[LLMCallFunction],

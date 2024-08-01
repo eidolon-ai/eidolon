@@ -87,12 +87,13 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
                 Document(
                     id=result.id,
                     metadata=result.metadata,
-                    page_content=await AgentOS.file_memory.read_file(
-                        self.spec.root_document_directory + "/" + collection + "/" + result.id
-                    ).decode(),
+                    page_content=await self.get_page_content(collection, result.id),
                 )
             )
         return returnDocuments
+
+    async def get_page_content(self, collection: str, doc_id: str) -> str:
+        return (await AgentOS.file_memory.read_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)).decode()
 
     async def raw_query(
         self,

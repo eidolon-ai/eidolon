@@ -1,4 +1,5 @@
 import asyncio
+import json
 from typing import cast, List
 
 from bson import ObjectId
@@ -9,13 +10,15 @@ from mem0.memory.telemetry import capture_event
 from mem0.vector_stores.base import VectorStoreBase
 from qdrant_client.http.models import ScoredPoint
 
-from eidolon_ai_client.events import StringOutputEvent
+from eidolon_ai_client.events import StringOutputEvent, LLMToolCallRequestEvent, ToolCall
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory
-from eidolon_ai_sdk.apu.llm_unit import LLMUnit
+from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory, SymbolicMemory
+from eidolon_ai_sdk.apu.llm_message import UserMessage, SystemMessage, UserMessageText
+from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMCallFunction
 from eidolon_ai_sdk.memory.document import Document
 from eidolon_ai_sdk.memory.noop_memory import NoopVectorStore
+from eidolon_ai_sdk.memory.vector_store import QueryItem
 
 
 class Mem0LLM(LLMBase):
@@ -24,36 +27,76 @@ class Mem0LLM(LLMBase):
     def __init__(self, llm_unit: LLMUnit):
         self.llm_unit = llm_unit
 
-    def generate_response(self, messages) -> str:
-        return asyncio.run(self._generate_response(messages))
+    def generate_response(self, messages, tools=None) -> str | dict:
+        return asyncio.run(self._generate_response(messages, tools or []))
 
-    async def _generate_response(self, messages) -> str:
+    async def _generate_response(self, messages, tools: List) -> str | dict:
+        transformed_messages = []
+        for m in messages:
+            if m.get("role") == "user":
+                transformed_messages.append(UserMessage(content=[UserMessageText(text=m["content"])]))
+            elif m.get("role") == "system":
+                transformed_messages.append(SystemMessage(content=m["content"]))
+            else:
+                raise ValueError(f"Unknown message role {m.get('role')}")
+        transformed_tools = [
+            LLMCallFunction(name=tool["name"], description=tool["description"], parameters=tool["parameters"])
+            for tool in (t['function'] for t in tools)
+        ]
+        called_tools: List[ToolCall] = []
         acc = []
-        messages = [m.model_dump() for m in messages]
-        async for event in self.llm_unit.execute_llm(messages, tools=[], output_format="str"):
+        async for event in self.llm_unit.execute_llm(
+                transformed_messages,
+                tools=transformed_tools,
+                output_format="str"
+        ):
             if event.is_root_and_type(StringOutputEvent):
-                acc.append(cast(event, StringOutputEvent).content)
+                acc.append(cast(StringOutputEvent, event).content)
+            elif event.is_root_and_type(LLMToolCallRequestEvent):
+                called_tools.append(cast(LLMToolCallRequestEvent, event).tool_call)
 
-        return "".join(acc)
+        content = "".join(acc)
+
+        if called_tools:
+            return dict(
+                content=content,
+                tool_calls=[
+                    dict(
+                        name=tool.name,
+                        arguments=tool.arguments
+                    )
+                    for tool in called_tools
+                ]
+            )
+        else:
+            return content
 
 
 class Mem0Embedding(EmbeddingBase):
+    dims: str = "unknown"
+    similarity_memory: SimilarityMemory
+
+    def __init__(self, similarity_memory: SimilarityMemory = None):
+        self.similarity_memory = similarity_memory or AgentOS.similarity_memory
+
     def embed(self, text) -> List[float]:
         return asyncio.run(self._embed(text))
 
     async def _embed(self, text):
-        return await AgentOS.similarity_memory.embed_text(text)
+        return await self.similarity_memory.embed_text(text)
 
 
 class Mem0VectorDB(VectorStoreBase):
-    def __init__(self):
-        pass
+    similarity_memory: SimilarityMemory
+
+    def __init__(self, similarity_memory: SimilarityMemory = None):
+        self.similarity_memory = similarity_memory or AgentOS.similarity_memory
 
     @property
     def vs(self) -> SimilarityMemory:
-        if isinstance(AgentOS.similarity_memory, NoopVectorStore):
+        if isinstance(self.similarity_memory, NoopVectorStore):
             logger.warning("Using NoopVectorStore. Mem0 vectordb will not work.")
-        return AgentOS.similarity_memory
+        return self.similarity_memory
 
     def create_col(self, name, vector_size, distance):
         pass
@@ -65,7 +108,7 @@ class Mem0VectorDB(VectorStoreBase):
         payloads = payloads or [None] * len(vectors)
         ids = ids or [ObjectId() for _ in range(len(vectors))]
         docs = [
-            Document(id=str(vector_id), embedding=vector, page_content=payload)
+            Document(id=str(vector_id), embedding=vector, page_content=json.dumps(payload))
             for vector, payload, vector_id in zip(vectors, payloads, ids)
         ]
         return await self.vs.add(collection=name, docs=docs)
@@ -74,17 +117,20 @@ class Mem0VectorDB(VectorStoreBase):
         return asyncio.run(self._search(filters, limit, name, query))
 
     async def _search(self, filters, limit, name, query):
-        found: List[Document] = await self.vs.query(collection=name, query=query, num_results=limit,
-                                                    metadata_where=filters)
+        found: List[QueryItem] = await self.vs.raw_query(collection=name, query=query, num_results=limit, metadata_where=filters, include_embeddings=True)
         return [
             ScoredPoint(
                 id=doc.id,
-                score=0.0,
-                vector=doc.embedding,
-                payload=doc.metadata
+                score=doc.score,
+                payload=json.loads(self.similarity_memory.vector_store.get_page_content(name, doc.id)),
+                vector=doc.embedding
             )
             for doc in found
         ]
+
+    async def _get_doc(self, name, vector_id):
+        async for doc in self.vs.get_docs(collection=name, doc_ids=[str(vector_id)]):
+            return doc
 
     def delete(self, name, vector_id):
         return asyncio.run(self._delete(name, vector_id))
@@ -127,15 +173,19 @@ class Mem0VectorDB(VectorStoreBase):
 
 
 class Mem0DB:
-    def __init__(self, collection: str):
+    collection: str
+    symbolic_memory: SymbolicMemory
+
+    def __init__(self, collection: str, symbolic_memory: SymbolicMemory = None):
         self.collection = collection
+        self.symbolic_memory = symbolic_memory or AgentOS.symbolic_memory
 
     def add_history(self, memory_id, prev_value, new_value, event, is_deleted=0):
         asyncio.run(self._add_history(event, is_deleted, memory_id, new_value, prev_value))
 
     async def _add_history(self, event, is_deleted, memory_id, new_value, prev_value):
         memory_id = memory_id or str(ObjectId())
-        return await AgentOS.symbolic_memory.insert_one(
+        return await self.symbolic_memory.insert_one(
             self.collection,
             dict(memory_id=memory_id, prev_value=prev_value, new_value=new_value, event=event, is_deleted=is_deleted)
         )
@@ -145,7 +195,7 @@ class Mem0DB:
 
     async def _get_history(self, memory_id):
         acc = []
-        async for doc in AgentOS.symbolic_memory.find(self.collection, {"memory_id": memory_id}):
+        async for doc in self.symbolic_memory.find(self.collection, {"memory_id": memory_id}):
             doc['id'] = doc.pop('_id')
             acc.append(doc)
         return acc
@@ -156,10 +206,10 @@ class Mem0DB:
 
 
 class EidolonMem0(Memory):
-    def __init__(self, llm: LLMUnit, db_collection: str):
-        self.embedding_model = Mem0Embedding()
-        self.vector_store = Mem0VectorDB()
+    def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None, symbolic_memory: SymbolicMemory = None):
+        self.embedding_model = Mem0Embedding(similarity_memory)
+        self.vector_store = Mem0VectorDB(similarity_memory)
         self.llm = Mem0LLM(llm)
-        self.db = Mem0DB(db_collection)
+        self.db = Mem0DB(db_collection, symbolic_memory)
         self.collection_name = db_collection
         capture_event("mem0.init", self)

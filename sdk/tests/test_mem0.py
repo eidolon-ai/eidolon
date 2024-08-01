@@ -1,4 +1,3 @@
-import pytest
 from mem0 import Memory
 from pytest_asyncio import fixture
 
@@ -7,9 +6,9 @@ from eidolon_ai_sdk.apu.mem0 import EidolonMem0
 from eidolon_ai_sdk.system.reference_model import Reference
 
 
-@pytest.fixture
-def memory_store(test_name):
-    return EidolonMem0(Reference[LLMUnit]().instantiate(), test_name)
+@fixture
+async def memory_store(test_name, machine):
+    yield EidolonMem0(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), test_name)
 
 
 def test_create_memory(memory_store: Memory):
