@@ -158,9 +158,8 @@ class Mem0DB:
 class EidolonMem0(Memory):
     def __init__(self, llm: LLMUnit, db_collection: str):
         self.embedding_model = Mem0Embedding()
-        # Initialize the appropriate vector store based on the configuration
         self.vector_store = Mem0VectorDB()
         self.llm = Mem0LLM(llm)
-        self.db = Mem0DB(self.config.history_db_path)
-        self.collection_name = self.config.collection_name
+        self.db = Mem0DB(db_collection)
+        self.collection_name = db_collection
         capture_event("mem0.init", self)
