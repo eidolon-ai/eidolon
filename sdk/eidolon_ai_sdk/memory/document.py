@@ -7,6 +7,7 @@ class Document(BaseModel):
     page_content: str = Field(..., description="The content of the document.")
     embedding: Optional[List[float]] = Field(default=None, description="The embedding of the document.")
     metadata: dict = Field(default_factory=dict, description="The metadata of the document.")
+    score: Optional[float] = Field(default=None, description="The score of the document.")
 
 
 class EmbeddedDocument(BaseModel):

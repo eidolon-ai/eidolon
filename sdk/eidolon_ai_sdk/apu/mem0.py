@@ -1,6 +1,5 @@
 import asyncio
-import json
-from functools import wraps
+from datetime import datetime
 from types import SimpleNamespace
 from typing import cast, List
 
@@ -20,7 +19,6 @@ from eidolon_ai_sdk.apu.llm_message import UserMessage, SystemMessage, UserMessa
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMCallFunction
 from eidolon_ai_sdk.memory.document import Document
 from eidolon_ai_sdk.memory.noop_memory import NoopVectorStore
-from eidolon_ai_sdk.memory.vector_store import QueryItem
 
 
 class Mem0LLM(LLMBase):
@@ -59,19 +57,16 @@ class Mem0LLM(LLMBase):
 
         content = "".join(acc)
 
-        if called_tools:
-            return dict(
-                content=content,
-                tool_calls=[
-                    dict(
-                        name=tool.name,
-                        arguments=tool.arguments
-                    )
-                    for tool in called_tools
-                ]
-            )
-        else:
-            return content
+        return dict(
+            content=content,
+            tool_calls=[
+                dict(
+                    name=tool.name,
+                    arguments=tool.arguments
+                )
+                for tool in called_tools
+            ]
+        ) if tools else content
 
 
 class Mem0Embedding(EmbeddingBase):
@@ -110,7 +105,8 @@ class Mem0VectorDB(VectorStoreBase):
         payloads = payloads or [None] * len(vectors)
         ids = ids or [ObjectId() for _ in range(len(vectors))]
         docs = [
-            Document(id=str(vector_id), embedding=vector, metadata={k:v for k, v in payload.items() if k != 'data'}, page_content=payload["data"])
+            Document(id=str(vector_id), embedding=vector, metadata={k: v for k, v in payload.items() if k != 'data'},
+                     page_content=payload["data"])
             for vector, payload, vector_id in zip(vectors, payloads, ids)
         ]
         return await self.vs.add(collection=name, docs=docs)
@@ -119,13 +115,26 @@ class Mem0VectorDB(VectorStoreBase):
         return asyncio.run(self._search(filters, limit, name, query))
 
     async def _search(self, filters, limit, name, query):
-        found: List[QueryItem] = await self.vs.raw_query(collection=name, query=query, num_results=limit, metadata_where=filters, include_embeddings=True)
+        found: List[Document] = await self.vs.query(collection=name, query=query, num_results=limit, metadata_where=filters)
+        acc = []
+        for doc in found:
+            acc.append(
+                ScoredPoint(
+                    id=doc.id,
+                    score=doc.score,
+                    payload=dict(**doc.metadata, data=doc.page_content),
+                    vector=doc.embedding,
+                    version=1,
+                )
+            )
+
         return [
             ScoredPoint(
                 id=doc.id,
                 score=doc.score,
-                payload=doc.metadata,
-                vector=doc.embedding
+                payload=dict(**doc.metadata, data=doc.page_content),
+                vector=doc.embedding,
+                version=1,
             )
             for doc in found
         ]
@@ -141,18 +150,38 @@ class Mem0VectorDB(VectorStoreBase):
         return await self.vs.delete(collection=name, doc_ids=[str(vector_id)])
 
     def update(self, name, vector_id, vector=None, payload=None):
-        ...
+        return asyncio.run(self._update(name, payload, vector, vector_id))
+
+    async def _update(self, name, payload, vector, vector_id):
+        doc = None
+        async for d in self.vs.get_docs(collection=name, doc_ids=[str(vector_id)]):
+            doc = d
+        if vector:
+            doc.embedding = vector
+        data = (payload or {}).pop('data', None)
+        if payload:
+            doc.metadata = payload
+        if data:
+            doc.page_content = data
+        await self.vs.add(collection=name, docs=[doc])
+        return SimpleNamespace(
+            id=doc.id,
+            payload=doc.metadata,
+        )
 
     def get(self, name, vector_id):
         return asyncio.run(self._get(name, vector_id))
 
     async def _get(self, name, vector_id):
-        async for doc in self.vs.get_docs(collection=name, doc_ids=[str(vector_id)]):
-            doc.metadata['data'] = doc.page_content
-            return SimpleNamespace(
-                id=doc.id,
-                payload=doc.metadata,
-            )
+        try:
+            async for doc in self.vs.get_docs(collection=name, doc_ids=[str(vector_id)]):
+                doc.metadata['data'] = doc.page_content
+                return SimpleNamespace(
+                    id=doc.id,
+                    payload=doc.metadata,
+                )
+        except FileNotFoundError:
+            return None
 
     def list_cols(self):
         ...
@@ -175,7 +204,17 @@ class Mem0VectorDB(VectorStoreBase):
         Returns:
             list: List of vectors.
         """
-        ...
+        return [asyncio.run(self._list(filters, limit, name))]
+
+    async def _list(self, filters, limit, name):
+        docs = await self.vs.query(collection=name, query="", num_results=limit, metadata_where=filters)
+        return [
+            SimpleNamespace(
+                id=doc.id,
+                payload=dict(**doc.metadata, data=doc.page_content),
+            )
+            for doc in docs
+        ]
 
 
 class Mem0DB:
@@ -191,9 +230,10 @@ class Mem0DB:
 
     async def _add_history(self, event, is_deleted, memory_id, new_value, prev_value):
         memory_id = memory_id or str(ObjectId())
+        timestamp = datetime.utcnow()
         return await self.symbolic_memory.insert_one(
             self.collection,
-            dict(memory_id=memory_id, prev_value=prev_value, new_value=new_value, event=event, is_deleted=is_deleted)
+            dict(memory_id=memory_id, prev_value=prev_value, new_value=new_value, event=event, is_deleted=is_deleted, timestamp=timestamp)
         )
 
     def get_history(self, memory_id):
@@ -212,7 +252,8 @@ class Mem0DB:
 
 
 class EidolonMem0(Memory):
-    def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None, symbolic_memory: SymbolicMemory = None):
+    def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None,
+                 symbolic_memory: SymbolicMemory = None):
         self.embedding_model = Mem0Embedding(similarity_memory)
         self.vector_store = Mem0VectorDB(similarity_memory)
         self.llm = Mem0LLM(llm)

@@ -15,7 +15,6 @@ from eidolon_ai_client.events import (
     ToolCall,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
-from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,

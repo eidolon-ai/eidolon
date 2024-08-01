@@ -75,11 +75,11 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
     async def query(
         self,
         collection: str,
-        query: str,
+        query: str | List[float],
         num_results: int,
         metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:
-        text = await AgentOS.similarity_memory.embed_text(query)
+        text = await AgentOS.similarity_memory.embed_text(query) if isinstance(query, str) else query
         results = await self.query_embedding(collection, text, num_results, metadata_where, False)
         returnDocuments = []
         for result in results:
@@ -88,6 +88,7 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
                     id=result.id,
                     metadata=result.metadata,
                     page_content=await self.get_page_content(collection, result.id),
+                    score=result.score,
                 )
             )
         return returnDocuments
