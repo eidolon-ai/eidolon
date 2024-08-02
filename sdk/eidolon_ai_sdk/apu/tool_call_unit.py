@@ -86,7 +86,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
     async def _wrap_exe_call(
         self,
         exec_llm_call: Callable[
-            [CallContext, List[LLMMessage], List[LLMCallFunction], Union[Literal["str"], Dict[str, Any]]],
+            [List[LLMMessage], List[LLMCallFunction], Union[Literal["str"], Dict[str, Any]]],
             AsyncIterator[StreamEvent],
         ],
         tools: List[LLMCallFunction],
