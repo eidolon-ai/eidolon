@@ -1532,7 +1532,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.30"
+version = "0.1.31"
 description = "Eidolon python client and CLI"
 optional = false
 python-versions = ">=3.8,<3.13"
@@ -6290,6 +6290,7 @@ description = "Automatically mock your HTTP interactions to simplify and speed u
 optional = false
 python-versions = ">=3.8"
 files = [
+    {file = "vcrpy-6.0.1-py2.py3-none-any.whl", hash = "sha256:621c3fb2d6bd8aa9f87532c688e4575bcbbde0c0afeb5ebdb7e14cac409edfdd"},
     {file = "vcrpy-6.0.1.tar.gz", hash = "sha256:9e023fee7f892baa0bbda2f7da7c8ac51165c1c6e38ff8688683a12a4bde9278"},
 ]
 
@@ -6722,4 +6723,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "a711be005218fc02335ec10d086c1ede2ca1ebe0fe0682f0b7ed43ba119de73e"
+content-hash = "755149cc5140620800270951dcc29ed658a399f57dff14f01316aba7818de9f3"

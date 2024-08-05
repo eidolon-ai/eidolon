@@ -94,8 +94,7 @@ jobs:
         run: docker ps -a
 
       - name: Run Playwright tests
-        run: |
-          pnpm exec playwright test --config=playwright.config.js
+        run: pnpm exec playwright test --config=playwright.config.js
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Stop Docker containers
@@ -124,6 +123,5 @@ jobs:
         if: always()
         with:
           name: playwright-screenshots
-          path: |
-            webui/apps/eidolon-ui2/tests/screenshots
+          path: webui/apps/eidolon-ui2/tests/screenshots
           if-no-files-found: ignore
