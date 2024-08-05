@@ -36,6 +36,7 @@ from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
+from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 
 tracer = trace.get_tracer("apu")
 
@@ -43,6 +44,7 @@ tracer = trace.get_tracer("apu")
 class ConversationalAPUSpec(APUSpec):
     io_unit: AnnotatedReference[IOUnit]
     memory_unit: AnnotatedReference[MemoryUnit]
+    longterm_memory_unit: AnnotatedReference[LongTermMemoryUnit]
     llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
     audio_unit: Optional[Reference[AudioUnit]] = None
@@ -57,6 +59,7 @@ class ConversationalAPUSpec(APUSpec):
 class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLocator):
     io_unit: IOUnit
     memory_unit: MemoryUnit
+    longterm_memory_unit: LongTermMemoryUnit
     logic_units: List[LogicUnit]
     llm_unit: LLMUnit
     audio_unit: AudioUnit
@@ -70,6 +73,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.io_unit = self.spec.io_unit.instantiate(**kwargs)
         self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
+        # my best guess for how to initialize
+        self.longterm_memory_unit = self.spec.longterm_memory_unit.instantiate(**kwargs)
+        if not self.longterm_memory_unit.mem0_initialized():
+            self.longterm_memory_unit.init_mem0(self.llm_unit)
+
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None
         self.image_unit = self.spec.image_unit.instantiate(**kwargs) if self.spec.image_unit else None

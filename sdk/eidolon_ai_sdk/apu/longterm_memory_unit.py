@@ -21,7 +21,16 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
     def __init__(self, spec: LongTermMemoryUnitConfig = None, **kwargs):
         super().__init__(**kwargs)
         self.spec = spec
-        self.mem0: EidolonMem0 = EidolonMem0(spec.llm_unit, spec.db_collection, spec.similarity_memory)
+        if spec.llm_unit is not None:
+            self.mem0: EidolonMem0 = EidolonMem0(spec.llm_unit, spec.db_collection, spec.similarity_memory)
+        else:
+            self.mem0 = None
+
+    def init_mem0(self, llm_unit: LLMUnit):
+        self.mem0 =  EidolonMem0(llm_unit, self.spec.db_collection, self.spec.similarity_memory)
+
+    def mem0_initialized(self):
+        self.mem0 is not None
 
     def storeMessage(self, call_context: CallContext, message: LLMMessage):
         user_id = AgentOS.current_user().id
