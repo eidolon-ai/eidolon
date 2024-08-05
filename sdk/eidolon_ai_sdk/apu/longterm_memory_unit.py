@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import LLMMessage
 from eidolon_ai_sdk.system.reference_model import Specable
@@ -23,35 +24,35 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
         self.mem0: EidolonMem0 = EidolonMem0(spec.llm_unit, spec.db_collection, spec.similarity_memory)
 
     def storeMessage(self, call_context: CallContext, message: LLMMessage):
+        user_id = AgentOS.current_user().id
+        agent_name = AgentOS.current_agent_name()
         metadata = {
             "process_id": call_context.process_id,
-            # add agent, user ids
+            "agent_name": AgentOS.current_agent_name()
         }
-        # put the user id in here
-        user_id = ""
         # not sure if I should manipulate result somehow - what's the expected return value?
-        return self.mem0.add(message, user_id=user_id, metadata=metadata)
+        return self.mem0.add(message, user_id=user_id, agent_id=agent_name, metadata=metadata)
 
     def storeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
+        user_id = AgentOS.current_user().id
+        agent_name = AgentOS.current_agent_name()
         metadata = {
             "process_id": call_context.process_id,
-            # add agent, user ids
+            "agent_name": AgentOS.current_agent_name()
         }
-        user_id = ""
         # not sure if I should manipulate result somehow - what's the expected return value?
-        return self.mem0.add(messages, user_id=user_id, metadata=metadata)
+        return self.mem0.add(messages, user_id=user_id, metadata=metadata, agent_id=agent_name)
 
     def searchMemories(self, call_context: CallContext, message: LLMMessage, multi_process: bool = False, multi_agent: bool = False):
         query = str(message)
-        user_id = "" # need to get this
-        results = self.mem0.search(query, user_id="")
+        user_id = AgentOS.current_user().id
+        results = self.mem0.search(query, user_id=user_id)
         def filter_func(res):
             try:
                 valid = True
                 if not multi_process and res.process_id != call_context.process_id:
                     valid = False
-                # add agent id check here
-                if not multi_agent:
+                if not multi_agent and res.agent_id != AgentOS.current_agent_name():
                     valid = False
                 return valid
             except:
@@ -65,16 +66,12 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
 
     def getAllMemories(self, call_context: CallContext, filter_by_process: bool = True, filter_by_agent: bool = True):
         if filter_by_agent:
-            # change to use actual agent id
-            return self.mem0.get_all(agent_id=None)
+            return self.mem0.get_all(agent_id=AgentOS.current_agent_name())
         memories = self.mem0.get_all()
         def filter_func(mem):
             try:
                 valid = True
                 if filter_by_process and mem.metadata.process_id != call_context.process_id:
-                    valid = False
-                # add agent id check here
-                if filter_by_agent:
                     valid = False
                 return valid
             except:
