@@ -292,7 +292,7 @@ class SimilarityMemory(ABC):
     async def query(
         self,
         collection: str,
-        query: str,
+        query: str | List[float],
         num_results: int,
         metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:

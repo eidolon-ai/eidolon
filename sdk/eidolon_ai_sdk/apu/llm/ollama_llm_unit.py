@@ -11,7 +11,6 @@ from eidolon_ai_client.events import (
     ObjectOutputEvent,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
-from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
     AssistantMessage,
@@ -61,13 +60,8 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
 
-    async def execute_llm(
-        self,
-        call_context: CallContext,
-        messages: List[LLMMessage],
-        tools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AsyncIterator[AssistantMessage]:
+    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
+                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, output_format)
 
         logger.info("executing ollama llm request")

@@ -18,7 +18,6 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
     AssistantMessage,
@@ -138,13 +137,8 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
 
         self.temperature = self.spec.temperature
 
-    async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AsyncIterator[AssistantMessage]:
+    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
+                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing open ai llm request", extra=request)

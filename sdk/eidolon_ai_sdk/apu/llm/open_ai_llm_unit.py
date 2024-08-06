@@ -15,7 +15,6 @@ from eidolon_ai_client.events import (
     ToolCall,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
-from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
@@ -33,7 +32,7 @@ from eidolon_ai_sdk.util.image_utils import scale_image
 logger = eidolon_logger.getChild("llm_unit")
 
 
-async def convert_to_openai(message: LLMMessage, process_id: str):
+async def convert_to_openai(message: LLMMessage):
     if isinstance(message, SystemMessage):
         return {"role": "system", "content": message.content}
     elif isinstance(message, UserMessage):
@@ -44,7 +43,7 @@ async def convert_to_openai(message: LLMMessage, process_id: str):
                 if isinstance(part, UserMessageText):
                     content.append({"type": "text", "text": part.text})
                 elif isinstance(part, UserMessageImage):
-                    data = await part.getBytes(process_id=process_id)
+                    data = await part.getBytes()
                     # scale the image such that the max size of the shortest size is at most 768px
                     data = scale_image(data)
                     # base64 encode the data
@@ -106,14 +105,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.temperature = self.spec.temperature
         self.connection_handler = self.spec.connection_handler.instantiate()
 
-    async def execute_llm(
-        self,
-        call_context: CallContext,
-        messages: List[LLMMessage],
-        tools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
-    ) -> AsyncIterator[AssistantMessage]:
-        can_stream_message, request = await self._build_request(call_context, messages, tools, output_format)
+    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
+                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[AssistantMessage]:
+        can_stream_message, request = await self._build_request(messages, tools, output_format)
         request["stream"] = True
 
         logger.info("executing open ai llm request", extra=request)
@@ -169,9 +163,9 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
 
-    async def _build_request(self, call_context: CallContext, inMessages, inTools, output_format):
+    async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
-        messages = [await convert_to_openai(message, call_context.process_id) for message in inMessages]
+        messages = [await convert_to_openai(message) for message in inMessages]
         request = {
             "messages": messages,
             "model": self.model.name,

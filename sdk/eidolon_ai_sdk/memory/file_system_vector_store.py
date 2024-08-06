@@ -56,9 +56,8 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
 
     async def add(self, collection: str, docs: Sequence[Document]):
         await AgentOS.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
-        # Asynchronously collect embedded documents
-        embeddedDocs = []
-        async for embeddedDoc in AgentOS.similarity_memory.embed(docs):
+        embeddedDocs = [EmbeddedDocument(id=doc.id, embedding=doc.embedding, metadata=doc.metadata) for doc in docs if doc.embedding]
+        async for embeddedDoc in AgentOS.similarity_memory.embed([d for d in docs if not d.embedding]):
             embeddedDocs.append(embeddedDoc)
         await self.add_embedding(collection, embeddedDocs)
         with tracer.start_as_current_span("add documents"):
@@ -76,11 +75,11 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
     async def query(
         self,
         collection: str,
-        query: str,
+        query: str | List[float],
         num_results: int,
         metadata_where: Optional[Dict[str, str]] = None,
     ) -> List[Document]:
-        text = await AgentOS.similarity_memory.embed_text(query)
+        text = await AgentOS.similarity_memory.embed_text(query) if isinstance(query, str) else query
         results = await self.query_embedding(collection, text, num_results, metadata_where, False)
         returnDocuments = []
         for result in results:
@@ -88,12 +87,14 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
                 Document(
                     id=result.id,
                     metadata=result.metadata,
-                    page_content=await AgentOS.file_memory.read_file(
-                        self.spec.root_document_directory + "/" + collection + "/" + result.id
-                    ).decode(),
+                    page_content=await self.get_page_content(collection, result.id),
+                    score=result.score,
                 )
             )
         return returnDocuments
+
+    async def get_page_content(self, collection: str, doc_id: str) -> str:
+        return (await AgentOS.file_memory.read_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)).decode()
 
     async def raw_query(
         self,
