@@ -66,13 +66,13 @@ if (!id) {
         <ItemGrid
           items={bullets}
           columns={columns}
-          defaultIcon="tabler:check"
+          defaultIcon="tabler:sun"
           classes={{
             container: `gap-y-4 md:gap-y-8`,
             panel: 'max-w-none',
             title: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
             description: 'text-muted dark:text-slate-400 ml-2 rtl:ml-0 rtl:mr-2',
-            icon: 'flex h-7 w-7 items-center justify-center rounded-full bg-green-600 dark:bg-green-700 text-gray-50 p-1',
+            icon: 'flex h-7 w-7 items-center justify-center rounded-full bg-[#04223D] text-gray-50 p-1',
             action: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
           }}
         />
@@ -107,7 +107,7 @@ if (!id) {
           <div id=`#${id}-tab-content`>
             {tabs.map((item, index) => (
               <div class="hidden" id={`${id}-${index}-content`} role="tabpanel" aria-labelledby={`${id}-${index}-tab`}>
-                <div class="relative m-auto">
+                <div class="relative m-auto overflow-y-auto" style="height: 500px">
                   <TabItem {...item}/>
                 </div>
               </div>

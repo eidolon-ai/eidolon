@@ -44,7 +44,7 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
       <span class="text-center leading-8">
         <span class="text-2xl md:text-3xl">Open source framework to rapidly build and deploy genAI apps</span>
         <br/>
-        <span class="text-sm font-semibold tracking-tighter md:text-2xl">Maintain control | Reduce complexity | Increase accuracy</span>
+        <span class="text-xl font-semibold tracking-tighter md:text-3xl">Maintain control | Reduce complexity | Increase accuracy</span>
       </span>
     </Fragment>
   </MainTitle>
@@ -52,11 +52,12 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   <div class="mb-16"/>
   <!-- Content Widget **************** -->
 
-  <div class="">
+  <div class=" bg-gray-100 dark:bg-blue-950">
+    <hr/>
     <Steps
       title="Bring enterprise Agents into production in three easy steps"
       horizontal
-      classes = {{container: "pb-2 md:pb-2 lg:pb-2"}}
+      classes = {{container: "pb-2 md:pb-2 lg:pb-2 lg:py-4 py-2 md:py-2"}}
       items={[
         {
           title: '<span class="font-medium">1. Build</span>',
@@ -83,7 +84,7 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
       {
         title: 'Choose from a variety of pre-built agents or define your own',
         description:
-          "Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.",
+          "Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent framework you like.",
       },
       {
         title: 'Define agents with declarative YAML',
@@ -264,7 +265,7 @@ chatbot   3s`
       {
         title: 'Build a GUI with React components',
         description:
-          'Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.',
+          'Eidolon provides a set of React components to help you build a GUI to interact with your chatbot agents. The components are designed to be easy to use and extensible.',
       },
       {
         title: 'Run actions directly through HTTP REST API',
@@ -278,6 +279,11 @@ chatbot   3s`
       },
     ]}
     tabs={[
+      {
+        title: "WebUI",
+        src: "~/assets/images/webui.gif",
+        alt: "RAG",
+      },
       {
         title: "CLI",
         src: "~/assets/images/cli.svg",
@@ -312,11 +318,6 @@ const response = await agent.action("converse", body)
 expect(response).toContain("fast iteration times")
 expect(response).toContain("extensible agent mesh")
 expect(response).toContain("supportive community")`,
-      },
-      {
-        title: "WebUI",
-        src: "~/assets/images/webui.gif",
-        alt: "RAG",
       },
     ]}
   >
