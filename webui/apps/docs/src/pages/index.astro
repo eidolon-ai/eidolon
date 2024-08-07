@@ -5,6 +5,7 @@ import Steps from '~/components/widgets/Steps.astro';
 import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
 import MainTitle from "../components/widgets/MainTitle.astro";
 import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
+import ProductDescription from "../components/widgets/ProductDescription.astro";
 
 
 const metadata = {
@@ -50,14 +51,31 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   </MainTitle>
 
   <div class="mb-16"/>
-  <!-- Content Widget **************** -->
 
+  <ProductDescription
+    classes={{container: 'bg-gradient-to-b from-gray-100 to-white w-full'}}  
+    title="What is Eidolon?" 
+    subtitle="Eidolon AI is the industry's first AI Agent Server for the Enterprise. An Open Source framework, we empower developers to rapidly build & deploy GenAI Apps, dramatically increasing developer productivity."
+    itemSetup="Eidolon features 2 key capabilities:"
+    items={[
+    {
+      title: 'Agent Server',
+      description: 'A secure, enterprise ready, deployment server for Agentic applications. The Agent Server  is based on a Microservice architecture, is interoperable with other agents ' +
+        'and enables easy production deployment, making it a a natural choice for enterprises.'
+    },
+      {
+        title: 'Eidolon SDK',
+        description: 'A pluggable AI Agent framework (SDK) for developers to build Agentic applications quickly and easily. The SDK is designed to be extensible and flexible, ' +
+          'enabling developers to build and deploy agents in a fraction of the time it would take to build from scratch.',
+      }
+    ]}>
+ </ProductDescription>
   <div class=" bg-gray-100 dark:bg-blue-950">
     <hr/>
     <Steps
-      title="Bring enterprise Agents into production in three easy steps"
+      title="Bring agents into production in 3 easy steps"
       horizontal
-      classes = {{container: "pb-2 md:pb-2 lg:pb-2 lg:py-4 py-2 md:py-2"}}
+      classes = {{container: "lg:pt-14 pt-6 md:pt-10 pb-0 md:pb-0 lg:pb-0 "}}
       items={[
         {
           title: '<span class="font-medium">1. Build</span>',
@@ -77,7 +95,6 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
       ]}
     />
   </div>
-  <hr/>
   <ContentWithTabs
     id="build"
     bullets={[
@@ -198,7 +215,7 @@ spec:
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gray-100 dark:bg-blue-950"></div>
+      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-gray-100 to-white"></div>
     </Fragment>
   </ContentWithTabs>
 
@@ -254,7 +271,7 @@ chatbot   3s`
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-white dark:bg-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-transparent"></div>
     </Fragment>
   </ContentWithTabs>
   <hr/>
@@ -327,7 +344,7 @@ expect(response).toContain("supportive community")`,
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gray-50 dark:bg-blue-950"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-blue-950"></div>
     </Fragment>
   </ContentWithTabs>
 
