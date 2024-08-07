@@ -58,8 +58,7 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
         # not sure if I should manipulate result somehow - what's the expected return value?
         return self.mem0.add(messages, user_id=user_id, metadata=metadata, agent_id=agent_name)
 
-    def searchMemories(self, call_context: CallContext, message: LLMMessage):
-        query = str(message)
+    def searchMemories(self, call_context: CallContext, query: str | LLMMessage | List[LLMMessage]):
         user_id = AgentOS.current_user().id
         results = self.mem0.search(query) if self._multi_user_scope() else self.mem0.search(query, user_id=user_id)
         def filter_func(res):

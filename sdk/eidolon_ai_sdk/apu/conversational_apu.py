@@ -139,6 +139,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, conversation_messages)
             conversation.extend(conversation_messages)
+
+            # EDIT: get relevant mem0 memories and extend the conversation history with them
+            longterm_memories = self.longterm_memory_unit.searchMemories(call_context, conversation_messages)
+            conversation.extend(longterm_memories)
+
             async for event in self._llm_execution_cycle(call_context, output_format, conversation):
                 yield event
         except HTTPException as e:
@@ -197,13 +202,17 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             if stream_collector.get_content():
                 logger.info(f"LLM Response: {stream_collector.get_content()}")
 
+            event_content = stream_collector.get_content() or ""
             assistant_message = self.llm_unit.create_assistant_message(
-                call_context, stream_collector.get_content() or "", tool_call_events
+                call_context, event_content, tool_call_events
             )
 
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             converted_conversation.append(assistant_message)
+
+            # EDIT: store event content in mem0 (not sure if correct):
+            self.longterm_memory_unit.storeMessage(event_content)
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
