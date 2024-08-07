@@ -75,8 +75,6 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
         # my best guess for how to initialize
         self.longterm_memory_unit = self.spec.longterm_memory_unit.instantiate(**kwargs)
-        if not self.longterm_memory_unit.mem0_initialized():
-            self.longterm_memory_unit.init_mem0(self.llm_unit)
 
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None

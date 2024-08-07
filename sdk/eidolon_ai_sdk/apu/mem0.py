@@ -252,8 +252,7 @@ class Mem0DB:
 
 
 class EidolonMem0(Memory):
-    def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None,
-                 symbolic_memory: SymbolicMemory = None):
+    def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None, symbolic_memory: SymbolicMemory = None):
         self.embedding_model = Mem0Embedding(similarity_memory)
         self.vector_store = Mem0VectorDB(similarity_memory)
         self.llm = Mem0LLM(llm)
