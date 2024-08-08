@@ -1,6 +1,39 @@
 .DocSearch-Button {
   --docsearch-searchbox-background: #fff;
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid #eeeeee;
   padding-right: 4px;
+  background: #f8f8f8;
+}
+
+.DocSearch-Button-Keys {
+  border: 1px solid #ccc;
+  min-width: auto;
+  padding-top: 2px;
+  border-radius: 4px;
+  background: #fff;
+} 
+
+.DocSearch-Button-Key {
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  /*padding: 2px;*/
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  /*margin-right: 0;*/
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.DocSearch-Button-Keys > kbd:first-of-type {
+  padding-right: 0;
+  left: 4px;
+}
+.DocSearch-Button-Keys kbd:last-of-type {
+  padding-left: 0;
+  font-size: small;
+  right: 4px;
 }
