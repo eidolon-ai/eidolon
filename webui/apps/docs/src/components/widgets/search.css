@@ -1,9 +1,15 @@
 .DocSearch-Button {
-  --docsearch-searchbox-background: #fff;
-  border-radius: 6px;
-  border: 1px solid #eeeeee;
-  padding-right: 4px;
-  background: #f8f8f8;
+  background: transparent;
+  color: inherit;
+  margin: 0;
+  border: none;
+}
+
+.DocSearch-Button:hover {
+  background: transparent;
+  color: inherit;
+  border: none;
+  box-shadow: none;
 }
 
 .DocSearch-Button-Keys {

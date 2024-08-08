@@ -53,7 +53,7 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   <div class="mb-16"/>
 
   <ProductDescription
-    classes={{container: 'bg-gradient-to-b from-gray-100 to-white w-full'}}  
+    classes={{container: 'bg-gradient-to-b from-gray-100 to-white w-full dark:bg-none'}}  
     title="What is Eidolon?" 
     subtitle="Eidolon AI is the industry's first AI Agent Server for the Enterprise. An Open Source framework, we empower developers to rapidly build & deploy GenAI Apps, dramatically increasing developer productivity."
     itemSetup="Eidolon features 2 key capabilities:"
@@ -215,7 +215,7 @@ spec:
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-gray-100 to-white"></div>
+      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-gray-100 to-white dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
 
@@ -271,7 +271,7 @@ chatbot   3s`
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-transparent dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
   <hr/>
@@ -344,7 +344,7 @@ expect(response).toContain("supportive community")`,
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-blue-950"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-none dark:bg-blue-950 "></div>
     </Fragment>
   </ContentWithTabs>
 
