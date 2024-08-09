@@ -55,8 +55,14 @@
   -webkit-mask: linear-gradient(to bottom, #ffffff calc(var(--line-fade-stop) / 2), transparent);
 }
 
+#main-title {
+  --intro_width: '';
+  --intro_height: '';
+  --intro_height_auto: '';
+}
+
 .grid-line-top:before, .grid-line-bottom:after {
-  animation-name: intro_width;
+  animation-name: var(--intro_width);
   animation-duration: var(--a-duration);
   animation-timing-function: var(--a-easing);
   animation-fill-mode: forwards;
@@ -65,38 +71,38 @@
 }
 
 .grid-line-horizontal[data-fade=both] {
-  animation-name: intro_height;
+  animation-name: var(--intro_height);
   animation-duration: var(--a-duration);
-  animation-timing-function: var(--a-easing);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
   animation-fill-mode: forwards;
-  animation-delay: var(--a-delay);
+  animation-delay: calc(var(--a-delay) * 3);
   height: 0;
 }
 
 .grid-line-horizontal[data-fade=top] {
-  animation-name: intro_height_auto;
+  animation-name: var(--intro_height_auto);
   animation-duration: var(--a-duration);
-  animation-timing-function: var(--a-easing);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
   animation-fill-mode: forwards;
-  animation-delay: var(--a-delay);
+  animation-delay: calc(var(--a-delay) * 2);
   height: 0;
 }
 
 .grid-line-horizontal[data-fade=none] {
-  animation-name: intro_height_auto;
+  animation-name: var(--intro_height_auto);
   animation-duration: var(--a-duration);
-  animation-timing-function: var(--a-easing);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
   animation-fill-mode: forwards;
-  animation-delay: var(--a-delay);
+  animation-delay: calc(var(--a-delay) * 2);
   height: 0;
 }
 
 .grid-line-horizontal[data-fade=bottom] {
-  animation-name: intro_height_auto;
+  animation-name: var(--intro_height_auto);
   animation-duration: var(--a-duration);
-  animation-timing-function: var(--a-easing);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
   animation-fill-mode: forwards;
-  animation-delay: var(--a-delay);
+  animation-delay: calc(var(--a-delay) * 2);
   height: 0;
 }
 

@@ -29,7 +29,7 @@ fill="currentColor"/></svg>`
 const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&nbsp;&nbsp;Star on GitHub`
 ---
 
-<section class="relative not-prose flex pl-main pr-main md:pl-main-md md:pr-main-md lg:pl-main-lg lg:pr-main-lg justify-center mt-20 mb-20">
+<section id="main-title" class="relative not-prose flex pl-main pr-main md:pl-main-md md:pr-main-md lg:pl-main-lg lg:pr-main-lg justify-center mt-20 mb-20">
   <div class="relative w-[calc(100%-var(--line-offset-sm)*2)]  md:w-[calc(100%-var(--line-offset-md)*2)] lg:w-[calc(100%-var(--line-offset)*2)]">
     <div id="main-top-gutter" class="flex flex-row">
       <div class="w-full basis-1/4"></div>
@@ -88,3 +88,39 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
     </div>
   </div>
 </section>
+
+<script>
+  const addAnimation = (list: NodeListOf<Element>, selector: string, animation: string) => {
+    list.forEach((element) => {
+      const style = getComputedStyle(element, selector);
+      style.setProperty('animation-name', animation);
+    });
+  }
+  
+  const removeAnimation = (list: NodeListOf<Element>, selector: string) => {
+    list.forEach((element) => {
+      const style = getComputedStyle(element, selector);
+      style.removeProperty('animation-name');
+    });
+  }
+  
+  const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const main_title_element = document.getElementById('main-title');
+    console.log(main_title_element)
+
+    if (entry.isIntersecting) {
+      main_title_element.style.setProperty('--intro_width','intro_width');
+      main_title_element.style.setProperty('--intro_height','intro_height');
+      main_title_element.style.setProperty('--intro_height_auto','intro_height_auto');
+    } else {
+      // We're not intersecting, so remove the class!
+      main_title_element.style.removeProperty('--intro_width');
+      main_title_element.style.removeProperty('--intro_height');
+      main_title_element.style.removeProperty('--intro_height_auto');
+    }
+  });
+});
+
+observer.observe(document.querySelector('.grid-line-top'));
+</script>
