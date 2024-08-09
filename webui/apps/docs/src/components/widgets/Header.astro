@@ -66,19 +66,19 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
 <header
   class:list={[
     {sticky: isSticky, relative: !isSticky, dark: isDark},
-    "top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out",
+    "top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out text-black",
   ]}
   {...isSticky ? { "data-aw-sticky-header":  true } : {}}
   {...id ? { id } : {}}
 >
-  <div class="absolute inset-0"></div>
+  <div class="absolute inset-0 black"></div>
   <div
     class:list={[
-      "relative text-default py-3 px-4 w-full md:flex md:justify-between",
+      "relative text-default px-4 w-full md:flex md:justify-between",
     ]}
   >
     <div class:list={[{"mr-auto rtl:mr-0 rtl:ml-auto": position === "right"}, "flex justify-between"]}>
-      <a class="flex items-center" href={getHomePermalink()}>
+      <a class="flex items-center pt-2" href={getHomePermalink()}>
         <Logo/>
       </a>
       {showMenu && (
@@ -152,7 +152,8 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
             ""
           )
         }
-        <div id="docsearchbtn" class="mr-2 bg-gray-50 dark:bg-gray-500 rounded-md hover:border-primary dark:hover:border-primary border-2 border-gray-100 dark:border-gray-400"/>
+        <div id="docsearchbtn" style="color: #000000"
+             class="mr-2 bg-gray-50 dark:bg-gray-500 rounded-md hover:border-primary dark:hover:border-primary border-2 border-gray-100 dark:border-gray-400"/>
         <div style="display:flex; flex-direction: row; align-items: center; justify-content: center">
           {
             <Button href="https://github.com/eidolon-ai/eidolon" variant="link" class="py-2.5 px-2.0 font-semibold shadow-none hover:underline text-sm w-auto capitalize"
@@ -176,18 +177,30 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
       </div>
     </div>
   </div>
+  <div class="flex flex-row flex-nowrap justify-end items-end gap-0.5 md:gap-1 pt-1 md:pt-0 pb-2 pl-1 pr-1 md:pr-4">
+    <a href="https://pypi.org/project/eidolon-ai-sdk/">
+      <img class="" style="display: inline-block;" alt="PyPI - Version" src="https://img.shields.io/pypi/v/eidolon-ai-sdk?style=flat&label=eidolon-ai-sdk">
+    </a>
+    <a href="https://pypistats.org/packages/eidolon-ai-sdk">
+        <img class="" style="display: inline-block" alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/eidolon-ai-sdk">
+    </a>
+    <a href="https://github.com/eidolon-ai/eidolon/actions/workflows/test_python.yml?query=branch%3Amain">
+      <img class="" style="display: inline-block;" alt="GitHub Test Status"
+           src="https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&logo=github&label=test">
+    </a>
+  </div>
 </header>
 
 <script>
   import '@docsearch/css';
-  import docsearch from '@docsearch/js';
-  import "./search.css"
+    import docsearch from '@docsearch/js';
+    import "./search.css"
 
-  docsearch({
-    appId: "EEA60PZVA2",
-    apiKey: "6bbd9d76e8fc77e3e7744c572534d1dd",
-    indexName: "eidolonai",
-    container: '#docsearchbtn',
-    placeholder: 'Search documentation',
-  } as any);
+    docsearch({
+      appId: "EEA60PZVA2",
+      apiKey: "6bbd9d76e8fc77e3e7744c572534d1dd",
+      indexName: "eidolonai",
+      container: '#docsearchbtn',
+      placeholder: 'Search documentation',
+      } as any);
 </script>
