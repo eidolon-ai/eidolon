@@ -103,29 +103,41 @@
 @keyframes intro_width {
   0% {
     opacity: 1;
+    background: linear-gradient(to right, var(--aw-color-primary), var(--aw-color-primary) 50%, transparent 0, transparent);
+    background-size: var(--line-gap) var(--line-width);
   }
   100% {
     opacity: .3;
     width: calc(100% + var(--line-offset));
+    background: linear-gradient(to right, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-gap) var(--line-width);
   }
 }
 
 @keyframes intro_height {
   0% {
     opacity: 1;
+    background: linear-gradient(180deg, var(--aw-color-accent), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-width) var(--line-gap);
   }
   100% {
     opacity: .3;
     height: calc(100% + var(--line-offset));
+    background: linear-gradient(180deg, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-width) var(--line-gap);
   }
 }
 
 @keyframes intro_height_auto {
   0% {
     opacity: 1;
+    background: linear-gradient(180deg, var(--aw-color-accent), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-width) var(--line-gap);
   }
   100% {
     opacity: .3;
     height: 100%;
+    background: linear-gradient(180deg, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-width) var(--line-gap);
   }
 }

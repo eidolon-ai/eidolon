@@ -45,7 +45,7 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
         {
           tagline && (
             <p
-              class="font-bold leading-tighter tracking-tighter dark:text-gray-200 pl-4 pr-4" style="font-size: max(36px,min(4vw,84px))"
+              class="font-bold leading-tighter tracking-tighter dark:text-gray-200 pl-4 pr-4" style="font-size: max(36px,min(4.5vw,84px))"
               set:html={tagline}
             />
           )
@@ -53,7 +53,8 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
       </div>
       <div class="relative pt-10 pb-10 grid-line-bottom pl-8 pr-8 md:pl-10 md:pr-10 lg:pl-20 lg:pr-20">
         <p
-          class="text-xl md:text-2xl text-gray-500 dark:text-gray-200 pointer-events-none"
+          class="text-gray-500 dark:text-gray-200 pointer-events-none"
+          style="text-rendering: optimizeLegibility; font-size: max(15px,min(2vw,28px)) "
           set:html={content}
         />
       </div>
@@ -67,8 +68,8 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
               <div class="grid-line-horizontal" data-fade=none data-side=left></div>
               <div class="grid-line-horizontal" data-fade=none data-side=right></div>
               <div class="flex gap-5">
-                <Button variant="secondary" href="https://github.com/eidolon-ai/eidolon">GitHub</Button>
-                <Button variant="primary" href="/docs/quickstart">Quickstart</Button>
+                <Button variant="primary" href="/docs/quickstart">Get Started</Button>
+                <Button variant="secondary" href="https://github.com/eidolon-ai/eidolon">Star Us</Button>
               </div>
             </div>
           </div>
