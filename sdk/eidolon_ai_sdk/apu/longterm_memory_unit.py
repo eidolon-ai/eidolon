@@ -9,7 +9,7 @@ from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.mem0 import EidolonMem0
-from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory
+from eidolon_ai_sdk.system.reference_model import Reference
 
 EIDOLON_DB_COL_NAME = "eidolon_mem0"
 
@@ -21,19 +21,15 @@ class LongTermMemoryUnitScope(Enum):
     USER_PROCESS = "userProcess"
 
 class LongTermMemoryUnitConfig(BaseModel):
-    llm_unit: Optional[LLMUnit]
-    unit_scope: Optional[LongTermMemoryUnitScope]
+    llm_unit: Optional[Reference[LLMUnit]]
     pass
 
 class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
-    def __init__(self, default_llm: LLMUnit,  spec: LongTermMemoryUnitConfig = None, **kwargs):
+    def __init__(self, default_llm: LLMUnit, unit_scope: LongTermMemoryUnitScope, spec: LongTermMemoryUnitConfig = None, **kwargs):
         super().__init__(**kwargs)
         self.spec = spec
-        if spec.unit_scope is None:
-            self.unit_scope = LongTermMemoryUnitScope.USER_PROCESS
-        else :
-            self.unit_scope = spec.unit_scope
-        if spec.llm_unit is not None:
+        self.unit_scope = unit_scope
+        if spec is not None and spec.llm_unit is not None:
             self.mem0 = EidolonMem0(spec.llm_unit, EIDOLON_DB_COL_NAME)
         else:
             self.mem0 = EidolonMem0(default_llm, EIDOLON_DB_COL_NAME)
@@ -43,30 +39,32 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
         agent_name = AgentOS.current_agent_name()
         metadata = {
             "process_id": call_context.process_id,
-            "agent_name": AgentOS.current_agent_name()
+            "agent_name": agent_name
         }
         # not sure if I should manipulate result somehow - what's the expected return value?
-        return self.mem0.add(message, user_id=user_id, agent_id=agent_name, metadata=metadata)
+        return self.mem0.add(message, user_id=user_id, metadata=metadata)
 
     def storeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
         user_id = AgentOS.current_user().id
         agent_name = AgentOS.current_agent_name()
         metadata = {
             "process_id": call_context.process_id,
-            "agent_name": AgentOS.current_agent_name()
+            "agent_name": agent_name
         }
         # not sure if I should manipulate result somehow - what's the expected return value?
-        return self.mem0.add(messages, user_id=user_id, metadata=metadata, agent_id=agent_name)
+        return self.mem0.add(messages, user_id=user_id, metadata=metadata)
 
     def searchMemories(self, call_context: CallContext, query: str | LLMMessage | List[LLMMessage]):
         user_id = AgentOS.current_user().id
         results = self.mem0.search(query) if self._multi_user_scope() else self.mem0.search(query, user_id=user_id)
+        if (self.unit_scope == LongTermMemoryUnitScope.SYSTEM):
+            return results
         def filter_func(res):
             try:
                 valid = True
-                if not self._multi_process_scope() and res.metadata.process_id != call_context.process_id:
+                if not self._multi_process_scope() and res['metadata']['process_id'] != call_context.process_id:
                     valid = False
-                if not self._multi_agent_scope() and res.agent_id != AgentOS.current_agent_name():
+                if not self._multi_agent_scope() and res['metadata']['agent_name'] != AgentOS.current_agent_name():
                     valid = False
                 return valid
             except:
@@ -75,25 +73,24 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
                     return True
                 return False
             
-        filtered_results = results.filter(filter_func)
+        filtered_results = list(filter(filter_func, results))
         return filtered_results
 
     def getAllMemories(self, call_context: CallContext):
-        if self.unit_scope == LongTermMemoryUnitScope.AGENT:
-            return self.mem0.get_all(agent_id=AgentOS.current_agent_name())
+        if self._unit_scope == LongTermMemoryUnitScope.SYSTEM:
+            return self.mem0.get_all()
         elif self.unit_scope == LongTermMemoryUnitScope.USER:
             return self.mem0.get_all(user_id=AgentOS.current_user().id)
-        elif self.unit_scope == LongTermMemoryUnitScope.USER_AGENT:
-            return self.mem0.get_all(user_id=AgentOS.current_user().id, agent_id=AgentOS.current_agent_name()) 
-        
-        memories = self.mem0.get_all(user_id=AgentOS.current_user().id)
-        if self._unit_scope == LongTermMemoryUnitScope.SYSTEM:
-            return memories
+
+        user_id = AgentOS.current_user().id
+        memories = self.mem0.get_all() if self._multi_user_scope() else self.mem0.get_all(user_id=user_id)
         
         def filter_func(mem):
             try:
                 valid = True
-                if not self._multi_process_scope() and mem.metadata.process_id != call_context.process_id:
+                if not self._multi_process_scope() and mem['metadata']['process_id'] != call_context.process_id:
+                    valid = False
+                if not self._multi_agent_scope() and mem['metadata']['agent_name'] != AgentOS.current_agent_name():
                     valid = False
                 return valid
             except:
@@ -101,7 +98,10 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
                     return False
                 return True
 
-        return memories.filter(filter_func)
+        return list(filter(filter_func, memories))
+    
+    def getMemory(self, memory_id: str):
+        return self.mem0.get(memory_id)
     
     def getMemoryHistory(self, memory_id: str):
         return self.mem0.history(memory_id)
@@ -113,8 +113,8 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
         memories = self.mem0.get_all()
         for mem in memories:
             try:
-                if mem.metadata.process_id == process_id:
-                    self.mem0.delete(mem.id)
+                if mem['metadata']['process_id'] == process_id:
+                    self.mem0.delete(mem['id'])
             except:
                 continue
 
@@ -134,6 +134,6 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
         return False
     
     def _multi_process_scope(self):
-        if self.unit_scope != LongTermMemoryUnitScope:
+        if self.unit_scope != LongTermMemoryUnitScope.USER_PROCESS:
             return True
         return False
