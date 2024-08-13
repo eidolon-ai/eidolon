@@ -20,6 +20,10 @@
   mask-composite: exclude;
 }
 
+.dark {
+  --line-color: #fff;
+}
+
 .grid-line-top:before {
   top: 0;
 }

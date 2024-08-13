@@ -1,11 +1,8 @@
 ---
-import type {ContentWithTabs as Props} from '~/types';
 import Headline from '../ui/Headline.astro';
 import WidgetWrapper from '../ui/WidgetWrapper.astro';
-import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
 import ItemGrid from '../ui/ItemGrid.astro';
-import {Code} from 'astro-expressive-code/components'
 import TabItem from "./TabItem.astro";
 
 let {
@@ -25,7 +22,9 @@ let {
 
   id,
   isDark = false,
-  classes = {},
+  classes = {
+    container: ''
+  },
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
@@ -129,7 +128,6 @@ if (!id) {
       const id = this.getAttribute('id');
       const height = document.getElementById(`${id}-height`).offsetHeight;
       document.getElementById(`${id}-tabs`).style.height = `${height}px`;
-      console.log("h", height)
     }
   }
   

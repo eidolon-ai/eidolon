@@ -107,7 +107,6 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
   const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     const main_title_element = document.getElementById('main-title');
-    console.log(main_title_element)
 
     if (entry.isIntersecting) {
       main_title_element.style.setProperty('--intro_width','intro_width');

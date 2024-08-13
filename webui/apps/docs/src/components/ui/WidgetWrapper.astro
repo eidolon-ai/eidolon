@@ -22,7 +22,14 @@ const WrapperTag = as;
   </div>
   <div
     class:list={[
-      twMerge("relative mx-auto px-4 md:px-6 py-8 md:py-12 lg:py-16 xl:px-20 2xl:px-32 text-default", containerClass),
+      twMerge("relative pl-[calc(var(--aw-spacing-main-margin)+var(--line-offset-sm))]",
+        "pr-[calc(var(--aw-spacing-main-margin)+var(--line-offset-sm))]",
+        "md:pl-[calc(var(--aw-spacing-main-md-margin)+var(--line-offset-md))]",
+        "md:pr-[calc(var(--aw-spacing-main-md-margin)+var(--line-offset-md))]",
+        "lg:pl-[calc(var(--aw-spacing-main-lg-margin)+var(--line-offset))]",
+        "lg:pr-[calc(var(--aw-spacing-main-lg-margin)+var(--line-offset))]",
+        "py-8 md:py-12 lg:py-16 text-default", 
+        containerClass),
       { dark: isDark },
     ]}
   >
