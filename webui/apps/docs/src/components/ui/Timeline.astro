@@ -13,7 +13,7 @@ export interface Props {
 const { items = [], classes = {}, defaultIcon, horizontal } = Astro.props as Props;
 
 const {
-  container: containerClass = horizontal ? "flex flex-col md:flex md:flex-row md:gap-8" : "flex flex-col",
+  container: containerClass = horizontal ? "flex flex-col md:flex md:flex-row md:gap-8 mb-4 md:mb-0" : "flex flex-col",
   panel: panelClass = "",
   title: titleClass = "",
   description: descriptionClass = "",
@@ -78,7 +78,7 @@ const {
               </div>
             </div>
           );
-          return link ? <a href={link}>{content}</a> : content;
+          return link ? <a href={link} class="hover:underline">{content}</a> : content;
         })}
     </div>
   )
