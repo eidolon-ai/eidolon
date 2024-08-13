@@ -6,7 +6,7 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 import yaml
 from openai import AsyncStream
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
-from openai.types.chat.completion_create_params import ResponseFormat
+from openai.types.shared_params import ResponseFormatJSONObject
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -157,7 +157,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
             if not self.spec.force_json:
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
 
             if complete_message or len(tools_to_call) == 0:
                 content = json.loads(complete_message) if complete_message else {}
@@ -181,7 +181,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             if not self.spec.force_json:
                 force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
             else:
-                request["response_format"] = ResponseFormat(type="json_object")
+                request["response_format"] = ResponseFormatJSONObject(type="json_object")
 
             # add response rules to original system message for this call only
             if messages[0]["role"] == "system":
