@@ -215,7 +215,7 @@ def test_user_agent_scoping(user_unit: LongTermMemoryUnit, user_agent_unit: Long
     User.set_current(User(id="test_user_4", extra={}))
     searchRes2 = agent_unit.searchMemories(call_context, "what is my name?")
     assert len(searchRes2) > 0
-    RequestContext.set("agent_name", "test_agent_2");
+    RequestContext.set("agent_name", "test_agent_2")
     searchRes2 = agent_unit.searchMemories(call_context, "what is my name?")
     assert len(searchRes2) < 1
 
@@ -232,6 +232,6 @@ def test_system_scoping(system_unit: LongTermMemoryUnit):
     User.set_current(User(id="test_user_4", extra={}))
     searchRes2 = system_unit.searchMemories(call_context, "what is my name?")
     assert len(searchRes2) > 0
-    RequestContext.set("agent_name", "test_agent_2");
+    RequestContext.set("agent_name", "test_agent_2")
     searchRes2 = system_unit.searchMemories(call_context, "what is my name?")
     assert len(searchRes2) > 0

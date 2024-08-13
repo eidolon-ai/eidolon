@@ -13,6 +13,7 @@ from eidolon_ai_sdk.system.reference_model import Reference
 
 EIDOLON_DB_COL_NAME = "eidolon_mem0"
 
+
 class LongTermMemoryUnitScope(Enum):
     SYSTEM = "system"
     AGENT = "agent"
@@ -20,9 +21,11 @@ class LongTermMemoryUnitScope(Enum):
     USER_AGENT = "userAgent"
     USER_PROCESS = "userProcess"
 
+
 class LongTermMemoryUnitConfig(BaseModel):
     llm_unit: Optional[Reference[LLMUnit]]
     pass
+
 
 class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
     def __init__(self, default_llm: LLMUnit, unit_scope: LongTermMemoryUnitScope, spec: LongTermMemoryUnitConfig = None, **kwargs):
@@ -59,6 +62,7 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
         results = self.mem0.search(query) if self._multi_user_scope() else self.mem0.search(query, user_id=user_id)
         if (self.unit_scope == LongTermMemoryUnitScope.SYSTEM):
             return results
+
         def filter_func(res):
             try:
                 valid = True
@@ -67,12 +71,12 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
                 if not self._multi_agent_scope() and res['metadata']['agent_name'] != AgentOS.current_agent_name():
                     valid = False
                 return valid
-            except:
+            except Exception:
                 # assume caused by missing process_id or agent_id fields
                 if self._multi_process_scope() and self._multi_agent_scope():
                     return True
                 return False
-            
+
         filtered_results = list(filter(filter_func, results))
         return filtered_results
 
@@ -84,7 +88,7 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
 
         user_id = AgentOS.current_user().id
         memories = self.mem0.get_all() if self._multi_user_scope() else self.mem0.get_all(user_id=user_id)
-        
+
         def filter_func(mem):
             try:
                 valid = True
@@ -93,29 +97,29 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
                 if not self._multi_agent_scope() and mem['metadata']['agent_name'] != AgentOS.current_agent_name():
                     valid = False
                 return valid
-            except:
+            except Exception:
                 if self._multi_agent_scope() and self._multi_process_scope():
                     return False
                 return True
 
         return list(filter(filter_func, memories))
-    
+
     def getMemory(self, memory_id: str):
         return self.mem0.get(memory_id)
-    
+
     def getMemoryHistory(self, memory_id: str):
         return self.mem0.history(memory_id)
-    
+
     def deleteMemory(self, memory_id: str):
         return self.mem0.delete(memory_id)
-    
+
     def deleteMemoriesForProcess(self, process_id: str):
         memories = self.mem0.get_all()
         for mem in memories:
             try:
                 if mem['metadata']['process_id'] == process_id:
                     self.mem0.delete(mem['id'])
-            except:
+            except Exception:
                 continue
 
     def deleteMemoriesForAgent(self, agent_id: str):
@@ -127,12 +131,12 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
         if self.unit_scope == LongTermMemoryUnitScope.SYSTEM or self.unit_scope == LongTermMemoryUnitScope.USER:
             return True
         return False
-    
+
     def _multi_user_scope(self):
         if self.unit_scope == LongTermMemoryUnitScope.AGENT or self.unit_scope == LongTermMemoryUnitScope.SYSTEM:
             return True
         return False
-    
+
     def _multi_process_scope(self):
         if self.unit_scope != LongTermMemoryUnitScope.USER_PROCESS:
             return True
