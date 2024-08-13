@@ -3,6 +3,7 @@ from datetime import datetime
 from types import SimpleNamespace
 from typing import cast, List
 
+import mem0
 from bson import ObjectId
 from mem0 import Memory
 from mem0.embeddings.base import EmbeddingBase
@@ -259,3 +260,19 @@ class EidolonMem0(Memory):
         self.db = Mem0DB(db_collection, symbolic_memory)
         self.collection_name = db_collection
         capture_event("mem0.init", self)
+
+
+class NoTelemetry:
+    def __init__(self):
+        pass
+
+    def capture_event(self, event_name, properties=None):
+        pass
+
+    def identify_user(self, user_id, properties=None):
+        pass
+
+    def close(self):
+        pass
+
+mem0.memory.telemetry.telemetry = NoTelemetry()
