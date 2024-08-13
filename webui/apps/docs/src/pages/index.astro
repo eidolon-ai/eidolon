@@ -24,35 +24,15 @@ const bg = await Astro.slots.render("bg")
       AI Agent Server for the Enterprise
     </Fragment>
     <Fragment slot="content">
-        <span>An Enterprise-Grade, 100% Open Source framework, Eidolon enables developers to 
+        <span>An Enterprise-Grade, Open Source framework, Eidolon enables developers to 
           <span class="font-semibold">rapidly</span> build and deploy the most <span class="font-semibold">powerful</span> genAI applications.</span>
       <!--<br/>-->
       <!--<span class="text-xl font-semibold tracking-tighter md:text-3xl">Maintain control | Reduce complexity | Increase accuracy</span>-->
     </Fragment>
   </MainTitle>
 
-  <div class="mb-16"/>
-
-  <ProductDescription
-    classes={{container: 'bg-gradient-to-b from-gray-100 to-white w-full dark:bg-none'}}
-    title="What is Eidolon?"
-    subtitle="Eidolon AI is the industry's first AI Agent Server for the Enterprise. An Open Source framework, we empower developers to rapidly build & deploy GenAI Apps, dramatically increasing developer productivity."
-    itemSetup="Eidolon features 2 key capabilities:"
-    items={[
-      {
-        title: 'Agent Server',
-        description: 'A secure, enterprise ready, deployment server for Agentic applications. The Agent Server  is based on a Microservice architecture, is interoperable with other agents ' +
-          'and enables easy production deployment, making it a a natural choice for enterprises.'
-      },
-      {
-        title: 'Eidolon SDK',
-        description: 'A pluggable AI Agent framework (SDK) for developers to build Agentic applications quickly and easily. The SDK is designed to be extensible and flexible, ' +
-          'enabling developers to build and deploy agents in a fraction of the time it would take to build from scratch.',
-      }
-    ]}>
-  </ProductDescription>
-  <div class=" bg-gray-100 dark:bg-blue-950">
-    <hr/>
+  <ProductDescription/>
+  <div class=" bg-white dark:bg-blue-950">
     <Steps
       title="Bring agents into production in 3 easy steps"
       horizontal
@@ -78,7 +58,8 @@ const bg = await Astro.slots.render("bg")
   </div>
   <ContentWithTabs
     id="build"
-    height="550"
+    height="550" 
+    classes={{container: "pt-0 md:pt-0 lg:pt-0"}}
     bullets={[
       {
         title: 'Choose from a variety of pre-built agents or define your own',
@@ -197,7 +178,7 @@ spec:
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-gray-100 to-white dark:bg-none"></div>
+      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-white to-gray-100 dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
 
@@ -253,7 +234,7 @@ chatbot   3s`
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-transparent dark:bg-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-white to-gray-100 dark:bg-transparent dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
   <hr/>
@@ -326,7 +307,7 @@ expect(response).toContain("supportive community")`,
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-none dark:bg-blue-950 "></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-white to-gray-100 dark:bg-none dark:bg-blue-950 "></div>
     </Fragment>
   </ContentWithTabs>
 

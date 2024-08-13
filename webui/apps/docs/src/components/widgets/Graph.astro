@@ -1,0 +1,225 @@
+---
+let {id, isDark = false, containerClass = "", bg, as = "section"} = Astro.props;
+
+if (!id) {
+  id = `content-with-code-${Math.random().toString(36).substr(2, 9)}`;
+}
+---
+<div class="relative w-full h-full mt-[8px]">
+  <graph-component id={id}/>
+</div>
+
+<script>
+  import * as d3 from "d3";
+
+  class GraphComponent extends HTMLElement {
+    private static data = {
+      name: "flare",
+      children: [
+        {
+          name: "vis",
+          children: [
+            {
+              name: "events",
+              children: [
+                {name: "DataEvent", value: 2313},
+                {name: "SelectionEvent", value: 1880},
+                {name: "TooltipEvent", value: 1701},
+                {name: "VisualizationEvent", value: 1117}
+              ]
+            },
+            {name: "Visualization", value: 16540},
+            {name: "Visualization", value: 16540}
+          ]
+        },
+        {
+          name: "analytics",
+          children: [
+            {
+              name: "cluster",
+              children: [
+                {name: "HierarchicalCluster", value: 6714},
+                {name: "MergeEdge", value: 743}
+              ]
+            },
+            {
+              name: "optimization",
+              children: [
+                {name: "DataEvent", value: 2313},
+                {name: "SelectionEvent", value: 1880},
+                {name: "AspectRatioBanker", value: 7074}
+              ]
+            }
+          ]
+        },
+        {
+          name: "query",
+          children: [
+            {name: "and", value: 330},
+            {name: "average", value: 287},
+            {name: "count", value: 277},
+            {name: "distinct", value: 292},
+          ]
+        },
+      ]
+    }
+
+    static leaf_radius = 15.5;
+    static parent_radius = 25.5;
+
+    chart() {
+      // Specify the chart’s dimensions.
+      const width = 310 * 3.5;
+      const height = 230 * 3.5;
+
+      // Compute the graph and start the force simulation.
+      const root = d3.hierarchy(GraphComponent.data);
+      const links = root.links();
+      const nodes = root.descendants();
+
+      const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(d => d.children ? GraphComponent.parent_radius * 9 : GraphComponent.parent_radius * 4)
+          .strength(1).iterations(3))
+        .force("charge", d3.forceManyBody().strength((d, i) => i == 0 ? -10000 : d.children ? -25 * (GraphComponent.parent_radius) : -25 * (GraphComponent.leaf_radius)))
+        .force("x", d3.forceX())
+        .force("y", d3.forceY())
+        .stop()
+
+      // Create the container SVG.
+      const svg = d3.create("svg")
+        .attr("viewBox", [-width / 2, -height / 2, width, height])
+        .attr("style", `width: ${width}, height: ${height}`);
+
+      const defs = svg.append('defs')
+      let lg = defs.append('linearGradient').attr('id', 'pulse')
+
+      // Append links.
+      const link = svg.append("g")
+        .attr("stroke", "#999")
+        .attr("stroke-width", "3")
+        .attr("stroke-opacity", 0.6)
+        .selectAll("line")
+        .data(links)
+        .join("line");
+
+      // Append nodes.
+      const node = svg.append("g")
+        .attr("fill", "#fff")
+        .attr("stroke", "#ccc")
+        .attr("stroke-width", 1.5)
+        .selectAll("circle")
+        .data(nodes)
+        .join("circle")
+        .attr("fill", d => d.children ? null : "#aaa")
+        .attr("stroke", d => d.children ? null : "#eee")
+        .attr("r", d => d.children ? GraphComponent.parent_radius : GraphComponent.leaf_radius)
+
+      node.append("title")
+        .text(d => d.data.name);
+
+      for (let i = 0; i < 300; ++i) simulation.tick();
+
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      node
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
+
+      // Function to get a random path from root to a leaf
+      function getRandomPath(node) {
+        let path = [node];
+        while (node.children && node.children.length > 0) {
+          node = node.children[Math.floor(Math.random() * node.children.length)];
+          path.push(node);
+        }
+        return path;
+      }
+
+      // Function to generate a random color
+      function getRandomColor() {
+        const hue = Math.random() * 360;
+        const saturation = 70 + Math.random() * 30;
+        const lightness = 45 + Math.random() * 30;
+        return [hue, saturation, lightness];
+      }
+
+      // Function to animate the pulse
+      function animatePulse() {
+        const path = getRandomPath(root);
+        const [h, s, l] = getRandomColor()
+        const pulseColor = `hsl(${h}, ${s}%, ${l}%)`;
+        const color2 = `hsl(${h}, 10%, 90%)`;
+        const color3 = `hsl(${(h + 60) % 360}, ${s}%, ${l / 2}%)`;
+        const color4 = `hsl(${(h + 210) % 360}, ${s}%, ${l}%)`
+        lg.selectAll('stop').remove();
+        lg.append('stop').attr('offset', '0%').attr('stop-color', color2).attr('stop-opacity', 0.9)
+        lg.append('stop').attr('offset', '15.65%').attr('stop-color', pulseColor)
+        lg.append('stop').attr('offset', '66.16%').attr('stop-color', color3)
+        lg.append('stop').attr('offset', '100%').attr('stop-color', color4).attr('stop-opacity', 0.0)
+
+        // Reset all nodes to default style
+        node.attr("fill", d => d.children ? null : "#aaa")
+          .attr("r", d => d.children ? GraphComponent.parent_radius : GraphComponent.leaf_radius);
+
+        // Animate the pulse along the path
+        path.forEach((path_node, index) => {
+          d3.select(node.filter(d => d.data === path_node.data).node())
+            .transition()
+            .delay(index * 500)  // Delay each node's animation
+            .duration(600)
+            .attr("fill", pulseColor)
+            .attr("r", d => d.children ? 8 : 6)
+            .transition()
+            .duration(100)
+            .attr("fill", d => d.children ? null : "#aaa")
+            .attr("r", d => d.children ? GraphComponent.parent_radius : GraphComponent.leaf_radius);
+        });
+
+        // Animate the links along the path
+        for (let i = 0; i < path.length - 1; i++) {
+          const source = path[i];
+          const target = path[i + 1];
+          link.filter(l => l.source === source && l.target === target)
+            .transition()
+            .delay(i * 500 + 200)
+            .duration(500)
+            .attr("stroke", 'url(#pulse)')
+            .attr("stroke-width", 10)
+            .transition()
+            .duration(1)
+            .attr("stroke", "#999")
+            .attr("stroke-width", 3);
+        }
+      }
+
+      function scheduleNextAnimation() {
+        const minDelay = 1000;
+        const maxDelay = 8000;
+        const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
+
+        setTimeout(() => {
+          animatePulse();
+          scheduleNextAnimation();  // Schedule the next animation
+        }, randomDelay);
+      }
+
+      // Start the random interval animations
+      scheduleNextAnimation();
+
+      return svg.node();
+    }
+
+    constructor() {
+      super();
+      const id = this.getAttribute('id');
+      const chartElement = this.chart();
+      this.appendChild(chartElement);
+    }
+  }
+
+  customElements.define('graph-component', GraphComponent);
+</script>
