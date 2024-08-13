@@ -28,6 +28,8 @@ class LongTermMemoryUnitConfig(BaseModel):
 
 
 class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
+    mem0: EidolonMem0
+
     def __init__(self, default_llm: LLMUnit, unit_scope: LongTermMemoryUnitScope, spec: LongTermMemoryUnitConfig = None, **kwargs):
         super().__init__(**kwargs)
         self.spec = spec
