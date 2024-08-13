@@ -44,7 +44,7 @@ tracer = trace.get_tracer("apu")
 class ConversationalAPUSpec(APUSpec):
     io_unit: AnnotatedReference[IOUnit]
     memory_unit: AnnotatedReference[MemoryUnit]
-    longterm_memory_unit: AnnotatedReference[LongTermMemoryUnit]
+    longterm_memory_unit: Optional[AnnotatedReference[LongTermMemoryUnit]] = None
     llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
     audio_unit: Optional[Reference[AudioUnit]] = None
@@ -74,7 +74,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
         # my best guess for how to initialize
-        self.longterm_memory_unit = self.spec.longterm_memory_unit.instantiate(**kwargs)
+        self.longterm_memory_unit = self.spec.longterm_memory_unit.instantiate(**kwargs) if self.spec.longterm_memory_unit else None
 
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None
@@ -141,8 +141,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             conversation.extend(conversation_messages)
 
             # EDIT: get relevant mem0 memories and extend the conversation history with them
-            longterm_memories = self.longterm_memory_unit.searchMemories(call_context, conversation_messages)
-            conversation.extend(longterm_memories)
+            if self.longterm_memory_unit:
+                longterm_memories = self.longterm_memory_unit.searchMemories(call_context, conversation_messages)
+                conversation.extend(longterm_memories)
 
             async for event in self._llm_execution_cycle(call_context, output_format, conversation):
                 yield event
@@ -211,8 +212,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             converted_conversation.append(assistant_message)
 
-            # EDIT: store event content in mem0 (not sure if correct):
-            self.longterm_memory_unit.storeMessage(event_content)
+            if self.longterm_memory_unit:
+                # EDIT: store event content in mem0 (not sure if correct):
+                self.longterm_memory_unit.storeMessage(event_content)
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
