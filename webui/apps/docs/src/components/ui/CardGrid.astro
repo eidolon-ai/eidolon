@@ -33,9 +33,9 @@ const {
       )}
     >
       {items.map(({ title, description, icon, callToAction, slot, href, classes: itemClasses = {} }) => (
-        <div class="w-full h-[450px] xl:h-[650px] border-2 border-dotted rounded-lg p-6 max-w-4xl flex flex-col border-gray-200 dark:border-gray-500">
+        <div class="w-full max-w-[550px] border-2 border-dotted rounded-lg p-6 max-w-4xl flex flex-col border-gray-200 dark:border-gray-500">
           {slot && (
-            <div class="h-[230px] xl:h-[430px] md:mb-4 md:mt-4">
+            <div class="h-[230px] md:mb-4 md:mt-4">
               <div class="w-full h-full flex flex-col justify-center items-center" set:html={Astro.slots.render(slot)} />
             </div>
           )}
