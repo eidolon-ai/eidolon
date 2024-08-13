@@ -32,8 +32,7 @@ const bg = await Astro.slots.render("bg")
   </MainTitle>
 
   <ProductDescription/>
-  <div class=" bg-gray-100 dark:bg-blue-950">
-    <hr/>
+  <div class=" bg-white dark:bg-blue-950">
     <Steps
       title="Bring agents into production in 3 easy steps"
       horizontal
@@ -59,7 +58,8 @@ const bg = await Astro.slots.render("bg")
   </div>
   <ContentWithTabs
     id="build"
-    height="550"
+    height="550" 
+    classes={{container: "pt-0 md:pt-0 lg:pt-0"}}
     bullets={[
       {
         title: 'Choose from a variety of pre-built agents or define your own',
@@ -178,7 +178,7 @@ spec:
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-gray-100 to-white dark:bg-none"></div>
+      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-white to-gray-100 dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
 
@@ -234,7 +234,7 @@ chatbot   3s`
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-transparent dark:bg-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-white to-gray-100 dark:bg-transparent dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
   <hr/>
@@ -307,7 +307,7 @@ expect(response).toContain("supportive community")`,
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-none dark:bg-blue-950 "></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-white to-gray-100 dark:bg-none dark:bg-blue-950 "></div>
     </Fragment>
   </ContentWithTabs>
 
