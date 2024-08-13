@@ -5,6 +5,7 @@ import Steps from '~/components/widgets/Steps.astro';
 import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
 import MainTitle from "../components/widgets/MainTitle.astro";
 import ContentWithTabs from "../components/widgets/ContentWithTabs.astro";
+import ProductDescription from "../components/widgets/ProductDescription.astro";
 
 
 const metadata = {
@@ -13,50 +14,49 @@ const metadata = {
 };
 
 const bg = await Astro.slots.render("bg")
-
-const githubIcon = `<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" 
-d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" 
-fill="currentColor"/></svg>`
-
-const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&nbsp;&nbsp;Star on GitHub`
 ---
 
 <Layout metadata={metadata}>
   <!-- Hero Widget ******************* -->
-
-  <MainTitle
-    actions={[
-      {
-        color: 'secondary',
-        text: githubText,
-        href: 'https://github.com/eidolon-ai/eidolon',
-        target: '_blank',
-      },
-      {text: 'Quickstart', href: '/docs/quickstart', color: 'primary'},
-    ]}
-  >
+  <div class="overflow-x-hidden">
+  <MainTitle>
     <Fragment slot="tagline">
-      <span class="text-center">
       AI Agent Server for the Enterprise
-      </span>
     </Fragment>
     <Fragment slot="content">
-      <span class="text-center leading-8">
-        <span class="text-2xl md:text-3xl">Open source framework to rapidly build and deploy genAI apps</span>
-        <br/>
-        <span class="text-sm font-semibold tracking-tighter md:text-2xl">Maintain control | Reduce complexity | Increase accuracy</span>
-      </span>
+        <span>An Enterprise-Grade, 100% Open Source framework, Eidolon enables developers to 
+          <span class="font-semibold">rapidly</span> build and deploy the most <span class="font-semibold">powerful</span> genAI applications.</span>
+      <!--<br/>-->
+      <!--<span class="text-xl font-semibold tracking-tighter md:text-3xl">Maintain control | Reduce complexity | Increase accuracy</span>-->
     </Fragment>
   </MainTitle>
 
   <div class="mb-16"/>
-  <!-- Content Widget **************** -->
 
-  <div class="">
+  <ProductDescription
+    classes={{container: 'bg-gradient-to-b from-gray-100 to-white w-full dark:bg-none'}}
+    title="What is Eidolon?"
+    subtitle="Eidolon AI is the industry's first AI Agent Server for the Enterprise. An Open Source framework, we empower developers to rapidly build & deploy GenAI Apps, dramatically increasing developer productivity."
+    itemSetup="Eidolon features 2 key capabilities:"
+    items={[
+      {
+        title: 'Agent Server',
+        description: 'A secure, enterprise ready, deployment server for Agentic applications. The Agent Server  is based on a Microservice architecture, is interoperable with other agents ' +
+          'and enables easy production deployment, making it a a natural choice for enterprises.'
+      },
+      {
+        title: 'Eidolon SDK',
+        description: 'A pluggable AI Agent framework (SDK) for developers to build Agentic applications quickly and easily. The SDK is designed to be extensible and flexible, ' +
+          'enabling developers to build and deploy agents in a fraction of the time it would take to build from scratch.',
+      }
+    ]}>
+  </ProductDescription>
+  <div class=" bg-gray-100 dark:bg-blue-950">
+    <hr/>
     <Steps
-      title="Bring enterprise Agents into production in three easy steps"
+      title="Bring agents into production in 3 easy steps"
       horizontal
-      classes = {{container: "pb-2 md:pb-2 lg:pb-2"}}
+      classes={{container: "lg:pt-14 pt-6 md:pt-10 pb-0 md:pb-0 lg:pb-0 "}}
       items={[
         {
           title: '<span class="font-medium">1. Build</span>',
@@ -76,14 +76,14 @@ const githubText = `<div style="height: 16px; width: 16px">${githubIcon}</div>&n
       ]}
     />
   </div>
-  <hr/>
   <ContentWithTabs
     id="build"
+    height="550"
     bullets={[
       {
         title: 'Choose from a variety of pre-built agents or define your own',
         description:
-          "Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.",
+          "Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent framework you like.",
       },
       {
         title: 'Define agents with declarative YAML',
@@ -197,7 +197,7 @@ spec:
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gray-100 dark:bg-blue-950"></div>
+      <div class="absolute inset-0 dark:bg-blue-950 bg-gradient-to-b from-gray-100 to-white dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
 
@@ -253,7 +253,7 @@ chatbot   3s`
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-white dark:bg-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-transparent dark:bg-none"></div>
     </Fragment>
   </ContentWithTabs>
   <hr/>
@@ -264,7 +264,7 @@ chatbot   3s`
       {
         title: 'Build a GUI with React components',
         description:
-          'Eidolon provides a variety of pre-built agents to get you started. You can also define your own agents using vanilla code or any other agent frameworkk you like.',
+          'Eidolon provides a set of React components to help you build a GUI to interact with your chatbot agents. The components are designed to be easy to use and extensible.',
       },
       {
         title: 'Run actions directly through HTTP REST API',
@@ -278,6 +278,11 @@ chatbot   3s`
       },
     ]}
     tabs={[
+      {
+        title: "WebUI",
+        src: "~/assets/images/webui.gif",
+        alt: "RAG",
+      },
       {
         title: "CLI",
         src: "~/assets/images/cli.svg",
@@ -313,11 +318,6 @@ expect(response).toContain("fast iteration times")
 expect(response).toContain("extensible agent mesh")
 expect(response).toContain("supportive community")`,
       },
-      {
-        title: "WebUI",
-        src: "~/assets/images/webui.gif",
-        alt: "RAG",
-      },
     ]}
   >
     <Fragment slot="content">
@@ -326,9 +326,10 @@ expect(response).toContain("supportive community")`,
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-gray-50 dark:bg-blue-950"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-gray-100 to-white dark:bg-none dark:bg-blue-950 "></div>
     </Fragment>
   </ContentWithTabs>
 
   <hr/>
+    </div>
 </Layout>

@@ -5,6 +5,11 @@ module.exports = {
 		'./node_modules/flowbite/**/*.js'],
   theme: {
     extend: {
+      spacing: {
+        "main": "var(--aw-spacing-main-margin)",
+        "main-md": "var(--aw-spacing-main-md-margin)",
+        "main-lg": 'var(--aw-spacing-main-lg-margin)',
+      },
       colors: {
         primary: 'var(--aw-color-primary)',
         secondary: 'var(--aw-color-secondary)',

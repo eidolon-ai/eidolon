@@ -1,7 +1,8 @@
 ---
-import { Icon } from 'astro-icon/components';
-import { SITE } from 'astrowind:config';
-import { getHomePermalink } from '~/utils/permalinks';
+import {Icon} from 'astro-icon/components';
+import {SITE} from 'astrowind:config';
+import {getHomePermalink} from '~/utils/permalinks';
+import Logo from "../Logo.astro";
 
 interface Link {
   text?: string;
@@ -23,20 +24,59 @@ export interface Props {
   theme?: string;
 }
 
-const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme = 'light' } = Astro.props;
+const {socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme = 'light'} = Astro.props;
 ---
 
-<footer class:list={[{ dark: theme === 'dark' }, 'relative border-t border-gray-200 dark:border-slate-800 not-prose']}>
-  <!--<div class="dark:bg-dark absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+<footer class:list={[{dark: theme === 'dark'}, 'relative border-t border-gray-200 dark:border-slate-800 not-prose']}>
+  <div class="dark:bg-dark absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 dark:text-slate-300">
     <div class="grid grid-cols-12 gap-4 gap-y-8 sm:gap-8 py-8 md:py-12">
       <div class="col-span-12 lg:col-span-4">
-        <div class="mb-2">
-          <a class="inline-block font-bold text-xl" href={getHomePermalink()}>{SITE?.name}</a>
+        <div class="mb-2 flex flex-row">
+          <Logo/>
+        </div>
+        <div class="md:flex md:items-center md:justify-between ">
+          {
+            socialLinks?.length ? (
+              <ul class="flex mb-4 -ml-2 md:mb-0 rtl:ml-0 rtl:-mr-2 rtl:md:ml-0 rtl:md:mr-4">
+                {socialLinks.map(({ariaLabel, href, text, icon}) => (
+                  <li>
+                    <a
+                      class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+                      aria-label={ariaLabel}
+                      href={href}
+                    >
+                      {icon &&
+                        <Icon name={icon} class="w-5 h-5"/>}
+                      <Fragment set:html={text}/>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              ''
+            )
+          }
+
+          <div class="text-sm mr-4 dark:text-muted">
+            <Fragment set:html={footNote}/>
+          </div>
+        </div>
+        <div class="flex flex-row flex-nowrap justify-start items-end gap-0.5 md:gap-1 pt-1 md:pt-0 pb-2 pr-1 md:pr-7">
+          <a href="https://pypistats.org/packages/eidolon-ai-sdk">
+            <img class="" style="display: inline-block" alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/eidolon-ai-sdk">
+          </a>
+          <a href="https://pypi.org/project/eidolon-ai-sdk/">
+            <img class="" style="display: inline-block;" alt="PyPI - Version" src="https://img.shields.io/pypi/v/eidolon-ai-sdk?style=flat&label=eidolon-ai-sdk">
+          </a>
+          <a href="https://github.com/eidolon-ai/eidolon/actions/workflows/test_python.yml?query=branch%3Amain">
+            <img class="" style="display: inline-block;" alt="GitHub Test Status"
+                 src="https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&logo=github&label=test">
+          </a>
         </div>
         <div class="text-sm text-muted">
           {
-            secondaryLinks.map(({ text, href }) => (
+            secondaryLinks.map(({text, href}) => (
               <a
                 class="text-muted hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out mr-2 rtl:mr-0 rtl:ml-2"
                 href={href}
@@ -47,19 +87,19 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
         </div>
       </div>
       {
-        links.map(({ title, links }) => (
+        links.map(({title, links}) => (
           <div class="col-span-6 md:col-span-3 lg:col-span-2">
             <div class="dark:text-gray-300 font-medium mb-2">{title}</div>
             {links && Array.isArray(links) && links.length > 0 && (
               <ul class="text-sm">
-                {links.map(({ text, href, ariaLabel }) => (
+                {links.map(({text, href, ariaLabel}) => (
                   <li class="mb-2">
                     <a
                       class="text-muted hover:text-gray-700 hover:underline dark:text-gray-400 transition duration-150 ease-in-out"
                       href={href}
                       aria-label={ariaLabel}
                     >
-                      <Fragment set:html={text} />
+                      <Fragment set:html={text}/>
                     </a>
                   </li>
                 ))}
@@ -68,32 +108,6 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
           </div>
         ))
       }
-    </div>-->
-    <div class="md:flex md:items-center md:justify-between py-6 md:py-8">
-      {
-        socialLinks?.length ? (
-          <ul class="flex mb-4 md:order-1 -ml-2 md:ml-4 md:mb-0 rtl:ml-0 rtl:-mr-2 rtl:md:ml-0 rtl:md:mr-4">
-            {socialLinks.map(({ ariaLabel, href, text, icon }) => (
-              <li>
-                <a
-                  class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
-                  aria-label={ariaLabel}
-                  href={href}
-                >
-                  {icon && <Icon name={icon} class="w-5 h-5" />}
-                  <Fragment set:html={text} />
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          ''
-        )
-      }
-
-      <div class="text-sm mr-4 dark:text-muted">
-        <Fragment set:html={footNote} />
-      </div>
     </div>
   </div>
 </footer>

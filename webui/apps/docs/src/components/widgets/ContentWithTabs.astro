@@ -5,7 +5,7 @@ import WidgetWrapper from '../ui/WidgetWrapper.astro';
 import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
 import ItemGrid from '../ui/ItemGrid.astro';
-import { Code } from 'astro-expressive-code/components'
+import {Code} from 'astro-expressive-code/components'
 import TabItem from "./TabItem.astro";
 
 let {
@@ -14,8 +14,9 @@ let {
   tagline,
   content = await Astro.slots.render('content'),
   callToAction,
-  bullets  = [],
+  bullets = [],
   columns,
+  height,
 
   tabs = [],
 
@@ -39,82 +40,98 @@ if (!id) {
   containerClass={`mx-auto ${isAfterContent ? 'pt-0 md:pt-0 lg:pt-0' : 'pt-2 md:pt-4 lg:pt-8'} ${classes?.container ?? ''}`}
   bg={bg}
 >
-  <Headline
-    title={title}
-    subtitle={subtitle}
-    tagline={tagline}
-    classes={{
-      container: 'max-w-xl sm:mx-auto lg:max-w-2xl',
-      title: 'text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading',
-      subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400',
-    }}
-  />
-  <div class="mx-auto p-4 md:px-8 max-w-5xl">
-    <div class={`md:flex ${isReversed ? 'md:flex-row-reverse' : ''} md:gap-16`}>
-      <div class="md:basis-1/2 md:w-1/2">
-        {content &&
-          <div class="mb-12 text-lg dark:text-slate-400" set:html={content}/>}
+  <size-component id={id}>
+    <Headline
+      title={title}
+      subtitle={subtitle}
+      tagline={tagline}
+      classes={{
+        container: 'max-w-xl sm:mx-auto lg:max-w-2xl',
+        title: 'text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading',
+        subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400',
+      }}
+    />
+    <div class="mx-auto p-4 md:px-8 max-w-5xl">
+      <div class={`md:flex ${isReversed ? 'md:flex-row-reverse' : ''} md:gap-16`}>
+        <div id={`${id}-height`} class="md:basis-1/2 md:w-1/2">
+          {content &&
+            <div class="mb-12 text-lg dark:text-slate-400" set:html={content}/>}
 
-        {
-          callToAction && (
-            <div class="mt-[-40px] mb-8 text-primary">
-              <Button variant="link" {...callToAction}/>
-            </div>
-          )
-        }
-
-        <ItemGrid
-          items={bullets}
-          columns={columns}
-          defaultIcon="tabler:check"
-          classes={{
-            container: `gap-y-4 md:gap-y-8`,
-            panel: 'max-w-none',
-            title: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
-            description: 'text-muted dark:text-slate-400 ml-2 rtl:ml-0 rtl:mr-2',
-            icon: 'flex h-7 w-7 items-center justify-center rounded-full bg-green-600 dark:bg-green-700 text-gray-50 p-1',
-            action: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
-          }}
-        />
-      </div>
-
-      <div class="md:basis-1/2">
-        {tabs.length == 1 && (
-          <div class="relative m-auto mt-8 md:mt-0">
-            <TabItem {...tabs[0]}/>
-          </div>
-        )}
-        {tabs.length > 1 && (
-          <div class="mb-2">
-            <ul class="flex flex-nowrap text-sm font-medium text-center" id=`${id}-tab` data-tabs-toggle=`#${id}-tab-content` role="tablist">
-              {tabs.map((item, index) => (
-                <li class="me-2" role="presentation">
-                  <button
-                    class={`inline-block p-4 border-b-2 rounded-t-lg`}
-                    id={`${id}-${index}-tab`}
-                    data-tabs-target={`#${id}-${index}-content`}
-                    type="button"
-                    role="tab"
-                    aria-controls={item.title}
-                    aria-selected="false"
-                  >
-                    {item.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div id=`#${id}-tab-content`>
-            {tabs.map((item, index) => (
-              <div class="hidden" id={`${id}-${index}-content`} role="tabpanel" aria-labelledby={`${id}-${index}-tab`}>
-                <div class="relative m-auto">
-                  <TabItem {...item}/>
-                </div>
+          {
+            callToAction && (
+              <div class="mt-[-40px] mb-8 text-primary">
+                <Button variant="link" {...callToAction}/>
               </div>
-            ))}
-          </div>
-        )}
+            )
+          }
+
+          <ItemGrid
+            items={bullets}
+            columns={columns}
+            defaultIcon="tabler:sun"
+            classes={{
+              container: `gap-y-4 md:gap-y-8`,
+              panel: 'max-w-none',
+              title: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
+              description: 'text-muted dark:text-slate-400 ml-2 rtl:ml-0 rtl:mr-2',
+              icon: 'flex h-7 w-7 items-center justify-center rounded-full bg-[#04223D] text-gray-50 p-1',
+              action: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
+            }}
+          />
+        </div>
+
+        <div class="md:basis-1/2 flex flex-col" id=`${id}-tabs`>
+          {tabs.length == 1 && (
+            <div class="relative m-auto mt-8 md:mt-0">
+              <TabItem {...tabs[0]}/>
+            </div>
+          )}
+          {tabs.length > 1 && (
+            <div class="mb-2">
+              <ul class="flex flex-nowrap text-sm font-medium text-center" id=`${id}-tab` data-tabs-toggle=`#${id}-tab-content` role="tablist">
+                {tabs.map((item, index) => (
+                  <li class="me-2" role="presentation">
+                    <button
+                      class={`inline-block p-4 border-b-2 rounded-t-lg`}
+                      id={`${id}-${index}-tab`}
+                      data-tabs-target={`#${id}-${index}-content`}
+                      type="button"
+                      role="tab"
+                      aria-controls={item.title}
+                      aria-selected="false"
+                    >
+                      {item.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div id=`#${id}-tab-content` class="h-full overflow-hidden">
+              {tabs.map((item, index) => (
+                <div class="hidden h-full" id={`${id}-${index}-content`} role="tabpanel" aria-labelledby={`${id}-${index}-tab`}>
+                  <div class="relative m-auto h-full">
+                    <TabItem {...item}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
+  </size-component>
 </WidgetWrapper>
+
+<script>
+  class SizeComponent extends HTMLElement {
+    constructor() {
+      super();
+      const id = this.getAttribute('id');
+      const height = document.getElementById(`${id}-height`).offsetHeight;
+      document.getElementById(`${id}-tabs`).style.height = `${height}px`;
+      console.log("h", height)
+    }
+  }
+  
+  customElements.define('size-component', SizeComponent);
+</script>

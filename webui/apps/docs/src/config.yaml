@@ -73,6 +73,11 @@ ui:
 
   tokens:
     default:
+      spacing:
+        main:
+          margin_lg: 56px
+          margin_md: 24px
+          margin: 4px
       fonts:
         sans: InterVariable
         serif: InterVariable
