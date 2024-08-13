@@ -1,9 +1,11 @@
 ---
 import Headline from '~/components/ui/Headline.astro';
-import ItemGrid from '~/components/ui/ItemGrid.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import CardGrid from "../ui/CardGrid.astro";
+import Graph from "./Graph.astro";
+import APU from "./APU.astro";
 
-const {
+let {
   title = '',
   subtitle = '',
   tagline = '',
@@ -16,22 +18,53 @@ const {
   classes = {},
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
+
+title = "What is Eidolon?"
+subtitle = "The industry's first AI Agent Server for the Enterprise"
+items = [
+  {
+    title: 'Agent Server',
+    slot: 'agent-server',
+    description: 'A secure, enterprise ready, deployment server for Agentic applications.'
+  },
+  {
+    title: 'Eidolon SDK',
+    slot: 'sdk',
+    description: 'A pluggable AI Agent framework (SDK) for developers to build Agentic applications quickly and easily.',
+  }
+]
 ---
 
-<WidgetWrapper id={id} isDark={isDark} containerClass={`mx-auto ${classes?.container ?? ''}`} bg={bg}>
-  <Headline title={title} subtitle={subtitle} tagline={tagline} classes={{
-    container: 'max-w-5xl text-left mb-4 md:mb-4',
-  }}/>
-  {itemSetup && <div class="mx-auto max-w-5xl mb-4 text-xl text-muted" set:html={itemSetup}/>}
-  <ItemGrid
+<WidgetWrapper id={id} isDark={isDark} containerClass={`${classes?.container ?? ''}`} bg={bg}>
+  <Headline tagline={tagline} classes={{
+    container: 'max-w-5xl mb-4 md:mb-4',
+  }}>
+    <Fragment slot="title">
+      <div class="flex flex-col md:flex-row justify-center items-center gap-2">
+        <span class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl">{title}</span>
+        <span class="font-normal leading-normal tracking-normal text-lg md:text-xl">{subtitle}</span>
+      </div>
+    </Fragment>
+  </Headline>
+  {itemSetup &&
+    <div class="mx-auto max-w-5xl mb-4 text-xl text-muted" set:html={itemSetup}/>}
+  <CardGrid
     items={items}
     columns={columns}
-    defaultIcon="tabler:chevron-right"
     classes={{
-      container: `max-w-5xl gap-y-8 md:gap-y-12 `,
+      container: `gap-x-8 md:gap-x-12 lg:gap-x-16 xl:gap-x-20`,
       panel: 'max-w-none',
       icon: 'flex-shrink-0 mt-1 w-6 h-6 text-primary',
       description: 'text-md',
     }}
-  />
+  >
+    <Fragment slot="agent-server">
+      <div class="w-full h-full mb-8">
+        <Graph/>
+      </div>
+    </Fragment>
+    <Fragment slot="sdk">
+      <APU/>
+    </Fragment>
+  </CardGrid>
 </WidgetWrapper>
