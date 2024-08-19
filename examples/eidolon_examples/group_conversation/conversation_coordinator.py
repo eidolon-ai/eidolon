@@ -112,11 +112,7 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             for agent, conversation in conversations_per_agent.items():
                 if agent != agent_process.agent:
                     local_conversations.append(Thought(is_inner_voice=False, agent_name=agent, thought=conversation))
-            await (
-                Agent.get(agent_process.agent)
-                .process(agent_process.process_id)
-                .action("add_thoughts", {"thoughts": local_conversations})
-            )
+            await agent_process.action("add_thoughts", {"thoughts": local_conversations})
 
         for agent_process in group.agents:
             agent = agent_process.agent
