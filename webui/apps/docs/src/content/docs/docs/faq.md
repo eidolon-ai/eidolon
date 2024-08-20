@@ -50,3 +50,84 @@ Perhaps the most important for the enterprise, support for governance -- securit
 
 #### 5. Open Source
 Anyone can use Eidolon, review it, analyze, and contribute to it. Exclusive licensing and paywalls chill innovation. They don't disrupt the market so much as interrupt it. Open source helps to level the playing field. Improving and refining software remains a community concern, not a product-led marketing initiative.
+
+## Getting Started
+
+To get started with Eidolon, simply click on [Get Started](https://www.eidolon.ai/get-started). You can join the [Eidolon Discord Server](https://discord.com/invite/eidolon) if you have any questions.
+
+## Features and Functionality
+
+### What is an AI Agent Server?
+An AI Agent Server is a deployment server that provides a runtime environment for agents. The Agent Server enables easy deployment and is interoperable with other agents in a secure, scalable, and monitorable way.
+
+### How does Eidolon scale?
+Our service-first approach makes it simple to scale requests up to the limits of the environment’s resources. Eidolon agents or services are stateless and can be scaled for performance or redundancy.
+
+### What are Eidolon’s key features?
+Eidolon offers 2 key capabilities out of the box:
+1. A pluggable AI Agent framework (SDK) for developers to build Agentic applications.
+2. An Agent Server based on a microservice architecture, interoperable with other agents, and enabling easy production deployment.
+
+### Why does Eidolon use YAML to configure agent services?
+Eidolon uses YAML to simplify the developer experience. Developers familiar with defining Kubernetes resources will understand how to apply this model quickly, facilitating developer adoption and testing.
+
+### Do I need to write code or does Eidolon provide everything for me?
+Eidolon provides many prebuilt agents out of the box, requiring no code to put them into production, just configuration. While this is good for many situations, Eidolon also provides an extensive SDK so developers can create new and unique agent types.
+
+### Once I’ve built an agent, how do I deploy it in production?
+Eidolon provides two methods to productionalize Machines and Agents:
+- **Kubernetes:** Eidolon provides k8s operators that make Eidolon resources like machines, agents, APU’s, etc., first-class k8s objects. Just `kubeapply` your changes, and the resources are updated automatically using a rolling upgrade.
+- **Docker:** A single Eidolon machine can be built into a docker container, and you can choose how it is deployed.
+
+### How do agents behave in an Eidolon environment?
+Agents in Eidolon are defined as services. Each service is configured as a contract and may be connected to other agent-driven services as the developer sees fit. This service-oriented design promotes horizontal scaling that is simple and straightforward.
+
+Eidolon’s pluggable framework lets developers focus on building secure, flexible, user-centric applications that are easy to deploy without sacrificing data privacy or other compliance requirements.
+
+### Do you have UI widgets that can be used to create a chatbot?
+Developers can create their own UI or use the Eidolon provided React components to manage user interaction with a chatbot or chatbot-like application.
+
+## Integrations
+
+### What if I’ve already built Agents on another platform - can they be leveraged with Eidolon and if so how?
+Yes, with Eidolon you can easily deploy agents built on other platforms. All Agents in Eidolon are simply services. Integration with other frameworks is as easy as creating a new FastAPI service and defining a deployment descriptor.
+
+### What is the benefit of using Eidolon versus using the OpenAI library hosting on some server and building the UI?
+Using Eidolon offers several benefits over directly using the OpenAI library hosting on a server and building a UI:
+- **Higher Accuracy:** The framework allows for iterative development which can lead to improved accuracy in AI models.
+- **Rapid Deployment:** Eidolon provides an enterprise-ready AI Agent Server and SDK which significantly speeds up the process of building and deploying AI applications.
+- **Scalability and Security:** It integrates easily with Kubernetes, allowing for secure and scalable deployment.
+- **Extensibility:** Eidolon is designed to be flexible and customizable, allowing developers to build complex AI systems more efficiently.
+- **Pre-built Tools:** It offers pre-built agents and React components for easier UI integration.
+
+For more details, visit [Eidolon AI](https://www.eidolon.ai).
+
+## Security
+
+### How does Eidolon support data privacy?
+Eidolon AI lets users control their data. Although it’s easy to connect an agent to user data, the user maintains full control. Complying with international data privacy regulations such as GDPR is simple. Eidolon also supports pluggable privacy components allowing users to install the regulatory support they require.
+
+### How does Eidolon support security requirements?
+Our security framework supports any RESTful authentication method. Users can implement the security protocols most appropriate to their needs.
+
+### Can I trust Eidolon? What are the key security and data privacy features?
+Eidolon provides built-in authentication with major identity providers, as well as RBAC control to agents and fine-grained access control on agent conversations. If you need something different, it is easy to extend any of these pluggable components with custom behavior.
+
+Eidolon’s approach to agent design can support anything from simple conversational tools to complex state machines executing business logic.
+
+## Technical Support
+
+### I'm having a technical issue where do I get support?
+If you're experiencing a technical issue, the best place to get support is our Discord channel. Our team and community members are available there to assist you. Just head over to the #general channel, describe your issue, and someone will help you out shortly.
+
+## Resources and Examples
+
+### I have a specific use case in mind, do you have a repository of examples?
+If you have a specific use case in mind, you can explore our repository of examples on our website. Check out the Examples of Agents on Eidolon section on [Eidolon](https://www.eidolon.ai) to find detailed examples that might match your needs.
+
+## General
+
+### How can I help Eidolon?
+Thank you for your generous offer to help. Here are a few ways you can support our vision:
+- **Star Us on GitHub:** This helps increase our visibility and encourages others to check out Eidolon. Your support makes a big difference!
+- **Join the Conversation on Discord:** Our developers would love to hear from you. Join our Discord server to share your feedback, ask questions, or just say hello.

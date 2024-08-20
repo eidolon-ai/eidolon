@@ -47,3 +47,13 @@
 .DocSearch-Button .DocSearch-Search-Icon {
   color: #000;
 }
+
+.DocSearch-Input {
+  background: transparent;
+}
+
+.DocSearch-Input:focus {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
