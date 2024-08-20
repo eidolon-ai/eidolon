@@ -1,4 +1,3 @@
-from jsonref import requests
 from pytest_asyncio import fixture
 
 from eidolon_ai_client.client import Machine
