@@ -1,8 +1,10 @@
 import uuid
+from typing import List
 from unittest.mock import patch
 
 import pytest
 from pytest_asyncio import fixture
+from qdrant_client.http.models import ScoredPoint
 
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.apu.call_context import CallContext
@@ -39,9 +41,20 @@ def with_mocked_mem0_timestamp():
         yield
 
 
+def constantScore(scores: List[ScoredPoint]) -> List[ScoredPoint]:
+    for score in scores:
+        score.score = 1
+    return scores
+
+
 @fixture
 async def user_proc_unit(machine):
     yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS)
+
+
+@fixture
+async def user_proc_unit_const_score(machine):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS, memory_converter=constantScore)
 
 
 @fixture
@@ -102,24 +115,24 @@ def test_memory_update(user_proc_unit: LongTermMemoryUnit):
 
 # test memory deletion
 @pytest.mark.vcr()
-def test_memory_delete(user_proc_unit: LongTermMemoryUnit):
+def test_memory_delete(user_proc_unit_const_score: LongTermMemoryUnit):
     queryText = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
     call_context = CallContext(process_id='test_proc')
-    mem_list = user_proc_unit.storeMessage(call_context, data)
+    mem_list = user_proc_unit_const_score.storeMessage(call_context, data)
     if len(mem_list) > 0:
         mem_id = mem_list[-1]["id"]
-        user_proc_unit.deleteMemory(mem_id)
-        assert user_proc_unit.getMemory(mem_id) is None
+        user_proc_unit_const_score.deleteMemory(mem_id)
+        assert user_proc_unit_const_score.getMemory(mem_id) is None
 
     query1Text = "bicycles have wheels"
     data = UserMessage(content=[UserMessageText(text=query1Text)])
-    mem_id_1 = user_proc_unit.storeMessage(call_context, data)[-1]["id"]
+    mem_id_1 = user_proc_unit_const_score.storeMessage(call_context, data)[-1]["id"]
     query2Text = "the sky is blue"
     data = UserMessage(content=[UserMessageText(text=query2Text)])
-    mem_id_2 = user_proc_unit.storeMessage(call_context, data)[-1]["id"]
-    user_proc_unit.deleteMemoriesForProcess("test_proc")
-    assert user_proc_unit.getMemory(mem_id_1) is None and user_proc_unit.getMemory(mem_id_2) is None
+    mem_id_2 = user_proc_unit_const_score.storeMessage(call_context, data)[-1]["id"]
+    user_proc_unit_const_score.deleteMemoriesForProcess("test_proc")
+    assert user_proc_unit_const_score.getMemory(mem_id_1) is None and user_proc_unit_const_score.getMemory(mem_id_2) is None
 
 
 # test memory search
@@ -135,15 +148,15 @@ def test_memory_search(user_proc_unit: LongTermMemoryUnit):
 
 # test memory history
 @pytest.mark.vcr()
-def test_memory_history(user_proc_unit: LongTermMemoryUnit):
+def test_memory_history(user_proc_unit_const_score: LongTermMemoryUnit):
     queryText = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
     call_context = CallContext(process_id='test_proc')
-    mem_id = user_proc_unit.storeMessage(call_context, data)[-1]['id']
+    mem_id = user_proc_unit_const_score.storeMessage(call_context, data)[-1]['id']
     query2Text = "My name is actually John Kapoor, not John Doe"
     data = UserMessage(content=[UserMessageText(text=query2Text)])
-    user_proc_unit.storeMessage(call_context, data)
-    history = user_proc_unit.getMemoryHistory(mem_id)
+    user_proc_unit_const_score.storeMessage(call_context, data)
+    history = user_proc_unit_const_score.getMemoryHistory(mem_id)
     assert len(history) > 0
 
 
