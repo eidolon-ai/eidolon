@@ -53,7 +53,7 @@ Anyone can use Eidolon, review it, analyze, and contribute to it. Exclusive lice
 
 ## Getting Started
 
-To get started with Eidolon, simply click on [Get Started](https://www.eidolon.ai/get-started). You can join the [Eidolon Discord Server](https://discord.com/invite/eidolon) if you have any questions.
+To get started with Eidolon, simply click on [Get Started](https://www.eidolonai.com/docs/quickstart). You can join the [Eidolon Discord Server](https://discord.com/invite/eidolon) if you have any questions.
 
 ## Features and Functionality
 
@@ -100,7 +100,7 @@ Using Eidolon offers several benefits over directly using the OpenAI library hos
 - **Extensibility:** Eidolon is designed to be flexible and customizable, allowing developers to build complex AI systems more efficiently.
 - **Pre-built Tools:** It offers pre-built agents and React components for easier UI integration.
 
-For more details, visit [Eidolon AI](https://www.eidolon.ai).
+For more details, visit [Eidolon AI](https://www.eidolonai.com/).
 
 ## Security
 
@@ -123,7 +123,7 @@ If you're experiencing a technical issue, the best place to get support is our D
 ## Resources and Examples
 
 ### I have a specific use case in mind, do you have a repository of examples?
-If you have a specific use case in mind, you can explore our repository of examples on our website. Check out the Examples of Agents on Eidolon section on [Eidolon](https://www.eidolon.ai) to find detailed examples that might match your needs.
+If you have a specific use case in mind, you can explore our repository of examples on our website. Check out the Examples of Agents on Eidolon section on [Eidolon](https://www.eidolonai.com/) to find detailed examples that might match your needs.
 
 ## General
 
