@@ -42,8 +42,8 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
 
     def __init__(self, **kwargs):
         super().__init__("game", **kwargs)
-        self.cpu = self.spec.cpu.instantiate()
-        self.cpu.logic_units.append(PlayerLogicUnit(game_master=self, processing_unit_locator=self.cpu, spec={}))
+        self.apu = self.spec.apu.instantiate()
+        self.apu.logic_units.append(PlayerLogicUnit(game_master=self, processing_unit_locator=self.apu, spec={}))
 
     @register_program()
     async def start_game(
@@ -52,7 +52,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         """
         Called to start the game. Initializes the remote agents and starts the first turn.
         """
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         system_prompt = f"{self.spec.system_prompt}\n\nYou are playing the game {game}\n You must always remember the rules of the game and follow them"
         await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
         message = f"Find the rules of {game} and summarize them. Make sure to include all the rules in detail.\n"
@@ -89,7 +89,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         Called to allow the agent to speak
         """
         message = "Play the next turn of the game.\n"
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
         yield AgentStateEvent(state="take_turn")
@@ -101,7 +101,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         """
         Called to allow the agent to speak
         """
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
         yield AgentStateEvent(state="take_turn")
