@@ -55,7 +55,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.env = Environment(undefined=StrictUndefined)
-        self.cpu = self.spec.cpu.instantiate()
+        self.apu = self.spec.apu.instantiate()
         self.system_prompt = self.spec.system_prompt
         if not self.system_prompt:
             self.system_prompt = "You are an agent mimicking a human. You will be given a topic and you should respond to it as if you were a human."
@@ -86,7 +86,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         Called to start the conversation. Will return a new state dictating what the agent wants to do next.
         """
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         await t.set_boot_messages(
             prompts=[
                 SystemAPUMessage(prompt=self.system_prompt),
@@ -104,7 +104,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         Called to record a thought either from another agent or from the coordinator.
         """
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         messages = []
         for thought in thoughts:
             if thought.is_inner_voice:
@@ -114,7 +114,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
                     UserMessage(content=[UserMessageText(text=f"{thought.agent_name} said: {thought.thought}")])
                 )
 
-        await self.cpu.memory_unit.storeMessages(
+        await self.apu.memory_unit.storeMessages(
             call_context=t.call_context(),
             messages=messages,
         )
@@ -130,7 +130,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
 
         prompt = UserTextAPUMessage(prompt=self.env.from_string(self.think_prompt).render())
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[prompt], output_format=AgentThought):
             yield event
         yield AgentStateEvent(state="idle")
@@ -141,7 +141,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         Called to allow the agent to speak
         """
         prompt = UserTextAPUMessage(prompt=self.speak_prompt)
-        t = await self.cpu.main_thread(process_id)
+        t = await self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[prompt], output_format=str):
             yield event
         yield AgentStateEvent(state="idle")
