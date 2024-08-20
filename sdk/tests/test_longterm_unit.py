@@ -10,34 +10,24 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
-from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
+from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit, LongTermMemoryUnitConfig
 from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnitScope
 from eidolon_ai_sdk.security.user import User
 from eidolon_ai_sdk.system.reference_model import Reference
 
-'''
-Need to instantiate LLM unit, then spec out a few different
-memory units for different scopes.
 
-Do similar things as Luke did in test_mem0 except take care
-to test that the scoping works as correctly for each of them
-'''
+class MockUUID:
+    def __init__(self):
+        self.i = 0
 
-
-class _wrapper:
-    i = 0
+    def uuid4(self):
+        self.i += 1
+        return uuid.UUID(f"00000000-0000-0000-0000-{self.i:012d}")
 
 
 @pytest.fixture(autouse=True)
-def with_mocked_mem0_timestamp():
-    _wrapper.i = 0
-
-    def pert_test_iter():
-        _wrapper.i += 1
-        return uuid.UUID(f"00000000-0000-0000-0000-{_wrapper.i:012d}")
-
-    with patch("mem0.memory.main.uuid.uuid4") as mem0uuid:
-        mem0uuid.side_effect = pert_test_iter
+def deterministic_uuids(test_name):
+    with patch("mem0.memory.main.uuid", new=MockUUID()):
         yield
 
 
@@ -48,33 +38,38 @@ def constantScore(scores: List[ScoredPoint]) -> List[ScoredPoint]:
 
 
 @fixture
-async def user_proc_unit(machine):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS)
+def test_spec(test_name):
+    yield LongTermMemoryUnitConfig(collection_name=test_name)
 
 
 @fixture
-async def user_proc_unit_const_score(machine):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS, memory_converter=constantScore)
+async def user_proc_unit(machine, test_spec):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS, spec=test_spec)
 
 
 @fixture
-async def user_agent_unit(machine):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_AGENT)
+async def user_proc_unit_const_score(machine, test_spec):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS, memory_converter=constantScore, spec=test_spec)
 
 
 @fixture
-async def user_unit(machine):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER)
+async def user_agent_unit(machine, test_spec):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_AGENT, spec=test_spec)
 
 
 @fixture
-async def agent_unit(machine):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.AGENT)
+async def user_unit(machine, test_spec):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER, spec=test_spec)
 
 
 @fixture
-async def system_unit(machine):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.SYSTEM)
+async def agent_unit(machine, test_spec):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.AGENT, spec=test_spec)
+
+
+@fixture
+async def system_unit(machine, test_spec):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.SYSTEM, spec=test_spec)
 
 
 @pytest.fixture(scope="function", autouse=True)
