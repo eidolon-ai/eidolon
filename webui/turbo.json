@@ -20,6 +20,10 @@
         "!.next/cache/**"
       ]
     },
+    "watch": {
+      "cache": false,
+      "persistent": true
+    },
     "deploy": {
       // A package's `deploy` script depends on the `build`,
       // `test`, and `lint` scripts of the same package

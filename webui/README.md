@@ -53,12 +53,23 @@ The content are described in the template file.
 You will need to change the defaults if you would like to enable authentication or are running the eidos on
 a port other than 8080.
 
-### Running the Server
+### Running the Server for Development
+
+To build for dev mode, run:
+
+```bash
+turbo run build
+```
+
+Or run a file watcher so that you do not need to rebuild when updating components.
+```bash
+turbo run watch --parallel
+```
 
 To start the development server, run:
 
 ```bash
-pnpm install
+pnpm install  # This is only needed the first time you run the project
 turbo run dev
 ```
 
