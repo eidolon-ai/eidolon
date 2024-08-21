@@ -5,7 +5,7 @@ import * as React from "react";
 import {usePathname, useRouter} from "next/navigation";
 import {ChooseAgentForm, getAppPathFromPath} from "@eidolon-ai/components/client";
 
-export function StartProgramDialog({open, onClose, machineUrl, defaultAgent}: { machineUrl: string, open: boolean, defaultAgent: string | undefined, onClose: (wasCanceled: boolean) => void }) {
+export function StartProgramDialog({open, onClose, machineUrl, defaultAgent}: { machineUrl: string, open: boolean, defaultAgent?: string, onClose: (wasCanceled: boolean) => void }) {
   const router = useRouter()
   const pathname = usePathname()
 
