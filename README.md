@@ -46,7 +46,7 @@ to run (ie, [OpenAI API Key](https://platform.openai.com/api-keys)):
 💭 OPENAI_API_KEY (required):
 ```
 
-Please note that your OPEN_API_KEY must belong to an account with [at least a $5 balance](https://platform.openai.com/docs/guides/rate-limits/tier-1-rate-limits), or you won't be able to run the [GPT-4 Turbo model](https://help.openai.com/en/articles/8555510-gpt-4-turbo-in-the-openai-api) required to run the server.
+Please note that your `OPENAI_API_KEY` must belong to an account with [at least a $5 balance](https://platform.openai.com/docs/guides/rate-limits/tier-1-rate-limits), or you won't be able to run the [GPT-4 Turbo model](https://help.openai.com/en/articles/8555510-gpt-4-turbo-in-the-openai-api) required to run the server.
 
 You'll know this is an issue if you see this output:
 
