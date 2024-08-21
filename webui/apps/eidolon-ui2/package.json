@@ -52,15 +52,16 @@
     "@types/qs": "^6.9.15",
     "clsx": "latest",
     "copy-to-clipboard": "latest",
-    "next": "14.2.3",
-    "next-auth": "beta",
-    "qs": "^6.12.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "sharp": "^0.33.4"
+    "next": "15.0.0-canary.123",
+    "next-auth": "5.0.0-beta.18",
+    "qs": "^6.13.0",
+    "react": "19.0.0-rc-a960b92c-20240819",
+    "react-dom": "19.0.0-rc-a960b92c-20240819",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "@playwright/test": "^1.44.1",
+    "@babel/preset-env": "latest",
+    "@playwright/test": "latest",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@testing-library/user-event": "latest",
@@ -68,12 +69,12 @@
     "@types/react": "latest",
     "babel-jest": "latest",
     "eslint": "8.57.0",
-    "eslint-config-next": "^14.2.3",
+    "eslint-config-next": "^14.2.5",
     "eslint-plugin-testing-library": "latest",
     "jest": "latest",
     "jest-environment-jsdom": "latest",
     "next-router-mock": "latest",
-    "playwright": "^1.44.1",
+    "playwright": "latest",
     "prettier": "latest",
     "typescript": "latest"
   }
