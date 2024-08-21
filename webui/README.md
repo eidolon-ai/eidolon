@@ -63,7 +63,7 @@ turbo run build
 
 Or run a file watcher so that you do not need to rebuild when updating components.
 ```bash
-turbo run watch --parallel
+turbo run watch
 ```
 
 To start the development server, run:
