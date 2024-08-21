@@ -38,38 +38,33 @@ def constantScore(scores: List[ScoredPoint]) -> List[ScoredPoint]:
 
 
 @fixture
-def test_spec(test_name):
-    yield LongTermMemoryUnitConfig(collection_name=test_name)
+async def user_proc_unit(machine, test_name):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=LongTermMemoryUnitConfig(unit_scope=LongTermMemoryUnitScope.USER_PROCESS, collection_name=test_name))
 
 
 @fixture
-async def user_proc_unit(machine, test_spec):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS, spec=test_spec)
+async def user_proc_unit_const_score(machine, test_name):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), memory_converter=constantScore, spec=LongTermMemoryUnitConfig(unit_scope=LongTermMemoryUnitScope.USER_PROCESS, collection_name=test_name))
 
 
 @fixture
-async def user_proc_unit_const_score(machine, test_spec):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_PROCESS, memory_converter=constantScore, spec=test_spec)
+async def user_agent_unit(machine, test_name):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=LongTermMemoryUnitConfig(unit_scope=LongTermMemoryUnitScope.USER_AGENT, collection_name=test_name))
 
 
 @fixture
-async def user_agent_unit(machine, test_spec):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER_AGENT, spec=test_spec)
+async def user_unit(machine, test_name):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=LongTermMemoryUnitConfig(unit_scope=LongTermMemoryUnitScope.USER, collection_name=test_name))
 
 
 @fixture
-async def user_unit(machine, test_spec):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.USER, spec=test_spec)
+async def agent_unit(machine, test_name):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=LongTermMemoryUnitConfig(unit_scope=LongTermMemoryUnitScope.AGENT, collection_name=test_name))
 
 
 @fixture
-async def agent_unit(machine, test_spec):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.AGENT, spec=test_spec)
-
-
-@fixture
-async def system_unit(machine, test_spec):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), LongTermMemoryUnitScope.SYSTEM, spec=test_spec)
+async def system_unit(machine, test_name):
+    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=LongTermMemoryUnitConfig(unit_scope=LongTermMemoryUnitScope.SYSTEM, collection_name=test_name))
 
 
 @pytest.fixture(scope="function", autouse=True)
