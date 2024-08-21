@@ -34,6 +34,29 @@ cd eidolon-quickstart
 make docker-serve
 ```
 
+This command will download the dependencies required to run your agent machine and start the Eidolon http server in
+"dev-mode".
+
+---
+
+The first time you run this command, you may be prompted to enter credentials that the machine needs
+to run (ie, [OpenAI API Key](https://platform.openai.com/api-keys)):
+
+```
+💭 OPENAI_API_KEY (required):
+```
+
+Please note that your OPEN_API_KEY must belong to an account with [at least a $5 balance](https://platform.openai.com/docs/guides/rate-limits/tier-1-rate-limits), or you won't be able to run the [GPT-4 Turbo model](https://help.openai.com/en/articles/8555510-gpt-4-turbo-in-the-openai-api) required to run the server.
+
+You'll know this is an issue if you see this output:
+
+```
+raise self._make_status_error_from_response(err.response) from None
+openai.NotFoundError: Error code: 404 - {'error': {'message': 'The model `gpt-4-turbo` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_found'}}
+```
+
+---
+
 If your AgentMachine successfully started, you should see the following logs in your terminal.
 ```bash
 INFO - Building machine 'local_dev'
