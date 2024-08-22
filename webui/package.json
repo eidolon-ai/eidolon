@@ -7,6 +7,7 @@
   "version": "1.0.57",
   "scripts": {
     "build": "turbo build",
+    "watch": "turbo watch",
     "start": "npm --prefix apps/eidolon-ui2 run start",
     "test": "turbo test",
     "dev": "turbo dev",

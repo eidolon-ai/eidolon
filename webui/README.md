@@ -29,16 +29,6 @@ npm install -g pnpm
 
 Alternatively, you can check the [official PNPM installation guide](https://pnpm.io/installation) for more methods and detailed instructions.
 
-### Installing Turbo Repo
-
-Turbo Repo is a tool that helps you manage multiple repositories. To install it, run the following command in your terminal:
-
-```bash
-pnpm install turbo --global
-```
-
-Alternatively, you can check the [official Turbo Repo installation guide](https://turbo.build/repo) for more methods and detailed instructions.
-
 ### Running Eidolon Machine
 
 You will also need a running Eidolon Machine. For instructions on how to run a machine, see our [quickstart guide](https://www.eidolonai.com/docs/quickstart)
@@ -53,24 +43,25 @@ The content are described in the template file.
 You will need to change the defaults if you would like to enable authentication or are running the eidos on
 a port other than 8080.
 
-### Running the Server for Development
+### Building Components
 
-To build for dev mode, run:
+The webui has several components that need to be built before running the server.
 
+To build them once run:
 ```bash
-turbo run build
+pnpm build
 ```
 
 Or run a file watcher so that you do not need to rebuild when updating components.
 ```bash
-turbo run watch
+pnpm watch
 ```
 
+### Running the Server in Dev Mode
 To start the development server, run:
 
 ```bash
-pnpm install  # This is only needed the first time you run the project
-turbo run dev
+pnpm dev
 ```
 
 This command will start the Eidolon Web UI on a local development server, usually accessible at [http://localhost:3000](http://localhost:3000).
