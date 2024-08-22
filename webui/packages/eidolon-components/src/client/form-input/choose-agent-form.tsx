@@ -9,14 +9,18 @@ export interface ChooseAgentFormProps {
   machineUrl: string,
   // eslint-disable-next-line no-unused-vars
   handleSubmit: (proces_id: string) => void
+  defaultAgent?: string
 }
 
-export function ChooseAgentForm({handleSubmit, machineUrl}: ChooseAgentFormProps) {
-  const [title, setTitle] = useState<string>("")
-  const [agent, setAgent] = useState<string>("")
+export function ChooseAgentForm({handleSubmit, machineUrl, defaultAgent}: ChooseAgentFormProps) {
+  const [title, setTitle] = useState<string>("New Conversation")
+  const [agent, setAgent] = useState<string>(defaultAgent || "")
   const [agents, setAgents] = useState<string[]>([])
 
   const internalHandleSubmit = () => {
+    if (!agent) {
+      throw new Error("Agent is required")
+    }
     createProcess(machineUrl, agent, title).then((process) => {
       handleSubmit(process?.process_id!)
     })
@@ -24,6 +28,9 @@ export function ChooseAgentForm({handleSubmit, machineUrl}: ChooseAgentFormProps
   useEffect(() => {
     getAgents(machineUrl).then((agents) => {
       setAgents(agents)
+      if (agents.length > 0 && !agent && agents[0]) {
+        setAgent(agents[0])
+      }
     }).catch(() => {
       // ignore
     })
