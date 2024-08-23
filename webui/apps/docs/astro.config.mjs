@@ -76,6 +76,7 @@ export default defineConfig({
           items: [
             {label: 'Launch the WebUI', link: '/docs/howto/webui'},
             {label: 'Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Swap out LLMs', link: '/docs/howto/swap_llm'},
             {label: 'Customizing Builtin Components', link: '/docs/howto/customize_builtins'},
             {label: 'Custom Agent Templates', link: '/docs/howto/custom_agents'},
             {label: 'Custom Components', link: '/docs/howto/using_references'},
