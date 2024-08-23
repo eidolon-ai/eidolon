@@ -61,6 +61,14 @@ Then run the server and webui in dev mode, use the following command:
 make docker-serve
 ```
 
+<small>
+⚠️ The first time you run this command, you may be prompted to enter credentials that the machine needs
+to run (ie, OpenAI API Key, Google CSE key, and Google CSE Token). These resources will be saved in the `.env` file in 
+the project root.
+</small>
+
+---
+
 If the server starts successfully, you should see the following output:
 ```
 Starting Server...
