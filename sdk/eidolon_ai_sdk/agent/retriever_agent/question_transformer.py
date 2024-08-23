@@ -24,3 +24,8 @@ class QuestionTransformer(ABC, Specable[QuestionTransformerSpec]):
             :param question:
             :param apu:
         """
+
+
+class NoopQuestionTransformer(QuestionTransformer):
+    async def transform(self, apu: APU, process_id: str, question: str) -> List[str]:
+        return [question]
