@@ -28,7 +28,7 @@
     "docker:down": "docker-compose down",
     "docker:build": "docker-compose build",
     "docker:rebuild": "pnpm run docker:down && pnpm run docker:build && pnpm run docker:up",
-    "test:e2e": "pnpm run docker:rebuild && pnpm exec playwright test && pnpm run docker:down",
+    "test:e2e": "pnpm exec playwright test",
     "playwright:debug": "pnpm exec playwright test --debug",
     "format": "prettier ./ --write",
     "lint": "next lint",

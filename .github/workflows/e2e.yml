@@ -112,7 +112,7 @@ jobs:
         run: docker ps -a
 
       - name: Run Playwright tests
-        run: pnpm exec playwright test --config=playwright.config.js
+        run: pnpm exec playwright test
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Stop Docker containers

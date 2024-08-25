@@ -1,7 +1,5 @@
 # This file is used to run the Eidolon server, a MongoDB database, and the Eidolon UI together in a single command.
 # Run `docker-compose up` in the same directory as this file to start the services.
-version: '3.8'
-
 services:
   mongo:
     image: mongo:latest
