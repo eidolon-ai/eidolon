@@ -1,4 +1,4 @@
-const { defineConfig } = require('@playwright/test');
+const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
     testDir: './tests',
@@ -10,6 +10,12 @@ module.exports = defineConfig({
         baseURL: 'http://localhost:3000',
         screenshot: 'only-on-failure',
     },
+    projects: [
+        {
+          name: 'chromium',
+          use: { ...devices['Desktop Chrome'] },
+        },
+    ],
     webServer: {
         command: 'pnpm docker-compose up',
         cwd: '../../..',
