@@ -6,3 +6,4 @@ Overview of QuestionTransformer components
 ## Builtins
 * [QuestionTransformer](/docs/components/questiontransformer/questiontransformer/)
 * [MultiQuestionTransformer](/docs/components/questiontransformer/multiquestiontransformer/)
+* [NoopQuestionTransformer](/docs/components/questiontransformer/noopquestiontransformer/)
