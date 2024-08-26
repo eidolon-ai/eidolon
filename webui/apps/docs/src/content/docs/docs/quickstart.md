@@ -117,4 +117,3 @@ Now that you have a running agent machine with a simple agent. Let's start custo
 - [ ] [Swap out components](/docs/howto/customize_builtins) (like the underlying llm)
 - [ ] Use [structured inputs](/docs/components/simple_agent#defining-actions) for prompt templating
 - [ ] Leverage your agent's [state machine](/docs/components/simple_agent#defining-actions)
-- [ ] Launch [Eidolon's UI](/docs/howto/webui)
