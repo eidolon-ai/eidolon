@@ -11,6 +11,5 @@ Interface for exporting spans.
     `SimpleSpanProcessor` or a `BatchSpanProcessor`.
 
 ## Builtins
-* [SpanExporter](/docs/components/spanexporter/spanexporter/)
-* [NoopSpanExporter](/docs/components/spanexporter/noopspanexporter/)
+* [NoopSpanExporter](/docs/components/spanexporter/noopspanexporter/) (default)
 * [OTLPSpanExporter](/docs/components/spanexporter/otlpspanexporter/)

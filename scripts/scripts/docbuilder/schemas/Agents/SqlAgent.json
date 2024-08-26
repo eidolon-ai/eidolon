@@ -1,0 +1,57 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "SqlAgent",
+      "description": "SqlAgent"
+    },
+    "client": {
+      "$ref": "file:../SqlClient/overview.json",
+      "default": {
+        "implementation": "SqlClient"
+      }
+    },
+    "apu": {
+      "$ref": "file:../APU/overview.json",
+      "default": {
+        "implementation": "APU"
+      }
+    },
+    "description": {
+      "default": "An agent for interacting with data. Can respond to queries provided in natural language.",
+      "title": "Description",
+      "type": "string"
+    },
+    "system_prompt": {
+      "default": "\n    You are a helpful assistant that is a sql expert and helps a user query a {{ protocol }} database and analyse the response.\n    \n    Here is the database schema:\n    {{ metadata }}\n    \n    Use your as needed tools to investigate the database with the goal of providing the user with the query that they need.\n    \n    Think carefully.\n    ",
+      "title": "System Prompt",
+      "type": "string"
+    },
+    "user_prompt": {
+      "default": "{{ message }}",
+      "title": "User Prompt",
+      "type": "string"
+    },
+    "clarification_prompt": {
+      "default": "What clarifying information do you need? Phrase your response as an explicit question or several questions.",
+      "title": "Clarification Prompt",
+      "type": "string"
+    },
+    "response_prompt": {
+      "default": "What is your response? Be explicit and concise.",
+      "title": "Response Prompt",
+      "type": "string"
+    },
+    "error_prompt": {
+      "default": "An error occurred executing the query \"{{ query }}\": {{ error }}",
+      "title": "Error Prompt",
+      "type": "string"
+    },
+    "num_retries": {
+      "default": 3,
+      "title": "Num Retries",
+      "type": "integer"
+    }
+  },
+  "title": "SqlAgent",
+  "type": "object"
+}

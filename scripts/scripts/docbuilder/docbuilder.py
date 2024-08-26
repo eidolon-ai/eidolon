@@ -1,5 +1,4 @@
 import json
-import json
 import os
 import shutil
 import textwrap
@@ -17,6 +16,7 @@ from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
+from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
 from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory, SymbolicMemory
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
@@ -33,7 +33,7 @@ class Group(BaseModel):
     components: list[tuple[str, type, dict]] = []
     description: str = None
     document_in_sidebar: bool = True
-    root: Optional[tuple[str, type, dict]] = None
+    default: Optional[str] = None
 
     def sort_components(self):
         self.components = sorted(self.components, key=lambda x: x[0])
@@ -51,7 +51,7 @@ class Group(BaseModel):
 
     def get_components(self):
         self.sort_components()
-        return [*([self.root] if self.root else []), *self.components]
+        return self.components
 
 
 components_to_load: list[Group] = [
@@ -62,6 +62,7 @@ components_to_load: list[Group] = [
         ("SimpleAgent", SimpleAgent, {}),
         ("RetrieverAgent", RetrieverAgent, {}),
         ("APIAgent", APIAgent, {}),
+        ("SqlAgent", SqlAgent, {}),
     ]),
     Group(base=APU),
     Group(base=LLMUnit),
@@ -123,6 +124,8 @@ def write_md(read_loc,
         content = ["## Builtins"]
         for name, _, _ in g.get_components():
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
+            if name == g.default:
+                content[-1] += " (default)"
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
     with TemporaryDirectory() as tempdir:
@@ -194,7 +197,9 @@ def generate_groups():
         clz = for_name(pointer, object)
         for group_key, group in groups.items():
             if key == group_key:
-                group.root = (key, clz, overrides)
+                if key == r.spec['implementation']:
+                    group.components.append((key, clz, overrides))
+                group.default = r.spec['implementation']
             elif not isinstance(group.base, str) and group != object and issubclass(clz, group.base):
                 group.components.append((key, clz, overrides))
 

@@ -3,9 +3,6 @@
   "description": "Overview of MemoryUnit components",
   "anyOf": [
     {
-      "$ref": "file:./MemoryUnit.json"
-    },
-    {
       "$ref": "file:./RawMemoryUnit.json"
     }
   ],

@@ -3,9 +3,6 @@
   "description": "Overview of SecurityManager components",
   "anyOf": [
     {
-      "$ref": "file:./SecurityManager.json"
-    },
-    {
       "$ref": "file:./SecurityManagerImpl.json"
     }
   ],
