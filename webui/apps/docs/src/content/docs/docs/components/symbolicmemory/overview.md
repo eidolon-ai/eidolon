@@ -11,6 +11,5 @@ on symbolic data. Implementations of this class are expected to manage collectio
 of symbols, providing a high-level interface to store and retrieve symbolic information.
 
 ## Builtins
-* [SymbolicMemory](/docs/components/symbolicmemory/symbolicmemory/)
 * [LocalSymbolicMemory](/docs/components/symbolicmemory/localsymbolicmemory/)
-* [MongoSymbolicMemory](/docs/components/symbolicmemory/mongosymbolicmemory/)
+* [MongoSymbolicMemory](/docs/components/symbolicmemory/mongosymbolicmemory/) (default)

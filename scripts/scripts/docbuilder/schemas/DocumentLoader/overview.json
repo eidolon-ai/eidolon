@@ -3,9 +3,6 @@
   "description": "Overview of DocumentLoader components",
   "anyOf": [
     {
-      "$ref": "file:./DocumentLoader.json"
-    },
-    {
       "$ref": "file:./AzureLoader.json"
     },
     {

@@ -6,4 +6,5 @@ Overview of Agents components
 ## Builtins
 * [APIAgent](/docs/components/agents/apiagent/)
 * [RetrieverAgent](/docs/components/agents/retrieveragent/)
-* [SimpleAgent](/docs/components/agents/simpleagent/)
+* [SimpleAgent](/docs/components/agents/simpleagent/) (default)
+* [SqlAgent](/docs/components/agents/sqlagent/)
