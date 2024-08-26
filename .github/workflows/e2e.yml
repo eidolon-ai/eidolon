@@ -7,7 +7,7 @@ on:
     paths:
       - '**'
       - '!k8s-operator/**'
-  pull_request:
+  pull_request_target:
     types: [ opened, synchronize ]
     paths:
       - '**'
@@ -68,18 +68,10 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
 
       - name: Install PNPM
         run: npm install -g pnpm
