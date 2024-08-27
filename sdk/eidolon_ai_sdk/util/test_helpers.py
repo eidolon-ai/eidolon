@@ -1,4 +1,5 @@
 import functools
+from contextlib import contextmanager
 
 try:
     from unittest.mock import patch
@@ -9,6 +10,7 @@ from eidolon_ai_sdk.agent.doc_manager.transformer import document_transformer
 from eidolon_ai_sdk.system import agent_controller, process_file_system
 
 
+@contextmanager
 def deterministic_process_ids(id_prefix):
     if patch is None:
         raise ImportError("unittest.mock.patch is required for this helper")
@@ -30,6 +32,7 @@ def deterministic_process_ids(id_prefix):
         yield
 
 
+@contextmanager
 def patched_vcr_aiohttp_url_encoded():
     """
     vcr has a bug around how it handles multipart requests, and it is wired in for everything,
@@ -62,6 +65,7 @@ def patched_vcr_aiohttp_url_encoded():
         yield
 
 
+@contextmanager
 def patched_vcr_object_handling():
     """
     VCR prematurely reads/decodes response body
