@@ -159,7 +159,9 @@ class TestSimpleTests:
         process = await Agent.get("json_output").create_process()
         resp = await process.action("converse", body="What is the population of France?")
         assert "population" in resp.data
-        assert (isinstance(resp.data["population"], int) or isinstance(resp.data["population"], float)) and resp.data["population"] > 0
+        assert (isinstance(resp.data["population"], int) or isinstance(resp.data["population"], float)) and resp.data[
+            "population"
+        ] > 0
 
     async def test_states(self):
         process = await Agent.get("states").create_process()

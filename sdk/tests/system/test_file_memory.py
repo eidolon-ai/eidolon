@@ -19,10 +19,13 @@ def s3_memory(test_name, **kwargs):
 
 
 def azure_memory(test_name, **kwargs):
-    return AzureFileMemory(spec=AzureFileMemorySpec(
-        account_url="https://eidolon.blob.core.windows.net",
-        container="eidolon-test-file-" + test_name.replace("_", "-").replace("[", "").replace("]", ""),
-        create_container_on_startup=True))
+    return AzureFileMemory(
+        spec=AzureFileMemorySpec(
+            account_url="https://eidolon.blob.core.windows.net",
+            container="eidolon-test-file-" + test_name.replace("_", "-").replace("[", "").replace("]", ""),
+            create_container_on_startup=True,
+        )
+    )
 
 
 @pytest.mark.parametrize("memory_", [file_memory, s3_memory, azure_memory])

@@ -27,8 +27,12 @@ class TestLLMUnit(LLMUnit):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
-                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[StreamEvent]:
+    async def execute_llm(
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AsyncIterator[StreamEvent]:
         return self.fn(messages, tools, output_format)
 
 
@@ -149,15 +153,18 @@ async def test_wrap_exe_call_converts_output():
     mess = [UserMessage(content=[UserMessageText(text="123")])]
     tool_response = [ToolCall(tool_call_id="1", name="a", arguments={"x": "y"})]
 
-    async def exec_llm_mock(
-        messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
-    ):
+    async def exec_llm_mock(messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema):
         assert output_schema == ToolCallResponse.model_json_schema()
         yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
 
     unit = make_wrapper("here", exec_llm_mock)
 
-    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters = dict())], mess)]
+    response = [
+        event
+        async for event in unit._wrap_exe_call(
+            exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters=dict())], mess
+        )
+    ]
     assert response == [LLMToolCallRequestEvent(tool_call=tool) for tool in tool_response]
 
 
@@ -175,7 +182,12 @@ async def test_wrap_exe_call_yields_other_events():
 
     unit = make_wrapper("here", exec_llm_mock)
 
-    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters = dict())], mess)]
+    response = [
+        event
+        async for event in unit._wrap_exe_call(
+            exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters=dict())], mess
+        )
+    ]
     assert response == [
         UserInputEvent(input="abc"),
         LLMToolCallRequestEvent(tool_call=tool_response[0]),
@@ -197,7 +209,12 @@ async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
 
     unit = make_wrapper("here", exec_llm_mock)
 
-    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters = dict())], mess)]
+    response = [
+        event
+        async for event in unit._wrap_exe_call(
+            exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters=dict())], mess
+        )
+    ]
     assert response == [UserInputEvent(input="abc"), StringOutputEvent(content=""), UserInputEvent(input="abc")]
 
 

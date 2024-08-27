@@ -10,7 +10,9 @@ from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class SearchParams(BaseModel):
-    term: str = Field(description="The query. Be very explicit and verbose in your question. This is going to a GOOGLE search engine.")
+    term: str = Field(
+        description="The query. Be very explicit and verbose in your question. This is going to a GOOGLE search engine."
+    )
     num_results: int = Field(default=10, description="The number of results to return")
     lang: str = Field(default="en", description="The language to search in")
     dateRestrict: Optional[str] = Field(default=None, description="Restrict the search to a specific date range")
@@ -20,6 +22,7 @@ class WebSearchAgentSpec(SearchSpec):
     """
     The web search agent uses google to search for a term and return the results.
     """
+
     pass
 
 

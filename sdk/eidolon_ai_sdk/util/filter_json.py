@@ -21,7 +21,7 @@ def filter_and_reconstruct_json(original_json, result_filters):
 
             # Extract the values and add them to the filtered item
             for match in matches:
-                path_parts = str(match.full_path).split('.')
+                path_parts = str(match.full_path).split(".")
                 current = filtered_item
 
                 def update_current(parent, path):
@@ -37,7 +37,7 @@ def filter_and_reconstruct_json(original_json, result_filters):
                 current_updater = None
 
                 for part in path_parts[:-1]:
-                    if part.startswith('[') and part.endswith(']'):
+                    if part.startswith("[") and part.endswith("]"):
                         index = int(part[1:-1])
                         if not isinstance(current, list):
                             current = current_updater([])
@@ -50,7 +50,7 @@ def filter_and_reconstruct_json(original_json, result_filters):
                             current[part] = {}
                         current = current[part]
 
-                if path_parts[-1].startswith('[') and path_parts[-1].endswith(']'):
+                if path_parts[-1].startswith("[") and path_parts[-1].endswith("]"):
                     index = int(path_parts[-1][1:-1])
                     if not isinstance(current, list):
                         current = []

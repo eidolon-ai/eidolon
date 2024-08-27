@@ -96,10 +96,9 @@ pdoc = "^14.4.0"
 vcrpy = "^6.0.1"
 watchfiles = "^0.22.0"
 
-[tool.poetry.dependencies.typer]
+[tool.poetry.group.dev.dependencies.typer]
 extras = [ "all",]
 version = "^0.9.0"
-develop = true
 
 [tool.poetry.group.dev.dependencies.eidolon-ai-client]
 path = "../client/python"

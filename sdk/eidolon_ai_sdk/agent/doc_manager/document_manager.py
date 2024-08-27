@@ -89,7 +89,9 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                         tasks.add(asyncio.create_task(self.processor.addFile(self.collection_name, change.file_info)))
                         add_count += 1
                     elif isinstance(change, ModifiedFile):
-                        tasks.add(asyncio.create_task(self.processor.replaceFile(self.collection_name, change.file_info)))
+                        tasks.add(
+                            asyncio.create_task(self.processor.replaceFile(self.collection_name, change.file_info))
+                        )
                         replace_count += 1
                     elif isinstance(change, RemovedFile):
                         tasks.add(asyncio.create_task(self.processor.removeFile(self.collection_name, change.file_path)))

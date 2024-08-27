@@ -23,7 +23,7 @@ class SqlClient(BaseModel):
 
 class MetadataAttribute(BaseModel):
     name: str
-    metadata: List['MetadataAttribute'] | List[str] = []
+    metadata: List["MetadataAttribute"] | List[str] = []
     remove_falsy_metadata: bool = True
 
 
@@ -35,17 +35,32 @@ class SqlAlchemy(SqlClient):
     Performs cursory checks when `select_only` is set to True. Additionally ensure user is restricted to allowed permissions.
     """
 
-    connection_string: str = Field("sqlite+aiosqlite:///:memory:",
-                                   description="SQLAlchemy connection string. See https://docs.sqlalchemy.org/en/20/core/engines.html for more information.")
+    connection_string: str = Field(
+        "sqlite+aiosqlite:///:memory:",
+        description="SQLAlchemy connection string. See https://docs.sqlalchemy.org/en/20/core/engines.html for more information.",
+    )
     engine_kwargs: dict = {}
     select_only: bool = False
-    metadata: List[MetadataAttribute] = [MetadataAttribute(
-        name="tables",
-        atributes=[MetadataAttribute(
-            name="columns",
-            attributes=["name", "type", "nullable", "default", "autoincrement", "primary_key", "foreign_keys",
-                        "constraints"]
-        )])]
+    metadata: List[MetadataAttribute] = [
+        MetadataAttribute(
+            name="tables",
+            atributes=[
+                MetadataAttribute(
+                    name="columns",
+                    attributes=[
+                        "name",
+                        "type",
+                        "nullable",
+                        "default",
+                        "autoincrement",
+                        "primary_key",
+                        "foreign_keys",
+                        "constraints",
+                    ],
+                )
+            ],
+        )
+    ]
     protocol: str = None
 
     @model_validator(mode="after")

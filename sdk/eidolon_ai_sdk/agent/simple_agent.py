@@ -90,7 +90,9 @@ class ActionDefinition(BaseModel):
             required.append("body")
 
         if self.allow_file_upload:
-            properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandleWithInclude.model_json_schema())
+            properties["body"]["properties"]["attached_files"] = dict(
+                type="array", items=FileHandleWithInclude.model_json_schema()
+            )
 
         if agent.spec.apus:
             apu_names = [apu.title for apu in agent.spec.apus]
@@ -124,7 +126,9 @@ class SimpleAgentSpec(BaseModel):
     """
 
     description: Optional[str] = None
-    system_prompt: str = "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task."
+    system_prompt: str = (
+        "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task."
+    )
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
     apu: AnnotatedReference[APU] = None
