@@ -82,10 +82,6 @@ pythonpath = "project"
 extras = [ "asyncio",]
 version = "^2.0.31"
 
-[tool.poetry.dependencies.typer]
-extras = [ "all",]
-version = "^0.9.0"
-
 [tool.poetry.dependencies.boto3-stubs]
 extras = [ "essential",]
 version = "^1.34.74"
@@ -99,6 +95,11 @@ pytest-asyncio = "^0.23.4"
 pdoc = "^14.4.0"
 vcrpy = "^6.0.1"
 watchfiles = "^0.22.0"
+
+[tool.poetry.dependencies.typer]
+extras = [ "all",]
+version = "^0.9.0"
+develop = true
 
 [tool.poetry.group.dev.dependencies.eidolon-ai-client]
 path = "../client/python"
