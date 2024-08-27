@@ -1,11 +1,8 @@
-import functools
 import os
 import pathlib
 import threading
-import urllib.parse
 from contextlib import asynccontextmanager
 from typing import Iterable
-from unittest.mock import patch
 
 import httpx
 import pytest
@@ -15,17 +12,13 @@ from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
-from vcr.stubs import httpx_stubs, aiohttp_stubs
 
-import eidolon_ai_sdk.system.process_file_system as process_file_system
-from eidolon_ai_sdk.agent.doc_manager.transformer import document_transformer
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.bin.server import start_os, start_app
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
-from eidolon_ai_sdk.system import agent_controller
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
@@ -33,6 +26,7 @@ from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.posthog import PosthogConfig
+from eidolon_ai_sdk.util.test_helpers import patched_vcr_aiohttp_url_encoded, patched_vcr_object_handling
 
 PosthogConfig.enabled = False
 
@@ -40,36 +34,14 @@ PosthogConfig.enabled = False
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "run_app" in i.fixturenames, items):
-        item.fixturenames.append("patched_vcr_object_handling")
+        item.fixturenames.append("patched_vcr")
         item.fixturenames.append("deterministic_process_ids")
         item.add_marker(pytest.mark.vcr)
 
 
-@pytest.fixture(scope="module", autouse=True)
-def patched_vcr_aiohttp_url_encoded():
-    """
-    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
-    even the fake test client requests, so we need to pipe the body through ourselves
-    """
-
-    original = aiohttp_stubs.vcr_request
-
-    def my_custom_function(cassette, real_request):
-        fn = original(cassette, real_request)
-
-        @functools.wraps(real_request)
-        async def new_request(self, method, url, **kwargs):
-            data = kwargs.get("data")
-            if "Content-Type" in kwargs.get("headers", {}):
-                if "application/x-www-form-urlencoded" in kwargs["headers"]["Content-Type"] and isinstance(data, dict):
-                    # url encode the data
-                    kwargs["data"] = urllib.parse.urlencode(data)
-
-            return await fn(self, method, url, **kwargs)
-
-        return new_request
-
-    with patch.object(aiohttp_stubs, "vcr_request", new=my_custom_function):
+@pytest.fixture()
+def patched_vcr():
+    with patched_vcr_aiohttp_url_encoded(), patched_vcr_object_handling():
         yield
 
 
@@ -95,12 +67,7 @@ def app_builder(machine_manager):
 
 @pytest.fixture(scope="module")
 def port():
-    # fixing the port. Do we need to be so cool to have a random port?
     return 5346
-    # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    #     s.bind(("", 0))
-    #     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    #     return s.getsockname()[1]
 
 
 @pytest.fixture(autouse=True)
@@ -337,29 +304,6 @@ def cat(test_dir):
         yield f
 
 
-@pytest.fixture
-def patched_vcr_object_handling():
-    """
-    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
-    even the fake test client requests, so we need to pipe the body through ourselves
-    """
-
-    def my_custom_function(httpx_request, **kwargs):
-        uri = str(httpx_request.url)
-        headers = dict(httpx_request.headers)
-        return VcrRequest(httpx_request.method, uri, httpx_request, headers)
-
-    with patch.object(httpx_stubs, "_make_vcr_request", new=my_custom_function):
-        yield
-
-
-def deterministic_id_generator(test_name):
-    count = 0
-    while True:
-        yield f"{test_name}_{count}"
-        count += 1
-
-
 @pytest.fixture()
 def test_name(request):
     return request.node.name
@@ -367,24 +311,5 @@ def test_name(request):
 
 @pytest.fixture()
 def deterministic_process_ids(test_name):
-    """
-    Tool call responses contain the process id, which means it does name make cache hits for vcr.
-    This method patches object id for processes so that it returns a deterministic id based on the test name.
-    """
-
-    pid_generator = deterministic_id_generator(test_name)
-    fid_generator = deterministic_id_generator(test_name + "_file")
-
-    def patched_pid(*args, **kwargs):
-        return next(pid_generator)
-
-    def patched_fid(*args, **kwargs):
-        return next(fid_generator)
-
-    def patched_did(*args, **kwargs):
-        return next(fid_generator)
-
-    with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(
-        process_file_system, "ObjectId", new=patched_fid
-    ), patch.object(document_transformer, "ObjectId", new=patched_did):
+    with deterministic_process_ids(test_name):
         yield
