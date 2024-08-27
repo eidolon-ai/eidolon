@@ -53,7 +53,7 @@ A secret with the needed credentials for your Eidolon deployment. The name of th
 
 See the [Eidolon documentation](https://www.eidolonai.com) for more information on what keys you need. 
 However, typically this will be a secret with the following keys:
-- `OLLAMA_URL` - the URL for your Ollama deployment if you are using ollama.
+- `OLLAMA_HOST` - the URL for your Ollama deployment if you are using ollama.
 - `OPENAI_API_KEY` - your OpenAI API key if you are using OpenAI.
 - `MISTRAL_API_KEY` - your Mistral API key if you are using Mistral.
 - `ANTHROPIC_API_KEY` - your Anthropic API key if you are using Anthropic.
