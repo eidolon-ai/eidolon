@@ -26,7 +26,8 @@ from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.posthog import PosthogConfig
-from eidolon_ai_sdk.util.test_helpers import patched_vcr_aiohttp_url_encoded, patched_vcr_object_handling
+from eidolon_ai_sdk.util.test_helpers import patched_vcr_aiohttp_url_encoded, patched_vcr_object_handling, \
+    deterministic_ids
 
 PosthogConfig.enabled = False
 
@@ -35,7 +36,7 @@ PosthogConfig.enabled = False
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "run_app" in i.fixturenames, items):
         item.fixturenames.append("patched_vcr")
-        item.fixturenames.append("deterministic_process_ids")
+        item.fixturenames.append("deterministic_eidolon_ids")
         item.add_marker(pytest.mark.vcr)
 
 
@@ -310,6 +311,6 @@ def test_name(request):
 
 
 @pytest.fixture()
-def deterministic_process_ids(test_name):
-    with deterministic_process_ids(test_name):
+def deterministic_eidolon_ids(test_name):
+    with deterministic_ids(test_name):
         yield

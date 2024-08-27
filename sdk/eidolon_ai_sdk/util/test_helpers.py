@@ -11,7 +11,7 @@ from eidolon_ai_sdk.system import agent_controller, process_file_system
 
 
 @contextmanager
-def deterministic_process_ids(id_prefix):
+def deterministic_ids(id_prefix):
     if patch is None:
         raise ImportError("unittest.mock.patch is required for this helper")
 
