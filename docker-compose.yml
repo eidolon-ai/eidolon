@@ -34,6 +34,12 @@ services:
     build:
       context: ./webui
       dockerfile: Dockerfile
+    develop:
+      watch:
+        - path: ./webui
+          ignore:
+            - ./webui/**/tests/**
+          action: rebuild
     environment:
       - NEXTAUTH_URL=http://localhost:3000/api/auth
       - AUTH_TRUST_HOST=http://localhost:3000
