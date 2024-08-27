@@ -3,8 +3,7 @@ from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Opt
 
 from pydantic import BaseModel, Field
 
-from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, \
-    LLMToolCallRequestEvent
+from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
@@ -31,6 +30,7 @@ class ToolCallResponse(BaseModel):
     """
     Response
     """
+
     tools: Optional[List[ToolCall]] = Field(default=[], description="The tools that are available.")
     notes: str = Field(default="", description="Any notes or explanations.")
 
@@ -56,8 +56,12 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         )
         self.model = ModelWrapper(base_model=self.llm_unit.model)
 
-    def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
-                    output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[StreamEvent]:
+    def execute_llm(
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AsyncIterator[StreamEvent]:
         messages = self._add_tools(messages, tools)
         return self._wrap_exe_call(self.llm_unit.execute_llm, tools, messages)
 
@@ -77,7 +81,10 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                 )
 
             prompt = (
-                "You have access to the following tools:\n" + "\n".join(tool_schema) + "\n" + self.spec.tool_message_prompt
+                "You have access to the following tools:\n"
+                + "\n".join(tool_schema)
+                + "\n"
+                + self.spec.tool_message_prompt
             )
             messages = messages + [UserMessage(content=[UserMessageText(text=prompt)])]
 

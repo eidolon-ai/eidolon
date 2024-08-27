@@ -19,7 +19,9 @@ def _get_default_token_provider():
 
 class AzureFileMemorySpec(BaseModel):
     azure_ad_token_provider: Optional[Reference] = Field(default_factory=_get_default_token_provider)
-    account_url: str = Field(description="The URL of the Azure storage account of the form https://<OAUTH_STORAGE_ACCOUNT_NAME>.blob.core.windows.net.")
+    account_url: str = Field(
+        description="The URL of the Azure storage account of the form https://<OAUTH_STORAGE_ACCOUNT_NAME>.blob.core.windows.net."
+    )
     container: str = Field(description="The name of the container to use.")
     create_container_on_startup: bool = Field(
         default=False, description="If true, the container will be created on startup if not already present."

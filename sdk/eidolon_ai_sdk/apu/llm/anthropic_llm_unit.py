@@ -6,7 +6,14 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 
 import yaml
 from PIL import Image
-from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError, TextEvent, ContentBlockStopEvent
+from anthropic import (
+    AsyncAnthropic,
+    APIConnectionError,
+    RateLimitError,
+    APIStatusError,
+    TextEvent,
+    ContentBlockStopEvent,
+)
 from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
 from anthropic.types.image_block_param import Source
 from fastapi import HTTPException
@@ -14,7 +21,8 @@ from fastapi import HTTPException
 from eidolon_ai_client.events import (
     StringOutputEvent,
     ObjectOutputEvent,
-    ToolCall, LLMToolCallRequestEvent,
+    ToolCall,
+    LLMToolCallRequestEvent,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -92,7 +100,11 @@ async def convert_to_llm(message: LLMMessage):
                     data = scale_image(data)
                     # base64 encode the data
                     base64_image = base64.b64encode(data).decode("utf-8")
-                    content.append(ImageBlockParam(source=Source(data = base64_image, media_type="image/png", type="base64" ), type="image"))
+                    content.append(
+                        ImageBlockParam(
+                            source=Source(data=base64_image, media_type="image/png", type="base64"), type="image"
+                        )
+                    )
         else:
             content = [TextBlockParam(type="text", text=content)]
 
@@ -101,18 +113,20 @@ async def convert_to_llm(message: LLMMessage):
         content = [TextBlockParam(type="text", text=message.content)]
         if message.tool_calls and len(message.tool_calls) > 0:
             for tool_call in message.tool_calls:
-                content.append(ToolUseBlockParam(type="tool_use", id=tool_call.tool_call_id, name=tool_call.name, input=tool_call.arguments))
+                content.append(
+                    ToolUseBlockParam(
+                        type="tool_use", id=tool_call.tool_call_id, name=tool_call.name, input=tool_call.arguments
+                    )
+                )
         return {"role": "assistant", "content": content}
     elif isinstance(message, ToolResponseMessage):
         # tool_call_id, content
         data = json.dumps(message.result)
         content = [TextBlockParam(type="text", text=data)]
-        return {"role": "user", "content": [{
-            "type": "tool_result",
-            "tool_use_id": message.tool_call_id,
-            "content": content
+        return {
+            "role": "user",
+            "content": [{"type": "tool_result", "tool_use_id": message.tool_call_id, "content": content}],
         }
-        ]}
     else:
         raise ValueError(f"Unknown message type {message.type}")
 
@@ -137,8 +151,12 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
 
         self.temperature = self.spec.temperature
 
-    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
-                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[AssistantMessage]:
+    async def execute_llm(
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing open ai llm request", extra=request)
@@ -152,7 +170,11 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
                 message = cast(MessageStreamEvent, in_message)
 
                 if isinstance(message, ContentBlockStopEvent) and isinstance(message.content_block, ToolUseBlock):
-                    tc = ToolCall(tool_call_id=message.content_block.id, name=message.content_block.name, arguments=message.content_block.input)
+                    tc = ToolCall(
+                        tool_call_id=message.content_block.id,
+                        name=message.content_block.name,
+                        arguments=message.content_block.input,
+                    )
                     tools_to_call.append(tc)
                 elif isinstance(message, TextEvent):
                     content = message.text
@@ -170,7 +192,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             if not can_stream_message:
                 logger.debug(f"anthropic llm object response: {complete_message}", extra=dict(content=complete_message))
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)

@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument(
         "yaml_path",
         type=str,
-        nargs='+',
+        nargs="+",
         help="Path to a directory containing YAML files describing the agent machine to start.",
     )
     parser.add_argument(
@@ -97,11 +97,7 @@ def main():
         kwargs["reload_includes"] = ["*.yml", "*.yaml", "*.py"]
 
     uvicorn.run(
-        "eidolon_ai_sdk.bin.agent_http_server:app",
-        host="0.0.0.0",
-        port=args.port,
-        log_level=log_level_str,
-        **kwargs
+        "eidolon_ai_sdk.bin.agent_http_server:app", host="0.0.0.0", port=args.port, log_level=log_level_str, **kwargs
     )
 
 

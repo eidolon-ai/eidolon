@@ -12,7 +12,9 @@ class Operation(BaseModel):
     description: Optional[str] = Field(default=None, description="Description of the operation")
     path: str = Field(description="Path of the operation. Must match exactly including path parameters")
     method: str = Field(description="HTTP method of the operation.  get and post are supported")
-    result_filters: Optional[List[str]] = Field(default=None, description="Filters to apply to the result of the operation per json ref spec")
+    result_filters: Optional[List[str]] = Field(
+        default=None, description="Filters to apply to the result of the operation per json ref spec"
+    )
 
     def matches(self, path: str) -> bool:
         return self.path == path
@@ -30,8 +32,7 @@ class Action(BaseModel):
     tool_call: Callable[..., Any]
 
 
-def build_actions(operations_to_expose: List[Operation], schema: dict, title: str,
-                  call_fn: callable):
+def build_actions(operations_to_expose: List[Operation], schema: dict, title: str, call_fn: callable):
     schema = replace_refs(schema)
     actions = []
     for op_path, op in schema["paths"].items():
@@ -70,14 +71,18 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                             params["__body__"] = _body_model(method, name)
                             required.append("__body__")
                         description = operation.description or _description(method, name)
-                        actions.append(Action(
-                            title=title,
-                            sub_title=method.get("summary", name),
-                            name=name,
-                            action_schema=dict(type="object", properties=params, required=required),
-                            description=description,
-                            tool_call=_call_endpoint(operation.path, operation.result_filters, method_name, methodParams, call_fn)
-                        ))
+                        actions.append(
+                            Action(
+                                title=title,
+                                sub_title=method.get("summary", name),
+                                name=name,
+                                action_schema=dict(type="object", properties=params, required=required),
+                                description=description,
+                                tool_call=_call_endpoint(
+                                    operation.path, operation.result_filters, method_name, methodParams, call_fn
+                                ),
+                            )
+                        )
     return actions
 
 
@@ -121,8 +126,7 @@ def _convert_runtime_value(query_params: List[Tuple[str, Any]], param: dict, val
         query_params.append((param["name"], str(value)))
 
 
-def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, _method_params,
-                   call_fn: callable):
+def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, _method_params, call_fn: callable):
     method_params = _method_params.copy() if _method_params else None
     result_filters = result_filters.copy() if result_filters else None
 

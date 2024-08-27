@@ -27,9 +27,7 @@ class TracedThreadPoolExecutor(ThreadPoolExecutor):
         context = otel_context.get_current()
         if context:
             return super().submit(
-                lambda: self.with_otel_context(
-                    context, lambda: fn(*args, **kwargs)
-                ),
+                lambda: self.with_otel_context(context, lambda: fn(*args, **kwargs)),
             )
         else:
             return super().submit(lambda: fn(*args, **kwargs))

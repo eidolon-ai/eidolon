@@ -85,21 +85,21 @@ class Reference(BaseModel):
 
             @classmethod
             def __get_pydantic_json_schema__(
-                    cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
+                cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
             ) -> JsonSchemaValue:
                 json_schema = handler(core_schema)
                 json_schema = handler.resolve_ref_schema(json_schema)
                 json_schema["title"] = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
-                json_schema['properties']['implementation']['default'] = params[1]
-                json_schema['reference_pointer'] = {
-                    'type': params[0] if isinstance(params[0], str) else params[0].__name__,
-                    'default_impl': params[1],
+                json_schema["properties"]["implementation"]["default"] = params[1]
+                json_schema["reference_pointer"] = {
+                    "type": params[0] if isinstance(params[0], str) else params[0].__name__,
+                    "default_impl": params[1],
                 }
                 return json_schema
 
             @classmethod
             def _transformed_impl(cls):
-                impl = cls._transform({})['implementation']
+                impl = cls._transform({})["implementation"]
                 if "." in impl:
                     impl = impl.split(".")[-1]
                 return impl
@@ -143,6 +143,7 @@ class Reference(BaseModel):
     @classmethod
     def _expand(cls, impl, extra):
         from eidolon_ai_sdk.system.kernel import AgentOSKernel
+
         ref = AgentOSKernel.get_resource(ReferenceResource, impl, default=None)
         if not ref:
             return impl, extra
