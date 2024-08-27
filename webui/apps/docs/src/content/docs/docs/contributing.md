@@ -77,9 +77,12 @@ possible for all operating systems, but if you run into any issues, please let u
 First, let's make sure we have everything we need to get started.
 ### Prerequisites (macOS)
 
-##### Ensure Python3.11 is installed
+##### Ensure Python3.11 and pipx is installed
 ```bash
 brew install python@3.11
+
+# see https://pipx.pypa.io/
+brew install pipx
 ```
 
 ##### [Python Poetry](https://python-poetry.org/docs/ "Official poetry installation guide")
@@ -146,6 +149,7 @@ echo "MONGO_CONNECTION_STR=mongodb://localhost:27017/?directConnection=true" >> 
 echo "MONGO_DATABASE_NAME=eidolon" >> .env
 echo "MISTRAL_API_KEY=<YOUR MISTRAL_API_KEY>" >> .env
 echo "ANTHROPIC_API_KEY=<YOUR ANTHROPIC_API_KEY>" >> .env
+echo "OLLAMA_HOST=<YOUR URL TO OLLAMA LOCAL INSTALLATION>"
 ```
 
 There is also a .env.example file changed in that you can clone.
@@ -164,6 +168,7 @@ Each of these need a separate poetry environment. See [the poetry document](http
 ```bash
 cd examples
 poetry shell
+poetry install
 poetry run eidolon-server eidolon_examples/conversational_chatbot/resources
 ```
 
