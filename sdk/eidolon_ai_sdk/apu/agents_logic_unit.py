@@ -61,7 +61,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return copy.deepcopy(self._machine_schemas[machine])
 
     async def build_action_tool(
-            self, machine: str, agent: str, action: str, allowed_pids: Set[str], call_context: CallContext
+        self, machine: str, agent: str, action: str, allowed_pids: Set[str], call_context: CallContext
     ):
         agent_client = Agent.get(agent)
         path = f"/processes/{{process_id}}/agent/{agent}/actions/{action}"
@@ -140,7 +140,9 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         body = endpoint_schema.get("requestBody")
         if not body:
             return dict, dict(type="object", properties={})
-        elif "text/plain" in body["content"] or ("application/json" in body["content"] and body["content"]["application/json"]["schema"]['type'] == 'string'):
+        elif "text/plain" in body["content"] or (
+            "application/json" in body["content"] and body["content"]["application/json"]["schema"]["type"] == "string"
+        ):
             return str, dict(type="object", properties=dict(body=dict(type="string")))
         elif "application/json" in body["content"]:
             return dict, body["content"]["application/json"]["schema"]

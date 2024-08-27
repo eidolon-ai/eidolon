@@ -131,8 +131,12 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
 
-    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
-                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[AssistantMessage]:
+    async def execute_llm(
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing mistral llm request", extra=request)
@@ -155,7 +159,9 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 )
 
                 for tool_call in message.tool_calls or []:
-                    tools_to_call.append(dict(id=tool_call.id, name=tool_call.function.name, arguments=tool_call.function.arguments))
+                    tools_to_call.append(
+                        dict(id=tool_call.id, name=tool_call.function.name, arguments=tool_call.function.arguments)
+                    )
 
                 if message.content:
                     if can_stream_message:

@@ -5,7 +5,6 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 
-
 @fixture(scope="module", autouse=True)
 async def server(run_app):
     resources = [
@@ -13,12 +12,12 @@ async def server(run_app):
             apiVersion="eidolon/v1",
             kind="Agent",
             metadata=Metadata(name="default"),
-            spec=dict(implementation=SimpleAgent.__name__,
-                      apu="Llamma3-8b"),
+            spec=dict(implementation=SimpleAgent.__name__, apu="Llamma3-8b"),
         )
     ]
     async with run_app(*resources) as ra:
         yield ra
+
 
 async def test_llama3(server):
     process = await Agent.get("default").create_process()

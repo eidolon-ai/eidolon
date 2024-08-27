@@ -9,12 +9,15 @@ from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.mem0 import EidolonMem0
 from eidolon_ai_sdk.system.reference_model import Reference
 
+
 class _wrapper:
     i = 0
+
 
 @pytest.fixture(autouse=True)
 def with_mocked_mem0_timestamp():
     _wrapper.i = 0
+
     def pert_test_iter():
         _wrapper.i += 1
         return uuid.UUID(f"00000000-0000-0000-0000-{_wrapper.i:012d}")
@@ -33,7 +36,7 @@ async def memory_store(test_name, machine):
 def test_create_memory(memory_store: Memory):
     data = "Name is John Doe."
     memory_id = memory_store.add(data=data)[-1]["id"]
-    assert memory_store.get(memory_id)['text'] == data
+    assert memory_store.get(memory_id)["text"] == data
 
 
 @pytest.mark.vcr()
@@ -41,7 +44,7 @@ def test_get_memory(memory_store):
     data = "Name is John Doe."
     memory_id = memory_store.add(data=data)[-1]["id"]
     retrieved_data = memory_store.get(memory_id)
-    assert retrieved_data['text'] == data
+    assert retrieved_data["text"] == data
 
 
 @pytest.mark.vcr()
@@ -51,8 +54,8 @@ def test_update_memory(memory_store):
     new_data = "Name is John Kapoor."
     memory_store.update(memory_id, new_data)
     updated_memory = memory_store.get(memory_id)
-    assert updated_memory['text'] == new_data
-    assert memory_store.get(memory_id)['text'] == new_data
+    assert updated_memory["text"] == new_data
+    assert memory_store.get(memory_id)["text"] == new_data
 
 
 @pytest.mark.vcr()
@@ -69,13 +72,13 @@ def test_history(memory_store):
     memory_id = memory_store.add(data=data)[-1]["id"]
     history = memory_store.history(memory_id)
     assert [h["new_value"] for h in history] == ["Prefers Indian food"]
-    assert memory_store.get(memory_id)['text'] == "Prefers Indian food"
+    assert memory_store.get(memory_id)["text"] == "Prefers Indian food"
 
     new_data = "I like italian food."
     memory_store.update(memory_id, new_data)
     history = memory_store.history(memory_id)
     assert [h["new_value"] for h in history] == ["Prefers Indian food", new_data]
-    assert memory_store.get(memory_id)['text'] == new_data
+    assert memory_store.get(memory_id)["text"] == new_data
 
 
 # @pytest.mark.skip("todo")

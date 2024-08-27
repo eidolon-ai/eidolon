@@ -27,7 +27,6 @@ src="https://www.youtube.com/embed/8GOsbX8Hs50">
 
 ## Core Concepts
 ###### [Customizing the AgentProcessingUnit](/docs/howto/customize_builtins)
-###### [Running the UI](/docs/howto/webui)
 
 ## Agents
 ### [Conversational Agent](https://github.com/eidolon-ai/eidolon-chatbot/blob/main/resources/conversational_agent.yaml)
@@ -60,12 +59,7 @@ First let's fork for Eidolon's chatbot repository, clone it to your local machin
 ```bash
 git clone https://github.com/eidolon-ai/eidolon-chatbot.git
 cd eidolon-chatbot
-make serve-dev
-```
-
-Next let's run the ui locally.
-```bash
-docker run -e "EIDOLON_SERVER=http://host.docker.internal:8080" -p 3000:3000 eidolonai/webui:latest
+make docker-serve  # launches agent server and webui
 ```
 
 Now Head over to the [chatbot ui](http://localhost:3000/eidolon-apps/sp/chatbot) in your favorite browser and start chatting with your new agent.

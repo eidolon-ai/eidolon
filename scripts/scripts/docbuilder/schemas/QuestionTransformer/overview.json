@@ -3,10 +3,10 @@
   "description": "Overview of QuestionTransformer components",
   "anyOf": [
     {
-      "$ref": "file:./QuestionTransformer.json"
+      "$ref": "file:./MultiQuestionTransformer.json"
     },
     {
-      "$ref": "file:./MultiQuestionTransformer.json"
+      "$ref": "file:./NoopQuestionTransformer.json"
     }
   ],
   "reference_group": {

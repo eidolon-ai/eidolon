@@ -3,9 +3,6 @@
   "description": "Overview of Sampler components",
   "anyOf": [
     {
-      "$ref": "file:./Sampler.json"
-    },
-    {
       "$ref": "file:./CustomSampler.json"
     }
   ],

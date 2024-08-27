@@ -34,10 +34,13 @@ class S3FileMemory(BaseModel, FileMemoryBase):
 
     def client(self):
         if not self._client:
-            session = boto3.Session(region_name=self.region_name,
-                                    aws_access_key_id=self.aws_access_key_id,
-                                    aws_secret_access_key=self.aws_secret_access_key,
-                                    aws_session_token=self.aws_session_token, **self.session_args)
+            session = boto3.Session(
+                region_name=self.region_name,
+                aws_access_key_id=self.aws_access_key_id,
+                aws_secret_access_key=self.aws_secret_access_key,
+                aws_session_token=self.aws_session_token,
+                **self.session_args,
+            )
             self._client = session.resource("s3").Bucket(self.bucket)
         return self._client
 

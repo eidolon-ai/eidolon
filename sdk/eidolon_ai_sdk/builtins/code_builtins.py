@@ -29,7 +29,7 @@ from eidolon_ai_sdk.agent.generic_agent import GenericAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.document_retriever import SimilarityMemoryRetriever, DocumentRetriever
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
-from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer
+from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformer, NoopQuestionTransformer
 from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
@@ -207,6 +207,7 @@ def named_builtins() -> List[ReferenceResource]:
         ProposePromptStrategy,
         (QuestionTransformer, MultiQuestionTransformer),
         MultiQuestionTransformer,
+        NoopQuestionTransformer,
         (DocumentReranker, RAGFusionReranker),
         RAGFusionReranker,
         (DocumentRetriever, SimilarityMemoryRetriever),

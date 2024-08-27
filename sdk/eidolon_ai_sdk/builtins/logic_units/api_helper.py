@@ -37,7 +37,7 @@ def _render_template_from_env(template_string):
 def build_call(extra_header_params, extra_query_params, root_call_url):
     async def do_call(path_to_call, method, query_params, headers, body):
         nonlocal extra_header_params, extra_query_params, root_call_url
-        path_to_call = path_to_call.lstrip('/')
+        path_to_call = path_to_call.lstrip("/")
         headers = headers or {}
         headers["Content-Type"] = "application/json"
 

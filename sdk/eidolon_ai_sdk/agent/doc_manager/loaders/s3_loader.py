@@ -28,13 +28,15 @@ class S3Loader(DocumentLoader, Specable[S3LoaderSpec]):
 
     def __init__(self, **kwargs: object):
         super().__init__(**kwargs)
-        self.loader = WrappedMemoryLoader(spec=WrappedMemoryLoaderSpec(
-            memory=dict(
-                implementation=fqn(S3FileMemory),
-                **self.spec.model_dump(),
-            ),
-            pattern=self.spec.pattern,
-        ))
+        self.loader = WrappedMemoryLoader(
+            spec=WrappedMemoryLoaderSpec(
+                memory=dict(
+                    implementation=fqn(S3FileMemory),
+                    **self.spec.model_dump(),
+                ),
+                pattern=self.spec.pattern,
+            )
+        )
 
     def get_changes(self, *args, **kwargs):
         return self.loader.get_changes(*args, **kwargs)

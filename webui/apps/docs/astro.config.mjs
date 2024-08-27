@@ -74,8 +74,8 @@ export default defineConfig({
         {
           label: 'How To',
           items: [
-            {label: 'Launch the WebUI', link: '/docs/howto/webui'},
             {label: 'Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Swap out LLMs', link: '/docs/howto/swap_llm'},
             {label: 'Customizing Builtin Components', link: '/docs/howto/customize_builtins'},
             {label: 'Custom Agent Templates', link: '/docs/howto/custom_agents'},
             {label: 'Custom Components', link: '/docs/howto/using_references'},
@@ -101,7 +101,6 @@ export default defineConfig({
             {
               label: 'SymbolicMemory', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/symbolicmemory/overview'},
-                {label: 'SymbolicMemory', link: '/docs/components/symbolicmemory/symbolicmemory'},
                 {label: 'LocalSymbolicMemory', link: '/docs/components/symbolicmemory/localsymbolicmemory'},
                 {label: 'MongoSymbolicMemory', link: '/docs/components/symbolicmemory/mongosymbolicmemory'},
               ]
@@ -109,7 +108,6 @@ export default defineConfig({
             {
               label: 'SimilarityMemory', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/similaritymemory/overview'},
-                {label: 'SimilarityMemory', link: '/docs/components/similaritymemory/similaritymemory'},
                 {label: 'SimilarityMemoryImpl', link: '/docs/components/similaritymemory/similaritymemoryimpl'},
               ]
             },
@@ -128,12 +126,12 @@ export default defineConfig({
                 {label: 'APIAgent', link: '/docs/components/agents/apiagent'},
                 {label: 'RetrieverAgent', link: '/docs/components/agents/retrieveragent'},
                 {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent'},
+                {label: 'SqlAgent', link: '/docs/components/agents/sqlagent'},
               ]
             },
             {
               label: 'APU', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/apu/overview'},
-                {label: 'APU', link: '/docs/components/apu/apu'},
                 {label: 'ClaudeHaiku', link: '/docs/components/apu/claudehaiku'},
                 {label: 'ClaudeOpus', link: '/docs/components/apu/claudeopus'},
                 {label: 'ClaudeSonnet', link: '/docs/components/apu/claudesonnet'},
@@ -150,7 +148,6 @@ export default defineConfig({
             {
               label: 'LLMUnit', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmunit/overview'},
-                {label: 'LLMUnit', link: '/docs/components/llmunit/llmunit'},
                 {label: 'AnthropicLLMUnit', link: '/docs/components/llmunit/anthropicllmunit'},
                 {label: 'MistralGPT', link: '/docs/components/llmunit/mistralgpt'},
                 {label: 'OllamaLLMUnit', link: '/docs/components/llmunit/ollamallmunit'},
@@ -161,7 +158,6 @@ export default defineConfig({
             {
               label: 'LLMModel', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmmodel/overview'},
-                {label: 'LLMModel', link: '/docs/components/llmmodel/llmmodel'},
                 {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307'},
                 {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229'},
                 {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229'},
@@ -189,13 +185,11 @@ export default defineConfig({
             {
               label: 'DocumentManager', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/documentmanager/overview'},
-                {label: 'DocumentManager', link: '/docs/components/documentmanager/documentmanager'},
               ]
             },
             {
               label: 'DocumentLoader', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/documentloader/overview'},
-                {label: 'DocumentLoader', link: '/docs/components/documentloader/documentloader'},
                 {label: 'AzureLoader', link: '/docs/components/documentloader/azureloader'},
                 {label: 'FilesystemLoader', link: '/docs/components/documentloader/filesystemloader'},
                 {label: 'GitHubLoader', link: '/docs/components/documentloader/githubloader'},

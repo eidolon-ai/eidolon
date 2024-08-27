@@ -3,9 +3,6 @@
   "description": "Overview of DocumentRetriever components",
   "anyOf": [
     {
-      "$ref": "file:./DocumentRetriever.json"
-    },
-    {
       "$ref": "file:./SimilarityMemoryRetriever.json"
     }
   ],

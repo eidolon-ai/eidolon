@@ -35,7 +35,7 @@ make docker-serve
 ```
 
 This command will download the dependencies required to run your agent machine and start the Eidolon http server in
-"dev-mode".
+"dev-mode". It will also start the Eidolon webui, which you can access at [http://localhost:3000](http://localhost:3000).
 
 ---
 
@@ -85,7 +85,6 @@ Now that you have a running agent machine with a simple agent. Let's start custo
 - [ ] [Swap out components](https://www.eidolonai.com/docs/howto/customize_builtins) (like the underlying llm)
 - [ ] Use [structured inputs](https://www.eidolonai.com/docs/components/agents/simpleagent#actions) for prompt templating
 - [ ] Leverage your agent's [state machine](https://www.eidolonai.com/docs/components/agents/simpleagent#actions)
-- [ ] Launch [Eidolon's UI](https://www.eidolonai.com/docs/howto/webui)
 
 
 ## Support ⭐️

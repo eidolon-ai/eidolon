@@ -1,11 +1,11 @@
 ---
-title: AuthenticationProcessor
-description: Description of AuthenticationProcessor component
+title: NoopQuestionTransformer
+description: Description of NoopQuestionTransformer component
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description       |
 | ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | AuthenticationProcessor |
+| - [implementation](#implementation ) | No      | const | No         | -          | NoopQuestionTransformer |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -14,8 +14,8 @@ description: Description of AuthenticationProcessor component
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** AuthenticationProcessor
+**Description:** NoopQuestionTransformer
 
-Specific value: `"AuthenticationProcessor"`
+Specific value: `"NoopQuestionTransformer"`
 
 ----------------------------------------------------------------------------------------------------------------------------

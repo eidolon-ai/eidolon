@@ -53,6 +53,7 @@ def patched_vcr_aiohttp_url_encoded():
     """
 
     original = aiohttp_stubs.vcr_request
+
     def my_custom_function(cassette, real_request):
         fn = original(cassette, real_request)
 
@@ -65,6 +66,7 @@ def patched_vcr_aiohttp_url_encoded():
                     kwargs["data"] = urllib.parse.urlencode(data)
 
             return await fn(self, method, url, **kwargs)
+
         return new_request
 
     with patch.object(aiohttp_stubs, "vcr_request", new=my_custom_function):
@@ -78,9 +80,9 @@ def app_builder(machine_manager):
         async def manage_lifecycle(_app: FastAPI):
             async with machine_manager() as _machine:
                 async with start_os(
-                        app=_app,
-                        resource_generator=[_machine, *resources] if _machine else resources,
-                        machine_name=_machine.metadata.name,
+                    app=_app,
+                    resource_generator=[_machine, *resources] if _machine else resources,
+                    machine_name=_machine.metadata.name,
                     fail_on_agent_start_error=True,
                 ):
                     yield
@@ -111,8 +113,13 @@ def vcr_config():
         return request
 
     return dict(
-        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None), ("x-api-key", None)],
-        filter_query_parameters=["cx", "key"], # google custom search engine id
+        filter_headers=[
+            ("authorization", "XXXXXX"),
+            ("amz-sdk-invocation-id", None),
+            ("X-Amz-Date", None),
+            ("x-api-key", None),
+        ],
+        filter_query_parameters=["cx", "key"],  # google custom search engine id
         filter_post_data_parameters=["client_secret"],
         before_record_request=ignore_some_localhost,
         record_mode="once",
@@ -160,7 +167,7 @@ def run_app(app_builder, port):
         try:
             # Wait for the server to start
             while len(server_wrapper) == 0 or not (
-                    server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started
+                server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started
             ):
                 pass
             if server_wrapper[0] in {"aborted", "stopped"}:
@@ -378,5 +385,6 @@ def deterministic_process_ids(test_name):
         return next(fid_generator)
 
     with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(
-            process_file_system, "ObjectId", new=patched_fid), patch.object(document_transformer, "ObjectId", new=patched_did):
+        process_file_system, "ObjectId", new=patched_fid
+    ), patch.object(document_transformer, "ObjectId", new=patched_did):
         yield
