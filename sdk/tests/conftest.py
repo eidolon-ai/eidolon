@@ -13,6 +13,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
 
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
 from eidolon_ai_sdk.bin.server import start_os, start_app
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
@@ -24,10 +25,10 @@ from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
+from eidolon_ai_sdk.test_utils.server import serve_thread
+from eidolon_ai_sdk.test_utils.vcr import vcr_patch
 from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.posthog import PosthogConfig
-from eidolon_ai_sdk.util.test_helpers import patched_vcr_aiohttp_url_encoded, patched_vcr_object_handling, \
-    deterministic_ids
 
 PosthogConfig.enabled = False
 
@@ -36,45 +37,18 @@ PosthogConfig.enabled = False
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "run_app" in i.fixturenames, items):
         item.fixturenames.append("patched_vcr")
-        item.fixturenames.append("deterministic_eidolon_ids")
         item.add_marker(pytest.mark.vcr)
 
 
 @pytest.fixture()
-def patched_vcr():
-    with patched_vcr_aiohttp_url_encoded(), patched_vcr_object_handling():
+def patched_vcr(test_name):
+    with vcr_patch(test_name):
         yield
-
-
-@pytest.fixture(scope="module")
-def app_builder(machine_manager):
-    def fn(resources: Iterable[Resource]):
-        @asynccontextmanager
-        async def manage_lifecycle(_app: FastAPI):
-            async with machine_manager() as _machine:
-                async with start_os(
-                    app=_app,
-                    resource_generator=[_machine, *resources] if _machine else resources,
-                    machine_name=_machine.metadata.name,
-                    fail_on_agent_start_error=True,
-                ):
-                    yield
-                    print("done")
-
-        return start_app(lifespan=manage_lifecycle)
-
-    return fn
-
-
-@pytest.fixture(scope="module")
-def port():
-    return 5346
-
 
 @pytest.fixture(autouse=True)
 def vcr_config():
     def ignore_some_localhost(request: VcrRequest):
-        if (request.host == "0.0.0.0" or request.host == "localhost") and port != 11434:
+        if (request.host == "0.0.0.0" or request.host == "localhost") and request.port != 11434:  # 11434 is the ollama port
             return None
         elif request.host == "login.microsoftonline.com":
             return None
@@ -96,59 +70,17 @@ def vcr_config():
 
 
 @pytest.fixture(scope="module")
-def run_app(app_builder, port):
+def run_app(machine_manager):
     @asynccontextmanager
     async def fn(*agents):
-        server_wrapper = []
-
-        def run_server():
-            AppStatus.should_exit = False
-            AppStatus.should_exit_event = None
-
-            try:
-                resources = [
-                    a
-                    if isinstance(a, Resource)
-                    else AgentResource(
-                        apiVersion="eidolon/v1",
-                        spec=Reference(implementation=fqn(a)),
-                        metadata=Metadata(name=a.__name__),
-                    )
-                    for a in agents
-                ]
-                app = app_builder(resources)
-                # todo, the next line launches uvicorn app as a subprocess so it does not block
-                config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info", loop="asyncio")
-                server = uvicorn.Server(config)
-                server_wrapper.append(server)
-                server.run()
-                server_wrapper.clear()
-                server_wrapper.append("stopped")
-            except BaseException as e:
-                server_wrapper.clear()
-                server_wrapper.append("aborted")
-                raise e
-
-        server_thread = threading.Thread(target=run_server)
-        server_thread.start()
-
-        try:
-            # Wait for the server to start
-            while len(server_wrapper) == 0 or not (
-                server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started
-            ):
-                pass
-            if server_wrapper[0] in {"aborted", "stopped"}:
-                raise Exception("Server failed to start")
-
-            print(f"Server started on port {port}")
-            os.environ["EIDOLON_LOCAL_MACHINE"] = f"http://localhost:{port}"
-            yield f"http://localhost:{port}"
-        finally:
-            # server_wrapper[0].force_exit = True
-            if isinstance(server_wrapper[0], uvicorn.Server):
-                server_wrapper[0].should_exit = True
-            server_thread.join()
+        async with machine_manager() as machine:
+            resources = [a if isinstance(a, Resource) else AgentResource(
+                apiVersion="eidolon/v1",
+                spec=Reference(implementation=fqn(a)),
+                metadata=Metadata(name=a.__name__),
+            ) for a in agents]
+            with serve_thread([machine, *resources], machine_name=machine.metadata.name) as ra:
+                yield ra
 
     return fn
 
@@ -308,9 +240,3 @@ def cat(test_dir):
 @pytest.fixture()
 def test_name(request):
     return request.node.name
-
-
-@pytest.fixture()
-def deterministic_eidolon_ids(test_name):
-    with deterministic_ids(test_name):
-        yield

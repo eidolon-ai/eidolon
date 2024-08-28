@@ -11,6 +11,12 @@ from eidolon_ai_sdk.system import agent_controller, process_file_system
 
 
 @contextmanager
+def vcr_patch(test_name):
+    with patched_vcr_aiohttp_url_encoded(), patched_vcr_object_handling(), deterministic_ids(test_name):
+        yield
+
+
+@contextmanager
 def deterministic_ids(id_prefix):
     if patch is None:
         raise ImportError("unittest.mock.patch is required for this helper")
