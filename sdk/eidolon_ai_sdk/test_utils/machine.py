@@ -17,26 +17,23 @@ class TestMachine(MachineResource):
     _similarity_memory: str
 
     def __init__(self, file_loc: str | Path):
-        self._file_memory = str(Path(file_loc) / "file_memory")
-        self._similarity_memory = str(Path(file_loc) / "similarity_memory")
-        os.mkdir(self._file_memory)
-        os.mkdir(self._similarity_memory)
+        similarity_memory = str(Path(file_loc) / "similarity_memory")
+        file_memory = str(Path(file_loc) / "file_memory")
+        os.mkdir(file_memory)
+        os.mkdir(similarity_memory)
+        md = Metadata(name="test_machine")
+        spec = MachineSpec(symbolic_memory=fqn(LocalSymbolicMemory),
+                           file_memory=dict(implementation=fqn(LocalFileMemory), root_dir=file_loc, ),
+                           similarity_memory=dict(implementation=fqn(SimilarityMemoryImpl),
+                                                  vector_store=dict(implementation=fqn(ChromaVectorStore),
+                                                                    url=f"file://{similarity_memory}", )), )
         super().__init__(
-            metadata=Metadata(name="test_machine"),
-            spec=MachineSpec(
-                symbolic_memory=fqn(LocalSymbolicMemory),
-                file_memory=dict(
-                    implementation=fqn(LocalFileMemory),
-                    root_dir=file_loc,
-                ),
-                similarity_memory=dict(
-                    implementation=fqn(SimilarityMemoryImpl),
-                    vector_store=dict(
-                        implementation=fqn(ChromaVectorStore),
-                        url=f"file://{self._similarity_memory}",
-                    )
-                ),
-            ).model_dump())
+            apiVersion="v1",
+            metadata=md,
+            spec=spec,
+        )
+        self._file_memory = file_memory
+        self._similarity_memory = similarity_memory
 
     def reset_state(self):
         LocalSymbolicMemory.db = {}
