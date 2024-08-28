@@ -1,7 +1,7 @@
 ---
 name: Problem / Bug Report
 about: Report a potential bug or problem
-title: "[ problem ]"
+title: "[ problem ] "
 labels: community
 assignees: ''
 
