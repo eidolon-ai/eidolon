@@ -1,5 +1,6 @@
 # This file is used to run the Eidolon server, a MongoDB database, and the Eidolon UI together in a single command.
 # Run `docker-compose up` in the same directory as this file to start the services.
+
 services:
   mongo:
     image: mongo:latest
@@ -37,9 +38,9 @@ services:
     develop:
       watch:
         - path: ./webui
+          action: rebuild
           ignore:
             - ./webui/apps/eidolon-ui2/tests
-          action: rebuild
     environment:
       - NEXTAUTH_URL=http://localhost:3000/api/auth
       - AUTH_TRUST_HOST=http://localhost:3000

@@ -88,7 +88,7 @@ jobs:
       - name: Install Docker compose
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:
-          version: '2.14.2' # the full version of `docker-compose` command
+          version: '2.29.2' # the full version of `docker-compose` command
       - name: Install dependencies
         run: pnpm install
         working-directory: ./webui/apps/eidolon-ui2
