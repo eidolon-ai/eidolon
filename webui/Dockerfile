@@ -61,4 +61,5 @@ ENV NEXTAUTH_URL=http://localhost:3000/api/auth
 ENV AUTH_TRUST_HOST=http://localhost:3000
 ENV NEXTAUTH_SECRET=secret
 ENV EIDOLON_AUTH_PROVIDERS=""
-CMD node apps/eidolon-ui2/server.js
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["node", "apps/eidolon-ui2/server.js"]
