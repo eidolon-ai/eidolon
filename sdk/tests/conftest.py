@@ -73,7 +73,7 @@ def run_app(machine_manager):
                 spec=Reference(implementation=fqn(a)),
                 metadata=Metadata(name=a.__name__),
             ) for a in agents]
-            with serve_thread([machine, *resources], machine_name=machine.metadata.name, port=5346) as ra:
+            with serve_thread([machine, *resources], machine_name=machine.metadata.name) as ra:
                 yield ra
 
     return fn

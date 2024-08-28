@@ -11,7 +11,7 @@ from eidolon_ai_sdk.bin.server import start_os, start_app
 
 
 @contextmanager
-def serve_thread(resources, machine_name="local_dev", port=9436):
+def serve_thread(resources, machine_name="test_machine", port=5346):
     @asynccontextmanager
     async def manage_lifecycle(_app: FastAPI):
         async with start_os(
