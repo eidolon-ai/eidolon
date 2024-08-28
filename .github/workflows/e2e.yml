@@ -94,7 +94,7 @@ jobs:
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Build Docker images
