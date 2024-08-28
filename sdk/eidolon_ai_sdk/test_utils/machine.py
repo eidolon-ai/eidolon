@@ -16,14 +16,14 @@ class TestMachine(MachineResource):
     _file_memory: str
     _similarity_memory: str
 
-    def __init__(self, file_loc: str | Path):
-        similarity_memory = str(Path(file_loc) / "similarity_memory")
-        file_memory = str(Path(file_loc) / "file_memory")
+    def __init__(self, storage_loc: str | Path):
+        similarity_memory = str(Path(storage_loc) / "similarity_memory")
+        file_memory = str(Path(storage_loc) / "file_memory")
         os.mkdir(file_memory)
         os.mkdir(similarity_memory)
         md = Metadata(name="test_machine")
         spec = MachineSpec(symbolic_memory=fqn(LocalSymbolicMemory),
-                           file_memory=dict(implementation=fqn(LocalFileMemory), root_dir=file_loc, ),
+                           file_memory=dict(implementation=fqn(LocalFileMemory), root_dir=storage_loc, ),
                            similarity_memory=dict(implementation=fqn(SimilarityMemoryImpl),
                                                   vector_store=dict(implementation=fqn(ChromaVectorStore),
                                                                     url=f"file://{similarity_memory}", )), )

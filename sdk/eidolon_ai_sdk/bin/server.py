@@ -8,7 +8,6 @@ from typing import Literal
 
 import dotenv
 import time
-import yaml
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
