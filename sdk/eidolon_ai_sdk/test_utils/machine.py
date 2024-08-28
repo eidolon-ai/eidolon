@@ -21,16 +21,21 @@ class TestMachine(MachineResource):
         file_memory = str(Path(storage_loc) / "file_memory")
         os.mkdir(file_memory)
         os.mkdir(similarity_memory)
-        md = Metadata(name="test_machine")
-        spec = MachineSpec(symbolic_memory=fqn(LocalSymbolicMemory),
-                           file_memory=dict(implementation=fqn(LocalFileMemory), root_dir=storage_loc, ),
-                           similarity_memory=dict(implementation=fqn(SimilarityMemoryImpl),
-                                                  vector_store=dict(implementation=fqn(ChromaVectorStore),
-                                                                    url=f"file://{similarity_memory}", )), )
         super().__init__(
             apiVersion="v1",
-            metadata=md,
-            spec=spec,
+            metadata=Metadata(name="test_machine"),
+            spec=MachineSpec(
+                symbolic_memory=fqn(LocalSymbolicMemory),
+                file_memory=dict(
+                    implementation=fqn(LocalFileMemory),
+                    root_dir=storage_loc,
+                ),
+                similarity_memory=dict(
+                    implementation=fqn(SimilarityMemoryImpl),
+                    vector_store=dict(
+                        implementation=fqn(ChromaVectorStore),
+                        url=f"file://{similarity_memory}", )),
+            ),
         )
         self._file_memory = file_memory
         self._similarity_memory = similarity_memory
