@@ -38,7 +38,7 @@ services:
       watch:
         - path: ./webui
           ignore:
-            - ./webui/**/tests/**
+            - ./webui/apps/eidolon-ui2/tests
           action: rebuild
     environment:
       - NEXTAUTH_URL=http://localhost:3000/api/auth
