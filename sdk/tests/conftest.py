@@ -1,21 +1,14 @@
 import os
 import pathlib
-import threading
 from contextlib import asynccontextmanager
-from typing import Iterable
 
 import httpx
 import pytest
-import uvicorn
 from bson import ObjectId
-from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
-from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
 
-from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
-from eidolon_ai_sdk.bin.server import start_os, start_app
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
@@ -44,6 +37,7 @@ def pytest_collection_modifyitems(items):
 def patched_vcr(test_name):
     with vcr_patch(test_name):
         yield
+
 
 @pytest.fixture(autouse=True)
 def vcr_config():
@@ -79,7 +73,7 @@ def run_app(machine_manager):
                 spec=Reference(implementation=fqn(a)),
                 metadata=Metadata(name=a.__name__),
             ) for a in agents]
-            with serve_thread([machine, *resources], machine_name=machine.metadata.name) as ra:
+            with serve_thread([machine, *resources], machine_name=machine.metadata.name, port=5346) as ra:
                 yield ra
 
     return fn
