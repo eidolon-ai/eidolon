@@ -11,23 +11,23 @@ from eidolon_ai_sdk.test_utils.vcr import vcr_patch
 
 
 @fixture(scope="module")
-def test_machine(tmp_path_factory):
+def machine(tmp_path_factory):
     return TestMachine(tmp_path_factory.mktemp("test_utils_storage"))
 
 
 @fixture(scope="module", autouse=True)
-def server(test_machine):
+def server(machine):
     resources = load_resources([Path(__file__).parent / "resources"])
-    with serve_thread([test_machine, *resources]):
+    with serve_thread([machine, *resources]):
         yield
 
 
 @fixture(autouse=True)
-def state_manager(test_name, test_machine):
-    test_machine.reset_state()
+def state_manager(test_name, machine):
+    machine.reset_state()
     with vcr_patch(test_name):
         yield
-    test_machine.reset_state()
+    machine.reset_state()
 
 
 @pytest.mark.vcr
