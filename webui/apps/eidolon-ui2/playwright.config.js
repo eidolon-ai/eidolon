@@ -25,7 +25,7 @@ module.exports = defineConfig({
         },
     ],
     webServer: {
-        command: 'pnpm docker-compose up',
+        command: 'pnpm docker compose up',
         cwd: '../../..',
         port: 3000,
         timeout: 120000,
