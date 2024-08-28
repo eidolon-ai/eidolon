@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Use this as a guide. Not all problems present themselves the same way.
+Use this as a guide. Not all problems present themselves the same way. Delete anything you don't use to keep the issue tidy. (Like these instructions 😄)
 
 **Describe the problem**
 Be as clear and concise as possible.
