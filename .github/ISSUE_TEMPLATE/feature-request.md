@@ -1,5 +1,5 @@
 ---
-name: Feature request
+name: Feature Request
 about: Suggest an idea for this project
 title: "[ feature ] "
 labels: community
@@ -7,14 +7,14 @@ assignees: ''
 
 ---
 
-It is helpful to follow the "user story" method, but you don't have to.
----
-User Story:
+It is helpful to follow the "user story" method, but you don't have to. Delete anything you don't use to keep the issue tidy. (Like these instructions :smile:)
+
+**User Story**
 - As a [persona]
 - I want [to do something or have something happen automatically]
 - So that [you get some sort of value, like saving time or achieving a goal]
 
-Acceptance Criteria:
+**Acceptance Criteria**
 - Given that [the condition, such as using a specific feature and/or your authorization level]
 - When I [do something in the product]
 - Then [desired result -- what should happen]
