@@ -14,16 +14,8 @@ from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
-class LongTermMemoryUnitScope(Enum):
-    SYSTEM = "system"
-    AGENT = "agent"
-    USER = "user"
-    USER_AGENT = "userAgent"
-    USER_PROCESS = "userProcess"
-
-
 class LongTermMemoryUnitConfig(BaseModel):
-    unit_scope: LongTermMemoryUnitScope
+    user_scoped: bool
     llm_unit: Optional[Reference[LLMUnit]] = None
     collection_name: str = "eidolon_mem0"
 
@@ -35,88 +27,38 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
                  memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None, **kwargs):
         super().__init__(**kwargs)
         self.spec = spec
-        self.unit_scope = spec.unit_scope
+        self.user_scoped = spec.user_scoped
         if spec is not None and spec.llm_unit is not None:
             default_llm = spec.llm_unit
         self.mem0 = EidolonMem0(default_llm, spec.collection_name, memory_converter=memory_converter)
 
-    def storeMessage(self, call_context: CallContext, message: LLMMessage):
+    def store_message(self, call_context: CallContext, message: LLMMessage):
         user_id = AgentOS.current_user().id
         agent_name = AgentOS.current_agent_name()
         metadata = {
             "process_id": call_context.process_id,
             "agent_name": agent_name
         }
-        # not sure if I should manipulate result somehow - what's the expected return value?
         return self.mem0.add(message, user_id=user_id, metadata=metadata)
 
-    def storeMessages(self, call_context: CallContext, messages: List[LLMMessage]):
+    def store_messages(self, call_context: CallContext, messages: List[LLMMessage]):
         user_id = AgentOS.current_user().id
         agent_name = AgentOS.current_agent_name()
         metadata = {
             "process_id": call_context.process_id,
             "agent_name": agent_name
         }
-        # not sure if I should manipulate result somehow - what's the expected return value?
         return self.mem0.add(messages, user_id=user_id, metadata=metadata)
 
-    def searchMemories(self, call_context: CallContext, query: str | LLMMessage | List[LLMMessage]):
+    def search_memories(self, query: str | LLMMessage | List[LLMMessage]):
         user_id = AgentOS.current_user().id
-        results = self.mem0.search(query) if self._multi_user_scope() else self.mem0.search(query, user_id=user_id)
-        if (self.unit_scope == LongTermMemoryUnitScope.SYSTEM):
-            return results
+        results = self.mem0.search(query) if not self.user_scoped else self.mem0.search(query, user_id=user_id)
+        return results
 
-        def filter_func(res):
-            try:
-                valid = True
-                if not self._multi_process_scope() and res['metadata']['process_id'] != call_context.process_id:
-                    valid = False
-                if not self._multi_agent_scope() and res['metadata']['agent_name'] != AgentOS.current_agent_name():
-                    valid = False
-                return valid
-            except Exception:
-                # assume caused by missing process_id or agent_id fields
-                if self._multi_process_scope() and self._multi_agent_scope():
-                    return True
-                return False
+    def get_all_memories(self):
+        return (self.mem0.get_all() if self.user_scoped else self.mem0.get_all(user_id=AgentOS.current_user().id))
 
-        filtered_results = list(filter(filter_func, results))
-        return filtered_results
-
-    def getAllMemories(self, call_context: CallContext):
-        if self._unit_scope == LongTermMemoryUnitScope.SYSTEM:
-            return self.mem0.get_all()
-        elif self.unit_scope == LongTermMemoryUnitScope.USER:
-            return self.mem0.get_all(user_id=AgentOS.current_user().id)
-
-        user_id = AgentOS.current_user().id
-        memories = self.mem0.get_all() if self._multi_user_scope() else self.mem0.get_all(user_id=user_id)
-
-        def filter_func(mem):
-            try:
-                valid = True
-                if not self._multi_process_scope() and mem['metadata']['process_id'] != call_context.process_id:
-                    valid = False
-                if not self._multi_agent_scope() and mem['metadata']['agent_name'] != AgentOS.current_agent_name():
-                    valid = False
-                return valid
-            except Exception:
-                if self._multi_agent_scope() and self._multi_process_scope():
-                    return False
-                return True
-
-        return list(filter(filter_func, memories))
-
-    def getMemory(self, memory_id: str):
-        return self.mem0.get(memory_id)
-
-    def getMemoryHistory(self, memory_id: str):
-        return self.mem0.history(memory_id)
-
-    def deleteMemory(self, memory_id: str):
-        return self.mem0.delete(memory_id)
-
-    def deleteMemoriesForProcess(self, process_id: str):
+    def delete_memories_for_process(self, process_id: str):
         memories = self.mem0.get_all()
         for mem in memories:
             try:
@@ -125,22 +67,5 @@ class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
             except Exception:
                 continue
 
-    def deleteMemoriesForAgent(self, agent_id: str):
-        memories = self.mem0.get_all(agent_id=agent_id)
-        for mem in memories:
-            self.mem0.delete(mem.id)
-
-    def _multi_agent_scope(self):
-        if self.unit_scope == LongTermMemoryUnitScope.SYSTEM or self.unit_scope == LongTermMemoryUnitScope.USER:
-            return True
-        return False
-
-    def _multi_user_scope(self):
-        if self.unit_scope == LongTermMemoryUnitScope.AGENT or self.unit_scope == LongTermMemoryUnitScope.SYSTEM:
-            return True
-        return False
-
-    def _multi_process_scope(self):
-        if self.unit_scope != LongTermMemoryUnitScope.USER_PROCESS:
-            return True
-        return False
+    def _get_memory(self, mem_id: str):
+        return self.mem0.get(mem_id)

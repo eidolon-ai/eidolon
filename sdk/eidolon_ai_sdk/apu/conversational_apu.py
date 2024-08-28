@@ -142,7 +142,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
 
             # EDIT: get relevant mem0 memories and extend the conversation history with them
             if self.longterm_memory_unit:
-                longterm_memories = self.longterm_memory_unit.searchMemories(call_context, conversation_messages)
+                longterm_memories = self.longterm_memory_unit.search_memories(conversation_messages)
                 conversation.extend(longterm_memories)
 
             async for event in self._llm_execution_cycle(call_context, output_format, conversation):
@@ -214,7 +214,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
 
             if self.longterm_memory_unit:
                 # EDIT: store event content in mem0 (not sure if correct):
-                self.longterm_memory_unit.storeMessage(event_content)
+                self.longterm_memory_unit.store_message(call_context, event_content)
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
