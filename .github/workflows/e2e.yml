@@ -89,10 +89,6 @@ jobs:
         run: pnpm install
         working-directory: ./webui/apps/eidolon-ui2
 
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium firefox webkit
-        working-directory: ./webui/apps/eidolon-ui2
-
       - name: Build Docker images
         run: pnpm run docker:build
         working-directory: ./webui/apps/eidolon-ui2
@@ -108,7 +104,7 @@ jobs:
         run: docker ps -a
 
       - name: Run Playwright tests
-        run: pnpm exec playwright test
+        run: pnpm dlx playwright install && pnpm exec playwright test
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Stop Docker containers
