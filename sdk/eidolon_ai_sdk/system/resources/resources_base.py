@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import os
-from typing import Optional, TypeVar, Type
+from pathlib import Path
+from typing import Optional, TypeVar, Type, Iterable
 
 import yaml
 from pydantic import BaseModel
@@ -30,8 +31,9 @@ class Resource(BaseModel, extra="allow"):
         return clazz.model_validate(self.model_dump())
 
 
-def load_resources(paths):
+def load_resources(paths: Iterable[str | Path]):
     for path in paths:
+        path = str(path)
         logger.debug(f"Loading resources from {os.path.abspath(path)}")
         if not os.path.exists(path):
             raise ValueError(f"Path {path} does not exist")
