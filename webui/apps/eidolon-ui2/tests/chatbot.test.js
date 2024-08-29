@@ -2,23 +2,33 @@ const { test, expect } = require('@playwright/test');
 
 // Test to check if the chatbot responds to input
 test('Chatbot should respond to input', async ({ page }) => {
+    const chatInput = page.locator('textarea[aria-invalid="false"]');
+    const submitInput = page.locator('button[id="submit-input-text"]')
+
     await page.goto('/eidolon-apps/sp/chatbot');
-    // If the user is not logged in, log in with a random email
-    if (await page.locator('text=Eidolon Demo Cloud').isVisible()) {
-        const randomEmail = `test${Math.random().toString(36).substring(7)}@example.com`;
-        await page.fill('input[id="input-username-for-credentials-provider"]', randomEmail);
-        await page.click('button[type="submit"]');
-    }
+    await login(page);
+
     // Add a chat
-    const addChatButton = await page.locator('text=Add Chat');
+    const addChatButton = page.getByText('Add Chat');
     await addChatButton.click();
-    const inputField = await page.locator('textarea[aria-invalid="false"]');
-    await inputField.waitFor();
+
     // Fill the input field with a message
-    await inputField.fill('Hello, how are you? Type "Hello!" if you are there!');
-    await page.locator('button[id="submit-input-text"]').click();
-    const response = await page.getByText("Hello!", { exact: true });
-    await response.waitFor();
+    await chatInput.fill('Hello, how are you? Type "Hello!" if you are there!');
+    await submitInput.click();
+    const response = page.getByText("Hello!", { exact: true });
+
     await expect(response).toBeVisible();
     await expect(response).toContainText('Hello!');
 });
+
+async function login(page) {
+    const emailField = page.locator('#input-username-for-credentials-provider');
+    const randomEmail = `test${Math.random().toString(36).substring(7)}@example.com`;
+    const eidolonDemoCloud = page.locator('text=Eidolon Demo Cloud');
+    const login = page.locator('button[type="submit"]');
+
+    if (await eidolonDemoCloud.isVisible()) {
+        await emailField.fill(randomEmail);
+        await login.click();
+    }
+}

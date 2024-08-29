@@ -16,7 +16,7 @@ COPY --from=builder /app/out/json/ .
 RUN pnpm install
 
 # Build eidolon-client first
-FROM base_installer as eidolon_client_builder
+FROM base_installer AS eidolon_client_builder
 WORKDIR /app/packages/eidolon-client
 COPY packages/eidolon-client .
 COPY packages/typescript-config /app/packages/typescript-config
@@ -24,7 +24,7 @@ RUN pnpm install
 RUN pnpm run build
 
 # Build eidolon-components next
-FROM eidolon_client_builder as eidolon_components_builder
+FROM eidolon_client_builder AS eidolon_components_builder
 WORKDIR /app/packages/eidolon-components
 COPY packages/eidolon-components .
 COPY packages/typescript-config /app/packages/typescript-config
@@ -33,7 +33,7 @@ RUN pnpm install
 RUN pnpm run build
 
 # Build from our project, which will be constant cache misses
-FROM base_installer as installer
+FROM base_installer AS installer
 COPY --from=builder /app/out/full/ .
 COPY --from=eidolon_client_builder /app/packages/eidolon-client/dist /app/packages/eidolon-client/dist
 COPY --from=eidolon_components_builder /app/packages/eidolon-components/dist /app/packages/eidolon-components/dist
@@ -61,4 +61,5 @@ ENV NEXTAUTH_URL=http://localhost:3000/api/auth
 ENV AUTH_TRUST_HOST=http://localhost:3000
 ENV NEXTAUTH_SECRET=secret
 ENV EIDOLON_AUTH_PROVIDERS=""
-CMD node apps/eidolon-ui2/server.js
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["node", "apps/eidolon-ui2/server.js"]

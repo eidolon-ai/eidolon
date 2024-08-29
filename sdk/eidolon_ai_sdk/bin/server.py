@@ -8,7 +8,6 @@ from typing import Literal
 
 import dotenv
 import time
-import yaml
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -168,7 +167,7 @@ async def start_os(
         logger.info(f"Building machine '{machine_name}'")
         AgentOS.machine_name = machine_name
         machine_spec = AgentOSKernel.get_resource(MachineResource, machine_name).spec
-        logger.debug(yaml.safe_dump(machine_spec.model_dump()))
+        logger.debug(machine_spec.model_dump())
         machine: AgentMachine = machine_spec.instantiate()
         AgentOSKernel.load_machine(machine)
         await machine.start(app)

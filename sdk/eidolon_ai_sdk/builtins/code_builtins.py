@@ -1,5 +1,3 @@
-from typing import Tuple, List
-
 from azure.identity import DefaultAzureCredential, EnvironmentCredential
 from openai import AsyncOpenAI
 from openai.lib.azure import AsyncAzureOpenAI
@@ -7,6 +5,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.trace import SpanProcessor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter
 from opentelemetry.sdk.trace.sampling import Sampler
+from typing import Tuple, List
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.api_agent import APIAgent
@@ -25,6 +24,8 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.auto_parser import AutoParser
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
+from eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters import CharacterTextSplitter, LatexTextSplitter, MarkdownTextSplitter, PythonCodeTextSplitter, SpacyTextSplitter, \
+    NLTKTextSplitter, RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter, TokenTextSplitter, HTMLHeaderTextSplitter, MarkdownHeaderTextSplitter
 from eidolon_ai_sdk.agent.generic_agent import GenericAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.document_retriever import SimilarityMemoryRetriever, DocumentRetriever
@@ -40,10 +41,6 @@ from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
-from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
-from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
-from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
-from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.apu.agent_io import IOUnit
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.audio_unit import AudioUnit
@@ -59,6 +56,10 @@ from eidolon_ai_sdk.apu.llm.open_ai_speech import OpenAiSpeech
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.apu.tool_call_unit import ToolCallLLMWrapper
+from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
+from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
+from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
+from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.memory.azure_file_memory import AzureFileMemory
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
 from eidolon_ai_sdk.security.azure_authorizer import AzureJWTProcessor
@@ -203,6 +204,17 @@ def named_builtins() -> List[ReferenceResource]:
         AutoParser,
         (DocumentTransformer, AutoTransformer),
         AutoTransformer,
+        CharacterTextSplitter,
+        MarkdownHeaderTextSplitter,
+        HTMLHeaderTextSplitter,
+        TokenTextSplitter,
+        SentenceTransformersTokenTextSplitter,
+        RecursiveCharacterTextSplitter,
+        NLTKTextSplitter,
+        SpacyTextSplitter,
+        PythonCodeTextSplitter,
+        MarkdownTextSplitter,
+        LatexTextSplitter,
         (ThoughtGenerationStrategy, ProposePromptStrategy),
         ProposePromptStrategy,
         (QuestionTransformer, MultiQuestionTransformer),
