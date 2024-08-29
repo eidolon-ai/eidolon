@@ -1,0 +1,52 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "SentenceTransformersTokenTextSplitter",
+      "description": "SentenceTransformersTokenTextSplitter"
+    },
+    "chunk_size": {
+      "default": 4000,
+      "description": "Maximum size of chunks to return",
+      "title": "Chunk Size",
+      "type": "integer"
+    },
+    "chunk_overlap": {
+      "default": 50,
+      "title": "Chunk Overlap",
+      "type": "integer"
+    },
+    "keep_separator": {
+      "default": false,
+      "description": "Whether to keep the separator in the chunks",
+      "title": "Keep Separator",
+      "type": "boolean"
+    },
+    "strip_whitespace": {
+      "default": true,
+      "description": "If `True`, strips whitespace from the start and end of every document",
+      "title": "Strip Whitespace",
+      "type": "boolean"
+    },
+    "model": {
+      "default": "sentence-transformers/all-mpnet-base-v2",
+      "description": "Model name",
+      "title": "Model",
+      "type": "string"
+    },
+    "tokens_per_chunk": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Number of tokens per chunk",
+      "title": "Tokens Per Chunk"
+    }
+  },
+  "title": "SentenceTransformersTokenTextSplitter",
+  "type": "object"
+}
