@@ -1392,7 +1392,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.115"
+version = "0.1.116"
 description = "An open source sgent service SDK"
 optional = false
 python-versions = ">=3.10,<3.13"
@@ -6207,4 +6207,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "b7489cc1ed6d1b63ed6dd3fec607a00815fb7df0916ce60779c5ec4e2fdeabdf"
+content-hash = "2e813c52b463bb2d35c5b91b0a1d65182f3bad8c41eb9f188812e0c4994d31a2"
