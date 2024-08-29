@@ -1,23 +1,23 @@
 ---
 title: Using LLM APIs
-description: References - How to get started with and set LLM provider API keys
+description: References - How to get started with LLMs and set API keys
 ---
 
 ## LLM Prerequisites
 
-For various LLM providers you wish to use, you may need to:
+To access their models through APIs, LLM providers may require you to:
 
 - create an account
 - acquire an API key
-- install the LLM's SDK to work with its APIs
 - fund the account
+- install the LLM's SDK to work with its APIs
 
 Use the table below to get started with popular LLM providers. Note that each provider has its own terms and conditions regarding account payment and usage pricing.
 
 | LLM | Provider Documentation | Eidolon API_Key attribute |
 | --- | --- | --- |
-| Claude | [Getting Started with Anthropic](https://docs.anthropic.com/en/api/getting-started)  | ANTHROPIC_API_KEY |
-| Mistral | [Mistral AI Quickstart: Account Setup](https://docs.mistral.ai/getting-started/quickstart/#account-setup)  | MISTRAL_API_KEY |
+| Claude | [Anthropic Quickstart](https://docs.anthropic.com/en/docs/quickstart)  | ANTHROPIC_API_KEY |
+| Mistral | [Mistral AI Quickstart: Account Setup](https://docs.mistral.ai/getting-started/quickstart/#account-setup)<br>[Mistral Python Client](https://docs.mistral.ai/getting-started/clients/) | MISTRAL_API_KEY |
 | Ollama | [Ollama Github](https://github.com/ollama/ollama)  | n/a -- you run Ollama locally |
 | GPT | [OpenAI Developer Quickstart](https://platform.openai.com/docs/quickstart)  | OPENAI_API_KEY |
 
