@@ -17,7 +17,6 @@ RUN poetry build
 RUN poetry export --without dev --without-hashes --format=requirements.txt | grep -v "eidolon-ai-client" | grep -v "eidolon-ai-usage-client" | grep -v "-e file:///" > dist/requirements.txt
 
 FROM ${BASE_IMAGE} AS sdk_base
-RUN apt-get update && apt-get install -y gcc g++ python3-dev && rm -rf /var/lib/apt/lists/*
 COPY --from=builder dist/requirements.txt /tmp/eidolon_ai_sdk/requirements.txt
 RUN pip install -r /tmp/eidolon_ai_sdk/requirements.txt
 RUN playwright install
