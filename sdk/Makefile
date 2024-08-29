@@ -21,4 +21,4 @@ dockerx:
 	rm ../Dockerfile.cross
 
 maybe_docker_push:
-	@docker manifest inspect $(PROJECT)/sdk:$(VERSION) >/dev/null && echo "Image exists" || $(MAKE) dockerx
+	@docker manifest inspect $(PROJECT)/sdk:$(VERSION) >/dev/null && echo "Image exists" || { $(MAKE) dockerx; exit $$?; }

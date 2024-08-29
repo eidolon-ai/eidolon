@@ -11,4 +11,4 @@ push_image: docker
 	docker push ${PROJECT}/usage_service:${VERSION}
 
 maybe_docker_push:
-	@docker manifest inspect $(PROJECT)/usage_service:$(VERSION) >/dev/null && echo "Image exists" || $(MAKE) push_image
+	@docker manifest inspect $(PROJECT)/usage_service:$(VERSION) >/dev/null && echo "Image exists" || { $(MAKE) push_image; exit $$?; }

@@ -19,4 +19,4 @@ chatbot_bash: chatbot
 	docker run --rm -it --entrypoint bash eidolonai/chatbot:latest
 
 maybe_docker_push:
-	@docker manifest inspect $(PROJECT)/chatbot:$(VERSION) >/dev/null && echo "Image exists" || $(MAKE) chatbot_push
+	@docker manifest inspect $(PROJECT)/chatbot:$(VERSION) >/dev/null && echo "Image exists" || { $(MAKE) chatbot_push; exit $$?; }
