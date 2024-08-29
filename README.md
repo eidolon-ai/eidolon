@@ -126,6 +126,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mfernest"><img src="https://avatars.githubusercontent.com/u/521295?v=4?s=100" width="100px;" alt="Michael Ernest"/><br /><sub><b>Michael Ernest</b></sub></a><br /><a href="#blog-mfernest" title="Blogposts">📝</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SahitiGajjala"><img src="https://avatars.githubusercontent.com/u/50892626?v=4?s=100" width="100px;" alt="SahitiGajjala"/><br /><sub><b>SahitiGajjala</b></sub></a><br /><a href="#content-SahitiGajjala" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jweberde"><img src="https://avatars.githubusercontent.com/u/3398215?v=4?s=100" width="100px;" alt="jweberde"/><br /><sub><b>jweberde</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=jweberde" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.stevenqa.com"><img src="https://avatars.githubusercontent.com/u/34585031?v=4?s=100" width="100px;" alt="Steven Boutcher"/><br /><sub><b>Steven Boutcher</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=steven-the-qa" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
   <tfoot>
