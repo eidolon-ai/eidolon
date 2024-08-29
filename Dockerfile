@@ -14,7 +14,7 @@ RUN poetry build
 FROM builder_base AS builder
 COPY sdk .
 RUN poetry build
-RUN poetry export --without dev --format=requirements.txt | grep -v "eidolon-ai-client" | grep -v "eidolon-ai-usage-client" | grep -v "-e file:///" > dist/requirements.txt
+RUN poetry export --without dev --without-hashes --format=requirements.txt | grep -v "eidolon-ai-client" | grep -v "eidolon-ai-usage-client" | grep -v "-e file:///" > dist/requirements.txt
 
 FROM ${BASE_IMAGE} AS sdk_base
 COPY --from=builder dist/requirements.txt /tmp/eidolon_ai_sdk/requirements.txt
