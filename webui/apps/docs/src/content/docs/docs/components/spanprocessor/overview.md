@@ -10,5 +10,4 @@ Interface which allows hooks for SDK's `Span` start and end method
     in the same order as they were registered.
 
 ## Builtins
-* [SpanProcessor](/docs/components/spanprocessor/spanprocessor/)
-* [BatchSpanProcessor](/docs/components/spanprocessor/batchspanprocessor/)
+* [BatchSpanProcessor](/docs/components/spanprocessor/batchspanprocessor/) (default)

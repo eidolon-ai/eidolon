@@ -3,9 +3,6 @@
   "description": "Overview of Embedding components",
   "anyOf": [
     {
-      "$ref": "file:./Embedding.json"
-    },
-    {
       "$ref": "file:./NoopEmbedding.json"
     },
     {

@@ -3,9 +3,6 @@
   "description": "Overview of DocumentParser components",
   "anyOf": [
     {
-      "$ref": "file:./DocumentParser.json"
-    },
-    {
       "$ref": "file:./AutoParser.json"
     }
   ],

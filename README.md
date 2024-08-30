@@ -35,7 +35,7 @@ make docker-serve
 ```
 
 This command will download the dependencies required to run your agent machine and start the Eidolon http server in
-"dev-mode".
+"dev-mode". It will also start the Eidolon webui, which you can access at [http://localhost:3000](http://localhost:3000).
 
 ---
 
@@ -85,7 +85,6 @@ Now that you have a running agent machine with a simple agent. Let's start custo
 - [ ] [Swap out components](https://www.eidolonai.com/docs/howto/customize_builtins) (like the underlying llm)
 - [ ] Use [structured inputs](https://www.eidolonai.com/docs/components/agents/simpleagent#actions) for prompt templating
 - [ ] Leverage your agent's [state machine](https://www.eidolonai.com/docs/components/agents/simpleagent#actions)
-- [ ] Launch [Eidolon's UI](https://www.eidolonai.com/docs/howto/webui)
 
 
 ## Support ⭐️
@@ -126,6 +125,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/melanie1000"><img src="https://avatars.githubusercontent.com/u/132308172?v=4?s=100" width="100px;" alt="melanie1000"/><br /><sub><b>melanie1000</b></sub></a><br /><a href="#content-melanie1000" title="Content">🖋</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mfernest"><img src="https://avatars.githubusercontent.com/u/521295?v=4?s=100" width="100px;" alt="Michael Ernest"/><br /><sub><b>Michael Ernest</b></sub></a><br /><a href="#blog-mfernest" title="Blogposts">📝</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SahitiGajjala"><img src="https://avatars.githubusercontent.com/u/50892626?v=4?s=100" width="100px;" alt="SahitiGajjala"/><br /><sub><b>SahitiGajjala</b></sub></a><br /><a href="#content-SahitiGajjala" title="Content">🖋</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jweberde"><img src="https://avatars.githubusercontent.com/u/3398215?v=4?s=100" width="100px;" alt="jweberde"/><br /><sub><b>jweberde</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=jweberde" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.stevenqa.com"><img src="https://avatars.githubusercontent.com/u/34585031?v=4?s=100" width="100px;" alt="Steven Boutcher"/><br /><sub><b>Steven Boutcher</b></sub></a><br /><a href="https://github.com/eidolon-ai/eidolon/commits?author=steven-the-qa" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
   <tfoot>

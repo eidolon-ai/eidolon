@@ -56,7 +56,9 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
 
     async def add(self, collection: str, docs: Sequence[Document]):
         await AgentOS.file_memory.mkdir(self.spec.root_document_directory + "/" + collection, exist_ok=True)
-        embeddedDocs = [EmbeddedDocument(id=doc.id, embedding=doc.embedding, metadata=doc.metadata) for doc in docs if doc.embedding]
+        embeddedDocs = [
+            EmbeddedDocument(id=doc.id, embedding=doc.embedding, metadata=doc.metadata) for doc in docs if doc.embedding
+        ]
         async for embeddedDoc in AgentOS.similarity_memory.embed([d for d in docs if not d.embedding]):
             embeddedDocs.append(embeddedDoc)
         await self.add_embedding(collection, embeddedDocs)
@@ -94,7 +96,9 @@ class FileSystemVectorStore(VectorStore, Specable[FileSystemVectorStoreSpec]):
         return returnDocuments
 
     async def get_page_content(self, collection: str, doc_id: str) -> str:
-        return (await AgentOS.file_memory.read_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)).decode()
+        return (
+            await AgentOS.file_memory.read_file(self.spec.root_document_directory + "/" + collection + "/" + doc_id)
+        ).decode()
 
     async def raw_query(
         self,

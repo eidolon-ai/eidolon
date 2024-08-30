@@ -57,8 +57,8 @@ class TestRetrieverAgent:
                         # these need to be set for cassette to match, but grab them from environ if present to make generating cassettes easier
                         aws_access_key_id=environ.get("AWS_ACCESS_KEY_ID", "foo"),
                         aws_secret_access_key=environ.get("AWS_SECRET_ACCESS_KEY", "bar"),
-                    )
-                )
+                    ),
+                ),
             ),
         )
 
@@ -77,9 +77,9 @@ class TestRetrieverAgent:
                         implementation=AzureLoader.__name__,
                         container="rag-search-test",
                         account_url="https://eidolon.blob.core.windows.net",
-                        create_container_on_startup=False
-                    )
-                )
+                        create_container_on_startup=False,
+                    ),
+                ),
             ),
         )
 

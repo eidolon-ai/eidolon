@@ -68,15 +68,11 @@ First let's fork for Eidolon's chatbot repository, clone it to your local machin
 ```bash
 git clone https://github.com/eidolon-ai/eidolon-git-search.git
 cd eidolon-git-search
-make serve-dev
+make docker-serve  # launches agent server and webui
 ```
 
-🚨make sure you set your github token, otherwise you will hit rate limit errors
+🚨 make sure you set your github token, otherwise you will hit rate limit errors
 
 Now you can interact with the Repo Expert via the Eidolon UI or the CLI. For this example let's launch the UI.
 
-```bash
-docker run -e "EIDOLON_SERVER=http://host.docker.internal:8080" -p 3000:3000 eidolonai/webui:latest
-```
-
-Now Head over to the [chatbot ui](http://localhost:3000/eidolon-apps/sp/agent-rag) in your favorite browser and start chatting with your new agent.
+Now Head over to the [eidolon ui](http://localhost:3000) in your favorite browser and start chatting with your new agent.

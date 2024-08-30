@@ -88,8 +88,8 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
     @abstractmethod
     def execute_llm(
         self,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
         pass

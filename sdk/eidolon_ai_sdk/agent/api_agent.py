@@ -20,8 +20,14 @@ class APIAgentSpec(BaseModel):
     root_call_url: str = Field(description="Root URL of the API to call")
     open_api_location: str = Field(description="Location of the OpenAPI schema")
     operations_to_expose: List[Operation] = Field(description="Operations to expose")
-    extra_header_params: dict = Field(description="Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=dict())
-    extra_query_params: dict = Field(description="Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=dict())
+    extra_header_params: dict = Field(
+        description="Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
+        default=dict(),
+    )
+    extra_query_params: dict = Field(
+        description="Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
+        default=dict(),
+    )
 
 
 class APIAgent(Specable[APIAgentSpec]):
@@ -49,8 +55,12 @@ class APIAgent(Specable[APIAgentSpec]):
 
         operations_to_expose = self.spec.operations_to_expose
         title = self.spec.title
-        actions = build_actions(operations_to_expose, schema, title,
-                                build_call(self.spec.extra_header_params, self.spec.extra_query_params, self.spec.root_call_url))
+        actions = build_actions(
+            operations_to_expose,
+            schema,
+            title,
+            build_call(self.spec.extra_header_params, self.spec.extra_query_params, self.spec.root_call_url),
+        )
         for action in actions:
             self._add_action(action)
 
@@ -71,7 +81,7 @@ class APIAgent(Specable[APIAgentSpec]):
             self,
             action.name,
             register_action(
-                'initialized',
+                "initialized",
                 name=action.name,
                 input_model=lambda a, b: model,
                 output_model=lambda a, b: Any,

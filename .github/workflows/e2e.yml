@@ -7,7 +7,8 @@ on:
     paths:
       - '**'
       - '!k8s-operator/**'
-  pull_request:
+  pull_request_target:
+    types: [ opened, synchronize ]
     paths:
       - '**'
       - '!k8s-operator/**'
@@ -38,6 +39,28 @@ jobs:
       CI: true
 
     steps:
+      #     https://michaelheap.com/access-secrets-from-forks/
+      #     Allow contributors to run the tests with secret access if it is kicked off by a maintainer
+      - name: Get User Permission
+        id: checkAccess
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check User Permission
+        if: steps.checkAccess.outputs.require-result == 'false'
+        run: |
+          echo "${{ github.triggering_actor }} does not have permissions on this repo."
+          echo "Current permission level is ${{ steps.checkAccess.outputs.user-permission }}"
+          echo "Job originally triggered by ${{ github.actor }}"
+          exit 1
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{  github.event.pull_request.head.sha }} # This is dangerous without the first access check
+
       - name: Check for OPENAI_API_KEY
         run: |
           if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
@@ -45,18 +68,10 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
 
       - name: Install PNPM
         run: npm install -g pnpm
@@ -70,16 +85,8 @@ jobs:
           else
             echo "No conflicting MongoDB containers"
           fi
-      - name: Install Docker compose
-        uses: KengoTODA/actions-setup-docker-compose@v1
-        with:
-          version: '2.14.2' # the full version of `docker-compose` command
       - name: Install dependencies
         run: pnpm install
-        working-directory: ./webui/apps/eidolon-ui2
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Build Docker images
@@ -96,8 +103,12 @@ jobs:
       - name: List Docker containers
         run: docker ps -a
 
+      - name: Install Playwright dependencies
+        run: pnpm dlx playwright install
+        working-directory: ./webui/apps/eidolon-ui2
+
       - name: Run Playwright tests
-        run: pnpm exec playwright test --config=playwright.config.js
+        run: pnpm exec playwright test
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Stop Docker containers

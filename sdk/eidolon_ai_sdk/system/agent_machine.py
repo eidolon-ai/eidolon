@@ -33,7 +33,9 @@ class MachineSpec(BaseModel):
     process_file_system: AnnotatedReference[ProcessFileSystem] = Field(
         description="The Process File System implementation. Used to store files related to processes."
     )
-    fail_on_agent_start_error: bool = Field(False, description="If true, the machine will fail to start if an agent fails to start. Default: False")
+    fail_on_agent_start_error: bool = Field(
+        False, description="If true, the machine will fail to start if an agent fails to start. Default: False"
+    )
 
     def get_agent_memory(self):
         file_memory = self.file_memory.instantiate()
@@ -169,12 +171,12 @@ class AgentMachine(Specable[MachineSpec]):
         return None
 
     async def upload_file(
-            self,
-            process_id: str,
-            mime_type: Annotated[str | None, Header()] = None,
-            file_bytes=Body(
-                description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream"
-            ),
+        self,
+        process_id: str,
+        mime_type: Annotated[str | None, Header()] = None,
+        file_bytes=Body(
+            description="A byte stream that represents the file to be uploaded", media_type="application/octet-stream"
+        ),
     ):
         """
         Upload a file for this process
@@ -229,11 +231,11 @@ class AgentMachine(Specable[MachineSpec]):
         return JSONResponse(content=response, status_code=200)
 
     async def list_processes(
-            self,
-            request: Request,
-            skip: int = 0,
-            limit: Annotated[int, Field(ge=1, le=100)] = 100,
-            sort: Literal["ascending", "descending"] = "ascending",
+        self,
+        request: Request,
+        skip: int = 0,
+        limit: Annotated[int, Field(ge=1, le=100)] = 100,
+        sort: Literal["ascending", "descending"] = "ascending",
     ):
         """
         List all processes. Supports paging and sorting
@@ -242,7 +244,7 @@ class AgentMachine(Specable[MachineSpec]):
         child_pids = await AgentCallHistory.get_child_pids()
         processes_acc = []
         async for process_ in ProcessDoc.find(
-                query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
+            query={}, projection={"data": 0}, sort=dict(updated=1 if sort == "ascending" else -1)
         ):
             process_ = cast(ProcessDoc, process_)
             try:

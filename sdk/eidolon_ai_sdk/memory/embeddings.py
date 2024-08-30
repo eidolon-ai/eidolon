@@ -58,7 +58,7 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
                 id=document.id,
                 embedding=text,
                 metadata=document.metadata,
-        )
+            )
 
     async def start(self):
         pass

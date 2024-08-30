@@ -1,11 +1,7 @@
 {
   "title": "ResultSummarizer",
   "description": "Overview of ResultSummarizer components",
-  "anyOf": [
-    {
-      "$ref": "file:./ResultSummarizer.json"
-    }
-  ],
+  "anyOf": [],
   "reference_group": {
     "type": "ResultSummarizer"
   }

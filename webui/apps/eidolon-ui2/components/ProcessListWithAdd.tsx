@@ -62,7 +62,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
           goHome={() => {
           }}
         />
-        <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} onClose={() => {
+        <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} defaultAgent={app.params.agent} onClose={() => {
           setCreateProcessOpen(false)
         }}/>
       </Box>

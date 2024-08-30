@@ -9,11 +9,10 @@ The APU provides a set of capabilities that encapsulate LLM functionality and cr
 To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).
 
 ## Builtins
-* [APU](/docs/components/apu/apu/)
 * [ClaudeHaiku](/docs/components/apu/claudehaiku/)
 * [ClaudeOpus](/docs/components/apu/claudeopus/)
 * [ClaudeSonnet](/docs/components/apu/claudesonnet/)
-* [ConversationalAPU](/docs/components/apu/conversationalapu/)
+* [ConversationalAPU](/docs/components/apu/conversationalapu/) (default)
 * [GPT3.5-turbo](/docs/components/apu/gpt3_5-turbo/)
 * [GPT4-turbo](/docs/components/apu/gpt4-turbo/)
 * [GPT4o](/docs/components/apu/gpt4o/)

@@ -122,10 +122,10 @@ class AgentController:
         pass
 
     async def run_program(
-            self,
-            handler: FnHandler,
-            process_id: str,
-            **kwargs,
+        self,
+        handler: FnHandler,
+        process_id: str,
+        **kwargs,
     ):
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
         RequestContext["agent_name"] = self.name
@@ -205,11 +205,17 @@ class AgentController:
         try:
             process = await ProcessDoc.create(agent=self.name, **kwargs, _id=str(ObjectId()))
         except Exception as e:
-            logger.error(dedent(f"""
+            logger.error(
+                dedent(
+                    f"""
             Unable to create process. This is likely due to a misconfigured or unreachable database.
             If you are developing locally consider using LocalSymbolicMemory (-m local_dev)
-            {type(e).__name__}: {e}""").strip())
-            raise HTTPException(status_code=503, detail=f"{type(e).__name__} while creating process. See server logs for more details.")
+            {type(e).__name__}: {e}"""
+                ).strip()
+            )
+            raise HTTPException(
+                status_code=503, detail=f"{type(e).__name__} while creating process. See server logs for more details."
+            )
         if hasattr(self.agent, "create_process"):
             await self.agent.create_process(process.record_id)
         return process
@@ -303,10 +309,10 @@ class AgentController:
                     ended = event.is_root_end_event()
                     transitioned = event.is_root_and_type(AgentStateEvent)
                     if (
-                            isinstance(event, StringOutputEvent)
-                            and events_to_store
-                            and isinstance(events_to_store[-1], StringOutputEvent)
-                            and event.stream_context == events_to_store[-1].stream_context
+                        isinstance(event, StringOutputEvent)
+                        and events_to_store
+                        and isinstance(events_to_store[-1], StringOutputEvent)
+                        and event.stream_context == events_to_store[-1].stream_context
                     ):
                         events_to_store[-1].content += event.content
                     else:
@@ -332,7 +338,7 @@ class AgentController:
                 await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
-            self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
+        self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         seen_end = False

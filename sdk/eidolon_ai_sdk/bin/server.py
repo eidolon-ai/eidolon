@@ -8,7 +8,6 @@ from typing import Literal
 
 import dotenv
 import time
-import yaml
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -71,7 +70,14 @@ class MachineStatus(BaseModel):
 
 
 @asynccontextmanager
-async def start_os(app: FastAPI, resource_generator, machine_name, log_level=logging.INFO, replay_override=..., fail_on_agent_start_error=False):
+async def start_os(
+    app: FastAPI,
+    resource_generator,
+    machine_name,
+    log_level=logging.INFO,
+    replay_override=...,
+    fail_on_agent_start_error=False,
+):
     t0 = time.perf_counter()
 
     resource_load_error_handler.fail_on_agent_start_error = fail_on_agent_start_error
@@ -117,12 +123,16 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         resource_status = {}
         agent_status = {}
         for res in AgentOSKernel.get_resources(ReferenceResource):
-            errors = resource_load_error_handler.load_errors.get(res, []) + resource_load_error_handler.start_errors.get(res, [])
+            errors = resource_load_error_handler.load_errors.get(res, []) + resource_load_error_handler.start_errors.get(
+                res, []
+            )
             resource_status[res] = ResourceStatus(
                 resource_name=res, resource_status="error" if errors else "running", errors=errors
             )
         for res in AgentOSKernel.get_resources(AgentResource):
-            errors = resource_load_error_handler.load_errors.get(res, []) + resource_load_error_handler.start_errors.get(res, [])
+            errors = resource_load_error_handler.load_errors.get(res, []) + resource_load_error_handler.start_errors.get(
+                res, []
+            )
             agent_status[res] = ResourceStatus(
                 resource_name=res, resource_status="error" if errors else "running", errors=errors
             )
@@ -157,7 +167,7 @@ async def start_os(app: FastAPI, resource_generator, machine_name, log_level=log
         logger.info(f"Building machine '{machine_name}'")
         AgentOS.machine_name = machine_name
         machine_spec = AgentOSKernel.get_resource(MachineResource, machine_name).spec
-        logger.debug(yaml.safe_dump(machine_spec.model_dump()))
+        logger.debug(machine_spec.model_dump())
         machine: AgentMachine = machine_spec.instantiate()
         AgentOSKernel.load_machine(machine)
         await machine.start(app)

@@ -3,9 +3,6 @@
   "description": "Overview of SimilarityMemory components",
   "anyOf": [
     {
-      "$ref": "file:./SimilarityMemory.json"
-    },
-    {
       "$ref": "file:./SimilarityMemoryImpl.json"
     }
   ],

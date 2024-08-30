@@ -3,9 +3,6 @@
   "description": "Overview of OpenAIConnectionHandler components",
   "anyOf": [
     {
-      "$ref": "file:./OpenAIConnectionHandler.json"
-    },
-    {
       "$ref": "file:./AzureOpenAIConnectionHandler.json"
     }
   ],

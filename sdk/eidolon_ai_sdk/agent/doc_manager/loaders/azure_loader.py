@@ -9,6 +9,7 @@ class AzureLoaderSpec(AzureFileMemorySpec):
     """
     Loads documents from an azure storage container.
     """
+
     pattern: str = "**"
 
 
@@ -18,13 +19,15 @@ class AzureLoader(DocumentLoader, Specable[AzureLoaderSpec]):
     def __init__(self, **kwargs: object):
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
-        self.loader = WrappedMemoryLoader(spec=WrappedMemoryLoaderSpec(
-            memory=dict(
-                implementation=fqn(AzureFileMemory),
-                **self.spec.model_dump(),
-            ),
-            pattern=self.spec.pattern,
-        ))
+        self.loader = WrappedMemoryLoader(
+            spec=WrappedMemoryLoaderSpec(
+                memory=dict(
+                    implementation=fqn(AzureFileMemory),
+                    **self.spec.model_dump(),
+                ),
+                pattern=self.spec.pattern,
+            )
+        )
 
     def get_changes(self, *args, **kwargs):
         return self.loader.get_changes(*args, **kwargs)

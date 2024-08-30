@@ -3,8 +3,14 @@ from typing import Literal, Optional, cast
 from jinja2 import Environment, StrictUndefined, Template
 from pydantic import BaseModel
 
-from eidolon_ai_client.events import StartStreamContextEvent, ObjectOutputEvent, AgentStateEvent, EndStreamContextEvent, \
-    UserInputEvent, StringOutputEvent
+from eidolon_ai_client.events import (
+    StartStreamContextEvent,
+    ObjectOutputEvent,
+    AgentStateEvent,
+    EndStreamContextEvent,
+    UserInputEvent,
+    StringOutputEvent,
+)
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import register_program, register_action
 from eidolon_ai_sdk.agent.sql_agent.client import SqlClient
@@ -36,9 +42,11 @@ class SqlAgentSpec(BaseModel):
     Think carefully.
     """
     user_prompt: str = "{{ message }}"
-    clarification_prompt: str = "What clarifying information do you need? Phrase your response as an explicit question or several questions."
+    clarification_prompt: str = (
+        "What clarifying information do you need? Phrase your response as an explicit question or several questions."
+    )
     response_prompt: str = "What is your response? Be explicit and concise."
-    error_prompt: str = "An error occurred executing the query \"{{ query }}\": {{ error }}"
+    error_prompt: str = 'An error occurred executing the query "{{ query }}": {{ error }}'
     num_retries: int = 3
 
 
@@ -74,8 +82,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
         kwargs = dict(**body.model_dump(), metadata=schema, protocol=self._client.protocol)
         t = await self._apu.main_thread(process_id)
         if agent_state == "initialized":
-            await t.set_boot_messages(
-                prompts=[SystemAPUMessage(prompt=self._system_prompt.render(**kwargs))])
+            await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self._system_prompt.render(**kwargs))])
         message = UserTextAPUMessage(prompt=self._user_prompt.render(**kwargs))
         yield UserInputEvent(input=body.message)
         async for e in self.cycle(t, message, self.spec.num_retries, body=body):
@@ -84,7 +91,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
     async def cycle(self, thread, message, num_reties, body: SqlRequestBody):
         last_event = None
         thinking_stream = thread.stream_request(prompts=[message], output_format=self.get_response_object(body))
-        async for e in stream_manager(thinking_stream, StartStreamContextEvent(context_id='thinking', title='Thinking')):
+        async for e in stream_manager(thinking_stream, StartStreamContextEvent(context_id="thinking", title="Thinking")):
             if isinstance(e, ObjectOutputEvent):
                 last_event = e
             yield e
@@ -107,16 +114,18 @@ class SqlAgent(Specable[SqlAgentSpec]):
                 yield AgentStateEvent(state="idle") if body.allow_conversation else AgentStateEvent(state="terminated")
             except Exception as e:
                 if num_reties > 0:
-                    yield StartStreamContextEvent(context_id='error', title='Error')
-                    yield ObjectOutputEvent(content=dict(query=response.query, error=str(e)), stream_context='error')
-                    yield EndStreamContextEvent(context_id='error')
+                    yield StartStreamContextEvent(context_id="error", title="Error")
+                    yield ObjectOutputEvent(content=dict(query=response.query, error=str(e)), stream_context="error")
+                    yield EndStreamContextEvent(context_id="error")
                     message = UserTextAPUMessage(prompt=self._error_prompt.render(error=str(e), query=response.query))
                     yield UserInputEvent(input=message.prompt)
                     async for e in self.cycle(thread, message, num_reties - 1, body=body):
                         yield e
                 else:
                     if body.allow_clarification:
-                        yield StringOutputEvent(content="I'm sorry, I'm having trouble executing a query. Can you provide more information?")
+                        yield StringOutputEvent(
+                            content="I'm sorry, I'm having trouble executing a query. Can you provide more information?"
+                        )
                         yield AgentStateEvent(state="idle")
                     else:
                         raise
@@ -134,38 +143,44 @@ class SqlAgent(Specable[SqlAgentSpec]):
             raise ValueError(f"Unexpected response type from llm: {response.response_type}")
 
     def get_response_object(self, body: SqlRequestBody):
-        responses = [dict(
-            type="object",
-            description="Respond to the user with the data returned after executing the provided query",
-            properties=dict(
-                response_type=dict(const="execute"),
-                query=dict(type="string")),
-            required=["response_type", "query"],
-        )]
+        responses = [
+            dict(
+                type="object",
+                description="Respond to the user with the data returned after executing the provided query",
+                properties=dict(response_type=dict(const="execute"), query=dict(type="string")),
+                required=["response_type", "query"],
+            )
+        ]
         if body.allow_conversation:
-            responses.append(dict(
-                type="object",
-                description="A response that directly answers the provided question.",
-                properties=dict(
-                    response_type=dict(const="respond"),
-                ),
-                required=["response_type"],
-            ))
-            responses.append(dict(
-                type="object",
-                description="More information is required from the user to answer the provided question.",
-                properties=dict(response_type=dict(const="clarify")),
-                required=["response_type"],
-            ))
+            responses.append(
+                dict(
+                    type="object",
+                    description="A response that directly answers the provided question.",
+                    properties=dict(
+                        response_type=dict(const="respond"),
+                    ),
+                    required=["response_type"],
+                )
+            )
+            responses.append(
+                dict(
+                    type="object",
+                    description="More information is required from the user to answer the provided question.",
+                    properties=dict(response_type=dict(const="clarify")),
+                    required=["response_type"],
+                )
+            )
 
         if len(responses) > 1:
             return dict(anyOf=responses)
         elif len(responses) == 1:
             return responses[0]
         else:
-            raise ValueError("No valid response types")  # this should not be possible due to validation in SqlRequestBody
+            raise ValueError(
+                "No valid response types"
+            )  # this should not be possible due to validation in SqlRequestBody
 
 
 class _AgentResponse(BaseModel):
-    response_type: Literal['execute', 'clarify', 'respond']
+    response_type: Literal["execute", "clarify", "respond"]
     query: Optional[str] = None

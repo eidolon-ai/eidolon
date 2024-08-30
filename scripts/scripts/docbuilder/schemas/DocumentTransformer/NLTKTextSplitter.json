@@ -1,0 +1,46 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "NLTKTextSplitter",
+      "description": "NLTKTextSplitter"
+    },
+    "chunk_size": {
+      "default": 4000,
+      "description": "Maximum size of chunks to return",
+      "title": "Chunk Size",
+      "type": "integer"
+    },
+    "chunk_overlap": {
+      "default": 200,
+      "description": "Overlap in characters between chunks",
+      "title": "Chunk Overlap",
+      "type": "integer"
+    },
+    "keep_separator": {
+      "default": false,
+      "description": "Whether to keep the separator in the chunks",
+      "title": "Keep Separator",
+      "type": "boolean"
+    },
+    "strip_whitespace": {
+      "default": true,
+      "description": "If `True`, strips whitespace from the start and end of every document",
+      "title": "Strip Whitespace",
+      "type": "boolean"
+    },
+    "separator": {
+      "default": "\n\n",
+      "description": "Separator to split on",
+      "title": "Separator",
+      "type": "string"
+    },
+    "language": {
+      "default": "english",
+      "description": "Language to use for tokenization",
+      "title": "Language",
+      "type": "string"
+    }
+  },
+  "title": "NLTKTextSplitter",
+  "type": "object"
+}

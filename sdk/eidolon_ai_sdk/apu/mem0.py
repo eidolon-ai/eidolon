@@ -42,15 +42,11 @@ class Mem0LLM(LLMBase):
                 raise ValueError(f"Unknown message role {m.get('role')}")
         transformed_tools = [
             LLMCallFunction(name=tool["name"], description=tool["description"], parameters=tool["parameters"])
-            for tool in (t['function'] for t in tools)
+            for tool in (t["function"] for t in tools)
         ]
         called_tools: List[ToolCall] = []
         acc = []
-        async for event in self.llm_unit.execute_llm(
-                transformed_messages,
-                tools=transformed_tools,
-                output_format="str"
-        ):
+        async for event in self.llm_unit.execute_llm(transformed_messages, tools=transformed_tools, output_format="str"):
             if event.is_root_and_type(StringOutputEvent):
                 acc.append(cast(StringOutputEvent, event).content)
             elif event.is_root_and_type(LLMToolCallRequestEvent):
@@ -58,16 +54,11 @@ class Mem0LLM(LLMBase):
 
         content = "".join(acc)
 
-        return dict(
-            content=content,
-            tool_calls=[
-                dict(
-                    name=tool.name,
-                    arguments=tool.arguments
-                )
-                for tool in called_tools
-            ]
-        ) if tools else content
+        return (
+            dict(content=content, tool_calls=[dict(name=tool.name, arguments=tool.arguments) for tool in called_tools])
+            if tools
+            else content
+        )
 
 
 class Mem0Embedding(EmbeddingBase):
@@ -107,8 +98,12 @@ class Mem0VectorDB(VectorStoreBase):
         payloads = payloads or [None] * len(vectors)
         ids = ids or [ObjectId() for _ in range(len(vectors))]
         docs = [
-            Document(id=str(vector_id), embedding=vector, metadata={k: v for k, v in payload.items() if k != 'data'},
-                     page_content=payload["data"])
+            Document(
+                id=str(vector_id),
+                embedding=vector,
+                metadata={k: v for k, v in payload.items() if k != "data"},
+                page_content=payload["data"],
+            )
             for vector, payload, vector_id in zip(vectors, payloads, ids)
         ]
         return await self.vs.add(collection=name, docs=docs)
@@ -117,7 +112,9 @@ class Mem0VectorDB(VectorStoreBase):
         return asyncio.run(self._search(filters, limit, name, query))
 
     async def _search(self, filters, limit, name, query):
-        found: List[Document] = await self.vs.query(collection=name, query=query, num_results=limit, metadata_where=filters)
+        found: List[Document] = await self.vs.query(
+            collection=name, query=query, num_results=limit, metadata_where=filters
+        )
         acc = []
         for doc in found:
             acc.append(
@@ -164,7 +161,7 @@ class Mem0VectorDB(VectorStoreBase):
             doc = d
         if vector:
             doc.embedding = vector
-        data = (payload or {}).pop('data', None)
+        data = (payload or {}).pop("data", None)
         if payload:
             doc.metadata = payload
         if data:
@@ -181,7 +178,7 @@ class Mem0VectorDB(VectorStoreBase):
     async def _get(self, name, vector_id):
         try:
             async for doc in self.vs.get_docs(collection=name, doc_ids=[str(vector_id)]):
-                doc.metadata['data'] = doc.page_content
+                doc.metadata["data"] = doc.page_content
                 return SimpleNamespace(
                     id=doc.id,
                     payload=doc.metadata,
@@ -239,7 +236,14 @@ class Mem0DB:
         timestamp = datetime.utcnow()
         return await self.symbolic_memory.insert_one(
             self.collection,
-            dict(memory_id=memory_id, prev_value=prev_value, new_value=new_value, event=event, is_deleted=is_deleted, timestamp=timestamp)
+            dict(
+                memory_id=memory_id,
+                prev_value=prev_value,
+                new_value=new_value,
+                event=event,
+                is_deleted=is_deleted,
+                timestamp=timestamp,
+            ),
         )
 
     def get_history(self, memory_id):
@@ -248,7 +252,7 @@ class Mem0DB:
     async def _get_history(self, memory_id):
         acc = []
         async for doc in self.symbolic_memory.find(self.collection, {"memory_id": memory_id}):
-            doc['id'] = doc.pop('_id')
+            doc["id"] = doc.pop("_id")
             acc.append(doc)
         return acc
 

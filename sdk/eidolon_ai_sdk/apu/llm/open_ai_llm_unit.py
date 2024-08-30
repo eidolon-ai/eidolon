@@ -6,7 +6,6 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 import yaml
 from openai import AsyncStream
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
-from openai.types.shared_params import ResponseFormatJSONObject
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -105,8 +104,12 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         self.temperature = self.spec.temperature
         self.connection_handler = self.spec.connection_handler.instantiate()
 
-    async def execute_llm(self, messages: List[LLMMessage], tools: List[LLMCallFunction],
-                          output_format: Union[Literal["str"], Dict[str, Any]]) -> AsyncIterator[AssistantMessage]:
+    async def execute_llm(
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+    ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
         request["stream"] = True
 
@@ -181,7 +184,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             if not self.spec.force_json:
                 force_json_msg += "\nThe response will be wrapped in a json section json```{...}```\nRemember to use double quotes for strings and properties."
             else:
-                request["response_format"] = ResponseFormatJSONObject(type="json_object")
+                request["response_format"] = dict(type="json_object")
 
             # add response rules to original system message for this call only
             if messages[0]["role"] == "system":

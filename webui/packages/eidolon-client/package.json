@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "tsup index.ts",
+    "watch": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
     "test": "jest --ci"

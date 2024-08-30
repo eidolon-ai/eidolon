@@ -1,36 +1,25 @@
-import functools
 import os
 import pathlib
-import threading
-import urllib.parse
 from contextlib import asynccontextmanager
-from typing import Iterable
-from unittest.mock import patch
 
 import httpx
 import pytest
-import uvicorn
 from bson import ObjectId
-from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
-from sse_starlette.sse import AppStatus
 from vcr.request import Request as VcrRequest
-from vcr.stubs import httpx_stubs, aiohttp_stubs
 
-import eidolon_ai_sdk.system.process_file_system as process_file_system
-from eidolon_ai_sdk.agent.doc_manager.transformer import document_transformer
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAIGPT
-from eidolon_ai_sdk.bin.server import start_os, start_app
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
 from eidolon_ai_sdk.memory.local_symbolic_memory import LocalSymbolicMemory
 from eidolon_ai_sdk.memory.mongo_symbolic_memory import MongoSymbolicMemory
 from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
-from eidolon_ai_sdk.system import agent_controller
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
+from eidolon_ai_sdk.test_utils.server import serve_thread
+from eidolon_ai_sdk.test_utils.vcr import vcr_patch
 from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_sdk.util.posthog import PosthogConfig
 
@@ -40,79 +29,33 @@ PosthogConfig.enabled = False
 # we want all tests using the client_builder to use vcr, so we don't send requests to openai
 def pytest_collection_modifyitems(items):
     for item in filter(lambda i: "run_app" in i.fixturenames, items):
-        item.fixturenames.append("patched_vcr_object_handling")
-        item.fixturenames.append("deterministic_process_ids")
+        item.fixturenames.append("patched_vcr")
         item.add_marker(pytest.mark.vcr)
 
 
-@pytest.fixture(scope="module", autouse=True)
-def patched_vcr_aiohttp_url_encoded():
-    """
-    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
-    even the fake test client requests, so we need to pipe the body through ourselves
-    """
-
-    original = aiohttp_stubs.vcr_request
-    def my_custom_function(cassette, real_request):
-        fn = original(cassette, real_request)
-
-        @functools.wraps(real_request)
-        async def new_request(self, method, url, **kwargs):
-            data = kwargs.get("data")
-            if "Content-Type" in kwargs.get("headers", {}):
-                if "application/x-www-form-urlencoded" in kwargs["headers"]["Content-Type"] and isinstance(data, dict):
-                    # url encode the data
-                    kwargs["data"] = urllib.parse.urlencode(data)
-
-            return await fn(self, method, url, **kwargs)
-        return new_request
-
-    with patch.object(aiohttp_stubs, "vcr_request", new=my_custom_function):
+@pytest.fixture()
+def patched_vcr(test_name):
+    with vcr_patch(test_name):
         yield
-
-
-@pytest.fixture(scope="module")
-def app_builder(machine_manager):
-    def fn(resources: Iterable[Resource]):
-        @asynccontextmanager
-        async def manage_lifecycle(_app: FastAPI):
-            async with machine_manager() as _machine:
-                async with start_os(
-                        app=_app,
-                        resource_generator=[_machine, *resources] if _machine else resources,
-                        machine_name=_machine.metadata.name,
-                    fail_on_agent_start_error=True,
-                ):
-                    yield
-                    print("done")
-
-        return start_app(lifespan=manage_lifecycle)
-
-    return fn
-
-
-@pytest.fixture(scope="module")
-def port():
-    # fixing the port. Do we need to be so cool to have a random port?
-    return 5346
-    # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    #     s.bind(("", 0))
-    #     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    #     return s.getsockname()[1]
 
 
 @pytest.fixture(autouse=True)
 def vcr_config():
     def ignore_some_localhost(request: VcrRequest):
-        if (request.host == "0.0.0.0" or request.host == "localhost") and port != 11434:
+        if (request.host == "0.0.0.0" or request.host == "localhost") and request.port != 11434:  # 11434 is the ollama port
             return None
         elif request.host == "login.microsoftonline.com":
             return None
         return request
 
     return dict(
-        filter_headers=[("authorization", "XXXXXX"), ("amz-sdk-invocation-id", None), ("X-Amz-Date", None), ("x-api-key", None)],
-        filter_query_parameters=["cx", "key"], # google custom search engine id
+        filter_headers=[
+            ("authorization", "XXXXXX"),
+            ("amz-sdk-invocation-id", None),
+            ("X-Amz-Date", None),
+            ("x-api-key", None),
+        ],
+        filter_query_parameters=["cx", "key"],  # google custom search engine id
         filter_post_data_parameters=["client_secret"],
         before_record_request=ignore_some_localhost,
         record_mode="once",
@@ -121,59 +64,17 @@ def vcr_config():
 
 
 @pytest.fixture(scope="module")
-def run_app(app_builder, port):
+def run_app(machine_manager):
     @asynccontextmanager
     async def fn(*agents):
-        server_wrapper = []
-
-        def run_server():
-            AppStatus.should_exit = False
-            AppStatus.should_exit_event = None
-
-            try:
-                resources = [
-                    a
-                    if isinstance(a, Resource)
-                    else AgentResource(
-                        apiVersion="eidolon/v1",
-                        spec=Reference(implementation=fqn(a)),
-                        metadata=Metadata(name=a.__name__),
-                    )
-                    for a in agents
-                ]
-                app = app_builder(resources)
-                # todo, the next line launches uvicorn app as a subprocess so it does not block
-                config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info", loop="asyncio")
-                server = uvicorn.Server(config)
-                server_wrapper.append(server)
-                server.run()
-                server_wrapper.clear()
-                server_wrapper.append("stopped")
-            except BaseException as e:
-                server_wrapper.clear()
-                server_wrapper.append("aborted")
-                raise e
-
-        server_thread = threading.Thread(target=run_server)
-        server_thread.start()
-
-        try:
-            # Wait for the server to start
-            while len(server_wrapper) == 0 or not (
-                    server_wrapper[0] in {"aborted", "stopped"} or server_wrapper[0].started
-            ):
-                pass
-            if server_wrapper[0] in {"aborted", "stopped"}:
-                raise Exception("Server failed to start")
-
-            print(f"Server started on port {port}")
-            os.environ["EIDOLON_LOCAL_MACHINE"] = f"http://localhost:{port}"
-            yield f"http://localhost:{port}"
-        finally:
-            # server_wrapper[0].force_exit = True
-            if isinstance(server_wrapper[0], uvicorn.Server):
-                server_wrapper[0].should_exit = True
-            server_thread.join()
+        async with machine_manager() as machine:
+            resources = [a if isinstance(a, Resource) else AgentResource(
+                apiVersion="eidolon/v1",
+                spec=Reference(implementation=fqn(a)),
+                metadata=Metadata(name=a.__name__),
+            ) for a in agents]
+            with serve_thread([machine, *resources], machine_name=machine.metadata.name) as ra:
+                yield ra
 
     return fn
 
@@ -330,53 +231,6 @@ def cat(test_dir):
         yield f
 
 
-@pytest.fixture
-def patched_vcr_object_handling():
-    """
-    vcr has a bug around how it handles multipart requests, and it is wired in for everything,
-    even the fake test client requests, so we need to pipe the body through ourselves
-    """
-
-    def my_custom_function(httpx_request, **kwargs):
-        uri = str(httpx_request.url)
-        headers = dict(httpx_request.headers)
-        return VcrRequest(httpx_request.method, uri, httpx_request, headers)
-
-    with patch.object(httpx_stubs, "_make_vcr_request", new=my_custom_function):
-        yield
-
-
-def deterministic_id_generator(test_name):
-    count = 0
-    while True:
-        yield f"{test_name}_{count}"
-        count += 1
-
-
 @pytest.fixture()
 def test_name(request):
     return request.node.name
-
-
-@pytest.fixture()
-def deterministic_process_ids(test_name):
-    """
-    Tool call responses contain the process id, which means it does name make cache hits for vcr.
-    This method patches object id for processes so that it returns a deterministic id based on the test name.
-    """
-
-    pid_generator = deterministic_id_generator(test_name)
-    fid_generator = deterministic_id_generator(test_name + "_file")
-
-    def patched_pid(*args, **kwargs):
-        return next(pid_generator)
-
-    def patched_fid(*args, **kwargs):
-        return next(fid_generator)
-
-    def patched_did(*args, **kwargs):
-        return next(fid_generator)
-
-    with patch.object(agent_controller, "ObjectId", new=patched_pid), patch.object(
-            process_file_system, "ObjectId", new=patched_fid), patch.object(document_transformer, "ObjectId", new=patched_did):
-        yield

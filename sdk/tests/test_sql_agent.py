@@ -9,14 +9,13 @@ from eidolon_ai_sdk.util.class_utils import fqn
 @pytest.fixture(scope="module", autouse=True)
 async def server(run_app, test_dir):
     async with run_app(
-            sqlagent(
-                "SqlAgent",
-                client=dict(connection_string=f"sqlite+aiosqlite:///{str(test_dir / 'resources' / 'chinook.db')}")
-            ),
-            sqlagent(
-                "BrokenSqlAgent",
-                client=dict(connection_string=f"sqlite:///{str(test_dir / 'resources' / 'chinook.db')}")
-            ),
+        sqlagent(
+            "SqlAgent",
+            client=dict(connection_string=f"sqlite+aiosqlite:///{str(test_dir / 'resources' / 'chinook.db')}"),
+        ),
+        sqlagent(
+            "BrokenSqlAgent", client=dict(connection_string=f"sqlite:///{str(test_dir / 'resources' / 'chinook.db')}")
+        ),
     ) as ra:
         yield ra
 
@@ -26,7 +25,7 @@ def sqlagent(name: str, **kwargs):
         apiVersion="eidolon/v1",
         kind="Agent",
         metadata=Metadata(name=name),
-        spec=dict(implementation=fqn(SqlAgent), **kwargs)
+        spec=dict(implementation=fqn(SqlAgent), **kwargs),
     )
 
 
@@ -57,7 +56,9 @@ async def test_sql_agent(process):
 
 
 async def test_sql_agent_data_query(process):
-    response = await process.action("query", dict(message="how may albums are in the database?", allow_conversation=False))
+    response = await process.action(
+        "query", dict(message="how may albums are in the database?", allow_conversation=False)
+    )
     assert response.data == [347]
 
 

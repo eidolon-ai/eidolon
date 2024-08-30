@@ -3,10 +3,40 @@
   "description": "Overview of DocumentTransformer components",
   "anyOf": [
     {
-      "$ref": "file:./DocumentTransformer.json"
+      "$ref": "file:./AutoTransformer.json"
     },
     {
-      "$ref": "file:./AutoTransformer.json"
+      "$ref": "file:./CharacterTextSplitter.json"
+    },
+    {
+      "$ref": "file:./HTMLHeaderTextSplitter.json"
+    },
+    {
+      "$ref": "file:./LatexTextSplitter.json"
+    },
+    {
+      "$ref": "file:./MarkdownHeaderTextSplitter.json"
+    },
+    {
+      "$ref": "file:./MarkdownTextSplitter.json"
+    },
+    {
+      "$ref": "file:./NLTKTextSplitter.json"
+    },
+    {
+      "$ref": "file:./PythonCodeTextSplitter.json"
+    },
+    {
+      "$ref": "file:./RecursiveCharacterTextSplitter.json"
+    },
+    {
+      "$ref": "file:./SentenceTransformersTokenTextSplitter.json"
+    },
+    {
+      "$ref": "file:./SpacyTextSplitter.json"
+    },
+    {
+      "$ref": "file:./TokenTextSplitter.json"
     }
   ],
   "reference_group": {

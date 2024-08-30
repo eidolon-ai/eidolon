@@ -128,10 +128,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[APUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+        self,
+        call_context: CallContext,
+        prompts: List[APUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
@@ -156,10 +156,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             raise APUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
-            self,
-            call_context: CallContext,
-            output_format: Union[Literal["str"], Dict[str, Any]],
-            conversation: List[LLMMessage],
+        self,
+        call_context: CallContext,
+        output_format: Union[Literal["str"], Dict[str, Any]],
+        conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
         # first convert the conversation to fill in file data
         num_files = 0
@@ -186,7 +186,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             with tracer.start_as_current_span("building tools"):
                 lus = self.logic_units
                 if num_files > 0:
-                    lus += RagLogicUnit(self.retriever, apu=self.retriever_apu, processing_unit_locator=self),
+                    lus += (RagLogicUnit(self.retriever, apu=self.retriever_apu, processing_unit_locator=self),)
                 tool_defs = await LLMToolWrapper.from_logic_units(call_context, lus)
                 tool_call_events = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
@@ -229,11 +229,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         raise APUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
-            self,
-            call_context: CallContext,
-            tool_call_event: LLMToolCallRequestEvent,
-            tool_defs,
-            conversation: List[LLMMessage],
+        self,
+        call_context: CallContext,
+        tool_call_event: LLMToolCallRequestEvent,
+        tool_defs,
+        conversation: List[LLMMessage],
     ):
         tc = tool_call_event.tool_call
         logic_unit_wrapper = ["NaN"]
@@ -242,7 +242,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             message = self.llm_unit.create_tool_response_message(
                 logic_unit_name=logic_unit_wrapper[0],
                 tc=tc,
-                content=f"Invalid tool call {tc.name}. Check the name and try again."
+                content=f"Invalid tool call {tc.name}. Check the name and try again.",
             )
         else:
             tool_def = tool_defs[tc.name]
