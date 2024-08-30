@@ -1,5 +1,5 @@
 ---
-title: Using LLM APIs
+title: LLM Authentication
 description: References - How to get started with LLMs and set API keys
 ---
 
@@ -30,7 +30,6 @@ To see your Eidolon environment settings:
 
 ```console
 cd <Eidolon application root directory>
-ls -oa
 cat .env
 ```
 
