@@ -1,6 +1,6 @@
 ---
-title: Customizing Builtin Components
-description: References - Pluggable Resources
+title: Customize Built-in Components
+description: References - How to create your own pluggable resources
 ---
 In a multi-agent system, agents will have vastly different needs. This may be as simple as choosing a different system 
 prompt, or as complex as using a different LLM model. Eidolon allows you to specify this customization without ever 

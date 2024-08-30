@@ -1,6 +1,6 @@
 ---
-title: Using References
-description: References - Using References
+title: Use References
+description: References - Why and how to use References for dependency injection
 ---
 
 References make up the backbone of Eidolon's yaml driven dependency injection. Defining them in a component's spec 

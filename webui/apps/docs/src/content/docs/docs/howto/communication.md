@@ -1,6 +1,6 @@
 ---
-title: Agent-Agent Communication
-description: References - Agent Communication
+title: Enable Agent Interactivity
+description: References - How to configure agents to communicate and interact with each other
 ---
 In a multi-agent system, agents need to communicate with each other to share information, coordinate actions, and achieve 
 common goals.
