@@ -19,7 +19,8 @@ Welcome to the Eidolon Quickstart guide. This section covers environment setup, 
 We know you are excited about creating your first agent, but first let's make sure we have everything we need to get started.
 
 ##### [OpenAI API Key](https://platform.openai.com/account/api-keys "Create an OpenAI key") 
-You should have an envrionment variable OPENAI_API_KEY associated with an account containing at least $5. set to your OpenAI API.
+You should have an environment variable OPENAI_API_KEY associated with a funded account (see LLM provider for minimum
+funding requirements) to set your OpenAI api key.
 Create a new key on [openai.com](https://platform.openai.com/api-keys) if you don't have one already or check out our 
 [LLM Authentication](/docs/howto/llm_authentication) guide for more details.
 
