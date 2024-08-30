@@ -1,8 +1,6 @@
-from enum import Enum
-from typing import Optional, List, Callable
-
 from pydantic import BaseModel
 from qdrant_client.http.models import ScoredPoint
+from typing import Optional, List, Callable
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.call_context import CallContext
