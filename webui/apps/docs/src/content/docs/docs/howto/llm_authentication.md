@@ -1,5 +1,5 @@
 ---
-title: LLM Authentication
+title: Authenticate Your LLM
 description: References - How to get started with LLMs and set API keys
 ---
 
