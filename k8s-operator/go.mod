@@ -1,6 +1,6 @@
 module github.com/eidolon-ai/eidolon/k8s-operator
 
-go 1.22.0
+go 1.22
 
 toolchain go1.22.4
 
