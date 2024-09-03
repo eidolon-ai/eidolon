@@ -6,7 +6,7 @@ metadata:
   annotations:
     - title: "Mistral Medium"
 spec:
-  implementation: APU
+  implementation: ConversationalAPU
   llm_unit:
     implementation: MistralGPT
     model: "mistral-medium-latest"
