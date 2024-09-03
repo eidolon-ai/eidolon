@@ -79,7 +79,7 @@ export default defineConfig({
             {label: 'Configure Agent-Agent Communication', link: '/docs/howto/communication'},
             {label: 'Configure Built-in Components', link: '/docs/howto/customize_builtins'},
             {label: 'Use References', link: '/docs/howto/using_references'},
-            {label: 'Built Agent Templates', link: '/docs/howto/custom_agents'},
+            {label: 'Build Custom Agent Templates', link: '/docs/howto/custom_agents'},
           ],
         },
         {
