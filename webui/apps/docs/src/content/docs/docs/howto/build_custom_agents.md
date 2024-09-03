@@ -1,8 +1,8 @@
 ---
-title: Custom Agent Templates
-description: References - Building Custom Agent Templates
+title: How to Build Custom Agent Templates
+description: Reference - Building Custom Agent Templates
 ---
-Eidolon defines several useful [AgentTemplates](/docs/components/agent_templates/) out of the box, but for domain 
+Eidolon defines several useful built-in [AgentTemplates](/docs/components/agents/overview) out of the box, but for domain 
 specific problems, you may need to create your own.
 
 ## Why
@@ -48,12 +48,14 @@ communicate with it.
 
 ### LLM Based Agent Template
 
-Ok, so now let's actually create an agent that uses an LLM. As you know, you could use langchain or even raw calls out 
-to openai if you want, but to fully leverage Eidolon's capabilities, you should use an [**AgentProcessingUnit**](/docs/components/apu/)
-or **APU**.
+Ok, so now let's actually create an agent that uses an LLM. You could use langchain or even raw calls out 
+to OpenAI if you want, but to fully leverage Eidolon's capabilities, you should use an [**Agent Processing Unit**](/docs/components/apu/overview/)
+(APU).
 
-The APU is Eidolon's abstraction around llm interactions. It provides an LLM agnostic multi-media interface that 
-gives you tooling to developers manage memory, inter-agent-communication, logic-units, metrics, and prompt engineering. 
+The APU is Eidolon's abstraction around LLM interactions. It provides an LLM-agnostic, multi-media interface. The APU 
+gives developers built-in tooling to manage memory, inter-agent-communication, logic units, metrics, and prompt engineering. 
+
+
 Everything you love about Eidolon is baked into the **APU**.
 
 ```python
@@ -72,7 +74,7 @@ class QA(Specable[QASpec]):
     ])
 ```
 
-🔎 What is this `Specable` thing? Eidolon uses Pydantic to define the spec of different resources. [Learn more about 
+🔎 What is this `Specable` thing? Eidolon uses [Pydantic models](https://docs.pydantic.dev/latest/concepts/models/) to define the spec of different resources. [Learn more about 
 how references work.](/docs/howto/using_references)
 
 ### Streaming Response

@@ -1,11 +1,10 @@
 ---
-title: Customizing Builtin Components
-description: References - Pluggable Resources
+title: How to Configure Built-in Components
+description: Reference - Configuring Pluggable Resources
 ---
-In a multi-agent system, agents will have vastly different needs. This may be as simple as choosing a different system 
-prompt, or as complex as using a different LLM model. Eidolon allows you to specify this customization without ever 
-needing to jump into code. What's more, it also allows you to override deeply nested configuration as well as define 
-custom resources to use as templates.
+In a multi-agent system, agents will have vastly different needs. For example, system prompts can be vague or preciese, or you may want to use a variety of LLM models. 
+
+Eidolon allows you to configure agents without ever needing to jump into code. You can override deeply nested configuration default, as well as define new custom resources to use as templates.
 
 ## Why
 LLM applications require a ton of tweaking 🔨. Jumping into code for each and every code means this fiddling is slower 
@@ -18,7 +17,7 @@ architecture, fine-tuning, model selection, and prompt engineering so each perso
 without getting bogged down.
 
 ## How
-### Spec Customization
+### Spec Configuration
 
 In Eidolon's agent yaml files, you can have probably noticed the `spec` field. This is where you can customize portions 
 of the component's configuration.
@@ -31,17 +30,21 @@ metadata:
 spec: ...
 ```
 
+#### Field Configuration
 
-#### Field Customization
-You can override individual fields of the component.
+You can override component defaults at the individual field or attribute level.
+
 ```yaml
 spec:
   title_generation_mode: "none"   # 🔎 overrides the component's default title_generation_mode
 ```
 
-#### Implementation Customization
-Most components have a default implementation that they point to. Agents use the SimpleAgent template by default. You 
-can override this implementation, but remember the new contents need to match the new implementation's spec pattern.
+#### Overriding Implementation Defaults
+
+Most components have a default implementation. Check the Built-in Components "Overview" and child pages to see the defaults. For example, agents use the [SimpleAgent template by default](https://www.eidolonai.com/docs/components/agents/overview). 
+
+You can override implementation defaults, but remember the new contents need to match the new implementation's spec pattern.
+
 ```yaml
 spec:
   implementation: RetrieverAgent  # 🔎 defines the new component to use
@@ -50,7 +53,7 @@ spec:
 ```
 
 #### Nested Spec Customization
-Components can also make **References** to other components. These subcomponents can be customized as well.
+Components can also make [References](/docs/howto/using_references/) to other components. These subcomponents can be customized as well.
 ```yaml
 spec:
   apu:                            # 🔎 modify the component's default apu
@@ -67,6 +70,7 @@ spec:
 
 This implementation pointer override is quite common, so we have added as shortcut for it. If you just specify a string 
 for the reference, we will treat it as an implementation override.
+
 ```yaml
 spec:
   apu: ConversationalAPU

@@ -74,11 +74,12 @@ export default defineConfig({
         {
           label: 'How To',
           items: [
-            {label: 'Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Authenticate LLMs', link: '/docs/howto/authenticate_llm'},
             {label: 'Swap out LLMs', link: '/docs/howto/swap_llm'},
-            {label: 'Customizing Builtin Components', link: '/docs/howto/customize_builtins'},
-            {label: 'Custom Agent Templates', link: '/docs/howto/custom_agents'},
-            {label: 'Custom Components', link: '/docs/howto/using_references'},
+            {label: 'Configure Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Configure Built-in Components', link: '/docs/howto/customize_builtins'},
+            {label: 'Use References', link: '/docs/howto/using_references'},
+            {label: 'Built Agent Templates', link: '/docs/howto/custom_agents'},
           ],
         },
         {
