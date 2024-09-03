@@ -20,7 +20,7 @@ Use the table below to get started with popular LLM providers.
 | Claude | [Anthropic Quickstart](https://docs.anthropic.com/en/docs/quickstart)  | ANTHROPIC_API_KEY |
 | Mistral | [Mistral AI Quickstart: Account Setup](https://docs.mistral.ai/getting-started/quickstart/#account-setup) | MISTRAL_API_KEY |
 | Ollama | [Ollama Github](https://github.com/ollama/ollama)  | n/a -- you run Ollama locally |
-| GPT | [OpenAI Developer Quickstart](https://platform.openai.com/docs/quickstart)  | OPENAI_API_KEY |
+| ChatGPT | [OpenAI Developer Quickstart](https://platform.openai.com/docs/quickstart)  | OPENAI_API_KEY |
 
 ## Setting Your LLM API Keys
 
