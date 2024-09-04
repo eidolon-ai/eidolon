@@ -235,5 +235,12 @@ export default defineConfig({
         '~': path.resolve(__dirname, './src')
       }
     }
+  },
+  redirects: {
+    // '/old-page': '/new-page'
+    '/docs/components/simple_agent/': '/docs/components/agents/simpleagent/',
+    '/docs/components/simple_agent#defining-actions': '/docs/components/agents/simpleagent#51-actiondefinition',
+    '/docs/howto/customize_builtins/': '/docs/howto/configure_builtins/',
+    '/docs/howto/custom_agents/': '/docs/howto/build_custom_agents/'
   }
 });
