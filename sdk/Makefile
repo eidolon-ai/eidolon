@@ -3,7 +3,10 @@
 PROJECT ?= docker.io/eidolonai
 VERSION := $(shell grep -m 1 '^version = ' pyproject.toml | awk -F '"' '{print $$2}')
 
-docker:
+poetry.lock: pyproject.toml
+	poetry lock --no-update
+
+docker: poetry.lock
 	docker build --target sdk_base -t ${PROJECT}/sdk_base -t ${PROJECT}/sdk_base:${VERSION} -f ../Dockerfile ..
 	docker build -t ${PROJECT}/sdk -t ${PROJECT}/sdk:${VERSION} -f ../Dockerfile ..
 
