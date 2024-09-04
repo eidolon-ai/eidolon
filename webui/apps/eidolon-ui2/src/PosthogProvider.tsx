@@ -7,7 +7,8 @@ const POSTHOG_HOST = "https://us.i.posthog.com"
 
 if (typeof window !== 'undefined' && POSTHOG_KEY) {
   posthog.init(POSTHOG_KEY, {
-    api_host: POSTHOG_HOST
+    api_host: POSTHOG_HOST,
+    disable_session_recording: true,
   })
 
   const realFetch = globalThis.fetch;
@@ -30,5 +31,5 @@ export function PHProvider({
                            }: {
   children: React.ReactNode
 }) {
-  return <PostHogProvider client={posthog} options={{disable_session_recording: true}}>{children}</PostHogProvider>
+  return <PostHogProvider client={posthog}>{children}</PostHogProvider>
 }
