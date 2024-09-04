@@ -68,7 +68,7 @@ Believe it or not, you are already up and running with a simple agent! 🎉
 
 ## What just happened?
 
-The repository you just cloned defines an **AgentMachine** 💻 with a single **AgentProgram** 🤖 named `hello_world` 👋.
+The repository you just cloned defines an **AgentMachine** 💻 with a single **AgentProgram** 🤖 named `hello-world` 👋.
 
 The agent 🤖 is defined in a yaml file 📄 located at `resources/hello_world_agent.yaml`.
 
@@ -79,7 +79,7 @@ want (like a custom LLM. tools, etc).
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
-  name: hello_world
+  name: hello-world
 
 spec:
   description: "This is an example of a agent using the 'SimpleAgent' template."
@@ -99,7 +99,7 @@ pip install 'eidolon-ai-client[cli]' -U
 
 #### 2. Then create an AgentProcess
 ```bash
-export PID=$(eidolon-cli processes create --agent hello_world); echo $PID
+export PID=$(eidolon-cli processes create --agent hello-world); echo $PID
 ```
 🔬 _a process defines the boundaries of an agent's memory._
 
@@ -114,8 +114,9 @@ Did your agent respond to you? 🍾 Congratulations! You have successfully creat
 Now that you have a running agent machine with a simple agent. Let's start customizing!
 
 - [ ] ⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub. Eidolon is a fully open source project, and we love your support!
-- [ ] Add new capabilities via logic units (tools)
-- [ ] Enable [agent-to-agent communication](/docs/howto/communication)
-- [ ] [Swap out components](/docs/howto/customize_builtins) (like the underlying llm)
-- [ ] Use [structured inputs](/docs/components/simple_agent#defining-actions) for prompt templating
-- [ ] Leverage your agent's [state machine](/docs/components/simple_agent#defining-actions)
+- [ ] [Swap out the LLM](docs/howto/swap_llm)
+- [ ] Configure [agent-to-agent communication](/docs/howto/communication)
+- [ ] Configure [built-in components](/docs/howto/configure_builtins)
+- [ ] Use [structured inputs](docs/components/agents/simpleagent#3-property-system_prompt) for prompt templating
+- [ ] Leverage your agent's [state machine](/docs/components/agents/simpleagent#51-actiondefinition)
+- [ ] Add new capabilities via [LogicUnits](/category/logicunit) (tools)
