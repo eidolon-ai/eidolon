@@ -11,7 +11,7 @@ spec:
   image_unit: OpenAIImageUnit
   llm_unit:
     implementation: AnthropicLLMUnit
-    model: "claude-3-sonnet-20240229"
+    model: "claude-3-5-sonnet-20240620"
 ---
 apiVersion: eidolon/v1
 kind: Reference
@@ -23,6 +23,20 @@ spec:
   name: "claude-3-sonnet-20240229"
   input_context_limit: 200000
   output_context_limit: 4096
+  supports_tools: False
+  supports_image_input: True
+  supports_audio_input: False
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: claude-3-5-sonnet-20240620
+spec:
+  implementation: LLMModel
+  human_name: Claude Sonnet
+  name: "claude-3-5-sonnet-20240620"
+  input_context_limit: 200000
+  output_context_limit: 8192
   supports_tools: False
   supports_image_input: True
   supports_audio_input: False
