@@ -77,9 +77,9 @@ export default defineConfig({
             {label: 'Authenticate LLMs', link: '/docs/howto/authenticate_llm'},
             {label: 'Swap out LLMs', link: '/docs/howto/swap_llm'},
             {label: 'Configure Agent-Agent Communication', link: '/docs/howto/communication'},
-            {label: 'Configure Built-in Components', link: '/docs/howto/customize_builtins'},
+            {label: 'Configure Built-in Components', link: '/docs/howto/configure_builtins'},
             {label: 'Use References', link: '/docs/howto/using_references'},
-            {label: 'Build Custom Agent Templates', link: '/docs/howto/custom_agents'},
+            {label: 'Build Custom Agent Templates', link: '/docs/howto/build_custom_agents'},
           ],
         },
         {
