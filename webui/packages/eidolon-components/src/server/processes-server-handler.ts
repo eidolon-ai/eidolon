@@ -1,10 +1,38 @@
 import {EidolonClient, HttpException} from "@eidolon-ai/client";
 
-export function processResponse(promise: Promise<any>) {
-  return convertException(promise.then(Response.json))
+export async function processHeadersAndResponse(request: Request, promise: Promise<any>) {
+  const realFetch = globalThis.fetch;
+
+  globalThis.fetch = function patchedFetch(uri, options) {
+    if (request.headers) {
+      const localHeaders = request.headers
+      if (localHeaders.get('X-Eidolon-Context')) {
+        const newHeaders: Record<string, string> = {}
+        if (options?.headers) {
+          Object.assign(newHeaders, options.headers)
+        }
+        const headersToFind = localHeaders.get('X-Eidolon-Context')?.split(",") || []
+        headersToFind.forEach((header) => {
+          const value = localHeaders.get(header)
+          if (value) {
+            newHeaders[header] = value
+          }
+        })
+        newHeaders['X-Eidolon-Context'] = localHeaders.get('X-Eidolon-Context')!
+        if (!options) {
+          options = {}
+        }
+        options.headers = newHeaders
+      }
+    }
+    return realFetch(uri, options);
+  };
+  return convertException(promise.then(Response.json)).finally(() => {
+    globalThis.fetch = realFetch;
+  })
 }
 
-export function convertException(promise: Promise<any>) {
+export async function convertException(promise: Promise<any>) {
   return promise.catch((e) => {
     if (e instanceof HttpException) {
       return new Response(e.statusText, {status: e.status, statusText: e.statusText})
@@ -47,7 +75,7 @@ export class MachineHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 422})
     }
-    return processResponse(this.getAgents(machineUrl))
+    return processHeadersAndResponse(req, this.getAgents(machineUrl))
   }
 
   async getAgents(machineUrl: string) {
@@ -68,7 +96,7 @@ export class AgentHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 422})
     }
-    return processResponse(this.getOperations(machineUrl, params.agent))
+    return processHeadersAndResponse(req, this.getOperations(machineUrl, params.agent))
   }
 
   async getOperations(machineUrl: string, agent: string) {
@@ -89,7 +117,7 @@ export class ProcessesHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 422})
     }
-    return processResponse(this.getProcesses(machineUrl))
+    return processHeadersAndResponse(req, this.getProcesses(machineUrl))
   }
 
   async POST(req: Request): Promise<Response> {
@@ -97,7 +125,7 @@ export class ProcessesHandler {
     const machineUrl = reqBody["machineUrl"]
     const agent = reqBody["agent"]
     const title = reqBody["title"]
-    return processResponse(this.createProcess(machineUrl, agent, title))
+    return processHeadersAndResponse(req, this.createProcess(machineUrl, agent, title))
   }
 
   async getProcesses(machineUrl: string) {
@@ -132,7 +160,7 @@ export class ProcessHandler {
     }
     const resp = this.getProcess(machineUrl, processId);
 
-    return processResponse(resp)
+    return processHeadersAndResponse(req, resp)
   }
 
   async getProcess(machineUrl: string, processId: string) {
@@ -146,7 +174,7 @@ export class ProcessHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 422})
     }
-    return processResponse(this.deleteProcess(machineUrl, params.processid))
+    return processHeadersAndResponse(req, this.deleteProcess(machineUrl, params.processid))
   }
 
   async deleteProcess(machineUrl: string, processid: string) {
@@ -167,7 +195,7 @@ export class ProcessEventsHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 422})
     }
-    return processResponse(this.getEvents(machineUrl, params.processid))
+    return processHeadersAndResponse(req, this.getEvents(machineUrl, params.processid))
   }
 
   async getEvents(machineUrl: string, processid: string) {
@@ -247,7 +275,7 @@ export class FilesHandler {
       return new Response('machineUrl is required', {status: 422})
     }
     const mimeType = req.headers.get('mime-type')
-    return processResponse(this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType))
+    return processHeadersAndResponse(req, this.uploadFile(machineUrl, params.processid, await req.blob(), mimeType))
   }
 
   async uploadFile(machineUrl: string, processId: string, file: Blob, mimeType: string | null) {
@@ -269,7 +297,7 @@ export class FileHandler {
       return new Response('machineUrl is required', {status: 400})
     }
     const reqBody = await req.json()
-    return processResponse(this.setMetadata(machineUrl, params.processid, params.fileid, reqBody))
+    return processHeadersAndResponse(req, this.setMetadata(machineUrl, params.processid, params.fileid, reqBody))
   }
 
   // download file
@@ -294,7 +322,7 @@ export class FileHandler {
     if (!machineUrl) {
       return new Response('machineUrl is required', {status: 400})
     }
-    return processResponse(this.deleteFile(machineUrl, params.processid, params.fileid).then(() => "ok"))
+    return processHeadersAndResponse(req, this.deleteFile(machineUrl, params.processid, params.fileid).then(() => "ok"))
   }
 
   async downloadFile(machineUrl: string, processId: string, fileId: string) {

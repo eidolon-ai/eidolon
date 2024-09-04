@@ -1,18 +1,17 @@
-import asyncio
+from importlib import metadata
+
 import hashlib
 import json
 import logging
 import os
 import socket
-from functools import wraps, cache
-from importlib import metadata
+from functools import cache
 from platform import python_version, uname
+from posthog import Posthog
 from typing import Optional
 
-from posthog import Posthog
-
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.util.async_wrapper import make_async
+from eidolon_ai_client.util.request_context import RequestContext
 
 
 class PosthogConfig:
@@ -79,11 +78,7 @@ def metric(fn):
         except Exception:
             logger.warning(f"Error reporting metrics {fn.__name__}", exc_info=logger.isEnabledFor(logging.DEBUG))
 
-    @wraps(fn)
-    def second_wrapper(*args, **kwargs):
-        return asyncio.create_task(make_async(with_logging)(*args, **kwargs))
-
-    return second_wrapper
+    return with_logging
 
 
 # below is a decorator that wraps a function with a try catch and logs with the fn name if exception is thrown
@@ -105,7 +100,8 @@ def report_server_started(time_to_start: float, number_of_agents: int, error: bo
 
 @metric
 def report_new_process():
-    PosthogConfig.client.capture(distinct_id(), event="new_process", properties=properties())
+    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", distinct_id())
+    PosthogConfig.client.capture(l_distinct_id, event="new_process", properties=properties())
 
 
 @cache
@@ -117,9 +113,10 @@ def _builtin_agents():
 
 @metric
 def report_agent_action(agent_name: str):
+    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", distinct_id())
     if agent_name not in _builtin_agents():
         agent_name = "custom"
     PosthogConfig.client.capture(
-        distinct_id(), event="agent_action", properties={"agent_type": agent_name, **properties()}
+        l_distinct_id, event="agent_action", properties={"agent_type": agent_name, **properties()}
     )
     logger.info("Agent request reported")
