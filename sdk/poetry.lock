@@ -6267,7 +6267,10 @@ enabler = ["pytest-enabler (>=2.2)"]
 test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-ignore-flaky"]
 type = ["pytest-mypy"]
 
+[extras]
+all = ["playwright"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "79fd70b912580bed1be63dc973d03c63a05b4b3937e0fd08561c7166ea5cfaa6"
+content-hash = "a97e0f4d6692f3577f4977eeeaaec368733365072e7209b8284e6d6cd3a401c6"
