@@ -1,8 +1,8 @@
 {
   "properties": {
     "implementation": {
-      "const": "ClaudeSonnet",
-      "description": "ClaudeSonnet"
+      "const": "GPT4o-mini",
+      "description": "GPT4o-mini"
     },
     "max_num_function_calls": {
       "default": 10,
@@ -25,8 +25,8 @@
     "llm_unit": {
       "$ref": "file:../LLMUnit/overview.json",
       "default": {
-        "implementation": "AnthropicLLMUnit",
-        "model": "claude-3-5-sonnet-20240620"
+        "implementation": "OpenAIGPT",
+        "model": "gpt-4o-mini"
       }
     },
     "logic_units": {
@@ -106,6 +106,6 @@
       "default": null
     }
   },
-  "title": "ClaudeSonnet",
+  "title": "GPT4o-mini",
   "type": "object"
 }
