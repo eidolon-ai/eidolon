@@ -1,5 +1,5 @@
 ---
-title: Swapping LLMs
+title: How to Swap LLMs
 description: References - How to Swap LLM providers or models
 ---
 

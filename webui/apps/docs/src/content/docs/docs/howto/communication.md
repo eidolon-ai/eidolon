@@ -1,6 +1,6 @@
 ---
-title: Agent-Agent Communication
-description: References - Agent Communication
+title: How to Configure Agent Communication
+description: Reference - Agent-to-Agent Communication
 ---
 In a multi-agent system, agents need to communicate with each other to share information, coordinate actions, and achieve 
 common goals.
@@ -19,10 +19,9 @@ the problem at hand.
 
 This all means that we need an easy way to assemble our agents and have them communicate with each other.
 
-
 ## How
-In any APU enabled agent, you can add an [AgentLogicUnit](/docs/components/logicunit/apilogicunit) agent's apu. When using a 
-[SimpleAgentTemplate](/docs/components/agents/simpleagent), we have made this a step easier. Just adding an 
+In any APU-enabled agent, you can add an [AgentLogicUnit](/docs/components/logicunit/apilogicunit) agent's APU. When using a 
+[SimpleAgentTemplate](/docs/components/agents/simpleagent), we made this a step easier. Just add an 
 `agent_refs` field to the spec portion of the yaml file. This field is a list of agent names that the agent will communicate with.
 
 When an agent is created, it will automatically be able to communicate with the agents listed in the `agent_refs` field.
