@@ -75,6 +75,9 @@ mem0ai = "^0.0.9"
 
 playwright = { version = "^1.43.0", optional = true }
 
+[tool.poetry.extras]
+all =  ["playwright"]
+
 [tool.pytest.ini_options]
 pythonpath = "project"
 

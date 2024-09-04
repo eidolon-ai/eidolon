@@ -46,3 +46,4 @@ develop = true
 [tool.poetry.group.dev.dependencies.eidolon-ai-sdk]
 path = "../sdk"
 develop = true
+extras = [ "all" ]
