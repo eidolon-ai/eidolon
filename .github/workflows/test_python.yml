@@ -81,7 +81,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
-      - run: poetry install
+      - run: poetry install -E all
         working-directory: sdk
       - run: poetry run playwright install
         working-directory: sdk
