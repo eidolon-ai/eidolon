@@ -219,8 +219,11 @@ export default defineConfig({
           ],
         },
         {label: 'Contributing', link: '/docs/contributing'},
-      ]
-    })
+      ],
+      editLink: {
+        baseUrl: 'https://github.com/eidolon-ai/eidolon/tree/main/webui/apps/docs',
+      },
+    }),
   ],
   image: {
     service: squooshImageService()
