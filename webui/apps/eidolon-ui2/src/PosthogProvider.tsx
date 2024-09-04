@@ -1,17 +1,14 @@
 'use client'
 import posthog from 'posthog-js'
 import {PostHogProvider} from 'posthog-js/react'
-import md5 from 'blueimp-md5';
 
 const POSTHOG_KEY = "phc_9lcmDyxVkji98ggIqy2XvyVcItnrgdrMQhZBFp6Du5d"
 const POSTHOG_HOST = "https://us.i.posthog.com"
 
 if (typeof window !== 'undefined' && POSTHOG_KEY) {
-  const distinctId = md5(window.location.hostname);
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST
   })
-  posthog.identify(distinctId)
 
   const realFetch = globalThis.fetch;
 
