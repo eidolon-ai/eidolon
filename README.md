@@ -82,7 +82,7 @@ Now that you have a running agent machine with a simple agent. Let's start custo
 
 - [ ] Add new capabilities via logic units (tools)
 - [ ] Enable [agent-to-agent communication](https://www.eidolonai.com/docs/howto/communication)
-- [ ] [Swap out components](https://www.eidolonai.com/docs/howto/customize_builtins) (like the underlying llm)
+- [ ] [Swap out components](https://www.eidolonai.com/docs/howto/configure_builtins) (like the underlying llm)
 - [ ] Use [structured inputs](https://www.eidolonai.com/docs/components/agents/simpleagent#actions) for prompt templating
 - [ ] Leverage your agent's [state machine](https://www.eidolonai.com/docs/components/agents/simpleagent#actions)
 
