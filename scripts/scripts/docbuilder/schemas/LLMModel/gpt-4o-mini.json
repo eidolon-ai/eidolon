@@ -1,18 +1,18 @@
 {
   "properties": {
     "implementation": {
-      "const": "gpt-4o",
-      "description": "gpt-4o"
+      "const": "gpt-4o-mini",
+      "description": "gpt-4o-mini"
     },
     "human_name": {
       "title": "Human Name",
       "type": "string",
-      "default": "GPT-4o"
+      "default": "GPT-4o-mini"
     },
     "name": {
       "title": "Name",
       "type": "string",
-      "default": "gpt-4o"
+      "default": "gpt-4o-mini"
     },
     "input_context_limit": {
       "title": "Input Context Limit",
@@ -40,6 +40,6 @@
       "default": false
     }
   },
-  "title": "gpt-4o",
+  "title": "gpt-4o-mini",
   "type": "object"
 }

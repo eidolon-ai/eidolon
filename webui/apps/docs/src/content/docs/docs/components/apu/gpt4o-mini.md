@@ -1,11 +1,11 @@
 ---
-title: ClaudeSonnet
-description: Description of ClaudeSonnet component
+title: GPT4o-mini
+description: Description of GPT4o-mini component
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                                   |
 | ---------------------------------------------------- | ------- | ---------------------------- | ---------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )                 | No      | const                        | No         | -                                          | ClaudeSonnet                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [implementation](#implementation )                 | No      | const                        | No         | -                                          | GPT4o-mini                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [max_num_function_calls](#max_num_function_calls ) | No      | integer                      | No         | -                                          | Max Num Function Calls                                                                                                                                                                                                                                                                                                                                                                              |
 | - [io_unit](#io_unit )                               | No      | Reference[IOUnit]            | No         | In [IOUnit](/docs/components/iounit/overview)            | <br />This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM<br /><br />This can be overridden to provide custom IO handling.<br />                                                                                                                                                                                                                 |
 | - [memory_unit](#memory_unit )                       | No      | Reference[MemoryUnit]        | No         | In [MemoryUnit](/docs/components/memoryunit/overview)        | Overview of MemoryUnit components                                                                                                                                                                                                                                                                                                                                                                   |
@@ -26,9 +26,9 @@ description: Description of ClaudeSonnet component
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** ClaudeSonnet
+**Description:** GPT4o-mini
 
-Specific value: `"ClaudeSonnet"`
+Specific value: `"GPT4o-mini"`
 
 ## <a name="max_num_function_calls"></a>2. Property `max_num_function_calls`
 
@@ -69,12 +69,12 @@ This can be overridden to provide custom IO handling.
 
 ## <a name="llm_unit"></a>5. Property `llm_unit`
 
-|                |                                                                                 |
-| -------------- | ------------------------------------------------------------------------------- |
-| **Type**       | `Reference[LLMUnit]`                                                            |
-| **Required**   | No                                                                              |
-| **Default**    | `{"implementation": "AnthropicLLMUnit", "model": "claude-3-5-sonnet-20240620"}` |
-| **Defined in** | [LLMUnit](/docs/components/llmunit/overview)                                                   |
+|                |                                                           |
+| -------------- | --------------------------------------------------------- |
+| **Type**       | `Reference[LLMUnit]`                                      |
+| **Required**   | No                                                        |
+| **Default**    | `{"implementation": "OpenAIGPT", "model": "gpt-4o-mini"}` |
+| **Defined in** | [LLMUnit](/docs/components/llmunit/overview)                             |
 
 **Description:** Overview of LLMUnit components
 

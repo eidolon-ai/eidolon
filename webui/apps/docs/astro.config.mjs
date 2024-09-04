@@ -140,6 +140,7 @@ export default defineConfig({
                 {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo'},
                 {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo'},
                 {label: 'GPT4o', link: '/docs/components/apu/gpt4o'},
+                {label: 'GPT4o-mini', link: '/docs/components/apu/gpt4o-mini'},
                 {label: 'Llamma3-8b', link: '/docs/components/apu/llamma3-8b'},
                 {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge'},
                 {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium'},
@@ -159,12 +160,14 @@ export default defineConfig({
             {
               label: 'LLMModel', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmmodel/overview'},
+                {label: 'claude-3-5-sonnet-20240620', link: '/docs/components/llmmodel/claude-3-5-sonnet-20240620'},
                 {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307'},
                 {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229'},
                 {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229'},
                 {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo'},
                 {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo'},
                 {label: 'gpt-4o', link: '/docs/components/llmmodel/gpt-4o'},
+                {label: 'gpt-4o-mini', link: '/docs/components/llmmodel/gpt-4o-mini'},
                 {label: 'llama3-8b', link: '/docs/components/llmmodel/llama3-8b'},
                 {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest'},
                 {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest'},

@@ -1,33 +1,33 @@
 {
   "properties": {
     "implementation": {
-      "const": "gpt-4o",
-      "description": "gpt-4o"
+      "const": "claude-3-5-sonnet-20240620",
+      "description": "claude-3-5-sonnet-20240620"
     },
     "human_name": {
       "title": "Human Name",
       "type": "string",
-      "default": "GPT-4o"
+      "default": "Claude Sonnet"
     },
     "name": {
       "title": "Name",
       "type": "string",
-      "default": "gpt-4o"
+      "default": "claude-3-5-sonnet-20240620"
     },
     "input_context_limit": {
       "title": "Input Context Limit",
       "type": "integer",
-      "default": 128000
+      "default": 200000
     },
     "output_context_limit": {
       "title": "Output Context Limit",
       "type": "integer",
-      "default": 4096
+      "default": 8192
     },
     "supports_tools": {
       "title": "Supports Tools",
       "type": "boolean",
-      "default": true
+      "default": false
     },
     "supports_image_input": {
       "title": "Supports Image Input",
@@ -40,6 +40,6 @@
       "default": false
     }
   },
-  "title": "gpt-4o",
+  "title": "claude-3-5-sonnet-20240620",
   "type": "object"
 }
