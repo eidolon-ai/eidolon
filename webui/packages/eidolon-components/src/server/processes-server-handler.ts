@@ -2,6 +2,7 @@ import {EidolonClient, HttpException} from "@eidolon-ai/client";
 
 export async function processHeadersAndResponse(request: Request, promise: Promise<any>) {
   const realFetch = globalThis.fetch;
+  /*global globalThis*/
 
   globalThis.fetch = function patchedFetch(uri, options) {
     if (request.headers) {
