@@ -6,7 +6,7 @@ metadata:
   annotations:
     - title: "Llamma3 8b"
 spec:
-  implementation: APU
+  implementation: ConversationalAPU
   llm_unit:
     implementation: ToolCallLLMWrapper
     llm_unit:

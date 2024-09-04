@@ -6,7 +6,7 @@ metadata:
   annotations:
     - title: "OpenAI GPT 3.5 Turbo"
 spec:
-    implementation: APU
+    implementation: ConversationalAPU
     audio_unit: OpenAiSpeech
     image_unit: OpenAIImageUnit
     llm_unit:
