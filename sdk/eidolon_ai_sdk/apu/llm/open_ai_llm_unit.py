@@ -160,7 +160,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
             if not self.spec.force_json:
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
 
             if complete_message or len(tools_to_call) == 0:
                 content = json.loads(complete_message) if complete_message else {}

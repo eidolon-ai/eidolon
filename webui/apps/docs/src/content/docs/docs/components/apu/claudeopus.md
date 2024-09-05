@@ -9,6 +9,7 @@ description: Description of ClaudeOpus component
 | - [max_num_function_calls](#max_num_function_calls ) | No      | integer                      | No         | -                                          | Max Num Function Calls                                                                                                                                                                                                                                                                                                                                                                              |
 | - [io_unit](#io_unit )                               | No      | Reference[IOUnit]            | No         | In [IOUnit](/docs/components/iounit/overview)            | <br />This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM<br /><br />This can be overridden to provide custom IO handling.<br />                                                                                                                                                                                                                 |
 | - [memory_unit](#memory_unit )                       | No      | Reference[MemoryUnit]        | No         | In [MemoryUnit](/docs/components/memoryunit/overview)        | Overview of MemoryUnit components                                                                                                                                                                                                                                                                                                                                                                   |
+| - [longterm_memory_unit](#longterm_memory_unit )     | No      | object                       | No         | -                                          | LongTermMemoryUnit Reference                                                                                                                                                                                                                                                                                                                                                                        |
 | - [llm_unit](#llm_unit )                             | No      | Reference[LLMUnit]           | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of LLMUnit components                                                                                                                                                                                                                                                                                                                                                                      |
 | - [logic_units](#logic_units )                       | No      | array                        | No         | -                                          | Logic Units                                                                                                                                                                                                                                                                                                                                                                                         |
 | - [audio_unit](#audio_unit )                         | No      | Combination                  | No         | -                                          | -                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -67,7 +68,33 @@ This can be overridden to provide custom IO handling.
 
 **Description:** Overview of MemoryUnit components
 
-## <a name="llm_unit"></a>5. Property `llm_unit`
+## <a name="longterm_memory_unit"></a>5. Property `longterm_memory_unit`
+
+**Title:** LongTermMemoryUnit Reference
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
+
+| Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#longterm_memory_unit_implementation ) | No      | string | No         | -          | Implementation    |
+| - [](#longterm_memory_unit_additionalProperties )         | No      | object | No         | -          | -                 |
+
+### <a name="longterm_memory_unit_implementation"></a>5.1. Property `implementation`
+
+**Title:** Implementation
+
+|              |                        |
+| ------------ | ---------------------- |
+| **Type**     | `string`               |
+| **Required** | No                     |
+| **Default**  | `"LongTermMemoryUnit"` |
+
+## <a name="llm_unit"></a>6. Property `llm_unit`
 
 |                |                                                                             |
 | -------------- | --------------------------------------------------------------------------- |
@@ -78,7 +105,7 @@ This can be overridden to provide custom IO handling.
 
 **Description:** Overview of LLMUnit components
 
-## <a name="logic_units"></a>6. Property `logic_units`
+## <a name="logic_units"></a>7. Property `logic_units`
 
 **Title:** Logic Units
 
@@ -100,7 +127,7 @@ This can be overridden to provide custom IO handling.
 | ----------------------------------- | -------------------------------- |
 | [overview.json](#logic_units_items) | Overview of LogicUnit components |
 
-### <a name="autogenerated_heading_2"></a>6.1. overview.json
+### <a name="autogenerated_heading_2"></a>7.1. overview.json
 
 |                |                                 |
 | -------------- | ------------------------------- |
@@ -110,7 +137,7 @@ This can be overridden to provide custom IO handling.
 
 **Description:** Overview of LogicUnit components
 
-## <a name="audio_unit"></a>7. Property `audio_unit`
+## <a name="audio_unit"></a>8. Property `audio_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -124,7 +151,7 @@ This can be overridden to provide custom IO handling.
 | [overview.json](#audio_unit_anyOf_i0) |
 | [item 1](#audio_unit_anyOf_i1)        |
 
-### <a name="audio_unit_anyOf_i0"></a>7.1. Property `overview.json`
+### <a name="audio_unit_anyOf_i0"></a>8.1. Property `overview.json`
 
 |                |                                 |
 | -------------- | ------------------------------- |
@@ -134,14 +161,14 @@ This can be overridden to provide custom IO handling.
 
 **Description:** Overview of AudioUnit components
 
-### <a name="audio_unit_anyOf_i1"></a>7.2. Property `item 1`
+### <a name="audio_unit_anyOf_i1"></a>8.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-## <a name="image_unit"></a>8. Property `image_unit`
+## <a name="image_unit"></a>9. Property `image_unit`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -155,7 +182,7 @@ This can be overridden to provide custom IO handling.
 | [ImageUnit Reference](#image_unit_anyOf_i0) |
 | [item 1](#image_unit_anyOf_i1)              |
 
-### <a name="image_unit_anyOf_i0"></a>8.1. Property `ImageUnit Reference`
+### <a name="image_unit_anyOf_i0"></a>9.1. Property `ImageUnit Reference`
 
 **Title:** ImageUnit Reference
 
@@ -170,7 +197,7 @@ This can be overridden to provide custom IO handling.
 | - [implementation](#image_unit_anyOf_i0_implementation ) | No      | string | No         | -          | Implementation    |
 | - [](#image_unit_anyOf_i0_additionalProperties )         | No      | object | No         | -          | -                 |
 
-#### <a name="image_unit_anyOf_i0_implementation"></a>8.1.1. Property `implementation`
+#### <a name="image_unit_anyOf_i0_implementation"></a>9.1.1. Property `implementation`
 
 **Title:** Implementation
 
@@ -180,14 +207,14 @@ This can be overridden to provide custom IO handling.
 | **Required** | No                                          |
 | **Default**  | `"eidolon_ai_sdk.apu.image_unit.ImageUnit"` |
 
-### <a name="image_unit_anyOf_i1"></a>8.2. Property `item 1`
+### <a name="image_unit_anyOf_i1"></a>9.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
 
-## <a name="record_conversation"></a>9. Property `record_conversation`
+## <a name="record_conversation"></a>10. Property `record_conversation`
 
 **Title:** Record Conversation
 
@@ -197,7 +224,7 @@ This can be overridden to provide custom IO handling.
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="allow_tool_errors"></a>10. Property `allow_tool_errors`
+## <a name="allow_tool_errors"></a>11. Property `allow_tool_errors`
 
 **Title:** Allow Tool Errors
 
@@ -207,7 +234,7 @@ This can be overridden to provide custom IO handling.
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="document_processor"></a>11. Property `document_processor`
+## <a name="document_processor"></a>12. Property `document_processor`
 
 |                |                                           |
 | -------------- | ----------------------------------------- |
@@ -218,7 +245,7 @@ This can be overridden to provide custom IO handling.
 
 **Description:** Overview of DocumentProcessor components
 
-## <a name="retriever"></a>12. Property `retriever`
+## <a name="retriever"></a>13. Property `retriever`
 
 |                |                                   |
 | -------------- | --------------------------------- |
@@ -229,7 +256,7 @@ This can be overridden to provide custom IO handling.
 
 **Description:** Overview of Retriever components
 
-## <a name="retriever_apu"></a>13. Property `retriever_apu`
+## <a name="retriever_apu"></a>14. Property `retriever_apu`
 
 |                |                           |
 | -------------- | ------------------------- |

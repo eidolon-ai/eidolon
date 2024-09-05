@@ -1,35 +1,46 @@
 import uuid
+from typing import List
 from unittest.mock import patch
 
 import pytest
 from mem0 import Memory
 from pytest_asyncio import fixture
+from qdrant_client.http.models import ScoredPoint
 
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.mem0 import EidolonMem0
 from eidolon_ai_sdk.system.reference_model import Reference
 
 
-class _wrapper:
-    i = 0
+class MockUUID:
+    def __init__(self):
+        self.i = 0
+
+    def uuid4(self):
+        self.i += 1
+        return uuid.UUID(f"00000000-0000-0000-0000-{self.i:012d}")
 
 
 @pytest.fixture(autouse=True)
-def with_mocked_mem0_timestamp():
-    _wrapper.i = 0
-
-    def pert_test_iter():
-        _wrapper.i += 1
-        return uuid.UUID(f"00000000-0000-0000-0000-{_wrapper.i:012d}")
-
-    with patch("mem0.memory.main.uuid.uuid4") as mem0uuid:
-        mem0uuid.side_effect = pert_test_iter
+def deterministic_uuids(test_name):
+    with patch("mem0.memory.main.uuid", new=MockUUID()):
         yield
+
+
+def constantScore(scores: List[ScoredPoint]) -> List[ScoredPoint]:
+    for score in scores:
+        score.score = 1
+    return scores
 
 
 @fixture
 async def memory_store(test_name, machine):
     yield EidolonMem0(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), test_name)
+
+
+@fixture
+async def memory_store_const_score(test_name, machine):
+    yield EidolonMem0(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), test_name, memory_converter=constantScore)
 
 
 @pytest.mark.vcr()
@@ -83,11 +94,11 @@ def test_history(memory_store):
 
 # @pytest.mark.skip("todo")
 @pytest.mark.vcr()
-def test_list_memories(memory_store):
-    data1 = "Name is John Doe."
-    data2 = "Name is John Doe. I like to code in Python."
-    memory_store.add(data=data1)
-    memory_store.add(data=data2)
-    memories = memory_store.get_all()
-    assert "john doe" in str(memories).lower()
+def test_list_memories(memory_store_const_score):
+    data1 = "Name is Fredrick."
+    data2 = "Name is Fredrick. I like to code in Python."
+    memory_store_const_score.add(data=data1)
+    memory_store_const_score.add(data=data2)
+    memories = memory_store_const_score.get_all()
+    assert "fredrick" in str(memories).lower()
     assert "likes to code in python" in str(memories).lower()
