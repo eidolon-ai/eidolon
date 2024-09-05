@@ -74,11 +74,12 @@ export default defineConfig({
         {
           label: 'How To',
           items: [
-            {label: 'Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Authenticate LLMs', link: '/docs/howto/authenticate_llm'},
             {label: 'Swap out LLMs', link: '/docs/howto/swap_llm'},
-            {label: 'Customizing Builtin Components', link: '/docs/howto/customize_builtins'},
-            {label: 'Custom Agent Templates', link: '/docs/howto/custom_agents'},
-            {label: 'Custom Components', link: '/docs/howto/using_references'},
+            {label: 'Configure Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Configure Built-in Components', link: '/docs/howto/configure_builtins'},
+            {label: 'Use References', link: '/docs/howto/using_references'},
+            {label: 'Build Custom Agent Templates', link: '/docs/howto/build_custom_agents'},
           ],
         },
         {
@@ -139,6 +140,7 @@ export default defineConfig({
                 {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo'},
                 {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo'},
                 {label: 'GPT4o', link: '/docs/components/apu/gpt4o'},
+                {label: 'GPT4o-mini', link: '/docs/components/apu/gpt4o-mini'},
                 {label: 'Llamma3-8b', link: '/docs/components/apu/llamma3-8b'},
                 {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge'},
                 {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium'},
@@ -158,12 +160,14 @@ export default defineConfig({
             {
               label: 'LLMModel', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmmodel/overview'},
+                {label: 'claude-3-5-sonnet-20240620', link: '/docs/components/llmmodel/claude-3-5-sonnet-20240620'},
                 {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307'},
                 {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229'},
                 {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229'},
                 {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo'},
                 {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo'},
                 {label: 'gpt-4o', link: '/docs/components/llmmodel/gpt-4o'},
+                {label: 'gpt-4o-mini', link: '/docs/components/llmmodel/gpt-4o-mini'},
                 {label: 'llama3-8b', link: '/docs/components/llmmodel/llama3-8b'},
                 {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest'},
                 {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest'},
@@ -215,8 +219,11 @@ export default defineConfig({
           ],
         },
         {label: 'Contributing', link: '/docs/contributing'},
-      ]
-    })
+      ],
+      editLink: {
+        baseUrl: 'https://github.com/eidolon-ai/eidolon/tree/main/webui/apps/docs',
+      },
+    }),
   ],
   image: {
     service: squooshImageService()
@@ -231,5 +238,12 @@ export default defineConfig({
         '~': path.resolve(__dirname, './src')
       }
     }
+  },
+  redirects: {
+    // '/old-page': '/new-page'
+    '/docs/components/simple_agent/': '/docs/components/agents/simpleagent/',
+    '/docs/components/simple_agent#defining-actions': '/docs/components/agents/simpleagent#51-actiondefinition',
+    '/docs/howto/customize_builtins/': '/docs/howto/configure_builtins/',
+    '/docs/howto/custom_agents/': '/docs/howto/build_custom_agents/'
   }
 });

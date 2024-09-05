@@ -1,11 +1,11 @@
 ---
-title: gpt-4o
-description: Description of gpt-4o component
+title: gpt-4o-mini
+description: Description of gpt-4o-mini component
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | gpt-4o               |
+| - [implementation](#implementation )             | No      | const   | No         | -          | gpt-4o-mini          |
 | - [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
 | - [name](#name )                                 | No      | string  | No         | -          | Name                 |
 | - [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
@@ -21,29 +21,29 @@ description: Description of gpt-4o component
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** gpt-4o
+**Description:** gpt-4o-mini
 
-Specific value: `"gpt-4o"`
+Specific value: `"gpt-4o-mini"`
 
 ## <a name="human_name"></a>2. Property `human_name`
 
 **Title:** Human Name
 
-|              |            |
-| ------------ | ---------- |
-| **Type**     | `string`   |
-| **Required** | No         |
-| **Default**  | `"GPT-4o"` |
+|              |                 |
+| ------------ | --------------- |
+| **Type**     | `string`        |
+| **Required** | No              |
+| **Default**  | `"GPT-4o-mini"` |
 
 ## <a name="name"></a>3. Property `name`
 
 **Title:** Name
 
-|              |            |
-| ------------ | ---------- |
-| **Type**     | `string`   |
-| **Required** | No         |
-| **Default**  | `"gpt-4o"` |
+|              |                 |
+| ------------ | --------------- |
+| **Type**     | `string`        |
+| **Required** | No              |
+| **Default**  | `"gpt-4o-mini"` |
 
 ## <a name="input_context_limit"></a>4. Property `input_context_limit`
 
