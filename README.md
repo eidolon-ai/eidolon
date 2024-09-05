@@ -6,7 +6,7 @@
 [![Tests - Status](https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&label=test)](https://github.com/eidolon-ai/eidolon/actions/workflows/test_python.yml?query=branch%3Amain)
 
 
-Eidolon helps developers designing and deploying agent-based services.
+Eidolon helps developers build and deploy agent-based services.
 
 ## Why Eidolon?
 ### 1. Easy to deploy
@@ -25,79 +25,24 @@ developers will not be able to adapt their agents to the rapidly changing AI lan
 
 Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 
-## [Quickstart Guide 🚀](https://www.eidolonai.com/docs/quickstart)
+## 🚀 Ready to get Started?
+Check out Eidolon's [Quickstart Guide](https://www.eidolonai.com/docs/quickstart)
 
-### Running the AgentMachine
-```bash
-git clone https://github.com/eidolon-ai/eidolon-quickstart.git
-cd eidolon-quickstart
-make docker-serve
-```
-
-This command will download the dependencies required to run your agent machine and start the Eidolon http server in
-"dev-mode". It will also start the Eidolon webui, which you can access at [http://localhost:3000](http://localhost:3000).
-
----
-
-The first time you run this command, you may be prompted to enter credentials that the machine needs
-to run (ie, [OpenAI API Key](https://platform.openai.com/api-keys)):
-
-```
-💭 OPENAI_API_KEY (required):
-```
-
-Please note that your `OPENAI_API_KEY` must belong to an account with [at least a $5 balance](https://platform.openai.com/docs/guides/rate-limits/tier-1-rate-limits), or you won't be able to run the [GPT-4 Turbo model](https://help.openai.com/en/articles/8555510-gpt-4-turbo-in-the-openai-api) required to run the server.
-
-You'll know this is an issue if you see this output:
-
-```
-raise self._make_status_error_from_response(err.response) from None
-openai.NotFoundError: Error code: 404 - {'error': {'message': 'The model `gpt-4-turbo` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_found'}}
-```
-
----
-
-If your AgentMachine successfully started, you should see the following logs in your terminal.
-```bash
-INFO - Building machine 'local_dev'
-INFO - Starting agent 'hello-world'
-INFO - Server Started
-```
-
-You can also check out your machine's [swagger docs](http://localhost:8080/docs#/).
-
-### Try it out!
-Head over to another terminal where we will install a cli, create a new process, and then converse with our agent on 
-that process.
-```bash
-pip install 'eidolon-ai-client[cli]'
-export PID=$(eidolon-cli processes create --agent hello-world)
-eidolon-cli actions converse --process-id $PID --body "Hi! I made you"
-```
-
-Believe it or not, you are already up and running with a simple agent! 🎉
-
-### Next Steps
-Now that you have a running agent machine with a simple agent. Let's start customizing!
-
-- [ ] Add new capabilities via logic units (tools)
-- [ ] Enable [agent-to-agent communication](https://www.eidolonai.com/docs/howto/communication)
-- [ ] [Swap out components](https://www.eidolonai.com/docs/howto/configure_builtins) (like the underlying llm)
-- [ ] Use [structured inputs](https://www.eidolonai.com/docs/components/agents/simpleagent#actions) for prompt templating
-- [ ] Leverage your agent's [state machine](https://www.eidolonai.com/docs/components/agents/simpleagent#actions)
-
-
-## Support ⭐️
+## 😍 Like what you see?
 Eidolon is a completely open source project. Keep your dirty money!
 
 ⭐️ But we love your stars ⭐️
 
-## Contributing
+The best way you can support the project is by staring this repository.
 
-We welcome and appreciate contributions! 
+## Want to Contribute?
 
-Reach out to us on [discord](https://discord.gg/6kVQrHpeqG) if you have 
+We welcome and appreciate contributions!
+
+File an [issue](https://github.com/eidolon-ai/eidolon/issues/new/choose) or reach out to us on [discord](https://discord.gg/6kVQrHpeqG) if you have 
 any questions or suggestions.
+
+To get your feet wet, we keep a catalog of [good first issues](https://github.com/orgs/eidolon-ai/projects/6/views/6) for new contributors to tackle.
 
 If you need help with the mechanics of contributing, check out the [First Contributions Repository](https://github.com/firstcontributions/first-contributions). 
 
