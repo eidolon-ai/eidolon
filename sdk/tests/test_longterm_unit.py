@@ -10,7 +10,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
-from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit, LongTermMemoryUnitConfig
+from eidolon_ai_sdk.apu.mem0_long_term_memory import Mem0LongTermMemoryUnit, Mem0LongTermMemoryUnitConfig
 from eidolon_ai_sdk.security.user import User
 from eidolon_ai_sdk.system.reference_model import Reference
 
@@ -38,17 +38,17 @@ def constantScore(scores: List[ScoredPoint]) -> List[ScoredPoint]:
 
 @fixture
 async def user_unit(machine, test_name):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name))
+    yield Mem0LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=Mem0LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name))
 
 
 @fixture
 async def user_unit_const_score(machine, test_name):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), memory_converter=constantScore, spec=LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name))
+    yield Mem0LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), memory_converter=constantScore, spec=Mem0LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name))
 
 
 @fixture
 async def agent_unit(machine, test_name):
-    yield LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=LongTermMemoryUnitConfig(user_scoped=False, collection_name=test_name))
+    yield Mem0LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=Mem0LongTermMemoryUnitConfig(user_scoped=False, collection_name=test_name))
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -60,7 +60,7 @@ def set_agent_user_context():
 
 # test memory creation
 @pytest.mark.vcr()
-def test_create_memory(user_unit: LongTermMemoryUnit):
+def test_create_memory(user_unit: Mem0LongTermMemoryUnit):
     queryText = "Name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
     call_context = CallContext(process_id='test_proc')
@@ -73,7 +73,7 @@ def test_create_memory(user_unit: LongTermMemoryUnit):
 
 # test memory updates
 @pytest.mark.vcr()
-def test_memory_update(user_unit: LongTermMemoryUnit):
+def test_memory_update(user_unit: Mem0LongTermMemoryUnit):
     query1Text = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=query1Text)])
     call_context = CallContext(process_id='test_proc')
@@ -89,7 +89,7 @@ def test_memory_update(user_unit: LongTermMemoryUnit):
 
 # test memory deletion
 @pytest.mark.vcr()
-def test_memory_delete(user_unit_const_score: LongTermMemoryUnit):
+def test_memory_delete(user_unit_const_score: Mem0LongTermMemoryUnit):
     call_context = CallContext(process_id='test_proc')
     query1Text = "bicycles have wheels"
     data = UserMessage(content=[UserMessageText(text=query1Text)])
@@ -103,7 +103,7 @@ def test_memory_delete(user_unit_const_score: LongTermMemoryUnit):
 
 # test memory search
 @pytest.mark.vcr()
-def test_memory_search(user_unit: LongTermMemoryUnit):
+def test_memory_search(user_unit: Mem0LongTermMemoryUnit):
     queryText = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
     call_context = CallContext(process_id='test_proc')
@@ -115,7 +115,7 @@ def test_memory_search(user_unit: LongTermMemoryUnit):
 # add memory for a user and make sure it only shows up for appropriately
 # scoped units + agents
 @pytest.mark.vcr()
-def test_user_agent_scoping(user_unit: LongTermMemoryUnit, agent_unit: LongTermMemoryUnit):
+def test_user_agent_scoping(user_unit: Mem0LongTermMemoryUnit, agent_unit: Mem0LongTermMemoryUnit):
     queryText = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
     call_context = CallContext(process_id='test_proc')

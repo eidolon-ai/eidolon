@@ -1424,7 +1424,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.33"
+version = "0.1.34"
 description = "Eidolon python client and CLI"
 optional = false
 python-versions = ">=3.8,<3.13"
@@ -2350,20 +2350,6 @@ files = [
 ]
 
 [[package]]
-name = "jsonpatch"
-version = "1.33"
-description = "Apply JSON-Patches (RFC 6902)"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*"
-files = [
-    {file = "jsonpatch-1.33-py2.py3-none-any.whl", hash = "sha256:0ae28c0cd062bbd8b8ecc26d7d164fbbea9652a1a3693f3b956c1eae5145dade"},
-    {file = "jsonpatch-1.33.tar.gz", hash = "sha256:9fcd4009c41e6d12348b4a0ff2563ba56a2923a7dfee731d004e212e1ee5030c"},
-]
-
-[package.dependencies]
-jsonpointer = ">=1.9"
-
-[[package]]
 name = "jsonpath-ng"
 version = "1.6.1"
 description = "A final implementation of JSONPath for Python that aims to be standard compliant, including arithmetic and binary comparison operators and providing clear AST for metaprogramming."
@@ -2386,17 +2372,6 @@ python-versions = ">=3.6"
 files = [
     {file = "jsonpath-python-1.0.6.tar.gz", hash = "sha256:dd5be4a72d8a2995c3f583cf82bf3cd1a9544cfdabf2d22595b67aff07349666"},
     {file = "jsonpath_python-1.0.6-py3-none-any.whl", hash = "sha256:1e3b78df579f5efc23565293612decee04214609208a2335884b3ee3f786b575"},
-]
-
-[[package]]
-name = "jsonpointer"
-version = "3.0.0"
-description = "Identify specific nodes in a JSON document (RFC 6901)"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "jsonpointer-3.0.0-py2.py3-none-any.whl", hash = "sha256:13e088adc14fca8b6aa8177c044e12701e6ad4b28ff10e65f2267a90109c9942"},
-    {file = "jsonpointer-3.0.0.tar.gz", hash = "sha256:2b2d729f2091522d61c3b31f82e11870f60b68f43fbc705cb76bf4b832af59ef"},
 ]
 
 [[package]]
@@ -2472,96 +2447,6 @@ websocket-client = ">=0.32.0,<0.40.0 || >0.40.0,<0.41.dev0 || >=0.43.dev0"
 adal = ["adal (>=1.0.2)"]
 
 [[package]]
-name = "langchain"
-version = "0.2.16"
-description = "Building applications with LLMs through composability"
-optional = false
-python-versions = "<4.0,>=3.8.1"
-files = [
-    {file = "langchain-0.2.16-py3-none-any.whl", hash = "sha256:8f59ee8b45f268df4b924ea3b9c63e49286efa756d16b3f6a9de5c6e502c36e1"},
-    {file = "langchain-0.2.16.tar.gz", hash = "sha256:ffb426a76a703b73ac69abad77cd16eaf03dda76b42cff55572f592d74944166"},
-]
-
-[package.dependencies]
-aiohttp = ">=3.8.3,<4.0.0"
-async-timeout = {version = ">=4.0.0,<5.0.0", markers = "python_version < \"3.11\""}
-langchain-core = ">=0.2.38,<0.3.0"
-langchain-text-splitters = ">=0.2.0,<0.3.0"
-langsmith = ">=0.1.17,<0.2.0"
-numpy = [
-    {version = ">=1,<2", markers = "python_version < \"3.12\""},
-    {version = ">=1.26.0,<2.0.0", markers = "python_version >= \"3.12\""},
-]
-pydantic = ">=1,<3"
-PyYAML = ">=5.3"
-requests = ">=2,<3"
-SQLAlchemy = ">=1.4,<3"
-tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
-
-[[package]]
-name = "langchain-community"
-version = "0.2.16"
-description = "Community contributed LangChain integrations."
-optional = false
-python-versions = "<4.0,>=3.8.1"
-files = [
-    {file = "langchain_community-0.2.16-py3-none-any.whl", hash = "sha256:115e1419c176091d4e00240cb5a38612a249e70f213516b6cacae61a8794a868"},
-    {file = "langchain_community-0.2.16.tar.gz", hash = "sha256:ab416b793a7aed1fa46ebaffd29993296b02286a99819eabc43be2ea8e41ae78"},
-]
-
-[package.dependencies]
-aiohttp = ">=3.8.3,<4.0.0"
-dataclasses-json = ">=0.5.7,<0.7"
-langchain = ">=0.2.16,<0.3.0"
-langchain-core = ">=0.2.38,<0.3.0"
-langsmith = ">=0.1.0,<0.2.0"
-numpy = [
-    {version = ">=1,<2", markers = "python_version < \"3.12\""},
-    {version = ">=1.26.0,<2.0.0", markers = "python_version >= \"3.12\""},
-]
-PyYAML = ">=5.3"
-requests = ">=2,<3"
-SQLAlchemy = ">=1.4,<3"
-tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
-
-[[package]]
-name = "langchain-core"
-version = "0.2.38"
-description = "Building applications with LLMs through composability"
-optional = false
-python-versions = "<4.0,>=3.8.1"
-files = [
-    {file = "langchain_core-0.2.38-py3-none-any.whl", hash = "sha256:8a5729bc7e68b4af089af20eff44fe4e7ca21d0e0c87ec21cef7621981fd1a4a"},
-    {file = "langchain_core-0.2.38.tar.gz", hash = "sha256:eb69dbedd344f2ee1f15bcea6c71a05884b867588fadc42d04632e727c1238f3"},
-]
-
-[package.dependencies]
-jsonpatch = ">=1.33,<2.0"
-langsmith = ">=0.1.75,<0.2.0"
-packaging = ">=23.2,<25"
-pydantic = [
-    {version = ">=1,<3", markers = "python_full_version < \"3.12.4\""},
-    {version = ">=2.7.4,<3.0.0", markers = "python_full_version >= \"3.12.4\""},
-]
-PyYAML = ">=5.3"
-tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
-typing-extensions = ">=4.7"
-
-[[package]]
-name = "langchain-text-splitters"
-version = "0.2.4"
-description = "LangChain text splitting utilities"
-optional = false
-python-versions = "<4.0,>=3.8.1"
-files = [
-    {file = "langchain_text_splitters-0.2.4-py3-none-any.whl", hash = "sha256:2702dee5b7cbdd595ccbe43b8d38d01a34aa8583f4d6a5a68ad2305ae3e7b645"},
-    {file = "langchain_text_splitters-0.2.4.tar.gz", hash = "sha256:f7daa7a3b0aa8309ce248e2e2b6fc8115be01118d336c7f7f7dfacda0e89bf29"},
-]
-
-[package.dependencies]
-langchain-core = ">=0.2.38,<0.3.0"
-
-[[package]]
 name = "langdetect"
 version = "1.0.9"
 description = "Language detection library ported from Google's language-detection."
@@ -2574,26 +2459,6 @@ files = [
 
 [package.dependencies]
 six = "*"
-
-[[package]]
-name = "langsmith"
-version = "0.1.114"
-description = "Client library to connect to the LangSmith LLM Tracing and Evaluation Platform."
-optional = false
-python-versions = "<4.0,>=3.8.1"
-files = [
-    {file = "langsmith-0.1.114-py3-none-any.whl", hash = "sha256:2b6b6b49ddb1cea75f465da107ddc21e60d3c7242813dcc0de90f914e4957249"},
-    {file = "langsmith-0.1.114.tar.gz", hash = "sha256:1683e1505d034d1bf7c960067c1357fd0d294172dd20540f913093e4b86857a2"},
-]
-
-[package.dependencies]
-httpx = ">=0.23.0,<1"
-orjson = ">=3.9.14,<4.0.0"
-pydantic = [
-    {version = ">=1,<3", markers = "python_full_version < \"3.12.4\""},
-    {version = ">=2.7.4,<3.0.0", markers = "python_full_version >= \"3.12.4\""},
-]
-requests = ">=2,<3"
 
 [[package]]
 name = "lxml"
@@ -2885,25 +2750,20 @@ files = [
 
 [[package]]
 name = "mem0ai"
-version = "0.1.11"
+version = "0.0.9"
 description = "Long-term memory for AI Agents"
 optional = false
-python-versions = "<4.0,>=3.9"
+python-versions = "<4.0,>=3.8"
 files = [
-    {file = "mem0ai-0.1.11-py3-none-any.whl", hash = "sha256:a9bbc2d0694f73a8b6ba2fdea76d4d2fda768eb3df7e850ff534e50d17f918a8"},
-    {file = "mem0ai-0.1.11.tar.gz", hash = "sha256:e83fbc67266e27022397620e5c881bce2f701ecb4d93beba596e89c8e61e6e5f"},
+    {file = "mem0ai-0.0.9-py3-none-any.whl", hash = "sha256:d4de435729af4fd3d597d022ffb2af89a0630d6c3b4769792bbe27d2ce816858"},
+    {file = "mem0ai-0.0.9.tar.gz", hash = "sha256:e4374d5d04aa3f543cd3325f700e4b62f5358ae1c6fa5c44b2ff790c10c4e5f1"},
 ]
 
 [package.dependencies]
-langchain-community = ">=0.2.12,<0.3.0"
-neo4j = ">=5.23.1,<6.0.0"
 openai = ">=1.33.0,<2.0.0"
 posthog = ">=3.5.0,<4.0.0"
 pydantic = ">=2.7.3,<3.0.0"
-pytz = ">=2024.1,<2025.0"
 qdrant-client = ">=1.9.1,<2.0.0"
-rank-bm25 = ">=0.2.2,<0.3.0"
-sqlalchemy = ">=2.0.31,<3.0.0"
 
 [[package]]
 name = "mmh3"
@@ -3290,25 +3150,6 @@ files = [
     {file = "mypy_extensions-1.0.0-py3-none-any.whl", hash = "sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d"},
     {file = "mypy_extensions-1.0.0.tar.gz", hash = "sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782"},
 ]
-
-[[package]]
-name = "neo4j"
-version = "5.24.0"
-description = "Neo4j Bolt driver for Python"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "neo4j-5.24.0-py3-none-any.whl", hash = "sha256:5b4705cfe8130020f33e75e31ad3fcfe67ee958e07d0c3c4936e9c8245a1ea58"},
-    {file = "neo4j-5.24.0.tar.gz", hash = "sha256:499ca35135847528f4ee70314bd49c8b08b031e4dfd588bb06c1c2fb35d729e2"},
-]
-
-[package.dependencies]
-pytz = "*"
-
-[package.extras]
-numpy = ["numpy (>=1.7.0,<2.0.0)"]
-pandas = ["numpy (>=1.7.0,<2.0.0)", "pandas (>=1.1.0,<3.0.0)"]
-pyarrow = ["pyarrow (>=1.0.0)"]
 
 [[package]]
 name = "nest-asyncio"
@@ -4718,17 +4559,6 @@ files = [
 dev = ["atomicwrites (==1.2.1)", "attrs (==19.2.0)", "coverage (==6.5.0)", "hatch", "invoke (==2.2.0)", "more-itertools (==4.3.0)", "pbr (==4.3.0)", "pluggy (==1.0.0)", "py (==1.11.0)", "pytest (==7.2.0)", "pytest-cov (==4.0.0)", "pytest-timeout (==2.1.0)", "pyyaml (==5.1)"]
 
 [[package]]
-name = "pytz"
-version = "2024.1"
-description = "World timezone definitions, modern and historical"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
-    {file = "pytz-2024.1.tar.gz", hash = "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812"},
-]
-
-[[package]]
 name = "pywin32"
 version = "306"
 description = "Python for Window Extensions"
@@ -4839,23 +4669,6 @@ urllib3 = ">=1.26.14,<3"
 [package.extras]
 fastembed = ["fastembed (==0.3.6)"]
 fastembed-gpu = ["fastembed-gpu (==0.3.6)"]
-
-[[package]]
-name = "rank-bm25"
-version = "0.2.2"
-description = "Various BM25 algorithms for document ranking"
-optional = false
-python-versions = "*"
-files = [
-    {file = "rank_bm25-0.2.2-py3-none-any.whl", hash = "sha256:7bd4a95571adadfc271746fa146a4bcfd89c0cf731e49c3d1ad863290adbe8ae"},
-    {file = "rank_bm25-0.2.2.tar.gz", hash = "sha256:096ccef76f8188563419aaf384a02f0ea459503fdf77901378d4fd9d87e5e51d"},
-]
-
-[package.dependencies]
-numpy = "*"
-
-[package.extras]
-dev = ["pytest"]
 
 [[package]]
 name = "rapidfuzz"
@@ -6477,4 +6290,4 @@ all = ["playwright"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "a5f73443c8da55ef06c585409a7615dcc47e5ae5e6fc45f1462b05ed68825bad"
+content-hash = "2efe9c816b4dbb0e4d3d0d1482f55026857a0cc1641e4f1e955a84446e96be49"
