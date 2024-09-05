@@ -51,7 +51,7 @@ export default function () {
           const companiesToResearch = companies.filter((company) => !company.researched_details).map((company) => company.name)
 
           // noinspection JSIgnoredPromiseFromCall
-          streamOperation(app.location, appOptions.agent, "research_more_companies", processStatus.process_id, {companyNames: companiesToResearch}, (event) => {
+          streamOperation(app.location, appOptions.agent, "research_more_companies", processStatus.process_id, {companyNames: companiesToResearch}, (event: any) => {
             if (event.category === "output") {
               const newCompany = event.content as Company
               const index = companies.findIndex((c) => c.name === newCompany.name)

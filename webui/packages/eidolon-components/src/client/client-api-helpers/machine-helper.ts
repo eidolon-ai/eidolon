@@ -24,7 +24,7 @@ export async function getOperations(machineUrl: string, agent: string) {
   })
 }
 
-export async function getApps() {
+export async function getApps(): Promise<Record<string, EidolonApp>> {
   return fetch(`/api/eidolon/apps`, {
     method: "GET"
   })
