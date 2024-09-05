@@ -8,6 +8,7 @@ import './globals.css';
 import {SessionProvider} from "next-auth/react";
 import {EidolonProvider} from "@eidolon-ai/components/client";
 import {PHProvider} from "@/PosthogProvider.tsx";
+import "@eidolon-ai/components/client-css";
 
 const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)?.main || '#FFFFFF';
 
