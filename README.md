@@ -60,7 +60,7 @@ openai.NotFoundError: Error code: 404 - {'error': {'message': 'The model `gpt-4-
 If your AgentMachine successfully started, you should see the following logs in your terminal.
 ```bash
 INFO - Building machine 'local_dev'
-INFO - Starting agent 'hello_world'
+INFO - Starting agent 'hello-world'
 INFO - Server Started
 ```
 
