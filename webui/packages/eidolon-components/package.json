@@ -15,7 +15,7 @@
   },
   "exports": {
     "./client": {
-      "import": ["./dist/client/index.js", "./dist/client/index.css"],
+      "import": "./dist/client/index.js",
       "require": "./dist/client/index.cjs",
       "types": "./dist/client/index.d.ts"
     },
@@ -79,7 +79,7 @@
     "setup-polly-jest": "^0.11.0",
     "tsup": "^8.1.0",
     "typescript": "^5.4.5",
-     "esbuild-plugin-css-modules": "^0.3.0",
+    "esbuild-plugin-css-modules": "^0.3.0",
     "postcss": "^8.4.45",
     "postcss-modules": "^6.0.0",
     "hash-css-selector": "^1.1.0",

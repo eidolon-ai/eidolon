@@ -28,7 +28,7 @@ export async function getApps() {
   return fetch(`/api/eidolon/apps`, {
     method: "GET"
   })
-    .then(resp => {
+    .then(async resp => {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
