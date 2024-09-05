@@ -8,7 +8,6 @@ import './globals.css';
 import {SessionProvider} from "next-auth/react";
 import {EidolonProvider} from "@eidolon-ai/components/client";
 import {PHProvider} from "@/PosthogProvider.tsx";
-import PostHogPageView from "@/PostHogPageView.tsx";
 
 const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)?.main || '#FFFFFF';
 
@@ -27,7 +26,6 @@ const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
     <html lang="en">
     <PHProvider>
       <body>
-      <PostHogPageView/>
       <SessionProvider>
         <AppStoreProvider>
           <EidolonProvider>
