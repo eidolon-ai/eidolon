@@ -1,5 +1,5 @@
 ---
-title: Swapping LLMs
+title: How to Swap LLMs
 description: References - How to Swap LLM providers or models
 ---
 
@@ -34,9 +34,9 @@ spec:
 ```
 
 
-* <small>When choosing an LLM from a different provider, you will need to update your auth information accordingly. See
-  the specific APU documentation for more details</small>
-* <small>For more information on customizing components (including changing machine wide defaults), see [Customize Builtins](/docs/howto/customize_builtins).</small>
+>When choosing an LLM from a different provider, you will need to update your auth information accordingly. See the specific APU documentation for more details or check out [How to Authenticate your LLM](/docs/howto/llm_authentication).
+>
+>For more information on customizing components (including changing machine wide defaults), see [How to Configure Built-in Components](/docs/howto/configure_builtins).
 
 ---
 ## Defining a Custom APU

@@ -18,15 +18,14 @@ RUN poetry export --without dev --without-hashes --format=requirements.txt | gre
 
 FROM ${BASE_IMAGE} AS sdk_base
 COPY --from=builder dist/requirements.txt /tmp/eidolon_ai_sdk/requirements.txt
-RUN pip install -r /tmp/eidolon_ai_sdk/requirements.txt
-RUN playwright install
+RUN pip install -r /tmp/eidolon_ai_sdk/requirements.txt --no-cache --no-deps
 
 COPY --from=eidolon_client_builder dist/*.whl /tmp/eidolon_ai_client/
-RUN pip install /tmp/eidolon_ai_client/*.whl
+RUN pip install /tmp/eidolon_ai_client/*.whl --no-cache --no-deps
 COPY --from=usage_client_builder dist/*.whl /tmp/usage_client/
-RUN pip install /tmp/usage_client/*.whl
+RUN pip install /tmp/usage_client/*.whl --no-cache --no-deps
 COPY --from=builder dist/*.whl /tmp/eidolon_ai_sdk/
-RUN pip install /tmp/eidolon_ai_sdk/*.whl
+RUN pip install /tmp/eidolon_ai_sdk/*.whl --no-cache --no-deps
 
 FROM sdk_base AS runner
 RUN addgroup --system --gid 1001 eidolon

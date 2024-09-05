@@ -22,11 +22,35 @@
         "implementation": "MemoryUnit"
       }
     },
+    "longterm_memory_unit": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "properties": {
+            "implementation": {
+              "default": "LongTermMemoryUnit",
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "reference_pointer": {
+            "default_impl": "LongTermMemoryUnit",
+            "type": "LongTermMemoryUnit"
+          },
+          "title": "LongTermMemoryUnit Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "llm_unit": {
       "$ref": "file:../LLMUnit/overview.json",
       "default": {
         "implementation": "AnthropicLLMUnit",
-        "model": "claude-3-sonnet-20240229"
+        "model": "claude-3-5-sonnet-20240620"
       }
     },
     "logic_units": {

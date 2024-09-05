@@ -16,7 +16,7 @@ description: Create a multi-media chatbot powered web-researcher using the llm o
 This Recipe shows an example of a web researcher chatbot. 
 
 ## Core Concepts
-###### [Customizing the AgentProcessingUnit](http://localhost:4321/docs/howto/customize_builtins)
+###### [How to Configure Built-in Components](/docs/howto/configure_builtins)
 
 ## Agents
 #### [Conversational Agent](https://github.com/eidolon-ai/web-researcher/blob/main/resources/conversational_agent.yaml)
@@ -35,7 +35,7 @@ You will notice that enabled file upload on our AgentProcessingUnit's primary ac
 ```
 
 
-We also have a list of available APUs in resources/apus.yaml.
+We also have a list of available [APUs](docs/components/apu/overview) in resources/apus.yaml.
 ```yaml
   apus:
     - apu: MistralSmall

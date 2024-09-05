@@ -3,7 +3,10 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 from fastapi import Body
-from playwright.async_api import async_playwright
+try:
+    from playwright.async_api import async_playwright
+except ImportError:
+    async_playwright = None
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program
@@ -52,6 +55,8 @@ class WebScrapingAgent(Specable[WebScrapingAgentSpec]):
         :param url:
         :return:
         """
+        if not async_playwright:
+            raise ValueError("Playwright not installed. Please add playwright to your project.")
         await ProcessDoc.set_delete_on_terminate(process_id, True)
         async with async_playwright() as playwright:
             browser = await playwright.chromium.launch(headless=True)

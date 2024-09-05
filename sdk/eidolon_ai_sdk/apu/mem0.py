@@ -1,8 +1,9 @@
 import asyncio
 from datetime import datetime
 from types import SimpleNamespace
-from typing import cast, List
+from typing import cast, List, Callable, Optional
 
+import mem0
 from bson import ObjectId
 from mem0 import Memory
 from mem0.embeddings.base import EmbeddingBase
@@ -77,8 +78,9 @@ class Mem0Embedding(EmbeddingBase):
 class Mem0VectorDB(VectorStoreBase):
     similarity_memory: SimilarityMemory
 
-    def __init__(self, similarity_memory: SimilarityMemory = None):
+    def __init__(self, similarity_memory: SimilarityMemory = None, memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None):
         self.similarity_memory = similarity_memory or AgentOS.similarity_memory
+        self.memory_converter = memory_converter
 
     @property
     def vs(self) -> SimilarityMemory:
@@ -125,7 +127,7 @@ class Mem0VectorDB(VectorStoreBase):
                 )
             )
 
-        return [
+        retDocs = [
             ScoredPoint(
                 id=doc.id,
                 score=doc.score,
@@ -135,6 +137,10 @@ class Mem0VectorDB(VectorStoreBase):
             )
             for doc in found
         ]
+
+        if self.memory_converter:
+            return self.memory_converter(retDocs)
+        return retDocs
 
     async def _get_doc(self, name, vector_id):
         async for doc in self.vs.get_docs(collection=name, doc_ids=[str(vector_id)]):
@@ -256,16 +262,27 @@ class Mem0DB:
 
 
 class EidolonMem0(Memory):
-    def __init__(
-        self,
-        llm: LLMUnit,
-        db_collection: str,
-        similarity_memory: SimilarityMemory = None,
-        symbolic_memory: SymbolicMemory = None,
-    ):
+    def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None, symbolic_memory: SymbolicMemory = None,
+                 memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None):
         self.embedding_model = Mem0Embedding(similarity_memory)
-        self.vector_store = Mem0VectorDB(similarity_memory)
+        self.vector_store = Mem0VectorDB(similarity_memory, memory_converter)
         self.llm = Mem0LLM(llm)
         self.db = Mem0DB(db_collection, symbolic_memory)
         self.collection_name = db_collection
         capture_event("mem0.init", self)
+
+
+class NoTelemetry:
+    def __init__(self):
+        pass
+
+    def capture_event(self, event_name, properties=None):
+        pass
+
+    def identify_user(self, user_id, properties=None):
+        pass
+
+    def close(self):
+        pass
+
+mem0.memory.telemetry.telemetry = NoTelemetry()

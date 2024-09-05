@@ -83,7 +83,7 @@ Specific value: `"gpt-4o"`
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
-| **Default**  | `false`   |
+| **Default**  | `true`    |
 
 ## <a name="supports_audio_input"></a>8. Property `supports_audio_input`
 
