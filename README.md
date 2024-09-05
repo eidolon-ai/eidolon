@@ -8,7 +8,7 @@
 
 Eidolon helps developers build and deploy agent-based services.
 
-## Why Eidolon?
+## Why Eidolon? 🤔
 ### 1. Easy to deploy
 With Eidolon, agents are services, so there is no extra work when it comes time to deploy. The HTTP server is built in.
 
@@ -23,19 +23,19 @@ etc or just define your own.
 This means no vendor lock-in and minimizes the work needed to upgrade portions of an agent. Without this flexibility, 
 developers will not be able to adapt their agents to the rapidly changing AI landscape.
 
-Check out [Eidolon's website](https://eidolonai.com/) to learn more.
+Check out [Eidolon's website](https://eidolonai.com/) to see examples or learn more.
 
-## 🚀 Ready to get started?
+## Ready to get started? 🚀
 Check out Eidolon's [Quickstart Guide](https://www.eidolonai.com/docs/quickstart)
 
-## 😍 Like what you see?
+## Like what you see? 😍
 Eidolon is a completely open source project. Keep your dirty money!
 
 ⭐️ But we love your stars ⭐️
 
 The best way you can support the project is by staring this repository.
 
-## Want to Contribute?
+## Want to Contribute? 💻
 
 We welcome and appreciate contributions!
 
