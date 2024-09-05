@@ -3,14 +3,25 @@ from datetime import datetime
 from types import SimpleNamespace
 from typing import cast, List, Callable, Optional
 
-import mem0
+try:
+    import mem0
+    from mem0 import Memory
+    from mem0.embeddings.base import EmbeddingBase
+    from mem0.llms.base import LLMBase
+    from mem0.memory.telemetry import capture_event
+    from mem0.vector_stores.base import VectorStoreBase
+    from qdrant_client.http.models import ScoredPoint
+except ImportError:
+    mem0 = None
+    Memory = object
+    EmbeddingBase = object
+    LLMBase = object
+    capture_event = lambda *args, **kwargs: None
+    VectorStoreBase = object
+    ScoredPoint = object
+
+
 from bson import ObjectId
-from mem0 import Memory
-from mem0.embeddings.base import EmbeddingBase
-from mem0.llms.base import LLMBase
-from mem0.memory.telemetry import capture_event
-from mem0.vector_stores.base import VectorStoreBase
-from qdrant_client.http.models import ScoredPoint
 
 from eidolon_ai_client.events import StringOutputEvent, LLMToolCallRequestEvent, ToolCall
 from eidolon_ai_client.util.logger import logger
@@ -264,6 +275,8 @@ class Mem0DB:
 class EidolonMem0(Memory):
     def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None, symbolic_memory: SymbolicMemory = None,
                  memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None):
+        if mem0 is None:
+            raise ImportError("Mem0 is not installed.")
         self.embedding_model = Mem0Embedding(similarity_memory)
         self.vector_store = Mem0VectorDB(similarity_memory, memory_converter)
         self.llm = Mem0LLM(llm)

@@ -9,9 +9,9 @@ try:
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 except ImportError:
     pass
+
 import chromadb
-from chromadb import Include, QueryResult
-from chromadb.api.models.Collection import Collection
+
 from pathlib import Path
 from pydantic import Field, field_validator
 from typing import List, Dict, Any, Optional
@@ -62,7 +62,7 @@ class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
 
 class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]):
     spec: ChromaVectorStoreConfig
-    client: chromadb.Client
+    client: 'chromadb.Client'
     lock = threading.Lock()
 
     def __init__(self, spec: ChromaVectorStoreConfig):
@@ -76,6 +76,8 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
     def connect(self):
         url = urlparse(self.spec.url)
         if url.scheme == "file":
+            if not hasattr(chromadb, "PersistentClient"):
+                raise RuntimeError("PersistentClient not available, please install chromadb")
             path = url.path
             self.client = chromadb.PersistentClient(path)
         else:
@@ -91,7 +93,7 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
     async def stop(self):
         pass
 
-    def _get_collection(self, name: str) -> Collection:
+    def _get_collection(self, name: str) -> 'chromadb.Collection':
         with ChromaVectorStore.lock:
             if not self.client:
                 self.connect()
@@ -130,11 +132,11 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         include_embeddings=False,
     ) -> List[QueryItem]:
         collection = self._get_collection(name=collection)
-        thingsToInclude: Include = ["metadatas", "distances"]
+        thingsToInclude: 'chromadb.Include' = ["metadatas", "distances"]
         if include_embeddings:
             thingsToInclude.append("embeddings")
 
-        results: QueryResult = collection.query(
+        results: 'chromadb.QueryResult' = collection.query(
             query_embeddings=[query],
             n_results=num_results,
             where=metadata_where,

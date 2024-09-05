@@ -5,9 +5,18 @@ from functools import cached_property
 from typing import AsyncIterable, List, cast, Any
 
 from pydantic import BaseModel, Field, model_validator
-from sqlalchemy import make_url, MetaData, text, Row
-from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+try:
+    from sqlalchemy import make_url, MetaData, text, Row
+    from sqlalchemy.exc import InvalidRequestError
+    from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+except ImportError:
+    make_url = None
+    MetaData = None
+    text = None
+    Row = None
+    InvalidRequestError = None
+    AsyncEngine = None
+    create_async_engine = None
 
 
 class SqlClient(BaseModel):
@@ -34,6 +43,11 @@ class SqlAlchemy(SqlClient):
 
     Performs cursory checks when `select_only` is set to True. Additionally ensure user is restricted to allowed permissions.
     """
+
+    def __init__(self, *args, **kwargs):
+        if not make_url:
+            raise ImportError("SQLAlchemy is not installed.")
+        super().__init__(*args, **kwargs)
 
     connection_string: str = Field(
         "sqlite+aiosqlite:///:memory:",

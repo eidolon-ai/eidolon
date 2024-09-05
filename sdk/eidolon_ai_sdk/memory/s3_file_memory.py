@@ -3,7 +3,6 @@ import fnmatch
 from io import BytesIO
 from typing import AsyncIterable, Optional
 
-import boto3
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
@@ -34,6 +33,7 @@ class S3FileMemory(BaseModel, FileMemoryBase):
 
     def client(self):
         if not self._client:
+            import boto3
             session = boto3.Session(
                 region_name=self.region_name,
                 aws_access_key_id=self.aws_access_key_id,

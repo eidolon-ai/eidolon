@@ -1,7 +1,9 @@
 from typing import Optional, Iterable, Union
 
-import numpy as np
-from pymupdf import pymupdf
+try:
+    from pymupdf import pymupdf
+except ImportError:
+    pymupdf = None
 
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DocumentParserSpec, DataBlob
 from eidolon_ai_sdk.memory.document import Document
@@ -25,13 +27,11 @@ _PDF_FILTER_WITHOUT_LOSS = [
 ]
 
 
-def extract_from_images_with_rapidocr(
-    images: Iterable[Union[Iterable[np.ndarray], bytes]],
-) -> str:
+def extract_from_images_with_rapidocr(images) -> str:
     """Extract text from images with RapidOCR.
 
     Args:
-        images: Images to extract text from.
+        images: Iterable[Union[Iterable[numpy.ndarray], bytes]] Images to extract text from.
 
     Returns:
         Text extracted from images.
@@ -61,6 +61,8 @@ class PyPDFParserSpec(DocumentParserSpec):
 
 class PyPDFParser(DocumentParser, Specable[PyPDFParserSpec]):
     def __init__(self, spec: PyPDFParserSpec):
+        if not pymupdf:
+            raise ImportError("PyMuPDF is not installed.")
         super().__init__(spec)
         self.password = spec.password
 

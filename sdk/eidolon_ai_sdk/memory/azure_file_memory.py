@@ -3,7 +3,11 @@ import os
 from typing import AsyncIterable, Optional
 
 from azure.identity.aio import EnvironmentCredential
-from azure.storage.blob.aio import BlobServiceClient, ContainerClient
+try:
+    from azure.storage.blob.aio import BlobServiceClient, ContainerClient
+except ImportError:
+    BlobServiceClient = None
+    ContainerClient = None
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
@@ -33,6 +37,8 @@ class AzureFileMemory(FileMemoryBase, Specable[AzureFileMemorySpec]):
     _container: ContainerClient = None
 
     def __init__(self, **kwargs):
+        if BlobServiceClient is None:
+            raise ImportError("azure-storage-blob libraries are not installed.")
         super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
 
