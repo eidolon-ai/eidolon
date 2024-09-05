@@ -104,7 +104,7 @@ jobs:
         run: docker ps -a
 
       - name: Install Playwright dependencies
-        run: pnpm dlx playwright install
+        run: pnpm exec playwright install
         working-directory: ./webui/apps/eidolon-ui2
 
       - name: Run Playwright tests
