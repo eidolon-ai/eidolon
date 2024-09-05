@@ -71,7 +71,7 @@ aiohttp = "^3.9.5"
 lxml = ">=4.9.3,<6.0.0"
 aiosqlite = "^0.20.0"
 eval-type-backport = "^0.2.0"
-mem0ai = "^0.0.9"
+mem0ai = "^0.1.11"
 
 [tool.poetry.extras]
 all = [ "playwright",]
