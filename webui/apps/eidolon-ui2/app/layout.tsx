@@ -7,6 +7,7 @@ import CurrentLayout from '@/layout';
 import './globals.css';
 import {SessionProvider} from "next-auth/react";
 import {EidolonProvider} from "@eidolon-ai/components/client";
+import {PHProvider} from "@/PosthogProvider.tsx";
 
 const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)?.main || '#FFFFFF';
 
@@ -23,19 +24,21 @@ export const viewport: Viewport = {
 const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
   return (
     <html lang="en">
-    <body>
-    <SessionProvider>
-      <AppStoreProvider>
-        <EidolonProvider>
-          <ThemeProvider>
-            <CurrentLayout>
-              {children}
-            </CurrentLayout>
-          </ThemeProvider>
-        </EidolonProvider>
-      </AppStoreProvider>
-    </SessionProvider>
-    </body>
+    <PHProvider>
+      <body>
+      <SessionProvider>
+        <AppStoreProvider>
+          <EidolonProvider>
+            <ThemeProvider>
+              <CurrentLayout>
+                {children}
+              </CurrentLayout>
+            </ThemeProvider>
+          </EidolonProvider>
+        </AppStoreProvider>
+      </SessionProvider>
+      </body>
+    </PHProvider>
     </html>
   );
 };
