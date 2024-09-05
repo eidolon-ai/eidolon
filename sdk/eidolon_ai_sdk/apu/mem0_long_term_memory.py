@@ -7,7 +7,6 @@ from eidolon_ai_sdk.apu.llm_message import LLMMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnitConfig, LongTermMemoryUnit
 from eidolon_ai_sdk.apu.mem0 import EidolonMem0
-from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
@@ -15,12 +14,13 @@ class Mem0LongTermMemoryUnitConfig(LongTermMemoryUnitConfig):
     collection_name: str = "eidolon_mem0"
 
 
-class Mem0LongTermMemoryUnit(ProcessingUnit, Specable[Mem0LongTermMemoryUnitConfig], LongTermMemoryUnit):
+class Mem0LongTermMemoryUnit(LongTermMemoryUnit, Specable[Mem0LongTermMemoryUnitConfig]):
     mem0: EidolonMem0
 
     def __init__(self, default_llm: LLMUnit, spec: Mem0LongTermMemoryUnitConfig = None,
                  memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None, **kwargs):
         super().__init__(**kwargs)
+        Specable.__init__(self, spec)
         self.spec = spec
         self.user_scoped = spec.user_scoped
         if spec is not None and spec.llm_unit is not None:

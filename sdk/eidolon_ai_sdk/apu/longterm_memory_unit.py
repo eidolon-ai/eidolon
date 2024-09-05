@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from qdrant_client.http.models import ScoredPoint
-from typing import Optional, List, Callable
+from typing import Optional, List
 
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import LLMMessage
@@ -17,8 +16,7 @@ class LongTermMemoryUnitConfig(BaseModel):
 
 class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
 
-    def __init__(self, default_llm: LLMUnit, spec: LongTermMemoryUnitConfig = None,
-                 memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         pass
 
