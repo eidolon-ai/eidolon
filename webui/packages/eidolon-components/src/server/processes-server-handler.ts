@@ -1,12 +1,12 @@
 import {EidolonClient, HttpException} from "@eidolon-ai/client";
 
 export async function processHeadersAndResponse(request: Request, promise: Promise<any>) {
-  const realFetch = globalThis.fetch;
+  const realFetch = globalThis.fetch || fetch;
   /*global globalThis*/
 
   globalThis.fetch = function patchedFetch(uri, options) {
     if (request.headers) {
-      const localHeaders = request.headers
+      const localHeaders = new Headers(request.headers || {})
       if (localHeaders.get('X-Eidolon-Context')) {
         const newHeaders: Record<string, string> = {}
         if (options?.headers) {
