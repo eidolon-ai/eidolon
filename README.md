@@ -25,7 +25,7 @@ developers will not be able to adapt their agents to the rapidly changing AI lan
 
 Check out [Eidolon's website](https://eidolonai.com/) to learn more.
 
-## 🚀 Ready to get Started?
+## 🚀 Ready to get started?
 Check out Eidolon's [Quickstart Guide](https://www.eidolonai.com/docs/quickstart)
 
 ## 😍 Like what you see?
