@@ -107,6 +107,10 @@ jobs:
         run: pnpm exec playwright install
         working-directory: ./webui/apps/eidolon-ui2
 
+      - name: Install Playwright browsers
+        run: pnpm dlx playwright install
+        working-directory: ./webui/apps/eidolon-ui2
+
       - name: Run Playwright tests
         run: pnpm exec playwright test
         working-directory: ./webui/apps/eidolon-ui2
