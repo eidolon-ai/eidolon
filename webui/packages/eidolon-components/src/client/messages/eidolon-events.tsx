@@ -2,7 +2,6 @@
 
 import {Box} from "@mui/material";
 import {ElementsAndLookup} from "../lib/display-elements.ts";
-import "./eidolon-events.css"
 import {ChatScrollAnchor} from "./chat-scroll-anchor.tsx";
 import {ChatDisplayElement} from "./chat-display-element.tsx";
 

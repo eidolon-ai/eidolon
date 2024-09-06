@@ -8,7 +8,7 @@ import rehypeRaw from 'rehype-raw'
 import rehypeWrap from "rehype-wrap-all";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {materialLight} from "react-syntax-highlighter/dist/esm/styles/prism";
-import "./eidolon-markdown.css"
+import styles from "./eidolon-markdown.module.css";
 import {Link} from "@mui/material";
 
 interface EidolonMarkdownProps {
@@ -31,9 +31,9 @@ export const EidolonMarkdown = ({machineUrl, children, showLineNumbers}: Eidolon
 
   // noinspection JSUnusedGlobalSymbols
   return <Markdown
-    className={"markdown"}
+    className={styles.markdown}
     // @ts-ignore
-    rehypePlugins={[[rehypeRaw], [rehypeWrap, {selector: 'table', wrapper: 'div.responsive-table'}]]}
+    rehypePlugins={[[rehypeRaw], [rehypeWrap, {selector: 'table', wrapper: `div.${styles.responsiveTable}`}]]}
     remarkPlugins={[remarkGfm]}
     transformImageUri={(src) => transformURL(src)}
     transformLinkUri={(href) => transformURL(href)}
