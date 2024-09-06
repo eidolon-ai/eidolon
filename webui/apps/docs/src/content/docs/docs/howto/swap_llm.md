@@ -34,7 +34,7 @@ spec:
 ```
 
 
->When choosing an LLM from a different provider, you will need to update your auth information accordingly. See the specific APU documentation for more details or check out [How to Authenticate your LLM](/docs/howto/llm_authentication).
+>When choosing an LLM from a different provider, you will need to update your auth information accordingly. See the specific APU documentation for more details or check out [How to Authenticate your LLM](/docs/howto/authenticate_llm).
 >
 >For more information on customizing components (including changing machine wide defaults), see [How to Configure Built-in Components](/docs/howto/configure_builtins).
 

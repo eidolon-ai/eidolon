@@ -22,7 +22,7 @@ We know you are excited about creating your first agent, but first let's make su
 You should have an environment variable OPENAI_API_KEY associated with a funded account (see LLM provider for minimum
 funding requirements).
 Create a new key on [openai.com](https://platform.openai.com/api-keys) if you don't have one already or check out 
-[How to Authenticate your LLM](/docs/howto/llm_authentication) for more details.
+[How to Authenticate your LLM](/docs/howto/authenticate_llm) for more details.
 
 ##### [Docker Daemon](https://docs.docker.com/get-docker/ "Install Docker")
 Eidolon uses Docker to run your agent machine. Make sure you have Docker installed on your machine.
