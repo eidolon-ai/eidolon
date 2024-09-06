@@ -5,6 +5,7 @@ import {ChatDisplayElement} from "./chat-display-element.tsx";
 import {useState} from "react";
 import {BuildCircle} from '@mui/icons-material';
 import {EidolonMarkdown} from "./eidolon-markdown.tsx";
+import styles from "./eidolon-events.module.css";
 
 interface ExpandMoreDivProps extends IconButtonProps {
   expand: boolean;
@@ -62,7 +63,7 @@ export const ToolCall = ({machineUrl, element, agentName}: ToolCallElementProps)
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography variant={"h6"}>Input:</Typography>
-          <div className={"chat-indent"}>
+          <div className={styles[`chat-indent`]}>
             <EidolonMarkdown machineUrl={machineUrl}>{'```json\n' + JSON.stringify(element.arguments, undefined,
             "  ") + "\n```"}</EidolonMarkdown>
           </div>
