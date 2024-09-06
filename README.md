@@ -29,9 +29,12 @@ Check out [Eidolon's website](https://eidolonai.com/) to see examples and learn 
 Check out Eidolon's [Quickstart Guide](https://www.eidolonai.com/docs/quickstart)
 
 ## Like what you see? 😍
-⭐️ We love your stars ⭐️
 
-The best way you can support the project is by staring this repository.
+### Star the [repo](https://github.com/eidolon-ai/eidolon) on GitHub️ ⭐️
+This helps increase our visibility and encourages others to check out Eidolon. Your support makes a big difference!
+
+### Join the conversation on [discord](https://discord.com/invite/6kVQrHpeqG) 🧠
+Our developers would love to hear from you. Join our Discord server to share your feedback, ask questions, or just say hello.
 
 ## Want to Contribute? 💻
 
