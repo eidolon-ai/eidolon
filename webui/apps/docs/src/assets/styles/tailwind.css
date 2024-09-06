@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  .markdown ul {
+    min-width: 0;
+    padding-left: 2rem;
+    list-style-type: disc;
+    margin-top: -.25rem;
+  }
+
+  .markdown ol {
+    min-width: 0;
+    padding-left: 2rem;
+    list-style-type: decimal;
+    margin-top: -.25rem;
+  }
+
+  .markdown ol > li {
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+}
+
 @layer utilities {
   .bg-page {
     background-color: var(--aw-color-bg-page);
