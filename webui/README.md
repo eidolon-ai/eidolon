@@ -36,7 +36,7 @@ You will also need a running Eidolon Machine. For instructions on how to run a m
 ### Setting Up Your Environment
 
 **Environment Configuration**:
-You need to create a `.env` file in the **webui/app/eidolon-ui2** directory of the project. Copy
+You need to create a `.env` file in the **webui/apps/eidolon-ui2** directory of the project. Copy
 the contents of the 'template.env' file and paste it into the `.env` file.
 
 The content are described in the template file.
