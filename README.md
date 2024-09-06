@@ -6,7 +6,7 @@
 [![Tests - Status](https://img.shields.io/github/actions/workflow/status/eidolon-ai/eidolon/test_python.yml?style=flat&label=test)](https://github.com/eidolon-ai/eidolon/actions/workflows/test_python.yml?query=branch%3Amain)
 
 
-Eidolon helps developers build and deploy agent-based services.
+Eidolon helps developers **_build_** and **_deploy_** agent-based services.
 
 ## Why Eidolon? 🤔
 ### 1. Easy to deploy
@@ -23,15 +23,13 @@ etc or just define your own.
 This means no vendor lock-in and minimizes the work needed to upgrade portions of an agent. Without this flexibility, 
 developers will not be able to adapt their agents to the rapidly changing AI landscape.
 
-Check out [Eidolon's website](https://eidolonai.com/) to see examples or learn more.
+Check out [Eidolon's website](https://eidolonai.com/) to see examples and learn more.
 
 ## Ready to get started? 🚀
 Check out Eidolon's [Quickstart Guide](https://www.eidolonai.com/docs/quickstart)
 
 ## Like what you see? 😍
-Eidolon is a completely open source project. Keep your dirty money!
-
-⭐️ But we love your stars ⭐️
+⭐️ We love your stars ⭐️
 
 The best way you can support the project is by staring this repository.
 
