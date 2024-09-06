@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 @layer base {
-  .markdown ul {
+  ul {
     min-width: 0;
     padding-left: 2rem;
     list-style-type: disc;
     margin-top: -.25rem;
   }
 
-  .markdown ol {
+  ol {
     min-width: 0;
     padding-left: 2rem;
     list-style-type: decimal;
     margin-top: -.25rem;
   }
 
-  .markdown ol > li {
+  ol > li {
     overflow-wrap: break-word;
     white-space: normal;
   }
