@@ -4,12 +4,10 @@ on:
     branches: [main]
     paths:
       - 'webui/**'
-      - '!webui/apps/docs/**'
       - '!k8s-operator/**'
   pull_request:
     paths:
       - 'webui/**'
-      - '!webui/apps/docs/**'
       - '!k8s-operator/**'
   workflow_dispatch:
 
