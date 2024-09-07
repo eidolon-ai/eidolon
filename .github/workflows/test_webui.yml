@@ -3,11 +3,15 @@ on:
   push:
     branches: [main]
     paths:
-      - webui/**
+      - 'webui/**'
+      - '!webui/apps/docs/**'
+      - '!k8s-operator/**'
   pull_request:
-  workflow_dispatch:
     paths:
-      - webui/**
+      - 'webui/**'
+      - '!webui/apps/docs/**'
+      - '!k8s-operator/**'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

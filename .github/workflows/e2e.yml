@@ -7,11 +7,13 @@ on:
     paths:
       - '**'
       - '!k8s-operator/**'
+      - '!webui/apps/docs/**'
   pull_request_target:
     types: [ opened, synchronize ]
     paths:
       - '**'
       - '!k8s-operator/**'
+      - '!webui/apps/docs/**'
 
 jobs:
   test-e2e:

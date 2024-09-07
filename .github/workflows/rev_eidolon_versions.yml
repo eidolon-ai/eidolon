@@ -1,4 +1,4 @@
-name: Rev and Publish Python Projects
+name: Rev and Publish Eidolon Projects
 on:
   workflow_run:
     workflows: ["Test Python"]  # The name of the test workflow
