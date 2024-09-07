@@ -7,11 +7,9 @@ description: Reference - How to get started with LLMs and set API keys
 
 To access LLM models through Eidolon, you may need to:
 
-<ul class="sl-markdown-content">
-  <li>Create an account with the LLM provider</li>
-  <li>Fund the account</li>
-  <li>Acquire an API key</li>
-</ul>
+- Create an account with the LLM provider
+- Fund the account
+- Acquire an API key
 
 Note that each provider has its own terms and conditions regarding account payment and usage pricing.
 
