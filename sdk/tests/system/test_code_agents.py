@@ -345,7 +345,7 @@ class TestStateMachine:
         with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
             metrics_enabled.return_value = True
             status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
-            with pytest.raises(AgentError) as error:
+            with pytest.raises(AgentError):
                 await status.action("error")
 
         posthog_events = mock.client.capture.call_args_list
@@ -362,7 +362,7 @@ class TestStateMachine:
         with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
             metrics_enabled.return_value = True
             status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
-            with pytest.raises(AgentError) as error:
+            with pytest.raises(AgentError):
                 await status.action("error")
 
         posthog_events = mock.client.capture.call_args_list
