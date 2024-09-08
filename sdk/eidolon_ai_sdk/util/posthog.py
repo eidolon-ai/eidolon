@@ -109,26 +109,10 @@ def report_server_started(time_to_start: float, number_of_agents: int, error: bo
     logger.debug("Server started reported with %s", kwargs)
 
 
-@metric
-def report_new_process():
-    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
-    PosthogConfig.client.capture(l_distinct_id, event="new_process", properties=properties())
-
-
 @cache
 def _builtin_agents():
     from eidolon_ai_sdk.builtins.code_builtins import named_builtins
-
     return {r.metadata.name for r in named_builtins()}
-
-
-@metric
-def report_agent_action():
-    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
-    props = properties()
-    props["agent_type"] = _get_agent_type()
-    PosthogConfig.client.capture(l_distinct_id, event="agent_action", properties=props)
-    logger.info("Agent request reported")
 
 
 @metric
