@@ -17,10 +17,10 @@ Use the table below to get started with popular LLM providers.
 
 | LLM | Provider Documentation | Eidolon API_Key attribute |
 | --- | --- | --- |
-| Claude | [Anthropic Quickstart](https://docs.anthropic.com/en/docs/quickstart)  | ANTHROPIC_API_KEY |
-| Mistral | [Mistral AI Quickstart: Account Setup](https://docs.mistral.ai/getting-started/quickstart/#account-setup) | MISTRAL_API_KEY |
-| Ollama | [Ollama Github](https://github.com/ollama/ollama)  | n/a -- you run Ollama locally |
-| ChatGPT | [OpenAI Developer Quickstart](https://platform.openai.com/docs/quickstart)  | OPENAI_API_KEY |
+| Claude | <a href="https://docs.anthropic.com/en/docs/quickstart" target=_blank>Anthropic Quickstart</a>  | ANTHROPIC_API_KEY |
+| Mistral | <a href="https://docs.mistral.ai/getting-started/quickstart/#account-setup" target=_blank>Mistral AI Quickstart: Account Setup</a> | MISTRAL_API_KEY |
+| Ollama | <a href="https://github.com/ollama/ollama" target=_blank>Ollama Github</a> | n/a -- you run Ollama locally |
+| ChatGPT | <a href="https://platform.openai.com/docs/quickstart" target=_blank>OpenAI Developer Quickstart</a>  | OPENAI_API_KEY |
 
 ## Prompts During Installations
 
@@ -34,7 +34,7 @@ cat .env
 ```
 ## Setting New LLM API Keys
 
-If you want to use a new LLM, you may need to enter an API Key to the `.env` file. See [LLM Prerequisites](#llm-prerequisites) to learn about authenticating with various providers.
+If you want to [use a new LLM](/docs/howto/swap_llm), you may need to enter an API Key to the `.env` file. See [LLM Prerequisites](#llm-prerequisites) to learn about authenticating with various providers.
 
 Example `.env` file:
 
