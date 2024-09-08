@@ -1,4 +1,5 @@
 from typing import Annotated
+from unittest.mock import patch
 
 import httpx
 import pytest
@@ -301,7 +302,7 @@ class StateMachine2(StateMachine):
 
 
 class TestStateMachine:
-    @pytest_asyncio.fixture(scope="class")
+    @pytest_asyncio.fixture(scope="class", autouse=True)
     async def server(self, run_app):
         async with run_app(StateMachine, StateMachine2) as ra:
             yield ra
@@ -335,6 +336,24 @@ class TestStateMachine:
         )
         assert post.state == "bar"
         assert post.data == "low man on the totem pole"
+
+    async def test_records_metrics(self):
+        with patch("eidolon_ai_sdk.util.posthog.metric") as mock:
+            await run_program(
+                "StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole")
+            )
+        assert mock.return_value.call_count == 2
+        create_process = mock.return_value.call_args_list[0].kwargs
+        assert create_process['event'] == 'http_request'
+        assert create_process['properties']['method'] == 'POST'
+        assert create_process['properties']['response_code'] == 200
+        assert create_process['properties']['route'] == '/processes'
+        run_action = mock.return_value.call_args_list[1].kwargs
+        assert run_action['event'] == 'http_request'
+        assert run_action['properties']['method'] == 'POST'
+        assert run_action['properties']['response_code'] == 200
+        assert run_action['properties']['route'] == '/processes/{process_id}/agent/{agent_name}/actions/{action_name}'
+
 
     async def test_can_transition_state(self):
         init = await run_program(
