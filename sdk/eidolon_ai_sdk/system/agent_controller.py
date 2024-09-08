@@ -418,8 +418,8 @@ class AgentController:
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]
 
         async def _run_program(**_kwargs):
-            agent = type(self.agent).__name__
-            report_agent_action(agent)
+            RequestContext.set(key='agent_type', value=type(self.agent).__name__, propagate=False)
+            report_agent_action()
             return await self.run_program(handler, **_kwargs)
 
         _run_program.__signature__ = sig.replace(parameters=params_values, return_annotation=typing.Any)

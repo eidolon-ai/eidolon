@@ -9,7 +9,7 @@ import time
 from functools import cache
 from importlib import metadata
 from platform import python_version, uname
-from typing import Optional
+from typing import Optional, Any
 
 from posthog import Posthog
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -123,14 +123,32 @@ def _builtin_agents():
 
 
 @metric
-def report_agent_action(agent_name: str):
+def report_agent_action():
     l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
-    if agent_name not in _builtin_agents():
-        agent_name = "custom"
-    PosthogConfig.client.capture(
-        l_distinct_id, event="agent_action", properties={"agent_type": agent_name, **properties()}
-    )
+    props = properties()
+    props["agent_type"] = _get_agent_type()
+    PosthogConfig.client.capture(l_distinct_id, event="agent_action", properties=props)
     logger.info("Agent request reported")
+
+
+@metric
+def report_agent_state_change(process_id, state, error: Optional[Any] = None):
+    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
+    props = properties()
+    props["process_id"] = process_id
+    props['agent_type'] = _get_agent_type()
+    props["state"] = state
+    if error:
+        props["error"] = error
+    PosthogConfig.client.capture(l_distinct_id, event="process_state_transition", properties=props)
+    logger.info("Agent request reported")
+
+
+def _get_agent_type():
+    agent_type = RequestContext.get('agent_type', default="unknown")
+    if agent_type not in _builtin_agents():
+        agent_type = "custom"
+    return agent_type
 
 
 AGENT_PATTERN = re.compile(r'(/agents?/)([^/]+)')

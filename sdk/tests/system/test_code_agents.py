@@ -292,6 +292,10 @@ class StateMachine:
     async def to_church(self):
         return AgentState(name="church", data="man of god")
 
+    @register_action("bar")
+    async def error(self):
+        raise Exception("big bad server error")
+
     @register_action("church")
     async def terminate(self):
         return "Only God can terminate me"
@@ -337,23 +341,39 @@ class TestStateMachine:
         assert post.state == "bar"
         assert post.data == "low man on the totem pole"
 
-    async def test_records_metrics(self):
-        with patch("eidolon_ai_sdk.util.posthog.metric") as mock:
-            await run_program(
-                "StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole")
-            )
-        assert mock.return_value.call_count == 2
-        create_process = mock.return_value.call_args_list[0].kwargs
-        assert create_process['event'] == 'http_request'
-        assert create_process['properties']['method'] == 'POST'
-        assert create_process['properties']['response_code'] == 200
-        assert create_process['properties']['route'] == '/processes'
-        run_action = mock.return_value.call_args_list[1].kwargs
-        assert run_action['event'] == 'http_request'
-        assert run_action['properties']['method'] == 'POST'
-        assert run_action['properties']['response_code'] == 200
-        assert run_action['properties']['route'] == '/processes/{process_id}/agent/{agent_name}/actions/{action_name}'
+    async def test_records_agent_transition_metrics(self):
+        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
+            metrics_enabled.return_value = True
+            status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+            with pytest.raises(AgentError) as error:
+                await status.action("error")
 
+        posthog_events = mock.client.capture.call_args_list
+        process_state_transitions = [e.kwargs for e in posthog_events if e.kwargs["event"] == "process_state_transition"]
+        assert {e["properties"]["process_id"] for e in process_state_transitions} == {status.process_id}
+        assert process_state_transitions[0]['properties']['state'] == 'initialized'
+        assert process_state_transitions[1]['properties']['state'] == 'processing'
+        assert process_state_transitions[2]['properties']['state'] == 'bar'
+        assert process_state_transitions[3]['properties']['state'] == 'processing'
+        assert process_state_transitions[4]['properties']['state'] == 'unhandled_error'
+        assert process_state_transitions[4]['properties']['error'] == {'detail': 'big bad server error', 'status_code': 500}
+
+    async def test_records_http_metrics(self):
+        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
+            metrics_enabled.return_value = True
+            status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+            with pytest.raises(AgentError) as error:
+                await status.action("error")
+
+        posthog_events = mock.client.capture.call_args_list
+        http_requests = [e.kwargs for e in posthog_events if e.kwargs["event"] == "http_request"]
+        assert http_requests[0]['properties']['method'] == 'POST'
+        assert http_requests[0]['properties']['response_code'] == 200
+        assert http_requests[0]['properties']['route'] == '/processes'
+        assert http_requests[1]['properties']['method'] == 'POST'
+        assert http_requests[1]['properties']['response_code'] == 200
+        assert http_requests[1]['properties']['route'] == '/processes/{process_id}/agent/{agent_name}/actions/{action_name}'
+        assert http_requests[2]['properties']['response_code'] == 500
 
     async def test_can_transition_state(self):
         init = await run_program(
