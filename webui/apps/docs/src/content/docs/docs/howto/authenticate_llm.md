@@ -22,9 +22,9 @@ Use the table below to get started with popular LLM providers.
 | Ollama | [Ollama Github](https://github.com/ollama/ollama)  | n/a -- you run Ollama locally |
 | ChatGPT | [OpenAI Developer Quickstart](https://platform.openai.com/docs/quickstart)  | OPENAI_API_KEY |
 
-## Setting Your LLM API Keys
+## Prompts During Installations
 
-If you are prompted to enter an API key during an Eidolon installation process, it will automatically be added to the Eidolon `.env` file. 
+If you are prompted to enter an API key during an installation process, it will automatically be added to the Eidolon `.env` file. 
 
 To see your Eidolon environment settings:
 
@@ -32,17 +32,18 @@ To see your Eidolon environment settings:
 cd <Eidolon application root directory>
 cat .env
 ```
+## Setting New LLM API Keys
 
-If the `.env` file does not exist, create it as a plain text file. 
+If you want to use a new LLM, you may need to enter an API Key to the `.env` file. See [LLM Prerequisites](#llm-prerequisites) to learn about authenticating with various providers.
 
-If the `.env` file does not contain the API key you need for an LLM provider, simply add it to the file. 
+Example `.env` file:
 
-Example:
-
-```console
+```text
 OPENAI_API_KEY=youropenaiapikey
 ANTHROPIC_API_KEY=youranthropicapikey
 MISTRAL_API_KEY=yourmistralapikey
 ```
 
-Restart the Eidolon server. Eidolon agents can now authenticate with your preferred LLMs.
+Restart Eidolon. Agents can now authenticate with your preferred LLMs.
+
+>Note: if the `.env` file does not exist in your application root directory, create it as a plain text file. 
