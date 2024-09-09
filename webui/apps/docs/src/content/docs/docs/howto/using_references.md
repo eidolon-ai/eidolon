@@ -7,7 +7,7 @@ References make up the backbone of Eidolon's runtime dependency injection. Defin
 
 ## Why
 
-When customizing or building your own [AgentTemplates](docs/howto/build_custom_agents/), [LogicUnits](/docs/components/logicunit/overview/), or other components, you may want to extend Eidolon's built-in components, or even create your own interfaces that can be expanded in the future. 
+When customizing or building your own [AgentTemplates](/docs/howto/build_custom_agents/), [LogicUnits](/docs/components/logicunit/overview/), or other components, you may want to extend Eidolon's built-in components, or even create your own interfaces that can be expanded in the future. 
 
 Eidolon has the concept of **References** which dynamically injects dependencies from resources defined in yaml files. References are fundamental to Eidolon's pluggable architecture.
 
@@ -15,7 +15,7 @@ Eidolon has the concept of **References** which dynamically injects dependencies
 
 At its simplest, a **reference** is a class. Any object within your python environment can be _referenced_ by its fully qualified name (FQN).
 
-A **spec** is a [Pydantic model](https://docs.pydantic.dev/latest/concepts/models/).
+A **spec** is a <a href="https://docs.pydantic.dev/latest/concepts/models/" target=_blank>Pydantic model</a>.
 
 ## How
 
