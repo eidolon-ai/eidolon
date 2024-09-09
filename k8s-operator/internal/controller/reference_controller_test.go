@@ -19,7 +19,7 @@ var _ = Describe("Reference Reconciler", func() {
 	Context("When reconciling References", func() {
 		const (
 			referenceName = "test-reference"
-			namespace     = "default"
+			namespace     = "foobar"
 			configMapName = "eidolon-reference-cm"
 		)
 
@@ -30,6 +30,7 @@ var _ = Describe("Reference Reconciler", func() {
 		}
 
 		BeforeEach(func() {
+			Expect(createNamespaceIfNotExists(ctx, namespace)).To(Succeed())
 			// Create a test Reference
 			reference := &serverv1alpha1.Reference{
 				ObjectMeta: metav1.ObjectMeta{
