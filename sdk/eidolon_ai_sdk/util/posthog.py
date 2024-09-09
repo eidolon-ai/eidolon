@@ -1,17 +1,23 @@
-from importlib import metadata
-
+import copy
 import hashlib
 import json
 import logging
 import os
+import re
 import socket
+import time
 from functools import cache
+from importlib import metadata
 from platform import python_version, uname
+from typing import Optional, Any
+
 from posthog import Posthog
-from typing import Optional
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
+from eidolon_ai_sdk.util.routing import get_route_name
 
 
 class PosthogConfig:
@@ -33,14 +39,18 @@ def posthog_enabled():
 
 
 @cache
-def distinct_id() -> str:
+def machine_id() -> str:
     if not posthog_enabled():
         return "disabled"
     return os.environ.get("POSTHOG_ID") or hashlib.md5(socket.gethostname().encode()).hexdigest()
 
 
-@cache
 def properties():
+    return copy.deepcopy(_properties())
+
+
+@cache
+def _properties():
     system, _, release, version, machine, processor = uname()  # node contains identifying information, ignore
     rtn = {
         "python version": python_version(),
@@ -49,6 +59,7 @@ def properties():
         "platform.version": version,
         "platform.machine": machine,
         "platform.processor": processor,
+        "machine_id": machine_id(),
     }
     metrics_loc = os.path.join(os.path.dirname(os.path.dirname((os.path.dirname(__file__)))), "metrics.json")
 
@@ -85,7 +96,7 @@ def metric(fn):
 @metric
 def report_server_started(time_to_start: float, number_of_agents: int, error: bool):
     kwargs = dict(
-        distinct_id=distinct_id(),
+        distinct_id=machine_id(),
         event="server_started",
         properties={
             "time_to_start": time_to_start,
@@ -98,25 +109,58 @@ def report_server_started(time_to_start: float, number_of_agents: int, error: bo
     logger.debug("Server started reported with %s", kwargs)
 
 
-@metric
-def report_new_process():
-    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", distinct_id())
-    PosthogConfig.client.capture(l_distinct_id, event="new_process", properties=properties())
-
-
 @cache
 def _builtin_agents():
     from eidolon_ai_sdk.builtins.code_builtins import named_builtins
-
     return {r.metadata.name for r in named_builtins()}
 
 
 @metric
-def report_agent_action(agent_name: str):
-    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", distinct_id())
-    if agent_name not in _builtin_agents():
-        agent_name = "custom"
-    PosthogConfig.client.capture(
-        l_distinct_id, event="agent_action", properties={"agent_type": agent_name, **properties()}
-    )
+def report_agent_state_change(process_id, state, error: Optional[Any] = None):
+    l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
+    props = properties()
+    props["process_id"] = process_id
+    props['agent_type'] = _get_agent_type()
+    props["state"] = state
+    if error:
+        props["error"] = error
+    PosthogConfig.client.capture(l_distinct_id, event="process_state_transition", properties=props)
     logger.info("Agent request reported")
+
+
+def _get_agent_type():
+    agent_type = RequestContext.get('agent_type', default="unknown")
+    if agent_type not in _builtin_agents():
+        agent_type = "custom"
+    return agent_type
+
+
+AGENT_PATTERN = re.compile(r'(/agents?/)([^/]+)')
+ACTIONS_PATTERN = re.compile(r'(/actions/)([^/]+)')
+
+
+class PostHogMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        t0 = time.perf_counter()
+        l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
+        props = properties()
+        props['response_type'] = request.headers.get("accept", "unknown")
+        pre_sub = get_route_name(request)
+        post_sub = AGENT_PATTERN.sub(r"\1{agent_name}", pre_sub)  # replaces
+        post_sub = ACTIONS_PATTERN.sub(r"\1{action_name}", post_sub)
+        props['route'] = post_sub
+        props['method'] = request.method
+        try:
+            response = await call_next(request)
+            props['response_code'] = response.status_code
+        except Exception as e:
+            props['response_code'] = 500
+            props['error'] = str(e)
+            raise e
+        finally:
+            props['duration'] = time.perf_counter() - t0
+            metric(PosthogConfig.client.capture)(
+                l_distinct_id, event="http_request", properties=props
+            )
+
+        return response
