@@ -1,35 +1,35 @@
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
-  name: conversational_agent
+  name: conversational-agent
 spec:
-  agent_refs:
-    - research_agent
-  system_prompt:
-    You are a helpful assistant. Please respond using markdown unless told otherwise by the user. Output all multi-media content as embedded content including image, video, and audio.
-    Only generate images or speech if directly asked by the user.
-
   actions:
-    - name: "converse"
-      description: "A copilot that engages with the user."
-      allow_file_upload: true
+  - allow_file_upload: true
+    description: A copilot that engages with the user.
+    name: converse
+  agent_refs:
+  - research_agent
   apus:
-    - apu: MistralSmall
-      title: Mistral Small
-    - apu: MistralMedium
-      title: Mistral Medium
-    - apu: MistralLarge
-      title: Mistral Large
-    - apu: Llamma3-8b
-      title: Llamma3 8b
-    - apu: GPT3.5-turbo
-      title: GPT3.5 Turbo
-    - apu: GPT4-turbo
-      title: GPT4 Turbo
-      default: true
-    - apu: ClaudeOpus
-      title: Claude Opus
-    - apu: ClaudeSonnet
-      title: Claude Sonnet
-    - apu: ClaudeHaiku
-      title: Claude Haiku
+  - apu: MistralSmall
+    title: Mistral Small
+  - apu: MistralMedium
+    title: Mistral Medium
+  - apu: MistralLarge
+    title: Mistral Large
+  - apu: Llamma3-8b
+    title: Llamma3 8b
+  - apu: GPT3.5-turbo
+    title: GPT3.5 Turbo
+  - apu: GPT4-turbo
+    default: true
+    title: GPT4 Turbo
+  - apu: ClaudeOpus
+    title: Claude Opus
+  - apu: ClaudeSonnet
+    title: Claude Sonnet
+  - apu: ClaudeHaiku
+    title: Claude Haiku
+  system_prompt: You are a helpful assistant. Please respond using markdown unless
+    told otherwise by the user. Output all multi-media content as embedded content
+    including image, video, and audio. Only generate images or speech if directly
+    asked by the user.
