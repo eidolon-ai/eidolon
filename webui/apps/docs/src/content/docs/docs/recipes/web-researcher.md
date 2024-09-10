@@ -35,7 +35,7 @@ You will notice that enabled file upload on our AgentProcessingUnit's primary ac
 ```
 
 
-We also have a list of available [APUs](docs/components/apu/overview) in resources/apus.yaml.
+We also have a list of available [APUs](/docs/components/apu/overview) in resources/apus.yaml.
 ```yaml
   apus:
     - apu: MistralSmall
