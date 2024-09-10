@@ -1,6 +1,6 @@
 ---
 title: DocumentParser Overview
-description: Overview of DocumentParser components
+description: "Overview of DocumentParser components"
 ---
 Overview of DocumentParser components
 ## Builtins

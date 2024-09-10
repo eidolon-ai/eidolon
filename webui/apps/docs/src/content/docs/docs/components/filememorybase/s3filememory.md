@@ -1,6 +1,6 @@
 ---
 title: S3FileMemory
-description: Description of S3FileMemory component
+description: "Description of S3FileMemory component"
 ---
 
 | Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description        |

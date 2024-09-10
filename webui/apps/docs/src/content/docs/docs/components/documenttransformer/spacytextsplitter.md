@@ -1,6 +1,6 @@
 ---
 title: SpacyTextSplitter
-description: Description of SpacyTextSplitter component
+description: "Description of SpacyTextSplitter component"
 ---
 
 | Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description |

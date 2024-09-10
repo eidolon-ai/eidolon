@@ -1,6 +1,6 @@
 ---
 title: ProposePromptStrategy
-description: Description of ProposePromptStrategy component
+description: "Description of ProposePromptStrategy component"
 ---
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description     |

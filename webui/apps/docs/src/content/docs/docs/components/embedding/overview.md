@@ -1,6 +1,6 @@
 ---
 title: Embedding Overview
-description: Overview of Embedding components
+description: "Overview of Embedding components"
 ---
 Overview of Embedding components
 ## Builtins

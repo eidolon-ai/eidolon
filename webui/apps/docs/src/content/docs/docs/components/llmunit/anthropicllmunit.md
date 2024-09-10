@@ -1,6 +1,6 @@
 ---
 title: AnthropicLLMUnit
-description: Description of AnthropicLLMUnit component
+description: "Description of AnthropicLLMUnit component"
 ---
 
 | Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |

@@ -1,13 +1,14 @@
 ---
 title: APU Overview
-description: Overview of APU components
----
+description: "The APU is the main interface for the Agent to interact with the LLM.
+The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.
 
+To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/)."
+---
 The APU is the main interface for the Agent to interact with the LLM.
 The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.
 
 To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).
-
 ## Builtins
 * [ClaudeHaiku](/docs/components/apu/claudehaiku/)
 * [ClaudeOpus](/docs/components/apu/claudeopus/)

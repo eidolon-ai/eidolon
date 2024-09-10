@@ -1,6 +1,6 @@
 ---
 title: PrivateAuthorizer
-description: Description of PrivateAuthorizer component
+description: "Description of PrivateAuthorizer component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |

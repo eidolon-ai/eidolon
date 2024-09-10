@@ -1,6 +1,6 @@
 ---
 title: Search
-description: Description of Search component
+description: "Description of Search component"
 ---
 
 | Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |

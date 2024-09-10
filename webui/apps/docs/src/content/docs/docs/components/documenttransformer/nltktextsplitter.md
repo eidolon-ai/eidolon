@@ -1,6 +1,6 @@
 ---
 title: NLTKTextSplitter
-description: Description of NLTKTextSplitter component
+description: "Description of NLTKTextSplitter component"
 ---
 
 | Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description |

@@ -1,6 +1,6 @@
 ---
 title: SqlClient Overview
-description: Overview of SqlClient components
+description: "Overview of SqlClient components"
 ---
 Overview of SqlClient components
 ## Builtins

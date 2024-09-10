@@ -1,9 +1,10 @@
 ---
 title: LLMModel Overview
-description: Overview of LLMModel components
+description: "Overview of LLMModel components"
 ---
 Overview of LLMModel components
 ## Builtins
+* [LLMModel](/docs/components/llmmodel/llmmodel/) (default)
 * [claude-3-5-sonnet-20240620](/docs/components/llmmodel/claude-3-5-sonnet-20240620/)
 * [claude-3-haiku-20240307](/docs/components/llmmodel/claude-3-haiku-20240307/)
 * [claude-3-opus-20240229](/docs/components/llmmodel/claude-3-opus-20240229/)

@@ -42,7 +42,7 @@ class Group(BaseModel):
     def update_description(self) -> Self:
         if not self.description:
             if isinstance(self.base, type) and self.base.__doc__:
-                self.description = textwrap.dedent(self.base.__doc__)
+                self.description = textwrap.dedent(self.base.__doc__).strip()
             elif isinstance(self.base, type):
                 self.description = f"Overview of {self.base.__name__} components"
             else:
@@ -120,12 +120,13 @@ def write_md(read_loc,
     for k, g in groups.items():
         write_file_loc = write_loc / url_safe(k) / "overview.md"
         title = f"{k} Overview"
-        description = f"Overview of {k} components"
         content = ["## Builtins"]
         for name, _, _ in g.get_components():
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
             if name == g.default:
                 content[-1] += " (default)"
+        with open(read_loc / k / "overview.json", 'r') as json_file:
+            description = json.load(json_file)['description']
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
     with TemporaryDirectory() as tempdir:
@@ -197,9 +198,10 @@ def generate_groups():
         clz = for_name(pointer, object)
         for group_key, group in groups.items():
             if key == group_key:
-                if key == r.spec['implementation']:
+                impl_tail = r.spec['implementation'].split(".")[-1]
+                if key == r.spec['implementation'] or "." in r.spec['implementation'] and key == impl_tail:
                     group.components.append((key, clz, overrides))
-                group.default = r.spec['implementation']
+                group.default = impl_tail
             elif not isinstance(group.base, str) and group != object and issubclass(clz, group.base):
                 group.components.append((key, clz, overrides))
 

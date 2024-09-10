@@ -1,6 +1,6 @@
 ---
 title: APIAgent
-description: Description of APIAgent component
+description: "Description of APIAgent component"
 ---
 
 **Description:** An Agent that can call rest endpoints documented via OpenAPI (Swagger).

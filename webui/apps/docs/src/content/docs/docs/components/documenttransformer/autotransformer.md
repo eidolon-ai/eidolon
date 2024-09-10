@@ -1,6 +1,6 @@
 ---
 title: AutoTransformer
-description: Description of AutoTransformer component
+description: "Description of AutoTransformer component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |

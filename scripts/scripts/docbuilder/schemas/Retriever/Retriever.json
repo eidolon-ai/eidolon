@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "Retriever",
+      "description": "Retriever"
+    },
+    "max_num_results": {
+      "default": 10,
+      "description": "The maximum number of results to consider.",
+      "title": "Max Num Results",
+      "type": "integer"
+    },
+    "question_transformer": {
+      "$ref": "file:../QuestionTransformer/overview.json",
+      "default": {
+        "implementation": "QuestionTransformer"
+      }
+    },
+    "document_retriever": {
+      "$ref": "file:../DocumentRetriever/overview.json",
+      "default": {
+        "implementation": "DocumentRetriever"
+      }
+    },
+    "document_reranker": {
+      "$ref": "file:../DocumentReranker/overview.json",
+      "default": {
+        "implementation": "DocumentReranker"
+      }
+    },
+    "result_summarizer": {
+      "$ref": "file:../ResultSummarizer/overview.json",
+      "default": {
+        "implementation": "ResultSummarizer"
+      }
+    }
+  },
+  "title": "Retriever",
+  "type": "object"
+}

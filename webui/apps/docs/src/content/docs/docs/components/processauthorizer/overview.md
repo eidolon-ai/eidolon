@@ -1,6 +1,6 @@
 ---
 title: ProcessAuthorizer Overview
-description: Overview of ProcessAuthorizer components
+description: "Overview of ProcessAuthorizer components"
 ---
 Overview of ProcessAuthorizer components
 ## Builtins

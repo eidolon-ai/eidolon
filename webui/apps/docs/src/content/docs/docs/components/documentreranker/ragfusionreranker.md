@@ -1,6 +1,6 @@
 ---
 title: RAGFusionReranker
-description: Description of RAGFusionReranker component
+description: "Description of RAGFusionReranker component"
 ---
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |

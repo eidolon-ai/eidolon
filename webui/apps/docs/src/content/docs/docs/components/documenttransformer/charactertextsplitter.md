@@ -1,6 +1,6 @@
 ---
 title: CharacterTextSplitter
-description: Description of CharacterTextSplitter component
+description: "Description of CharacterTextSplitter component"
 ---
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description     |

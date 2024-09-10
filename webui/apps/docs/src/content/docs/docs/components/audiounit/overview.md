@@ -1,6 +1,6 @@
 ---
 title: AudioUnit Overview
-description: Overview of AudioUnit components
+description: "Overview of AudioUnit components"
 ---
 Overview of AudioUnit components
 ## Builtins

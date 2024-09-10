@@ -1,6 +1,6 @@
 ---
 title: SimilarityMemoryRetriever
-description: Description of SimilarityMemoryRetriever component
+description: "Description of SimilarityMemoryRetriever component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description         |
