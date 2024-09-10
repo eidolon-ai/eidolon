@@ -28,6 +28,10 @@ class APIAgentSpec(BaseModel):
         description="Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
         default=dict(),
     )
+    max_response_size: int = Field(
+        description="Maximum size of response content to allow. If the response is larger than this, an error will be raised. Default is 50k",
+        default=50 * 1024,
+    )
 
 
 class APIAgent(Specable[APIAgentSpec]):
@@ -59,6 +63,7 @@ class APIAgent(Specable[APIAgentSpec]):
             operations_to_expose,
             schema,
             title,
+            self.spec.max_response_size,
             build_call(self.spec.extra_header_params, self.spec.extra_query_params, self.spec.root_call_url),
         )
         for action in actions:
