@@ -4,9 +4,6 @@
   "anyOf": [
     {
       "$ref": "file:./AzureOpenAIConnectionHandler.json"
-    },
-    {
-      "$ref": "file:./OpenAIConnectionHandler.json"
     }
   ],
   "reference_group": {

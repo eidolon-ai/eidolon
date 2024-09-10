@@ -4,4 +4,4 @@ description: Overview of UsageClient components
 ---
 Overview of UsageClient components
 ## Builtins
-* [UsageClient](/docs/components/usageclient/usageclient/) (default)
+* [eidolon_ai_usage_client.client.UsageClient](/docs/components/usageclient/eidolon_ai_usage_client_client_usageclient/) (default)

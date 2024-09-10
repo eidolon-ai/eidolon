@@ -2,8 +2,8 @@
   "description": "Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (\nprovided by loader) into similarity memory where they can be searched.",
   "properties": {
     "implementation": {
-      "const": "DocumentManager",
-      "description": "DocumentManager"
+      "const": "eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager",
+      "description": "eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager"
     },
     "name": {
       "description": "The name of the document manager (used to name database collections).",
@@ -38,6 +38,6 @@
   "required": [
     "name"
   ],
-  "title": "DocumentManager",
+  "title": "eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager",
   "type": "object"
 }

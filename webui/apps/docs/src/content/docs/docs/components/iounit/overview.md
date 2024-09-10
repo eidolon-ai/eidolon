@@ -8,4 +8,4 @@ This is the IO unit for the APU. It is responsible for converting the prompts fr
 
 This can be overridden to provide custom IO handling.
 ## Builtins
-* [IOUnit](/docs/components/iounit/iounit/) (default)
+* [eidolon_ai_sdk.apu.agent_io.IOUnit](/docs/components/iounit/eidolon_ai_sdk_apu_agent_io_iounit/) (default)

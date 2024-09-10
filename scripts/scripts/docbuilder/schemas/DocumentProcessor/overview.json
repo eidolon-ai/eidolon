@@ -3,7 +3,7 @@
   "description": "Overview of DocumentProcessor components",
   "anyOf": [
     {
-      "$ref": "file:./DocumentProcessor.json"
+      "$ref": "file:./eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor.json"
     }
   ],
   "reference_group": {
