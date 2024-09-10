@@ -1392,7 +1392,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.123"
+version = "0.1.124"
 description = "An open source sgent service SDK"
 optional = false
 python-versions = ">=3.10,<3.13"
@@ -1412,7 +1412,7 @@ chromadb = ">=0.4.18"
 dill = "^0.3.8"
 eidolon-ai-client = "^0.1.35"
 eidolon-ai-mistralai = "^0.1.6a"
-eidolon-ai-usage-client = "^0.1.8"
+eidolon-ai-usage-client = "^0.1.9"
 esprima = "^4.0.1"
 eval-type-backport = "^0.2.0"
 fastapi = ">=0.109.0"
@@ -1458,7 +1458,7 @@ url = "../sdk"
 
 [[package]]
 name = "eidolon-ai-usage-client"
-version = "0.1.8"
+version = "0.1.9"
 description = ""
 optional = false
 python-versions = ">=3.8,<3.13"
@@ -1468,7 +1468,6 @@ develop = true
 [package.dependencies]
 httpx = "^0.27.0"
 pydantic = "^2.6.4"
-setuptools = "^69.2.0"
 
 [package.source]
 type = "directory"
@@ -6211,4 +6210,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "1c8c3a7922706fe44a0bab4882340364b6b9fa24710af23af513722a37a5d4f1"
+content-hash = "22946ed1719f4f4c86334484b85a05bd18525031a71d28368658b69a12eb89b7"

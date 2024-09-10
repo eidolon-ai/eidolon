@@ -21,7 +21,7 @@ var _ = Describe("Agent Reconciler", func() {
 	Context("When reconciling Agents", func() {
 		const (
 			agentName     = "test-agent"
-			namespace     = "default"
+			namespace     = "foobar"
 			configMapName = "eidolon-agent-cm"
 		)
 
@@ -32,6 +32,7 @@ var _ = Describe("Agent Reconciler", func() {
 		}
 
 		BeforeEach(func() {
+			Expect(createNamespaceIfNotExists(ctx, namespace)).To(Succeed())
 			// Create a test Agent
 			agent := &serverv1alpha1.Agent{
 				ObjectMeta: metav1.ObjectMeta{

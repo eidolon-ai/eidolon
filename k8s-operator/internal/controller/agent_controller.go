@@ -49,17 +49,17 @@ func (r *AgentReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// The Agent was deleted, we need to update the ConfigMap
-			return r.updateConfigMap(ctx)
+			return r.updateConfigMap(ctx, req.Namespace)
 		}
 		logger.Error(err, "Unable to fetch Agent")
 		return ctrl.Result{}, err
 	}
 
 	// Update the ConfigMap with all Agents
-	return r.updateConfigMap(ctx)
+	return r.updateConfigMap(ctx, req.Namespace)
 }
 
-func (r *AgentReconciler) updateConfigMap(ctx context.Context) (ctrl.Result, error) {
+func (r *AgentReconciler) updateConfigMap(ctx context.Context, namespace string) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
 	// List all Agents
@@ -106,7 +106,7 @@ func (r *AgentReconciler) updateConfigMap(ctx context.Context) (ctrl.Result, err
 	cm := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "eidolon-agent-cm",
-			Namespace: "default", // You might want to make this configurable
+			Namespace: namespace,
 		},
 		Data: map[string]string{
 			"agents.yaml": agentsYAML.String(),
@@ -116,7 +116,7 @@ func (r *AgentReconciler) updateConfigMap(ctx context.Context) (ctrl.Result, err
 	foundCM := &corev1.ConfigMap{}
 	err := r.Get(ctx, types.NamespacedName{Name: cm.Name, Namespace: cm.Namespace}, foundCM)
 	if err != nil && errors.IsNotFound(err) {
-		logger.Info("Creating ConfigMap", "Name", cm.Name)
+		logger.Info("Creating ConfigMap", "Name", cm.Name, "Namespace", cm.Namespace)
 		err = r.Create(ctx, cm)
 		if err != nil {
 			logger.Error(err, "Failed to create ConfigMap")
@@ -128,7 +128,7 @@ func (r *AgentReconciler) updateConfigMap(ctx context.Context) (ctrl.Result, err
 	} else {
 		// Update the existing ConfigMap
 		foundCM.Data = cm.Data
-		logger.Info("Updating ConfigMap", "Name", cm.Name)
+		logger.Info("Updating ConfigMap", "Name", cm.Name, "Namespace", cm.Namespace)
 		err = r.Update(ctx, foundCM)
 		if err != nil {
 			logger.Error(err, "Failed to update ConfigMap")

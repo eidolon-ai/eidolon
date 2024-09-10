@@ -49,17 +49,17 @@ func (r *ReferenceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// The Reference was deleted, we need to update the ConfigMap
-			return r.updateConfigMap(ctx)
+			return r.updateConfigMap(ctx, req.NamespacedName.Namespace)
 		}
 		logger.Error(err, "Unable to fetch Reference")
 		return ctrl.Result{}, err
 	}
 
 	// Update the ConfigMap with all References
-	return r.updateConfigMap(ctx)
+	return r.updateConfigMap(ctx, req.NamespacedName.Namespace)
 }
 
-func (r *ReferenceReconciler) updateConfigMap(ctx context.Context) (ctrl.Result, error) {
+func (r *ReferenceReconciler) updateConfigMap(ctx context.Context, namespace string) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
 	// List all References
@@ -106,7 +106,7 @@ func (r *ReferenceReconciler) updateConfigMap(ctx context.Context) (ctrl.Result,
 	cm := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "eidolon-reference-cm",
-			Namespace: "default", // You might want to make this configurable
+			Namespace: namespace,
 		},
 		Data: map[string]string{
 			"references.yaml": referencesYAML.String(),
