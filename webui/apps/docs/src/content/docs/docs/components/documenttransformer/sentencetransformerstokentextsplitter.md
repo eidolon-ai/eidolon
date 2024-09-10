@@ -1,6 +1,6 @@
 ---
 title: SentenceTransformersTokenTextSplitter
-description: Description of SentenceTransformersTokenTextSplitter component
+description: "Description of SentenceTransformersTokenTextSplitter component"
 ---
 
 | Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description                     |

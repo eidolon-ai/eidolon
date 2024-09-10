@@ -1,6 +1,6 @@
 ---
 title: OllamaLLMUnit
-description: Description of OllamaLLMUnit component
+description: "Description of OllamaLLMUnit component"
 ---
 
 | Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |

@@ -1,6 +1,6 @@
 ---
 title: mistral-medium-latest
-description: Description of mistral-medium-latest component
+description: "Description of mistral-medium-latest component"
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description     |

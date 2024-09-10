@@ -1,6 +1,6 @@
 ---
 title: GlobPatternFunctionalAuthorizer
-description: Description of GlobPatternFunctionalAuthorizer component
+description: "Description of GlobPatternFunctionalAuthorizer component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description               |

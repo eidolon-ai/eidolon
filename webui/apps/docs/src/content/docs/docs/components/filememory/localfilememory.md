@@ -1,6 +1,6 @@
 ---
 title: LocalFileMemory
-description: Description of LocalFileMemory component
+description: "Description of LocalFileMemory component"
 ---
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |

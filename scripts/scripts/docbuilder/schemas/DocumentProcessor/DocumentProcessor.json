@@ -1,8 +1,8 @@
 {
   "properties": {
     "implementation": {
-      "const": "eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor",
-      "description": "eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor"
+      "const": "DocumentProcessor",
+      "description": "DocumentProcessor"
     },
     "parser": {
       "$ref": "file:../DocumentParser/overview.json",
@@ -17,6 +17,6 @@
       }
     }
   },
-  "title": "eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor",
+  "title": "DocumentProcessor",
   "type": "object"
 }

@@ -1,6 +1,6 @@
 ---
 title: ClaudeHaiku
-description: Description of ClaudeHaiku component
+description: "Description of ClaudeHaiku component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

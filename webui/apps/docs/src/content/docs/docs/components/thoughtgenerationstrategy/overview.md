@@ -1,6 +1,6 @@
 ---
 title: ThoughtGenerationStrategy Overview
-description: Base class for a thought generation strategy.
+description: "Base class for a thought generation strategy."
 ---
 Base class for a thought generation strategy.
 ## Builtins

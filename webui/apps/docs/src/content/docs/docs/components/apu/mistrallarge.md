@@ -1,6 +1,6 @@
 ---
 title: MistralLarge
-description: Description of MistralLarge component
+description: "Description of MistralLarge component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

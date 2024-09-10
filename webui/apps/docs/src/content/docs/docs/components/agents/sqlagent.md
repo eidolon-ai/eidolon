@@ -1,6 +1,6 @@
 ---
 title: SqlAgent
-description: Description of SqlAgent component
+description: "Description of SqlAgent component"
 ---
 
 | Property                                         | Pattern | Type                 | Deprecated | Definition                         | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

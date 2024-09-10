@@ -50,9 +50,6 @@ class Group(BaseModel):
         return self
 
     def get_components(self):
-        if not self.components and self.default:
-            clz = for_name(self.default, object)
-            return [(self.default, clz, {})]
         self.sort_components()
         return self.components
 
@@ -201,9 +198,10 @@ def generate_groups():
         clz = for_name(pointer, object)
         for group_key, group in groups.items():
             if key == group_key:
-                if key == r.spec['implementation']:
+                impl_tail = r.spec['implementation'].split(".")[-1]
+                if key == r.spec['implementation'] or "." in r.spec['implementation'] and key == impl_tail:
                     group.components.append((key, clz, overrides))
-                group.default = r.spec['implementation']
+                group.default = impl_tail
             elif not isinstance(group.base, str) and group != object and issubclass(clz, group.base):
                 group.components.append((key, clz, overrides))
 

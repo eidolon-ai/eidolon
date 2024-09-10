@@ -1,6 +1,6 @@
 ---
 title: NoopVectorStore
-description: Description of NoopVectorStore component
+description: "Description of NoopVectorStore component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |

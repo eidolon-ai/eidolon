@@ -3,7 +3,7 @@
   "description": "Overview of UsageClient components",
   "anyOf": [
     {
-      "$ref": "file:./eidolon_ai_usage_client.client.UsageClient.json"
+      "$ref": "file:./UsageClient.json"
     }
   ],
   "reference_group": {

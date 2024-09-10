@@ -3,7 +3,7 @@
   "description": "Overview of ResultSummarizer components",
   "anyOf": [
     {
-      "$ref": "file:./eidolon_ai_sdk.agent.retriever_agent.result_summarizer.ResultSummarizer.json"
+      "$ref": "file:./ResultSummarizer.json"
     }
   ],
   "reference_group": {

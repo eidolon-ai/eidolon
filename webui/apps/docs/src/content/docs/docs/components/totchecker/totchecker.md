@@ -1,13 +1,13 @@
 ---
-title: eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker
-description: Description of eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker component
+title: ToTChecker
+description: "Description of ToTChecker component"
 ---
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description                                 |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------------------------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker |
-| - [prompt](#prompt )                 | No      | string | No         | -          | Prompt                                            |
-| - [examples](#examples )             | No      | string | No         | -          | Examples                                          |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const  | No         | -          | ToTChecker        |
+| - [prompt](#prompt )                 | No      | string | No         | -          | Prompt            |
+| - [examples](#examples )             | No      | string | No         | -          | Examples          |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -16,9 +16,9 @@ description: Description of eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker co
 | **Type**     | `const` |
 | **Required** | No      |
 
-**Description:** eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker
+**Description:** ToTChecker
 
-Specific value: `"eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker"`
+Specific value: `"ToTChecker"`
 
 ## <a name="prompt"></a>2. Property `prompt`
 

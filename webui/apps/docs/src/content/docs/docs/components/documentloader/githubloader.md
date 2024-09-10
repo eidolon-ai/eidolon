@@ -1,6 +1,6 @@
 ---
 title: GitHubLoader
-description: Description of GitHubLoader component
+description: "Description of GitHubLoader component"
 ---
 
 **Description:** Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories

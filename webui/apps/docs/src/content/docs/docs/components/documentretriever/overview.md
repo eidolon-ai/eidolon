@@ -1,6 +1,6 @@
 ---
 title: DocumentRetriever Overview
-description: Overview of DocumentRetriever components
+description: "Overview of DocumentRetriever components"
 ---
 Overview of DocumentRetriever components
 ## Builtins

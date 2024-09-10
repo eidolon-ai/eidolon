@@ -3,7 +3,7 @@
   "description": "Overview of ToTChecker components",
   "anyOf": [
     {
-      "$ref": "file:./eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker.json"
+      "$ref": "file:./ToTChecker.json"
     }
   ],
   "reference_group": {

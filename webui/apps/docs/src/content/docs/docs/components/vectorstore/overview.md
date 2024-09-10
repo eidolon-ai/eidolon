@@ -1,6 +1,6 @@
 ---
 title: VectorStore Overview
-description: Overview of VectorStore components
+description: "Overview of VectorStore components"
 ---
 Overview of VectorStore components
 ## Builtins

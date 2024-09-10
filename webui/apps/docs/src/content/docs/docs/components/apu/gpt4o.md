@@ -1,6 +1,6 @@
 ---
 title: GPT4o
-description: Description of GPT4o component
+description: "Description of GPT4o component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

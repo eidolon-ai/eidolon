@@ -1,6 +1,6 @@
 ---
 title: Llamma3-8b
-description: Description of Llamma3-8b component
+description: "Description of Llamma3-8b component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

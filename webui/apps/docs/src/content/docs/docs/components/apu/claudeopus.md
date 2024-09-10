@@ -1,6 +1,6 @@
 ---
 title: ClaudeOpus
-description: Description of ClaudeOpus component
+description: "Description of ClaudeOpus component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

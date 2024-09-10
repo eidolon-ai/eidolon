@@ -1,6 +1,6 @@
 ---
 title: NoopFunctionalAuth
-description: Description of NoopFunctionalAuth component
+description: "Description of NoopFunctionalAuth component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description  |

@@ -1,6 +1,6 @@
 ---
 title: CustomSampler
-description: Description of CustomSampler component
+description: "Description of CustomSampler component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |

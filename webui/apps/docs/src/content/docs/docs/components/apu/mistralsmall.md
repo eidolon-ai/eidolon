@@ -1,6 +1,6 @@
 ---
 title: MistralSmall
-description: Description of MistralSmall component
+description: "Description of MistralSmall component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

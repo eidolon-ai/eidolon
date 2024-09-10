@@ -1,6 +1,6 @@
 ---
 title: ConversationalAPU
-description: Description of ConversationalAPU component
+description: "Description of ConversationalAPU component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

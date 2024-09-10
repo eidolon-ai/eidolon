@@ -1,6 +1,6 @@
 ---
 title: GPT3.5-turbo
-description: Description of GPT3.5-turbo component
+description: "Description of GPT3.5-turbo component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

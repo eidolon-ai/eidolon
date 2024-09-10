@@ -1,6 +1,6 @@
 ---
 title: OpenAIEmbedding
-description: Description of OpenAIEmbedding component
+description: "Description of OpenAIEmbedding component"
 ---
 
 | Property                                     | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |

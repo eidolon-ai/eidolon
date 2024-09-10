@@ -1,6 +1,6 @@
 ---
 title: OpenAIImageUnit
-description: Description of OpenAIImageUnit component
+description: "Description of OpenAIImageUnit component"
 ---
 
 | Property                                                       | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |

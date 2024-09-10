@@ -1,6 +1,6 @@
 ---
 title: ClaudeSonnet
-description: Description of ClaudeSonnet component
+description: "Description of ClaudeSonnet component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

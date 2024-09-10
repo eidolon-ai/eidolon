@@ -3,7 +3,7 @@
   "description": "This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM\n\nThis can be overridden to provide custom IO handling.",
   "anyOf": [
     {
-      "$ref": "file:./eidolon_ai_sdk.apu.agent_io.IOUnit.json"
+      "$ref": "file:./IOUnit.json"
     }
   ],
   "reference_group": {

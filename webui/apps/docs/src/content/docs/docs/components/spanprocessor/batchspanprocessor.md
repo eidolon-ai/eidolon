@@ -1,6 +1,6 @@
 ---
 title: BatchSpanProcessor
-description: Description of BatchSpanProcessor component
+description: "Description of BatchSpanProcessor component"
 ---
 
 **Description:** Batch span processor implementation.

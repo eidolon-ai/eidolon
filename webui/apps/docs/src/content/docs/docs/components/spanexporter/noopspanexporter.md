@@ -1,6 +1,6 @@
 ---
 title: NoopSpanExporter
-description: Description of NoopSpanExporter component
+description: "Description of NoopSpanExporter component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |

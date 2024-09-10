@@ -1,6 +1,6 @@
 ---
 title: MistralGPT
-description: Description of MistralGPT component
+description: "Description of MistralGPT component"
 ---
 
 | Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |

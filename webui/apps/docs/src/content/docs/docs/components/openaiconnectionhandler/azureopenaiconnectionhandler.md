@@ -1,6 +1,6 @@
 ---
 title: AzureOpenAIConnectionHandler
-description: Description of AzureOpenAIConnectionHandler component
+description: "Description of AzureOpenAIConnectionHandler component"
 ---
 
 **Description:** Automatically infers the values from environment variables for:

@@ -1,6 +1,6 @@
 ---
 title: S3Loader
-description: Description of S3Loader component
+description: "Description of S3Loader component"
 ---
 
 **Description:** Loads documents from an S3 bucket.

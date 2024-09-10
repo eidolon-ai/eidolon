@@ -1,6 +1,6 @@
 ---
 title: LatexTextSplitter
-description: Description of LatexTextSplitter component
+description: "Description of LatexTextSplitter component"
 ---
 
 | Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description  |

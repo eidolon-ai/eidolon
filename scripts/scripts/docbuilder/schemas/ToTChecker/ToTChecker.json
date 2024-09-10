@@ -1,8 +1,8 @@
 {
   "properties": {
     "implementation": {
-      "const": "eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker",
-      "description": "eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker"
+      "const": "ToTChecker",
+      "description": "ToTChecker"
     },
     "prompt": {
       "default": "You are an intelligent agent, validating thoughts of another intelligent agent.\n\nEvaluate the thoughts and question and respond with one word.\n\n- Respond VALID if the thoughts contain the information needed so answer the question\n- Respond INVALID if the last thought is invalid or does not make progress from previous thoughts.\n- Respond INTERMEDIATE if the last thought is valid but not the final solution to the question.\n\n{% if examples %}\n<EXAMPLEs>\n{{ examples }}\n</EXAMPLE>\n{% endif %}\n\n{% if problem %}\n<QUESTION>\n{{ problem }}\n</QUESTION>\n{% endif %}\n\n{% if thoughts %}\n{% for thought in thoughts %}\n<THOUGHT>\n{{ thought }}\n</THOUGHT>\n{% endfor %}\n{% endif %}",
@@ -15,6 +15,6 @@
       "type": "string"
     }
   },
-  "title": "eidolon_ai_sdk.agent.tot_agent.checker.ToTChecker",
+  "title": "ToTChecker",
   "type": "object"
 }

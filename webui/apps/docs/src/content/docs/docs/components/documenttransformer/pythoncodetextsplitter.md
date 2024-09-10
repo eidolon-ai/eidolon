@@ -1,6 +1,6 @@
 ---
 title: PythonCodeTextSplitter
-description: Description of PythonCodeTextSplitter component
+description: "Description of PythonCodeTextSplitter component"
 ---
 
 | Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description      |

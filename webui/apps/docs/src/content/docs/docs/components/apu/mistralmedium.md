@@ -1,6 +1,6 @@
 ---
 title: MistralMedium
-description: Description of MistralMedium component
+description: "Description of MistralMedium component"
 ---
 
 | Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |

@@ -1,6 +1,6 @@
 ---
 title: NoopAuthProcessor
-description: Description of NoopAuthProcessor component
+description: "Description of NoopAuthProcessor component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
