@@ -1,7 +1,11 @@
 {
   "title": "DocumentManager",
   "description": "Overview of DocumentManager components",
-  "anyOf": [],
+  "anyOf": [
+    {
+      "$ref": "file:./DocumentManager.json"
+    }
+  ],
   "reference_group": {
     "type": "DocumentManager"
   }

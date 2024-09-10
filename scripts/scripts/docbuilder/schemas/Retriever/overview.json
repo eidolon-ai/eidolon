@@ -3,6 +3,9 @@
   "description": "Overview of Retriever components",
   "anyOf": [
     {
+      "$ref": "file:./Retriever.json"
+    },
+    {
       "$ref": "file:./RetrieverAgent.json"
     }
   ],
