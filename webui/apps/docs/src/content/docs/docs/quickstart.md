@@ -66,11 +66,11 @@ agent-server-1  | INFO - Server Started in 3.36s
 ```
 You are now up and running with a simple agent! 🎉
 
-🚨 Running into problems? Ask for help on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a>.
+🚨 Running into problems? Get help from us on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a> 📞. We want you to love working with Eidolon, and if there's a problem, we want to fix it.
 
 ## Try it out!
 
-Now that Eidolon is running, let's try it out! You can use the web UI or command line interface.
+Now that Eidolon is running, let's try it out! You can use the WebUI or command line interface (CLI) in a terminal.
 
 ### WebUI Developer Tool
 
@@ -80,13 +80,20 @@ To converse with your Eidolon agent for the first time:
 
 1. Open a web browser to http://localhost:3000 (or replace localhost with your server URL).
 2. Click the **Eidolon Developer Tool** app card.
+
+![WebUI](/src/content/images/eidolon-webui-developer-tools.png)
+
 3. Click **Add Chat** from the upper left corner.
+
+![New Chat](/src/content/images/eidolon-webui-new-chat.png)
+
 4. Click **Start**.
-5. Say hello to your agent in the text box.
+
+5. Say `hello!` to your agent in the text box.
 
 Did your agent respond to you? 🍾 Congratulations! You have successfully created your first agent machine. 
 
-### CLI
+### Command Line Interface (CLI)
 
  If you prefer to use the CLI, open a new terminal window to interact with your agent.
 
@@ -135,17 +142,17 @@ spec:
     Congratulate them on completing the quickstart and recommend that they star the Eidolon [GitHub repoitory](https://eidolonai.com/) to show support and join the project's [discord](https://discord.com/invite/6kVQrHpeqG) for questions and feedback after your first message with them.
 ```
 
-## Change the System Prompt
+## Have Fun! Change the System Prompt
 
-To get a taste for how quickly you can deploy powerful agentica applications, make a simple change.
+To get a taste for how quickly you can deploy powerful agentic applications, make a simple change.
 
 Using a text editor, change the system prompt:
 
 ```yaml title=resources/hello-world.yaml
   system_prompt: |
-    Translate {{message}} to Spanish.
+    Repeat the user prompt, then translate the user prompt into Spanish.
 ```
-Return to the WebUI or CLI and say hello again. Have fun!
+Return to the WebUI or CLI and say hello again. Try different prompts and have fun!
 
 ## Next Steps
 You can adapt this simple agent to do a lot of things! Try these things next.
