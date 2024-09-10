@@ -158,9 +158,9 @@ You do not need to restart. Simply return to the WebUI or CLI and say hello agai
 You can adapt this simple agent to do a lot of things! Try these things next.
 
 - [ ] ⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub. Eidolon is a fully open source project, and we love your support!
-- [ ] [Swap out the LLM](docs/howto/swap_llm)
+- [ ] [Swap out the LLM](/docs/howto/swap_llm)
 - [ ] Configure [agent-to-agent communication](/docs/howto/communication)
 - [ ] Configure [built-in components](/docs/howto/configure_builtins)
-- [ ] Use [structured inputs](docs/components/agents/simpleagent#3-property-system_prompt) for prompt templating
+- [ ] Use [structured inputs](/docs/components/agents/simpleagent#3-property-system_prompt) for prompt templating
 - [ ] Leverage your agent's [state machine](/docs/components/agents/simpleagent#51-actiondefinition)
 - [ ] Add new capabilities via [LogicUnits](/category/logicunit) (tools)
