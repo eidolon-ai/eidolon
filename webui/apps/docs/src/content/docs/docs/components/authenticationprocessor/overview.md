@@ -1,6 +1,6 @@
 ---
 title: AuthenticationProcessor Overview
-description: Overview of AuthenticationProcessor components
+description: "Overview of AuthenticationProcessor components"
 ---
 Overview of AuthenticationProcessor components
 ## Builtins

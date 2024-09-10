@@ -1,6 +1,6 @@
 ---
 title: OpenAIGPT
-description: Description of OpenAIGPT component
+description: "Description of OpenAIGPT component"
 ---
 
 | Property                                     | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |

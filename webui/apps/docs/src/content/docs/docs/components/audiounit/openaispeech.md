@@ -1,6 +1,6 @@
 ---
 title: OpenAiSpeech
-description: Description of OpenAiSpeech component
+description: "Description of OpenAiSpeech component"
 ---
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |

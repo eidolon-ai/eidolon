@@ -1,6 +1,6 @@
 ---
 title: DocumentReranker Overview
-description: Overview of DocumentReranker components
+description: "Overview of DocumentReranker components"
 ---
 Overview of DocumentReranker components
 ## Builtins

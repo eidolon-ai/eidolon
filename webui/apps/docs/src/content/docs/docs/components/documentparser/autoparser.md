@@ -1,6 +1,6 @@
 ---
 title: AutoParser
-description: Description of AutoParser component
+description: "Description of AutoParser component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |

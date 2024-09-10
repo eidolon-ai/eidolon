@@ -53,6 +53,10 @@ class DocumentManagerSpec(BaseModel):
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
+    """
+    Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents
+    """
+
     last_reload = 0
 
     def __init__(self, **kwargs):

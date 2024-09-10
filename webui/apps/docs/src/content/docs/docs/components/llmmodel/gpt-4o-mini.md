@@ -1,6 +1,6 @@
 ---
 title: gpt-4o-mini
-description: Description of gpt-4o-mini component
+description: "Description of gpt-4o-mini component"
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |

@@ -1,6 +1,6 @@
 ---
 title: LocalSymbolicMemory
-description: Description of LocalSymbolicMemory component
+description: "Description of LocalSymbolicMemory component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description   |

@@ -1,6 +1,6 @@
 ---
 title: LogicUnit Overview
-description: Overview of LogicUnit components
+description: "Overview of LogicUnit components"
 ---
 Overview of LogicUnit components
 ## Builtins

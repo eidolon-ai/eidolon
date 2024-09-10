@@ -1,6 +1,6 @@
 ---
 title: claude-3-haiku-20240307
-description: Description of claude-3-haiku-20240307 component
+description: "Description of claude-3-haiku-20240307 component"
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description       |

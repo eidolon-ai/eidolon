@@ -1,6 +1,6 @@
 ---
 title: MarkdownHeaderTextSplitter
-description: Description of MarkdownHeaderTextSplitter component
+description: "Description of MarkdownHeaderTextSplitter component"
 ---
 
 | Property                                       | Pattern | Type           | Deprecated | Definition | Title/Description          |

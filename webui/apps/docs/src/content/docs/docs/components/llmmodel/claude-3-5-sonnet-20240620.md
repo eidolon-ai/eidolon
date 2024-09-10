@@ -1,6 +1,6 @@
 ---
 title: claude-3-5-sonnet-20240620
-description: Description of claude-3-5-sonnet-20240620 component
+description: "Description of claude-3-5-sonnet-20240620 component"
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description          |

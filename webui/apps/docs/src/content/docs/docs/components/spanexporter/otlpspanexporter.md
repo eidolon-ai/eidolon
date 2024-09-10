@@ -1,6 +1,6 @@
 ---
 title: OTLPSpanExporter
-description: Description of OTLPSpanExporter component
+description: "Description of OTLPSpanExporter component"
 ---
 
 **Description:** OTLP span exporter

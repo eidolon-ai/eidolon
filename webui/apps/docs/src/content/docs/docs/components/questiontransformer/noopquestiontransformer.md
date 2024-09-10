@@ -1,6 +1,6 @@
 ---
 title: NoopQuestionTransformer
-description: Description of NoopQuestionTransformer component
+description: "Description of NoopQuestionTransformer component"
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description       |

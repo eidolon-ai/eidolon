@@ -3,6 +3,9 @@
   "description": "Overview of LLMModel components",
   "anyOf": [
     {
+      "$ref": "file:./LLMModel.json"
+    },
+    {
       "$ref": "file:./claude-3-5-sonnet-20240620.json"
     },
     {

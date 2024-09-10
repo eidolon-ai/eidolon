@@ -1,6 +1,6 @@
 ---
 title: RecursiveCharacterTextSplitter
-description: Description of RecursiveCharacterTextSplitter component
+description: "Description of RecursiveCharacterTextSplitter component"
 ---
 
 | Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description              |

@@ -1,6 +1,6 @@
 ---
 title: AudioUnit
-description: Description of AudioUnit component
+description: "Description of AudioUnit component"
 ---
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |

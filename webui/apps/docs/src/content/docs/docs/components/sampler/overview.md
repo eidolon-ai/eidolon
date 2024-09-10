@@ -1,6 +1,6 @@
 ---
 title: Sampler Overview
-description: Overview of Sampler components
+description: "Overview of Sampler components"
 ---
 Overview of Sampler components
 ## Builtins

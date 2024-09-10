@@ -160,6 +160,7 @@ export default defineConfig({
             {
               label: 'LLMModel', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmmodel/overview'},
+                {label: 'LLMModel', link: '/docs/components/llmmodel/llmmodel'},
                 {label: 'claude-3-5-sonnet-20240620', link: '/docs/components/llmmodel/claude-3-5-sonnet-20240620'},
                 {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307'},
                 {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229'},
@@ -189,6 +190,7 @@ export default defineConfig({
             {
               label: 'DocumentManager', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/documentmanager/overview'},
+                {label: 'DocumentManager', link: '/docs/components/documentmanager/documentmanager'},
               ]
             },
             {
