@@ -197,9 +197,10 @@ def generate_groups():
         clz = for_name(pointer, object)
         for group_key, group in groups.items():
             if key == group_key:
-                if key == r.spec['implementation']:
+                implementation = r.spec['implementation'].split(".")[-1]
+                if key == implementation:
                     group.components.append((key, clz, overrides))
-                group.default = r.spec['implementation']
+                group.default = implementation
             elif not isinstance(group.base, str) and group != object and issubclass(clz, group.base):
                 group.components.append((key, clz, overrides))
 
