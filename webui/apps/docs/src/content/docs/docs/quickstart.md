@@ -81,11 +81,11 @@ To converse with your Eidolon agent for the first time:
 1. Open a web browser to http://localhost:3000 (or replace localhost with your server URL).
 2. Click the **Eidolon Developer Tool** app card.
 
-![WebUI](/src/content/images/eidolon-webui-developer-tools.png)
+![WebUI](../../../assets/images/eidolon-webui-developer-tools.png)
 
 3. Click **Add Chat** from the upper left corner.
 
-![New Chat](/src/content/images/eidolon-webui-new-chat.png)
+![New Chat](../../../assets/images/eidolon-webui-new-chat.png)
 
 4. Click **Start**.
 
