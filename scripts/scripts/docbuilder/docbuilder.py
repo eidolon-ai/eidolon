@@ -120,12 +120,13 @@ def write_md(read_loc,
     for k, g in groups.items():
         write_file_loc = write_loc / url_safe(k) / "overview.md"
         title = f"{k} Overview"
-        description = f"Overview of {k} components"
         content = ["## Builtins"]
         for name, _, _ in g.get_components():
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
             if name == g.default:
                 content[-1] += " (default)"
+        with open(read_loc / k / "overview.json", 'r') as json_file:
+            description = json.load(json_file)['description']
         write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
     with TemporaryDirectory() as tempdir:
