@@ -24,7 +24,7 @@ So now you have chosen the APU you want to use. For this example we will choose 
 
 To update your agent, all you need to do is update the `apu` field in your agent's spec.
 
-```yaml
+```yaml title=claudey-mcclaudagent.yaml
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
@@ -48,7 +48,7 @@ and works by directly texting Sam Altman, so not many people have access to it.
 
 We can specify the model inline within our agent's configuration.
 
-```yaml
+```yaml title=resources/qa.yaml
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
@@ -62,4 +62,4 @@ spec:
         name: "gpt-sam"
 ```
 
-* <small>For specifics on how to customize an APU, check out the [docs for your chosen provider's apu](/docs/components/apu/overview).</small>
+>For specifics on how to customize an APU, check out the [docs for your chosen provider's apu](/docs/components/apu/overview).
