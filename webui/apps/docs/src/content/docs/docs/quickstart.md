@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: Walk through prequisites for Mac and Linux
+description: Walk through prequisites for Mac & Linux
 ---
 
 <div>
