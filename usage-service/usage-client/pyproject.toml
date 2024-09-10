@@ -4,13 +4,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-ai-usage-client"
-version = "0.1.9"
+version = "0.1.10"
 description = ""
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
 
 [tool.eidolon]
-last-update-hash = "c520ec63b25284398380de05d8d1c41937b99d9b"
+last-update-hash = "8bd2c69b5b1757e62602e1af9b3b50b13fd475a9"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.13"
