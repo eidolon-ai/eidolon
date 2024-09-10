@@ -1,6 +1,6 @@
 {
   "title": "DocumentManager",
-  "description": "Overview of DocumentManager components",
+  "description": "Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents",
   "anyOf": [
     {
       "$ref": "file:./DocumentManager.json"

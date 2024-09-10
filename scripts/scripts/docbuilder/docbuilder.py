@@ -42,7 +42,7 @@ class Group(BaseModel):
     def update_description(self) -> Self:
         if not self.description:
             if isinstance(self.base, type) and self.base.__doc__:
-                self.description = textwrap.dedent(self.base.__doc__)
+                self.description = textwrap.dedent(self.base.__doc__).strip()
             elif isinstance(self.base, type):
                 self.description = f"Overview of {self.base.__name__} components"
             else:

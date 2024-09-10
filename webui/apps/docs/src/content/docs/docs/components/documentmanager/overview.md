@@ -1,7 +1,7 @@
 ---
 title: DocumentManager Overview
-description: Overview of DocumentManager components
+description: Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents
 ---
-Overview of DocumentManager components
+Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents
 ## Builtins
 * [DocumentManager](/docs/components/documentmanager/documentmanager/) (default)
