@@ -1,6 +1,6 @@
 ---
 title: MarkdownTextSplitter
-description: Description of MarkdownTextSplitter component
+description: "Description of MarkdownTextSplitter component"
 ---
 
 | Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description    |

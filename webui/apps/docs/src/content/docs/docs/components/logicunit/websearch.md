@@ -1,6 +1,6 @@
 ---
 title: WebSearch
-description: Description of WebSearch component
+description: "Description of WebSearch component"
 ---
 
 | Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description   |

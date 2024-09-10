@@ -1,6 +1,6 @@
 ---
 title: AzureLoader
-description: Description of AzureLoader component
+description: "Description of AzureLoader component"
 ---
 
 **Description:** Loads documents from an azure storage container.

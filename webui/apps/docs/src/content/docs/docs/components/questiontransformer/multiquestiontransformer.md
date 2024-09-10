@@ -1,6 +1,6 @@
 ---
 title: MultiQuestionTransformer
-description: Description of MultiQuestionTransformer component
+description: "Description of MultiQuestionTransformer component"
 ---
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description        |

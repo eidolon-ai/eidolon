@@ -1,6 +1,6 @@
 ---
 title: FunctionalAuthorizer Overview
-description: Overview of FunctionalAuthorizer components
+description: "Overview of FunctionalAuthorizer components"
 ---
 Overview of FunctionalAuthorizer components
 ## Builtins

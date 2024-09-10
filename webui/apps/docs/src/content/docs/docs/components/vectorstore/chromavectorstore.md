@@ -1,6 +1,6 @@
 ---
 title: ChromaVectorStore
-description: Description of ChromaVectorStore component
+description: "Description of ChromaVectorStore component"
 ---
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |

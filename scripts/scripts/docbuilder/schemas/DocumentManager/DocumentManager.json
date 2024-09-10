@@ -1,0 +1,43 @@
+{
+  "description": "Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (\nprovided by loader) into similarity memory where they can be searched.",
+  "properties": {
+    "implementation": {
+      "const": "DocumentManager",
+      "description": "DocumentManager"
+    },
+    "name": {
+      "description": "The name of the document manager (used to name database collections).",
+      "title": "Name",
+      "type": "string"
+    },
+    "recheck_frequency": {
+      "default": 60,
+      "description": "The number of seconds between checks.",
+      "title": "Recheck Frequency",
+      "type": "integer"
+    },
+    "loader": {
+      "$ref": "file:../DocumentLoader/overview.json",
+      "default": {
+        "implementation": "DocumentLoader"
+      }
+    },
+    "doc_processor": {
+      "$ref": "file:../DocumentProcessor/overview.json",
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
+    },
+    "concurrency": {
+      "default": 8,
+      "description": "The number of concurrent tasks to run.",
+      "title": "Concurrency",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "DocumentManager",
+  "type": "object"
+}

@@ -1,6 +1,6 @@
 ---
 title: SecurityManagerImpl
-description: Description of SecurityManagerImpl component
+description: "Description of SecurityManagerImpl component"
 ---
 
 | Property                                                 | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |

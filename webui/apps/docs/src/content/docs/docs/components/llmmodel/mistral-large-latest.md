@@ -1,6 +1,6 @@
 ---
 title: mistral-large-latest
-description: Description of mistral-large-latest component
+description: "Description of mistral-large-latest component"
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |

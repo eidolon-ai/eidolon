@@ -1,6 +1,6 @@
 ---
 title: SimilarityMemory Overview
-description: Overview of SimilarityMemory components
+description: "Overview of SimilarityMemory components"
 ---
 Overview of SimilarityMemory components
 ## Builtins

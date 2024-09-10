@@ -1,6 +1,6 @@
 ---
 title: ToolCallLLMWrapper
-description: Description of ToolCallLLMWrapper component
+description: "Description of ToolCallLLMWrapper component"
 ---
 
 | Property                                       | Pattern | Type                | Deprecated | Definition                        | Title/Description               |

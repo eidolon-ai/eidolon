@@ -1,6 +1,6 @@
 ---
 title: FileMemory
-description: Description of FileMemory component
+description: "Description of FileMemory component"
 ---
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |

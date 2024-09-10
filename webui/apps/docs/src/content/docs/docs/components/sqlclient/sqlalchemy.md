@@ -1,6 +1,6 @@
 ---
 title: SqlAlchemy
-description: Description of SqlAlchemy component
+description: "Description of SqlAlchemy component"
 ---
 
 **Description:** A client for executing SQL queries using SQLAlchemy.

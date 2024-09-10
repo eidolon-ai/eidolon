@@ -1465,7 +1465,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-usage-client"
-version = "0.1.9"
+version = "0.1.10"
 description = ""
 optional = false
 python-versions = ">=3.8,<3.13"
@@ -6289,4 +6289,4 @@ all = ["playwright"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "580f0dcf389f2dbaeb7ae1b421e1de65f7586ae02e5351f73bb232bfee41fafa"
+content-hash = "277f1683f2160de5178fc9d74756473d5df08546714b1c6e6eac6fa607338385"

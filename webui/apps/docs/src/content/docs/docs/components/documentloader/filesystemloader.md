@@ -1,6 +1,6 @@
 ---
 title: FilesystemLoader
-description: Description of FilesystemLoader component
+description: "Description of FilesystemLoader component"
 ---
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |

@@ -1,6 +1,6 @@
 ---
 title: SecurityManager Overview
-description: Overview of SecurityManager components
+description: "Overview of SecurityManager components"
 ---
 Overview of SecurityManager components
 ## Builtins

@@ -1,6 +1,6 @@
 ---
 title: GoogleJWTProcessor
-description: Description of GoogleJWTProcessor component
+description: "Description of GoogleJWTProcessor component"
 ---
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description  |

@@ -1,6 +1,6 @@
 ---
 title: Browser
-description: Description of Browser component
+description: "Description of Browser component"
 ---
 
 | Property                             | Pattern | Type             | Deprecated | Definition | Title/Description |

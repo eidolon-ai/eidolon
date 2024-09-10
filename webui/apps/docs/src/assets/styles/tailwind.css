@@ -116,12 +116,12 @@
   margin-top: 0;
 }
 
-.frame.is-terminal figcaption + pre {
+.sl-markdown-content .expressive-code figcaption + pre {
   margin-top: 0;
 }
 
-.ec-line {
-  margin-top: 0 !important;
+.sl-markdown-content .expressive-code .ec-line {
+  margin-top: 0;
 }
 
 .sl-markdown-content ul {
