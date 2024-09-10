@@ -69,8 +69,10 @@ var _ = Describe("Machine Controller", func() {
 		mgrCtx, mgrCancel = context.WithCancel(ctx)
 
 		go func() {
+			defer GinkgoRecover()
 			err := mgr.Start(mgrCtx)
 			if err != nil {
+				GinkgoWriter.Printf("Error starting server: %v\n", err)
 				Expect(err).NotTo(HaveOccurred())
 			}
 		}()
