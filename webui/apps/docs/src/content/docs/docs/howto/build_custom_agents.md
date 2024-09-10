@@ -74,7 +74,7 @@ class QA(Specable[QASpec]):
     ])
 ```
 
-🔎 What is this `Specable` thing? Eidolon uses [Pydantic models](https://docs.pydantic.dev/latest/concepts/models/) to define the spec of different resources. [Learn more about 
+🔎 What is this `Specable` thing? Eidolon uses <a href="https://docs.pydantic.dev/latest/concepts/models/" target=_blank>Pydantic models</a> to define the spec of different resources. [Learn more about 
 how references work.](/docs/howto/using_references)
 
 ### Streaming Response
