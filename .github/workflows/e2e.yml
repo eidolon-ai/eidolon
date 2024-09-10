@@ -7,11 +7,13 @@ on:
     paths:
       - '**'
       - '!k8s-operator/**'
+      - '!webui/apps/docs/**'
   pull_request_target:
     types: [ opened, synchronize ]
     paths:
       - '**'
       - '!k8s-operator/**'
+      - '!webui/apps/docs/**'
 
 jobs:
   test-e2e:
@@ -104,6 +106,10 @@ jobs:
         run: docker ps -a
 
       - name: Install Playwright dependencies
+        run: pnpm exec playwright install
+        working-directory: ./webui/apps/eidolon-ui2
+
+      - name: Install browsers Playwright
         run: pnpm dlx playwright install
         working-directory: ./webui/apps/eidolon-ui2
 

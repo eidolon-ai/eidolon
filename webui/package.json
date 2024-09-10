@@ -4,7 +4,7 @@
   "workspaces": [
     "packages/*"
   ],
-  "version": "1.0.62",
+  "version": "1.0.64",
   "scripts": {
     "build": "turbo build",
     "watch": "turbo watch",
@@ -29,6 +29,6 @@
     "node": ">=18"
   },
   "eidolon": {
-    "last-update-hash": "7db719095fe59d84e6c25cd0aac54e983d11aa45"
+    "last-update-hash": "790d475897675ce8de8f4eedaf427cae60ca8532"
   }
 }

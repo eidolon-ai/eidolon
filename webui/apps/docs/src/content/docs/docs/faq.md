@@ -129,5 +129,9 @@ If you have a specific use case in mind, you can explore our repository of examp
 
 ### How can I help Eidolon?
 Thank you for your generous offer to help. Here are a few ways you can support our vision:
-- **Star Us on GitHub:** This helps increase our visibility and encourages others to check out Eidolon. Your support makes a big difference!
-- **Join the Conversation on Discord:** Our developers would love to hear from you. Join our Discord server to share your feedback, ask questions, or just say hello.
+
+#### Star the [Project](https://github.com/eidolon-ai/eidolon) on GitHub️ ⭐️
+This helps increase our visibility and encourages others to check out Eidolon. Your support makes a big difference!
+
+#### Join the Conversation on [Discord](https://discord.com/invite/6kVQrHpeqG) 🧠
+Our developers would love to hear from you. Join our Discord server to share your feedback, ask questions, or just say hello.

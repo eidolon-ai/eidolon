@@ -35,7 +35,7 @@ from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource
-from eidolon_ai_sdk.util.posthog import report_server_started
+from eidolon_ai_sdk.util.posthog import report_server_started, PostHogMiddleware
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
 dotenv.load_dotenv()
@@ -231,7 +231,6 @@ def start_app(lifespan):
         _app = FastAPI(lifespan=lifespan, title="Agent Machine")
         _app.add_exception_handler(RequestValidationError, validation_exception_handler)
         _app.add_middleware(DynamicMiddleware)
-        _app.add_middleware(ContextMiddleware)
         _app.add_middleware(
             CORSMiddleware,
             allow_origins=["*"],
@@ -240,6 +239,8 @@ def start_app(lifespan):
             allow_headers=["*"],
         )
         _app.add_middleware(SecurityMiddleware)
+        _app.add_middleware(PostHogMiddleware)
+        _app.add_middleware(ContextMiddleware)
         _app.add_middleware(LoggingMiddleware)
         _app.add_exception_handler(PermissionException, permission_exception_handler)
         FastAPIInstrumentor.instrument_app(_app)
