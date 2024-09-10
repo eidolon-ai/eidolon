@@ -152,7 +152,7 @@ Using a text editor, change the system prompt:
   system_prompt: |
     Repeat the user prompt, then translate the user prompt into Spanish.
 ```
-Return to the WebUI or CLI and say hello again. Try different prompts and have fun!
+You do not need to restart. Simply return to the WebUI or CLI and say hello again. Try different prompts and have fun!
 
 ## Next Steps
 You can adapt this simple agent to do a lot of things! Try these things next.
