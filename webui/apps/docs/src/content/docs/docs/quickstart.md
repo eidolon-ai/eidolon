@@ -43,7 +43,7 @@ make docker-serve # or sudo make docker-serve
 
 >🔎 The first time you run this command, you will be prompted to enter the OpenAI API Key. Quickstart API keys and other credentials are stored in `eidolon-quickstart/.env`.
 
-If the server starts successfully, you should see output similar to this:
+<br>If the server starts successfully, you should see output similar to this:
 
 ```text title=output
 ✔ Network eidolon-quickstart_default           Created                  0.1s 
@@ -63,14 +63,15 @@ agent-server-1  | INFO - Collecting anonymous metrics, to disable metrics set DI
 agent-server-1  | INFO - Server Started in 3.36s
 ```
 
-</br></br>
+</br>
+
 **You are up and running with an agent!  🎉**
 
 Hello world! 👋
 </br></br>
 
->🚨 Running into problems? 
-Get help from us on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a> 📞 or submit an <a href="https://github.com/eidolon-ai/eidolon/issues/new/choose" target=_blank>issue on GitHub</a>. We want you to _love_ working with Eidolon, and if there's a problem, we want to fix it. 🛠
+>🤔 Running into problems? 
+Get help from us on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a> 📞 or submit an <a href="https://github.com/eidolon-ai/eidolon/issues/new/choose" target=_blank>issue on GitHub</a>. We want you to _love_ ❤️  working with Eidolon. If there's a problem, we want to fix it 🛠.
 
 ## Try it out!
 
@@ -85,17 +86,17 @@ To converse with your Eidolon agent for the first time:
 1. Open a web browser to http://localhost:3000 (or replace localhost with your server URL).
 2. Click the **Eidolon Developer Tool** app card.
 
-![WebUI](../../../assets/images/eidolon-webui-developer-tools.png)
+![WebUI](~/assets/images/eidolon-webui-developer-tools.png)
 
 3. Click **Add Chat** from the upper left corner.
 
-![New Chat](../../../assets/images/eidolon-webui-new-chat.png)
+![New Chat](~/assets/images/eidolon-webui-new-chat.png)
 
 4. Click **Start**.
 
 5. Say `hello!` to your agent in the text box.
 
-Did your agent respond to you? 🍾 Congratulations! You have successfully created your first agent machine. 
+Did your agent respond to you? 🍾 Congratulations! You successfully created your first agent machine. 
 
 ### Command Line Interface (CLI)
 
@@ -154,7 +155,7 @@ Dev mode provides a local http server and local memory, making it easy to focus 
 
 ## Have Fun! Change the System Prompt
 
-To get a taste for how quickly you can deploy powerful agentic applications, make a simple change.
+To see how quickly you can iterate to build powerful agentic applications, make a simple change.
 
 Using a text editor, change the system prompt:
 
@@ -162,7 +163,9 @@ Using a text editor, change the system prompt:
   system_prompt: |
     Repeat the user prompt, then translate the user prompt into Spanish.
 ```
-You do not need to restart. Simply return to the WebUI or CLI and say hello again. Try different prompts and have fun!
+You do not need to restart. Simply return to the WebUI or CLI and say hello again. 
+
+Try different user prompts (_messages_ you send to an agent in the WebUI or CLI) and system prompts (_instructions_ in the resource file to tell the agent what to do with user messages). Have fun!
 
 ## Next Steps
 You can adapt this simple agent to do a lot of things! Try these things next.
