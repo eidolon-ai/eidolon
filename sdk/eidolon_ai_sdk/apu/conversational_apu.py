@@ -188,7 +188,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 if num_files > 0:
                     lus += (RagLogicUnit(self.retriever, apu=self.retriever_apu, processing_unit_locator=self),)
                 tool_defs = await LLMToolWrapper.from_logic_units(call_context, lus)
-                tool_call_events = []
+                tool_call_events: List[LLMToolCallRequestEvent] = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
                 logger.info(f"Following tools are available: {list(tool_defs.keys())}")
