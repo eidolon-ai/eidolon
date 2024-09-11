@@ -1,11 +1,8 @@
-import asyncio
 import logging
-import time
 from typing import Iterator
 from unittest import mock
 
 import pytest
-import uvicorn
 from fastapi import FastAPI
 
 from eidolon_ai_sdk.bin.server import start_os
