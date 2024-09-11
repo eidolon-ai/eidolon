@@ -270,6 +270,24 @@ class AgentController:
     async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
+        custom_user_input = "custom_user_input_event" in handler.extra and handler.extra["custom_user_input_event"]
+        custom_start = "custom_start_event" in handler.extra and handler.extra["custom_start_event"]
+
+        def get_start_event():
+            extra = {}
+            if "title" in handler.extra:
+                extra["title"] = handler.extra["title"]
+            if "sub_title" in handler.extra:
+                extra["sub_title"] = handler.extra["sub_title"]
+
+            return StartAgentCallEvent(
+                machine=AgentOS.current_machine_url(),
+                agent_name=self.name,
+                call_name=handler.name,
+                process_id=process.record_id,
+                **extra,
+            )
+
         events_to_store = []
         ended = False
         transitioned = False
@@ -277,6 +295,17 @@ class AgentController:
             # allow the agent send a custom user input event or a custom start event
             user_input_event_seen = False
             start_event_seen = False
+            if not custom_user_input:
+                user_input_event_seen = True
+                output_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))
+                events_to_store.append(output_event)
+                yield output_event
+            if not custom_start:
+                start_event_seen = True
+                output_event = get_start_event()
+                events_to_store.append(output_event)
+                yield get_start_event()
+
             async for event in self.stream_agent_iterator(stream, process):
                 if event.is_root_and_type(UserInputEvent):
                     user_input_event_seen = True
@@ -289,19 +318,7 @@ class AgentController:
                     start_event_seen = True
                 elif not start_event_seen and not event.is_root_and_type(UserInputEvent):
                     start_event_seen = True
-                    extra = {}
-                    if "title" in handler.extra:
-                        extra["title"] = handler.extra["title"]
-                    if "sub_title" in handler.extra:
-                        extra["sub_title"] = handler.extra["sub_title"]
-
-                    output_event = StartAgentCallEvent(
-                        machine=AgentOS.current_machine_url(),
-                        agent_name=self.name,
-                        call_name=handler.name,
-                        process_id=process.record_id,
-                        **extra,
-                    )
+                    output_event = get_start_event()
                     events_to_store.append(output_event)
                     yield output_event
                 if not ended:

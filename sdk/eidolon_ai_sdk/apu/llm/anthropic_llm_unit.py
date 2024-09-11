@@ -82,6 +82,11 @@ def scale_image(image_bytes):
     return output.getvalue()
 
 
+class GroupedToolResponse(LLMMessage):
+    tool_responses: List[ToolResponseMessage]
+    type: str = "grouped_tool"
+
+
 async def convert_to_llm(message: LLMMessage):
     if isinstance(message, SystemMessage):
         return {"role": "user", "content": [TextBlockParam(type="text", text=message.content)]}
@@ -119,13 +124,14 @@ async def convert_to_llm(message: LLMMessage):
                     )
                 )
         return {"role": "assistant", "content": content}
-    elif isinstance(message, ToolResponseMessage):
+    elif isinstance(message, GroupedToolResponse):
+        # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
+        message.tool_responses.sort(key=lambda e: e.tool_call_id)
         # tool_call_id, content
-        data = json.dumps(message.result)
-        content = [TextBlockParam(type="text", text=data)]
+        content = [dict(type="tool_result", tool_use_id=m.tool_call_id, content=[TextBlockParam(type="text", text=json.dumps(m.result))]) for m in message.tool_responses]
         return {
             "role": "user",
-            "content": [{"type": "tool_result", "tool_use_id": message.tool_call_id, "content": content}],
+            "content": content,
         }
     else:
         raise ValueError(f"Unknown message type {message.type}")
@@ -206,7 +212,22 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
         system_prompt = "\n".join([message.content for message in inMessages if isinstance(message, SystemMessage)])
-        messages = [await convert_to_llm(message) for message in inMessages if not isinstance(message, SystemMessage)]
+
+        # We need to group tool response messages together so they appear in one block
+        messages = []
+        grouped_tool_responses = []
+        for message in inMessages:
+            if isinstance(message, ToolResponseMessage):
+                grouped_tool_responses.append(message)
+            else:
+                if grouped_tool_responses:
+                    messages.append(GroupedToolResponse(tool_responses=grouped_tool_responses))
+                    grouped_tool_responses = []
+                messages.append(message)
+        if grouped_tool_responses:
+            messages.append(GroupedToolResponse(tool_responses=grouped_tool_responses))
+
+        messages = [await convert_to_llm(message) for message in messages if not isinstance(message, SystemMessage)]
         if output_format == "str" or output_format["type"] == "string":
             is_string = True
         else:

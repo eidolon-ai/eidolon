@@ -91,7 +91,7 @@ class ActionDefinition(BaseModel):
 
         if self.allow_file_upload:
             properties["body"]["properties"]["attached_files"] = dict(
-                type="array", items=FileHandleWithInclude.model_json_schema()
+                type="array", items=FileHandleWithInclude.model_json_schema(), required=False
             )
 
         if agent.spec.apus:
