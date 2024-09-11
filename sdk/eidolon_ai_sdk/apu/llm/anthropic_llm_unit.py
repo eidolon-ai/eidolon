@@ -96,7 +96,7 @@ async def convert_to_llm(message: LLMMessage):
             content = []
             for part in message.content:
                 if part.type == "text":
-                    if part.text:
+                    if part.text and len(part.text.strip()) > 0:
                         content.append(TextBlockParam(text=part.text, type="text"))
                 else:
                     # retrieve the image from the file system
@@ -128,7 +128,14 @@ async def convert_to_llm(message: LLMMessage):
         # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
         message.tool_responses.sort(key=lambda e: e.tool_call_id)
         # tool_call_id, content
-        content = [dict(type="tool_result", tool_use_id=m.tool_call_id, content=[TextBlockParam(type="text", text=json.dumps(m.result))]) for m in message.tool_responses]
+        content = []
+        for m in message.tool_responses:
+            tr = dict(type="tool_result", tool_use_id=m.tool_call_id)
+            json_output = json.dumps(m.result).strip()
+            if len(json_output) > 0:
+                tr["content"] = [TextBlockParam(type="text", text=json_output)]
+            content.append(tr)
+
         return {
             "role": "user",
             "content": content,
