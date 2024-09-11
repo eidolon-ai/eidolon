@@ -168,7 +168,27 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
-        messages = [await convert_to_openai(message) for message in inMessages]
+        # This is all for tests so that we can ensure deterministic behavior
+        messages = []
+        grouped_tool_responses = []
+        for message in inMessages:
+            if isinstance(message, ToolResponseMessage):
+                grouped_tool_responses.append(message)
+            else:
+                if grouped_tool_responses:
+                    # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
+                    grouped_tool_responses.sort(key=lambda e: e.tool_call_id)
+                    for tool_response in grouped_tool_responses:
+                        messages.append(tool_response)
+                    grouped_tool_responses = []
+                messages.append(message)
+        if grouped_tool_responses:
+            # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
+            grouped_tool_responses.sort(key=lambda e: e.tool_call_id)
+            for tool_response in grouped_tool_responses:
+                messages.append(tool_response)
+
+        messages = [await convert_to_openai(message) for message in messages]
         request = {
             "messages": messages,
             "model": self.model.name,

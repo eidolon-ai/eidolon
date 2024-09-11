@@ -38,6 +38,7 @@ async def test_query_params(pet_store):
         [Operation(name="pets", description="Find Pets", path="/pets", method="get", result_filters=None)],
         pet_store,
         "PetStore",
+        99999,
         do_call,
     )
     assert len(actions) == 1
@@ -49,6 +50,17 @@ async def test_query_params(pet_store):
     assert action.action_schema == {
         "type": "object",
         "properties": {
+            'fields__': {'description': 'The fields to include in the '
+                                        'response or omit for all fields. '
+                                        'This is necessary to limit the '
+                                        'response size. This should be a '
+                                        "list of paths separated by '.'",
+                         'items': {'description': 'The path of a response '
+                                                  'field as it appears in '
+                                                  'the json schema',
+                                   'type': 'string'},
+                         'required': False,
+                         'type': 'array'},
             "limit": {"format": "int32", "type": "integer"},
             "tags": {"items": {"type": "string"}, "type": "array"},
             "categories": {"items": {"type": "string"}, "type": "array"},
@@ -76,6 +88,7 @@ async def test_path_params(pet_store):
         [Operation(name="get_pet", description="Get Pet", path="/pets/{id}", method="get", result_filters=None)],
         pet_store,
         "PetStore",
+        99999,
         do_call,
     )
     assert len(actions) == 1
@@ -86,7 +99,20 @@ async def test_path_params(pet_store):
     assert action.sub_title == "get_pet"
     assert action.action_schema == {
         "type": "object",
-        "properties": {"id": {"format": "int64", "type": "integer"}},
+        "properties": {
+            'fields__': {'description': 'The fields to include in the '
+                                        'response or omit for all fields. '
+                                        'This is necessary to limit the '
+                                        'response size. This should be a '
+                                        "list of paths separated by '.'",
+                         'items': {'description': 'The path of a response '
+                                                  'field as it appears in '
+                                                  'the json schema',
+                                   'type': 'string'},
+                         'required': False,
+                         'type': 'array'},
+            "id": {"format": "int64", "type": "integer"}
+        },
         "required": ["id"],
     }
     await action.tool_call(None, **{"id": 10})
@@ -114,6 +140,7 @@ async def test_header_params(pet_store):
         ],
         pet_store,
         "PetStore",
+        99999,
         do_call,
     )
     assert len(actions) == 1
@@ -124,7 +151,20 @@ async def test_header_params(pet_store):
     assert action.sub_title == "find_pet"
     assert action.action_schema == {
         "type": "object",
-        "properties": {"id": {"format": "int64", "type": "integer"}},
+        "properties": {
+            'fields__': {'description': 'The fields to include in the '
+                                        'response or omit for all fields. '
+                                        'This is necessary to limit the '
+                                        'response size. This should be a '
+                                        "list of paths separated by '.'",
+                         'items': {'description': 'The path of a response '
+                                                  'field as it appears in '
+                                                  'the json schema',
+                                   'type': 'string'},
+                         'required': False,
+                         'type': 'array'},
+            "id": {"format": "int64", "type": "integer"}
+        },
         "required": ["id"],
     }
     await action.tool_call(None, **{"id": 10})
@@ -148,6 +188,7 @@ async def test_body_params(pet_store):
         [Operation(name="add_pet", description=None, path="/pets", method="post", result_filters=None)],
         pet_store,
         "PetStore",
+        99999,
         do_call,
     )
     assert len(actions) == 1
@@ -160,10 +201,23 @@ async def test_body_params(pet_store):
         "type": "object",
         "required": ["__body__"],
         "properties": {
+            'fields__': {'description': 'The fields to include in the '
+                                        'response or omit for all fields. '
+                                        'This is necessary to limit the '
+                                        'response size. This should be a '
+                                        "list of paths separated by '.'",
+                         'items': {'description': 'The path of a response '
+                                                  'field as it appears in '
+                                                  'the json schema',
+                                   'type': 'string'},
+                         'required': False,
+                         'type': 'array'},
             "__body__": {
                 "type": "object",
                 "required": ["name"],
-                "properties": {"name": {"type": "string"}, "tag": {"type": "string"}},
+                "properties": {
+                    "name": {"type": "string"}, "tag": {"type": "string"}
+                },
             }
         },
     }

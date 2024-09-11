@@ -132,10 +132,10 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         Specable.__init__(self, **kwargs)
 
     async def execute_llm(
-        self,
-        messages: List[LLMMessage],
-        tools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            messages: List[LLMMessage],
+            tools: List[LLMCallFunction],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
@@ -181,7 +181,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json or tools:
                     # message format looks like json```{...}```, parse content and pull out the json
-                    complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
+                    complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
                 try:
                     content = json.loads(complete_message) if complete_message else {}
                 except json.JSONDecodeError as e:
@@ -198,7 +198,27 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
-        messages = [await convert_to_mistral(message) for message in inMessages]
+        # This is all for tests so that we can ensure deterministic behavior
+        messages = []
+        grouped_tool_responses = []
+        for message in inMessages:
+            if isinstance(message, ToolResponseMessage):
+                grouped_tool_responses.append(message)
+            else:
+                if grouped_tool_responses:
+                    # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
+                    grouped_tool_responses.sort(key=lambda e: e.tool_call_id)
+                    for tool_response in grouped_tool_responses:
+                        messages.append(tool_response)
+                    grouped_tool_responses = []
+                messages.append(message)
+        if grouped_tool_responses:
+            # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
+            grouped_tool_responses.sort(key=lambda e: e.tool_call_id)
+            for tool_response in grouped_tool_responses:
+                messages.append(tool_response)
+
+        messages = [await convert_to_mistral(message) for message in messages]
         request = {
             "messages": messages,
             "model": str(self.model.name),
