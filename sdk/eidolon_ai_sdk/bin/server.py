@@ -181,9 +181,8 @@ async def start_os(
         open_tele = AgentOSKernel.get_instance(OpenTelemetryManager)
         await open_tele.start()
         try:
-            time_to_start = time.perf_counter() - t0
-            report_server_started(time_to_start, len(machine.agent_controllers), False)
-            logger.info(f"Server Started in {time_to_start:.2f}s")
+            report_server_started(time.perf_counter() - t0, len(machine.agent_controllers), False)
+            logger.info(f"Server Started in {time.perf_counter() - t0 :.2f}s")
             _status = "running"
             yield
         finally:
@@ -191,9 +190,8 @@ async def start_os(
 
         await machine.stop()
     except BaseException:
-        time_to_start = time.perf_counter() - t0
-        await report_server_started(time_to_start, -1, True)
         logger.exception("Failed to start AgentOS")
+        report_server_started(time.perf_counter() - t0, -1, True)
         raise
     finally:
         _status = "stopped"
