@@ -26,7 +26,7 @@ const Page = () => {
         <List>
           <ListSubheader>
             <Typography variant={"body1"}>
-              The venture super-agent is a collection of four agents, venture_copilot, speech_agent, CompanyFinder, and CompanyResearcher
+              The venture super-agent is a collection of four agents, venture_copilot, speech-agent, CompanyFinder, and CompanyResearcher
             </Typography>
           </ListSubheader>
           <ListItemWithCode

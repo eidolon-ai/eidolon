@@ -16,7 +16,7 @@ const findCompanyChat = {
   "operation": "converse",
   "inputLabel": "Use the chat to find companies. When you find a company say 'add it to the list'.",
   "allowSpeech": true,
-  "speechAgent": "speech_agent",
+  "speechAgent": "speech-agent",
   "speechOperation": "speech_to_text"
 } as CopilotParams
 
