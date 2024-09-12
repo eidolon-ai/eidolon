@@ -24,7 +24,7 @@ const Page = () => {
         <List>
           <ListSubheader>
             <Typography variant={"body1"}>
-              The git search super-agent is a collection of three agents, repo_expert, repo_search, and speech_agent.
+              The git search super-agent is a collection of three agents, repo_expert, repo_search, and speech-agent.
             </Typography>
           </ListSubheader>
           <ListItemWithCode

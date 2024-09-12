@@ -14,7 +14,7 @@ const companyDetailChat = {
   "operation": "converse",
   "inputLabel": "How can I help you?",
   "allowSpeech": false,
-  "speechAgent": "speech_agent",
+  "speechAgent": "speech-agent",
   "speechOperation": "speech_to_text"
 } as CopilotParams
 

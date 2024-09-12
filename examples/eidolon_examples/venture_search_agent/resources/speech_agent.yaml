@@ -1,6 +1,6 @@
 apiVersion: eidolon/v1
 kind: Agent
 metadata:
-  name: speech_agent
+  name: speech-agent
 spec:
   implementation: AutonomousSpeechAgent
