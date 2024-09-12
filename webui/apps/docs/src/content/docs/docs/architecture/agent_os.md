@@ -146,7 +146,7 @@ Resources are the generic way every object is defined in Eidolon.
 Resources can be defined in code or, more commonly, in YAML files. Following in as example of a resource definition in YAML:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: APU
 metadata:
   name: frugal
@@ -168,7 +168,7 @@ The LLM for this APU is configured to use the GPT-3.5-Turbo-latest model with a 
 This resource is registered with the AgentOS and can be accessed by agents in their definition in the following way:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: GenericAgent
 metadata:
   name: qa
@@ -194,7 +194,7 @@ This simple communication model allows agents to be integrated into any system t
 An agent can define the set of other agents that it can communicate with. This is done by setting the "agent_refs" property in the agent specification. For example:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: qa

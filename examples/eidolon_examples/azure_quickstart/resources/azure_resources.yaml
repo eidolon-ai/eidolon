@@ -1,6 +1,6 @@
 ---
 # First We need to configure our openai connection handler to use the Azure
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: OpenAIConnectionHandler
@@ -9,7 +9,7 @@ spec:
   azure_endpoint: https://testinstancename.openai.azure.com/  # This is the endpoint of the Azure OpenAI service
 ---
 # Then we need to point our model to the Azure model deployment
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "gpt-4-turbo-preview"

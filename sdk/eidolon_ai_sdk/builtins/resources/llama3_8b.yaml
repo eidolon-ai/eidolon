@@ -1,5 +1,5 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: Llamma3-8b
@@ -13,7 +13,7 @@ spec:
       implementation: OllamaLLMUnit
       model: "llama3-8b"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "llama3-8b"

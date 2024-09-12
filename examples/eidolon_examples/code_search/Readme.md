@@ -15,7 +15,7 @@ This agent stands at the core of our operation, tasked with crafting the documen
 
 Here's a peak at the agent's definition:
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: doc_producer
@@ -32,7 +32,7 @@ These components, our RAG equivalents for code and document files, serve as the 
 
 Their configuration reflects their specialized functions:
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: SearchDocs

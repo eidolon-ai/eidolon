@@ -10,7 +10,7 @@ OpenTelemetry is enabled by default, without an exporter. So to configure monito
 The following example configures the exporter to hit a locally running Jaeger instance.
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: SpanExporter
