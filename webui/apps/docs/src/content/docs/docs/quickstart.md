@@ -70,6 +70,8 @@ agent-server-1  | INFO - Server Started in 3.36s
 Hello world! 👋
 </br></br>
 
+>🚨 A common error is not having a funded account. Go to <a href="https://platform.openai.com/settings/organization/billing/overview" target=_blank>OpenAI Billing</a> to get sorted out.
+
 >🤔 Running into problems? 
 Get help from us on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a> 📞 or submit an <a href="https://github.com/eidolon-ai/eidolon/issues/new/choose" target=_blank>issue on GitHub</a>. We want you to _love_ ❤️  working with Eidolon. If there's a problem, we want to fix it 🛠.
 
