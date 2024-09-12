@@ -1,8 +1,9 @@
 import json
 from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
@@ -31,7 +32,7 @@ class ToolCallResponse(BaseModel):
     Response
     """
 
-    tools: Optional[List[ToolCall]] = Field(default=[], description="The tools that are available.")
+    tools: List[ToolCall] = Field(default=[], description="The tools that are available.")
     notes: str = Field(default="", description="Any notes or explanations.")
 
 
@@ -63,7 +64,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
         messages = self._add_tools(messages, tools)
-        return self._wrap_exe_call(self.llm_unit.execute_llm, tools, messages)
+        return self._wrap_exe_call(self.llm_unit.execute_llm, tools, messages, output_format)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
         if tools and len(tools) > 0:
@@ -98,20 +99,35 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         ],
         tools: List[LLMCallFunction],
         messages: List[LLMMessage],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
-        ret_type = ToolCallResponse.model_json_schema() if tools else dict(type="string")
+        output_is_string = output_format == "str" or output_format.get('type') == "string"
+        if tools:
+            ret_type = dict(anyOf=[
+                ToolCallResponse.model_json_schema(),
+                dict(
+                    type="object",
+                    properties=dict(response=output_format),
+                    required=["response"],
+                )
+            ])
+        else:
+            ret_type = output_format
         stream: AsyncIterator[StreamEvent] = exec_llm_call(messages, [], ret_type)
         # stream should be a single object output event
         async for event in stream:
-            if isinstance(event, ObjectOutputEvent):
-                toolCallResponse = ToolCallResponse.model_validate(event.content)
-                if toolCallResponse.tools:
-                    for tool_call in toolCallResponse.tools:
-                        yield LLMToolCallRequestEvent(tool_call=tool_call)
-                    if toolCallResponse.notes:
-                        yield StringOutputEvent(content=toolCallResponse.notes)
+            if tools and event.is_root_and_type(ObjectOutputEvent):
+                if event.content.get("response"):
+                    if output_is_string:
+                        yield StringOutputEvent(content=str(event.content["response"]), metdata=event.metadata)
+                    else:
+                        yield ObjectOutputEvent(content=event.content["response"], metdata=event.metadata)
                 else:
-                    yield StringOutputEvent(content=toolCallResponse.notes)
+                    tool_call_response = ToolCallResponse.model_validate(event.content)
+                    if tool_call_response.notes and output_is_string:
+                        yield StringOutputEvent(content=tool_call_response.notes)
+                    for tool_call in tool_call_response.tools:
+                        yield LLMToolCallRequestEvent(tool_call=tool_call)
             else:
                 yield event
 
