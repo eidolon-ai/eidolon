@@ -41,9 +41,6 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         if not self.open_api_schema:
             try:
                 content = await get_content(self.spec.open_api_location)
-
-                # TODO: Would love to get some temp solution for circular references here
-                
                 self.open_api_schema = jsonref.replace_refs(content)
             except Exception as e:
                 logger.error(f"Error fetching schema from {self.spec.open_api_location}: {e}")
