@@ -10,8 +10,14 @@ spec:
     audio_unit: OpenAiSpeech
     image_unit: OpenAIImageUnit
     llm_unit:
-      implementation: OpenAIGPT
-      model: "gpt-strawberry-preview"
+      implementation: ToolCallLLMWrapper
+      llm_unit:
+        implementation: OpenAIGPT
+        temperature: 1
+        supports_system_messages: False
+        can_stream: False
+        force_json: False
+        model: "gpt-strawberry-preview"
 ---
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
@@ -23,34 +29,6 @@ spec:
   name: "o1-preview"
   input_context_limit: 128000
   output_context_limit: 32768
-  supports_tools: True
-  supports_image_input: True
-  supports_audio_input: False
----
-apiVersion: server.eidolonai.com/v1alpha1
-kind: Reference
-metadata:
-  name: GPTStrawberryMiniPreview
-  annotations:
-    - title: "OpenAI Strawberry Mini Preview"
-spec:
-  implementation: ConversationalAPU
-  audio_unit: OpenAiSpeech
-  image_unit: OpenAIImageUnit
-  llm_unit:
-    implementation: OpenAIGPT
-    model: "gpt-strawberry-preview"
----
-apiVersion: server.eidolonai.com/v1alpha1
-kind: Reference
-metadata:
-  name: "gpt-strawberry-preview"
-spec:
-  implementation: LLMModel
-  human_name: "GPT-Strawberry"
-  name: "o1-preview"
-  input_context_limit: 128000
-  output_context_limit: 65536
-  supports_tools: True
-  supports_image_input: True
+  supports_tools: False
+  supports_image_input: False
   supports_audio_input: False

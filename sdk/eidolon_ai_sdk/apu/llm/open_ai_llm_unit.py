@@ -5,7 +5,7 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 
 import yaml
 from openai import AsyncStream
-from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk
+from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk, ChatCompletion, ChatCompletionMessage
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -91,6 +91,8 @@ class OpenAiGPTSpec(LLMUnitSpec):
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
+    supports_system_messages: bool = True
+    can_stream: bool = True
     connection_handler: AnnotatedReference[OpenAIConnectionHandler]
 
 
@@ -110,8 +112,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         tools: List[LLMCallFunction],
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
-        can_stream_message, request = await self._build_request(messages, tools, output_format)
-        request["stream"] = True
+        is_string, request = await self._build_request(messages, tools, output_format)
 
         logger.info("executing open ai llm request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
@@ -119,13 +120,18 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
         complete_message = ""
         tools_to_call = []
-        completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
+        raw_completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
+        completion = raw_completion
+        if isinstance(completion, ChatCompletion):
+            async def _fn():
+                yield raw_completion
+            completion = _fn()
         async for m_chunk in completion:
-            chunk = cast(ChatCompletionChunk, m_chunk)
+            chunk = cast(ChatCompletionChunk | ChatCompletionMessage, m_chunk)
             if not chunk.choices:
                 logger.info("open ai llm chunk has no choices, skipping")
                 continue
-            message = chunk.choices[0].delta
+            message = chunk.choices[0].delta if hasattr(chunk.choices[0], "delta") else chunk.choices[0].message
 
             logger.debug(
                 f"open ai llm response\ntool calls: {len(message.tool_calls or [])}\ncontent:\n{message.content}",
@@ -145,7 +151,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
                         tools_to_call[index]["arguments"] += tool_call.function.arguments
 
             if message.content:
-                if can_stream_message:
+                if is_string:
                     logger.debug(f"open ai llm stream response: {message.content}", extra=dict(content=message.content))
                     yield StringOutputEvent(content=message.content)
                 else:
@@ -156,43 +162,25 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             for tool in tools_to_call:
                 tool_call = _convert_tool_call(tool)
                 yield LLMToolCallRequestEvent(tool_call=tool_call)
-        if not can_stream_message:
+        if not is_string:
             logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
             if not self.spec.force_json:
                 # message format looks like json```{...}```, parse content and pull out the json
                 complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
 
-            if complete_message or len(tools_to_call) == 0:
-                content = json.loads(complete_message) if complete_message else {}
-                yield ObjectOutputEvent(content=content)
+            if complete_message:
+                yield ObjectOutputEvent(content=json.loads(complete_message))
+            elif len(tools_to_call) == 0:
+                yield ObjectOutputEvent(content={})
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
-        # This is all for tests so that we can ensure deterministic behavior
-        messages = []
-        grouped_tool_responses = []
-        for message in inMessages:
-            if isinstance(message, ToolResponseMessage):
-                grouped_tool_responses.append(message)
-            else:
-                if grouped_tool_responses:
-                    # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
-                    grouped_tool_responses.sort(key=lambda e: e.tool_call_id)
-                    for tool_response in grouped_tool_responses:
-                        messages.append(tool_response)
-                    grouped_tool_responses = []
-                messages.append(message)
-        if grouped_tool_responses:
-            # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
-            grouped_tool_responses.sort(key=lambda e: e.tool_call_id)
-            for tool_response in grouped_tool_responses:
-                messages.append(tool_response)
-
-        messages = [await convert_to_openai(message) for message in messages]
+        messages = [await convert_to_openai(message) for message in inMessages]
         request = {
             "messages": messages,
             "model": self.model.name,
             "temperature": self.temperature,
+            "stream": self.spec.can_stream,
         }
         if output_format == "str" or output_format.get("type") == "string":
             is_string = True
@@ -216,6 +204,16 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             request["tools"] = tools
         if self.spec.max_tokens:
             request["max_tokens"] = self.spec.max_tokens
+
+        if not self.spec.supports_system_messages:
+            if len(messages) >= 2 and messages[0].get("role") == "system" and messages[1].get('role') == "user":
+                system_message = messages.pop(0)
+                text_content = [c for c in messages[0]["content"] if c['type'] == "text"][0]
+                text_to_add = f"For the rest of the conversation, follow the following instructions:\n<INSTRUCTIONS>\n{system_message['content']}\n</INSTRUCTIONS>"
+                text_content['text'] = f"{text_to_add}\n\n{text_content['text']}"
+            else:
+                raise RuntimeError("System messages are not supported by this model, but unable to transform messages")
+
         return is_string, request
 
     async def _build_tools(self, inTools):

@@ -22,7 +22,7 @@ class _DefaultModel(LLMModel):
 
 class ModelWrapper(LLMModel):
     def __init__(self, base_model: LLMModel):
-        super().__init__(**base_model.dict())
+        super().__init__(**base_model.model_dump())
         self.supports_tools = True
 
 
