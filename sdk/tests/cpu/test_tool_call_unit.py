@@ -197,7 +197,6 @@ async def test_wrap_exe_call_yields_other_events():
 
 async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
     mess = [UserMessage(content=[UserMessageText(text="123")])]
-    tool_response = []
 
     async def exec_llm_mock(
         messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
