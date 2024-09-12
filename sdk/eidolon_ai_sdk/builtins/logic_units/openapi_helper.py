@@ -105,9 +105,9 @@ def _body_model(endpoint_schema, name):
         return content["application/json"]["schema"]
     elif "text/plain" in content:
         return dict(type="object", properties=dict(body=dict(type="string")))
-    
-    # If no supported content type is found, raise an error
-    raise ValueError(f"Agent action at {name} does not support text/plain or application/json content types")
+    else:
+        # If no supported content type is found, raise an error
+        raise ValueError(f"Agent action at {name} does not support text/plain or application/json content types")
 
 
 def _convert_runtime_value(query_params: List[Tuple[str, Any]], param: dict, value: Any):

@@ -19,10 +19,11 @@ async def get_content(url: str, headers=None, **kwargs):
         content_type = response.headers.get('Content-Type', '')
         if 'application/json' in content_type:
             return response.json()
+        # Needs to include text/plain because some specs return text/plain for yaml like anything from github
         elif 'application/x-yaml' in content_type or 'text/yaml' in content_type or 'text/plain' in content_type:
             return yaml.safe_load(response.text)
         else:
-            raise ValueError(f"Unsupported content type: {content_type}")
+            raise ValueError(f"Unsupported content type {content_type} did not match accepted types: application/json or application/x-yaml")
 
 
 async def post_content(url: str, headers=None, **kwargs):
