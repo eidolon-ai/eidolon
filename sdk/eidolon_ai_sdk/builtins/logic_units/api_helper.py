@@ -23,7 +23,7 @@ async def get_content(url: str, headers=None, **kwargs):
         elif 'application/x-yaml' in content_type or 'text/yaml' in content_type or 'text/plain' in content_type:
             return yaml.safe_load(response.text)
         else:
-            raise ValueError(f"Unsupported content type {content_type} did not match accepted types: application/json or application/x-yaml")
+            raise ValueError(f"Unsupported content type {content_type} did not match accepted types: application/json, application/x-yaml, text/yaml, text/plain")
 
 
 async def post_content(url: str, headers=None, **kwargs):
