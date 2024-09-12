@@ -207,8 +207,6 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                 extra["title"] = action.title
             if action.sub_title:
                 extra["sub_title"] = action.sub_title
-            extra["custom_user_input_event"] = True
-            extra["custom_start_event"] = False
             setattr(
                 self,
                 action.name,
@@ -218,6 +216,7 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                     input_model=action.make_input_schema,
                     output_model=action.make_output_schema,
                     description=action.description,
+                    custom_user_input_event=True,
                     **extra,
                 )(self._act_wrapper(action, SimpleAgent._act)),
             )
