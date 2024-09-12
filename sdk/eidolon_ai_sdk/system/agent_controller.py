@@ -300,11 +300,11 @@ class AgentController:
                 output_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))
                 events_to_store.append(output_event)
                 yield output_event
-            if not custom_start:
+            if not custom_start and not custom_user_input:
                 start_event_seen = True
                 output_event = get_start_event()
                 events_to_store.append(output_event)
-                yield get_start_event()
+                yield output_event
 
             async for event in self.stream_agent_iterator(stream, process):
                 if event.is_root_and_type(UserInputEvent):

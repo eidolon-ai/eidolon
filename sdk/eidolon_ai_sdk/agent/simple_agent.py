@@ -156,7 +156,8 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
     generate_title_prompt = (
         "You are generating a title for a conversation. Consider the context and content of the discussion or text. "
         "Create a concise, relevant, and accurate representation of the main topic or theme in the content."
-        "Create a title that draws insiration from key phrases or ideas in the content. "
+        "Create a title that draws inspiration from key phrases or ideas in the content. "
+        "Do not use any tools to generate the title. "
         "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title. The prompt for the conversation is:\n"
     )
 
@@ -206,6 +207,8 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
                 extra["title"] = action.title
             if action.sub_title:
                 extra["sub_title"] = action.sub_title
+            extra["custom_user_input_event"] = True
+            extra["custom_start_event"] = False
             setattr(
                 self,
                 action.name,
