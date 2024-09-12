@@ -119,6 +119,7 @@ spec:
 ```
 
 You do not need to restart. Use your LLM providers' usage and activity tracking tools to confirm that user messages go to the model specified in the APU implementation.
+> 🚨 Getting errors? Make sure your API Keys are set in a .env file and your account is funded. See [How to Authenticate With Your LLM](/docs/howto/authenticate_llm).
 
 ![Anthropic Usage Dashboard](../../../../assets/images/anthropic-dashboard-usage.png)
 
