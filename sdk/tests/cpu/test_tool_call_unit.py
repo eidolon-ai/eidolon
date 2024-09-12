@@ -154,8 +154,8 @@ async def test_wrap_exe_call_converts_output():
     tool_response = [ToolCall(tool_call_id="1", name="a", arguments={"x": "y"})]
 
     async def exec_llm_mock(messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema):
-        assert output_schema == ToolCallResponse.model_json_schema()
-        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
+        assert output_schema['anyOf'][0] == ToolCallResponse.model_json_schema()
+        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response).model_dump())
 
     unit = make_wrapper("here", exec_llm_mock)
 
@@ -175,9 +175,9 @@ async def test_wrap_exe_call_yields_other_events():
     async def exec_llm_mock(
         messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
     ) -> AsyncIterator[StreamEvent]:
-        assert output_schema == ToolCallResponse.model_json_schema()
+        assert output_schema['anyOf'][0] == ToolCallResponse.model_json_schema()
         yield UserInputEvent(input="abc")
-        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
+        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response).model_dump())
         yield UserInputEvent(input="abc")
 
     unit = make_wrapper("here", exec_llm_mock)
@@ -202,9 +202,9 @@ async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
     async def exec_llm_mock(
         messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
     ) -> AsyncIterator[StreamEvent]:
-        assert output_schema == ToolCallResponse.model_json_schema()
+        assert output_schema['anyOf'][0] == ToolCallResponse.model_json_schema()
         yield UserInputEvent(input="abc")
-        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
+        yield ObjectOutputEvent(content=ToolCallResponse(tools=[]).model_dump())
         yield UserInputEvent(input="abc")
 
     unit = make_wrapper("here", exec_llm_mock)

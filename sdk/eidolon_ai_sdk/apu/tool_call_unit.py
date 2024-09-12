@@ -98,7 +98,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         ],
         tools: List[LLMCallFunction],
         messages: List[LLMMessage],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         output_is_string = output_format == "str" or output_format.get('type') == "string"
         if tools:
@@ -106,7 +106,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                 ToolCallResponse.model_json_schema(),
                 dict(
                     type="object",
-                    properties=dict(response=output_format),
+                    properties=dict(response=dict(type="string") if output_format == "str" else output_format),
                     required=["response"],
                 )
             ])
@@ -123,7 +123,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                         yield ObjectOutputEvent(content=event.content["response"], metdata=event.metadata)
                 else:
                     tool_call_response = ToolCallResponse.model_validate(event.content)
-                    if tool_call_response.notes and output_is_string:
+                    if (tool_call_response.notes or not tool_call_response.tools) and output_is_string:
                         yield StringOutputEvent(content=tool_call_response.notes)
                     for tool_call in tool_call_response.tools:
                         yield LLMToolCallRequestEvent(tool_call=tool_call)
