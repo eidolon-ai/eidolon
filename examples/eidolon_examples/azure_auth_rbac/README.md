@@ -19,7 +19,7 @@ Below is an illustrative example demonstrating how to configure Eidolon with the
 
 ```yaml
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: AuthenticationProcessor
@@ -47,7 +47,7 @@ To apply RBAC settings within Eidolon, utilize the following configuration snipp
 
 ```yaml
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: FunctionalAuthorizer

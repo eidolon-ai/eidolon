@@ -80,7 +80,7 @@ const bg = await Astro.slots.render("bg")
       {
         title: "Multi-Model Chatbot",
         language: 'yaml',
-        code: `apiVersion: eidolon/v1
+        code: `apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: multi-model-chatbot
@@ -100,7 +100,7 @@ spec:
         title: "RAG",
         language: 'yaml',
         code: `---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: agent
@@ -110,7 +110,7 @@ spec:
   agent_refs: ["doc-search"]
   system_prompt: You are a software expert responsible for answering questions about a code base.
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: doc-search
@@ -131,7 +131,7 @@ spec:
         title: "Agent-Agent Communication",
         language: 'yaml',
         code: `---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: manager
@@ -141,7 +141,7 @@ spec:
     You are a tech manager servicing user requests. You manage a team of engineers and qa workers. Work with your team as needed to answer user questions.
   agent_refs: ["engineer", "qa"]
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: manager
@@ -151,7 +151,7 @@ spec:
     You are a tech manager servicing user requests. You manage a team of engineers and qa workers. Work with your team as needed to answer user questions.
   agent_refs: ["engineer", "qa"]
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: engineer
@@ -161,7 +161,7 @@ spec:
     You are an engineer. Your manager (user) will come to with questions. Work with the qa team as needed to answer user questions.
   agent_refs: ["qa"] 
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: qa

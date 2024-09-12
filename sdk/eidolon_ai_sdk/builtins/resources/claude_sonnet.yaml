@@ -1,5 +1,5 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: ClaudeSonnet
@@ -13,7 +13,7 @@ spec:
     implementation: AnthropicLLMUnit
     model: "claude-3-5-sonnet-20240620"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: claude-3-sonnet-20240229
@@ -27,7 +27,7 @@ spec:
   supports_image_input: True
   supports_audio_input: False
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: claude-3-5-sonnet-20240620

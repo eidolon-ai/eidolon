@@ -23,7 +23,7 @@ In Eidolon's agent yaml files, you can have probably noticed the `spec` field. T
 of the component's configuration.
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: qa
@@ -85,7 +85,7 @@ Let's create a named resource `frugal_apu` so we can easily point to an older mo
 
 _frugal_apu.yaml_
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: frugal_apu
@@ -119,7 +119,7 @@ Now what if you are a lean startup, and want to use the frugal_apu for all of yo
 You would prefer not to override the apu of every agent, you just want to set frugal_apu as the default apu.
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: APU

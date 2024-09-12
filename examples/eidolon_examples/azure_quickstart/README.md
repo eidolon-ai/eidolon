@@ -11,7 +11,7 @@ To get started you will need an Azure OpenAI deployment, the deployment endpoint
 The first thing we need to do is create a resource in Eidolon to configure our openai client to use Azure OpenAI by default.
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: OpenAIConnectionHandler
@@ -43,7 +43,7 @@ Since this is the model used by default, your agents will automatically use it. 
 additional models used by your Eidolon Machine.
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "gpt-4-turbo-preview"

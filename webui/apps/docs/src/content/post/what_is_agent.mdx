@@ -80,7 +80,7 @@ other agents in the `agent_refs` field.
 Now let's look at how one would declare the configuration for this agent:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: qa
@@ -105,7 +105,7 @@ The SimpleAgent's easiest use is to build a chatbot interface. In fact, you can 
 chatbot available with **just configuration**. For example, here is the configuration for our chatbot agent:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: conversational_agent
