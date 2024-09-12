@@ -1,4 +1,5 @@
 import os
+import yaml
 from urllib.parse import urljoin, quote_plus
 
 from httpx import AsyncClient, Timeout
@@ -15,7 +16,13 @@ async def get_content(url: str, headers=None, **kwargs):
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
         response = await client.get(**params, **kwargs)
         await AgentError.check(response)
-        return response.json()
+        content_type = response.headers.get('Content-Type', '')
+        if 'application/json' in content_type:
+            return response.json()
+        elif 'application/x-yaml' in content_type or 'text/yaml' in content_type or 'text/plain' in content_type:
+            return yaml.safe_load(response.text)
+        else:
+            raise ValueError(f"Unsupported content type: {content_type}")
 
 
 async def post_content(url: str, headers=None, **kwargs):
