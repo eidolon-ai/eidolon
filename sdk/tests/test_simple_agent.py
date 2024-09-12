@@ -107,7 +107,7 @@ class TestSimpleTests:
     async def llm_name(self, apu):
         if "Claude" in apu:
             return "anthropic_completion"
-        elif "GPT4" in apu:
+        elif "GPT" in apu:
             return "openai_completion"
         elif "Mistral" in apu:
             return "mistral_completion"
