@@ -3,8 +3,8 @@ from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Opt
 
 from pydantic import BaseModel, Field
 
-from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
-from eidolon_ai_sdk.apu.call_context import CallContext
+from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, \
+    LLMToolCallRequestEvent
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage, \
     ToolResponseMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
@@ -63,18 +63,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         tools: List[LLMCallFunction],
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
-        tool_group: List[ToolResponseMessage] = []
-        acc = []
-        for message in messages:
-            if isinstance(message, ToolResponseMessage):
-                tool_group.append(message)
-            else:
-                acc.extend(sorted(tool_group, key=lambda x: x.tool_call_id))
-                tool_group = []
-                acc.append(message)
-        acc.extend(sorted(tool_group, key=lambda x: x.tool_call_id))
-
-        transformed_messages = self._add_tools(acc, tools)
+        transformed_messages = self._add_tools(messages, tools)
         return self._wrap_exe_call(self.llm_unit.execute_llm, tools, transformed_messages, output_format)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
@@ -114,8 +103,8 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                 + "\n"
                 + self.spec.tool_message_prompt
             )
-            messages = messages + [UserMessage(content=[UserMessageText(text=prompt)])]
-        return messages
+            acc.append(UserMessage(content=[UserMessageText(text=prompt)]))
+        return acc
 
     async def _wrap_exe_call(
         self,
