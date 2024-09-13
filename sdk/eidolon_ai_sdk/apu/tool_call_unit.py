@@ -68,7 +68,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
         if tools and len(tools) > 0:
             tool_schema = []
-            for tool in tools:
+            for tool in sorted(tools, key=lambda x: x.name):
                 tool_schema.append(
                     json.dumps(
                         {
