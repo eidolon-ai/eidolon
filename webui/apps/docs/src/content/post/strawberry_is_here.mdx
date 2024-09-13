@@ -29,7 +29,7 @@ O1 is like that brilliant but eccentric new colleague. Sure, it's super smart (i
 
 As the creator of Eidolon, I'll admit, I was annoyed. "Guess I can't sneak out for a climbing session today," I thought. 
 
-So I started clacking away at my keyboard. Quickly, I had a working solution. After pulling my hair out for a few more hours, I even had tests.
+So I started clacking away. Soon I had a working solution. After pulling my hair out for a few more hours, I even had tests.
 
 Eidolon now supports O1 in all its rule-breaking glory. Here's the kicker: for you, our beloved Eidolon users, nothing changes.
 
@@ -40,7 +40,17 @@ That's right. By spending my day working on those missing features, you don't ha
 Want to see the fruits of my labor? Check out this simple YAML config change:
 
 ```yaml
-# Insert YAML example here
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:
+  name: hello-world
+
+spec:
+  description: |
+    This is an example of a simple agent that can use OpenAI's o1-preview model. 
+    It can have tools, supports json mode, multi-agent communication, and all the other features you love about Eidolon.
+#  apu: ClaudeSonnet  <- move over Sonnet3.5, there's a new kid in town
+  apu: GPTo1Preview
 ```
 
 Yep, that's it. One line, and you're ready to harness the power of O1 in your Eidolon-powered application. No fuss, no muss, no existential crisis required.
