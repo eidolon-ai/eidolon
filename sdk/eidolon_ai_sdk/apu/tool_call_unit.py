@@ -70,6 +70,7 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                 tool_group.append(message)
             else:
                 acc.extend(sorted(tool_group, key=lambda x: x.tool_call_id))
+                tool_group = []
                 acc.append(message)
         acc.extend(sorted(tool_group, key=lambda x: x.tool_call_id))
 
@@ -77,6 +78,22 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         return self._wrap_exe_call(self.llm_unit.execute_llm, tools, transformed_messages, output_format)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
+        tool_group: List[ToolResponseMessage] = []
+        acc = []
+        for message in messages:
+            if isinstance(message, AssistantMessage):
+                message = self._transform_assistant_message(message)
+
+            if isinstance(message, ToolResponseMessage):
+                tool_group.append(message)
+            else:
+                if tool_group:
+                    acc.append(self._transform_tool_response_messages(tool_group))
+                tool_group = []
+                acc.append(message)
+        if tool_group:
+            acc.append(self._transform_tool_response_messages(tool_group))
+
         if tools and len(tools) > 0:
             tool_schema = []
             for tool in sorted(tools, key=lambda x: x.name):
@@ -98,7 +115,6 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                 + self.spec.tool_message_prompt
             )
             messages = messages + [UserMessage(content=[UserMessageText(text=prompt)])]
-
         return messages
 
     async def _wrap_exe_call(
@@ -148,16 +164,20 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
             else:
                 yield event
 
-    def create_assistant_message(self, call_context: CallContext, content: str, tool_call_events) -> LLMMessage:
-        if tool_call_events and len(tool_call_events) > 0:
+    def _transform_assistant_message(self, message: AssistantMessage) -> LLMMessage:
+        content = str(message.content)
+        if message.tool_calls:
             content += "\nCall the following tools\n"
-            for tool_call in tool_call_events:
-                content += f"\n{tool_call.tool_call.model_dump_json()}"
+            for tool_call in sorted(message.tool_calls, key=lambda x: x.tool_call_id):
+                content += f"\n{tool_call.model_dump_json()}"
         return AssistantMessage(
             type="assistant",
             content=content,
             tool_calls=[],
         )
 
-    def create_tool_response_message(self, logic_unit_name: str, tc: ToolCall, content: str) -> LLMMessage:
-        return UserMessage(content=[UserMessageText(text=f"Tool {tc.model_dump_json()} completed with value {content}")])
+    def _transform_tool_response_messages(self, responses: List[ToolResponseMessage]) -> LLMMessage:
+        content = []
+        for response in sorted(responses, key=lambda x: x.tool_call_id):
+            content.append(f"Tool {response.tool_call_id} completed with value: {response.result}")
+        return UserMessage(content=[UserMessageText(text="\n\n".join(content))])
