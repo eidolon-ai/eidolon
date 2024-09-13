@@ -32,6 +32,16 @@
       "default": null,
       "title": "Max Tokens"
     },
+    "supports_system_messages": {
+      "default": true,
+      "title": "Supports System Messages",
+      "type": "boolean"
+    },
+    "can_stream": {
+      "default": true,
+      "title": "Can Stream",
+      "type": "boolean"
+    },
     "connection_handler": {
       "$ref": "file:../OpenAIConnectionHandler/overview.json",
       "default": {
