@@ -119,14 +119,14 @@ spec:
 ```
 
 You do not need to restart. Use your LLM providers' usage and activity tracking tools to confirm that user messages go to the model specified in the APU implementation.
-> 🚨 Getting errors? Make sure your API Keys are set in a .env file and your account is funded. See [How to Authenticate With Your LLM](/docs/howto/authenticate_llm).
+> 🚨 Getting errors? Make sure your API Keys are set in a `.env` file and your account is funded. See [How to Authenticate With Your LLM](/docs/howto/authenticate_llm).
 
 ![Anthropic Usage Dashboard](../../../../assets/images/anthropic-dashboard-usage.png)
 
 
 ## Beyond Built-Ins
 
-If your needs are more specialized that what Eidolon offers through its built-in components, no problem. Some changes are as easy as a configuring an attribute. If you do need custom code, you can leverage the SDK to rapidly prototype, build, and deploy custom APUs.
+If your needs are more specialized that what Eidolon offers through its built-in components, no problem. Some changes are as easy as configuring an attribute. If you do need custom code, you can leverage the SDK to rapidly prototype, build, and deploy custom APUs.
 
 ### Use an Undocumented Model with a Built-In APU
 
