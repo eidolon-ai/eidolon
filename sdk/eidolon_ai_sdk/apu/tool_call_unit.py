@@ -100,6 +100,13 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         messages: List[LLMMessage],
         output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
+        print("\n\nDEBUGGING TOOLS\n\n")
+        print(messages)
+        print("\n\n")
+        for t in tools:
+            print(t)
+        print("\n\nend DEBUGGING\n\n")
+
         output_is_string = output_format == "str" or output_format.get('type') == "string"
         if tools:
             ret_type = dict(anyOf=[
