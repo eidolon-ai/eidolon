@@ -120,6 +120,11 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
 
         complete_message = ""
         tools_to_call = []
+
+        print("\n\nDEBUGGING PRINT\n\n")
+        print(yaml.dump(request))
+        print("\n\nEND PRINT\n\n")
+
         raw_completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
         completion = raw_completion
         if isinstance(completion, ChatCompletion):
