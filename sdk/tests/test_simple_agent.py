@@ -101,13 +101,13 @@ os.environ.setdefault("MISTRAL_API_KEY", "key_not_needed_with_saved_cassettes")
 
 
 class TestSimpleTests:
-    apus = ["GPT4o", "GPT4-turbo", "ClaudeSonnet", "MistralLarge"]
+    apus = ["GPT4o", "GPT4-turbo", "ClaudeSonnet", "MistralLarge", "GPTo1Preview"]
 
     @pytest.fixture(scope="class")
     async def llm_name(self, apu):
         if "Claude" in apu:
             return "anthropic_completion"
-        elif "GPT4" in apu:
+        elif "GPT" in apu:
             return "openai_completion"
         elif "Mistral" in apu:
             return "mistral_completion"
