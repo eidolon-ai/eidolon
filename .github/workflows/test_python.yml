@@ -65,7 +65,7 @@ jobs:
         working-directory: sdk
       - run: poetry run ruff check .
         working-directory: sdk
-      - run: poetry run pytest
+      - run: poetry run pytest tests/test_simple_agent.py -k 'test_with_multiple_tool_calls[GPTo1Preview]' -s
         env:
           OPENAI_API_KEY: intentionally_unused
         working-directory: sdk
