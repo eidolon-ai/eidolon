@@ -1,0 +1,82 @@
+---
+publishDate: 2024-08-12T00:00:00Z
+author: 'Luke Lalor (luke@augustdata.ai)'
+category: 'APU'
+title: "Taming O1: How Eidolon Keeps Your AI Development on Track"
+excerpt: "OpenAI's new model, O1, is shaking up the AI world. Learn how Eidolon is smoothing out the bumps and keeping your projects on track."
+image: ~/assets/images/strawberry.webp
+tags:
+  - APU
+  - LLM App Development
+  - Strawberry
+  - OpenAI
+  - Configuration
+  - O1
+metadata:
+  canonical: https://www.eidolonai.com/strawverry_is_here
+---
+
+In the fast-paced world of AI development, change is inevitable. But when that change comes in the form of a major model update that breaks existing contracts, it can throw even the most seasoned developers for a loop. That's exactly what happened recently with OpenAI's release of their new model, O1. Let's dive into what this means for AI developers and how Eidolon is here to smooth out the bumps.
+
+## The New Kid on the Block: OpenAI's O1
+
+So, OpenAI just dropped their shiny new model, O1, into preview mode. Cue the stampede of developers eager to play with the latest toy. But hold your horses, folks! This isn't your typical plug-and-play release.
+
+O1 is like that brilliant but eccentric new colleague. Sure, it's super smart (if the evals are to be believed), but it's also breaking all the rules. Do you like streaming? JSON mode? Tool calling? What about system messages... do you use those? If so, you're out of luck. This model follows a completely different contract than the others. It's enough to make any developer want to pull their hair out.
+
+## The Eidolon Difference: Keeping Calm in the Face of Change
+
+As a dev, I'll admit, I was annoyed. "Guess I can't sneak out for a climbing session today," I thought. 
+
+So I started clacking away. Soon I had a working solution. After banging my head for a few more hours, I even had tests.
+
+> <small>How do you write fast, cheap, and deterministic tests for LLM applications? Learn more [here](/testing_llm_apps).</small>
+
+Eidolon now supports O1 in all its rule-breaking glory. Here's the kicker: for you, our beloved Eidolon users, nothing changes.
+
+That's right. By spending my day working on those missing features, you don't have to. Eidolon handles the low-level building blocks (today, a fickle LLM provider; who knows what tomorrow will bring) so you can focus on building amazing AI applications.
+
+## One Config Change to Rule Them All
+
+Want to see the fruits of my labor? Check out this simple YAML config change:
+
+```yaml
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:
+  name: hello-world
+
+spec:
+  description: |
+    This is an example of a simple agent that can use OpenAI's o1-preview model. 
+    It can have tools, supports json mode, multi-agent communication, and all the other features you love about Eidolon.
+#  apu: ClaudeSonnet  <- move over Sonnet3.5, there's a new kid in town
+  apu: GPTo1Preview
+```
+
+Yep, that's it. One line, and you're ready to harness the power of O1 in your Eidolon-powered application. No fuss, no muss, no existential crisis required.
+
+## Why This Matters
+
+Now, you might be thinking, "Cool story, bro, but why should I care?" Well, let me tell you why this is a big deal:
+
+1. **Rapid Experimentation**: With Eidolon, you can now test out O1 in your projects without rewriting a single line of your core logic. That means more time innovating, less time troubleshooting.
+
+2. **Future-Proofing**: As AI models continue to evolve (and trust me, they will), Eidolon will be there to smooth out the bumps. Your code stays stable, even when the AI world is in flux.
+
+3. **Focus on What Matters**: You're building the next big AI-powered app, not wrestling with API changes. Eidolon lets you stay focused on your unique value proposition.
+
+## The Moral of the Story
+
+What started as a frustrating day of coding turned into a reminder of why we built Eidolon in the first place. We're here to make your life easier, to let you build and deploy interconnected AI Agents and tools without getting bogged down in the details.
+
+So the next time a big AI company decides to shake things up, remember: Eidolon's got your back. You focus on the big picture, we'll handle the pixels.
+
+## Want to Learn More?
+
+If you're intrigued by the idea of hassle-free AI development, we'd love to have you join our community:
+
+- Join our [Discord](https://discord.com/invite/6kVQrHpeqG) to connect with other developers and get support.
+- Star the source code on [GitHub](https://github.com/eidolon-ai/eidolon)!
+
+Remember, in the world of AI development, change is the only constant. But with Eidolon, you can surf the waves of innovation instead of being swept away by them. Happy coding!
