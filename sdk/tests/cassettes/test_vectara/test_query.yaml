@@ -1,0 +1,117 @@
+interactions:
+- request:
+    body: '{"query": "what is a black hole?", "search": {"limit": 10, "offset": 0}}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '72'
+      content-type:
+      - application/json
+      host:
+      - api.vectara.io
+      user-agent:
+      - python-httpx/0.27.2
+    method: POST
+    uri: https://api.vectara.io/v2/corpora/black-holes-sample-data/query
+  response:
+    body:
+      string: "{\"search_results\":[{\"text\":\"A black hole is a region of spacetime
+        where gravity is so strong that nothing, not even light and other electromagnetic
+        waves, is capable of possessing enough energy to escape it.\",\"score\":0.8379570841789246,\"part_metadata\":{\"title\":\"Black
+        hole\",\"lang\":\"eng\",\"section\":34,\"offset\":2016,\"len\":179},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"Black
+        hole\",\"score\":0.48227089643478394,\"part_metadata\":{\"is_title\":true,\"title_level\":2},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"The
+        size of a black hole, as determined by the radius of the event horizon, or
+        Schwarzschild radius, is proportional to the mass, M, through \\n                  \\n
+        \                     \\n                        \\n                          \\n
+        \                           \\n                              \\n                                \\n
+        \                                 \\n                                    r\\n
+        \                                   \\n                                      \\n
+        \                                       s\\n                                      \\n
+        \                                   \\n                                  \\n
+        \                                 =\\n                                  \\n
+        \                                   \\n                                      \\n
+        \                                       2\\n                                        G\\n
+        \                                       M\\n                                      \\n
+        \                                     \\n                                        c\\n
+        \                                       \\n                                          2\\n
+        \                                       \\n                                      \\n
+        \                                   \\n                                  \\n
+        \                                 \u2248\\\\x3C!\",\"score\":0.46443796157836914,\"part_metadata\":{\"title\":\"Physical
+        properties\",\"breadcrumb\":[\"Black hole\",\"Properties and structure\"],\"lang\":\"eng\",\"section\":7,\"offset\":8357,\"len\":1301},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"An
+        artistic depiction of a black hole and its features\\n                  \\n
+        \                 When an object falls into a black hole, any information
+        about the shape of the object or distribution of charge on it is evenly distributed
+        along the horizon of the black hole, and is lost to outside observers.\",\"score\":0.4623381495475769,\"part_metadata\":{\"title\":\"Properties
+        and structure\",\"breadcrumb\":[\"Black hole\"],\"lang\":\"eng\",\"section\":14,\"offset\":1165,\"len\":302},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"Black
+        holes were long considered a mathematical curiosity; it was not until the
+        1960s that theoretical work showed they were a generic prediction of general
+        relativity.\",\"score\":0.4569209814071655,\"part_metadata\":{\"title\":\"Black
+        hole\",\"lang\":\"eng\",\"section\":34,\"offset\":3370,\"len\":168},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"Conventional
+        black holes are formed by gravitational collapse of heavy objects such as
+        stars, but they can also in theory be formed by other processes.\",\"score\":0.4523938000202179,\"part_metadata\":{\"title\":\"Formation
+        and evolution\",\"breadcrumb\":[\"Black hole\"],\"lang\":\"eng\",\"section\":20,\"offset\":1310,\"len\":151},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"The
+        defining feature of a black hole is the appearance of an event horizon\u2014a
+        boundary in spacetime through which matter and light can pass only inward
+        towards the mass of the black hole.\",\"score\":0.4522572457790375,\"part_metadata\":{\"title\":\"Event
+        horizon\",\"breadcrumb\":[\"Black hole\",\"Properties and structure\"],\"lang\":\"eng\",\"section\":8,\"offset\":1086,\"len\":186},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"What
+        is visible is not the black hole\u2014which shows as black because of the
+        loss of all light within this dark region.\",\"score\":0.4441007375717163,\"part_metadata\":{\"title\":\"Direct
+        interferometry\",\"breadcrumb\":[\"Black hole\",\"Observational evidence\"],\"lang\":\"eng\",\"section\":21,\"offset\":966,\"len\":116},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"A
+        black hole has a great effect on the fate and circumstances of an object crossing
+        it, but it has no locally detectable features according to general relativity.\",\"score\":0.44345492124557495,\"part_metadata\":{\"title\":\"Black
+        hole\",\"lang\":\"eng\",\"section\":34,\"offset\":2376,\"len\":162},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"Black
+        hole - Wikipedia\",\"score\":0.4289284348487854,\"part_metadata\":{\"title_level\":1,\"is_title\":true,\"lang\":\"yor\"},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"}]}"
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type, Authorization, X-Api-Key, X-Request-Id, Accept, Customer-Id
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, PATCH, DELETE, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-Trace-Id, X-Request-Id
+      Access-Control-Max-Age:
+      - '1728000'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '6793'
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 15 Sep 2024 01:13:33 GMT
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+      x-request-id:
+      - 99c301e11836e79334af752450c8328e
+      x-trace-id:
+      - 800419de9523308d3ae658dca00d424e
+    status:
+      code: 200
+      message: OK
+version: 1

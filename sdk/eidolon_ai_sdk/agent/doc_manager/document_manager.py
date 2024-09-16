@@ -48,8 +48,8 @@ class DocumentManagerSpec(BaseModel):
     name: str = Field(description="The name of the document manager (used to name database collections).")
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
     loader: AnnotatedReference[DocumentLoader]
-    doc_processor: AnnotatedReference[DocumentProcessor]
     concurrency: int = Field(default=8, description="The number of concurrent tasks to run.")
+    doc_processor: AnnotatedReference[DocumentProcessor]
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
