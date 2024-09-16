@@ -40,6 +40,7 @@ from eidolon_ai_sdk.agent.sql_agent.client import SqlClient, SqlAlchemy
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
+from eidolon_ai_sdk.agent.vectara_agent import VectaraAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 from eidolon_ai_sdk.apu.agent_io import IOUnit
@@ -148,6 +149,7 @@ def named_builtins() -> List[ReferenceResource]:
         WebScrapingAgent,
         WebSearchAgent,
         WebResearcher,
+        VectaraAgent,
         APIAgent,
         # apu
         (APU, ConversationalAPU),
