@@ -16,6 +16,9 @@ from eidolon_ai_sdk.system.processes import MongoDoc
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
+os.environ.setdefault("VECTARA_API_KEY", "test")
+
+
 class VectaraAgentSpec(BaseModel):
     corpus_key: str
     description: str = "Search documents related to {{ corpus_key }}"

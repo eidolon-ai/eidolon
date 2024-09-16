@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from eidolon_ai_client.client import Agent, ProcessStatus
@@ -6,6 +8,9 @@ from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
+
+
+os.environ.setdefault("VECTARA_API_KEY", "test")
 
 
 @pytest.fixture(scope="module")
