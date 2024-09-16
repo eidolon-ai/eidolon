@@ -20,17 +20,18 @@ os.environ.setdefault("VECTARA_API_KEY", "test")
 
 
 class VectaraAgentSpec(BaseModel):
+    """
+    An agent backed by Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.
+    """
+
     corpus_key: str
     description: str = "Search documents related to {{ corpus_key }}"
     vectara_url: str = "https://api.vectara.io/"
     body_overrides: dict = Field({}, description="Arguments to use when creating / continuing a chat. See https://docs.vectara.com/docs/rest-api/create-chat for more information.")
 
 
+# We need to store chatid / processid mappings since vectara doesn't have metatdata / query concepts
 class VectaraDoc(MongoDoc):
-    """
-    An agent backed by Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.
-    """
-
     collection = "vectara_docs"
     process_id: str
     vectara_chat_id: str

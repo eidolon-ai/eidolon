@@ -14,11 +14,6 @@ from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference,
 
 
 class VectaraDocumentProcessorSpec(DocumentProcessorSpec):
-    """
-    A VectaraDocumentProcessor is a document processor that will take a document and send it to the Vectara API for indexing
-    Authenticate with the Vectara API using the VECTARA_API_KEY environment variable
-    """
-
     corpus_key: str
     vectara_url: str = "https://api.vectara.io/"
     parser: AnnotatedReference[DocumentParser]
