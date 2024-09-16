@@ -2,15 +2,19 @@ import os
 from urllib.parse import urljoin
 
 from httpx import AsyncClient
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class VectaraSearchSpec(BaseModel):
-    corpus_key: str
-    description: str = "Search documents related to {{ corpus_key }}"
+    """
+    A logic unit for searching in Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.
+    """
+
+    corpus_key: str = Field(description="The corpus key to search in.")
+    description: str = Field("Search documents related to {corpus_key}.", description="Description of the tool presented to LLM. Will be formatted with corpus_key.")
     vectara_url: str = "https://api.vectara.io/"
 
 
@@ -29,7 +33,7 @@ class VectaraSearch(Specable[VectaraSearchSpec], LogicUnit):
     def _url(self, suffix):
         return urljoin(self.spec.vectara_url, suffix)
 
-    @llm_function()
+    @llm_function(description=lambda lu, _: lu.spec.description.format(corpus_key=lu.spec.corpus_key))
     async def query(self, query: str, limit: int = 10, offset: int = 0):
         async with AsyncClient() as client:
             response = await client.post(

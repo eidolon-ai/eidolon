@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 from fastapi import Body
 from httpx import AsyncClient
 from httpx_sse import EventSource
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import StringOutputEvent, StartStreamContextEvent, ObjectOutputEvent, \
     EndStreamContextEvent, AgentStateEvent
@@ -20,10 +20,14 @@ class VectaraAgentSpec(BaseModel):
     corpus_key: str
     description: str = "Search documents related to {{ corpus_key }}"
     vectara_url: str = "https://api.vectara.io/"
-    body_overrides: dict = {}
+    body_overrides: dict = Field({}, description="Arguments to use when creating / continuing a chat. See https://docs.vectara.com/docs/rest-api/create-chat for more information.")
 
 
 class VectaraDoc(MongoDoc):
+    """
+    An agent backed by Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.
+    """
+
     collection = "vectara_docs"
     process_id: str
     vectara_chat_id: str
