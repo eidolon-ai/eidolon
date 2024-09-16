@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import StringOutputEvent, StartStreamContextEvent, ObjectOutputEvent, \
     EndStreamContextEvent, AgentStateEvent
-from eidolon_ai_sdk.agent.agent import register_program, register_action
+from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.system.processes import MongoDoc
 from eidolon_ai_sdk.system.reference_model import Specable
 
@@ -62,7 +62,7 @@ class VectaraAgent(Specable[VectaraAgentSpec]):
         doc = await VectaraDoc.find_one(query=dict(process_id=process_id))
         async with AsyncClient() as client:
             response = await client.post(
-                url=self._url(f"/v2/chats" if not doc else f"/v2/chats/{doc.vectara_chat_id}/turns"),
+                url=self._url("/v2/chats" if not doc else f"/v2/chats/{doc.vectara_chat_id}/turns"),
                 headers=self._headers,
                 json=body,
             )

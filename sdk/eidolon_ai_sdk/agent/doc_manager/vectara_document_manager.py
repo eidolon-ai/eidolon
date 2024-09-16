@@ -4,11 +4,9 @@ from typing import Optional, Iterable
 from urllib.parse import urljoin
 
 from httpx import AsyncClient
-from pydantic import BaseModel, Field
 
-from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager, DocumentManagerSpec
 from eidolon_ai_sdk.agent.doc_manager.document_processor import DocumentProcessor, DocumentProcessorSpec
-from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import FileInfo, DocumentLoader
+from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import FileInfo
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.memory.document import Document
