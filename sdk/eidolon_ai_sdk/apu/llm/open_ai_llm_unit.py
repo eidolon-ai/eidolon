@@ -102,11 +102,11 @@ class OpenAILLMBase(LLMUnit, Specable[OpenAILLMBaseSpec]):
     temperature: float
     connection_handler: OpenAIConnectionHandler
 
-    def __init__(self, kwargs):
+    def __init__(self, connection_handler: OpenAIConnectionHandler, **kwargs):
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
         self.temperature = self.spec.temperature
-        self.connection_handler = self.spec.connection_handler.instantiate()
+        self.connection_handler = connection_handler
 
     async def execute_llm(
             self,
