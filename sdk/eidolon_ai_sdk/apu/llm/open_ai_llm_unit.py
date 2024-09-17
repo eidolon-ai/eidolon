@@ -274,6 +274,7 @@ class OpenAiGPTSpec(OpenAILLMBaseSpec):
 
 class OpenAIGPT(OpenAILLMBase, Specable[OpenAiGPTSpec]):
     def __init__(self, **kwargs):
+        Specable.__init__(self, **kwargs)
         if self.spec.connection_handler:
             logger.warning(
                 "\"connection_handler\" is deprecated and will be removed. Use client_args if customizing an openai connection or AzureLLMUnit if connecting to Azure.")
