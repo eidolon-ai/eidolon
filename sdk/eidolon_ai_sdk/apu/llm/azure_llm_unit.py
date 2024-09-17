@@ -3,13 +3,16 @@ from typing import Optional, List
 
 from pydantic import Field
 
-from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import AzureOpenAIConnectionHandlerSpec, \
-    AzureOpenAIConnectionHandler, get_default_token_provider
+from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import AzureOpenAIConnectionHandlerSpec, AzureOpenAIConnectionHandler, get_default_token_provider
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAILLMBaseSpec, OpenAILLMBase
+from eidolon_ai_sdk.apu.llm_unit import LLMModel
 from eidolon_ai_sdk.system.reference_model import Specable, Reference
 
 
 class AzureLLMSpec(OpenAILLMBaseSpec):
+    model: Reference[LLMModel] = Field(
+        description="The model to use for the LLM. Since Azure deployments use custom names, no default is provided. See https://www.eidolonai.com/docs/howto/swap_llm for more details. on defining custom models."
+    )
     azure_ad_token_provider: Optional[Reference] = Field(default_factory=get_default_token_provider)
     token_provider_scopes: List[str] = ["https://cognitiveservices.azure.com/.default"]
     api_version: str = os.environ.get("OPENAI_API_VERSION") or "2024-02-01"
