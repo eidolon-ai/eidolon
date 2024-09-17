@@ -1,11 +1,11 @@
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Machine
 
 metadata:
   name: DEFAULT
 
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Machine
 
 metadata:

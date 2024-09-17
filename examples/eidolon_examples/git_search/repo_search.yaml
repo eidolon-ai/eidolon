@@ -1,5 +1,5 @@
 #file: noinspection KubernetesUnknownResourcesInspection
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: repo_search

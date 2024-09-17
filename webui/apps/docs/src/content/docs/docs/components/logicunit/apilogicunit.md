@@ -3,15 +3,16 @@ title: ApiLogicUnit
 description: "Description of ApiLogicUnit component"
 ---
 
-| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description    |
-| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const  | No         | -          | ApiLogicUnit         |
-| + [title](#title )                               | No      | string | No         | -          | Title                |
-| + [root_call_url](#root_call_url )               | No      | string | No         | -          | Root Call Url        |
-| + [open_api_location](#open_api_location )       | No      | string | No         | -          | Open Api Location    |
-| + [operations_to_expose](#operations_to_expose ) | No      | array  | No         | -          | Operations To Expose |
-| - [extra_header_params](#extra_header_params )   | No      | object | No         | -          | Extra Header Params  |
-| - [extra_query_params](#extra_query_params )     | No      | object | No         | -          | Extra Query Params   |
+| Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
+| ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
+| - [implementation](#implementation )             | No      | const   | No         | -          | ApiLogicUnit         |
+| + [title](#title )                               | No      | string  | No         | -          | Title                |
+| + [root_call_url](#root_call_url )               | No      | string  | No         | -          | Root Call Url        |
+| + [open_api_location](#open_api_location )       | No      | string  | No         | -          | Open Api Location    |
+| + [operations_to_expose](#operations_to_expose ) | No      | array   | No         | -          | Operations To Expose |
+| - [extra_header_params](#extra_header_params )   | No      | object  | No         | -          | Extra Header Params  |
+| - [extra_query_params](#extra_query_params )     | No      | object  | No         | -          | Extra Query Params   |
+| - [max_response_size](#max_response_size )       | No      | integer | No         | -          | Max Response Size    |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -198,5 +199,17 @@ Specific value: `"ApiLogicUnit"`
 | **Default**               | `{}`                                                                      |
 
 **Description:** Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)
+
+## <a name="max_response_size"></a>8. Property `max_response_size`
+
+**Title:** Max Response Size
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+| **Default**  | `51200`   |
+
+**Description:** Maximum size of response content to allow. If the response is larger than this, an error will be raised. Default is 50k
 
 ----------------------------------------------------------------------------------------------------------------------------

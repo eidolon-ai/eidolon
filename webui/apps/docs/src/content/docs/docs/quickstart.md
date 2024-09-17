@@ -28,45 +28,52 @@ The Quickstart uses Docker to run your agent machine. See <a href="https://docs.
 
 Running the Eidolon Quickstart requires only that you clone the repository to your machine and run a script.
 
-Use git to clone the quickstart to your local machine:
+1. Use git to clone the quickstart to your local machine:
 
 ```bash
 git clone https://github.com/eidolon-ai/eidolon-quickstart.git
 ```
 
-Next run the server in dev mode:
+2. Run the server in dev mode:
 
 ```bash
 cd eidolon-quickstart
 make docker-serve # or sudo make docker-serve
 ```
 
-This command downloads dependencies required to run the agent machine and starts Eidolon in "dev-mode". Dev mode provides a local http server and local memory, making it easy to get comfortable with Eidolon functionality.
+>🔎 The first time you run this command, you will be prompted to enter the OpenAI API Key. Quickstart API keys and other credentials are stored in `eidolon-quickstart/.env`.
 
->🔎 The first time you run this command, you will be prompted to enter the OpenAI API Key, and possibly other credentials. This information is stored in `eidolon-quickstart/.env`.
-
-If the server starts successfully, you should see the following output:
+<br>If the server starts successfully, you should see output similar to this:
 
 ```text title=output
- ✔ Network eidolon-quickstart_default           Created                  0.1s 
- ✔ Container eidolon-quickstart-agent-server-1  Created                  0.1s 
- ✔ Container eidolon-quickstart-webui-1         Created
+✔ Network eidolon-quickstart_default           Created                  0.1s 
+✔ Container eidolon-quickstart-agent-server-1  Created                  0.1s 
+✔ Container eidolon-quickstart-webui-1         Created
 Attaching to agent-server-1, webui-1
-webui-1         |   ▲ Next.js 15.0.0-canary.123
-webui-1         |   - Local:        http://xxxx:3000
-webui-1         |   - Network:      http://xxx.xx.x.x:3000
-webui-1         | 
-webui-1         |  ✓ Starting...
-webui-1         |  ✓ Ready in 256ms
+webui-1  |  ▲ Next.js 15.0.0-canary.123
+webui-1  |  - Local:        http://xxxx:3000
+webui-1  |  - Network:      http://xxx.xx.x.x:3000
+webui-1  | 
+webui-1  |  ✓ Starting...
+webui-1  |  ✓ Ready in 256ms
 ...
 agent-server-1  | INFO - Building machine 'local_dev'
 agent-server-1  | INFO - Starting agent 'hello-world'
 agent-server-1  | INFO - Collecting anonymous metrics, to disable metrics set DISABLE_ANONYMOUS_METRICS
 agent-server-1  | INFO - Server Started in 3.36s
 ```
-You are now up and running with a simple agent! 🎉
 
-🚨 Running into problems? Get help from us on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a> 📞. We want you to love working with Eidolon, and if there's a problem, we want to fix it.
+</br>
+
+**You are up and running with an agent!  🎉**
+
+Hello world! 👋
+</br></br>
+
+>🚨 A common error is not having a funded account. Go to <a href="https://platform.openai.com/settings/organization/billing/overview" target=_blank>OpenAI Billing</a> to get sorted out.
+
+>🤔 Running into problems? 
+Get help from us on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a> 📞 or submit an <a href="https://github.com/eidolon-ai/eidolon/issues/new/choose" target=_blank>issue on GitHub</a>. We want you to _love_ ❤️  working with Eidolon. If there's a problem, we want to fix it 🛠.
 
 ## Try it out!
 
@@ -81,17 +88,17 @@ To converse with your Eidolon agent for the first time:
 1. Open a web browser to http://localhost:3000 (or replace localhost with your server URL).
 2. Click the **Eidolon Developer Tool** app card.
 
-![WebUI](/src/content/images/eidolon-webui-developer-tools.png)
+![WebUI](~/assets/images/eidolon-webui-developer-tools.png)
 
 3. Click **Add Chat** from the upper left corner.
 
-![New Chat](/src/content/images/eidolon-webui-new-chat.png)
+![New Chat](~/assets/images/eidolon-webui-new-chat.png)
 
 4. Click **Start**.
 
 5. Say `hello!` to your agent in the text box.
 
-Did your agent respond to you? 🍾 Congratulations! You have successfully created your first agent machine. 
+Did your agent respond to you? 🍾 Congratulations! You successfully created your first agent machine. 
 
 ### Command Line Interface (CLI)
 
@@ -125,7 +132,7 @@ The agent's YAML file describes:
 
 - how to instantiate your agent from its **Agent Template** 🏭
 - including the `system_prompt`, which are instructions to the LLM 
-- any customization you might want, such as [swapping out the LLM](/docs/howto/swap_llm), custom tools, etc.
+- and any customization you might want, such as [swapping out the LLM](/docs/howto/swap_llm), custom tools, etc.
 
 ```yaml title=resources/hello-world.yaml
 apiVersion: server.eidolonai.com/v1alpha1
@@ -142,9 +149,15 @@ spec:
     Congratulate them on completing the quickstart and recommend that they star the Eidolon [GitHub repoitory](https://eidolonai.com/) to show support and join the project's [discord](https://discord.com/invite/6kVQrHpeqG) for questions and feedback after your first message with them.
 ```
 
+The `make docker-serve` command:
+- downloads dependencies required to run the agent machine
+- starts Eidolon in "dev-mode"
+
+Dev mode provides a local http server and local memory, making it easy to focus on and get comfortable with Eidolon functionality.
+
 ## Have Fun! Change the System Prompt
 
-To get a taste for how quickly you can deploy powerful agentic applications, make a simple change.
+To see how quickly you can iterate to build powerful agentic applications, make a simple change.
 
 Using a text editor, change the system prompt:
 
@@ -152,15 +165,17 @@ Using a text editor, change the system prompt:
   system_prompt: |
     Repeat the user prompt, then translate the user prompt into Spanish.
 ```
-You do not need to restart. Simply return to the WebUI or CLI and say hello again. Try different prompts and have fun!
+You do not need to restart. Simply return to the WebUI or CLI and say hello again. 
+
+Try different user prompts (_messages_ you send to an agent in the WebUI or CLI) and system prompts (_instructions_ in the resource file to tell the agent what to do with user messages). Have fun!
 
 ## Next Steps
 You can adapt this simple agent to do a lot of things! Try these things next.
 
 - [ ] ⭐ [Eidolon](https://github.com/eidolon-ai/eidolon) on GitHub. Eidolon is a fully open source project, and we love your support!
-- [ ] [Swap out the LLM](docs/howto/swap_llm)
+- [ ] [Swap out the LLM](/docs/howto/swap_llm)
 - [ ] Configure [agent-to-agent communication](/docs/howto/communication)
 - [ ] Configure [built-in components](/docs/howto/configure_builtins)
-- [ ] Use [structured inputs](docs/components/agents/simpleagent#3-property-system_prompt) for prompt templating
+- [ ] Use [structured inputs](/docs/components/agents/simpleagent#3-property-system_prompt) for prompt templating
 - [ ] Leverage your agent's [state machine](/docs/components/agents/simpleagent#51-actiondefinition)
 - [ ] Add new capabilities via [LogicUnits](/category/logicunit) (tools)

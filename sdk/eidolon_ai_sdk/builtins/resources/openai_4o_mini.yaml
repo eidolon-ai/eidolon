@@ -1,5 +1,5 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: GPT4o-mini
@@ -13,7 +13,7 @@ spec:
       implementation: OpenAIGPT
       model: "gpt-4o-mini"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "gpt-4o-mini"

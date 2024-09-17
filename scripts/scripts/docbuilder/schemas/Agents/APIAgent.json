@@ -96,6 +96,12 @@
       "description": "Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
       "title": "Extra Query Params",
       "type": "object"
+    },
+    "max_response_size": {
+      "default": 51200,
+      "description": "Maximum size of response content to allow. If the response is larger than this, an error will be raised. Default is 50k",
+      "title": "Max Response Size",
+      "type": "integer"
     }
   },
   "required": [

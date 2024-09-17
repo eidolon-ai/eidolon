@@ -101,13 +101,13 @@ os.environ.setdefault("MISTRAL_API_KEY", "key_not_needed_with_saved_cassettes")
 
 
 class TestSimpleTests:
-    apus = ["GPT4o", "GPT4-turbo", "ClaudeOpus", "MistralLarge"]
+    apus = ["GPT4o", "GPT4-turbo", "ClaudeSonnet", "MistralLarge", "GPTo1Preview"]
 
     @pytest.fixture(scope="class")
     async def llm_name(self, apu):
         if "Claude" in apu:
             return "anthropic_completion"
-        elif "GPT4" in apu:
+        elif "GPT" in apu:
             return "openai_completion"
         elif "Mistral" in apu:
             return "mistral_completion"
@@ -199,6 +199,11 @@ class TestSimpleTests:
     async def test_with_tools(self):
         process = await Agent.get("with_tools").create_process()
         resp = await process.action("converse", body="What is the meaning of life?")
+        assert "42" in resp.data.lower()
+
+    async def test_with_multiple_tool_calls(self):
+        process = await Agent.get("with_tools").create_process()
+        resp = await process.action("converse", body="Can you call the MeaningOfLife tool 5 times in parallel?")
         assert "42" in resp.data.lower()
 
     @pytest.fixture

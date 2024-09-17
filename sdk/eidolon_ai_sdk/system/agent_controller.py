@@ -270,41 +270,47 @@ class AgentController:
     async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
+
+        def get_start_event():
+            extra = {}
+            if "title" in handler.extra:
+                extra["title"] = handler.extra["title"]
+            if "sub_title" in handler.extra:
+                extra["sub_title"] = handler.extra["sub_title"]
+
+            return StartAgentCallEvent(
+                machine=AgentOS.current_machine_url(),
+                agent_name=self.name,
+                call_name=handler.name,
+                process_id=process.record_id,
+                **extra,
+            )
+
         events_to_store = []
         ended = False
         transitioned = False
         try:
             # allow the agent send a custom user input event or a custom start event
-            user_input_event_seen = False
-            start_event_seen = False
-            async for event in self.stream_agent_iterator(stream, process):
-                if event.is_root_and_type(UserInputEvent):
-                    user_input_event_seen = True
-                elif not user_input_event_seen:
-                    user_input_event_seen = True
-                    output_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))
-                    events_to_store.append(output_event)
-                    yield output_event
-                if event.is_root_and_type(StartAgentCallEvent):
-                    start_event_seen = True
-                elif not start_event_seen and not event.is_root_and_type(UserInputEvent):
-                    start_event_seen = True
-                    extra = {}
-                    if "title" in handler.extra:
-                        extra["title"] = handler.extra["title"]
-                    if "sub_title" in handler.extra:
-                        extra["sub_title"] = handler.extra["sub_title"]
+            seen_user_event = False
+            start_event = get_start_event()
+            if not handler.extra.get("custom_user_input_event", False):
+                seen_user_event = True
+                user_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))
+                events_to_store.extend([user_event, start_event])
+                yield user_event
+                yield start_event
 
-                    output_event = StartAgentCallEvent(
-                        machine=AgentOS.current_machine_url(),
-                        agent_name=self.name,
-                        call_name=handler.name,
-                        process_id=process.record_id,
-                        **extra,
-                    )
-                    events_to_store.append(output_event)
-                    yield output_event
-                if not ended:
+            async for event in self.stream_agent_iterator(stream, process):
+                if ended:
+                    logger.warning(f"Received event after end event ({event.event_type}), ignoring")
+                elif event.is_root_and_type(UserInputEvent):
+                    if seen_user_event:
+                        logger.warning("Duplicate user input event received from agent, ignoring")
+                    else:
+                        events_to_store.extend([event, start_event])
+                        yield event
+                        yield start_event
+                else:
                     ended = event.is_root_end_event()
                     transitioned = event.is_root_and_type(AgentStateEvent)
                     if (
@@ -317,8 +323,7 @@ class AgentController:
                     else:
                         events_to_store.append(event)
                     yield event
-                else:
-                    logger.warning(f"Received event after end event ({event.event_type}), ignoring")
+
         except asyncio.CancelledError:
             logger.info(f"Process {process.record_id} was cancelled")
             if not ended:

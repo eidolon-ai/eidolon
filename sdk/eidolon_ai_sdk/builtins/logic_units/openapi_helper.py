@@ -1,10 +1,11 @@
+import json
 from typing import List, Optional, Tuple, Any, Callable
 
 from jsonref import replace_refs
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json
+from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json, filter_and_reconstruct_json_from_paths
 
 
 class Operation(BaseModel):
@@ -32,7 +33,7 @@ class Action(BaseModel):
     tool_call: Callable[..., Any]
 
 
-def build_actions(operations_to_expose: List[Operation], schema: dict, title: str, call_fn: callable):
+def build_actions(operations_to_expose: List[Operation], schema: dict, title: str, max_size: int, call_fn: callable):
     schema = replace_refs(schema)
     actions = []
     for op_path, op in schema["paths"].items():
@@ -52,7 +53,7 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                     params[param["name"]] = schema_
                                     if "type" not in schema_:
                                         schema_["type"] = "string"
-                                    if param["required"]:
+                                    if "required" in param and param["required"]:
                                         required.append(param["name"])
                                 elif param["in"] == "path":
                                     params[param["name"]] = schema_
@@ -67,6 +68,9 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                 else:
                                     logger.error(f"Unsupported parameter location {param['in']}")
 
+                        params["fields__"] = dict(type="array", description="The fields to include in the response or omit for all fields. This is necessary to limit the response size. This should be a list of paths separated by '.'",
+                                                    items=dict(type="string", description="The path of a response field as it appears in the json schema"), required=False)
+
                         if "requestBody" in method:
                             params["__body__"] = _body_model(method, name)
                             required.append("__body__")
@@ -79,7 +83,7 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                 action_schema=dict(type="object", properties=params, required=required),
                                 description=description,
                                 tool_call=_call_endpoint(
-                                    operation.path, operation.result_filters, method_name, methodParams, call_fn
+                                    operation.path, operation.result_filters, method_name, methodParams, max_size, call_fn
                                 ),
                             )
                         )
@@ -126,7 +130,7 @@ def _convert_runtime_value(query_params: List[Tuple[str, Any]], param: dict, val
         query_params.append((param["name"], str(value)))
 
 
-def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, _method_params, call_fn: callable):
+def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, _method_params, max_content: int, call_fn: callable):
     method_params = _method_params.copy() if _method_params else None
     result_filters = result_filters.copy() if result_filters else None
 
@@ -147,12 +151,20 @@ def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, 
                 else:
                     logger.error(f"Unsupported parameter location {param['in']}")
         body = kwargs.pop("__body__", {})
+        fields = kwargs.pop("fields__", [])
 
         retValue = await call_fn(path_to_call, method, query_params, headers, body)
+
+        if fields:
+            retValue = filter_and_reconstruct_json_from_paths(retValue, fields)
 
         if result_filters:
             retValue = filter_and_reconstruct_json(retValue, result_filters)
 
+        content_size = len(json.dumps(retValue))
+        if content_size > max_content:
+            logger.error(f"Response content too large: {content_size} bytes")
+            return f"Content too large to process. Max content size is ${max_content}, size is ${content_size}."
         return retValue
 
     return _fn

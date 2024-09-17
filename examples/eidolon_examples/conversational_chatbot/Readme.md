@@ -27,7 +27,7 @@ open resources/conversational_agent.yaml
 and add the following content:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: conversational_agent

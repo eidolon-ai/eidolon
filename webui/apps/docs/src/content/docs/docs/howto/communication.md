@@ -28,7 +28,7 @@ When an agent is created, it will automatically be able to communicate with the 
 
 ### SimpleAgent Example
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: Developer

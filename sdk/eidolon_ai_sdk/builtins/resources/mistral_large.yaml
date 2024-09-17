@@ -1,5 +1,5 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: MistralLarge
@@ -13,7 +13,7 @@ spec:
     implementation: MistralGPT
     model: "mistral-large-latest"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "mistral-large-latest"

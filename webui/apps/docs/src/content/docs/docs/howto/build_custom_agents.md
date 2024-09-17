@@ -30,7 +30,7 @@ class CodeAgent:
 To use this agent template, you simply refer to it in your agent's yaml file by its fully qualified name.
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: hello_world

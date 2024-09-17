@@ -13,6 +13,7 @@ Overview of LLMModel components
 * [gpt-4-turbo](/docs/components/llmmodel/gpt-4-turbo/)
 * [gpt-4o](/docs/components/llmmodel/gpt-4o/)
 * [gpt-4o-mini](/docs/components/llmmodel/gpt-4o-mini/)
+* [gpt-o1-preview](/docs/components/llmmodel/gpt-o1-preview/)
 * [llama3-8b](/docs/components/llmmodel/llama3-8b/)
 * [mistral-large-latest](/docs/components/llmmodel/mistral-large-latest/)
 * [mistral-medium-latest](/docs/components/llmmodel/mistral-medium-latest/)

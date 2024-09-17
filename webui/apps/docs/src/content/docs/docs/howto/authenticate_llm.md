@@ -15,12 +15,15 @@ Note that each provider has its own terms and conditions regarding account payme
 
 Use the table below to get started with popular LLM providers. 
 
-| LLM | Provider Documentation | Eidolon API_Key attribute |
+| LLM | Provider Documentation | API_Key attribute |
 | --- | --- | --- |
-| Claude | <a href="https://docs.anthropic.com/en/docs/quickstart" target=_blank>Anthropic Quickstart</a>  | ANTHROPIC_API_KEY |
-| Mistral | <a href="https://docs.mistral.ai/getting-started/quickstart/#account-setup" target=_blank>Mistral AI Quickstart: Account Setup</a> | MISTRAL_API_KEY |
+| Claude | Anthropic <a href="https://console.anthropic.com/settings/keys" target=_blank>API Keys</a>, <a href="https://console.anthropic.com/settings/plans" target=_blank>billing</a> and <a href="https://console.anthropic.com/settings/usage" target=_blank>usage</a> | ANTHROPIC_API_KEY |
+| Mistral | Mistral <a href="https://console.mistral.ai/api-keys/" target=_blank>API Keys</a>, <a href="https://console.mistral.ai/billing/" target=_blank>billing</a> and <a href="https://console.mistral.ai/usage/" target=_blank>usage</a> | MISTRAL_API_KEY |
 | Ollama | <a href="https://github.com/ollama/ollama" target=_blank>Ollama Github</a> | n/a -- you run Ollama locally |
-| ChatGPT | <a href="https://platform.openai.com/docs/quickstart" target=_blank>OpenAI Developer Quickstart</a>  | OPENAI_API_KEY |
+| ChatGPT | OpenAI <a href="https://platform.openai.com/api-keys" target=_blank>API Keys</a>, <a href="https://platform.openai.com/settings/organization/billing/overview" target=_blank>billing</a> and <a href="https://platform.openai.com/usage" target=_blank>usage</a>  | OPENAI_API_KEY |
+
+>👉 Hot tip! Some LLM providers offer evaluation credits. It's a great way to get started and save money.
+
 
 ## Prompts During Installations
 

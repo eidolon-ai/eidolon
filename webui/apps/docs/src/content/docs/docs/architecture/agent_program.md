@@ -89,7 +89,7 @@ As we ascend the complexity ladder, agents are built to handle more autonomy and
 We've already seen how agents are defined in code, but let's see how they manifest themselves at configuration time in YAML. Here is the configuration for the **HelloWorld** agent:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: HelloWorld
@@ -105,7 +105,7 @@ However, most agents require some form of configuration to operate. This is wher
 For example, lets look at a simple agent that takes a question and returns a response:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: GenericAgent
 
 metadata:
