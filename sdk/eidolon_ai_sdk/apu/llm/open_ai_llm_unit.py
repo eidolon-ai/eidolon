@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import json
 import logging
@@ -6,6 +8,7 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 import yaml
 from openai import AsyncStream
 from openai.types.chat import ChatCompletionToolParam, ChatCompletionChunk, ChatCompletion, ChatCompletionMessage
+from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -14,7 +17,7 @@ from eidolon_ai_client.events import (
     ToolCall,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
-from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
+from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler, OpenAIConnectionHandlerSpec
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
     AssistantMessage,
@@ -25,7 +28,7 @@ from eidolon_ai_sdk.apu.llm_message import (
     UserMessageImage,
 )
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
 from eidolon_ai_sdk.util.image_utils import scale_image
 
 logger = eidolon_logger.getChild("llm_unit")
@@ -86,31 +89,30 @@ async def convert_to_openai(message: LLMMessage):
 gpt_4 = "gpt-4-turbo"
 
 
-class OpenAiGPTSpec(LLMUnitSpec):
+class OpenAILLMBaseSpec(LLMUnitSpec):
     model: AnnotatedReference[LLMModel, gpt_4]
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
     supports_system_messages: bool = True
     can_stream: bool = True
-    connection_handler: AnnotatedReference[OpenAIConnectionHandler]
 
 
-class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
+class OpenAILLMBase(LLMUnit, Specable[OpenAILLMBaseSpec]):
     temperature: float
     connection_handler: OpenAIConnectionHandler
 
-    def __init__(self, **kwargs):
+    def __init__(self, kwargs):
         LLMUnit.__init__(self, **kwargs)
         Specable.__init__(self, **kwargs)
         self.temperature = self.spec.temperature
         self.connection_handler = self.spec.connection_handler.instantiate()
 
     async def execute_llm(
-        self,
-        messages: List[LLMMessage],
-        tools: List[LLMCallFunction],
-        output_format: Union[Literal["str"], Dict[str, Any]],
+            self,
+            messages: List[LLMMessage],
+            tools: List[LLMCallFunction],
+            output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         is_string, request = await self._build_request(messages, tools, output_format)
 
@@ -125,6 +127,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         if isinstance(completion, ChatCompletion):
             async def _fn():
                 yield raw_completion
+
             completion = _fn()
         async for m_chunk in completion:
             chunk = cast(ChatCompletionChunk | ChatCompletionMessage, m_chunk)
@@ -160,7 +163,7 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
         logger.info(f"open ai llm tool calls: {json.dumps(tools_to_call)}", extra=dict(tool_calls=tools_to_call))
         if len(tools_to_call) > 0:
             for tool in tools_to_call:
-                tool_call = _convert_tool_call(tool)
+                tool_call = self._convert_tool_call(tool)
                 yield LLMToolCallRequestEvent(tool_call=tool_call)
         if not is_string:
             logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
@@ -254,11 +257,27 @@ class OpenAIGPT(LLMUnit, Specable[OpenAiGPTSpec]):
             )
         return tools
 
+    @staticmethod
+    def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
+        name = tool["name"]
+        try:
+            loads = json.loads(tool["arguments"])
+        except json.JSONDecodeError as e:
+            raise RuntimeError(f"Error decoding response function arguments for tool {name}") from e
+        return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
 
-def _convert_tool_call(tool: Dict[str, any]) -> ToolCall:
-    name = tool["name"]
-    try:
-        loads = json.loads(tool["arguments"])
-    except json.JSONDecodeError as e:
-        raise RuntimeError(f"Error decoding response function arguments for tool {name}") from e
-    return ToolCall(tool_call_id=tool["id"], name=name, arguments=loads)
+
+class OpenAiGPTSpec(OpenAILLMBaseSpec):
+    client_args: dict = {}
+    connection_handler: Optional[Reference[OpenAIConnectionHandler]] = Field(None, deprecated=True)
+
+
+class OpenAIGPT(OpenAILLMBase, Specable[OpenAiGPTSpec]):
+    def __init__(self, **kwargs):
+        if self.spec.connection_handler:
+            logger.warning(
+                "\"connection_handler\" is deprecated and will be removed. Use client_args if customizing an openai connection or AzureLLMUnit if connecting to Azure.")
+            connection_handler = self.spec.connection_handler.instantiate()
+        else:
+            connection_handler = OpenAIConnectionHandler(spec=OpenAIConnectionHandlerSpec(**self.spec.client_args))
+        super().__init__(connection_handler=connection_handler, ** kwargs)
