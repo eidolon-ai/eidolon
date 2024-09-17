@@ -152,6 +152,7 @@ export default defineConfig({
               label: 'LLMUnit', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmunit/overview'},
                 {label: 'AnthropicLLMUnit', link: '/docs/components/llmunit/anthropicllmunit'},
+                {label: 'AzureLLMUnit', link: '/docs/components/llmunit/azurellmunit'},
                 {label: 'MistralGPT', link: '/docs/components/llmunit/mistralgpt'},
                 {label: 'OllamaLLMUnit', link: '/docs/components/llmunit/ollamallmunit'},
                 {label: 'OpenAIGPT', link: '/docs/components/llmunit/openaigpt'},

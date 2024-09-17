@@ -42,11 +42,22 @@
       "title": "Can Stream",
       "type": "boolean"
     },
+    "client_args": {
+      "default": {},
+      "title": "Client Args",
+      "type": "object"
+    },
     "connection_handler": {
-      "$ref": "file:../OpenAIConnectionHandler/overview.json",
-      "default": {
-        "implementation": "OpenAIConnectionHandler"
-      }
+      "anyOf": [
+        {
+          "$ref": "file:../OpenAIConnectionHandler/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "deprecated": true
     }
   },
   "title": "OpenAIGPT",
