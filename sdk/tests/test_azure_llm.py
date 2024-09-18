@@ -2,7 +2,7 @@ import pytest
 
 from eidolon_ai_client.client import Agent
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
-from eidolon_ai_sdk.system.resources.resources_base import load_resources, Metadata
+from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.test_utils.machine import TestMachine
 from eidolon_ai_sdk.test_utils.server import serve_thread
 
