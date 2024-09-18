@@ -10,4 +10,5 @@ Overview of LogicUnit components
 * [OpenAIImageUnit](/docs/components/logicunit/openaiimageunit/)
 * [OpenAiSpeech](/docs/components/logicunit/openaispeech/)
 * [Search](/docs/components/logicunit/search/)
+* [VectaraSearch](/docs/components/logicunit/vectarasearch/)
 * [WebSearch](/docs/components/logicunit/websearch/)

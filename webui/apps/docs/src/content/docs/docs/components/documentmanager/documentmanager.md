@@ -12,8 +12,8 @@ provided by loader) into similarity memory where they can be searched.
 | + [name](#name )                           | No      | string                       | No         | -                                          | Name                                     |
 | - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -                                          | Recheck Frequency                        |
 | - [loader](#loader )                       | No      | Reference[DocumentLoader]    | No         | In [DocumentLoader](/docs/components/documentloader/overview)    | Overview of DocumentLoader components    |
-| - [doc_processor](#doc_processor )         | No      | Reference[DocumentProcessor] | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components |
 | - [concurrency](#concurrency )             | No      | integer                      | No         | -                                          | Concurrency                              |
+| - [doc_processor](#doc_processor )         | No      | Reference[DocumentProcessor] | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -60,18 +60,7 @@ Specific value: `"DocumentManager"`
 
 **Description:** Overview of DocumentLoader components
 
-## <a name="doc_processor"></a>5. Property `doc_processor`
-
-|                |                                           |
-| -------------- | ----------------------------------------- |
-| **Type**       | `Reference[DocumentProcessor]`            |
-| **Required**   | No                                        |
-| **Default**    | `{"implementation": "DocumentProcessor"}` |
-| **Defined in** | [DocumentProcessor](/docs/components/documentprocessor/overview)   |
-
-**Description:** Overview of DocumentProcessor components
-
-## <a name="concurrency"></a>6. Property `concurrency`
+## <a name="concurrency"></a>5. Property `concurrency`
 
 **Title:** Concurrency
 
@@ -82,5 +71,16 @@ Specific value: `"DocumentManager"`
 | **Default**  | `8`       |
 
 **Description:** The number of concurrent tasks to run.
+
+## <a name="doc_processor"></a>6. Property `doc_processor`
+
+|                |                                           |
+| -------------- | ----------------------------------------- |
+| **Type**       | `Reference[DocumentProcessor]`            |
+| **Required**   | No                                        |
+| **Default**    | `{"implementation": "DocumentProcessor"}` |
+| **Defined in** | [DocumentProcessor](/docs/components/documentprocessor/overview)   |
+
+**Description:** Overview of DocumentProcessor components
 
 ----------------------------------------------------------------------------------------------------------------------------
