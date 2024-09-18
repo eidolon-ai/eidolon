@@ -122,7 +122,17 @@ class OpenAILLMBase(LLMUnit, Specable[OpenAILLMBaseSpec]):
 
         complete_message = ""
         tools_to_call = []
-        raw_completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
+        try:
+            raw_completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
+        except Exception as e:
+            print("\nDEBUG START\n")
+            print(self.connection_handler.__dict__)
+            print("\n")
+            print(request)
+            print("\n")
+            print(e.response.__dict__)
+            print("\nDEBUG END\n")
+            raise
         completion = raw_completion
         if isinstance(completion, ChatCompletion):
             async def _fn():

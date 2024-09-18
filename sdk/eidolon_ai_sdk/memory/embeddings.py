@@ -89,7 +89,8 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
 
     async def stop(self):
         await super().stop()
-        await self.llm.close()
+        if self.llm:
+            await self.llm.close()
         self.llm = None
 
     def get_llm(self):
