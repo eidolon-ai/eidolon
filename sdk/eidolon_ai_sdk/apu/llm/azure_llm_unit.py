@@ -10,6 +10,16 @@ from eidolon_ai_sdk.system.reference_model import Specable, Reference
 
 
 class AzureLLMSpec(OpenAILLMBaseSpec):
+    """
+    Azure LLM Unit. Requires model to be defined. See https://www.eidolonai.com/docs/howto/swap_llm for more details.
+
+    Authentication is handled oot with one of two mechanisms:
+    * Static token defined with AZURE_OPENAI_API_KEY
+    * Token provider defined by AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
+
+    To use an alternative authentication mechanism, provide a custom token provider.
+    """
+
     azure_endpoint: str = Field(description="The azure_endpoint for the Azure LLM API. ie, \"https://eidolon-azure.openai.azure.com/\"")
     model: Reference[LLMModel] = Field(
         description="The model to use for the LLM. Since Azure deployments use custom names, no default is provided. See https://www.eidolonai.com/docs/howto/swap_llm for more details. on defining custom models."
