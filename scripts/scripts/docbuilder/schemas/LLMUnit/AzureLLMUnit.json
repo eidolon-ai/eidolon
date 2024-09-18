@@ -59,6 +59,11 @@
       "title": "Can Stream",
       "type": "boolean"
     },
+    "base_url": {
+      "description": "The base URL for the Azure LLM API. ie, \"https://eidolon-azure.openai.azure.com/openai\"",
+      "title": "Base Url",
+      "type": "string"
+    },
     "azure_ad_token_provider": {
       "anyOf": [
         {
@@ -91,7 +96,8 @@
     }
   },
   "required": [
-    "model"
+    "model",
+    "base_url"
   ],
   "title": "AzureLLMUnit",
   "type": "object"
