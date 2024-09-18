@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from eidolon_ai_client.client import Agent
@@ -6,6 +8,8 @@ from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.test_utils.machine import TestMachine
 from eidolon_ai_sdk.test_utils.server import serve_thread
 
+
+os.environ.setdefault("AZURE_OPENAI_API_KEY", "testkey")
 
 @pytest.fixture(scope="module")
 def machine(tmp_path_factory):
