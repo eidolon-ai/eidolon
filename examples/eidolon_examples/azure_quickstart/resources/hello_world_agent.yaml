@@ -10,7 +10,7 @@ spec:
   apu:
     llm_unit:
       implementation: AzureLLMUnit
-      base_url: https://eidolon-azure.openai.azure.com/openai
+      azure_endpoint: https://testinstancename.openai.azure.com/
       model:
-        implementation: gpt-4o
-        name: custom-azure-deployment
+        implementation: gpt-3.5-turbo
+        name: gpt-35-turbo-16k

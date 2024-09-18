@@ -10,7 +10,7 @@ from eidolon_ai_sdk.system.reference_model import Specable, Reference
 
 
 class AzureLLMSpec(OpenAILLMBaseSpec):
-    base_url: str = Field(description="The base URL for the Azure LLM API. ie, \"https://eidolon-azure.openai.azure.com/openai\"")
+    azure_endpoint: str = Field(description="The azure_endpoint for the Azure LLM API. ie, \"https://eidolon-azure.openai.azure.com/\"")
     model: Reference[LLMModel] = Field(
         description="The model to use for the LLM. Since Azure deployments use custom names, no default is provided. See https://www.eidolonai.com/docs/howto/swap_llm for more details. on defining custom models."
     )
@@ -27,7 +27,7 @@ class AzureLLMUnit(OpenAILLMBase, Specable[AzureLLMSpec]):
             azure_ad_token_provider=self.spec.azure_ad_token_provider,
             token_provider_scopes=self.spec.token_provider_scopes,
             api_version=self.spec.api_version,
-            base_url=self.spec.base_url,
+            azure_endpoint=self.spec.azure_endpoint,
             **self.spec.client_args
         ))
         super().__init__(connection_handler=connection_handler, ** kwargs)
