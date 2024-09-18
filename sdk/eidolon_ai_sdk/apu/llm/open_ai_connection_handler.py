@@ -48,7 +48,7 @@ class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
         - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
     """
 
-    azure_ad_token_provider: Optional[Reference] = Field(default_factory=get_default_token_provider)
+    azure_ad_token_provider: Optional[Reference[object]] = Field(default_factory=get_default_token_provider)
     token_provider_scopes: List[str] = ["https://cognitiveservices.azure.com/.default"]
     api_version: str = os.environ.get("OPENAI_API_VERSION") or "2024-02-01"
 

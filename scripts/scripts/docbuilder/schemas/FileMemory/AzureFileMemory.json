@@ -1,19 +1,4 @@
 {
-  "$defs": {
-    "Reference": {
-      "additionalProperties": true,
-      "description": "Used to create references to other classes. t is designed to be used with two type variables, `B` and `D` which are\nthe type bound and default type respectively. Neither are required, and if only one type is provided it is assumed\nto be the bound. Bound is used as the default if no default is provided. default can also be a string which will be\nlooked up from the OS ReferenceResources.\n\nExamples:\n    Reference(implementation=fqn(Foo)                           # Returns an instance of Foo\n    Reference[FooBase](implementation=fqn(Foo)).instantiate()   # Returns an instance of Foo\n    Reference[FooBase](implementation=fqn(Bar))                 # Raises ValueError\n    Reference[FooBase, Foo]().instantiate()                     # Returns an instance of Foo\n    Reference[FooBase]().instantiate()                          # Returns an instance of FooBase\n\nAttributes:\n    _bound: This is a type variable `B` that represents the bound type of the reference. It defaults to `object`.\n    _default: This is a type variable `D` that represents the default type of the reference. It defaults to `None`.\n    implementation: This is a string that represents the fully qualified name of the class that the reference points to. It is optional and can be set to `None`.\n    **extra: This is a dictionary that can hold any additional specifications for the reference. It is optional and can be set to `None`.\n\nMethods:\n    instantiate: This method is used to create an instance of the class that the reference points to.",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "Reference",
-      "type": "object"
-    }
-  },
   "properties": {
     "implementation": {
       "const": "AzureFileMemory",
@@ -22,7 +7,20 @@
     "azure_ad_token_provider": {
       "anyOf": [
         {
-          "$ref": "#/$defs/Reference"
+          "additionalProperties": true,
+          "properties": {
+            "implementation": {
+              "default": "builtins.object",
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "reference_pointer": {
+            "default_impl": "builtins.object",
+            "type": "object"
+          },
+          "title": "object Reference",
+          "type": "object"
         },
         {
           "type": "null"
