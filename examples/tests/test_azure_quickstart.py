@@ -1,11 +1,6 @@
-import os
-
 import pytest
-import requests
 
-from eidolon_ai_client.client import Agent, Machine
-from eidolon_ai_client.util.aiohttp import AgentError
-from eidolon_ai_client.util.request_context import RequestContext
+from eidolon_ai_client.client import Agent
 from eidolon_ai_sdk.system.resources.resources_base import load_resources
 from eidolon_ai_sdk.test_utils.machine import TestMachine
 from eidolon_ai_sdk.test_utils.server import serve_thread
