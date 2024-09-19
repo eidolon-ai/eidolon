@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { PaperclipIcon } from 'lucide-react';
 import { setMetadata, uploadFile } from "../client-api-helpers/files-helper.ts";
 import { FileHandle } from "@eidolon-ai/client";

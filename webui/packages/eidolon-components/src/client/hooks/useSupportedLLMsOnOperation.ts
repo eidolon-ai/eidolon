@@ -9,7 +9,7 @@ export function useSupportedLLMsOnOperation(machineURL: string, copilotParams: C
   function updateSelectedLLM(opInfo: OperationInfo) {
     const schema = opInfo.schema
     if (schema?.properties?.execute_on_apu) {
-      let property = schema?.properties?.execute_on_apu as Record<string, any>
+      const property = schema?.properties?.execute_on_apu as Record<string, unknown>
       if (property?.default) {
         setSelectedLLM(property.default)
       } else {
@@ -26,7 +26,7 @@ export function useSupportedLLMsOnOperation(machineURL: string, copilotParams: C
         updateSelectedLLM(copilotParams.operationInfo)
       } else {
         getOperations(machineURL, copilotParams.agent).then(ops => {
-          let opInfo = ops.find(op => op.name === copilotParams.operation)
+          const opInfo = ops.find(op => op.name === copilotParams.operation)
           if (opInfo) {
             copilotParams.operationInfo = opInfo
             updateSelectedLLM(opInfo)

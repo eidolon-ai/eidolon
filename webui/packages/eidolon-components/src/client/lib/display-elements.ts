@@ -28,7 +28,7 @@ export interface CanceledElement extends DisplayElement {
 
 export interface UserRequestElement extends DisplayElement {
   type: "user-request",
-  content: any
+  content: unknown
 }
 
 export interface MarkdownElement extends DisplayElement {
@@ -38,7 +38,7 @@ export interface MarkdownElement extends DisplayElement {
 
 export interface JsonElement extends DisplayElement {
   type: "json",
-  content: any
+  content: unknown
 }
 
 export interface ToolCallElement extends DisplayElement {
@@ -49,7 +49,7 @@ export interface ToolCallElement extends DisplayElement {
   is_agent: boolean,
   contextId: string,
   children: DisplayElement[]
-  arguments: Record<string, any>
+  arguments: Record<string, unknown>
 }
 
 export interface ToolCallEndElement extends DisplayElement {

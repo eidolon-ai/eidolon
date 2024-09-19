@@ -1,6 +1,6 @@
 'use client'
 
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import {ChevronRight, Pin} from 'lucide-react';
 import {useMouseTracking} from "../utils/mouseDetection.ts";
 

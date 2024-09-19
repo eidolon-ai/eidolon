@@ -9,7 +9,7 @@ export async function getAgents(machineUrl: string) {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
-      return resp.json().then((json: Record<string, any>) => json as string[])
+      return resp.json().then((json: Record<string, unknown>) => json as string[])
     })
 }
 
@@ -20,7 +20,7 @@ export async function getOperations(machineUrl: string, agent: string) {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
-    return resp.json().then((json: Record<string, any>) => json as OperationInfo[])
+    return resp.json().then((json: Record<string, unknown>) => json as OperationInfo[])
   })
 }
 
@@ -32,6 +32,6 @@ export async function getApps(): Promise<Record<string, EidolonApp>> {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
-      return resp.json().then((json: Record<string, any>) => json as Record<string, EidolonApp>)
+      return resp.json().then((json: Record<string, unknown>) => json as Record<string, EidolonApp>)
     })
 }

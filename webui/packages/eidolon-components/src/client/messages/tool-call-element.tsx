@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, Circle, Wrench } from 'lucide-react';
 import { ToolCallElement } from "../lib/display-elements.ts";
 import { ChatDisplayElement } from "./chat-display-element.js";

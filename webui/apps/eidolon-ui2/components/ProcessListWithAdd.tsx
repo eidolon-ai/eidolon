@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useState} from "react";
+import {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
 import {PlusCircle} from "lucide-react";
 import {CopilotParams, createProcess, EidolonApp, ProcessList, useProcesses} from "@eidolon-ai/components/client";

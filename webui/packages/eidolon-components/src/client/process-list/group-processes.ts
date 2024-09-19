@@ -11,7 +11,7 @@ export const groupProcessesByUpdateDate = async (processes: ProcessStatus[]) => 
 }
 
 const groupChat = (item: ProcessStatus) => {
-  let dateTime = DateTime.fromISO(item.updated);
+  const dateTime = DateTime.fromISO(item.updated);
   return groups.reduce((reducer, fn) => {
     const test = fn(dateTime)
     return (reducer.length || !test[0]) ? reducer : test[1]
@@ -64,7 +64,7 @@ const groups = [
       .contains(date), date.toFormat('LLLL')]
   },
   // older
-  (_: DateTime): testTuple => {
+  (): testTuple => {
     return [true, "Older"]
   },
 ]

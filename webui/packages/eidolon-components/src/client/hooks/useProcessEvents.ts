@@ -8,7 +8,7 @@ import {getProcessStatus} from "../client-api-helpers/process-helper.ts";
 import {EidolonEvent, RecordUsage} from "../provider/eidolon_provider.tsx";
 
 export function useProcessEvents(machineUrl: string, agent: string, processId: string,
-                                 // eslint-disable-next-line no-unused-vars
+                                  
                                  usageUpdateEvent: (event: EidolonEvent) => void
 ) {
   const [processState, setProcessState] = useState<ProcessStatus | undefined>(undefined)
@@ -46,7 +46,7 @@ export function useProcessEvents(machineUrl: string, agent: string, processId: s
     })
   }
 
-  const executeAction = async (machine: string, agent: string, operation: string, data: any) => {
+  const executeAction = async (machine: string, agent: string, operation: string, data: unknown) => {
     setProcessState({...processState, state: "processing"} as ProcessStatus)
     if (cancelFetchController.current) {
       cancelFetchController.current.abort();

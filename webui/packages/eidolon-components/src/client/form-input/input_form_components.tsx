@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
+import { useState, KeyboardEvent, ChangeEvent } from 'react';
 import { ArrowUpCircleIcon, XCircleIcon } from 'lucide-react';
 import { CopilotParams } from '../lib/util.ts';
 import { FileUpload } from '../file-upload/file-upload.tsx';

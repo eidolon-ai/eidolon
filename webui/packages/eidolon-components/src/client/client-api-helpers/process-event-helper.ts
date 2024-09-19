@@ -49,7 +49,7 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
 }
 
 export async function executeOperation(machineUrl: string, agent: string, operation: string, processId: string,
-                                       data: string | Record<string, any>) {
+                                       data: string | Record<string, unknown>) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     method: "POST",
     headers: {
@@ -61,9 +61,9 @@ export async function executeOperation(machineUrl: string, agent: string, operat
   return await response.json()
 }
 
-export async function streamOperation(machineUrl: string, agent: string, operation: string, processId: string, data: Record<string, any>,
-                                      // eslint-disable-next-line no-unused-vars
-                                      handleEvent: (data: Record<string, any>) => void,
+export async function streamOperation(machineUrl: string, agent: string, operation: string, processId: string, data: Record<string, unknown>,
+                                       
+                                      handleEvent: (data: Record<string, unknown>) => void,
 ) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     method: "POST",
@@ -90,7 +90,7 @@ export async function streamOperation(machineUrl: string, agent: string, operati
     }
   };
 
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const {done, value} = await reader.read();
     if (done) break;
@@ -100,8 +100,8 @@ export async function streamOperation(machineUrl: string, agent: string, operati
 }
 
 export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
-                                             data: Record<string, any>, elementsAndLookup: ElementsAndLookup,
-                                             // eslint-disable-next-line no-unused-vars
+                                             data: Record<string, unknown>, elementsAndLookup: ElementsAndLookup,
+                                              
                                              updateElements: (elements: ElementsAndLookup) => void, cancelFetchController: AbortController) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     signal: cancelFetchController.signal,
@@ -131,7 +131,7 @@ export async function executeServerOperation(machineUrl: string, agent: string, 
     }
   };
 
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const {done, value} = await reader.read();
     if (done) break;

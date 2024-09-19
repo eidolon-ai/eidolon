@@ -13,11 +13,11 @@ export async function uploadFile(machineUrl: string, process_id: string, file: B
       if (resp.status === 404) {
         return null
       }
-      return resp.json().then((json: Record<string, any>) => json as FileHandle)
+      return resp.json().then((json: Record<string, unknown>) => json as FileHandle)
     })
 }
 
-export async function setMetadata(machineUrl: string, process_id: string, file_id: string, metadata: Record<string, any>) {
+export async function setMetadata(machineUrl: string, process_id: string, file_id: string, metadata: Record<string, unknown>) {
   return fetch(`/api/eidolon/process/${process_id}/files/${file_id}?machineURL=${machineUrl}`, {
     headers: {
       "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export async function setMetadata(machineUrl: string, process_id: string, file_i
       if (resp.status === 404) {
         return null
       }
-      return resp.json().then((json: Record<string, any>) => json as FileHandle)
+      return resp.json().then((json: Record<string, unknown>) => json as FileHandle)
     })
 }
 

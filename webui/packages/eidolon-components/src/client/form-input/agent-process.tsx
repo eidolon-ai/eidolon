@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { AgentInputForm } from "./agent-input-form.js";
 import { OperationInfo, ProcessStatus } from "@eidolon-ai/client";
 import { ArrowUpCircleIcon, XCircleIcon, PlusCircleIcon, MinusCircleIcon } from 'lucide-react';
@@ -17,7 +17,7 @@ export function AgentProcess({ operations, processState, handleAction, handleCan
   const [bigForm, setBigForm] = useState(false);
 
   const handleSubmit = (formJson: Record<string, any>) => {
-    let operation = formJson.operation as OperationInfo;
+    const operation = formJson.operation as OperationInfo;
     handleAction(operation.machine, operation.agent, operation.name, formJson.data);
   };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronRight, ChevronDown, Trash2 } from 'lucide-react';
 import { ProcessStatus } from "@eidolon-ai/client";
 import { ProcessStatusWithChildren } from "../client-api-helpers/process-helper.ts";

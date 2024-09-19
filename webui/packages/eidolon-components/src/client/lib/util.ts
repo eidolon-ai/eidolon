@@ -37,16 +37,16 @@ export interface DevParams {
 }
 
 
-export function processResponse(promise: Promise<any>) {
+export function processResponse(promise: Promise<unknown>) {
   return convertException(promise.then(Response.json))
 }
 
-export function convertException(promise: Promise<any>) {
+export function convertException(promise: Promise<unknown>) {
   return promise.catch((e) => {
     if (e instanceof HttpException) {
       return new Response(e.statusText, {status: e.status, statusText: e.statusText})
     } else if (e instanceof Error) {
-      // @ts-ignore
+      // @ts-expect-error - cause is not defined in Error
       if (e?.cause?.code === 'ECONNREFUSED') {
         return new Response('Server Down', {status: 503})
       }
