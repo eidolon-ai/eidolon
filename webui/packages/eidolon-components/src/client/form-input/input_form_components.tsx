@@ -4,7 +4,7 @@ import { CopilotParams } from '../lib/util.ts';
 import { FileUpload } from '../file-upload/file-upload.tsx';
 import { FileHandle } from '@eidolon-ai/client';
 import { CircularProgressWithContent } from '../lib/circular-progress-with-content.tsx';
-import Recorder from '../audio/recorder.js';
+import RecorderElement from '../audio/recorder-element.js';
 
 export function ProcessTerminated() {
   return (
@@ -92,7 +92,7 @@ export function CopilotInputForm({
           />
         </div>
         {copilotParams.allowSpeech && (
-          <Recorder
+          <RecorderElement
             machineUrl={machineUrl}
             agent={copilotParams.speechAgent!}
             operation={copilotParams.speechOperation!}

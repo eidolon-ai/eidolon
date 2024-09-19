@@ -12,7 +12,7 @@ interface RecorderProps {
   setText: (text: string) => void;
 }
 
-export default function Recorder({ machineUrl, agent, operation, setText }: RecorderProps) {
+export default function RecorderElement({ machineUrl, agent, operation, setText }: RecorderProps) {
   const [recording, setRecording] = useState(false);
   const [recordingDeviceError, setRecordingDeviceError] = useState<string | null>(null);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
