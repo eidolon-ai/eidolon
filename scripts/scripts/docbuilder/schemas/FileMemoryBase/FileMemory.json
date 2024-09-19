@@ -12,5 +12,8 @@
     }
   },
   "title": "FileMemory",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

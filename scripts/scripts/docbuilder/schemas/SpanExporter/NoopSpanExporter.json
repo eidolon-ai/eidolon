@@ -6,5 +6,8 @@
       "const": "NoopSpanExporter",
       "description": "NoopSpanExporter"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

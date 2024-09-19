@@ -5,7 +5,7 @@
       "description": "MistralGPT"
     },
     "model": {
-      "$ref": "file:../LLMModel/overview.json",
+      "$ref": "../LLMModel/overview.json",
       "default": {
         "implementation": "mistral-large-latest"
       }
@@ -39,5 +39,8 @@
     }
   },
   "title": "MistralGPT",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

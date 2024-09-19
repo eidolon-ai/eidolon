@@ -3,20 +3,20 @@ title: AnthropicLLMUnit
 description: "Description of AnthropicLLMUnit component"
 ---
 
-| Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |
-| ------------------------------------ | ------- | ------------------- | ---------- | --------------------------------- | ------------------------------- |
-| - [implementation](#implementation ) | No      | const               | No         | -                                 | AnthropicLLMUnit                |
+| Property                             | Pattern | Type                | Deprecated | Definition                   | Title/Description               |
+| ------------------------------------ | ------- | ------------------- | ---------- | ---------------------------- | ------------------------------- |
+| + [implementation](#implementation ) | No      | const               | No         | -                            | AnthropicLLMUnit                |
 | - [model](#model )                   | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
-| - [temperature](#temperature )       | No      | number              | No         | -                                 | Temperature                     |
-| - [max_tokens](#max_tokens )         | No      | integer             | No         | -                                 | Max Tokens                      |
-| - [client_args](#client_args )       | No      | object              | No         | -                                 | Client Args                     |
+| - [temperature](#temperature )       | No      | number              | No         | -                            | Temperature                     |
+| - [max_tokens](#max_tokens )         | No      | integer             | No         | -                            | Max Tokens                      |
+| - [client_args](#client_args )       | No      | object              | No         | -                            | Client Args                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** AnthropicLLMUnit
 
@@ -29,7 +29,7 @@ Specific value: `"AnthropicLLMUnit"`
 | **Type**       | `Reference[LLMModel]`                          |
 | **Required**   | No                                             |
 | **Default**    | `{"implementation": "claude-3-opus-20240229"}` |
-| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)                 |
+| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)                      |
 
 **Description:** Overview of LLMModel components
 

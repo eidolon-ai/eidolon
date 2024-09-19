@@ -41,5 +41,8 @@
     }
   },
   "title": "claude-3-opus-20240229",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

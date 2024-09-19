@@ -12,5 +12,8 @@
     }
   },
   "title": "LocalFileMemory",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

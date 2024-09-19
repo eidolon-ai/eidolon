@@ -41,5 +41,8 @@
     }
   },
   "title": "claude-3-5-sonnet-20240620",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

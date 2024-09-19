@@ -5,7 +5,7 @@ description: "Description of claude-3-opus-20240229 component"
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | ---------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | claude-3-opus-20240229 |
+| + [implementation](#implementation )             | No      | const   | No         | -          | claude-3-opus-20240229 |
 | - [human_name](#human_name )                     | No      | string  | No         | -          | Human Name             |
 | - [name](#name )                                 | No      | string  | No         | -          | Name                   |
 | - [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit    |
@@ -19,7 +19,7 @@ description: "Description of claude-3-opus-20240229 component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** claude-3-opus-20240229
 

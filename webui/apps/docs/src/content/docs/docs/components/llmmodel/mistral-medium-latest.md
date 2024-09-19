@@ -5,7 +5,7 @@ description: "Description of mistral-medium-latest component"
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description     |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | --------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | mistral-medium-latest |
+| + [implementation](#implementation )             | No      | const   | No         | -          | mistral-medium-latest |
 | - [human_name](#human_name )                     | No      | string  | No         | -          | Human Name            |
 | - [name](#name )                                 | No      | string  | No         | -          | Name                  |
 | - [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit   |
@@ -19,7 +19,7 @@ description: "Description of mistral-medium-latest component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** mistral-medium-latest
 

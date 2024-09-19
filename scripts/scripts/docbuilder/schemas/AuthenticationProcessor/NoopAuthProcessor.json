@@ -6,5 +6,8 @@
       "const": "NoopAuthProcessor",
       "description": "NoopAuthProcessor"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

@@ -6,5 +6,8 @@
     }
   },
   "title": "ResultSummarizer",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

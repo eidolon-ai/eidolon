@@ -12,5 +12,8 @@
     }
   },
   "title": "RAGFusionReranker",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

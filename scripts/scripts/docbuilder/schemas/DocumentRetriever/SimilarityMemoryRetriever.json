@@ -6,5 +6,8 @@
     }
   },
   "title": "SimilarityMemoryRetriever",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

@@ -3,10 +3,10 @@
   "description": "Overview of Embedding components",
   "anyOf": [
     {
-      "$ref": "file:./NoopEmbedding.json"
+      "$ref": "./NoopEmbedding.json"
     },
     {
-      "$ref": "file:./OpenAIEmbedding.json"
+      "$ref": "./OpenAIEmbedding.json"
     }
   ],
   "reference_group": {

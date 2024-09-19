@@ -6,5 +6,8 @@
       "const": "LocalSymbolicMemory",
       "description": "LocalSymbolicMemory"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

@@ -5,7 +5,7 @@ description: "Description of OpenAIConnectionHandler component"
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | OpenAIConnectionHandler |
+| + [implementation](#implementation ) | No      | const  | No         | -          | OpenAIConnectionHandler |
 | - [](#additionalProperties )         | No      | object | No         | -          | -                       |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -13,7 +13,7 @@ description: "Description of OpenAIConnectionHandler component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** OpenAIConnectionHandler
 

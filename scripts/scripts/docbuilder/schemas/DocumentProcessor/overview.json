@@ -3,7 +3,7 @@
   "description": "Overview of DocumentProcessor components",
   "anyOf": [
     {
-      "$ref": "file:./DocumentProcessor.json"
+      "$ref": "./DocumentProcessor.json"
     }
   ],
   "reference_group": {

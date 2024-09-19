@@ -3,7 +3,7 @@
   "description": "Overview of UsageClient components",
   "anyOf": [
     {
-      "$ref": "file:./UsageClient.json"
+      "$ref": "./UsageClient.json"
     }
   ],
   "reference_group": {

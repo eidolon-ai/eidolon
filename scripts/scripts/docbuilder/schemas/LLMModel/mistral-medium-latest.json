@@ -41,5 +41,8 @@
     }
   },
   "title": "mistral-medium-latest",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

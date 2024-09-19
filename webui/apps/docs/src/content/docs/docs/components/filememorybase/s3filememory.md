@@ -5,7 +5,7 @@ description: "Description of S3FileMemory component"
 
 | Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description        |
 | -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#implementation )                     | No      | const   | No         | -          | S3FileMemory             |
+| + [implementation](#implementation )                     | No      | const   | No         | -          | S3FileMemory             |
 | + [bucket](#bucket )                                     | No      | string  | No         | -          | Bucket                   |
 | - [region_name](#region_name )                           | No      | string  | No         | -          | Region Name              |
 | - [aws_access_key_id](#aws_access_key_id )               | No      | string  | No         | -          | Aws Access Key Id        |
@@ -19,7 +19,7 @@ description: "Description of S3FileMemory component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** S3FileMemory
 

@@ -3,10 +3,10 @@
   "description": "Overview of FunctionalAuthorizer components",
   "anyOf": [
     {
-      "$ref": "file:./GlobPatternFunctionalAuthorizer.json"
+      "$ref": "./GlobPatternFunctionalAuthorizer.json"
     },
     {
-      "$ref": "file:./NoopFunctionalAuth.json"
+      "$ref": "./NoopFunctionalAuth.json"
     }
   ],
   "reference_group": {

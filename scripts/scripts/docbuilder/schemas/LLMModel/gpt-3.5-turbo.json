@@ -41,5 +41,8 @@
     }
   },
   "title": "gpt-3.5-turbo",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

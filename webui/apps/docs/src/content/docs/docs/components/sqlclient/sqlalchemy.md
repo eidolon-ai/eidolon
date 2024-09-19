@@ -10,7 +10,7 @@ Performs cursory checks when `select_only` is set to True. Additionally ensure u
 
 | Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )       | No      | const   | No         | -          | SqlAlchemy        |
+| + [implementation](#implementation )       | No      | const   | No         | -          | SqlAlchemy        |
 | - [protocol](#protocol )                   | No      | string  | No         | -          | Protocol          |
 | - [connection_string](#connection_string ) | No      | string  | No         | -          | Connection String |
 | - [engine_kwargs](#engine_kwargs )         | No      | object  | No         | -          | Engine Kwargs     |
@@ -22,7 +22,7 @@ Performs cursory checks when `select_only` is set to True. Additionally ensure u
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** SqlAlchemy
 

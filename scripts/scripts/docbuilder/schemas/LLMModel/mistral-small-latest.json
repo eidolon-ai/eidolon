@@ -41,5 +41,8 @@
     }
   },
   "title": "mistral-small-latest",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

@@ -5,7 +5,7 @@ description: "Description of ToTChecker component"
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | ToTChecker        |
+| + [implementation](#implementation ) | No      | const  | No         | -          | ToTChecker        |
 | - [prompt](#prompt )                 | No      | string | No         | -          | Prompt            |
 | - [examples](#examples )             | No      | string | No         | -          | Examples          |
 
@@ -14,7 +14,7 @@ description: "Description of ToTChecker component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** ToTChecker
 

@@ -3,7 +3,7 @@
   "description": "Overview of ResultSummarizer components",
   "anyOf": [
     {
-      "$ref": "file:./ResultSummarizer.json"
+      "$ref": "./ResultSummarizer.json"
     }
   ],
   "reference_group": {

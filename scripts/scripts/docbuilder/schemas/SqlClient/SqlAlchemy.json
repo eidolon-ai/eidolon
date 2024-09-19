@@ -80,5 +80,8 @@
     }
   },
   "title": "SqlAlchemy",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

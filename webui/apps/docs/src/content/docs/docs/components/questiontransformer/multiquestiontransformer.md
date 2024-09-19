@@ -5,7 +5,7 @@ description: "Description of MultiQuestionTransformer component"
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description        |
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#implementation )         | No      | const   | No         | -          | MultiQuestionTransformer |
+| + [implementation](#implementation )         | No      | const   | No         | -          | MultiQuestionTransformer |
 | - [keep_original](#keep_original )           | No      | boolean | No         | -          | Keep Original            |
 | - [number_to_generate](#number_to_generate ) | No      | integer | No         | -          | Number To Generate       |
 | - [prompt](#prompt )                         | No      | string  | No         | -          | Prompt                   |
@@ -15,7 +15,7 @@ description: "Description of MultiQuestionTransformer component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** MultiQuestionTransformer
 

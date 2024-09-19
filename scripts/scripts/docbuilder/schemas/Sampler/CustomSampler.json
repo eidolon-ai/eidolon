@@ -6,5 +6,8 @@
       "const": "CustomSampler",
       "description": "CustomSampler"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

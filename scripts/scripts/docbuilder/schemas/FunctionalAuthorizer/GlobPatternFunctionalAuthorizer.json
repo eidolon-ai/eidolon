@@ -6,5 +6,8 @@
       "const": "GlobPatternFunctionalAuthorizer",
       "description": "GlobPatternFunctionalAuthorizer"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

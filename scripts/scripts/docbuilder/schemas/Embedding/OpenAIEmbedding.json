@@ -11,12 +11,15 @@
       "type": "string"
     },
     "connection_handler": {
-      "$ref": "file:../OpenAIConnectionHandler/overview.json",
+      "$ref": "../OpenAIConnectionHandler/overview.json",
       "default": {
         "implementation": "OpenAIConnectionHandler"
       }
     }
   },
   "title": "OpenAIEmbedding",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

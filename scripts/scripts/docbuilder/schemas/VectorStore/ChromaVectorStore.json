@@ -18,5 +18,8 @@
     }
   },
   "title": "ChromaVectorStore",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

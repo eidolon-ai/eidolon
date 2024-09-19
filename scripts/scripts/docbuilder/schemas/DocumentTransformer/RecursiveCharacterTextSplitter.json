@@ -52,5 +52,8 @@
     }
   },
   "title": "RecursiveCharacterTextSplitter",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

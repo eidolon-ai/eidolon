@@ -15,5 +15,8 @@
     }
   },
   "title": "Browser",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

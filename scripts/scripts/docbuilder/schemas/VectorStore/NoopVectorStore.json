@@ -6,5 +6,8 @@
       "const": "NoopVectorStore",
       "description": "NoopVectorStore"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

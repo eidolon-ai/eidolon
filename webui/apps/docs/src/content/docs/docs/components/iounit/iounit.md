@@ -10,14 +10,14 @@ This can be overridden to provide custom IO handling.
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | IOUnit            |
+| + [implementation](#implementation ) | No      | const | No         | -          | IOUnit            |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** IOUnit
 

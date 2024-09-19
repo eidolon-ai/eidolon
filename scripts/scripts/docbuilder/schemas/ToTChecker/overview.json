@@ -3,7 +3,7 @@
   "description": "Overview of ToTChecker components",
   "anyOf": [
     {
-      "$ref": "file:./ToTChecker.json"
+      "$ref": "./ToTChecker.json"
     }
   ],
   "reference_group": {

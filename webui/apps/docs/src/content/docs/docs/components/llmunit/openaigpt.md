@@ -3,15 +3,15 @@ title: OpenAIGPT
 description: "Description of OpenAIGPT component"
 ---
 
-| Property                                                 | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |
-| -------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------------ | ---------------------------------------------- |
-| - [implementation](#implementation )                     | No      | const                              | No         | -                                                | OpenAIGPT                                      |
+| Property                                                 | Pattern | Type                               | Deprecated | Definition                                  | Title/Description                              |
+| -------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------- | ---------------------------------------------- |
+| + [implementation](#implementation )                     | No      | const                              | No         | -                                           | OpenAIGPT                                      |
 | - [model](#model )                                       | No      | Reference[LLMModel]                | No         | In [LLMModel](/docs/components/llmmodel/overview)                | Overview of LLMModel components                |
-| - [temperature](#temperature )                           | No      | number                             | No         | -                                                | Temperature                                    |
-| - [force_json](#force_json )                             | No      | boolean                            | No         | -                                                | Force Json                                     |
-| - [max_tokens](#max_tokens )                             | No      | integer                            | No         | -                                                | Max Tokens                                     |
-| - [supports_system_messages](#supports_system_messages ) | No      | boolean                            | No         | -                                                | Supports System Messages                       |
-| - [can_stream](#can_stream )                             | No      | boolean                            | No         | -                                                | Can Stream                                     |
+| - [temperature](#temperature )                           | No      | number                             | No         | -                                           | Temperature                                    |
+| - [force_json](#force_json )                             | No      | boolean                            | No         | -                                           | Force Json                                     |
+| - [max_tokens](#max_tokens )                             | No      | integer                            | No         | -                                           | Max Tokens                                     |
+| - [supports_system_messages](#supports_system_messages ) | No      | boolean                            | No         | -                                           | Supports System Messages                       |
+| - [can_stream](#can_stream )                             | No      | boolean                            | No         | -                                           | Can Stream                                     |
 | - [connection_handler](#connection_handler )             | No      | Reference[OpenAIConnectionHandler] | No         | In [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) | Overview of OpenAIConnectionHandler components |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -19,7 +19,7 @@ description: "Description of OpenAIGPT component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** OpenAIGPT
 
@@ -32,7 +32,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**       | `Reference[LLMModel]`               |
 | **Required**   | No                                  |
 | **Default**    | `{"implementation": "gpt-4-turbo"}` |
-| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)      |
+| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)           |
 
 **Description:** Overview of LLMModel components
 
@@ -93,7 +93,7 @@ Specific value: `"OpenAIGPT"`
 | **Type**       | `Reference[OpenAIConnectionHandler]`            |
 | **Required**   | No                                              |
 | **Default**    | `{"implementation": "OpenAIConnectionHandler"}` |
-| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)   |
+| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)        |
 
 **Description:** Overview of OpenAIConnectionHandler components
 

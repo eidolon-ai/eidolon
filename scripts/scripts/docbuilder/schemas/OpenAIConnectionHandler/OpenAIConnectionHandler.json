@@ -7,5 +7,8 @@
     }
   },
   "title": "OpenAIConnectionHandler",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

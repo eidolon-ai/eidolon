@@ -52,5 +52,8 @@
     }
   },
   "title": "LatexTextSplitter",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

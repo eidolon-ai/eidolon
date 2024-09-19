@@ -3,7 +3,7 @@
   "description": "Base class for a thought generation strategy.",
   "anyOf": [
     {
-      "$ref": "file:./ProposePromptStrategy.json"
+      "$ref": "./ProposePromptStrategy.json"
     }
   ],
   "reference_group": {

@@ -3,10 +3,10 @@ title: Retriever
 description: "Description of Retriever component"
 ---
 
-| Property                                         | Pattern | Type                           | Deprecated | Definition                                   | Title/Description                          |
-| ------------------------------------------------ | ------- | ------------------------------ | ---------- | -------------------------------------------- | ------------------------------------------ |
-| - [implementation](#implementation )             | No      | const                          | No         | -                                            | Retriever                                  |
-| - [max_num_results](#max_num_results )           | No      | integer                        | No         | -                                            | Max Num Results                            |
+| Property                                         | Pattern | Type                           | Deprecated | Definition                              | Title/Description                          |
+| ------------------------------------------------ | ------- | ------------------------------ | ---------- | --------------------------------------- | ------------------------------------------ |
+| + [implementation](#implementation )             | No      | const                          | No         | -                                       | Retriever                                  |
+| - [max_num_results](#max_num_results )           | No      | integer                        | No         | -                                       | Max Num Results                            |
 | - [question_transformer](#question_transformer ) | No      | Reference[QuestionTransformer] | No         | In [QuestionTransformer](/docs/components/questiontransformer/overview) | Overview of QuestionTransformer components |
 | - [document_retriever](#document_retriever )     | No      | Reference[DocumentRetriever]   | No         | In [DocumentRetriever](/docs/components/documentretriever/overview)   | Overview of DocumentRetriever components   |
 | - [document_reranker](#document_reranker )       | No      | Reference[DocumentReranker]    | No         | In [DocumentReranker](/docs/components/documentreranker/overview)    | Overview of DocumentReranker components    |
@@ -17,7 +17,7 @@ description: "Description of Retriever component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** Retriever
 
@@ -42,7 +42,7 @@ Specific value: `"Retriever"`
 | **Type**       | `Reference[QuestionTransformer]`            |
 | **Required**   | No                                          |
 | **Default**    | `{"implementation": "QuestionTransformer"}` |
-| **Defined in** | [QuestionTransformer](/docs/components/questiontransformer/overview)   |
+| **Defined in** | [QuestionTransformer](/docs/components/questiontransformer/overview)        |
 
 **Description:** Overview of QuestionTransformer components
 
@@ -53,7 +53,7 @@ Specific value: `"Retriever"`
 | **Type**       | `Reference[DocumentRetriever]`            |
 | **Required**   | No                                        |
 | **Default**    | `{"implementation": "DocumentRetriever"}` |
-| **Defined in** | [DocumentRetriever](/docs/components/documentretriever/overview)   |
+| **Defined in** | [DocumentRetriever](/docs/components/documentretriever/overview)        |
 
 **Description:** Overview of DocumentRetriever components
 
@@ -64,7 +64,7 @@ Specific value: `"Retriever"`
 | **Type**       | `Reference[DocumentReranker]`            |
 | **Required**   | No                                       |
 | **Default**    | `{"implementation": "DocumentReranker"}` |
-| **Defined in** | [DocumentReranker](/docs/components/documentreranker/overview)   |
+| **Defined in** | [DocumentReranker](/docs/components/documentreranker/overview)        |
 
 **Description:** Overview of DocumentReranker components
 
@@ -75,7 +75,7 @@ Specific value: `"Retriever"`
 | **Type**       | `Reference[ResultSummarizer]`            |
 | **Required**   | No                                       |
 | **Default**    | `{"implementation": "ResultSummarizer"}` |
-| **Defined in** | [ResultSummarizer](/docs/components/resultsummarizer/overview)   |
+| **Defined in** | [ResultSummarizer](/docs/components/resultsummarizer/overview)        |
 
 **Description:** Overview of ResultSummarizer components
 

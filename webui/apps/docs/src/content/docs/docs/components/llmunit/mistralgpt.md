@@ -3,21 +3,21 @@ title: MistralGPT
 description: "Description of MistralGPT component"
 ---
 
-| Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |
-| ------------------------------------ | ------- | ------------------- | ---------- | --------------------------------- | ------------------------------- |
-| - [implementation](#implementation ) | No      | const               | No         | -                                 | MistralGPT                      |
+| Property                             | Pattern | Type                | Deprecated | Definition                   | Title/Description               |
+| ------------------------------------ | ------- | ------------------- | ---------- | ---------------------------- | ------------------------------- |
+| + [implementation](#implementation ) | No      | const               | No         | -                            | MistralGPT                      |
 | - [model](#model )                   | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
-| - [temperature](#temperature )       | No      | number              | No         | -                                 | Temperature                     |
-| - [force_json](#force_json )         | No      | boolean             | No         | -                                 | Force Json                      |
-| - [max_tokens](#max_tokens )         | No      | integer             | No         | -                                 | Max Tokens                      |
-| - [client_args](#client_args )       | No      | object              | No         | -                                 | Client Args                     |
+| - [temperature](#temperature )       | No      | number              | No         | -                            | Temperature                     |
+| - [force_json](#force_json )         | No      | boolean             | No         | -                            | Force Json                      |
+| - [max_tokens](#max_tokens )         | No      | integer             | No         | -                            | Max Tokens                      |
+| - [client_args](#client_args )       | No      | object              | No         | -                            | Client Args                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** MistralGPT
 
@@ -30,7 +30,7 @@ Specific value: `"MistralGPT"`
 | **Type**       | `Reference[LLMModel]`                        |
 | **Required**   | No                                           |
 | **Default**    | `{"implementation": "mistral-large-latest"}` |
-| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)               |
+| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)                    |
 
 **Description:** Overview of LLMModel components
 

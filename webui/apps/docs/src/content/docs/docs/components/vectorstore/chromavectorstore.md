@@ -5,7 +5,7 @@ description: "Description of ChromaVectorStore component"
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )                   | No      | const  | No         | -          | ChromaVectorStore       |
+| + [implementation](#implementation )                   | No      | const  | No         | -          | ChromaVectorStore       |
 | - [root_document_directory](#root_document_directory ) | No      | string | No         | -          | Root Document Directory |
 | - [url](#url )                                         | No      | string | No         | -          | Url                     |
 
@@ -14,7 +14,7 @@ description: "Description of ChromaVectorStore component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** ChromaVectorStore
 

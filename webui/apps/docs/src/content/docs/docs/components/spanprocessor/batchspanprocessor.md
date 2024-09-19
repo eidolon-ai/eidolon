@@ -18,14 +18,14 @@ description: "Description of BatchSpanProcessor component"
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description  |
 | ------------------------------------ | ------- | ----- | ---------- | ---------- | ------------------ |
-| - [implementation](#implementation ) | No      | const | No         | -          | BatchSpanProcessor |
+| + [implementation](#implementation ) | No      | const | No         | -          | BatchSpanProcessor |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** BatchSpanProcessor
 

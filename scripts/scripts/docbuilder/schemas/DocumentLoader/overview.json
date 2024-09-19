@@ -3,16 +3,16 @@
   "description": "Overview of DocumentLoader components",
   "anyOf": [
     {
-      "$ref": "file:./AzureLoader.json"
+      "$ref": "./AzureLoader.json"
     },
     {
-      "$ref": "file:./FilesystemLoader.json"
+      "$ref": "./FilesystemLoader.json"
     },
     {
-      "$ref": "file:./GitHubLoader.json"
+      "$ref": "./GitHubLoader.json"
     },
     {
-      "$ref": "file:./S3Loader.json"
+      "$ref": "./S3Loader.json"
     }
   ],
   "reference_group": {

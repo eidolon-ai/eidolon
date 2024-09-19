@@ -42,5 +42,8 @@
     }
   },
   "title": "NLTKTextSplitter",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

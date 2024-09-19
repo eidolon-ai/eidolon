@@ -3,7 +3,7 @@
   "description": "Overview of AudioUnit components",
   "anyOf": [
     {
-      "$ref": "file:./OpenAiSpeech.json"
+      "$ref": "./OpenAiSpeech.json"
     }
   ],
   "reference_group": {

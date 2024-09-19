@@ -5,7 +5,7 @@
       "description": "AnthropicLLMUnit"
     },
     "model": {
-      "$ref": "file:../LLMModel/overview.json",
+      "$ref": "../LLMModel/overview.json",
       "default": {
         "implementation": "claude-3-opus-20240229"
       }
@@ -34,5 +34,8 @@
     }
   },
   "title": "AnthropicLLMUnit",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

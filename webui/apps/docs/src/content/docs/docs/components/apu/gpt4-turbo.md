@@ -3,19 +3,19 @@ title: GPT4-turbo
 description: "Description of GPT4-turbo component"
 ---
 
-| Property                                             | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |
-| ---------------------------------------------------- | ------- | ---------------------------- | ---------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )                 | No      | const                        | No         | -                                          | GPT4-turbo                                                                                                                                                                                                                                                                                                                                                                              |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer                      | No         | -                                          | Max Num Function Calls                                                                                                                                                                                                                                                                                                                                                                  |
+| Property                                             | Pattern | Type                         | Deprecated | Definition                            | Title/Description                                                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------- | ------- | ---------------------------- | ---------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [implementation](#implementation )                 | No      | const                        | No         | -                                     | GPT4-turbo                                                                                                                                                                                                                                                                                                                                                                              |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer                      | No         | -                                     | Max Num Function Calls                                                                                                                                                                                                                                                                                                                                                                  |
 | - [io_unit](#io_unit )                               | No      | Reference[IOUnit]            | No         | In [IOUnit](/docs/components/iounit/overview)            | This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM<br /><br />This can be overridden to provide custom IO handling.                                                                                                                                                                                                                 |
 | - [memory_unit](#memory_unit )                       | No      | Reference[MemoryUnit]        | No         | In [MemoryUnit](/docs/components/memoryunit/overview)        | Overview of MemoryUnit components                                                                                                                                                                                                                                                                                                                                                       |
-| - [longterm_memory_unit](#longterm_memory_unit )     | No      | object                       | No         | -                                          | LongTermMemoryUnit Reference                                                                                                                                                                                                                                                                                                                                                            |
+| - [longterm_memory_unit](#longterm_memory_unit )     | No      | object                       | No         | -                                     | LongTermMemoryUnit Reference                                                                                                                                                                                                                                                                                                                                                            |
 | - [llm_unit](#llm_unit )                             | No      | Reference[LLMUnit]           | No         | In [LLMUnit](/docs/components/llmunit/overview)           | Overview of LLMUnit components                                                                                                                                                                                                                                                                                                                                                          |
-| - [logic_units](#logic_units )                       | No      | array                        | No         | -                                          | Logic Units                                                                                                                                                                                                                                                                                                                                                                             |
-| - [audio_unit](#audio_unit )                         | No      | Combination                  | No         | -                                          | -                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [image_unit](#image_unit )                         | No      | Combination                  | No         | -                                          | -                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [record_conversation](#record_conversation )       | No      | boolean                      | No         | -                                          | Record Conversation                                                                                                                                                                                                                                                                                                                                                                     |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean                      | No         | -                                          | Allow Tool Errors                                                                                                                                                                                                                                                                                                                                                                       |
+| - [logic_units](#logic_units )                       | No      | array                        | No         | -                                     | Logic Units                                                                                                                                                                                                                                                                                                                                                                             |
+| - [audio_unit](#audio_unit )                         | No      | Combination                  | No         | -                                     | -                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [image_unit](#image_unit )                         | No      | Combination                  | No         | -                                     | -                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [record_conversation](#record_conversation )       | No      | boolean                      | No         | -                                     | Record Conversation                                                                                                                                                                                                                                                                                                                                                                     |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean                      | No         | -                                     | Allow Tool Errors                                                                                                                                                                                                                                                                                                                                                                       |
 | - [document_processor](#document_processor )         | No      | Reference[DocumentProcessor] | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components                                                                                                                                                                                                                                                                                                                                                |
 | - [retriever](#retriever )                           | No      | Reference[Retriever]         | No         | In [Retriever](/docs/components/retriever/overview)         | Overview of Retriever components                                                                                                                                                                                                                                                                                                                                                        |
 | - [retriever_apu](#retriever_apu )                   | No      | Reference[APU]               | No         | In [APU](/docs/components/apu/overview)               | The APU is the main interface for the Agent to interact with the LLM.<br />The APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.<br /><br />To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/). |
@@ -25,7 +25,7 @@ description: "Description of GPT4-turbo component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** GPT4-turbo
 
@@ -50,7 +50,7 @@ Specific value: `"GPT4-turbo"`
 | **Type**       | `Reference[IOUnit]`            |
 | **Required**   | No                             |
 | **Default**    | `{"implementation": "IOUnit"}` |
-| **Defined in** | [IOUnit](/docs/components/iounit/overview)   |
+| **Defined in** | [IOUnit](/docs/components/iounit/overview)        |
 
 **Description:** This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM
 
@@ -63,7 +63,7 @@ This can be overridden to provide custom IO handling.
 | **Type**       | `Reference[MemoryUnit]`            |
 | **Required**   | No                                 |
 | **Default**    | `{"implementation": "MemoryUnit"}` |
-| **Defined in** | [MemoryUnit](/docs/components/memoryunit/overview)   |
+| **Defined in** | [MemoryUnit](/docs/components/memoryunit/overview)        |
 
 **Description:** Overview of MemoryUnit components
 
@@ -100,7 +100,7 @@ This can be overridden to provide custom IO handling.
 | **Type**       | `Reference[LLMUnit]`                                      |
 | **Required**   | No                                                        |
 | **Default**    | `{"implementation": "OpenAIGPT", "model": "gpt-4-turbo"}` |
-| **Defined in** | [LLMUnit](/docs/components/llmunit/overview)                             |
+| **Defined in** | [LLMUnit](/docs/components/llmunit/overview)                                  |
 
 **Description:** Overview of LLMUnit components
 
@@ -128,10 +128,10 @@ This can be overridden to provide custom IO handling.
 
 ### <a name="autogenerated_heading_2"></a>7.1. overview.json
 
-|                |                                 |
-| -------------- | ------------------------------- |
-| **Type**       | `Reference[LogicUnit]`          |
-| **Required**   | No                              |
+|                |                            |
+| -------------- | -------------------------- |
+| **Type**       | `Reference[LogicUnit]`     |
+| **Required**   | No                         |
 | **Defined in** | [LogicUnit](/docs/components/logicunit/overview) |
 
 **Description:** Overview of LogicUnit components
@@ -152,10 +152,10 @@ This can be overridden to provide custom IO handling.
 
 ### <a name="audio_unit_anyOf_i0"></a>8.1. Property `overview.json`
 
-|                |                                 |
-| -------------- | ------------------------------- |
-| **Type**       | `Reference[AudioUnit]`          |
-| **Required**   | No                              |
+|                |                            |
+| -------------- | -------------------------- |
+| **Type**       | `Reference[AudioUnit]`     |
+| **Required**   | No                         |
 | **Defined in** | [AudioUnit](/docs/components/audiounit/overview) |
 
 **Description:** Overview of AudioUnit components
@@ -240,7 +240,7 @@ This can be overridden to provide custom IO handling.
 | **Type**       | `Reference[DocumentProcessor]`            |
 | **Required**   | No                                        |
 | **Default**    | `{"implementation": "DocumentProcessor"}` |
-| **Defined in** | [DocumentProcessor](/docs/components/documentprocessor/overview)   |
+| **Defined in** | [DocumentProcessor](/docs/components/documentprocessor/overview)        |
 
 **Description:** Overview of DocumentProcessor components
 
@@ -251,17 +251,17 @@ This can be overridden to provide custom IO handling.
 | **Type**       | `Reference[Retriever]`            |
 | **Required**   | No                                |
 | **Default**    | `{"implementation": "Retriever"}` |
-| **Defined in** | [Retriever](/docs/components/retriever/overview)   |
+| **Defined in** | [Retriever](/docs/components/retriever/overview)        |
 
 **Description:** Overview of Retriever components
 
 ## <a name="retriever_apu"></a>14. Property `retriever_apu`
 
-|                |                           |
-| -------------- | ------------------------- |
-| **Type**       | `Reference[APU]`          |
-| **Required**   | No                        |
-| **Default**    | `null`                    |
+|                |                      |
+| -------------- | -------------------- |
+| **Type**       | `Reference[APU]`     |
+| **Required**   | No                   |
+| **Default**    | `null`               |
 | **Defined in** | [APU](/docs/components/apu/overview) |
 
 **Description:** The APU is the main interface for the Agent to interact with the LLM.

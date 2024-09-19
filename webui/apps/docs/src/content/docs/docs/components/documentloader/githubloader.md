@@ -8,7 +8,7 @@ unless a TOKEN is provided
 
 | Property                             | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const       | No         | -          | GitHubLoader      |
+| + [implementation](#implementation ) | No      | const       | No         | -          | GitHubLoader      |
 | + [owner](#owner )                   | No      | string      | No         | -          | Owner             |
 | + [repo](#repo )                     | No      | string      | No         | -          | Repo              |
 | - [client_args](#client_args )       | No      | object      | No         | -          | Client Args       |
@@ -22,7 +22,7 @@ unless a TOKEN is provided
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** GitHubLoader
 

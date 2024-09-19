@@ -5,7 +5,7 @@ description: "Description of ApiLogicUnit component"
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | ApiLogicUnit         |
+| + [implementation](#implementation )             | No      | const   | No         | -          | ApiLogicUnit         |
 | + [title](#title )                               | No      | string  | No         | -          | Title                |
 | + [root_call_url](#root_call_url )               | No      | string  | No         | -          | Root Call Url        |
 | + [open_api_location](#open_api_location )       | No      | string  | No         | -          | Open Api Location    |
@@ -19,7 +19,7 @@ description: "Description of ApiLogicUnit component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** ApiLogicUnit
 

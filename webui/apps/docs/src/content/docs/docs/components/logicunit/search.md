@@ -5,7 +5,7 @@ description: "Description of Search component"
 
 | Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------- |
-| - [implementation](#implementation )           | No      | const       | No         | -          | Search              |
+| + [implementation](#implementation )           | No      | const       | No         | -          | Search              |
 | - [cse_id](#cse_id )                           | No      | string      | No         | -          | Cse Id              |
 | - [cse_token](#cse_token )                     | No      | string      | No         | -          | Cse Token           |
 | - [name](#name )                               | No      | string      | No         | -          | Name                |
@@ -18,7 +18,7 @@ description: "Description of Search component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** Search
 

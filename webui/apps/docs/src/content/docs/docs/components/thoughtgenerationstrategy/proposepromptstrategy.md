@@ -5,7 +5,7 @@ description: "Description of ProposePromptStrategy component"
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description     |
 | ------------------------------------ | ------- | ------- | ---------- | ---------- | --------------------- |
-| - [implementation](#implementation ) | No      | const   | No         | -          | ProposePromptStrategy |
+| + [implementation](#implementation ) | No      | const   | No         | -          | ProposePromptStrategy |
 | - [preamble](#preamble )             | No      | string  | No         | -          | Preamble              |
 | - [thoughts](#thoughts )             | No      | string  | No         | -          | Thoughts              |
 | - [post_amble](#post_amble )         | No      | string  | No         | -          | Post Amble            |
@@ -16,7 +16,7 @@ description: "Description of ProposePromptStrategy component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** ProposePromptStrategy
 

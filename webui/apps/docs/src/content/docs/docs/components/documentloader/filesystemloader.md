@@ -5,7 +5,7 @@ description: "Description of FilesystemLoader component"
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | FilesystemLoader  |
+| + [implementation](#implementation ) | No      | const  | No         | -          | FilesystemLoader  |
 | + [root_dir](#root_dir )             | No      | string | No         | -          | Root Dir          |
 | - [pattern](#pattern )               | No      | string | No         | -          | Pattern           |
 
@@ -14,7 +14,7 @@ description: "Description of FilesystemLoader component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** FilesystemLoader
 

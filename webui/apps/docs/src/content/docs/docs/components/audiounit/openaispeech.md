@@ -5,7 +5,7 @@ description: "Description of OpenAiSpeech component"
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |
 | ------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | -------------------------- |
-| - [implementation](#implementation )                         | No      | const            | No         | -          | OpenAiSpeech               |
+| + [implementation](#implementation )                         | No      | const            | No         | -          | OpenAiSpeech               |
 | - [text_to_speech_model](#text_to_speech_model )             | No      | enum (of string) | No         | -          | Text To Speech Model       |
 | - [text_to_speech_voice](#text_to_speech_voice )             | No      | enum (of string) | No         | -          | Text To Speech Voice       |
 | - [speech_to_text_model](#speech_to_text_model )             | No      | const            | No         | -          | Speech To Text Model       |
@@ -16,7 +16,7 @@ description: "Description of OpenAiSpeech component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** OpenAiSpeech
 

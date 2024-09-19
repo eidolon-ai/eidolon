@@ -6,13 +6,13 @@ description: "Description of DocumentManager component"
 **Description:** Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (
 provided by loader) into similarity memory where they can be searched.
 
-| Property                                   | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                        |
-| ------------------------------------------ | ------- | ---------------------------- | ---------- | ------------------------------------------ | ---------------------------------------- |
-| - [implementation](#implementation )       | No      | const                        | No         | -                                          | DocumentManager                          |
-| + [name](#name )                           | No      | string                       | No         | -                                          | Name                                     |
-| - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -                                          | Recheck Frequency                        |
+| Property                                   | Pattern | Type                         | Deprecated | Definition                            | Title/Description                        |
+| ------------------------------------------ | ------- | ---------------------------- | ---------- | ------------------------------------- | ---------------------------------------- |
+| + [implementation](#implementation )       | No      | const                        | No         | -                                     | DocumentManager                          |
+| + [name](#name )                           | No      | string                       | No         | -                                     | Name                                     |
+| - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -                                     | Recheck Frequency                        |
 | - [loader](#loader )                       | No      | Reference[DocumentLoader]    | No         | In [DocumentLoader](/docs/components/documentloader/overview)    | Overview of DocumentLoader components    |
-| - [concurrency](#concurrency )             | No      | integer                      | No         | -                                          | Concurrency                              |
+| - [concurrency](#concurrency )             | No      | integer                      | No         | -                                     | Concurrency                              |
 | - [doc_processor](#doc_processor )         | No      | Reference[DocumentProcessor] | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -20,7 +20,7 @@ provided by loader) into similarity memory where they can be searched.
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** DocumentManager
 
@@ -56,7 +56,7 @@ Specific value: `"DocumentManager"`
 | **Type**       | `Reference[DocumentLoader]`            |
 | **Required**   | No                                     |
 | **Default**    | `{"implementation": "DocumentLoader"}` |
-| **Defined in** | [DocumentLoader](/docs/components/documentloader/overview)   |
+| **Defined in** | [DocumentLoader](/docs/components/documentloader/overview)        |
 
 **Description:** Overview of DocumentLoader components
 
@@ -79,7 +79,7 @@ Specific value: `"DocumentManager"`
 | **Type**       | `Reference[DocumentProcessor]`            |
 | **Required**   | No                                        |
 | **Default**    | `{"implementation": "DocumentProcessor"}` |
-| **Defined in** | [DocumentProcessor](/docs/components/documentprocessor/overview)   |
+| **Defined in** | [DocumentProcessor](/docs/components/documentprocessor/overview)        |
 
 **Description:** Overview of DocumentProcessor components
 

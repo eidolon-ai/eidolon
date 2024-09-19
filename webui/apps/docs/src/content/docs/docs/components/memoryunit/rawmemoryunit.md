@@ -5,14 +5,14 @@ description: "Description of RawMemoryUnit component"
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | RawMemoryUnit     |
+| + [implementation](#implementation ) | No      | const | No         | -          | RawMemoryUnit     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** RawMemoryUnit
 

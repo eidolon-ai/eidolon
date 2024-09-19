@@ -5,7 +5,7 @@
       "description": "OpenAIGPT"
     },
     "model": {
-      "$ref": "file:../LLMModel/overview.json",
+      "$ref": "../LLMModel/overview.json",
       "default": {
         "implementation": "gpt-4-turbo"
       }
@@ -43,12 +43,15 @@
       "type": "boolean"
     },
     "connection_handler": {
-      "$ref": "file:../OpenAIConnectionHandler/overview.json",
+      "$ref": "../OpenAIConnectionHandler/overview.json",
       "default": {
         "implementation": "OpenAIConnectionHandler"
       }
     }
   },
   "title": "OpenAIGPT",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

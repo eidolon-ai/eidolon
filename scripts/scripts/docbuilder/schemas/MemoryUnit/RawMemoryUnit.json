@@ -6,5 +6,8 @@
     }
   },
   "title": "RawMemoryUnit",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

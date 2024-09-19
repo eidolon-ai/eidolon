@@ -5,18 +5,21 @@
       "description": "DocumentProcessor"
     },
     "parser": {
-      "$ref": "file:../DocumentParser/overview.json",
+      "$ref": "../DocumentParser/overview.json",
       "default": {
         "implementation": "DocumentParser"
       }
     },
     "splitter": {
-      "$ref": "file:../DocumentTransformer/overview.json",
+      "$ref": "../DocumentTransformer/overview.json",
       "default": {
         "implementation": "DocumentTransformer"
       }
     }
   },
   "title": "DocumentProcessor",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

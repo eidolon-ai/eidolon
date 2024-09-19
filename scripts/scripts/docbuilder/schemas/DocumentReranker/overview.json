@@ -3,7 +3,7 @@
   "description": "Overview of DocumentReranker components",
   "anyOf": [
     {
-      "$ref": "file:./RAGFusionReranker.json"
+      "$ref": "./RAGFusionReranker.json"
     }
   ],
   "reference_group": {

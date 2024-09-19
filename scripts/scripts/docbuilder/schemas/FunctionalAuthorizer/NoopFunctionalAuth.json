@@ -6,5 +6,8 @@
       "const": "NoopFunctionalAuth",
       "description": "NoopFunctionalAuth"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

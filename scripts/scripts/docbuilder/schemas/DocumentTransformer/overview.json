@@ -3,40 +3,40 @@
   "description": "Overview of DocumentTransformer components",
   "anyOf": [
     {
-      "$ref": "file:./AutoTransformer.json"
+      "$ref": "./AutoTransformer.json"
     },
     {
-      "$ref": "file:./CharacterTextSplitter.json"
+      "$ref": "./CharacterTextSplitter.json"
     },
     {
-      "$ref": "file:./HTMLHeaderTextSplitter.json"
+      "$ref": "./HTMLHeaderTextSplitter.json"
     },
     {
-      "$ref": "file:./LatexTextSplitter.json"
+      "$ref": "./LatexTextSplitter.json"
     },
     {
-      "$ref": "file:./MarkdownHeaderTextSplitter.json"
+      "$ref": "./MarkdownHeaderTextSplitter.json"
     },
     {
-      "$ref": "file:./MarkdownTextSplitter.json"
+      "$ref": "./MarkdownTextSplitter.json"
     },
     {
-      "$ref": "file:./NLTKTextSplitter.json"
+      "$ref": "./NLTKTextSplitter.json"
     },
     {
-      "$ref": "file:./PythonCodeTextSplitter.json"
+      "$ref": "./PythonCodeTextSplitter.json"
     },
     {
-      "$ref": "file:./RecursiveCharacterTextSplitter.json"
+      "$ref": "./RecursiveCharacterTextSplitter.json"
     },
     {
-      "$ref": "file:./SentenceTransformersTokenTextSplitter.json"
+      "$ref": "./SentenceTransformersTokenTextSplitter.json"
     },
     {
-      "$ref": "file:./SpacyTextSplitter.json"
+      "$ref": "./SpacyTextSplitter.json"
     },
     {
-      "$ref": "file:./TokenTextSplitter.json"
+      "$ref": "./TokenTextSplitter.json"
     }
   ],
   "reference_group": {

@@ -41,5 +41,8 @@
     }
   },
   "title": "claude-3-haiku-20240307",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

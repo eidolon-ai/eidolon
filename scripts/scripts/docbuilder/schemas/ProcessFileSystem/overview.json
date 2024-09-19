@@ -3,7 +3,7 @@
   "description": "Overview of ProcessFileSystem components",
   "anyOf": [
     {
-      "$ref": "file:./ProcessFileSystemImpl.json"
+      "$ref": "./ProcessFileSystemImpl.json"
     }
   ],
   "reference_group": {

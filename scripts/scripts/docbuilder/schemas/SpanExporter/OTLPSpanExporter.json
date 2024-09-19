@@ -7,5 +7,8 @@
       "const": "OTLPSpanExporter",
       "description": "OTLPSpanExporter"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

@@ -1,7 +1,6 @@
 {
   "$defs": {
     "ActionDefinition": {
-      "additionalProperties": true,
       "properties": {
         "name": {
           "default": "converse",
@@ -108,7 +107,6 @@
       "type": "object"
     },
     "NamedAPU": {
-      "additionalProperties": true,
       "properties": {
         "title": {
           "anyOf": [
@@ -123,7 +121,7 @@
           "title": "Title"
         },
         "apu": {
-          "$ref": "file:../APU/overview.json",
+          "$ref": "../APU/overview.json",
           "default": {
             "implementation": "APU"
           }
@@ -138,7 +136,6 @@
       "type": "object"
     }
   },
-  "additionalProperties": true,
   "description": "The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This\nagent is designed to be a flexible, modular component that can interact with various processing units and perform a\nrange of actions based on its configuration.",
   "properties": {
     "implementation": {
@@ -197,7 +194,7 @@
       "type": "array"
     },
     "apu": {
-      "$ref": "file:../APU/overview.json",
+      "$ref": "../APU/overview.json",
       "default": {
         "implementation": "APU"
       }
@@ -221,5 +218,8 @@
     }
   },
   "title": "SimpleAgent",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

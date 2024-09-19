@@ -3,9 +3,9 @@ title: SimilarityMemoryImpl
 description: "Description of SimilarityMemoryImpl component"
 ---
 
-| Property                             | Pattern | Type                   | Deprecated | Definition                           | Title/Description                  |
-| ------------------------------------ | ------- | ---------------------- | ---------- | ------------------------------------ | ---------------------------------- |
-| - [implementation](#implementation ) | No      | const                  | No         | -                                    | SimilarityMemoryImpl               |
+| Property                             | Pattern | Type                   | Deprecated | Definition                      | Title/Description                  |
+| ------------------------------------ | ------- | ---------------------- | ---------- | ------------------------------- | ---------------------------------- |
+| + [implementation](#implementation ) | No      | const                  | No         | -                               | SimilarityMemoryImpl               |
 | - [embedder](#embedder )             | No      | Reference[Embedding]   | No         | In [Embedding](/docs/components/embedding/overview)   | Overview of Embedding components   |
 | - [vector_store](#vector_store )     | No      | Reference[VectorStore] | No         | In [VectorStore](/docs/components/vectorstore/overview) | Overview of VectorStore components |
 
@@ -14,7 +14,7 @@ description: "Description of SimilarityMemoryImpl component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** SimilarityMemoryImpl
 
@@ -27,7 +27,7 @@ Specific value: `"SimilarityMemoryImpl"`
 | **Type**       | `Reference[Embedding]`            |
 | **Required**   | No                                |
 | **Default**    | `{"implementation": "Embedding"}` |
-| **Defined in** | [Embedding](/docs/components/embedding/overview)   |
+| **Defined in** | [Embedding](/docs/components/embedding/overview)        |
 
 **Description:** Overview of Embedding components
 
@@ -38,7 +38,7 @@ Specific value: `"SimilarityMemoryImpl"`
 | **Type**       | `Reference[VectorStore]`            |
 | **Required**   | No                                  |
 | **Default**    | `{"implementation": "VectorStore"}` |
-| **Defined in** | [VectorStore](/docs/components/vectorstore/overview)   |
+| **Defined in** | [VectorStore](/docs/components/vectorstore/overview)        |
 
 **Description:** Overview of VectorStore components
 

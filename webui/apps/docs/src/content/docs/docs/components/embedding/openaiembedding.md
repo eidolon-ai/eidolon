@@ -3,10 +3,10 @@ title: OpenAIEmbedding
 description: "Description of OpenAIEmbedding component"
 ---
 
-| Property                                     | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |
-| -------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------------ | ---------------------------------------------- |
-| - [implementation](#implementation )         | No      | const                              | No         | -                                                | OpenAIEmbedding                                |
-| - [model](#model )                           | No      | string                             | No         | -                                                | Model                                          |
+| Property                                     | Pattern | Type                               | Deprecated | Definition                                  | Title/Description                              |
+| -------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------- | ---------------------------------------------- |
+| + [implementation](#implementation )         | No      | const                              | No         | -                                           | OpenAIEmbedding                                |
+| - [model](#model )                           | No      | string                             | No         | -                                           | Model                                          |
 | - [connection_handler](#connection_handler ) | No      | Reference[OpenAIConnectionHandler] | No         | In [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) | Overview of OpenAIConnectionHandler components |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -14,7 +14,7 @@ description: "Description of OpenAIEmbedding component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** OpenAIEmbedding
 
@@ -39,7 +39,7 @@ Specific value: `"OpenAIEmbedding"`
 | **Type**       | `Reference[OpenAIConnectionHandler]`            |
 | **Required**   | No                                              |
 | **Default**    | `{"implementation": "OpenAIConnectionHandler"}` |
-| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)   |
+| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)        |
 
 **Description:** Overview of OpenAIConnectionHandler components
 

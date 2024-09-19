@@ -10,7 +10,7 @@
       "type": "string"
     },
     "llm_unit": {
-      "$ref": "file:../LLMUnit/overview.json",
+      "$ref": "../LLMUnit/overview.json",
       "default": {
         "implementation": "LLMUnit"
       }
@@ -18,7 +18,7 @@
     "model": {
       "anyOf": [
         {
-          "$ref": "file:../LLMModel/overview.json"
+          "$ref": "../LLMModel/overview.json"
         },
         {
           "type": "null"
@@ -28,5 +28,8 @@
     }
   },
   "title": "ToolCallLLMWrapper",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

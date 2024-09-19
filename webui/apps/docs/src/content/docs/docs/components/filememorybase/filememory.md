@@ -5,7 +5,7 @@ description: "Description of FileMemory component"
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | FileMemory        |
+| + [implementation](#implementation ) | No      | const  | No         | -          | FileMemory        |
 | - [root_dir](#root_dir )             | No      | string | No         | -          | Root Dir          |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -13,7 +13,7 @@ description: "Description of FileMemory component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** FileMemory
 

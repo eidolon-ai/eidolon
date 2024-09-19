@@ -48,7 +48,8 @@
   },
   "required": [
     "account_url",
-    "container"
+    "container",
+    "implementation"
   ],
   "title": "AzureFileMemory",
   "type": "object"

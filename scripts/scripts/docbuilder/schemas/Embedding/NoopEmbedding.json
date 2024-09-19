@@ -6,5 +6,8 @@
     }
   },
   "title": "NoopEmbedding",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

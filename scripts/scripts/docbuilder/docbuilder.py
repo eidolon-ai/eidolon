@@ -163,7 +163,7 @@ def write_md(read_loc,
 
 def write_astro_md_file(content, description, title, write_file_loc):
     for name, group in groups.items():
-        content = content.replace(f"file:../{name}/overview.json",
+        content = content.replace(f"../{name}/overview.json",
                                   f"[{name}](/docs/components/{url_safe(name)}/overview)")
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
@@ -214,7 +214,7 @@ def generate_json(write_base):
         base_json = {
             "title": key,
             "description": group.description,
-            "anyOf": [{"$ref": f"file:./{name}.json"} for name, _, _ in group.get_components()],
+            "anyOf": [{"$ref": f"./{name}.json"} for name, _, _ in group.get_components()],
             "reference_group":
                 {"type": key}
         }
@@ -226,6 +226,7 @@ def generate_json(write_base):
                 json_schema = clz.model_json_schema()
                 spec = Reference.get_spec_type(clz)
                 if spec:
+                    # spec is a base model. check if extra fields are allowed
                     for k, v in spec.model_fields.items():
                         if v.annotation.__name__ == "_Reference" and v.default_factory:
                             schema_prop = json_schema['properties'][k]
@@ -247,7 +248,7 @@ def generate_json(write_base):
 
                         type_ = v['reference_pointer']['type']
                         if type_ in groups:
-                            defs[k] = {"$ref": f"file:../{type_}/overview.json"}
+                            defs[k] = {"$ref": f"../{type_}/overview.json"}
                         else:
                             defs[k] = json_schema['$defs'][k]
                             defs[k]['type'] = "object"
@@ -276,6 +277,7 @@ def generate_json(write_base):
             json_schema.setdefault('properties', {})['implementation'] = {"const": name, "description": name}
             json_schema['properties'] = dict(implementation=json_schema['properties'].pop('implementation'),
                                              **json_schema['properties'])
+            json_schema.setdefault('required', []).append('implementation')
             with open(write_loc / (name + ".json"), 'w') as file:
                 json.dump(json_schema, file, indent=2)
 

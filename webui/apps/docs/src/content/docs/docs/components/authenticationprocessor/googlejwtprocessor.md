@@ -5,7 +5,7 @@ description: "Description of GoogleJWTProcessor component"
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description  |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------ |
-| - [implementation](#implementation ) | No      | const  | No         | -          | GoogleJWTProcessor |
+| + [implementation](#implementation ) | No      | const  | No         | -          | GoogleJWTProcessor |
 | - [jwks_url](#jwks_url )             | No      | string | No         | -          | Jwks Url           |
 | - [audience](#audience )             | No      | string | No         | -          | Audience           |
 | - [issuer](#issuer )                 | No      | string | No         | -          | Issuer             |
@@ -15,7 +15,7 @@ description: "Description of GoogleJWTProcessor component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** GoogleJWTProcessor
 

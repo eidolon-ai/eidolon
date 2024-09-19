@@ -3,7 +3,7 @@
   "description": "Overview of ProcessAuthorizer components",
   "anyOf": [
     {
-      "$ref": "file:./PrivateAuthorizer.json"
+      "$ref": "./PrivateAuthorizer.json"
     }
   ],
   "reference_group": {

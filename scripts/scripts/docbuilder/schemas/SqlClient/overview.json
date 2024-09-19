@@ -3,7 +3,7 @@
   "description": "Overview of SqlClient components",
   "anyOf": [
     {
-      "$ref": "file:./SqlAlchemy.json"
+      "$ref": "./SqlAlchemy.json"
     }
   ],
   "reference_group": {

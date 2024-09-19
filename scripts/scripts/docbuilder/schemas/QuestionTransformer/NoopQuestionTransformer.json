@@ -6,5 +6,8 @@
     }
   },
   "title": "NoopQuestionTransformer",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

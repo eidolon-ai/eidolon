@@ -3,20 +3,20 @@ title: SecurityManagerImpl
 description: "Description of SecurityManagerImpl component"
 ---
 
-| Property                                                 | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |
-| -------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------------ | ---------------------------------------------- |
-| - [implementation](#implementation )                     | No      | const                              | No         | -                                                | SecurityManagerImpl                            |
+| Property                                                 | Pattern | Type                               | Deprecated | Definition                                  | Title/Description                              |
+| -------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------- | ---------------------------------------------- |
+| + [implementation](#implementation )                     | No      | const                              | No         | -                                           | SecurityManagerImpl                            |
 | - [authentication_processor](#authentication_processor ) | No      | Reference[AuthenticationProcessor] | No         | In [AuthenticationProcessor](/docs/components/authenticationprocessor/overview) | Overview of AuthenticationProcessor components |
 | - [functional_authorizer](#functional_authorizer )       | No      | Reference[FunctionalAuthorizer]    | No         | In [FunctionalAuthorizer](/docs/components/functionalauthorizer/overview)    | Overview of FunctionalAuthorizer components    |
 | - [process_authorizer](#process_authorizer )             | No      | Reference[ProcessAuthorizer]       | No         | In [ProcessAuthorizer](/docs/components/processauthorizer/overview)       | Overview of ProcessAuthorizer components       |
-| - [safe_paths](#safe_paths )                             | No      | array of string                    | No         | -                                                | Safe Paths                                     |
+| - [safe_paths](#safe_paths )                             | No      | array of string                    | No         | -                                           | Safe Paths                                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** SecurityManagerImpl
 
@@ -29,7 +29,7 @@ Specific value: `"SecurityManagerImpl"`
 | **Type**       | `Reference[AuthenticationProcessor]`            |
 | **Required**   | No                                              |
 | **Default**    | `{"implementation": "AuthenticationProcessor"}` |
-| **Defined in** | [AuthenticationProcessor](/docs/components/authenticationprocessor/overview)   |
+| **Defined in** | [AuthenticationProcessor](/docs/components/authenticationprocessor/overview)        |
 
 **Description:** Overview of AuthenticationProcessor components
 
@@ -40,7 +40,7 @@ Specific value: `"SecurityManagerImpl"`
 | **Type**       | `Reference[FunctionalAuthorizer]`            |
 | **Required**   | No                                           |
 | **Default**    | `{"implementation": "FunctionalAuthorizer"}` |
-| **Defined in** | [FunctionalAuthorizer](/docs/components/functionalauthorizer/overview)   |
+| **Defined in** | [FunctionalAuthorizer](/docs/components/functionalauthorizer/overview)        |
 
 **Description:** Overview of FunctionalAuthorizer components
 
@@ -51,7 +51,7 @@ Specific value: `"SecurityManagerImpl"`
 | **Type**       | `Reference[ProcessAuthorizer]`            |
 | **Required**   | No                                        |
 | **Default**    | `{"implementation": "ProcessAuthorizer"}` |
-| **Defined in** | [ProcessAuthorizer](/docs/components/processauthorizer/overview)   |
+| **Defined in** | [ProcessAuthorizer](/docs/components/processauthorizer/overview)        |
 
 **Description:** Overview of ProcessAuthorizer components
 

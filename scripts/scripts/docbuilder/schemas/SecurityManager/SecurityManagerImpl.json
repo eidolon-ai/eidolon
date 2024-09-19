@@ -5,19 +5,19 @@
       "description": "SecurityManagerImpl"
     },
     "authentication_processor": {
-      "$ref": "file:../AuthenticationProcessor/overview.json",
+      "$ref": "../AuthenticationProcessor/overview.json",
       "default": {
         "implementation": "AuthenticationProcessor"
       }
     },
     "functional_authorizer": {
-      "$ref": "file:../FunctionalAuthorizer/overview.json",
+      "$ref": "../FunctionalAuthorizer/overview.json",
       "default": {
         "implementation": "FunctionalAuthorizer"
       }
     },
     "process_authorizer": {
-      "$ref": "file:../ProcessAuthorizer/overview.json",
+      "$ref": "../ProcessAuthorizer/overview.json",
       "default": {
         "implementation": "ProcessAuthorizer"
       }
@@ -38,5 +38,8 @@
     }
   },
   "title": "SecurityManagerImpl",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

@@ -41,5 +41,8 @@
     }
   },
   "title": "llama3-8b",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

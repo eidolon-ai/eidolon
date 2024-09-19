@@ -41,5 +41,8 @@
     }
   },
   "title": "gpt-4-turbo",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

@@ -52,5 +52,8 @@
     }
   },
   "title": "MarkdownTextSplitter",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

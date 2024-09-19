@@ -16,5 +16,8 @@
     }
   },
   "title": "ToTChecker",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

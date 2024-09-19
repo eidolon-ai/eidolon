@@ -5,7 +5,7 @@ description: "Description of MongoSymbolicMemory component"
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )                   | No      | const  | No         | -          | MongoSymbolicMemory     |
+| + [implementation](#implementation )                   | No      | const  | No         | -          | MongoSymbolicMemory     |
 | - [mongo_connection_string](#mongo_connection_string ) | No      | string | No         | -          | Mongo Connection String |
 | - [mongo_database_name](#mongo_database_name )         | No      | string | No         | -          | Mongo Database Name     |
 
@@ -14,7 +14,7 @@ description: "Description of MongoSymbolicMemory component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** MongoSymbolicMemory
 

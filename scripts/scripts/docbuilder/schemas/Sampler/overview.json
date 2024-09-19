@@ -3,7 +3,7 @@
   "description": "Overview of Sampler components",
   "anyOf": [
     {
-      "$ref": "file:./CustomSampler.json"
+      "$ref": "./CustomSampler.json"
     }
   ],
   "reference_group": {

@@ -3,16 +3,16 @@
   "description": "Overview of Agents components",
   "anyOf": [
     {
-      "$ref": "file:./APIAgent.json"
+      "$ref": "./APIAgent.json"
     },
     {
-      "$ref": "file:./RetrieverAgent.json"
+      "$ref": "./RetrieverAgent.json"
     },
     {
-      "$ref": "file:./SimpleAgent.json"
+      "$ref": "./SimpleAgent.json"
     },
     {
-      "$ref": "file:./SqlAgent.json"
+      "$ref": "./SqlAgent.json"
     }
   ],
   "reference_group": {

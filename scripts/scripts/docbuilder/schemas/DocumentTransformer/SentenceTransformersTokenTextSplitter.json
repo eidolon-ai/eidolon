@@ -48,5 +48,8 @@
     }
   },
   "title": "SentenceTransformersTokenTextSplitter",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

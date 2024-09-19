@@ -54,7 +54,8 @@
     }
   },
   "required": [
-    "headers_to_split_on"
+    "headers_to_split_on",
+    "implementation"
   ],
   "title": "MarkdownHeaderTextSplitter",
   "type": "object"

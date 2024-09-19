@@ -3,19 +3,19 @@
   "description": "Overview of LLMUnit components",
   "anyOf": [
     {
-      "$ref": "file:./AnthropicLLMUnit.json"
+      "$ref": "./AnthropicLLMUnit.json"
     },
     {
-      "$ref": "file:./MistralGPT.json"
+      "$ref": "./MistralGPT.json"
     },
     {
-      "$ref": "file:./OllamaLLMUnit.json"
+      "$ref": "./OllamaLLMUnit.json"
     },
     {
-      "$ref": "file:./OpenAIGPT.json"
+      "$ref": "./OpenAIGPT.json"
     },
     {
-      "$ref": "file:./ToolCallLLMWrapper.json"
+      "$ref": "./ToolCallLLMWrapper.json"
     }
   ],
   "reference_group": {

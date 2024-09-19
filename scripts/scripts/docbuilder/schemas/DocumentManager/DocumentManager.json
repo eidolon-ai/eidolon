@@ -17,7 +17,7 @@
       "type": "integer"
     },
     "loader": {
-      "$ref": "file:../DocumentLoader/overview.json",
+      "$ref": "../DocumentLoader/overview.json",
       "default": {
         "implementation": "DocumentLoader"
       }
@@ -29,14 +29,15 @@
       "type": "integer"
     },
     "doc_processor": {
-      "$ref": "file:../DocumentProcessor/overview.json",
+      "$ref": "../DocumentProcessor/overview.json",
       "default": {
         "implementation": "DocumentProcessor"
       }
     }
   },
   "required": [
-    "name"
+    "name",
+    "implementation"
   ],
   "title": "DocumentManager",
   "type": "object"

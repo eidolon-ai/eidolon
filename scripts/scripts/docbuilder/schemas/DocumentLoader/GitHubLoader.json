@@ -75,7 +75,8 @@
   },
   "required": [
     "owner",
-    "repo"
+    "repo",
+    "implementation"
   ],
   "title": "GitHubLoader",
   "type": "object"

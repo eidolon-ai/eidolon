@@ -7,7 +7,7 @@ description: "Description of VectaraSearch component"
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | VectaraSearch     |
+| + [implementation](#implementation ) | No      | const  | No         | -          | VectaraSearch     |
 | + [corpus_key](#corpus_key )         | No      | string | No         | -          | Corpus Key        |
 | - [description](#description )       | No      | string | No         | -          | Description       |
 | - [vectara_url](#vectara_url )       | No      | string | No         | -          | Vectara Url       |
@@ -17,7 +17,7 @@ description: "Description of VectaraSearch component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** VectaraSearch
 

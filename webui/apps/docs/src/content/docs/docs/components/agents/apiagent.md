@@ -7,7 +7,7 @@ description: "Description of APIAgent component"
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | APIAgent             |
+| + [implementation](#implementation )             | No      | const   | No         | -          | APIAgent             |
 | + [title](#title )                               | No      | string  | No         | -          | Title                |
 | + [root_call_url](#root_call_url )               | No      | string  | No         | -          | Root Call Url        |
 | + [open_api_location](#open_api_location )       | No      | string  | No         | -          | Open Api Location    |
@@ -21,7 +21,7 @@ description: "Description of APIAgent component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** APIAgent
 

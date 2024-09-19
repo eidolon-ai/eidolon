@@ -27,5 +27,8 @@
     }
   },
   "title": "ProposePromptStrategy",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

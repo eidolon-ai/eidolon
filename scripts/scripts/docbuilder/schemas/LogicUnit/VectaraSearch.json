@@ -23,7 +23,8 @@
     }
   },
   "required": [
-    "corpus_key"
+    "corpus_key",
+    "implementation"
   ],
   "title": "VectaraSearch",
   "type": "object"

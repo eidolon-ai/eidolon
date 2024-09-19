@@ -24,5 +24,8 @@
     }
   },
   "title": "GoogleJWTProcessor",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

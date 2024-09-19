@@ -5,7 +5,7 @@ description: "Description of SentenceTransformersTokenTextSplitter component"
 
 | Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description                     |
 | ---------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------- |
-| - [implementation](#implementation )     | No      | const   | No         | -          | SentenceTransformersTokenTextSplitter |
+| + [implementation](#implementation )     | No      | const   | No         | -          | SentenceTransformersTokenTextSplitter |
 | - [chunk_size](#chunk_size )             | No      | integer | No         | -          | Chunk Size                            |
 | - [chunk_overlap](#chunk_overlap )       | No      | integer | No         | -          | Chunk Overlap                         |
 | - [keep_separator](#keep_separator )     | No      | boolean | No         | -          | Keep Separator                        |
@@ -18,7 +18,7 @@ description: "Description of SentenceTransformersTokenTextSplitter component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** SentenceTransformersTokenTextSplitter
 

@@ -5,7 +5,7 @@ description: "Description of WebSearch component"
 
 | Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------- |
-| - [implementation](#implementation )           | No      | const            | No         | -          | WebSearch           |
+| + [implementation](#implementation )           | No      | const            | No         | -          | WebSearch           |
 | - [summarizer](#summarizer )                   | No      | enum (of string) | No         | -          | Summarizer          |
 | - [cse_id](#cse_id )                           | No      | string           | No         | -          | Cse Id              |
 | - [cse_token](#cse_token )                     | No      | string           | No         | -          | Cse Token           |
@@ -19,7 +19,7 @@ description: "Description of WebSearch component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** WebSearch
 

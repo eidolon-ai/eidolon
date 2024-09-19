@@ -70,7 +70,8 @@
     }
   },
   "required": [
-    "bucket"
+    "bucket",
+    "implementation"
   ],
   "title": "S3Loader",
   "type": "object"

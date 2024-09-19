@@ -11,5 +11,8 @@
     }
   },
   "title": "ProcessFileSystemImpl",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

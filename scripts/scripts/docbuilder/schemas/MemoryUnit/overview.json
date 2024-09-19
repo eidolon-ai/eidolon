@@ -3,7 +3,7 @@
   "description": "Overview of MemoryUnit components",
   "anyOf": [
     {
-      "$ref": "file:./RawMemoryUnit.json"
+      "$ref": "./RawMemoryUnit.json"
     }
   ],
   "reference_group": {

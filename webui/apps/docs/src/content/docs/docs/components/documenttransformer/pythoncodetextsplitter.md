@@ -5,7 +5,7 @@ description: "Description of PythonCodeTextSplitter component"
 
 | Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description      |
 | -------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------- |
-| - [implementation](#implementation )         | No      | const           | No         | -          | PythonCodeTextSplitter |
+| + [implementation](#implementation )         | No      | const           | No         | -          | PythonCodeTextSplitter |
 | - [chunk_size](#chunk_size )                 | No      | integer         | No         | -          | Chunk Size             |
 | - [chunk_overlap](#chunk_overlap )           | No      | integer         | No         | -          | Chunk Overlap          |
 | - [keep_separator](#keep_separator )         | No      | boolean         | No         | -          | Keep Separator         |
@@ -18,7 +18,7 @@ description: "Description of PythonCodeTextSplitter component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** PythonCodeTextSplitter
 

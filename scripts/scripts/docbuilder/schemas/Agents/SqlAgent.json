@@ -5,13 +5,13 @@
       "description": "SqlAgent"
     },
     "client": {
-      "$ref": "file:../SqlClient/overview.json",
+      "$ref": "../SqlClient/overview.json",
       "default": {
         "implementation": "SqlClient"
       }
     },
     "apu": {
-      "$ref": "file:../APU/overview.json",
+      "$ref": "../APU/overview.json",
       "default": {
         "implementation": "APU"
       }
@@ -53,5 +53,8 @@
     }
   },
   "title": "SqlAgent",
-  "type": "object"
+  "type": "object",
+  "required": [
+    "implementation"
+  ]
 }

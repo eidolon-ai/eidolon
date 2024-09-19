@@ -6,5 +6,8 @@
       "const": "PrivateAuthorizer",
       "description": "PrivateAuthorizer"
     }
-  }
+  },
+  "required": [
+    "implementation"
+  ]
 }

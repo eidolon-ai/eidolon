@@ -3,9 +3,9 @@ title: DocumentProcessor
 description: "Description of DocumentProcessor component"
 ---
 
-| Property                             | Pattern | Type                           | Deprecated | Definition                                   | Title/Description                          |
-| ------------------------------------ | ------- | ------------------------------ | ---------- | -------------------------------------------- | ------------------------------------------ |
-| - [implementation](#implementation ) | No      | const                          | No         | -                                            | DocumentProcessor                          |
+| Property                             | Pattern | Type                           | Deprecated | Definition                              | Title/Description                          |
+| ------------------------------------ | ------- | ------------------------------ | ---------- | --------------------------------------- | ------------------------------------------ |
+| + [implementation](#implementation ) | No      | const                          | No         | -                                       | DocumentProcessor                          |
 | - [parser](#parser )                 | No      | Reference[DocumentParser]      | No         | In [DocumentParser](/docs/components/documentparser/overview)      | Overview of DocumentParser components      |
 | - [splitter](#splitter )             | No      | Reference[DocumentTransformer] | No         | In [DocumentTransformer](/docs/components/documenttransformer/overview) | Overview of DocumentTransformer components |
 
@@ -14,7 +14,7 @@ description: "Description of DocumentProcessor component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 **Description:** DocumentProcessor
 
@@ -27,7 +27,7 @@ Specific value: `"DocumentProcessor"`
 | **Type**       | `Reference[DocumentParser]`            |
 | **Required**   | No                                     |
 | **Default**    | `{"implementation": "DocumentParser"}` |
-| **Defined in** | [DocumentParser](/docs/components/documentparser/overview)   |
+| **Defined in** | [DocumentParser](/docs/components/documentparser/overview)        |
 
 **Description:** Overview of DocumentParser components
 
@@ -38,7 +38,7 @@ Specific value: `"DocumentProcessor"`
 | **Type**       | `Reference[DocumentTransformer]`            |
 | **Required**   | No                                          |
 | **Default**    | `{"implementation": "DocumentTransformer"}` |
-| **Defined in** | [DocumentTransformer](/docs/components/documenttransformer/overview)   |
+| **Defined in** | [DocumentTransformer](/docs/components/documenttransformer/overview)        |
 
 **Description:** Overview of DocumentTransformer components
 

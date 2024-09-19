@@ -12,25 +12,25 @@
       "type": "integer"
     },
     "question_transformer": {
-      "$ref": "file:../QuestionTransformer/overview.json",
+      "$ref": "../QuestionTransformer/overview.json",
       "default": {
         "implementation": "QuestionTransformer"
       }
     },
     "document_retriever": {
-      "$ref": "file:../DocumentRetriever/overview.json",
+      "$ref": "../DocumentRetriever/overview.json",
       "default": {
         "implementation": "DocumentRetriever"
       }
     },
     "document_reranker": {
-      "$ref": "file:../DocumentReranker/overview.json",
+      "$ref": "../DocumentReranker/overview.json",
       "default": {
         "implementation": "DocumentReranker"
       }
     },
     "result_summarizer": {
-      "$ref": "file:../ResultSummarizer/overview.json",
+      "$ref": "../ResultSummarizer/overview.json",
       "default": {
         "implementation": "ResultSummarizer"
       }
@@ -74,7 +74,7 @@
     "document_manager": {
       "anyOf": [
         {
-          "$ref": "file:../DocumentManager/overview.json"
+          "$ref": "../DocumentManager/overview.json"
         },
         {
           "type": "null"
@@ -83,7 +83,7 @@
       "default": null
     },
     "apu": {
-      "$ref": "file:../APU/overview.json",
+      "$ref": "../APU/overview.json",
       "default": {
         "implementation": "APU"
       }
@@ -91,7 +91,8 @@
   },
   "required": [
     "name",
-    "description"
+    "description",
+    "implementation"
   ],
   "title": "RetrieverAgent",
   "type": "object"

@@ -3,28 +3,28 @@
   "description": "Overview of LogicUnit components",
   "anyOf": [
     {
-      "$ref": "file:./ApiLogicUnit.json"
+      "$ref": "./ApiLogicUnit.json"
     },
     {
-      "$ref": "file:./AudioUnit.json"
+      "$ref": "./AudioUnit.json"
     },
     {
-      "$ref": "file:./Browser.json"
+      "$ref": "./Browser.json"
     },
     {
-      "$ref": "file:./OpenAIImageUnit.json"
+      "$ref": "./OpenAIImageUnit.json"
     },
     {
-      "$ref": "file:./OpenAiSpeech.json"
+      "$ref": "./OpenAiSpeech.json"
     },
     {
-      "$ref": "file:./Search.json"
+      "$ref": "./Search.json"
     },
     {
-      "$ref": "file:./VectaraSearch.json"
+      "$ref": "./VectaraSearch.json"
     },
     {
-      "$ref": "file:./WebSearch.json"
+      "$ref": "./WebSearch.json"
     }
   ],
   "reference_group": {
