@@ -10,5 +10,5 @@ export interface ProcessPageProps {
 }
 
 export default function ({params}: ProcessPageProps) {
-  return <EidolonChatPanel app_name={params.app_name} processId={params.processId} advanced_input={false} />
+  return <EidolonChatPanel app_name={params.app_name} processId={params.processId} />
 }

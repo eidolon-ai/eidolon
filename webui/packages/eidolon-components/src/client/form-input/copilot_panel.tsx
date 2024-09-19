@@ -18,9 +18,10 @@ export interface CopilotPanelParams {
   // eslint-disable-next-line no-unused-vars
   afterExecute?: (payload: string | Record<string, any>) => void
   scrollableRegionRef?: React.RefObject<HTMLDivElement>
+  operation?: string
 }
 
-export function CopilotPanel({machineUrl, processId, copilotParams, userName, userImage, afterExecute, scrollableRegionRef}: CopilotPanelParams) {
+export function CopilotPanel({machineUrl, processId, copilotParams, userName, userImage, afterExecute, scrollableRegionRef, operation}: CopilotPanelParams) {
   const [_, dispatch] = useEidolonContext()
   const {
     elementsAndLookup,
@@ -53,7 +54,7 @@ export function CopilotPanel({machineUrl, processId, copilotParams, userName, us
         />
       )}
       {copilotParams.type === "dev" && (
-        <AgentProcess operations={copilotParams.operations} processState={processState} handleAction={executeAction} handleCancel={handleCancel}/>
+        <AgentProcess operations={copilotParams.operations} selectedOperation={operation} processState={processState} handleAction={executeAction} handleCancel={handleCancel}/>
       )}
     </div>
   )

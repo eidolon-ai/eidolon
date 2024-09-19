@@ -7,7 +7,7 @@ import TailwindRJSFTheme from "./rjsf-tailwind.js";
 interface AgentInputFormProps {
   handleSubmit: (formJson: Record<string, any>) => void;
   operations: OperationInfo[];
-  isProgram: boolean;
+  selectedOperation?: string
   processState?: ProcessStatus;
 }
 
@@ -15,8 +15,8 @@ function getAvailableOperations(operations: OperationInfo[], processState: Proce
   return processState ? operations.filter((op) => processState.available_actions.includes(op.name)) : [];
 }
 
-export function AgentInputForm({handleSubmit, operations, isProgram, processState}: AgentInputFormProps) {
-  const [agentOperation, setAgentOperation] = useState<number>(0);
+export function AgentInputForm({handleSubmit, operations, selectedOperation, processState}: AgentInputFormProps) {
+  const [agentOperation, setAgentOperation] = useState<string | undefined>(selectedOperation);
   const [schema, setSchema] = useState<RJSFSchema>({});
   const [title, setTitle] = useState<string>("");
   const [formData, setFormData] = useState<any>({});
@@ -25,21 +25,20 @@ export function AgentInputForm({handleSubmit, operations, isProgram, processStat
   useEffect(() => {
     const newUsableOperations = getAvailableOperations(operations, processState);
     setUsableOperations(newUsableOperations);
-    const operationInfo = newUsableOperations[0];
+    const operationInfo = selectedOperation ? newUsableOperations.find(p => p.name == selectedOperation): newUsableOperations[0];
     if (operationInfo) {
-      setAgentOperation(0);
+      setAgentOperation(newUsableOperations[0]?.name);
       setSchema({...operationInfo.schema, title: undefined} as RJSFSchema);
     }
   }, [operations, processState]);
 
   const handleFormSubmit = (event: IChangeEvent) => {
-    handleSubmit({data: event.formData, title, operation: usableOperations[agentOperation]});
+    handleSubmit({data: event.formData, title, operation: agentOperation});
   };
 
   const handleOperationChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const index = parseInt(event.target.value);
-    setAgentOperation(index);
-    const operationInfo = usableOperations[index];
+    const operationInfo = usableOperations.find(op => op.name === event.target.value)
+    setAgentOperation(operationInfo?.name);
     if (operationInfo) {
       setSchema({...operationInfo.schema, title: undefined} as RJSFSchema);
       setFormData({});
@@ -49,42 +48,31 @@ export function AgentInputForm({handleSubmit, operations, isProgram, processStat
   const uiSchema: UiSchema = {
     'ui:submitButtonOptions': {norender: true}
   };
-
   return (
-    <div className="w-full h-full flex flex-col">
-      {isProgram && (
-        <div className="mb-4 flex-shrink-0">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
-          <input
-            type="text"
-            id="title"
-            required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
-        </div>
-      )}
-      <div className="mb-4 flex-shrink-0">
-        <label htmlFor="operation" className="block text-sm font-medium text-gray-700">Operation</label>
+    <div className="w-full h-full flex flex-col p-4 space-y-2">
+      <div>
+        <label htmlFor="operation" className="block text-sm font-medium text-gray-700 mb-1">
+          Operation
+        </label>
         <select
           id="operation"
-          value={usableOperations.length ? agentOperation : ''}
+          defaultValue={agentOperation}
           onChange={handleOperationChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
         >
           {usableOperations.map((op, index) => (
-            <option key={index} value={index}>{op.label}</option>
+            <option key={op.name} value={op.name} className="py-1">
+              {op.label}
+            </option>
           ))}
         </select>
       </div>
-      <div className="flex grow overflow-y-auto min-h-0 relative">
+      <div className="flex-grow overflow-y-auto min-h-0">
         <TailwindRJSFTheme
           schema={schema}
           uiSchema={uiSchema}
           formData={formData}
-          onChange={(e: IChangeEvent<any>) => setFormData(e.formData)}
-          // onSubmit={handleFormSubmit}
+          onChange={(e) => setFormData(e.formData)}
         />
       </div>
     </div>

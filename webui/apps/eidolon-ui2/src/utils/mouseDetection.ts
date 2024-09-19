@@ -55,7 +55,6 @@ export function useMouseTracking({
       event.clientY <= rect.bottom;
 
     if (isInside !== isMouseOver) {
-      console.log('isInside', isInside);
       setIsMouseOver(isInside);
       if (!isPinned) {
         if (isInside) {

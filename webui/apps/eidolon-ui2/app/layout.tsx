@@ -7,6 +7,13 @@ import {SessionProvider} from "next-auth/react";
 import {EidolonProvider} from "@eidolon-ai/components/client";
 import {PHProvider} from "@/PosthogProvider.tsx";
 import "@eidolon-ai/components/client-css";
+import { Roboto } from 'next/font/google'
+
+const font = Roboto({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 
 export const metadata: Metadata = {
@@ -17,7 +24,7 @@ export const metadata: Metadata = {
 
 const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
   return (
-    <html lang="en">
+    <html lang="en" className={font.className}>
     <PHProvider>
       <body>
       <div className={"titanium-background"}/>

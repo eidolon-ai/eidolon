@@ -101,8 +101,10 @@ class AgentController:
 
     async def add_route(self, app, handler, path, isEndpointAProgram: bool):
         endpoint = self.process_action(handler, isEndpointAProgram)
+        title = handler.extra.get("title", handler.name)
         app.add_api_route(
             path,
+            summary=title,
             endpoint=endpoint,
             methods=["POST"],
             tags=[self.name],

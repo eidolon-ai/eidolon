@@ -83,15 +83,15 @@ export class EidolonClient {
     }
   }
 
-  private processRequestBody(agent: string, name: string, path: string, requestBody: any) {
+  private processRequestBody(agent: string, name: string, path: string, summary : string | undefined, description : string | undefined, requestBody: any) {
     const ret = {
       label: `${agent}:${name}`,
       machine: this.machineUrl,
       agent: agent,
       name: name,
       path: path,
-      summary: requestBody?.summary,
-      description: requestBody?.description,
+      summary: summary,
+      description: description,
       schema: {}
     } as OperationInfo
 
@@ -122,13 +122,15 @@ export class EidolonClient {
       for (const path in paths) {
         if (paths[path]?.post) {
           const requestBody = paths[path]!.post!.requestBody
+          const summary = paths[path]!.post!.summary
+          const description = paths[path]!.post!.description
           let agentREExec = agentRE.exec(path);
           if (agentREExec) {
             const agentName = agentREExec![1]!
             agents.add(agentName)
             let opName = path.substring(path.lastIndexOf('/') + 1);
             if (path.includes("process")) {
-              this.actions[agentName + "-" + opName] = this.processRequestBody(agentName, opName, path, requestBody)
+              this.actions[agentName + "-" + opName] = this.processRequestBody(agentName, opName, path, summary, description, requestBody)
             }
           }
         }

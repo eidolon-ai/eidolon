@@ -8,12 +8,13 @@ import { ButtonScrollToBottom } from "./button-scroll-to-bottom.js";
 
 interface AgentProcessProps {
   operations: OperationInfo[]
+  selectedOperation?: string
   processState?: ProcessStatus
   handleAction: (machine: string, agent: string, operation: string, data: any) => void
   handleCancel: () => void
 }
 
-export function AgentProcess({ operations, processState, handleAction, handleCancel }: AgentProcessProps) {
+export function AgentProcess({ operations, selectedOperation, processState, handleAction, handleCancel }: AgentProcessProps) {
   const [bigForm, setBigForm] = useState(false);
 
   const handleSubmit = (formJson: Record<string, any>) => {
@@ -26,7 +27,7 @@ export function AgentProcess({ operations, processState, handleAction, handleCan
   };
 
   let content = (
-    <AgentInputForm handleSubmit={handleSubmit} operations={operations} isProgram={false} processState={processState} />
+    <AgentInputForm handleSubmit={handleSubmit} selectedOperation={selectedOperation} operations={operations} processState={processState} />
   );
 
   let button: JSX.Element | null = (

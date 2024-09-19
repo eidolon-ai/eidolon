@@ -100,7 +100,7 @@ export async function streamOperation(machineUrl: string, agent: string, operati
 }
 
 export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
-                                             data: Record<string, unknown>, elementsAndLookup: ElementsAndLookup,
+                                             data: unknown | Record<string, unknown>, elementsAndLookup: ElementsAndLookup,
                                               
                                              updateElements: (elements: ElementsAndLookup) => void, cancelFetchController: AbortController) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {

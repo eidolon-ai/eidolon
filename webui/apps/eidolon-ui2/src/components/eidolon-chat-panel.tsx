@@ -10,7 +10,7 @@ import {ProcessStatus} from "@eidolon-ai/client";
 export interface EidolonChatPanelProps {
   app_name: string
   processId: string
-  advanced_input: boolean
+  operation?: string
 }
 
 interface BreadCrumb {
@@ -18,7 +18,7 @@ interface BreadCrumb {
   processId: string
 }
 
-export function EidolonChatPanel({app_name, processId, advanced_input}: EidolonChatPanelProps) {
+export function EidolonChatPanel({app_name, processId, operation}: EidolonChatPanelProps) {
   const {app, fetchError, processStatus, updateProcessStatus} = useProcess()
   const {data: session} = useSession()
   const outerContainerRef = useRef<HTMLDivElement>(null);
@@ -102,6 +102,7 @@ export function EidolonChatPanel({app_name, processId, advanced_input}: EidolonC
         {fetchError && (<div>{fetchError.message}</div>)}
         {app && !fetchError && (
           <CopilotPanel
+            operation={operation}
             scrollableRegionRef={scrollableRegionRef}
             machineUrl={app!.location}
             processId={processId}

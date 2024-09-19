@@ -1,6 +1,9 @@
-import {ProcessWithListLayout} from "../../../../components/ProcessWithListLayout";
+'use client'
+
 import {getApp} from "@/utils/eidolon-apps";
-import {ProcessProvider} from "@eidolon-ai/components/client";
+import {EidolonApp, ProcessProvider} from "@eidolon-ai/components/client";
+import {useEffect, useState} from "react";
+import {MainAppLayout} from "@/layout/main-app-layout.tsx";
 
 interface ChatbotLayoutProps {
   params: {
@@ -9,15 +12,18 @@ interface ChatbotLayoutProps {
   children: JSX.Element
 }
 
-export default function ChatbotLayout({children, params}: ChatbotLayoutProps) {
-  const app = getApp(params.app_name)!
+export default function ChatbotLayout({children}: ChatbotLayoutProps) {
+  const [app, setApp] = useState<EidolonApp | undefined>(undefined)
+
+  useEffect(() => {
+    getApp('dev-tool').then(setApp)
+  }, []);
+
   return (
-    <ProcessWithListLayout
-      app={app}
-    >
+    <MainAppLayout app={app}>
       <ProcessProvider>
         {children}
       </ProcessProvider>
-    </ProcessWithListLayout>
+    </MainAppLayout>
   )
 }

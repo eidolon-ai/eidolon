@@ -18,11 +18,11 @@ const Home: NextPage = () => {
   return (
     <div className="p-4 m-4 text-center min-h-screen bg-gray-50">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-        {Object.values(getAppRegistry()).map((app, index) => (
+        {getAppRegistry().then(obj => Object.values(obj).map((app, index) => (
           <div key={index} className="w-full">
             <EidolonAppItem path={app.path} app={app} />
           </div>
-        ))}
+        )))}
       </div>
     </div>
   );

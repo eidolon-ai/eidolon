@@ -9,6 +9,7 @@ export interface EidolonApp {
   type: "copilot" | "dev"
   path: string
   params: CopilotParams | DevParams
+  agents: Record<string, OperationInfo[]> | undefined
 }
 
 export interface CopilotParams {

@@ -1,6 +1,9 @@
-import React from 'react';
+'use client'
+
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { getApp } from "@/utils/eidolon-apps";
+import {getApp} from "@/utils/eidolon-apps";
+import {EidolonApp} from "@eidolon-ai/components/client";
 
 export interface HomePageProps {
   params: {
@@ -8,8 +11,12 @@ export interface HomePageProps {
   }
 }
 
-const DevTools = ({ params }: HomePageProps) => {
-  const app = getApp(params.app_name)!
+export default function ChatbotPage({ params }: HomePageProps) {
+  const [app, setApp] = useState<EidolonApp | undefined>(undefined)
+
+  useEffect(() => {
+    getApp(params.app_name).then(setApp)
+  }, []);
 
   return (
     <main className="flex-grow p-6 flex flex-col items-center justify-center min-h-screen">
@@ -30,5 +37,3 @@ const DevTools = ({ params }: HomePageProps) => {
     </main>
   );
 }
-
-export default DevTools;

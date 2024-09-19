@@ -16,13 +16,11 @@
   "exports": {
     "./client": {
       "import": "./dist/client/index.js",
-      "require": "./dist/client/index.cjs",
-      "types": "./dist/client/index.d.ts"
+      "require": "./dist/client/index.cjs"
     },
     "./server": {
       "import": "./dist/server/index.js",
-      "require": "./dist/server/index.cjs",
-      "types": "./dist/server/index.d.ts"
+      "require": "./dist/server/index.cjs"
     },
     "./client-css": {
       "import": "./dist/client/index.css"

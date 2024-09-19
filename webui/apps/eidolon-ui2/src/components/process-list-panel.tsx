@@ -1,20 +1,17 @@
 'use client'
 
-import {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
 import {PlusCircle} from "lucide-react";
 import {CopilotParams, createProcess, EidolonApp, ProcessList, useProcesses} from "@eidolon-ai/components/client";
 import {ProcessStatus} from "@eidolon-ai/client";
-import {StartProgramDialog} from "../app/eidolon-apps/dev-tool/components/start-program-dialog";
 
-export interface DevProcessListWithAddProps {
+export interface ProcessListPanelProps {
   app: EidolonApp
 }
 
-export const DevProcessListWithAdd = ({ app }: DevProcessListWithAddProps) => {
+export function ProcessListPanel({ app }: ProcessListPanelProps) {
   const machineURL = app.location;
-  const { updateProcesses } = useProcesses();
-  const [createProcessOpen, setCreateProcessOpen] = useState(false);
+  const {updateProcesses} = useProcesses();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -27,7 +24,7 @@ export const DevProcessListWithAdd = ({ app }: DevProcessListWithAddProps) => {
         }
       }).then(() => updateProcesses(machineURL));
     } else {
-      setCreateProcessOpen(true);
+      router.push(`/eidolon-apps/${app.path}`);
     }
   };
 
@@ -41,7 +38,7 @@ export const DevProcessListWithAdd = ({ app }: DevProcessListWithAddProps) => {
               className="flex items-center w-full px-4 py-2 hover:bg-gray-100 transition-colors duration-200"
             >
               <PlusCircle className="w-6 h-6 mr-4 text-gray-600"/>
-              <span className="text-sm">{app.params.addBtnText || "Add Chat"}</span>
+              <span className="text-sm">{app.params.addBtnText || "New Conversation"}</span>
             </button>
           </li>
         </ul>
@@ -54,20 +51,10 @@ export const DevProcessListWithAdd = ({ app }: DevProcessListWithAddProps) => {
           selectChat={(process: ProcessStatus) => {
             router.push(`/eidolon-apps/${app.path}/${process.process_id}`);
           }}
-          goHome={() => {}}
+          goHome={() => {
+          }}
         />
-
-        {app.type === 'dev' && (
-          <StartProgramDialog
-            machineUrl={machineURL}
-            open={createProcessOpen}
-            defaultAgent={app.params.agent}
-            onClose={() => {
-              setCreateProcessOpen(false);
-            }}
-          />
-        )}
       </div>
     </div>
   );
-};
+}
