@@ -1,0 +1,68 @@
+{
+  "$defs": {
+    "Metadata": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "default": "DEFAULT",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "implementation": {
+      "const": "AgentResource",
+      "description": "AgentResource"
+    },
+    "apiVersion": {
+      "title": "Apiversion",
+      "type": "string"
+    },
+    "kind": {
+      "const": "Agent",
+      "default": "Agent",
+      "enum": [
+        "Agent"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "metadata": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Metadata"
+        }
+      ],
+      "default": {
+        "name": "DEFAULT"
+      }
+    },
+    "spec": {
+      "additionalProperties": true,
+      "properties": {
+        "implementation": {
+          "default": "Agent",
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "reference_pointer": {
+        "default_impl": "Agent",
+        "type": "object"
+      },
+      "title": "object Reference",
+      "type": "object"
+    }
+  },
+  "required": [
+    "apiVersion",
+    "spec",
+    "implementation"
+  ],
+  "title": "AgentResource",
+  "type": "object"
+}
