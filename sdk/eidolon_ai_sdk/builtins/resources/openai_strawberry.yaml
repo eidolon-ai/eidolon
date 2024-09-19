@@ -1,0 +1,34 @@
+---
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Reference
+metadata:
+  name: GPTo1Preview
+  annotations:
+    - title: "OpenAI o1 Preview"
+spec:
+    implementation: ConversationalAPU
+    audio_unit: OpenAiSpeech
+    image_unit: OpenAIImageUnit
+    llm_unit:
+      implementation: ToolCallLLMWrapper
+      llm_unit:
+        implementation: OpenAIGPT
+        temperature: 1
+        supports_system_messages: False
+        can_stream: False
+        force_json: False
+        model: "gpt-o1-preview"
+---
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Reference
+metadata:
+  name: "gpt-o1-preview"
+spec:
+  implementation: LLMModel
+  human_name: "GPT-o1"
+  name: "o1-preview"
+  input_context_limit: 128000
+  output_context_limit: 32768
+  supports_tools: False
+  supports_image_input: False
+  supports_audio_input: False

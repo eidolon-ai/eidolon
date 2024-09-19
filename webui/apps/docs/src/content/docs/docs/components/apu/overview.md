@@ -18,6 +18,7 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 * [GPT4-turbo](/docs/components/apu/gpt4-turbo/)
 * [GPT4o](/docs/components/apu/gpt4o/)
 * [GPT4o-mini](/docs/components/apu/gpt4o-mini/)
+* [GPTo1Preview](/docs/components/apu/gpto1preview/)
 * [Llamma3-8b](/docs/components/apu/llamma3-8b/)
 * [MistralLarge](/docs/components/apu/mistrallarge/)
 * [MistralMedium](/docs/components/apu/mistralmedium/)

@@ -141,6 +141,7 @@ export default defineConfig({
                 {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo'},
                 {label: 'GPT4o', link: '/docs/components/apu/gpt4o'},
                 {label: 'GPT4o-mini', link: '/docs/components/apu/gpt4o-mini'},
+                {label: 'GPTo1Preview', link: '/docs/components/apu/gpto1preview'},
                 {label: 'Llamma3-8b', link: '/docs/components/apu/llamma3-8b'},
                 {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge'},
                 {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium'},
@@ -169,6 +170,7 @@ export default defineConfig({
                 {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo'},
                 {label: 'gpt-4o', link: '/docs/components/llmmodel/gpt-4o'},
                 {label: 'gpt-4o-mini', link: '/docs/components/llmmodel/gpt-4o-mini'},
+                {label: 'gpt-o1-preview', link: '/docs/components/llmmodel/gpt-o1-preview'},
                 {label: 'llama3-8b', link: '/docs/components/llmmodel/llama3-8b'},
                 {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest'},
                 {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest'},
@@ -184,6 +186,7 @@ export default defineConfig({
                 {label: 'OpenAIImageUnit', link: '/docs/components/logicunit/openaiimageunit'},
                 {label: 'OpenAiSpeech', link: '/docs/components/logicunit/openaispeech'},
                 {label: 'Search', link: '/docs/components/logicunit/search'},
+                {label: 'VectaraSearch', link: '/docs/components/logicunit/vectarasearch'},
                 {label: 'WebSearch', link: '/docs/components/logicunit/websearch'},
               ]
             },

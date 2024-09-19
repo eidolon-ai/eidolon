@@ -1,0 +1,1634 @@
+interactions:
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        eyJzZWFyY2giOiB7ImNvcnBvcmEiOiBbeyJjb3JwdXNfa2V5IjogImJsYWNrLWhvbGVzLXNhbXBs
+        ZS1kYXRhIn1dfSwgInF1ZXJ5IjogIndoYXQgaXMgYSBibGFjayBob2xlPyIsICJzdHJlYW1fcmVz
+        cG9uc2UiOiB0cnVlfQ==
+      - 0
+      - null
+    headers:
+      accept:
+      - text/event-stream
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '127'
+      content-type:
+      - application/json
+      host:
+      - api.vectara.io
+      user-agent:
+      - python-httpx/0.27.2
+    method: POST
+    uri: https://api.vectara.io/v2/chats
+  response:
+    body:
+      string: "event:search_results\ndata:{\"type\":\"search_results\",\"search_results\":[{\"text\":\"A
+        black hole is a region of spacetime where gravity is so strong that nothing,
+        not even light and other electromagnetic waves, is capable of possessing enough
+        energy to escape it.\",\"score\":0.9082812070846558,\"part_metadata\":{\"title\":\"Black
+        hole\",\"lang\":\"eng\",\"section\":34,\"offset\":2016,\"len\":179},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"An
+        artistic depiction of a black hole and its features\\n                  \\n
+        \                 When an object falls into a black hole, any information
+        about the shape of the object or distribution of charge on it is evenly distributed
+        along the horizon of the black hole, and is lost to outside observers.\",\"score\":0.5247617959976196,\"part_metadata\":{\"title\":\"Properties
+        and structure\",\"breadcrumb\":[\"Black hole\"],\"lang\":\"eng\",\"section\":14,\"offset\":1165,\"len\":302},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"Because
+        a black hole eventually achieves a stable state with only three parameters,
+        there is no way to avoid losing information about the initial conditions:
+        the gravitational and electric fields of a black hole give very little information
+        about what went in.\",\"score\":0.5155808925628662,\"part_metadata\":{\"title\":\"Properties
+        and structure\",\"breadcrumb\":[\"Black hole\"],\"lang\":\"eng\",\"section\":14,\"offset\":1864,\"len\":260},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"The
+        size of a black hole, as determined by the radius of the event horizon, or
+        Schwarzschild radius, is proportional to the mass, M, through \\n                  \\n
+        \                     \\n                        \\n                          \\n
+        \                           \\n                              \\n                                \\n
+        \                                 \\n                                    r\\n
+        \                                   \\n                                      \\n
+        \                                       s\\n                                      \\n
+        \                                   \\n                                  \\n
+        \                                 =\\n                                  \\n
+        \                                   \\n                                      \\n
+        \                                       2\\n                                        G\\n
+        \                                       M\\n                                      \\n
+        \                                     \\n                                        c\\n
+        \                                       \\n                                          2\\n
+        \                                       \\n                                      \\n
+        \                                   \\n                                  \\n
+        \                                 \u2248\\\\x3C!\",\"score\":0.5138418674468994,\"part_metadata\":{\"title\":\"Physical
+        properties\",\"breadcrumb\":[\"Black hole\",\"Properties and structure\"],\"lang\":\"eng\",\"section\":7,\"offset\":8357,\"len\":1301},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"Black
+        hole\",\"score\":0.5124500393867493,\"part_metadata\":{\"is_title\":true,\"title_level\":2},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"The
+        defining feature of a black hole is the appearance of an event horizon\u2014a
+        boundary in spacetime through which matter and light can pass only inward
+        towards the mass of the black hole.\",\"score\":0.5121040344238281,\"part_metadata\":{\"title\":\"Event
+        horizon\",\"breadcrumb\":[\"Black hole\",\"Properties and structure\"],\"lang\":\"eng\",\"section\":8,\"offset\":1086,\"len\":186},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"What
+        is visible is not the black hole\u2014which shows as black because of the
+        loss of all light within this dark region.\",\"score\":0.504933774471283,\"part_metadata\":{\"title\":\"Direct
+        interferometry\",\"breadcrumb\":[\"Black hole\",\"Observational evidence\"],\"lang\":\"eng\",\"section\":21,\"offset\":966,\"len\":116},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"A
+        view of M87* black hole in polarised light\\n                  \\n                  \\n
+        \                   \\n                    Sagittarius A*, black hole in the
+        center of the Milky Way\\n                  \\n                  The Event
+        Horizon Telescope (EHT) is an active program that directly observes the immediate
+        environment of black holes' event horizons, such as the black hole at the
+        centre of the Milky Way.\",\"score\":0.5022437572479248,\"part_metadata\":{\"title\":\"Direct
+        interferometry\",\"breadcrumb\":[\"Black hole\",\"Observational evidence\"],\"lang\":\"eng\",\"section\":21,\"offset\":80,\"len\":409},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"The
+        ergosphere of a black hole is a volume bounded by the black hole's event horizon
+        and the ergosurface, which coincides with the event horizon at the poles but
+        is at a much greater distance around the equator.\",\"score\":0.4955260753631592,\"part_metadata\":{\"title\":\"Ergosphere\",\"breadcrumb\":[\"Black
+        hole\",\"Properties and structure\"],\"lang\":\"eng\",\"section\":11,\"offset\":881,\"len\":211},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"},{\"text\":\"A
+        black hole has a great effect on the fate and circumstances of an object crossing
+        it, but it has no locally detectable features according to general relativity.\",\"score\":0.4888898730278015,\"part_metadata\":{\"title\":\"Black
+        hole\",\"lang\":\"eng\",\"section\":34,\"offset\":2376,\"len\":162},\"document_metadata\":{\"X-TIKA:Parsed-By\":\"org.apache.tika.parser.html.HtmlParser\",\"dc:title\":\"Black
+        hole - Wikipedia\",\"Content-Encoding\":\"UTF-8\",\"Content-Language\":\"en\",\"Content-Type\":\"text/html;
+        charset=UTF-8\",\"title\":\"Black hole - Wikipedia\"},\"document_id\":\"blob\"}]}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"A
+        b\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"lack
+        ho\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"le
+        \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"is
+        a r\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"egion
+        \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"in
+        space\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        wh\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ere
+        gravity\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        is inc\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"r\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"edibly
+        st\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"rong,
+        trapp\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ing
+        everyt\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"hing
+        i\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"nc\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"l\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ud\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ing
+        l\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"igh\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"t
+        [1]. \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"When
+        a\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"n
+        obj\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ec\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"t
+        fall\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"s
+        int\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"o\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        a b\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"lack
+        hole, a\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ny
+        inf\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"orm\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ati\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"on
+        ab\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"out\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        it is l\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ost
+        to out\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"si\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"d\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"e
+        \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"obse\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"rvers
+        [2]. The\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        gra\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"vitationa\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"l
+        and e\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"lec\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"tr\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ic
+        fie\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"lds
+        o\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"f
+        a bla\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ck
+        ho\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"le
+        reve\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"al
+        ver\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"y
+        lit\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"tle
+        abou\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"t
+        w\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ha\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"t\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        e\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"nt\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ered
+        i\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"t
+        [3]\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\".
+        \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"A
+        bla\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"c\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"k
+        hole's si\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ze,\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        det\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ermine\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"d
+        by its\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        event \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"h\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ori\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"zon
+        radius, i\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"s
+        p\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ropo\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"rtion\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"al\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"to\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        it\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"s
+        mass [\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"4\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"].\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        In es\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"sence\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\",
+        a\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        b\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"lack
+        hole i\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"s
+        a mys\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ter\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ious
+        e\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ntity\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        in\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        spa\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ce
+        that \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"exerts
+        immense\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        gravi\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"t\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ational\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        fo\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"rce,
+        making\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        it \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"impossibl\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"e\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        for \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"anythi\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"n\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"g,
+        \"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"even
+        li\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ght,\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"
+        to es\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"c\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_chunk\ndata:{\"type\":\"generation_chunk\",\"generation_chunk\":\"ape
+        its grasp.\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:generation_end\ndata:{\"type\":\"generation_end\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:chat_info\ndata:{\"type\":\"chat_info\",\"chat_id\":\"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\",\"turn_id\":\"trn_7538e1c1-d2f1-4e8b-87db-f945c09c77f4\"}\n\nevent:factual_consistency_score\ndata:{\"type\":\"factual_consistency_score\",\"factual_consistency_score\":0.6637028}\n\nevent:end\ndata:{\"type\":\"end\"}\n\n"
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type, Authorization, X-Api-Key, X-Request-Id, Accept, Customer-Id
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, PATCH, DELETE, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-Trace-Id, X-Request-Id
+      Access-Control-Max-Age:
+      - '1728000'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/event-stream
+      Date:
+      - Mon, 16 Sep 2024 21:21:22 GMT
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      x-request-id:
+      - 7a0596d505f8bb8b586fb18a9207bcda
+      x-trace-id:
+      - d66b71af7c1f57c3343585544dce6fec
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        eyJzZWFyY2giOiB7ImNvcnBvcmEiOiBbeyJjb3JwdXNfa2V5IjogImJsYWNrLWhvbGVzLXNhbXBs
+        ZS1kYXRhIn1dfSwgInF1ZXJ5IjogIldobyBmaXJzdCBwcm9wb3NlZCB0aGUgY29uY2VwdD8iLCAi
+        c3RyZWFtX3Jlc3BvbnNlIjogdHJ1ZX0=
+      - 0
+      - null
+    headers:
+      accept:
+      - text/event-stream
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '137'
+      content-type:
+      - application/json
+      host:
+      - api.vectara.io
+      user-agent:
+      - python-httpx/0.27.2
+    method: POST
+    uri: https://api.vectara.io/v2/chats/cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4/turns
+  response:
+    body:
+      string: 'event:search_results
+
+        data:{"type":"search_results","search_results":[{"text":"In 1916, Karl Schwarzschild
+        found the first modern solution of general relativity that would characterize
+        a black hole.","score":0.9366351366043091,"part_metadata":{"title":"Black
+        hole","lang":"eng","section":34,"offset":3119,"len":119},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"The
+        first strong candidate for a black hole, Cygnus X-1, was discovered in this
+        way by Charles Thomas Bolton, Louise Webster, and Paul Murdin in 1972.","score":0.5771575570106506,"part_metadata":{"title":"X-ray
+        binaries","breadcrumb":["Black hole","Observational evidence","Accretion of
+        matter"],"lang":"nob","section":25,"offset":1323,"len":150},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"Science
+        writer Marcia Bartusiak traces the term \"black hole\" to physicist Robert
+        H. Dicke, who in the early 1960s reportedly compared the phenomenon to the
+        Black Hole of Calcutta, notorious as a prison where people entered but never
+        left alive.","score":0.5747976303100586,"part_metadata":{"title":"Etymology","breadcrumb":["Black
+        hole","History"],"lang":"eng","section":5,"offset":232,"len":244},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"On
+        10 April 2019, the first direct image of a black hole and its vicinity was
+        published, following observations made by the Event Horizon Telescope (EHT)
+        in 2017 of the supermassive black hole in Messier 87''s galactic centre.","score":0.549094021320343,"part_metadata":{"title":"Observation","breadcrumb":["Black
+        hole","History"],"lang":"eng","section":4,"offset":241,"len":225},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"David
+        Finkelstein, in 1958, first published the interpretation of \"black hole\"
+        as a region of space from which nothing can escape.","score":0.5477292537689209,"part_metadata":{"title":"Black
+        hole","lang":"eng","section":34,"offset":3239,"len":130},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"In
+        the paper, which made no reference to Einstein''s recent publication, Oppenheimer
+        and Snyder used Einstein''s own theory of general relativity to show the conditions
+        on how a black hole could develop, for the first time in contemporary physics.","score":0.5419178009033203,"part_metadata":{"title":"General
+        relativity","breadcrumb":["Black hole","History"],"lang":"eng","section":3,"offset":6842,"len":245},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"The
+        analogy was completed when Hawking, in 1974, showed that quantum field theory
+        implies that black holes should radiate like a black body with a temperature
+        proportional to the surface gravity of the black hole, predicting the effect
+        now known as Hawking radiation.","score":0.5391607284545898,"part_metadata":{"title":"Golden
+        age","breadcrumb":["Black hole","History","General relativity"],"lang":"eng","section":2,"offset":2860,"len":267},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"In
+        December 1967, a student reportedly suggested the phrase \"black hole\" at
+        a lecture by John Wheeler; Wheeler adopted the term for its brevity and \"advertising
+        value\", and it quickly caught on, leading some to credit Wheeler with coining
+        the phrase.","score":0.5362219214439392,"part_metadata":{"title":"Etymology","breadcrumb":["Black
+        hole","History"],"lang":"eng","section":5,"offset":815,"len":250},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"The
+        first black hole known was Cygnus X-1, identified by several researchers independently
+        in 1971.","score":0.5356640815734863,"part_metadata":{"title":"Black hole","lang":"eng","section":34,"offset":3701,"len":99},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"},{"text":"In
+        November 2011 the first direct observation of a quasar accretion disk around
+        a supermassive black hole was reported.","score":0.5242708921432495,"part_metadata":{"title":"Accretion
+        of matter","breadcrumb":["Black hole","Observational evidence"],"lang":"eng","section":27,"offset":2738,"len":119},"document_metadata":{"X-TIKA:Parsed-By":"org.apache.tika.parser.html.HtmlParser","dc:title":"Black
+        hole - Wikipedia","Content-Encoding":"UTF-8","Content-Language":"en","Content-Type":"text/html;
+        charset=UTF-8","title":"Black hole - Wikipedia"},"document_id":"blob"}]}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"Karl "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"Sch"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"war"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"z"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"schild"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" in "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"1916 f"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ound th"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"e first m"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ode"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"rn solut"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ion "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"of gene"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ral "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"re"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"lativi"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ty fo"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"r"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"a "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"bla"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ck"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" h"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ol"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"e"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"["}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"1]. "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"Cygnus X-1 "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"was"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" d"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"iscover"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ed as a st"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"rong"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" c"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"andida"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"te fo"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"r a"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"bla"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"c"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"k"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ho"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"le i"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"n 197"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"2["}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"2]. T"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"he te"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"r"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"m \""}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"black h"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ole\" "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"is "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"traced bac"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"k to ph"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ys"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"i"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ci"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"st"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" R"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"obe"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"rt H"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":". Dick"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"e"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" in"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"t"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"h"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"e"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" e"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"arl"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"y"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" 19"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"6"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"0"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"s[3]"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":". In 2"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"019, the"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" Event Hor"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"izon Tele"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"scop"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"e prov"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ided th"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"e firs"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"t d"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ir"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ect im"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"age o"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"f a"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" blac"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"k h"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"o"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"le"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"i"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"n "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"Messie"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"r "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"87[4]"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":". Dav"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"i"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"d F"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"i"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"nke"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"l"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"s"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"tein"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":", in"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" 1958,"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" wa"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"s the firs"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"t "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"to int"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"erpre"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"t a"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" b"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"lack ho"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"le as"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" a reg"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ion from"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":" whi"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"ch noth"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"i"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"n"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"g "}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_chunk
+
+        data:{"type":"generation_chunk","generation_chunk":"can escape[5]."}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:generation_end
+
+        data:{"type":"generation_end"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:chat_info
+
+        data:{"type":"chat_info","chat_id":"cht_7538e1c1-d2f1-4e8b-87db-f945c09c77f4","turn_id":"trn_dc1966d7-de13-47ff-9893-49faa7f85b1f"}
+
+
+        event:factual_consistency_score
+
+        data:{"type":"factual_consistency_score","factual_consistency_score":0.5622951}
+
+
+        event:end
+
+        data:{"type":"end"}
+
+
+        '
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type, Authorization, X-Api-Key, X-Request-Id, Accept, Customer-Id
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, PATCH, DELETE, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-Trace-Id, X-Request-Id
+      Access-Control-Max-Age:
+      - '1728000'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/event-stream
+      Date:
+      - Mon, 16 Sep 2024 21:21:25 GMT
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      x-request-id:
+      - a678434f20090325d9ef4aa6195f7a62
+      x-trace-id:
+      - 8ac8daa57bc77947d403c2e4f46c9501
+    status:
+      code: 200
+      message: OK
+version: 1
