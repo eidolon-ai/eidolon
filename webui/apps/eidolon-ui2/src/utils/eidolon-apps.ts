@@ -75,6 +75,7 @@ function getAppsRaw() {
     app.path = `${key}`
     if (app.type === 'copilot') {
       const params = app.params as CopilotParams
+      params.type = 'copilot'
       if (params.custom_page) {
         app.path = `${params.custom_page}`
       } else {
@@ -86,6 +87,10 @@ function getAppsRaw() {
         app.location = location.machine
         console.log("setting ", params.agent, " machine ", location.machine)
       }
+    } else {
+      const params = app.params || {}
+      params.type = 'dev'
+      app.params = params
     }
     if (process.env.EIDOLON_SERVER) {
       app.location = process.env.EIDOLON_SERVER

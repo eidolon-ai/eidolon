@@ -12,6 +12,7 @@ export interface EidolonApp {
 }
 
 export interface CopilotParams {
+  type: "copilot",
   "agent": string,
   custom_page: string | undefined,
   addBtnText: string | undefined,
@@ -28,6 +29,7 @@ export interface CopilotParams {
 }
 
 export interface DevParams {
+  type: "dev",
   agent: string,
   operations: OperationInfo[],
   addBtnText: string | undefined,

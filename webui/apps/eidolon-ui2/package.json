@@ -36,6 +36,8 @@
     "build-eidolon": "node eidolon-app.build.js"
   },
   "dependencies": {
+    "@docsearch/js": "^3.6.1",
+    "@docsearch/react": "^3.6.1",
     "@eidolon-ai/client": "workspace:*",
     "@eidolon-ai/components": "workspace:*",
     "@eidolon-ai/usage-client": "workspace:*",
@@ -44,16 +46,15 @@
     "@emotion/server": "latest",
     "@emotion/styled": "latest",
     "@jsdevtools/ono": "latest",
-    "@mui/icons-material": "latest",
-    "@mui/material": "latest",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/blueimp-md5": "^2.18.2",
     "@types/faker": "^6.6.9",
     "@types/qs": "^6.9.15",
     "blueimp-md5": "^2.19.0",
-    "clsx": "latest",
+    "clsx": "^2.1.1",
     "copy-to-clipboard": "latest",
+    "lucide-react": "^0.441.0",
     "next": "15.0.0-canary.123",
     "next-auth": "5.0.0-beta.18",
     "posthog-js": "^1.160.2",
@@ -70,6 +71,7 @@
     "@testing-library/user-event": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
+    "autoprefixer": "^10.4.20",
     "babel-jest": "latest",
     "eslint": "8.57.0",
     "eslint-config-next": "^14.2.5",
@@ -77,7 +79,9 @@
     "jest": "latest",
     "jest-environment-jsdom": "latest",
     "next-router-mock": "latest",
+    "postcss": "^8.4.45",
     "prettier": "latest",
+    "tailwindcss": "^3.4.9",
     "typescript": "latest"
   }
 }

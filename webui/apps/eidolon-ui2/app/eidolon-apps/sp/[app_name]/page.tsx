@@ -1,5 +1,6 @@
-import {Box, Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/material";
-import {getApp} from "@/utils/eidolon-apps";
+import React from 'react';
+import Image from 'next/image';
+import { getApp } from "@/utils/eidolon-apps";
 
 export interface HomePageProps {
   params: {
@@ -7,33 +8,26 @@ export interface HomePageProps {
   }
 }
 
-const DevTools = ({params}: HomePageProps) => {
+const DevTools = ({ params }: HomePageProps) => {
   const app = getApp(params.app_name)!
+
   return (
-    <Box component="main" sx={{
-      flexGrow: 1, p: 3, alignItems: "center", height: "100%", display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-    }}>
-      <Card>
-        <CardActionArea>
-          <CardMedia
-            component="img"
-            image={app.image}
-            sx={{maxWidth: '100%'}}
+    <main className="flex-grow p-6 flex flex-col items-center justify-center min-h-screen">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-md w-full cursor-pointer transition-transform duration-300 hover:scale-105">
+        <div className="relative h-48 w-full">
+          <Image
+            src={app.image}
             alt={app.name}
+            layout="fill"
+            objectFit="cover"
           />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {app.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {app.description}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </Box>
+        </div>
+        <div className="p-4">
+          <h2 className="text-xl font-semibold mb-2">{app.name}</h2>
+          <p className="text-sm text-gray-600">{app.description}</p>
+        </div>
+      </div>
+    </main>
   );
 }
 

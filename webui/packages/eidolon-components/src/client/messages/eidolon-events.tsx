@@ -1,6 +1,5 @@
 'use client'
 
-import {Box} from "@mui/material";
 import {ElementsAndLookup} from "../lib/display-elements.ts";
 import {ChatScrollAnchor} from "./chat-scroll-anchor.tsx";
 import {ChatDisplayElement} from "./chat-display-element.tsx";
@@ -11,13 +10,14 @@ export interface EidolonEventProps {
   elementsAndLookup: ElementsAndLookup,
   userImage: string | null | undefined
   userName: string | null  | undefined
-  sx?: Record<any, any>
+  scrollableRegionRef?: React.RefObject<HTMLDivElement>
 }
 
-export function EidolonEvents({machineUrl, elementsAndLookup, agentName, userImage, userName, ...props}: EidolonEventProps) {
+export function EidolonEvents({machineUrl, elementsAndLookup, agentName, userImage, userName, scrollableRegionRef}: EidolonEventProps) {
   return (
-    <Box id="chat-elements-scroll-region"
-         sx={{overflowY: 'auto', overflowX: 'hidden', width: '100%', marginBottom: '8px', ...props.sx}}
+    <div id="chat-elements-scroll-region"
+         ref={scrollableRegionRef}
+         className={"flex flex-col gap-4 chat-elements-scroll-region overflow-y-auto overflow-x-hidden w-full mb-8"}
     >
       {elementsAndLookup.elements.map((child, index) => {
           if (index < elementsAndLookup.elements.length - 1 || child.type != "success") {
@@ -31,6 +31,6 @@ export function EidolonEvents({machineUrl, elementsAndLookup, agentName, userIma
         }
       )}
       <ChatScrollAnchor trackVisibility={true}></ChatScrollAnchor>
-    </Box>
+    </div>
   )
 }

@@ -1,103 +1,95 @@
-// noinspection JSUnusedGlobalSymbols
 'use client'
 
-import {Box, List, ListItem, ListItemText, ListSubheader} from "@mui/material";
-import {ProcessSummary} from "./process-summary.tsx";
-import {deleteProcess} from "../client-api-helpers/process-helper.ts";
-import {ProcessStatus} from "@eidolon-ai/client";
-import {useProcesses} from "../hooks/processes_context.tsx";
-import {useEffect} from "react";
+import React, { useEffect } from 'react';
+import { ProcessSummary } from "./process-summary.tsx";
+import { deleteProcess } from "../client-api-helpers/process-helper.ts";
+import { ProcessStatus } from "@eidolon-ai/client";
+import { useProcesses } from "../hooks/processes_context.tsx";
 
 export interface ProcessListProps {
-  // eslint-disable-next-line no-unused-vars
-  isSelected: (chat: ProcessStatus) => boolean
-  // eslint-disable-next-line no-unused-vars
-  selectChat: (chat: ProcessStatus) => void
-  goHome: () => void
-  machineURL: string
+  isSelected: (chat: ProcessStatus) => boolean;
+  selectChat: (chat: ProcessStatus) => void;
+  goHome: () => void;
+  machineURL: string;
 }
 
-export function ProcessList({machineURL, isSelected, selectChat, goHome}: ProcessListProps) {
-  const {processes, updateProcesses, fetchError} = useProcesses()
+export function ProcessList({ machineURL, isSelected, selectChat, goHome }: ProcessListProps) {
+  const { processes, updateProcesses, fetchError } = useProcesses();
 
   useEffect(() => {
-    updateProcesses(machineURL).then(() => {})
-  }, [machineURL])
+    updateProcesses(machineURL).then(() => {});
+  }, [machineURL]);
 
   const handleDelete = (chat: ProcessStatus) => {
-    const process_id = chat.process_id
+    const process_id = chat.process_id;
     deleteProcess(chat.machine, process_id).then(() => {
       if (isSelected(chat)) {
-        // get the previous item in the list from the current process_id and navigate to it by iterating through the
-        // dataByDate object and then each array of chats, keeping the previous item in a variable
-        let previousItem: ProcessStatus | undefined
-        let replaceWithNextItem = false
+        let previousItem: ProcessStatus | undefined;
+        let replaceWithNextItem = false;
         for (const [_, chats] of Object.entries(processes)) {
           for (const chat of chats) {
             if (replaceWithNextItem) {
-              return selectChat(chat)
+              return selectChat(chat);
             }
             if (chat.process_id === process_id) {
               if (previousItem) {
-                return selectChat(previousItem)
+                return selectChat(previousItem);
               } else {
-                replaceWithNextItem = true
+                replaceWithNextItem = true;
               }
             }
-            previousItem = chat
+            previousItem = chat;
           }
         }
-        goHome()
+        goHome();
       }
-    }).then(() => updateProcesses(machineURL))
-  }
+    }).then(() => updateProcesses(machineURL));
+  };
 
-  let listComponents = (
-    <List>
-      <ListItem>
-        <ListItemText primary="No chat history"/>
-      </ListItem>
-    </List>
-
-  )
+  let listComponents;
 
   if (fetchError) {
     listComponents = (
-      <List>
-        <ListItem>
-          <ListItemText primary="Failed to fetch chat history"/>
-        </ListItem>
-      </List>
-    )
-  } else if (Object.keys(processes).length) {
+      <ul className="list-none p-0">
+        <li className="p-4">
+          <p className="text-red-500">Failed to fetch chat history</p>
+        </li>
+      </ul>
+    );
+  } else if (Object.keys(processes).length === 0) {
     listComponents = (
-      <List>
-        {Object.entries(processes).map(([date, chats]) => {
-          return (
-            <Box key={date}>
-              <ListSubheader>{date}</ListSubheader>
-              {chats.map(chat => {
-                return (
-                  <ProcessSummary
-                    key={chat.process_id}
-                    chat={chat}
-                    handleDelete={handleDelete}
-                    isSelected={isSelected}
-                    selectChat={selectChat}
-                  />
-                )
-              })}
-            </Box>
-          )
-        })}
-      </List>
-    )
+      <ul className="list-none p-0">
+        <li className="p-4">
+          <p className="text-gray-500">No chat history</p>
+        </li>
+      </ul>
+    );
+  } else {
+    listComponents = (
+      <ul className="list-none p-0 h-full">
+        {Object.entries(processes).map(([date, chats]) => (
+          <li key={date} className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-500 sticky top-0 p-2 underline">{date}</h3>
+            <ul className="list-none p-0">
+              {chats.map(chat => (
+                <ProcessSummary
+                  key={chat.process_id}
+                  chat={chat}
+                  handleDelete={handleDelete}
+                  isSelected={isSelected}
+                  selectChat={selectChat}
+                />
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    );
   }
 
   return (
-    <Box sx={{overflow: 'auto'}}>
+    <div className="overflow-auto">
       {listComponents}
-    </Box>
-  )
+    </div>
+  );
 }
-

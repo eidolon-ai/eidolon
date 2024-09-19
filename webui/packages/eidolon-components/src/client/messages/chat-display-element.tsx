@@ -1,9 +1,9 @@
 // @ts-ignore
-import {Avatar, Box, Divider, Typography} from "@mui/material";
 import {AgentStartElement, DisplayElement, ErrorElement, JsonElement, MarkdownElement, ToolCallElement, UserRequestElement} from "../lib/display-elements.ts";
 import {ToolCall} from "./tool-call-element.tsx";
 import {EidolonMarkdown} from "./eidolon-markdown.tsx";
 import styles from "./eidolon-events.module.css"
+import {AgentCall} from "./agent-element.js";
 
 export interface ChatDisplayElementProps {
   machineUrl: string
@@ -30,27 +30,7 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
 
   switch (rawElement.type) {
     case "agent-start": {
-      const element = rawElement as AgentStartElement
-      let title: string
-      let subTitle: string
-      if (element.title) {
-        title = element.title
-        subTitle = element.callName
-      } else {
-        title = element.agentName
-        subTitle = element.callName
-      }
-      return (
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-          <div style={{display: 'flex', padding: "8px", marginBottom: "16px", background: "#f8f8f8", borderRadius: "8px", marginTop: "8px"}}>
-            <Avatar sx={{height: "36px", width: "36px"}} src="/img/eidolon_with_gradient.png"/>
-            <Box>
-              <Typography variant={"h6"} style={{marginLeft: '8px'}}>{title}</Typography>
-              <Typography lineHeight={1} variant={"subtitle1"} style={{marginLeft: '24px', color: '#777'}}>{subTitle}</Typography>
-            </Box>
-          </div>
-        </div>
-      )
+      return <AgentCall machineUrl={machineUrl} element={rawElement as AgentStartElement} agentName={agentName}/>
     }
     case "user-request": {
       const element = rawElement as UserRequestElement
@@ -65,24 +45,30 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
       }
       if (topLevel) {
         if (userImage) {
-          userAvatar = <Avatar sx={{height: "32px", width: "32px"}} src={userImage!}/>
+          userAvatar = userAvatar = (
+            <div className="h-6 w-6 rounded-full overflow-hidden">
+              <img src={userImage!} alt="User avatar" className="w-full h-full object-cover"/>
+            </div>
+          )
         } else {
-          userAvatar = <Avatar sx={{height: "32px", width: "32px"}}>{userName?.charAt(0)}</Avatar>
+          userAvatar = (
+            <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+              {userName?.charAt(0).toUpperCase()}
+            </div>
+          )
         }
       } else {
-        userAvatar = <Avatar sx={{height: "24px", width: "24px"}} src="/img/eidolon_with_gradient.png"/>
+        userAvatar = (
+          <div className="h-6 w-6 rounded-full overflow-hidden">
+            <img src={"/img/eidolon_with_gradient.png"} alt="User avatar" className="w-full h-full object-cover"/>
+          </div>
+        )
       }
       return (
-        <div>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
-            <div style={{display: 'flex', padding: "8px", marginBottom: "16px", background: "#f8f8f8", borderRadius: "8px", marginTop: "8px"}}>
-              {userAvatar}
-              <Box>
-                <Typography variant={"h6"} style={{marginLeft: '8px'}}>{agentName}</Typography>
-              </Box>
-            </div>
-          </div>
-          <div className={styles[`chat-indent`]}>
+        <div className={"flex flex-row border-r-4 rounded-xl py-3 px-2 w-fit user-element"}
+        >
+          {userAvatar}
+          <div className={"mx-2"}>
             <EidolonMarkdown machineUrl={machineUrl}>{getUserInput(element)}</EidolonMarkdown>
           </div>
         </div>
@@ -111,11 +97,6 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
         <div className={styles[`chat-indent`]}>
           <ToolCall machineUrl={machineUrl} element={element} agentName={agentName}/>
         </div>
-      )
-    }
-    case "success": {
-      return (
-        <Divider sx={{margin: "16px 0 16px 0"}} variant={"middle"}/>
       )
     }
     case "error": {

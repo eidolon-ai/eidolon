@@ -1,17 +1,10 @@
 'use client';
 import * as React from 'react';
 import {FunctionComponent, PropsWithChildren} from 'react';
-import {useRouter} from 'next/navigation';
-import {Stack} from '@mui/material';
 import ErrorBoundary from '../components/ErrorBoundary';
-import TopBar from './TopBar';
 import {LinkToPage} from '../utils/type';
-import {useOnMobile} from '../hooks/index';
-import {SIDEBAR_DESKTOP_ANCHOR, SIDEBAR_WIDTH, TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT,} from './config';
-import {EidolonHeader} from "../components/EidolonHeader";
-import {RightSideBarItems} from "./RightSideBarItems";
-
-const TITLE_PRIVATE = 'Eidolon'; // Title for pages after authentication
+import {Header} from "./Header.tsx";
+import {HeaderProvider} from "./HeaderContext.tsx";
 
 /**
  * SideBar navigation items with links
@@ -47,46 +40,20 @@ if (process.env.NEXT_PUBLIC_DEBUG) {
  * @layout PrivateLayout
  */
 const PrivateLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
-  const router = useRouter();
-  const onMobile = useOnMobile();
-  const shouldOpenSideBar = false;
 
   return (
-    <Stack
-      direction="column"
-      sx={{
-        minHeight: '100vh', // Full screen height
-        paddingTop: onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT,
-        paddingLeft: shouldOpenSideBar && SIDEBAR_DESKTOP_ANCHOR.includes('left') ? SIDEBAR_WIDTH : 0,
-        paddingRight: shouldOpenSideBar && SIDEBAR_DESKTOP_ANCHOR.includes('right') ? SIDEBAR_WIDTH : 0,
-      }}
+    <div
+      className={"flex flex-col overflow-hidden h-screen"}
     >
-      <Stack component="header">
-        <TopBar
-          startNode={EidolonHeader()}
-          endNode={RightSideBarItems()}
-          title={TITLE_PRIVATE}
-          goToApp={
-            () => {
-              router.push('/dev')
-            }
-          }
-        />
-      </Stack>
-
-      <Stack
-        component="main"
-        sx={{
-          flexGrow: 1, // Takes all possible space
-          paddingLeft: 1,
-          paddingRight: 1,
-          paddingTop: 1,
-          height:`calc(100vh - ${onMobile ? TOP_BAR_MOBILE_HEIGHT : TOP_BAR_DESKTOP_HEIGHT})`
-        }}
-      >
-        <ErrorBoundary name="Content">{children}</ErrorBoundary>
-      </Stack>
-    </Stack>
+      <HeaderProvider>
+        <Header/>
+        <div
+          className={"h-[inherit] overflow-hidden"}
+        >
+          <ErrorBoundary name="Content">{children}</ErrorBoundary>
+        </div>
+      </HeaderProvider>
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ export { getOperations, getAgents, getApps } from "src/client/client-api-helpers
 export { type ElementsAndLookup } from "src/client/lib/display-elements.js";
 export * from 'src/client/hooks/useProcessEvents.js';
 export { CopilotPanel } from 'src/client/form-input/copilot_panel.js';
-export { DevPanel } from 'src/client/form-input/DevPanel.js';
+export { DevPanel } from 'src/client/form-input/dev_panel.js';
 export { useProcessEvents } from 'src/client/hooks/useProcessEvents.js';
 export type { CopilotParams, EidolonApp, DevParams } from "src/client/lib/util.js";
 export { EidolonProvider, useEidolonContext } from "src/client/provider/eidolon_provider.js";

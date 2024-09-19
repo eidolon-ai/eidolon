@@ -1,128 +1,127 @@
-import {Button, Skeleton, TextField} from "@mui/material";
-import Recorder from "../audio/Recorder.tsx";
-import {ArrowCircleUpRounded, CancelRounded} from "@mui/icons-material";
-import {CopilotParams} from "../lib/util.ts";
-import {useState} from "react";
-import {FileUpload} from "../file-upload/FileUpload.tsx";
-import {FileHandle} from "@eidolon-ai/client";
-import {CircularProgressWithContent} from "../lib/circular-progress-with-content.tsx";
+import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
+import { ArrowUpCircleIcon, XCircleIcon } from 'lucide-react';
+import { CopilotParams } from '../lib/util.ts';
+import { FileUpload } from '../file-upload/file-upload.tsx';
+import { FileHandle } from '@eidolon-ai/client';
+import { CircularProgressWithContent } from '../lib/circular-progress-with-content.tsx';
+import Recorder from '../audio/recorder.js';
 
 export function ProcessTerminated() {
   return (
-    <div style={{width: "100%", display: "flex", flexDirection: "row"}}>
-      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-        <h3>Terminated</h3>
+    <div className="w-full flex flex-col items-center text-center">
+      <h3 className="text-xl font-semibold mb-2">Terminated</h3>
+      <p className="text-gray-600">
         The process has terminated and can no longer accept input.
-      </div>
+      </p>
     </div>
-  )
+  );
 }
 
-export function ProcessError({error}: { error: string }) {
+export function ProcessError({ error }: { error: string }) {
   return (
-    <div style={{width: "100%", display: "flex", flexDirection: "row"}}>
-      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-        <h2>Error</h2>
-        The process has encountered an error and can no longer accept input.<br/>
+    <div className="w-full flex flex-col items-center text-center">
+      <h2 className="text-2xl font-bold text-red-600 mb-2">Error</h2>
+      <p className="text-gray-700 mb-2">
+        The process has encountered an error and can no longer accept input.
+      </p>
+      <p className="text-red-500">
         Error: {error}
-      </div>
+      </p>
     </div>
-  )
+  );
 }
 
 export function ProcessLoading() {
   return (
-    <div style={{width: "100%", display: "flex", flexDirection: "row"}}>
-      <Skeleton variant="text" height={"64px"} width={"100%"} sx={{marginRight: "20px"}}/>
-      <div style={{display: "flex", alignItems: "center"}}>
-        <Skeleton variant="circular" width={36} height={36} sx={{marginRight: "12px"}}/>
-      </div>
+    <div className="w-full flex items-center space-x-4">
+      <div className="flex-grow h-16 bg-gray-200 animate-pulse rounded"></div>
+      <div className="w-10 h-10 bg-gray-200 animate-pulse rounded-full"></div>
     </div>
-  )
+  );
 }
 
 interface CopilotInputFormProps {
-  machineUrl: string
-  processId: string
-  isProcessing: boolean
-  copilotParams: CopilotParams
-  // eslint-disable-next-line no-unused-vars
-  addUploadedFiles: (files: FileHandle[]) => void
-  // eslint-disable-next-line no-unused-vars
-  doAction: (input: string) => Promise<void>
-
-  doCancel(): void
+  machineUrl: string;
+  processId: string;
+  isProcessing: boolean;
+  copilotParams: CopilotParams;
+  addUploadedFiles: (files: FileHandle[]) => void;
+  doAction: (input: string) => Promise<void>;
+  doCancel: () => void;
 }
 
-export function CopilotInputForm({machineUrl, processId, isProcessing, copilotParams, addUploadedFiles, doAction, doCancel}: CopilotInputFormProps) {
-  const [input, setInput] = useState("")
+export function CopilotInputForm({
+  machineUrl,
+  processId,
+  isProcessing,
+  copilotParams,
+  addUploadedFiles,
+  doAction,
+  doCancel
+}: CopilotInputFormProps) {
+  const [input, setInput] = useState('');
 
-  const handleKeyDown = async (
-    event: React.KeyboardEvent
-  ) => {
-    if (event.key === 'Enter') {
-      if (event.shiftKey) {
-        // Handle Shift+Enter key combination
-        // Add a new line to the TextField value
-        event.preventDefault();
-        let {value, selectionStart, selectionEnd} = event.target as HTMLInputElement | HTMLTextAreaElement;
-        if (selectionStart == null) {
-          selectionStart = 0;
-        }
-        if (selectionEnd == null) {
-          selectionEnd = value.length;
-        }
-
-        (event.target as HTMLInputElement | HTMLTextAreaElement).value = value.slice(0, selectionStart) + '\n' + value.slice(selectionEnd);
-      } else {
-        // Handle Enter key press
-        event.preventDefault();
-        handleAction()
-      }
+  const handleKeyDown = async (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      await handleAction();
     }
-  }
+  };
 
   const handleAction = async () => {
-    setInput("")
-    await doAction(input)
-  }
+    setInput('');
+    await doAction(input);
+  };
 
   return (
-    <div style={{width: "100%", display: "flex", flexDirection: "row"}}>
-      <div style={{display: "flex", flexDirection: "row", width: "100%"}}>
-        <FileUpload machineUrl={machineUrl} process_id={processId} addUploadedFiles={addUploadedFiles}/>
-        <TextField
-          multiline
-          variant={"standard"}
-          label={copilotParams.inputLabel}
-          fullWidth
-          maxRows={10}
-          sx={{margin: "8px 0px 8px 8px"}}
-          value={input}
-          onKeyDown={handleKeyDown}
-          onChange={(e) => setInput(e.target.value)}
-          inputProps={{"x-webkit-speech": "x-webkit-speech"}}
+    <div className="w-full flex flex-row">
+      <div className="flex flex-row w-full">
+        <FileUpload
+          machineUrl={machineUrl}
+          process_id={processId}
+          addUploadedFiles={addUploadedFiles}
         />
+        <div className="flex-grow mx-2">
+          <textarea
+            className="w-full mt-2 p-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-[240px]"
+            style={{overflow: 'auto'}}
+            placeholder={copilotParams.inputLabel}
+            value={input}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
         {copilotParams.allowSpeech && (
-          <Recorder machineUrl={machineUrl} agent={copilotParams.speechAgent!} operation={copilotParams.speechOperation!} setText={(text) => {
-            setInput(text)
-          }}/>)}
+          <Recorder
+            machineUrl={machineUrl}
+            agent={copilotParams.speechAgent!}
+            operation={copilotParams.speechOperation!}
+            setText={(text: string) => {
+              setInput(text);
+              handleAction();
+            }}
+          />
+        )}
       </div>
-      {isProcessing && (
+      {isProcessing ? (
+        <div className="flex items-center">
         <CircularProgressWithContent>
-          <Button variant={'text'} onClick={doCancel}><CancelRounded style={{fontSize: 36}}/></Button>
-        </CircularProgressWithContent>
-      )}
-      {!isProcessing && (
-        <Button
-          variant={'text'}
-          type="submit"
-          id="submit-input-text"
-          onClick={handleAction}><ArrowCircleUpRounded
-          style={{fontSize: 36}}
-          sx={{padding: "0px"}}
-        /></Button>
+            <button
+              onClick={doCancel}
+              className="text-red-500 hover:text-red-700 focus:outline-none"
+            >
+              <XCircleIcon className="w-8 h-8" />
+            </button>
+          </CircularProgressWithContent>
+        </div>
+      ) : (
+        <button
+          onClick={handleAction}
+          className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+        >
+          <ArrowUpCircleIcon className="w-8 h-8" />
+        </button>
       )}
     </div>
-  )
+  );
 }

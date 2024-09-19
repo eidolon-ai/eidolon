@@ -1,11 +1,9 @@
 'use client'
 
-import {Box} from "@mui/material";
-import ResizableDrawer from "@/components/ResizableDrawer/ResizableDrawer";
 import {DevProcessListWithAdd} from "./ProcessListWithAdd";
-import {ProcessesProvider} from "@eidolon-ai/components/client";
-import {EidolonApp} from "@eidolon-ai/components/client";
-import {useRef} from "react";
+import {EidolonApp, ProcessesProvider} from "@eidolon-ai/components/client";
+import {useState} from "react";
+import {DrawerSidebar} from "@/components/drawer-sidebar.tsx";
 
 
 export interface DevTooLayoutProps {
@@ -14,35 +12,18 @@ export interface DevTooLayoutProps {
 }
 
 export function ProcessWithListLayout({children, app}: DevTooLayoutProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  function updateContainerWidth(newWidth: number) {
-    if (containerRef.current) {
-      containerRef.current.style.width = `${newWidth}px`
-    }
-  }
+  const [width, setWidth] = useState(0)
 
   return (
     <ProcessesProvider>
-      <Box sx={{
-        display: 'flex',
-        height: '100%',
-      }}>
-        <ResizableDrawer
-          updateRemainderWidth={updateContainerWidth}
-          variant="persistent"
-          sx={{
-            display: 'block',
-          }}
-        >
-          <DevProcessListWithAdd app={app} />
-        </ResizableDrawer>
-        <Box component="main" maxWidth={"100%"} ref={containerRef}>
-          <Box height={"100%"} display={"flex"} justifyContent={"center"}>
-            {children}
-          </Box>
-        </Box>
-      </Box>
+      <div className={"flex flex-row h-full relative"}>
+        <DrawerSidebar>
+          <DevProcessListWithAdd app={app}/>
+        </DrawerSidebar>
+        <div className={"flex flex-col justify-center max-w-full h-full w-full"} >
+          {children}
+        </div>
+      </div>
     </ProcessesProvider>
   );
 }

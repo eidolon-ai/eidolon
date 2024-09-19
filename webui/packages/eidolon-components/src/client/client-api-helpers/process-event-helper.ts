@@ -15,6 +15,8 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
       const lastContext = getLastStreamContext(event.stream_context)
       const parent = elements.lookup[lastContext]!
       lastElement = parent.children[parent.children.length - 1]
+    } else if (elements.rootAgent) {
+      lastElement = elements.rootAgent.children[elements.rootAgent.children.length - 1]
     } else {
       lastElement = elements.elements[elements.elements.length - 1]
     }
@@ -26,13 +28,21 @@ const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
         elements.lookup[element.contextId] = element
       } else if (element.type === "tool-call-end") {
         elements.lookup[element.contextId]!.is_active = false
+      } else if (element.type === "agent-state" && !event.stream_context) {
+        elements.rootAgent = undefined
       }
+
       if (event.stream_context) {
         const lastContext = getLastStreamContext(event.stream_context)
         const parent = elements.lookup[lastContext]!
         parent.children.push(element)
+      } else if (elements.rootAgent) {
+        elements.rootAgent.children.push(element)
       } else {
         elements.elements.push(element)
+        if (element.type === "agent-start") {
+          elements.rootAgent = element
+        }
       }
     }
   }

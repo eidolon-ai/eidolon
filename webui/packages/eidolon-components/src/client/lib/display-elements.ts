@@ -10,6 +10,7 @@ export interface AgentStartElement extends DisplayElement {
   callName: string
   title: string
   sub_title: string
+  children: DisplayElement[]
 }
 
 export interface SuccessElement extends DisplayElement {
@@ -65,9 +66,11 @@ export interface AgentStateElement extends DisplayElement {
 export interface ElementsAndLookup {
   elements: DisplayElement[],
   lookup: Record<string, ToolCallElement>
+  rootAgent?: AgentStartElement
 }
 
 export const makeElement = (event: ChatEvent) => {
+  // console.log(event)
   switch (event.event_type) {
     case "agent_call":
       return {
@@ -75,7 +78,8 @@ export const makeElement = (event: ChatEvent) => {
         agentName: event.agent_name,
         callName: event.call_name,
         title: event.title,
-        sub_title: event.sub_title
+        sub_title: event.sub_title,
+        children: []
       } as AgentStartElement
     case "success":
       return {
