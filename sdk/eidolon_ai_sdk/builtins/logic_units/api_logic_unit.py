@@ -68,7 +68,8 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         return tools
 
     def _build_tool_def(self, action: Action):
-        model = schema_to_model(action.action_schema, "InputModel")
+        schemas = self.open_api_schema.get('components', {}).get('schemas', {})
+        model = schema_to_model(action.action_schema, "InputModel", schemas)
         return FnHandler(
             name=action.name,
             description=lambda a, b: action.description,

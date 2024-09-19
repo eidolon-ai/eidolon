@@ -97,7 +97,7 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         return tools
 
     def _build_tool_def(self, agent, operation, name, schema, description, tool_call):
-        model = schema_to_model(schema, "InputModel")
+        model = schema_to_model(schema, "InputModel", {})
         return FnHandler(
             name=name,
             description=lambda a, b: description,
@@ -168,12 +168,12 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         body = endpoint_schema.get("requestBody")
         if not body:
             json_schema = dict(type="object", properties={})
-            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input", {})
         elif "application/json" in body["content"]:
             json_schema = body["content"]["application/json"]["schema"]
-            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input")
+            return schema_to_model(dict(type="object", properties=dict(body=json_schema)), "Input", {})
         elif "text/plain" in body["content"]:
-            return schema_to_model(dict(type="object", properties=dict(body=dict(type="string"))), "Input")
+            return schema_to_model(dict(type="object", properties=dict(body=dict(type="string"))), "Input", {})
         else:
             raise ValueError(f"Agent action at {name} does not support text/plain or application/json")
 
