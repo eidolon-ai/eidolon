@@ -5,8 +5,7 @@ metadata:
   name: ImageAgent
 
 spec:
-  implementation: GenericAgent
-  description: "This is an example of a generic agent which can be used to create a conversational agent."
+  description: "This is an example of a simple agent which can be used to create a conversational agent."
   apu:
     implementation: APU
     spec:
@@ -20,9 +19,6 @@ spec:
           max_tokens: 4096
 
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
-  user_prompt: "{{instruction}}"
-  input_schema:
-    instruction:
-      type: string
-  output_schema: 'str'
-  files: multiple
+  actions:
+    - user_prompt: "{{instruction}}"
+    - allow_file_upload: True
