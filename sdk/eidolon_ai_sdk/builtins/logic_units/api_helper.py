@@ -36,7 +36,6 @@ async def post_content(url: str, headers=None, **kwargs):
     body = kwargs.get("body", {})
 
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
-        print(f"real body: {body}")
         response = await client.post(**params, json=body)  # Send the body as JSON
         await AgentError.check(response)
         return response.json()
@@ -51,7 +50,6 @@ async def patch_content(url: str, headers=None, **kwargs):
     body = kwargs.get("body", {})
 
     async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
-        print(f"real body: {body}")
         response = await client.patch(**params, json=body)  # Send the body as JSON
         await AgentError.check(response)
         return response.json()
@@ -84,20 +82,17 @@ def build_call(extra_header_params, extra_query_params, root_call_url):
         url = urljoin(root_call_url + "/", path_to_call)
         logger.info(f"Calling API {url}")
         try:
-            print(f"Headers: {headers}")
             if method == "get":
                 return await get_content(url, headers=headers, **body)
             elif method == "post":
                 if isinstance(body, BaseModel):  # Check if body is a Pydantic model
                     body = body.dict(exclude_none=True)  # Convert Pydantic model to a dictionary
 
-                print(f"Body: {body}")
                 return await post_content(url, headers=headers, body=body)
             elif method == "patch":
                 if isinstance(body, BaseModel):
                     body = body.dict(exclude_none=True)
                 
-                print(f"Body: {body}")
                 return await patch_content(url, headers=headers, body=body)
             else:
                 logger.error(f"Unsupported method {method}")
