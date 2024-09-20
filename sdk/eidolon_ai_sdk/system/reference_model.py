@@ -89,11 +89,11 @@ class Reference(BaseModel):
             ) -> JsonSchemaValue:
                 json_schema = handler(core_schema)
                 json_schema = handler.resolve_ref_schema(json_schema)
-                json_schema["title"] = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
-                json_schema["properties"]["implementation"]["default"] = params[1]
+                json_schema["title"] = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__) + " Reference"
+                json_schema["properties"]["implementation"]["default"] = cls._default
                 json_schema["reference_pointer"] = {
-                    "type": params[0] if isinstance(params[0], str) else params[0].__name__,
-                    "default_impl": params[1],
+                    "type": cls._bound if isinstance(cls._bound, str) else cls._bound.__name__,
+                    "default_impl": cls._default,
                 }
                 return json_schema
 
