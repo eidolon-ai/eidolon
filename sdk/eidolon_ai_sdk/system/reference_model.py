@@ -90,11 +90,49 @@ class Reference(BaseModel):
                 json_schema = handler(core_schema)
                 json_schema = handler.resolve_ref_schema(json_schema)
                 json_schema["title"] = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__) + " Reference"
-                json_schema["properties"]["implementation"]["default"] = cls._default
                 json_schema["reference_pointer"] = {
                     "type": cls._bound if isinstance(cls._bound, str) else cls._bound.__name__,
                     "default_impl": cls._default,
                 }
+                del json_schema['type']
+                del json_schema['properties']
+                del json_schema["additionalProperties"]
+
+
+                from eidolon_ai_sdk.system.kernel import AgentOSKernel
+
+                assert isinstance(cls._bound, type)
+
+                loose_object = dict(
+                    type="object",
+                    properties=dict(implementation=dict(type="string")),
+                    required=["implementation"],
+                    additionalProperties=True,
+                )
+                if cls._bound == object:
+                    json_schema.update(**copy.deepcopy(loose_object))
+                else:
+                    sub_types = []
+                    for r in AgentOSKernel.get_resources(ReferenceResource).values():
+                        overrides = Reference[object, r.metadata.name]._transform(r.spec)
+                        pointer = overrides.pop("implementation")
+                        clz = for_name(pointer, object)
+                        if issubclass(clz, cls._bound):
+                            sub_types.append((r.metadata.name, overrides, clz))
+                    defs = json_schema.setdefault("$defs", {})
+                    for name, overrides, clz in sub_types:
+                        if name not in defs:
+                            schema = clz.model_json_schema() if hasattr(clz, "model_json_schema") else copy.deepcopy(loose_object)
+                            schema['properties']['implementation'] = dict(const=name)
+                            for k, v in overrides.items():
+                                schema['properties'].setdefault(k, {})['default'] = v
+                            defs[name] = schema
+                            defs.update(schema.pop('$defs', {}))
+
+                    json_schema["anyOf"] = [
+                        {"$ref": f"#/$defs/{name}"} for name, _, _ in sub_types
+                    ]
+
                 return json_schema
 
             @classmethod

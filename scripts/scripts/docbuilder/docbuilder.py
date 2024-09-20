@@ -58,35 +58,16 @@ class Group(BaseModel):
         return self.components
 
 
-components_to_load: list[Group] = [
-    Group(base=SymbolicMemory),
-    Group(base=SimilarityMemory),
-    Group(base=FileMemoryBase),
-    Group(base="Agents", default="SimpleAgent", components=[
-        ("SimpleAgent", SimpleAgent, {}),
-        ("RetrieverAgent", RetrieverAgent, {}),
-        ("APIAgent", APIAgent, {}),
-        ("SqlAgent", SqlAgent, {}),
-    ]),
-    Group(base=APU),
-    Group(base=LLMUnit),
-    Group(base=LLMModel),
-    Group(base=LogicUnit),
-    Group(base=DocumentManager),
-    Group(base=DocumentLoader),
-]
-groups: Dict[str, Group] = {g.base if isinstance(g.base, str) else g.base.__name__: g for g in components_to_load}
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
 
 def main():
     print("Generating docs...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
-    shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    generate_groups()
+    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
     generate_json(dist_component_schemas)
-    write_md(dist_component_schemas)
-    update_sitemap()
+    # write_md(dist_component_schemas)
+    # update_sitemap()
     print("Done")
 
 
@@ -211,80 +192,8 @@ def generate_groups():
 
 
 def generate_json(write_base):
-    for key, group in groups.items():
-        write_loc = write_base / key
-        os.makedirs(write_loc, exist_ok=True)
-
-        base_json = {
-            "title": key,
-            "description": group.description,
-            "anyOf": [{"$ref": f"./{name}.json"} for name, _, _ in group.get_components()],
-            "reference_group":
-                {"type": key}
-        }
-        with open(write_loc / "overview.json", 'w') as file:
-            json.dump(base_json, file, indent=2)
-
-        for name, clz, overrides in group.get_components():
-            if hasattr(clz, "model_json_schema"):
-                json_schema = clz.model_json_schema()
-                spec = Reference.get_spec_type(clz)
-                if spec:
-                    # spec is a base model. check if extra fields are allowed
-                    for k, v in spec.model_fields.items():
-                        if v.annotation.__name__ == "_Reference" and v.default_factory:
-                            schema_prop = json_schema['properties'][k]
-                            if "allOf" in schema_prop:
-                                if len(schema_prop["allOf"]) != 1 or len(schema_prop["allOf"][0]) != 1:
-                                    raise ValueError("Expected allOf to just be a json schema templating choice made by extra json properties, but that assumption is invalid")
-                                schema_prop.update(schema_prop["allOf"][0])
-
-                            def_pointer = schema_prop['$ref'].replace("#/$defs/", "")
-                            default_impl: dict = json_schema['$defs'][def_pointer]['reference_pointer']['default_impl']
-                            if k not in overrides:
-                                overrides[k] = dict(implementation=default_impl)
-
-                defs = dict()
-                for k, v in list(json_schema.get("$defs", {}).items()):
-                    if 'reference_pointer' in v:
-                        if "AnnotatedReference" in v:
-                            v['default'] = v['reference_pointer']['default_impl']
-
-                        type_ = v['reference_pointer']['type']
-                        if type_ in groups:
-                            defs[k] = {"$ref": f"../{type_}/overview.json"}
-                        else:
-                            defs[k] = json_schema['$defs'][k]
-                            defs[k]['type'] = "object"
-                        del json_schema['$defs'][k]
-
-                json_schema = inline_refs(json_schema, defs)
-                if "$defs" in json_schema and not json_schema["$defs"]:
-                    del json_schema["$defs"]
-                json_schema['title'] = name
-
-                for k, v in overrides.items():
-                    json_schema['properties'][k]['default'] = v
-                if 'required' in json_schema:
-                    json_schema['required'] = [k for k in json_schema['required'] if k not in overrides]
-                    if not json_schema['required']:
-                        del json_schema['required']
-
-            else:
-                json_schema = {
-                    "title": name,
-                    "type": "object",
-                }
-                if clz.__doc__:
-                    json_schema["description"] = textwrap.dedent(clz.__doc__)
-
-            json_schema.setdefault('properties', {})['implementation'] = {"const": name, "description": name}
-            json_schema['properties'] = dict(implementation=json_schema['properties'].pop('implementation'),
-                                             **json_schema['properties'])
-            json_schema.setdefault('required', []).append('implementation')
-            with open(write_loc / (name + ".json"), 'w') as file:
-                json.dump(json_schema, file, indent=2)
-
+    schema = LLMUnit.model_json_schema()
+    print(schema)
 
 def inline_refs(schema, defs):
     if isinstance(schema, dict):
