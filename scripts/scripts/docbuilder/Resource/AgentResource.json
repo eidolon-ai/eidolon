@@ -14,10 +14,6 @@
     }
   },
   "properties": {
-    "implementation": {
-      "const": "AgentResource",
-      "description": "AgentResource"
-    },
     "apiVersion": {
       "title": "Apiversion",
       "type": "string"
@@ -42,26 +38,12 @@
       }
     },
     "spec": {
-      "additionalProperties": true,
-      "properties": {
-        "implementation": {
-          "default": "Agent",
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "reference_pointer": {
-        "default_impl": "Agent",
-        "type": "object"
-      },
-      "title": "object Reference",
-      "type": "object"
+      "$ref": "../schemas/Agents.overview.json"
     }
   },
   "required": [
     "apiVersion",
-    "spec",
-    "implementation"
+    "spec"
   ],
   "title": "AgentResource",
   "type": "object"

@@ -100,14 +100,6 @@ export default defineConfig({
           items: [
             // ### Start Components ###
             {
-              label: 'Resource', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/resource/overview'},
-                {label: 'AgentResource', link: '/docs/components/resource/agentresource'},
-                {label: 'MachineResource', link: '/docs/components/resource/machineresource'},
-                {label: 'ReferenceResource', link: '/docs/components/resource/referenceresource'},
-              ]
-            },
-            {
               label: 'SymbolicMemory', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/symbolicmemory/overview'},
                 {label: 'LocalSymbolicMemory', link: '/docs/components/symbolicmemory/localsymbolicmemory'},

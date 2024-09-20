@@ -22,6 +22,7 @@ from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
+from eidolon_ai_sdk.system.agent_machine import AgentMachine
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
@@ -58,11 +59,6 @@ class Group(BaseModel):
 
 
 components_to_load: list[Group] = [
-    Group(base=Resource, components=[
-        ("AgentResource", AgentResource, {}),
-        ("ReferenceResource", ReferenceResource, {}),
-        ("MachineResource", MachineResource, {}),
-    ]),
     Group(base=SymbolicMemory),
     Group(base=SimilarityMemory),
     Group(base=FileMemoryBase),
