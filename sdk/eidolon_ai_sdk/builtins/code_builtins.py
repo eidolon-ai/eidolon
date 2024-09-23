@@ -40,6 +40,7 @@ from eidolon_ai_sdk.agent.sql_agent.client import SqlClient, SqlAlchemy
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationStrategy, ProposePromptStrategy
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
+from eidolon_ai_sdk.agent.vectara_agent import VectaraAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 from eidolon_ai_sdk.apu.agent_io import IOUnit
@@ -60,6 +61,7 @@ from eidolon_ai_sdk.apu.tool_call_unit import ToolCallLLMWrapper
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
+from eidolon_ai_sdk.builtins.logic_units.vectara import VectaraSearch
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
 from eidolon_ai_sdk.memory.azure_file_memory import AzureFileMemory
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
@@ -122,7 +124,6 @@ def named_builtins() -> List[ReferenceResource]:
     Tuples map the name of the first element to the name of the second.
     Single types map the name of first element to it's fqn.
     """
-
     builtin_list = [
         AgentMachine,
         # security manager
@@ -145,6 +146,11 @@ def named_builtins() -> List[ReferenceResource]:
         RetrieverAgent,
         AutonomousSpeechAgent,
         SqlAgent,
+        WebScrapingAgent,
+        WebSearchAgent,
+        WebResearcher,
+        VectaraAgent,
+        APIAgent,
         # apu
         (APU, ConversationalAPU),
         ConversationalAPU,
@@ -162,11 +168,8 @@ def named_builtins() -> List[ReferenceResource]:
         Search,
         Browser,
         Retriever,
-        WebScrapingAgent,
-        WebSearchAgent,
-        WebResearcher,
         ApiLogicUnit,
-        APIAgent,
+        VectaraSearch,
         # machine components
         (SymbolicMemory, MongoSymbolicMemory),
         MongoSymbolicMemory,
@@ -249,4 +252,5 @@ def named_builtins() -> List[ReferenceResource]:
         # config objects
         ReplayConfig,
     ]
+
     return [_to_resource(maybe_tuple) for maybe_tuple in builtin_list if maybe_tuple]

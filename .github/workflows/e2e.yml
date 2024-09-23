@@ -8,12 +8,16 @@ on:
       - '**'
       - '!k8s-operator/**'
       - '!webui/apps/docs/**'
+      - '!.all-contributorsrc'
+      - '!README.md'
   pull_request_target:
     types: [ opened, synchronize ]
     paths:
       - '**'
       - '!k8s-operator/**'
       - '!webui/apps/docs/**'
+      - '!.all-contributorsrc'
+      - '!README.md'
 
 jobs:
   test-e2e:
