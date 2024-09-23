@@ -276,7 +276,6 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         if self.spec.title_generation_mode == "auto" and not process_obj.title:
             title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
             response = await (await apu.new_thread(process_id)).run_request(prompts=[title_message])
-            print("+++++ title", response)
             await process_obj.update(title=response)
 
         yield UserInputEvent(input=request_body, files=attached_files)
