@@ -192,8 +192,9 @@ def generate_groups():
 
 
 def generate_json(write_base):
-    schema = LLMUnit.model_json_schema()
+    schema = SimpleAgent.model_json_schema()
     print(schema)
+
 
 def inline_refs(schema, defs):
     if isinstance(schema, dict):

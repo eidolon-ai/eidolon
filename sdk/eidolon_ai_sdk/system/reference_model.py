@@ -27,14 +27,17 @@ class Specable(Generic[T]):
 
     @classmethod
     def model_json_schema(cls):
+        return cls.specable_cls().model_json_schema()
+
+    @classmethod
+    def specable_cls(cls):
         bases = getattr(cls, "__orig_bases__", [])
         specable = next(
             (base for base in bases if getattr(base, "__origin__", None) is Specable),
             None,
         )
         if specable:
-            model = specable.__args__[0]
-            return model.model_json_schema()
+            return specable.__args__[0]
         else:
             raise ValueError(f"Specable base {cls} not found")
 
@@ -112,26 +115,29 @@ class Reference(BaseModel):
                 if cls._bound == object:
                     json_schema.update(**copy.deepcopy(loose_object))
                 else:
-                    sub_types = []
+                    json_schema["anyOf"] = []
                     for r in AgentOSKernel.get_resources(ReferenceResource).values():
+                        # there is not a class for these psudo references, we can either make those classes dymaically, or create a custom ?generator? to handle them
                         overrides = Reference[object, r.metadata.name]._transform(r.spec)
                         pointer = overrides.pop("implementation")
                         clz = for_name(pointer, object)
-                        if issubclass(clz, cls._bound):
-                            sub_types.append((r.metadata.name, overrides, clz))
-                    defs = json_schema.setdefault("$defs", {})
-                    for name, overrides, clz in sub_types:
-                        if name not in defs:
-                            schema = clz.model_json_schema() if hasattr(clz, "model_json_schema") else copy.deepcopy(loose_object)
-                            schema['properties']['implementation'] = dict(const=name)
-                            for k, v in overrides.items():
-                                schema['properties'].setdefault(k, {})['default'] = v
-                            defs[name] = schema
-                            defs.update(schema.pop('$defs', {}))
 
-                    json_schema["anyOf"] = [
-                        {"$ref": f"#/$defs/{name}"} for name, _, _ in sub_types
-                    ]
+                        model_clz = clz.specable_cls() if issubclass(clz, Specable) else clz
+
+                        if issubclass(clz, cls._bound):
+                            reference_details = dict(
+                                properies=dict(implementation=dict(const=r.metadata.name)),
+                                additionalProperties=False,
+                            )
+                            if hasattr(model_clz, "__pydantic_core_schema__"):
+                                ref = handler(model_clz.__pydantic_core_schema__)
+                            else:
+                                # these are non-specable (ie, not configurable) instances, so we can largely ignore them
+                                ref = dict(
+                                    type="object",
+                                )
+                            ref['reference_details'] = reference_details
+                            json_schema["anyOf"].append(ref)
 
                 return json_schema
 
