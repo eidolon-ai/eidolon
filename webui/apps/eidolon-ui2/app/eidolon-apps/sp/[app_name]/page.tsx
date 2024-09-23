@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {CopilotInputForm, CopilotParams, createProcess, getOperations, SelectedFile, useApp} from "@eidolon-ai/components/client";
+import {CopilotInputForm, CopilotParams, createProcess, EidolonMarkdown, getOperations, SelectedFile, useApp} from "@eidolon-ai/components/client";
 import {ArrowRight, MessageSquare} from 'lucide-react';
 import {useNewChatOptions} from "./new-chat-options.tsx";
 import {useRouter} from "next/navigation";
@@ -73,13 +73,12 @@ const ChatbotHomePage = ({params}: HomePageProps) => {
             </div>
             <div className="flex-grow container mx-auto bg-white rounded-lg shadow-md overflow-hidden">
 
-              <div className="p-6 space-y-6">
-                <h2 className="text-2xl font-semibold text-gray-800">{app.name}</h2>
-
-                <div className="space-y-4">
-                  <p className="text-gray-600">
-                    {app.description}
-                  </p>
+              <div className="p-6 space-y-4 font-serif">
+                <div>
+                  <h2 className="text-2xl text-gray-800 mb-1">{app.name}</h2>
+                  <div className="text-sm text-gray-600 pl-4">
+                    <EidolonMarkdown machineUrl={app.location}>{app.description}</EidolonMarkdown>
+                  </div>
                 </div>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">

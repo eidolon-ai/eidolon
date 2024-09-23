@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
-import { EidolonApp } from "@eidolon-ai/components/client";
+import {EidolonApp, EidolonMarkdown} from "@eidolon-ai/components/client";
 
 export interface EidolonAppItemProps {
   path: string;
@@ -28,7 +28,6 @@ export function EidolonAppItem({ path, app }: EidolonAppItemProps) {
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-2">{app.name}</h3>
-        <p className="text-sm text-gray-600">{app.description}</p>
       </div>
     </div>
   );
