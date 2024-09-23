@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {ChevronDown, Circle, Expand} from 'lucide-react';
-import {ToolCallElement} from "../lib/display-elements.js";
+import {Crosshair, LoaderCircle, Minus, Plus} from 'lucide-react';
+import {DisplayElement, ToolCallElement} from "../lib/display-elements.js";
 import {ChatDisplayElement} from "./chat-display-element.js";
 import {EidolonMarkdown} from "./eidolon-markdown.js";
 
@@ -14,8 +14,13 @@ export interface ToolCallElementProps {
 export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, agentName, depth}) => {
   const [expanded, setExpanded] = useState(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setExpanded(!expanded);
+  };
+
+  const handleTargetClick = (element: DisplayElement) => {
+    console.log(element);
   };
 
   const getBgColor = (depth: number) => {
@@ -33,28 +38,43 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
         className={`flex flex-col relative w-fit ${bgColor} border border-gray-200 border-solid rounded-md cursor-pointer hover:bg-opacity-80 transition-colors duration-200 ${
           expanded ? 'rounded-b-none border-b-0' : ''
         }`}
-        onClick={handleExpandClick}
       >
-        <div className={"flex flex-row items-center"}>
-          <div className="p-2 border-r border-gray-200 flex justify-center">
-            <Expand className="w-5 h-5 text-gray-500"/>
-          </div>
-          <div className="h-full w-[1px] bg-gray-300"/>
-          <div className="px-3 py-2 text-sm font-medium text-gray-700 whitespace-nowrap">
+        <div className="flex flex-row items-center">
+          <div className="px-3 py-2 text-sm font-medium text-gray-700 whitespace-nowrap"
+               onClick={handleExpandClick}
+          >
             {element.is_agent && <span>{element.title}</span>}
             {!element.is_agent && <div><span>{element.sub_title}</span></div>}
           </div>
-          {element.is_active && (
-            <Circle className="w-4 h-4 text-blue-500 animate-pulse ml-auto mr-2"/>
-          )}
+          <div className="flex items-center ml-2">
+            {(element.is_active) && (
+              <div className="w-5 h-5 rounded-full flex items-center justify-center mr-2 ">
+                <LoaderCircle className="w-4 h-4 text-blue-500 text-center animate-spin [animation-duration:2s]"/>
+              </div>
+            )}
+            <div
+              className={`w-5 h-5 rounded-full bg-amber-300 flex items-center justify-center mr-1 opacity-65 ${element.is_agent ? 'hidden' : 'hidden'}`}
+              onClick={() => handleTargetClick(element)}
+            >
+              <Crosshair className="w-4 h-4 text-black text-center"/>
+            </div>
+            <div
+              className="w-5 h-5 rounded-full bg-green-400 flex items-center justify-center mr-2 opacity-65"
+              onClick={handleExpandClick}
+            >
+              {expanded ? (
+                <Minus className="w-4 h-4 text-black"/>
+              ) : (
+                <Plus className="w-4 h-4 text-black"/>
+              )}
+            </div>
+          </div>
         </div>
         {expanded && <div className={`left-0 right-0 absolute h-[1px] bottom-[-1px] ${bgColor}`}/>}
       </div>
 
       {expanded && (
-        <div
-          className={`${bgColor} border border-gray-200 border-solid rounded-b-md overflow-hidden`}
-        >
+        <div className={`${bgColor} border border-gray-200 border-solid rounded-b-md overflow-hidden`}>
           <div className="p-4">
             {!element.is_agent && (
               <div>
