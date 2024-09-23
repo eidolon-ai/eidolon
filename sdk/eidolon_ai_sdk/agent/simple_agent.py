@@ -133,7 +133,7 @@ class SimpleAgentSpec(BaseModel):
     actions: List[ActionDefinition] = [ActionDefinition()]
     apu: AnnotatedReference[APU] = None
     apus: List[NamedAPU] = []
-    title_generation_mode: Literal["none", "on_request"] = "on_request"
+    title_generation_mode: Literal["none", "on_request", "auto"] = "auto"
 
     @model_validator(mode="before")
     def validate_apu(cls, value):
@@ -202,22 +202,18 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
             )
 
         for action in self.spec.actions:
-            extra = {}
-            if action.title:
-                extra["title"] = action.title
-            if action.sub_title:
-                extra["sub_title"] = action.sub_title
             setattr(
                 self,
                 action.name,
                 register_action(
                     *action.allowed_states,
                     name=action.name,
+                    title=action.title,
+                    sub_title=action.sub_title,
                     input_model=action.make_input_schema,
                     output_model=action.make_output_schema,
                     description=action.description,
                     custom_user_input_event=True,
-                    **extra,
                 )(self._act_wrapper(action, SimpleAgent._act)),
             )
 
@@ -275,7 +271,16 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         else:
             apu = self.apu
 
+        # generate the tile if it is not generated
+        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+        if self.spec.title_generation_mode == "auto" and not process_obj.title:
+            title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
+            response = await (await apu.new_thread(process_id)).run_request(prompts=[title_message])
+            print("+++++ title", response)
+            await process_obj.update(title=response)
+
         yield UserInputEvent(input=request_body, files=attached_files)
+
         thread = await apu.main_thread(process_id)
         response = thread.stream_request(
             output_format=action.output_schema, prompts=[*attached_files_messages, text_message]

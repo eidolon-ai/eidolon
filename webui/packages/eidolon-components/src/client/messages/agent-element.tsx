@@ -9,10 +9,12 @@ export interface ToolCallElementProps {
 
 export const AgentCall = ({machineUrl, element, agentName}: ToolCallElementProps) => {
   return (
-    <div className={"flex flex-col bg-white border-r-4 rounded-xl py-4 pr-2"}>
+    <div className={"flex flex-col bg-white border-r-4 rounded-xl py-4 pr-2 gap-4 leading-normal"}>
       {element.children.map((child, index) => {
           if (index < element.children.length - 1 || child.type != "success") {
-            return <ChatDisplayElement userImage={undefined} userName={undefined} machineUrl={machineUrl} key={index} rawElement={child} topLevel={true} agentName={agentName}/>
+            return <ChatDisplayElement userImage={undefined} userName={undefined} machineUrl={machineUrl} key={index} rawElement={child} topLevel={true} agentName={agentName}
+                                       depth={0}
+            />
           }
         }
       )}

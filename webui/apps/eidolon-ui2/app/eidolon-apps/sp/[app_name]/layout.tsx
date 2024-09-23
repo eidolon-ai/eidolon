@@ -1,29 +1,23 @@
 'use client'
 
-import {getApp} from "@/utils/eidolon-apps";
-import {EidolonApp, ProcessProvider} from "@eidolon-ai/components/client";
-import {useEffect, useState} from "react";
+import {useEffect, useRef} from "react";
 import {MainAppLayout} from "@/layout/main-app-layout.tsx";
+import {NewChatOptionsProvider, useNewChatOptions} from "./new-chat-options.tsx";
 
-interface ChatbotLayoutProps {
+interface LayoutProps {
+  children: JSX.Element
   params: {
     app_name: string
   }
-  children: JSX.Element
 }
 
-export default function ChatbotLayout({children}: ChatbotLayoutProps) {
-  const [app, setApp] = useState<EidolonApp | undefined>(undefined)
 
-  useEffect(() => {
-    getApp('dev-tool').then(setApp)
-  }, []);
-
+export default function DevToolLayout({children, params}: LayoutProps) {
   return (
-    <MainAppLayout app={app}>
-      <ProcessProvider>
+    <MainAppLayout app_name={params.app_name}>
+      <NewChatOptionsProvider>
         {children}
-      </ProcessProvider>
+      </NewChatOptionsProvider>
     </MainAppLayout>
   )
 }

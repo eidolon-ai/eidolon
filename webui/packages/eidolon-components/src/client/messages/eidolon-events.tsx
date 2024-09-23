@@ -9,7 +9,7 @@ export interface EidolonEventProps {
   agentName: string,
   elementsAndLookup: ElementsAndLookup,
   userImage: string | null | undefined
-  userName: string | null  | undefined
+  userName: string | null | undefined
   scrollableRegionRef?: React.RefObject<HTMLDivElement>
 }
 
@@ -26,6 +26,7 @@ export function EidolonEvents({machineUrl, elementsAndLookup, agentName, userIma
                                        agentName={agentName}
                                        userImage={userImage}
                                        userName={userName}
+                                       depth={0}
             />
           }
         }

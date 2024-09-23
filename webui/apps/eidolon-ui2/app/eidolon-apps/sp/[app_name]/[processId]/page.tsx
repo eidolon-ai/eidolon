@@ -1,6 +1,8 @@
 'use client'
 
 import {EidolonChatPanel} from "@/components/eidolon-chat-panel.tsx";
+import {useNewChatOptions} from "../new-chat-options.tsx";
+import {ProcessProvider} from "@eidolon-ai/components/client";
 
 export interface ProcessPageProps {
   params: {
@@ -10,5 +12,11 @@ export interface ProcessPageProps {
 }
 
 export default function ({params}: ProcessPageProps) {
-  return <EidolonChatPanel app_name={params.app_name} processId={params.processId} />
+  const {options, clearOptions} = useNewChatOptions()
+
+  return (
+    <ProcessProvider processId={params.processId}>
+      <EidolonChatPanel options={options} clearOptions={clearOptions}/>
+    </ProcessProvider>
+  )
 }

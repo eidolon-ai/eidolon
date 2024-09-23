@@ -4,15 +4,18 @@ import { executeOperation } from "../client-api-helpers/process-event-helper.ts"
 import { uploadFile } from "../client-api-helpers/files-helper.ts";
 import { Mic, MicOff, Square } from 'lucide-react';
 
-interface RecorderProps {
+export interface SpeechOptions {
   machineUrl: string;
   agent: string;
   operation: string
-  // eslint-disable-next-line no-unused-vars
+}
+
+interface RecorderProps {
+  speechOptions: SpeechOptions;
   setText: (text: string) => void;
 }
 
-export default function RecorderElement({ machineUrl, agent, operation, setText }: RecorderProps) {
+export default function RecorderElement({ speechOptions, setText }: RecorderProps) {
   const [recording, setRecording] = useState(false);
   const [recordingDeviceError, setRecordingDeviceError] = useState<string | null>(null);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
@@ -41,10 +44,10 @@ export default function RecorderElement({ machineUrl, agent, operation, setText 
           const localChunks = audioChunks.filter((chunk) => chunk.size > 0);
           const blob = new Blob(localChunks, { type: mimeType });
           if (blob.size > 0) {
-            const process = await createProcess(machineUrl, agent, "audio");
-            const fileId = await uploadFile(machineUrl, process?.process_id!, blob);
-            const result = await executeOperation(machineUrl, agent, operation, process?.process_id!, { audio: fileId });
-            await deleteProcess(machineUrl, process?.process_id!);
+            const process = await createProcess(speechOptions.machineUrl, speechOptions.agent, "audio");
+            const fileId = await uploadFile(speechOptions.machineUrl, process?.process_id!, blob);
+            const result = await executeOperation(speechOptions.machineUrl, speechOptions.agent, speechOptions.operation, process?.process_id!, { audio: fileId });
+            await deleteProcess(speechOptions.machineUrl, process?.process_id!);
             setText(result["response"]);
           }
           setAudioChunks([]);
@@ -76,8 +79,8 @@ export default function RecorderElement({ machineUrl, agent, operation, setText 
     <>
       {recordingDeviceError && (
         <div className="group relative">
-          <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
-            <MicOff size={28} />
+          <button className="p-0 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+            <MicOff size={22} />
           </button>
           <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             Please allow access to the microphone in your browser.
@@ -85,19 +88,19 @@ export default function RecorderElement({ machineUrl, agent, operation, setText 
         </div>
       )}
       {!recordingDeviceError && !recording && (
-        <button
+        <div
           onClick={startRecording}
-          className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+          className="flex justify-center p-1 text-gray-500 hover:bg-gray-200 transition-colors duration-200 h-fit rounded-md"
         >
-          <Mic size={28} />
-        </button>
+          <Mic size={22} />
+        </div>
       )}
       {!recordingDeviceError && recording && (
         <button
           onClick={stopRecording}
-          className="p-2 text-red-500 hover:text-red-700 transition-colors duration-200"
+          className="p-0 text-red-500 hover:text-red-700 transition-colors duration-200"
         >
-          <Square size={28} />
+          <Square size={22} />
         </button>
       )}
     </>

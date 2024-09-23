@@ -70,7 +70,6 @@ export interface ElementsAndLookup {
 }
 
 export const makeElement = (event: ChatEvent) => {
-  // console.log(event)
   switch (event.event_type) {
     case "agent_call":
       return {

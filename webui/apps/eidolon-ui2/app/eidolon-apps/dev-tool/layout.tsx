@@ -1,7 +1,7 @@
 'use client'
 
 import {getApp} from "@/utils/eidolon-apps";
-import {EidolonApp, ProcessProvider} from "@eidolon-ai/components/client";
+import {EidolonApp} from "@eidolon-ai/components/client";
 import {useEffect, useState} from "react";
 import {MainAppLayout} from "@/layout/main-app-layout.tsx";
 
@@ -19,10 +19,8 @@ export default function DevToolLayout({children}: DevToolLayoutProps) {
   return (
     <>
       {app && (
-        <MainAppLayout app={app}>
-          <ProcessProvider>
+        <MainAppLayout app_name={'dev-tool'}>
             {children}
-          </ProcessProvider>
         </MainAppLayout>
       )}
     </>

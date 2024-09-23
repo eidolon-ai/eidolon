@@ -273,12 +273,11 @@ class AgentController:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
 
-        def get_start_event():
+        async def get_start_event():
             extra = {}
-            if "title" in handler.extra:
-                extra["title"] = handler.extra["title"]
-            if "sub_title" in handler.extra:
-                extra["sub_title"] = handler.extra["sub_title"]
+            proc = await ProcessDoc.find_one(query={"_id": process.record_id})
+            extra["title"] = proc.title if proc.title else extra.get("title", "")
+            extra["sub_title"] = extra.get("sub_title", "")
 
             return StartAgentCallEvent(
                 machine=AgentOS.current_machine_url(),
@@ -294,7 +293,7 @@ class AgentController:
         try:
             # allow the agent send a custom user input event or a custom start event
             seen_user_event = False
-            start_event = get_start_event()
+            start_event = await get_start_event()
             if not handler.extra.get("custom_user_input_event", False):
                 seen_user_event = True
                 user_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))

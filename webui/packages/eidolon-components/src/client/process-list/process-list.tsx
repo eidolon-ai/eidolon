@@ -17,7 +17,10 @@ export function ProcessList({ machineURL, isSelected, selectChat, goHome }: Proc
   const { processes, updateProcesses, fetchError } = useProcesses();
 
   useEffect(() => {
-    updateProcesses(machineURL).then(() => {});
+    if (machineURL) {
+      updateProcesses(machineURL).then(() => {
+      });
+    }
   }, [machineURL]);
 
   const handleDelete = (chat: ProcessStatus) => {

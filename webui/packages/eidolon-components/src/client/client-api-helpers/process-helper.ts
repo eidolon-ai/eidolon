@@ -25,7 +25,13 @@ export async function createProcess(machineUrl: string, agent: string, title: st
     if (resp.status === 404) {
       return null
     }
-    return resp.json().then((json) => json as ProcessStatus)
+    if (resp.status === 200) {
+      return resp.json().then((json) => json as ProcessStatus)
+    } else {
+      return resp.text().then(text => {
+        throw new HttpException(`Failed to create process: ${resp.statusText} - ${text}`, resp.status)
+      })
+    }
   })
 }
 

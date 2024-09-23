@@ -1,15 +1,13 @@
 'use client'
 
-import { ChangeEvent, useRef, useState } from "react";
-import { PaperclipIcon } from 'lucide-react';
-import { setMetadata, uploadFile } from "../client-api-helpers/files-helper.ts";
-import { FileHandle } from "@eidolon-ai/client";
+import {ChangeEvent, useRef, useState} from "react";
+import {PaperclipIcon} from 'lucide-react';
 
 interface CircularProgressProps {
   value: number;
 }
 
-function CircularProgressWithLabel({ value }: CircularProgressProps) {
+function CircularProgressWithLabel({value}: CircularProgressProps) {
   return (
     <div className="relative inline-flex">
       <svg className="w-8 h-8" viewBox="0 0 36 36">
@@ -40,42 +38,32 @@ function CircularProgressWithLabel({ value }: CircularProgressProps) {
   );
 }
 
-interface FileUploadProps {
-  machineUrl: string;
-  process_id: string;
-  addUploadedFiles: (files: FileHandle[]) => void;
+export interface SelectedFile {
+  name: string
+  blob: Blob
 }
 
-export function FileUpload({ machineUrl, process_id, addUploadedFiles }: FileUploadProps) {
+interface FileUploadProps {
+  addUploadedFiles: (files: SelectedFile[]) => void;
+}
+
+export function FileUpload({
+  addUploadedFiles,
+}: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [uploadingFiles, setUploadingFiles] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [blobs, setBlobs] = useState<SelectedFile[]>([]);
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event?.target?.files) {
-      const blobs = Array.from(event.target.files);
-
-      setUploadingFiles(true);
-      setProgress(0);
-      try {
-        const fileHandles: FileHandle[] = [];
-        for (const blob of blobs) {
-          const fileHandle = await uploadFile(machineUrl, process_id, blob);
-          if (fileHandle) {
-            await setMetadata(machineUrl, process_id, fileHandle.fileId, { name: blob.name });
-            fileHandles.push(fileHandle);
-          }
-          setProgress((fileHandles.length / blobs.length) * 100);
-        }
-        addUploadedFiles(fileHandles);
-      } finally {
-        setProgress(0);
-        setUploadingFiles(false);
-      }
+      const newBlobs = Array.from(event.target.files).map(file => {
+        return {name: file.name, blob: file};
+      })
+      addUploadedFiles(newBlobs);
+      setBlobs([...blobs, ...newBlobs]);
     }
   };
 
@@ -89,18 +77,12 @@ export function FileUpload({ machineUrl, process_id, addUploadedFiles }: FileUpl
         type="file"
         onChange={handleFileChange}
       />
-      {uploadingFiles ? (
-        <div className="w-8 h-8 flex items-center justify-center">
-          <CircularProgressWithLabel value={progress} />
-        </div>
-      ) : (
-        <button
-          onClick={handleButtonClick}
-          className="p-1 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <PaperclipIcon className="w-6 h-6 text-gray-600" />
-        </button>
-      )}
+      <div
+        onClick={handleButtonClick}
+        className="p-2 flex h-fit justify-center rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <PaperclipIcon className="w-4 h-4 text-gray-600"/>
+      </div>
     </div>
   );
 }

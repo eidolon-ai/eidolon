@@ -20,23 +20,6 @@ import {IChangeEvent, ThemeProps, withTheme} from '@rjsf/core';
 import {PlusCircle, XCircle, ChevronUp, ChevronDown, AlertCircle} from 'lucide-react';
 
 // Custom widgets
-const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
-  const {uiSchema, ...otherProps} = props;
-  return (
-    <button
-      type="submit"
-      className={`px-4 py-2 text-white rounded-md transition-colors ${
-        uiSchema?.disabled
-          ? 'bg-gray-400 cursor-not-allowed'
-          : 'bg-blue-500 hover:bg-blue-600'
-      }`}
-      {...otherProps}
-    >
-      {uiSchema?.submitText || 'Submit'}
-    </button>
-  );
-}
-
 const IconButton: React.FC<IconButtonProps> = (props) => {
   const {icon, className, ...otherProps} = props;
   return (
@@ -325,10 +308,11 @@ interface TailwindRJSFThemeProps {
   schema: RJSFSchema;
   uiSchema?: UiSchema;
   formData?: any;
+  onSubmit: () => void
   onChange: (data: IChangeEvent, id: string | undefined) => void;
 }
 
-const TailwindRJSFTheme: React.FC<TailwindRJSFThemeProps> = ({schema, uiSchema, formData, onChange}) => {
+const TailwindRJSFTheme: React.FC<TailwindRJSFThemeProps> = ({schema, uiSchema, formData, onSubmit, onChange}) => {
 
   const handleBlur = (id: string, value: any) => {
     const fieldSchema = schema.properties?.[id];
@@ -352,6 +336,7 @@ const TailwindRJSFTheme: React.FC<TailwindRJSFThemeProps> = ({schema, uiSchema, 
       }}
       formData={formData}
       onChange={onChange}
+      onSubmit={onSubmit}
       validator={validator as any}
     />
   );

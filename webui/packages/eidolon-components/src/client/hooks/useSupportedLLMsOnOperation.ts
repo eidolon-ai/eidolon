@@ -9,15 +9,14 @@ export function useSupportedLLMsOnOperation(machineURL: string, copilotParams: C
   function updateSelectedLLM(opInfo: OperationInfo) {
     const schema = opInfo.schema
     if (schema?.properties?.execute_on_apu) {
-      const property = schema?.properties?.execute_on_apu as Record<string, unknown>
+      const property = schema?.properties?.execute_on_apu as Record<string, any>
       if (property?.default) {
-        setSelectedLLM(property.default)
+        setSelectedLLM(property.default as string)
       } else {
         setSelectedLLM(property?.["enum"][0])
       }
     }
   }
-
 
   useEffect(() => {
     if (copilotParams) {

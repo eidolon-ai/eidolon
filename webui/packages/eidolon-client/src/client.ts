@@ -49,7 +49,7 @@ export interface ProcessesResponse {
 export interface FileHandle {
   machineUrl: string
   processId: string
-  fileId: string
+  file_id: string
   metadata?: Record<string, any>
 }
 
@@ -206,7 +206,8 @@ export class EidolonClient {
       body: JSON.stringify({agent: agent, title: title})
     })
     if (results.status !== 200) {
-      throw new HttpException(`Failed to create process: ${results.statusText}`, results.status)
+      const text = await results.text()
+      throw new HttpException(`Failed to create process: ${results.statusText} - ${text}`, results.status)
     }
     let status = await results.json() as ProcessStatus;
     addMachineIfMissing(this.machineUrl, status)

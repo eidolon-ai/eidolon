@@ -1,77 +1,71 @@
-import {createContext, ReactNode, useContext, useState} from "react";
-import {getProcessStatus} from "../client-api-helpers/process-helper.ts";
-import {HttpException, ProcessStatus} from "@eidolon-ai/client";
-import {getApps, getOperations} from "../client-api-helpers/machine-helper.ts";
-import {CopilotParams, DevParams, EidolonApp} from "../lib/util.ts";
+import { createContext, ReactNode, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import { getProcessStatus } from "../client-api-helpers/process-helper.ts";
+import { HttpException, ProcessStatus } from "@eidolon-ai/client";
+import { useApp } from "./app-context.js";
+import {useProcesses} from "./processes_context.js";
 
 interface ContextObject {
   processStatus?: ProcessStatus;
-  app?: EidolonApp;
-  fetchError?: HttpException;
-  updateProcessStatus: (appName: string, processId: string) => Promise<void>;
+  error?: HttpException;
+  updateProcessStatus: () => Promise<void>;
 }
 
 const EidolonProcessContext = createContext<ContextObject | undefined>(undefined);
 
-export const useProcess = (): ContextObject => {
+export const useProcess = () => {
   const context = useContext(EidolonProcessContext);
   if (!context) {
-    throw new Error("useProcess must be used within a ProcessProvider");
+    throw new HttpException("useProcess must be used within a ProcessProvider", 500);
   }
   return context;
 };
 
 interface ProcessProviderProps {
   children: ReactNode;
+  processId: string;
 }
 
-export const ProcessProvider: React.FC<ProcessProviderProps> = ({ children }) => {
-  const [state, setState] = useState<Omit<ContextObject, 'updateProcessStatus'>>({});
+export const ProcessProvider: React.FC<ProcessProviderProps> = ({ children, processId }) => {
+  const [processStatus, setProcessStatus] = useState<ProcessStatus | undefined>();
+  const [error, setError] = useState<HttpException | undefined>();
+  const { app } = useApp();
+  const {updateProcesses} = useProcesses();
 
-  const updateProcessStatus = async (appName: string, processId: string): Promise<void> => {
-    try {
-      const apps = await getApps();
-      const app = apps[appName];
-
-      if (!app) {
-        setState({fetchError: new HttpException(`App ${appName} not found`, 404)});
-        return
-      }
-
-      const processStatus = await getProcessStatus(app.location, processId);
-
-      if (app.type === "copilot") {
-        const operations = await getOperations(processStatus.machine, processStatus.agent);
-        const options = app.params as CopilotParams;
-        const operation = operations.find((o) => o.name === options.operation);
-
-        if (operation) {
-          options.operationInfo = operation;
-          if (operation.schema?.properties?.execute_on_apu) {
-            const property = operation.schema.properties.execute_on_apu as Record<string, any>;
-            options.supportedLLMs = property?.["enum"] as string[];
-            options.defaultLLM = property?.default as string;
-          }
+  const fetchProcessStatus = useCallback(async () => {
+    if (app?.location) {
+      try {
+        const existingTitle = processStatus?.title;
+        const status = await getProcessStatus(app.location, processId);
+        setProcessStatus(status);
+        if (status.title !== existingTitle) {
+          await updateProcesses(app.location);
         }
-      } else {
-        const options = app.params as DevParams;
-        options.operations = await getOperations(processStatus.machine, processStatus.agent);
+        setError(undefined);
+      } catch (error) {
+        console.error('Error fetching process status:', error);
+        setProcessStatus(undefined);
+        setError(error instanceof HttpException ? error : new HttpException('An unknown error occurred', 500));
       }
-
-      setState({ app, processStatus });
-    } catch (error) {
-      setState({ fetchError: error instanceof HttpException ? error : new HttpException('An unknown error occurred', 500) });
     }
-  };
+  }, [app?.location, processId]);
 
-  const contextValue: ContextObject = {
-    ...state,
+  useEffect(() => {
+    fetchProcessStatus();
+  }, [fetchProcessStatus]);
+
+  const updateProcessStatus = useCallback(async (): Promise<void> => {
+    await fetchProcessStatus();
+  }, [fetchProcessStatus]);
+
+  const contextValue = useMemo(() => ({
+    processStatus,
+    error,
     updateProcessStatus
-  };
+  }), [processStatus, error, updateProcessStatus]);
 
   return (
     <EidolonProcessContext.Provider value={contextValue}>
       {children}
     </EidolonProcessContext.Provider>
   );
-};
+}

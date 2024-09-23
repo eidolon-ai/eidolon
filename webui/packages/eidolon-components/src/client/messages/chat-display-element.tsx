@@ -4,6 +4,7 @@ import {ToolCall} from "./tool-call-element.tsx";
 import {EidolonMarkdown} from "./eidolon-markdown.tsx";
 import styles from "./eidolon-events.module.css"
 import {AgentCall} from "./agent-element.js";
+import {useProcesses} from "../hooks/processes_context.js";
 
 export interface ChatDisplayElementProps {
   machineUrl: string
@@ -12,19 +13,20 @@ export interface ChatDisplayElementProps {
   topLevel: boolean
   userImage: string | null | undefined
   userName: string | null | undefined
+  depth: number
 }
 
-export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage, userName}: ChatDisplayElementProps) => {
+export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage, userName, depth}: ChatDisplayElementProps) => {
   const getUserInput = (element: UserRequestElement) => {
-    let content = typeof element.content === "string" ? {body: element.content} : {...element.content}
+    let content: Record<string, unknown> = typeof element.content === "string" ? {body: element.content} : {...element.content as object}
     delete content["process_id"]
     if (Object.keys(content).length === 0) {
       return "*No Input*"
     } else if (Object.keys(content).length === 1 && Object.keys(content)[0] === "body") {
       return content[Object.keys(content)[0]!]
     } else {
-      content = JSON.stringify(content, undefined, "  ")
-      return '```json\n' + content + "\n```"
+      const contentStr = JSON.stringify(content, undefined, "  ")
+      return '```json\n' + contentStr + "\n```"
     }
   }
 
@@ -95,7 +97,7 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
       const element = rawElement as ToolCallElement
       return (
         <div className={styles[`chat-indent`]}>
-          <ToolCall machineUrl={machineUrl} element={element} agentName={agentName}/>
+          <ToolCall machineUrl={machineUrl} element={element} agentName={agentName} depth={depth}/>
         </div>
       )
     }

@@ -9,9 +9,8 @@ interface DrawerSidebarProps {
 }
 
 export const DrawerSidebar: React.FC<DrawerSidebarProps> = ({children}) => {
-  const initialIsPinned = localStorage.getItem('sidebarPinned') === 'true';
   const { ref, isMouseOver, isPinned, setIsPinned } = useMouseTracking({
-    initialIsPinned,
+    initialIsPinned: localStorage?.getItem('sidebarPinned') === 'true',
     onMouseEnter: () => {},
     onMouseLeave: () => {},
   });

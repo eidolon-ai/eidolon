@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    modularizeImports: {
-        'react-icons/ai': {
-            transform: 'react-icons/ai/{{member}}',
-        },
+    devIndicators:{
+        autoPrerender: false,
     },
     output: 'standalone',
 };

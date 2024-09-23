@@ -7,7 +7,7 @@ import {SessionProvider} from "next-auth/react";
 import {EidolonProvider} from "@eidolon-ai/components/client";
 import {PHProvider} from "@/PosthogProvider.tsx";
 import "@eidolon-ai/components/client-css";
-import { Roboto } from 'next/font/google'
+import {Merriweather, PT_Serif, Roboto} from 'next/font/google'
 
 const font = Roboto({
   weight: ['400', '700'],
@@ -15,7 +15,13 @@ const font = Roboto({
   display: 'swap',
 })
 
-
+const ptSerif = PT_Serif({
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-pt-serif',
+  display: 'swap',
+})
 export const metadata: Metadata = {
   title: 'Eidolon',
   description: 'Eidolon',
@@ -24,11 +30,11 @@ export const metadata: Metadata = {
 
 const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
   return (
-    <html lang="en" className={font.className}>
+    <html lang="en" className={`${font.className} ${ptSerif.className}`}>
     <PHProvider>
       <body>
       <div className={"titanium-background"}/>
-      <div className={"titanium-content"}>
+      <div className={"titanium-content font-sans"}>
         <SessionProvider>
           <AppStoreProvider>
             <EidolonProvider>

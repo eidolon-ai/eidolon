@@ -207,6 +207,9 @@ importers:
       '@emotion/styled':
         specifier: latest
         version: 11.13.0(@emotion/react@11.13.3(@types/react@18.3.4)(react@19.0.0-rc-a960b92c-20240819))(@types/react@18.3.4)(react@19.0.0-rc-a960b92c-20240819)
+      '@headlessui/react':
+        specifier: ^2.1.8
+        version: 2.1.8(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)
       '@jsdevtools/ono':
         specifier: latest
         version: 7.1.3
@@ -398,6 +401,9 @@ importers:
       '@eidolon-ai/client':
         specifier: workspace:*
         version: link:../eidolon-client
+      '@headlessui/react':
+        specifier: ^2.1.8
+        version: 2.1.8(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)
       '@readme/openapi-parser':
         specifier: 2.5.1
         version: 2.5.1(openapi-types@12.1.3)
@@ -1938,8 +1944,36 @@ packages:
   '@expressive-code/plugin-text-markers@0.35.6':
     resolution: {integrity: sha512-/k9eWVZSCs+uEKHR++22Uu6eIbHWEciVHbIuD8frT8DlqTtHYaaiwHPncO6KFWnGDz5i/gL7oyl6XmOi/E6GVg==}
 
+  '@floating-ui/core@1.6.8':
+    resolution: {integrity: sha512-7XJ9cPU+yI2QeLS+FCSlqNFZJq8arvswefkZrYI1yQBbftw6FyrZOxYSh+9S7z7TpeWlRt9zJ5IhM1WIL334jA==}
+
+  '@floating-ui/dom@1.6.11':
+    resolution: {integrity: sha512-qkMCxSR24v2vGkhYDo/UzxfJN3D4syqSjyuTFz6C7XcpU1pASPRieNI0Kj5VP3/503mOfYiGY891ugBX1GlABQ==}
+
+  '@floating-ui/react-dom@2.1.2':
+    resolution: {integrity: sha512-06okr5cgPzMNBy+Ycse2A6udMi4bqwW/zgBF/rwjcNqWkyr82Mcg8b0vjX8OJpZFy/FKjJmw6wV7t44kK6kW7A==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@floating-ui/react@0.26.24':
+    resolution: {integrity: sha512-2ly0pCkZIGEQUq5H8bBK0XJmc1xIK/RM3tvVzY3GBER7IOD1UgmC2Y2tjj4AuS+TC+vTE1KJv2053290jua0Sw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@floating-ui/utils@0.2.8':
+    resolution: {integrity: sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==}
+
   '@fontsource-variable/inter@5.0.20':
     resolution: {integrity: sha512-dhzG4Zls/tIrf8h0FhTNi8jT/uFwNhdTY2vKe6DYqoXDYOfEcTVZDyh1hKml1rlLT44Y7OoKoGz8w7czDW7twQ==}
+
+  '@headlessui/react@2.1.8':
+    resolution: {integrity: sha512-uajqVkAcVG/wHwG9Fh5PFMcFpf2VxM4vNRNKxRjuK009kePVur8LkuuygHfIE+2uZ7z7GnlTtYsyUe6glPpTLg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^18
+      react-dom: ^18
 
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -2589,6 +2623,37 @@ packages:
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
+  '@react-aria/focus@3.18.2':
+    resolution: {integrity: sha512-Jc/IY+StjA3uqN73o6txKQ527RFU7gnG5crEl5Xy3V+gbYp2O5L3ezAo/E0Ipi2cyMbG6T5Iit1IDs7hcGu8aw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
+  '@react-aria/interactions@3.22.2':
+    resolution: {integrity: sha512-xE/77fRVSlqHp2sfkrMeNLrqf2amF/RyuAS6T5oDJemRSgYM3UoxTbWjucPhfnoW7r32pFPHHgz4lbdX8xqD/g==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
+  '@react-aria/ssr@3.9.5':
+    resolution: {integrity: sha512-xEwGKoysu+oXulibNUSkXf8itW0npHHTa6c4AyYeZIJyRoegeteYuFpZUBPtIDE8RfHdNsSmE1ssOkxRnwbkuQ==}
+    engines: {node: '>= 12'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
+  '@react-aria/utils@3.25.2':
+    resolution: {integrity: sha512-GdIvG8GBJJZygB4L2QJP1Gabyn2mjFsha73I2wSe+o4DYeGWoJiMZRM06PyTIxLH4S7Sn7eVDtsSBfkc2VY/NA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
+  '@react-stately/utils@3.10.3':
+    resolution: {integrity: sha512-moClv7MlVSHpbYtQIkm0Cx+on8Pgt1XqtPx6fy9rQFb2DNc9u1G3AUVnqA17buOkH1vLxAtX4MedlxMWyRCYYA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
+  '@react-types/shared@3.24.1':
+    resolution: {integrity: sha512-AUQeGYEm/zDTN6zLzdXolDxz3Jk5dDL7f506F07U8tBwxNNI3WRdhU84G0/AaFikOZzDXhOZDr3MhQMzyE7Ydw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@readme/better-ajv-errors@1.6.0':
     resolution: {integrity: sha512-9gO9rld84Jgu13kcbKRU+WHseNhaVt76wYMeRDGsUGYxwJtI3RmEJ9LY9dZCYQGI8eUZLuxb5qDja0nqklpFjQ==}
     engines: {node: '>=14'}
@@ -2836,6 +2901,15 @@ packages:
     resolution: {integrity: sha512-ZvOCjUbsJBjL9CxQBn+VEnFpouzuKhxh2dH8xMIWHILL+HfOYtlAkWcyoon8LlzE53d2Yo6YO6pahKKNW3q1YQ==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
+
+  '@tanstack/react-virtual@3.10.8':
+    resolution: {integrity: sha512-VbzbVGSsZlQktyLrP5nxE+vE1ZR+U0NFAWPbJLoG2+DKPwd2D7dVICTVIIaYlJqX1ZCEnYDbaOpmMwbsyhBoIA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@tanstack/virtual-core@3.10.8':
+    resolution: {integrity: sha512-PBu00mtt95jbKFi6Llk9aik8bnR3tR/oQP1o3TSi+iG//+Q2RTIzCEgKkHG8BB86kxMNW6O8wku+Lmi+QFR6jA==}
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -8583,6 +8657,9 @@ packages:
     resolution: {integrity: sha512-7gr8p9TQP6RAHusBOSLs46F4564ZrjV8xFmw5zCmgmhGUcw2hxsShhJ6CEiHQMgPDwAQ1fWHPM0ypc4RMAig4A==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
+  tabbable@6.2.0:
+    resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
+
   tailwind-merge@2.5.2:
     resolution: {integrity: sha512-kjEBm+pvD+6eAwzJL2Bi+02/9LFLal1Gs61+QB7HvTfQQ0aXwC5LGT8PEt1gS0CWKktKe6ysPTAy3cBC5MeiIg==}
 
@@ -11343,7 +11420,64 @@ snapshots:
     dependencies:
       '@expressive-code/core': 0.35.6
 
+  '@floating-ui/core@1.6.8':
+    dependencies:
+      '@floating-ui/utils': 0.2.8
+
+  '@floating-ui/dom@1.6.11':
+    dependencies:
+      '@floating-ui/core': 1.6.8
+      '@floating-ui/utils': 0.2.8
+
+  '@floating-ui/react-dom@2.1.2(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@floating-ui/dom': 1.6.11
+      react: 18.3.1
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@18.3.1)
+
+  '@floating-ui/react-dom@2.1.2(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@floating-ui/dom': 1.6.11
+      react: 19.0.0-rc-a960b92c-20240819
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819)
+
+  '@floating-ui/react@0.26.24(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@floating-ui/react-dom': 2.1.2(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)
+      '@floating-ui/utils': 0.2.8
+      react: 18.3.1
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@18.3.1)
+      tabbable: 6.2.0
+
+  '@floating-ui/react@0.26.24(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@floating-ui/react-dom': 2.1.2(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)
+      '@floating-ui/utils': 0.2.8
+      react: 19.0.0-rc-a960b92c-20240819
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819)
+      tabbable: 6.2.0
+
+  '@floating-ui/utils@0.2.8': {}
+
   '@fontsource-variable/inter@5.0.20': {}
+
+  '@headlessui/react@2.1.8(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@floating-ui/react': 0.26.24(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)
+      '@react-aria/focus': 3.18.2(react@18.3.1)
+      '@react-aria/interactions': 3.22.2(react@18.3.1)
+      '@tanstack/react-virtual': 3.10.8(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@18.3.1)
+
+  '@headlessui/react@2.1.8(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@floating-ui/react': 0.26.24(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)
+      '@react-aria/focus': 3.18.2(react@19.0.0-rc-a960b92c-20240819)
+      '@react-aria/interactions': 3.22.2(react@19.0.0-rc-a960b92c-20240819)
+      '@tanstack/react-virtual': 3.10.8(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)
+      react: 19.0.0-rc-a960b92c-20240819
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819)
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
@@ -12166,6 +12300,86 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
+  '@react-aria/focus@3.18.2(react@18.3.1)':
+    dependencies:
+      '@react-aria/interactions': 3.22.2(react@18.3.1)
+      '@react-aria/utils': 3.25.2(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.12
+      clsx: 2.1.1
+      react: 18.3.1
+
+  '@react-aria/focus@3.18.2(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@react-aria/interactions': 3.22.2(react@19.0.0-rc-a960b92c-20240819)
+      '@react-aria/utils': 3.25.2(react@19.0.0-rc-a960b92c-20240819)
+      '@react-types/shared': 3.24.1(react@19.0.0-rc-a960b92c-20240819)
+      '@swc/helpers': 0.5.12
+      clsx: 2.1.1
+      react: 19.0.0-rc-a960b92c-20240819
+
+  '@react-aria/interactions@3.22.2(react@18.3.1)':
+    dependencies:
+      '@react-aria/ssr': 3.9.5(react@18.3.1)
+      '@react-aria/utils': 3.25.2(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.12
+      react: 18.3.1
+
+  '@react-aria/interactions@3.22.2(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@react-aria/ssr': 3.9.5(react@19.0.0-rc-a960b92c-20240819)
+      '@react-aria/utils': 3.25.2(react@19.0.0-rc-a960b92c-20240819)
+      '@react-types/shared': 3.24.1(react@19.0.0-rc-a960b92c-20240819)
+      '@swc/helpers': 0.5.12
+      react: 19.0.0-rc-a960b92c-20240819
+
+  '@react-aria/ssr@3.9.5(react@18.3.1)':
+    dependencies:
+      '@swc/helpers': 0.5.12
+      react: 18.3.1
+
+  '@react-aria/ssr@3.9.5(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@swc/helpers': 0.5.12
+      react: 19.0.0-rc-a960b92c-20240819
+
+  '@react-aria/utils@3.25.2(react@18.3.1)':
+    dependencies:
+      '@react-aria/ssr': 3.9.5(react@18.3.1)
+      '@react-stately/utils': 3.10.3(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.12
+      clsx: 2.1.1
+      react: 18.3.1
+
+  '@react-aria/utils@3.25.2(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@react-aria/ssr': 3.9.5(react@19.0.0-rc-a960b92c-20240819)
+      '@react-stately/utils': 3.10.3(react@19.0.0-rc-a960b92c-20240819)
+      '@react-types/shared': 3.24.1(react@19.0.0-rc-a960b92c-20240819)
+      '@swc/helpers': 0.5.12
+      clsx: 2.1.1
+      react: 19.0.0-rc-a960b92c-20240819
+
+  '@react-stately/utils@3.10.3(react@18.3.1)':
+    dependencies:
+      '@swc/helpers': 0.5.12
+      react: 18.3.1
+
+  '@react-stately/utils@3.10.3(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@swc/helpers': 0.5.12
+      react: 19.0.0-rc-a960b92c-20240819
+
+  '@react-types/shared@3.24.1(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+
+  '@react-types/shared@3.24.1(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      react: 19.0.0-rc-a960b92c-20240819
+
   '@readme/better-ajv-errors@1.6.0(ajv@8.17.1)':
     dependencies:
       '@babel/code-frame': 7.24.7
@@ -12379,6 +12593,20 @@ snapshots:
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.9(ts-node@10.9.2(@types/node@22.5.5)(typescript@5.5.4))
+
+  '@tanstack/react-virtual@3.10.8(react-dom@19.0.0-rc-a960b92c-20240819(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/virtual-core': 3.10.8
+      react: 18.3.1
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@18.3.1)
+
+  '@tanstack/react-virtual@3.10.8(react-dom@19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819))(react@19.0.0-rc-a960b92c-20240819)':
+    dependencies:
+      '@tanstack/virtual-core': 3.10.8
+      react: 19.0.0-rc-a960b92c-20240819
+      react-dom: 19.0.0-rc-a960b92c-20240819(react@19.0.0-rc-a960b92c-20240819)
+
+  '@tanstack/virtual-core@3.10.8': {}
 
   '@testing-library/dom@10.4.0':
     dependencies:
@@ -20504,6 +20732,8 @@ snapshots:
     dependencies:
       '@pkgr/core': 0.1.1
       tslib: 2.6.3
+
+  tabbable@6.2.0: {}
 
   tailwind-merge@2.5.2: {}
 
