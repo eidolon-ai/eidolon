@@ -18,7 +18,6 @@ export interface CopilotPanelParams {
   copilotParams: CopilotParams | DevParams
   userImage: string | null | undefined
   userName: string | null | undefined
-  // eslint-disable-next-line no-unused-vars
   afterExecute?: (payload: string | Record<string, any>) => void
   scrollableRegionRef?: React.RefObject<HTMLDivElement>
   operation?: string

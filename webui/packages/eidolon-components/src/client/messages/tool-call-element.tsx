@@ -1,15 +1,14 @@
-import {useState} from 'react';
-import {ChevronDown, Circle, Expand, Wrench} from 'lucide-react';
-import {ToolCallElement} from "../lib/display-elements.ts";
+import React, {useState} from 'react';
+import {ChevronDown, Circle, Expand} from 'lucide-react';
+import {ToolCallElement} from "../lib/display-elements.js";
 import {ChatDisplayElement} from "./chat-display-element.js";
 import {EidolonMarkdown} from "./eidolon-markdown.js";
-import styles from "./eidolon-events.module.css";
 
 export interface ToolCallElementProps {
-  machineUrl: string
-  element: ToolCallElement
-  agentName: string
-  depth: number
+  machineUrl: string;
+  element: ToolCallElement;
+  agentName: string;
+  depth: number;
 }
 
 export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, agentName, depth}) => {
@@ -19,78 +18,78 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
     setExpanded(!expanded);
   };
 
+  const getBgColor = (depth: number) => {
+    const colors = ['bg-gray-50', 'bg-gray-100', 'bg-gray-200', 'bg-gray-300',
+      'bg-blue-50', 'bg-blue-100', 'bg-blue-200', 'bg-blue-300',
+      'bg-green-50', 'bg-green-100', 'bg-green-200', 'bg-green-300'];
+    return colors[depth % colors.length];
+  };
+
+  const bgColor = getBgColor(depth);
+
   return (
-    <>
-      {!expanded && (
-        <div className="inline-flex items-center bg-gray-50 border border-gray-200 border-solid rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-200 ml-6 h-full"
-              onClick={handleExpandClick}
-        >
+    <div className={`mt-2 mb-2`}>
+      <div
+        className={`flex flex-col relative w-fit ${bgColor} border border-gray-200 border-solid rounded-md cursor-pointer hover:bg-opacity-80 transition-colors duration-200 ${
+          expanded ? 'rounded-b-none border-b-0' : ''
+        }`}
+        onClick={handleExpandClick}
+      >
+        <div className={"flex flex-row items-center"}>
           <div className="p-2 border-r border-gray-200 flex justify-center">
             <Expand className="w-5 h-5 text-gray-500"/>
           </div>
           <div className="h-full w-[1px] bg-gray-300"/>
           <div className="px-3 py-2 text-sm font-medium text-gray-700 whitespace-nowrap">
-            {element.title}
+            {element.is_agent && <span>{element.title}</span>}
+            {!element.is_agent && <div><span>{element.sub_title}</span></div>}
           </div>
+          {element.is_active && (
+            <Circle className="w-4 h-4 text-blue-500 animate-pulse ml-auto mr-2"/>
+          )}
         </div>
-      )}
-      {expanded && (
-        <div className="mt-2 mb-2 border border-gray-200 rounded-md">
-          <div
-            className="flex items-center justify-between p-2 cursor-pointer"
-            onClick={handleExpandClick}
-          >
-            <div className="flex items-center">
-              {element.is_agent
-                ? <img src="/img/eidolon_with_gradient.png" alt="Agent" className="w-6 h-6 rounded-full"/>
-                : <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
-                  <Wrench size={16}/>
-                </div>
-              }
-              <div className="ml-2">
-                <div className="text-sm font-medium">{element.is_agent ? `${element.title} Agent` : element.title}</div>
-                <div className="text-xs text-gray-500">{element.sub_title}</div>
-              </div>
-            </div>
-            <div className="flex items-center">
-              {element.is_active && (
-                <Circle className="w-4 h-4 text-blue-500 animate-pulse mr-2"/>
-              )}
-              <ChevronDown
-                className={`transform transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
-              />
-            </div>
-          </div>
-          <div className="p-4 border-t border-gray-200">
-            <h6 className="text-sm font-semibold mb-2">Input:</h6>
-            <div className={styles[`chat-indent`]}>
-              <EidolonMarkdown machineUrl={machineUrl}>
-                {'```json\n' + JSON.stringify(element.arguments, undefined, "  ") + "\n```"}
-              </EidolonMarkdown>
-            </div>
-            <hr className="my-4"/>
-            <h6 className="text-sm font-semibold mb-2">Output:</h6>
-            {element.children.map((child, index) => {
-              if (index < element.children.length - 1 || child.type !== "success") {
-                return (
-                  <ChatDisplayElement
-                    userImage={undefined}
-                    userName={undefined}
-                    machineUrl={machineUrl}
-                    key={index}
-                    rawElement={child}
-                    topLevel={false}
-                    agentName={agentName}
-                    depth={depth + 1}
-                  />
-                );
-              }
-              return null;
-            })}
-          </div>
-        </div>
-      )}
-    </>
+        {expanded && <div className={`left-0 right-0 absolute h-[1px] bottom-[-1px] ${bgColor}`}/>}
+      </div>
 
+      {expanded && (
+        <div
+          className={`${bgColor} border border-gray-200 border-solid rounded-b-md overflow-hidden`}
+        >
+          <div className="p-4">
+            {!element.is_agent && (
+              <div>
+                <h6 className="text-sm font-semibold mb-2">Input:</h6>
+                <div className="pl-4 border-l-2 border-gray-300">
+                  <EidolonMarkdown machineUrl={machineUrl}>
+                    {'```json\n' + JSON.stringify(element.arguments, null, 2) + "\n```"}
+                  </EidolonMarkdown>
+                </div>
+                <hr className="my-4"/>
+                <h6 className="text-sm font-semibold mb-2">Output:</h6>
+              </div>
+            )}
+            <div className="space-y-2">
+              {element.children.map((child, index) => {
+                if (index < element.children.length - 1 || child.type !== "success") {
+                  return (
+                    <ChatDisplayElement
+                      key={index}
+                      userImage={undefined}
+                      userName={undefined}
+                      machineUrl={machineUrl}
+                      rawElement={child}
+                      topLevel={false}
+                      agentName={agentName}
+                      depth={depth + 1}
+                    />
+                  );
+                }
+                return null;
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };

@@ -173,6 +173,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         async def fn(_self, **kwargs):
             process = await agent.create_process()
             yield ObjectOutputEvent(
+                hidden=True,
                 content=dict(
                     action="created new conversation",
                     conversation_id=process.process_id,

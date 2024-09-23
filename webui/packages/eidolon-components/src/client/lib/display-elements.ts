@@ -2,6 +2,7 @@ import {ChatEvent} from "@eidolon-ai/client";
 
 export interface DisplayElement {
   type: string
+  hidden?: boolean
 }
 
 export interface AgentStartElement extends DisplayElement {
@@ -101,18 +102,20 @@ export const makeElement = (event: ChatEvent) => {
     case "string":
       return {
         type: "markdown",
-        content: event.content
+        content: event.content,
+        hidden: event.hidden
       } as MarkdownElement
     case "object":
       return {
         type: "json",
-        content: event.content
+        content: event.content,
+        hidden: event.hidden
       } as JsonElement
     case "tool_call_start":
       return {
         type: "tool-call",
         title: event.title || event.tool_call.name,
-        sub_title: event.sub_title || "",
+        sub_title: event.is_agent_call ? "" : (event.sub_title || ""),
         is_active: true,
         is_agent: event.is_agent_call || false,
         contextId: event.context_id,

@@ -122,6 +122,7 @@ class StringOutputEvent(OutputEvent):
 class ObjectOutputEvent(OutputEvent, Generic[T]):
     event_type: Literal["object"] = "object"
     content: T
+    hidden: Optional[bool] = False
 
 
 # note EndStreamEvent does not need to reference the type of event it ends since this is captured by context

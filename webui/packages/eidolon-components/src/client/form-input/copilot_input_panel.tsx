@@ -94,7 +94,6 @@ export function CopilotInputPanel({
       <ProcessError error={processState.error!}/>
     )
   } else if (processState.state !== "processing" && processState?.available_actions?.length === 0) {
-    console.log(processState)
     content = (
       <ProcessTerminated/>
     )

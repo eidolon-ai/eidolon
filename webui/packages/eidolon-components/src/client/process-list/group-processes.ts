@@ -11,7 +11,7 @@ export const groupProcessesByUpdateDate = async (processes: ProcessStatus[]) => 
 }
 
 const groupChat = (item: ProcessStatus) => {
-  const dateTime = DateTime.fromISO(item.updated);
+  const dateTime = DateTime.fromISO(item.updated, { zone: "utc" }).toLocal();
   return groups.reduce((reducer, fn) => {
     const test = fn(dateTime)
     return (reducer.length || !test[0]) ? reducer : test[1]
