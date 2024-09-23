@@ -1,9 +1,12 @@
 {
   "title": "DocumentManager",
-  "description": "Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager'> components",
+  "description": "Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents",
   "anyOf": [
     {
       "$ref": "file:./DocumentManager.json"
     }
-  ]
+  ],
+  "reference_group": {
+    "type": "DocumentManager"
+  }
 }

@@ -1,6 +1,6 @@
 ---
 title: Search
-description: Description of Search component
+description: "Description of Search component"
 ---
 
 | Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
@@ -10,7 +10,7 @@ description: Description of Search component
 | - [cse_token](#cse_token )                     | No      | string      | No         | -          | Cse Token           |
 | - [name](#name )                               | No      | string      | No         | -          | Name                |
 | - [description](#description )                 | No      | string      | No         | -          | Description         |
-| - [defaultDateRestrict](#defaultDateRestrict ) | No      | Combination | No         | -          | Defaultdaterestrict |
+| - [defaultDateRestrict](#defaultDateRestrict ) | No      | string      | No         | -          | Defaultdaterestrict |
 | - [params](#params )                           | No      | Combination | No         | -          | Params              |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -66,31 +66,11 @@ Specific value: `"Search"`
 
 **Title:** Defaultdaterestrict
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                          |
-| --------------------------------------- |
-| [item 0](#defaultDateRestrict_anyOf_i0) |
-| [item 1](#defaultDateRestrict_anyOf_i1) |
-
-### <a name="defaultDateRestrict_anyOf_i0"></a>6.1. Property `item 0`
-
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-### <a name="defaultDateRestrict_anyOf_i1"></a>6.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`   |
 
 ## <a name="params"></a>7. Property `params`
 

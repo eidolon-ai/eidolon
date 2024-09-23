@@ -6,7 +6,14 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 
 import yaml
 from PIL import Image
-from anthropic import AsyncAnthropic, APIConnectionError, RateLimitError, APIStatusError, TextEvent, ContentBlockStopEvent
+from anthropic import (
+    AsyncAnthropic,
+    APIConnectionError,
+    RateLimitError,
+    APIStatusError,
+    TextEvent,
+    ContentBlockStopEvent,
+)
 from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
 from anthropic.types.image_block_param import Source
 from fastapi import HTTPException
@@ -14,11 +21,11 @@ from fastapi import HTTPException
 from eidolon_ai_client.events import (
     StringOutputEvent,
     ObjectOutputEvent,
-    ToolCall, LLMToolCallRequestEvent,
+    ToolCall,
+    LLMToolCallRequestEvent,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
 from eidolon_ai_sdk.agent_os import AgentOS
-from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
     AssistantMessage,
@@ -75,6 +82,11 @@ def scale_image(image_bytes):
     return output.getvalue()
 
 
+class GroupedToolResponse(LLMMessage):
+    tool_responses: List[ToolResponseMessage]
+    type: str = "grouped_tool"
+
+
 async def convert_to_llm(message: LLMMessage):
     if isinstance(message, SystemMessage):
         return {"role": "user", "content": [TextBlockParam(type="text", text=message.content)]}
@@ -93,7 +105,11 @@ async def convert_to_llm(message: LLMMessage):
                     data = scale_image(data)
                     # base64 encode the data
                     base64_image = base64.b64encode(data).decode("utf-8")
-                    content.append(ImageBlockParam(source=Source(data = base64_image, media_type="image/png", type="base64" ), type="image"))
+                    content.append(
+                        ImageBlockParam(
+                            source=Source(data=base64_image, media_type="image/png", type="base64"), type="image"
+                        )
+                    )
         else:
             content = [TextBlockParam(type="text", text=content)]
 
@@ -102,18 +118,21 @@ async def convert_to_llm(message: LLMMessage):
         content = [TextBlockParam(type="text", text=message.content)]
         if message.tool_calls and len(message.tool_calls) > 0:
             for tool_call in message.tool_calls:
-                content.append(ToolUseBlockParam(type="tool_use", id=tool_call.tool_call_id, name=tool_call.name, input=tool_call.arguments))
+                content.append(
+                    ToolUseBlockParam(
+                        type="tool_use", id=tool_call.tool_call_id, name=tool_call.name, input=tool_call.arguments
+                    )
+                )
         return {"role": "assistant", "content": content}
-    elif isinstance(message, ToolResponseMessage):
+    elif isinstance(message, GroupedToolResponse):
+        # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
+        message.tool_responses.sort(key=lambda e: e.tool_call_id)
         # tool_call_id, content
-        data = json.dumps(message.result)
-        content = [TextBlockParam(type="text", text=data)]
-        return {"role": "user", "content": [{
-            "type": "tool_result",
-            "tool_use_id": message.tool_call_id,
-            "content": content
+        content = [dict(type="tool_result", tool_use_id=m.tool_call_id, content=[TextBlockParam(type="text", text=json.dumps(m.result))]) for m in message.tool_responses]
+        return {
+            "role": "user",
+            "content": content,
         }
-        ]}
     else:
         raise ValueError(f"Unknown message type {message.type}")
 
@@ -139,11 +158,10 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
         self.temperature = self.spec.temperature
 
     async def execute_llm(
-            self,
-            call_context: CallContext,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
@@ -158,7 +176,11 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
                 message = cast(MessageStreamEvent, in_message)
 
                 if isinstance(message, ContentBlockStopEvent) and isinstance(message.content_block, ToolUseBlock):
-                    tc = ToolCall(tool_call_id=message.content_block.id, name=message.content_block.name, arguments=message.content_block.input)
+                    tc = ToolCall(
+                        tool_call_id=message.content_block.id,
+                        name=message.content_block.name,
+                        arguments=message.content_block.input,
+                    )
                     tools_to_call.append(tc)
                 elif isinstance(message, TextEvent):
                     content = message.text
@@ -176,7 +198,7 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             if not can_stream_message:
                 logger.debug(f"anthropic llm object response: {complete_message}", extra=dict(content=complete_message))
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
@@ -190,7 +212,22 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
         system_prompt = "\n".join([message.content for message in inMessages if isinstance(message, SystemMessage)])
-        messages = [await convert_to_llm(message) for message in inMessages if not isinstance(message, SystemMessage)]
+
+        # We need to group tool response messages together so they appear in one block
+        messages = []
+        grouped_tool_responses = []
+        for message in inMessages:
+            if isinstance(message, ToolResponseMessage):
+                grouped_tool_responses.append(message)
+            else:
+                if grouped_tool_responses:
+                    messages.append(GroupedToolResponse(tool_responses=grouped_tool_responses))
+                    grouped_tool_responses = []
+                messages.append(message)
+        if grouped_tool_responses:
+            messages.append(GroupedToolResponse(tool_responses=grouped_tool_responses))
+
+        messages = [await convert_to_llm(message) for message in messages if not isinstance(message, SystemMessage)]
         if output_format == "str" or output_format["type"] == "string":
             is_string = True
         else:

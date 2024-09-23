@@ -1,0 +1,12 @@
+{
+  "title": "SqlClient",
+  "description": "Overview of SqlClient components",
+  "anyOf": [
+    {
+      "$ref": "file:./SqlAlchemy.json"
+    }
+  ],
+  "reference_group": {
+    "type": "SqlClient"
+  }
+}

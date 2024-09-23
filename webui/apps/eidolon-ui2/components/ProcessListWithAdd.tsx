@@ -1,15 +1,15 @@
 'use client'
 
-import {CopilotParams, createProcess, EidolonApp, ProcessList} from "@eidolon/components";
+import {CopilotParams, createProcess, EidolonApp, ProcessList} from "@eidolon-ai/components/client";
 import {usePathname, useRouter} from "next/navigation";
-import {ProcessStatus} from "@eidolon/client";
+import {ProcessStatus} from "@eidolon-ai/client";
 import * as React from "react";
 import {useState} from "react";
 import {StartProgramDialog} from "../app/eidolon-apps/dev-tool/components/start-program-dialog";
 import {Box, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
 import List from "@mui/material/List";
 import {AddCircleOutline} from "@mui/icons-material";
-import {useProcesses} from "@eidolon/components";
+import {useProcesses} from "@eidolon-ai/components/client";
 import {TOP_BAR_DESKTOP_HEIGHT, TOP_BAR_MOBILE_HEIGHT} from "@/layout/config";
 import {useOnMobile} from "@/hooks/index";
 
@@ -28,7 +28,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
   const addClicked = () => {
     if (app.type === 'copilot') {
       const options = app.params as CopilotParams
-      createProcess(machineURL, options.agent, options.newItemText || "New Chat").then((process) => {
+      createProcess(machineURL, options.agent, options.newItemText || "New Chat").then((process: ProcessStatus | null) => {
         if (process) {
           router.push(`/eidolon-apps/${app.path}/${process!.process_id}`)
         }
@@ -62,7 +62,7 @@ export const DevProcessListWithAdd = ({app}: DevProcessListWithAddProps) => {
           goHome={() => {
           }}
         />
-        <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} onClose={() => {
+        <StartProgramDialog machineUrl={machineURL} open={createProcessOpen} defaultAgent={app.params.agent} onClose={() => {
           setCreateProcessOpen(false)
         }}/>
       </Box>

@@ -1,19 +1,19 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: MistralLarge
   annotations:
     - title: "Mistral Large"
 spec:
-  implementation: APU
+  implementation: ConversationalAPU
   audio_unit: OpenAiSpeech
   image_unit: OpenAIImageUnit
   llm_unit:
     implementation: MistralGPT
     model: "mistral-large-latest"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "mistral-large-latest"

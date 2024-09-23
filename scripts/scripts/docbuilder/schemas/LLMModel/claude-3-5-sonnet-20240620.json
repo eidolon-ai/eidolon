@@ -1,0 +1,45 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "claude-3-5-sonnet-20240620",
+      "description": "claude-3-5-sonnet-20240620"
+    },
+    "human_name": {
+      "title": "Human Name",
+      "type": "string",
+      "default": "Claude Sonnet"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string",
+      "default": "claude-3-5-sonnet-20240620"
+    },
+    "input_context_limit": {
+      "title": "Input Context Limit",
+      "type": "integer",
+      "default": 200000
+    },
+    "output_context_limit": {
+      "title": "Output Context Limit",
+      "type": "integer",
+      "default": 8192
+    },
+    "supports_tools": {
+      "title": "Supports Tools",
+      "type": "boolean",
+      "default": false
+    },
+    "supports_image_input": {
+      "title": "Supports Image Input",
+      "type": "boolean",
+      "default": true
+    },
+    "supports_audio_input": {
+      "title": "Supports Audio Input",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "title": "claude-3-5-sonnet-20240620",
+  "type": "object"
+}

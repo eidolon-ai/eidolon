@@ -4,10 +4,12 @@ import copy
 import logging
 from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 
-from pydantic import BaseModel, model_validator, Field, ConfigDict
+from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
+from pydantic.json_schema import JsonSchemaValue
 
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name, fqn
+from pydantic_core import core_schema as cs
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -81,12 +83,26 @@ class Reference(BaseModel):
             _bound = params[0]
             _default = params[1]
 
-            class Config:
-                title = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
-                json_schema_extra = {
-                    "type": f"Reference[{params[0] if isinstance(params[0], str) else params[0].__name__}]",
-                    "default": str(params[1]),
+            @classmethod
+            def __get_pydantic_json_schema__(
+                cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
+            ) -> JsonSchemaValue:
+                json_schema = handler(core_schema)
+                json_schema = handler.resolve_ref_schema(json_schema)
+                json_schema["title"] = (params[0] if isinstance(params[0], str) else params[0].__name__) + " Reference"
+                json_schema["properties"]["implementation"]["default"] = params[1]
+                json_schema["reference_pointer"] = {
+                    "type": params[0] if isinstance(params[0], str) else params[0].__name__,
+                    "default_impl": params[1],
                 }
+                return json_schema
+
+            @classmethod
+            def _transformed_impl(cls):
+                impl = cls._transform({})["implementation"]
+                if "." in impl:
+                    impl = impl.split(".")[-1]
+                return impl
 
             @model_validator(mode="before")
             def _dump_ref(cls, value):
@@ -127,6 +143,7 @@ class Reference(BaseModel):
     @classmethod
     def _expand(cls, impl, extra):
         from eidolon_ai_sdk.system.kernel import AgentOSKernel
+
         ref = AgentOSKernel.get_resource(ReferenceResource, impl, default=None)
         if not ref:
             return impl, extra
@@ -139,15 +156,18 @@ class Reference(BaseModel):
     @model_validator(mode="after")
     def _validate(self):
         reference_class = self._get_reference_class()
-        spec_type = self.get_spec_type(reference_class)
-        if spec_type:
-            spec_type.model_validate(self.model_extra or {})
-        elif issubclass(reference_class, BaseModel):
-            reference_class.model_validate(self.model_extra or {})
+        spec = Reference.get_spec_type(reference_class)
+        if spec:
+            spec.model_validate(self.model_extra or {})
         return self
 
     @staticmethod
-    def get_spec_type(reference_class) -> Optional[Type[BaseModel]]:
+    def get_spec_type(reference_class):
+        specable = Reference.get_specable_type(reference_class)
+        return specable if specable else reference_class if issubclass(reference_class, BaseModel) else None
+
+    @staticmethod
+    def get_specable_type(reference_class) -> Optional[Type[BaseModel]]:
         if issubclass(reference_class, Specable):
             bases = getattr(reference_class, "__orig_bases__", [])
             specable = next(
@@ -166,7 +186,7 @@ class Reference(BaseModel):
 
     def instantiate(self, *args, **kwargs):
         reference_class = self._get_reference_class()
-        spec_type = self.get_spec_type(reference_class)
+        spec_type = self.get_specable_type(reference_class)
         if spec_type:
             kwargs["spec"] = spec_type.model_validate(self.model_extra or {})
         else:

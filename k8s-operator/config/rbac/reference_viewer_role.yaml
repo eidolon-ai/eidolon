@@ -1,0 +1,27 @@
+# permissions for end users to view references.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: reference-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: eidolon-operator
+    app.kubernetes.io/part-of: eidolon-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: reference-viewer-role
+rules:
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - references
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - server.eidolonai.com
+  resources:
+  - references/status
+  verbs:
+  - get

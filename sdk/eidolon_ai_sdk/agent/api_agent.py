@@ -12,12 +12,26 @@ from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
 class APIAgentSpec(BaseModel):
+    """
+    An Agent that can call rest endpoints documented via OpenAPI (Swagger).
+    """
+
     title: str = Field(description="Title of the API")
     root_call_url: str = Field(description="Root URL of the API to call")
     open_api_location: str = Field(description="Location of the OpenAPI schema")
     operations_to_expose: List[Operation] = Field(description="Operations to expose")
-    extra_header_params: dict = Field(description="Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=dict())
-    extra_query_params: dict = Field(description="Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)", default=dict())
+    extra_header_params: dict = Field(
+        description="Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
+        default=dict(),
+    )
+    extra_query_params: dict = Field(
+        description="Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
+        default=dict(),
+    )
+    max_response_size: int = Field(
+        description="Maximum size of response content to allow. If the response is larger than this, an error will be raised. Default is 50k",
+        default=50 * 1024,
+    )
 
 
 class APIAgent(Specable[APIAgentSpec]):
@@ -45,8 +59,13 @@ class APIAgent(Specable[APIAgentSpec]):
 
         operations_to_expose = self.spec.operations_to_expose
         title = self.spec.title
-        actions = build_actions(operations_to_expose, schema, title,
-                                build_call(self.spec.extra_header_params, self.spec.extra_query_params, self.spec.root_call_url))
+        actions = build_actions(
+            operations_to_expose,
+            schema,
+            title,
+            self.spec.max_response_size,
+            build_call(self.spec.extra_header_params, self.spec.extra_query_params, self.spec.root_call_url),
+        )
         for action in actions:
             self._add_action(action)
 
@@ -67,7 +86,7 @@ class APIAgent(Specable[APIAgentSpec]):
             self,
             action.name,
             register_action(
-                'initialized',
+                "initialized",
                 name=action.name,
                 input_model=lambda a, b: model,
                 output_model=lambda a, b: Any,

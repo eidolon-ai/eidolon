@@ -6,7 +6,9 @@ import defaultTheme, {ThemeProvider} from '@/theme';
 import CurrentLayout from '@/layout';
 import './globals.css';
 import {SessionProvider} from "next-auth/react";
-import {EidolonProvider} from "@eidolon/components";
+import {EidolonProvider} from "@eidolon-ai/components/client";
+import {PHProvider} from "@/PosthogProvider.tsx";
+import "@eidolon-ai/components/client-css";
 
 const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)?.main || '#FFFFFF';
 
@@ -23,19 +25,21 @@ export const viewport: Viewport = {
 const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
   return (
     <html lang="en">
-    <body>
-    <SessionProvider>
-      <AppStoreProvider>
-        <EidolonProvider>
-          <ThemeProvider>
-            <CurrentLayout>
-              {children}
-            </CurrentLayout>
-          </ThemeProvider>
-        </EidolonProvider>
-      </AppStoreProvider>
-    </SessionProvider>
-    </body>
+    <PHProvider>
+      <body>
+      <SessionProvider>
+        <AppStoreProvider>
+          <EidolonProvider>
+            <ThemeProvider>
+              <CurrentLayout>
+                {children}
+              </CurrentLayout>
+            </ThemeProvider>
+          </EidolonProvider>
+        </AppStoreProvider>
+      </SessionProvider>
+      </body>
+    </PHProvider>
     </html>
   );
 };

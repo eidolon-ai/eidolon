@@ -36,6 +36,7 @@ from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
+from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 
 tracer = trace.get_tracer("apu")
 
@@ -43,6 +44,7 @@ tracer = trace.get_tracer("apu")
 class ConversationalAPUSpec(APUSpec):
     io_unit: AnnotatedReference[IOUnit]
     memory_unit: AnnotatedReference[MemoryUnit]
+    longterm_memory_unit: Optional[AnnotatedReference[LongTermMemoryUnit]] = None
     llm_unit: AnnotatedReference[LLMUnit]
     logic_units: List[Reference[LogicUnit]] = []
     audio_unit: Optional[Reference[AudioUnit]] = None
@@ -57,6 +59,7 @@ class ConversationalAPUSpec(APUSpec):
 class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLocator):
     io_unit: IOUnit
     memory_unit: MemoryUnit
+    longterm_memory_unit: LongTermMemoryUnit
     logic_units: List[LogicUnit]
     llm_unit: LLMUnit
     audio_unit: AudioUnit
@@ -70,6 +73,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.io_unit = self.spec.io_unit.instantiate(**kwargs)
         self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
+        # my best guess for how to initialize
+        self.longterm_memory_unit = self.spec.longterm_memory_unit.instantiate(**kwargs) if self.spec.longterm_memory_unit else None
+
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None
         self.image_unit = self.spec.image_unit.instantiate(**kwargs) if self.spec.image_unit else None
@@ -122,10 +128,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         await self.memory_unit.storeBootMessages(call_context, conversation_messages)
 
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[APUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+        self,
+        call_context: CallContext,
+        prompts: List[APUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
         try:
             conversation = await self.memory_unit.getConversationHistory(call_context)
@@ -133,6 +139,12 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, conversation_messages)
             conversation.extend(conversation_messages)
+
+            # EDIT: get relevant mem0 memories and extend the conversation history with them
+            if self.longterm_memory_unit:
+                longterm_memories = self.longterm_memory_unit.search_memories(conversation_messages)
+                conversation.extend(longterm_memories)
+
             async for event in self._llm_execution_cycle(call_context, output_format, conversation):
                 yield event
         except HTTPException as e:
@@ -144,10 +156,10 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             raise APUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
-            self,
-            call_context: CallContext,
-            output_format: Union[Literal["str"], Dict[str, Any]],
-            conversation: List[LLMMessage],
+        self,
+        call_context: CallContext,
+        output_format: Union[Literal["str"], Dict[str, Any]],
+        conversation: List[LLMMessage],
     ) -> AsyncIterator[StreamEvent]:
         # first convert the conversation to fill in file data
         num_files = 0
@@ -174,15 +186,13 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             with tracer.start_as_current_span("building tools"):
                 lus = self.logic_units
                 if num_files > 0:
-                    lus += RagLogicUnit(self.retriever, apu=self.retriever_apu, processing_unit_locator=self),
+                    lus += (RagLogicUnit(self.retriever, apu=self.retriever_apu, processing_unit_locator=self),)
                 tool_defs = await LLMToolWrapper.from_logic_units(call_context, lus)
-                tool_call_events = []
+                tool_call_events: List[LLMToolCallRequestEvent] = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
                 logger.info(f"Following tools are available: {list(tool_defs.keys())}")
-                execute_llm_ = self.llm_unit.execute_llm(
-                    call_context, converted_conversation, llm_facing_tools, output_format
-                )
+                execute_llm_ = self.llm_unit.execute_llm(converted_conversation, llm_facing_tools, output_format)
                 # yield the events but capture the output, so it can be rolled into one event for memory.
                 # noinspection PyTypeChecker
                 stream_collector = StreamCollector(execute_llm_)
@@ -193,13 +203,18 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             if stream_collector.get_content():
                 logger.info(f"LLM Response: {stream_collector.get_content()}")
 
+            event_content = stream_collector.get_content() or ""
             assistant_message = self.llm_unit.create_assistant_message(
-                call_context, stream_collector.get_content() or "", tool_call_events
+                call_context, event_content, tool_call_events
             )
 
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, [assistant_message])
             converted_conversation.append(assistant_message)
+
+            if self.longterm_memory_unit:
+                # EDIT: store event content in mem0 (not sure if correct):
+                self.longterm_memory_unit.store_message(call_context, event_content)
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
@@ -214,11 +229,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         raise APUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
-            self,
-            call_context: CallContext,
-            tool_call_event: LLMToolCallRequestEvent,
-            tool_defs,
-            conversation: List[LLMMessage],
+        self,
+        call_context: CallContext,
+        tool_call_event: LLMToolCallRequestEvent,
+        tool_defs,
+        conversation: List[LLMMessage],
     ):
         tc = tool_call_event.tool_call
         logic_unit_wrapper = ["NaN"]
@@ -227,7 +242,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             message = self.llm_unit.create_tool_response_message(
                 logic_unit_name=logic_unit_wrapper[0],
                 tc=tc,
-                content=f"Invalid tool call {tc.name}. Check the name and try again."
+                content=f"Invalid tool call {tc.name}. Check the name and try again.",
             )
         else:
             tool_def = tool_defs[tc.name]

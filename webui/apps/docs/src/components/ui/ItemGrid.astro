@@ -32,7 +32,7 @@ const {
         containerClass
       )}
     >
-      {items.map(({ title, description, icon, callToAction, classes: itemClasses = {} }) => (
+      {items.map(({ title, description, icon, callToAction, href, classes: itemClasses = {} }) => (
         <div>
           <div class={twMerge('flex flex-row max-w-md', panelClass, itemClasses?.panel)}>
             <div class="flex justify-center">
@@ -44,7 +44,12 @@ const {
               )}
             </div>
             <div class="mt-0.5">
-              {title && <h3 class={twMerge('text-xl font-bold', titleClass, itemClasses?.title)}>{title}</h3>}
+              {title && (
+                <h3 class={twMerge('text-xl font-bold', titleClass, itemClasses?.title)}>
+                {href && <a href={href} class="hover:underline">{title}</a>}
+                {!href && title}
+                </h3>
+              )}
               {description && (
                 <p
                   class={twMerge(`${title ? 'mt-3' : ''} text-muted`, descriptionClass, itemClasses?.description)}

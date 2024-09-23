@@ -1,18 +1,18 @@
 ---
 title: claude-3-opus-20240229
-description: Description of claude-3-opus-20240229 component
+description: "Description of claude-3-opus-20240229 component"
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | ---------------------- |
 | - [implementation](#implementation )             | No      | const   | No         | -          | claude-3-opus-20240229 |
-| + [human_name](#human_name )                     | No      | string  | No         | -          | Human Name             |
-| + [name](#name )                                 | No      | string  | No         | -          | Name                   |
-| + [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit    |
-| + [output_context_limit](#output_context_limit ) | No      | integer | No         | -          | Output Context Limit   |
-| + [supports_tools](#supports_tools )             | No      | boolean | No         | -          | Supports Tools         |
-| + [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input   |
-| + [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input   |
+| - [human_name](#human_name )                     | No      | string  | No         | -          | Human Name             |
+| - [name](#name )                                 | No      | string  | No         | -          | Name                   |
+| - [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit    |
+| - [output_context_limit](#output_context_limit ) | No      | integer | No         | -          | Output Context Limit   |
+| - [supports_tools](#supports_tools )             | No      | boolean | No         | -          | Supports Tools         |
+| - [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input   |
+| - [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -29,19 +29,21 @@ Specific value: `"claude-3-opus-20240229"`
 
 **Title:** Human Name
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
+|              |                 |
+| ------------ | --------------- |
+| **Type**     | `string`        |
+| **Required** | No              |
+| **Default**  | `"Claude Opus"` |
 
 ## <a name="name"></a>3. Property `name`
 
 **Title:** Name
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
+|              |                            |
+| ------------ | -------------------------- |
+| **Type**     | `string`                   |
+| **Required** | No                         |
+| **Default**  | `"claude-3-opus-20240229"` |
 
 ## <a name="input_context_limit"></a>4. Property `input_context_limit`
 
@@ -50,7 +52,8 @@ Specific value: `"claude-3-opus-20240229"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
-| **Required** | Yes       |
+| **Required** | No        |
+| **Default**  | `200000`  |
 
 ## <a name="output_context_limit"></a>5. Property `output_context_limit`
 
@@ -59,7 +62,8 @@ Specific value: `"claude-3-opus-20240229"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
-| **Required** | Yes       |
+| **Required** | No        |
+| **Default**  | `4096`    |
 
 ## <a name="supports_tools"></a>6. Property `supports_tools`
 
@@ -68,7 +72,8 @@ Specific value: `"claude-3-opus-20240229"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | Yes       |
+| **Required** | No        |
+| **Default**  | `false`   |
 
 ## <a name="supports_image_input"></a>7. Property `supports_image_input`
 
@@ -77,7 +82,8 @@ Specific value: `"claude-3-opus-20240229"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | Yes       |
+| **Required** | No        |
+| **Default**  | `true`    |
 
 ## <a name="supports_audio_input"></a>8. Property `supports_audio_input`
 
@@ -86,6 +92,7 @@ Specific value: `"claude-3-opus-20240229"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | Yes       |
+| **Required** | No        |
+| **Default**  | `false`   |
 
 ----------------------------------------------------------------------------------------------------------------------------

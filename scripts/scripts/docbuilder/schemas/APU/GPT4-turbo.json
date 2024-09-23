@@ -11,66 +11,33 @@
       "type": "integer"
     },
     "io_unit": {
-      "additionalProperties": true,
-      "default": "IOUnit",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "IOUnit Reference",
-      "type": "object"
+      "$ref": "file:../IOUnit/overview.json",
+      "default": {
+        "implementation": "IOUnit"
+      }
     },
     "memory_unit": {
-      "additionalProperties": true,
-      "default": "MemoryUnit",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "MemoryUnit Reference",
-      "type": "object"
+      "$ref": "file:../MemoryUnit/overview.json",
+      "default": {
+        "implementation": "MemoryUnit"
+      }
     },
-    "llm_unit": {
-      "$ref": "file:../LLMUnit/overview.json",
-      "default": "LLMUnit"
-    },
-    "logic_units": {
-      "default": [],
-      "items": {
-        "additionalProperties": true,
-        "default": "eidolon_ai_sdk.apu.logic_unit.LogicUnit",
-        "properties": {
-          "implementation": {
-            "default": null,
-            "title": "Implementation",
-            "type": "string"
-          }
-        },
-        "title": "LogicUnit Reference",
-        "type": "object"
-      },
-      "title": "Logic Units",
-      "type": "array"
-    },
-    "audio_unit": {
+    "longterm_memory_unit": {
       "anyOf": [
         {
           "additionalProperties": true,
-          "default": "eidolon_ai_sdk.apu.audio_unit.AudioUnit",
           "properties": {
             "implementation": {
-              "default": null,
+              "default": "LongTermMemoryUnit",
               "title": "Implementation",
               "type": "string"
             }
           },
-          "title": "AudioUnit Reference",
+          "reference_pointer": {
+            "default_impl": "LongTermMemoryUnit",
+            "type": "LongTermMemoryUnit"
+          },
+          "title": "LongTermMemoryUnit Reference",
           "type": "object"
         },
         {
@@ -79,17 +46,46 @@
       ],
       "default": null
     },
+    "llm_unit": {
+      "$ref": "file:../LLMUnit/overview.json",
+      "default": {
+        "implementation": "OpenAIGPT",
+        "model": "gpt-4-turbo"
+      }
+    },
+    "logic_units": {
+      "default": [],
+      "items": {
+        "$ref": "file:../LogicUnit/overview.json"
+      },
+      "title": "Logic Units",
+      "type": "array"
+    },
+    "audio_unit": {
+      "anyOf": [
+        {
+          "$ref": "file:../AudioUnit/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "OpenAiSpeech"
+    },
     "image_unit": {
       "anyOf": [
         {
           "additionalProperties": true,
-          "default": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
           "properties": {
             "implementation": {
-              "default": null,
+              "default": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
               "title": "Implementation",
               "type": "string"
             }
+          },
+          "reference_pointer": {
+            "default_impl": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
+            "type": "ImageUnit"
           },
           "title": "ImageUnit Reference",
           "type": "object"
@@ -98,7 +94,7 @@
           "type": "null"
         }
       ],
-      "default": null
+      "default": "OpenAIImageUnit"
     },
     "record_conversation": {
       "default": true,
@@ -111,45 +107,21 @@
       "type": "boolean"
     },
     "document_processor": {
-      "additionalProperties": true,
-      "default": "DocumentProcessor",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentProcessor Reference",
-      "type": "object"
+      "$ref": "file:../DocumentProcessor/overview.json",
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
     },
     "retriever": {
-      "additionalProperties": true,
-      "default": "Retriever",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "Retriever Reference",
-      "type": "object"
+      "$ref": "file:../Retriever/overview.json",
+      "default": {
+        "implementation": "Retriever"
+      }
     },
     "retriever_apu": {
       "anyOf": [
         {
-          "additionalProperties": true,
-          "default": "eidolon_ai_sdk.apu.apu.APU",
-          "properties": {
-            "implementation": {
-              "default": null,
-              "title": "Implementation",
-              "type": "string"
-            }
-          },
-          "title": "APU Reference",
-          "type": "object"
+          "$ref": "file:../APU/overview.json"
         },
         {
           "type": "null"

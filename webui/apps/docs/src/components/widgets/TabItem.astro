@@ -1,0 +1,30 @@
+---
+import { findImage } from '~/utils/images';
+import {getStyle} from '~/utils/images-optimization';
+import {Code} from "astro-expressive-code/components";
+
+import "./TabItem.css"
+
+let props = Astro.props
+
+if (props.src) {
+  const _image = await findImage(props.src)
+  if (_image !== null && typeof _image === 'object') {
+    delete props.src
+    if (!props.layout) {
+      props.layout = 'responsive'
+    }
+    props = {..._image, ...props}
+  } else if (_image) {
+    props.src = _image
+  }
+}
+
+---
+{props.code && (
+  <Code code={props.code} lang={props.language} wrap="true"/>
+)}
+
+{props.src && (
+  <img src={props.src} alt={props.alt} style={getStyle(props)} class="rounded-lg"/>
+)}

@@ -1,0 +1,42 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "SecurityManagerImpl",
+      "description": "SecurityManagerImpl"
+    },
+    "authentication_processor": {
+      "$ref": "file:../AuthenticationProcessor/overview.json",
+      "default": {
+        "implementation": "AuthenticationProcessor"
+      }
+    },
+    "functional_authorizer": {
+      "$ref": "file:../FunctionalAuthorizer/overview.json",
+      "default": {
+        "implementation": "FunctionalAuthorizer"
+      }
+    },
+    "process_authorizer": {
+      "$ref": "file:../ProcessAuthorizer/overview.json",
+      "default": {
+        "implementation": "ProcessAuthorizer"
+      }
+    },
+    "safe_paths": {
+      "default": [
+        "/system/health",
+        "/docs",
+        "/favicon.ico",
+        "/openapi.json"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Safe Paths",
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "title": "SecurityManagerImpl",
+  "type": "object"
+}

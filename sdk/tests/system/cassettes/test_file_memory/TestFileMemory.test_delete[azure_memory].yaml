@@ -1,0 +1,186 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-client-request-id:
+      - 6d233c4c-33e5-11ef-9f4d-aec083e7debd
+      x-ms-date:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: GET
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-deleteazure-memory?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      Etag:
+      - '"0x8DC9136B04798DF"'
+      Last-Modified:
+      - Thu, 20 Jun 2024 14:38:45 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 6d233c4c-33e5-11ef-9f4d-aec083e7debd
+      x-ms-default-encryption-scope:
+      - $account-encryption-key
+      x-ms-deny-encryption-scope-override:
+      - 'false'
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-immutable-storage-with-versioning-enabled:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 1697b8e4-c01e-00bb-56f2-c7689f000000
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: FOO
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 6daa3ee0-33e5-11ef-9f4d-aec083e7debd
+      x-ms-date:
+      - Wed, 26 Jun 2024 17:56:35 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: PUT
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-deleteazure-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - kBiQqOnIz21aGlQrIp/r/w==
+      Date:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      Etag:
+      - '"0x8DC960951ECF52B"'
+      Last-Modified:
+      - Wed, 26 Jun 2024 17:56:35 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 6daa3ee0-33e5-11ef-9f4d-aec083e7debd
+      x-ms-content-crc64:
+      - wtij308CLwo=
+      x-ms-request-id:
+      - 1697b93b-c01e-00bb-25f2-c7689f000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-client-request-id:
+      - 6db79bd0-33e5-11ef-9f4d-aec083e7debd
+      x-ms-date:
+      - Wed, 26 Jun 2024 17:56:35 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: DELETE
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-deleteazure-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 6db79bd0-33e5-11ef-9f4d-aec083e7debd
+      x-ms-delete-type-permanent:
+      - 'false'
+      x-ms-request-id:
+      - 1697b994-c01e-00bb-7df2-c7689f000000
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-client-request-id:
+      - 6dc4ec40-33e5-11ef-9f4d-aec083e7debd
+      x-ms-date:
+      - Wed, 26 Jun 2024 17:56:35 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: HEAD
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-deleteazure-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-client-request-id:
+      - 6dc4ec40-33e5-11ef-9f4d-aec083e7debd
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-is-soft-deleted:
+      - 'true'
+      x-ms-request-id:
+      - 1697b9e7-c01e-00bb-4ff2-c7689f000000
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+version: 1

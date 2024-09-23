@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": ["EIDOLON_USAGE_SERVER"],
-  "pipeline": {
+  "tasks": {
     "build": {
       // A package's `build` script depends on that package's
       // dependencies and devDependencies
@@ -13,9 +13,16 @@
       // note: output globs are relative to each package's `package.json`
       // (and not the monorepo root)
       "outputs": [
+        // Caches the outputs of the `build` script
+        "./packages/eidolon-client/dist/**",
+        "./packages/eidolon-components/dist/**",
         ".next/**",
         "!.next/cache/**"
       ]
+    },
+    "watch": {
+      "cache": false,
+      "persistent": true
     },
     "deploy": {
       // A package's `deploy` script depends on the `build`,
@@ -56,4 +63,3 @@
     }
   }
 }
-

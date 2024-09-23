@@ -1,0 +1,10 @@
+{
+  "title": "GlobPatternFunctionalAuthorizer",
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "GlobPatternFunctionalAuthorizer",
+      "description": "GlobPatternFunctionalAuthorizer"
+    }
+  }
+}

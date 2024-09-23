@@ -73,6 +73,11 @@ ui:
 
   tokens:
     default:
+      spacing:
+        main:
+          margin_lg: 56px
+          margin_md: 24px
+          margin: 4px
       fonts:
         sans: InterVariable
         serif: InterVariable
@@ -82,8 +87,8 @@ ui:
         heading: rgb(0 0 0)
         muted: rgb(16 16 16 / 66%)
         bgPage: rgb(255 255 255)
-        primary: rgb(1 97 239)
-        secondary: rgb(1 84 207)
+        primary: rgb(256 99 65)
+        secondary: rgb(64 64 64)
         accent: rgb(109 40 217)
     dark:
       fonts: {}
@@ -92,6 +97,6 @@ ui:
         heading: rgb(247, 248, 248)
         muted: rgb(229 236 246 / 66%)
         bgPage: rgb(3 6 32)
-        primary: rgb(1 97 239)
+        primary: rgb(256 99 65)
         secondary: rgb(1 84 207)
         accent: rgb(109 40 217)

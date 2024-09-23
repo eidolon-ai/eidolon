@@ -37,7 +37,9 @@ class Retriever(Specable[RetrieverSpec]):
         self.document_retriever = self.spec.document_retriever.instantiate()
         self.result_summarizer = self.spec.result_summarizer.instantiate()
 
-    async def do_search(self, vector_collection_name: str, apu: APU, process_id: str, question: str) -> AsyncIterable[DocSummary]:
+    async def do_search(
+        self, vector_collection_name: str, apu: APU, process_id: str, question: str
+    ) -> AsyncIterable[DocSummary]:
         """
         Process the question by searching the document store.
         :param process_id:

@@ -1,0 +1,12 @@
+{
+  "title": "MemoryUnit",
+  "description": "Overview of MemoryUnit components",
+  "anyOf": [
+    {
+      "$ref": "file:./RawMemoryUnit.json"
+    }
+  ],
+  "reference_group": {
+    "type": "MemoryUnit"
+  }
+}

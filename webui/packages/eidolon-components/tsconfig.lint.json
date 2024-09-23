@@ -1,8 +1,21 @@
 {
   "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src", "turbo"],
+  "include": ["src", "tsup.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

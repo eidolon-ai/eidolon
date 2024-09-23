@@ -114,16 +114,17 @@ class Search(LogicUnit, Specable[SearchSpec]):
 
             async def fn(self_, term: str, num_results: int = 10, lang: str = "en") -> List[SearchResult]:
                 return [
-                    r async for r in do_google_search(self.spec, term, num_results, lang, self.spec.params["dateRestrict"])
+                    r
+                    async for r in do_google_search(self.spec, term, num_results, lang, self.spec.params["dateRestrict"])
                 ]
         else:
 
             async def fn(
-                    self_,
-                    term: str,
-                    num_results: int = 10,
-                    lang: str = "en",
-                    dateRestrict: Optional[str] = self.spec.defaultDateRestrict,
+                self_,
+                term: str,
+                num_results: int = 10,
+                lang: str = "en",
+                dateRestrict: Optional[str] = self.spec.defaultDateRestrict,
             ) -> List[SearchResult]:
                 return [r async for r in do_google_search(self.spec, term, num_results, lang, dateRestrict)]
 

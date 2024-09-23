@@ -14,7 +14,7 @@ tags:
 metadata:
   canonical: https://www.eidolonai.com/conifguring_apu
 ---
-This is part 2 of a 2 part series on the Application Processing Unit (APU).
+This is part 2 of a 2 part series on the Agent Processing Unit (APU).
 
 For more information on what an APU is see <a href="./what_is_apu">Part 1: What is an APU?</a>
 
@@ -30,7 +30,7 @@ First let's look at how you can configure the built-in components.
 Below is a simple example of a built-in APU configured to use Mistral as the LLM Unit:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: MistralLarge
@@ -162,7 +162,7 @@ The real power of the Logic Units is that you can write your own custom Logic Un
 Then to configure the APU to use your custom Logic Unit, you would add a reference to your custom Logic Unit to the `logic_units` field of the APU configuration.  For example:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: MistralLarge

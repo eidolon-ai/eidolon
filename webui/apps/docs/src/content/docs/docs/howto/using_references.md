@@ -1,26 +1,30 @@
 ---
-title: Using References
-description: References - Using References
+title: How to Use References
+description: References - Working with and Creating Custom References
 ---
 
-References make up the backbone of Eidolon's yaml driven dependency injection. Defining them in a component's spec 
-allows that reference to be injected dynamically through configuration files.
+References make up the backbone of Eidolon's runtime dependency injection. Defining references in a component's spec allows your custom attributes to be injected dynamically through yaml configuration files.
 
 ## Why
 
-When building custom AgentTemplates, LogicUnits, or other components, you may want to use built in pluggable compoenents,
-or even create your own interfaces that can be expanded in the future. Eidolon has the concept of **References** which
-will dynamically inject dependencies from the resources you have defined in your yaml files. 
+When customizing or building your own [AgentTemplates](/docs/howto/build_custom_agents/), [LogicUnits](/docs/components/logicunit/overview/), or other components, you may want to extend Eidolon's built-in components, or even create your own interfaces that can be expanded in the future. 
+
+Eidolon has the concept of **References** which dynamically injects dependencies from resources defined in yaml files. References are fundamental to Eidolon's pluggable architecture.
+
+## What
+
+At its simplest, a **reference** is a class. Any object within your python environment can be _referenced_ by its fully qualified name (FQN).
+
+A **spec** is a <a href="https://docs.pydantic.dev/latest/concepts/models/" target=_blank>Pydantic model</a>.
 
 ## How
 
-At its simplest, a reference is any class. So, any object within your python environment can be referenced by its FQN.
-What we care about though is how to define the spec for a reference, so we can customize this classes.
+In Eidolon, you define the _spec_ for a _reference_ in python code. This allows you to configure runtime attributes external to the code through yaml files. The specable attributes for Eidolon built-in components are automatically published in the online documentation.
 
 ### Defining a Reference with a Spec
 
-Custom components of any kind can define a **spec**. This is what defines the component's configuration which can be 
-defined or overridden in yaml. The spec is just a **Pydantic** model. We can then define our resource to use this spec.
+Custom components of any kind can define a spec. This is what defines the component's configuration which can be 
+defined or overridden in yaml.  We can then define our resource to use this spec.
 
 ```python
 class CustomResourceSpec(BaseModel):
@@ -32,7 +36,8 @@ class CustomResource(Specable[CustomResourceSpec]):
         return f"{self.spec.question} + {self.spec.answer}" 
 ```
 
-In simple examples, we can also just define our spec within the resource itself. It will be wired up the same as above.
+In simple examples, you can also define our spec within the resource itself. It will be wired up the same as above.
+
 ```python
 class CustomResource(BaseModel):
     question: str = "what is the meaning of life"
@@ -42,13 +47,14 @@ class CustomResource(BaseModel):
 ```
 
 ### Using References within a Spec
-So that is all well and good, but what if we want to use a reference within a reference? We have a **Reference** type 
-that is what wires the references up at runtime. There is also an **AnnotatedReference** type that defines the default 
-factory for you.
 
-Below is an example of a resource that uses an apu as a custom resources. Notice that the reference will not actually 
-be an instance of the apu, but a factory that will create the apu when the resource is initialized.
+What if you want to use a reference within a reference? 
 
+- Eidolon has a **Reference** type that wires the references up at runtime. 
+
+- The **AnnotatedReference** type defines the default factory for you.
+
+Below is an example of a resource that uses an APU as a custom resource. Notice that the reference will not actually be an instance of the APU, but a factory that will create the APU when the resource is initialized.
 
 ```python
 class CustomResourceSpec(BaseModel):

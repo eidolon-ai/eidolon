@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, \
     LLMToolCallRequestEvent
-from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage
+from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage, \
+    ToolResponseMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
 from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
 
@@ -23,7 +23,7 @@ class _DefaultModel(LLMModel):
 
 class ModelWrapper(LLMModel):
     def __init__(self, base_model: LLMModel):
-        super().__init__(**base_model.dict())
+        super().__init__(**base_model.model_dump())
         self.supports_tools = True
 
 
@@ -31,7 +31,8 @@ class ToolCallResponse(BaseModel):
     """
     Response
     """
-    tools: Optional[List[ToolCall]] = Field(default=[], description="The tools that are available.")
+
+    tools: List[ToolCall] = Field(default=[], description="The tools that are available.")
     notes: str = Field(default="", description="Any notes or explanations.")
 
 
@@ -58,18 +59,33 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
 
     def execute_llm(
         self,
-        call_context: CallContext,
         messages: List[LLMMessage],
         tools: List[LLMCallFunction],
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
-        messages = self._add_tools(messages, tools)
-        return self._wrap_exe_call(self.llm_unit.execute_llm, call_context, tools, messages)
+        transformed_messages = self._add_tools(messages, tools)
+        return self._wrap_exe_call(self.llm_unit.execute_llm, tools, transformed_messages, output_format)
 
     def _add_tools(self, messages: List[LLMMessage], tools: List[LLMCallFunction]):
+        tool_group: List[ToolResponseMessage] = []
+        acc = []
+        for message in messages:
+            if isinstance(message, AssistantMessage):
+                message = self._transform_assistant_message(message)
+
+            if isinstance(message, ToolResponseMessage):
+                tool_group.append(message)
+            else:
+                if tool_group:
+                    acc.append(self._transform_tool_response_messages(tool_group))
+                tool_group = []
+                acc.append(message)
+        if tool_group:
+            acc.append(self._transform_tool_response_messages(tool_group))
+
         if tools and len(tools) > 0:
             tool_schema = []
-            for tool in tools:
+            for tool in sorted(tools, key=lambda x: x.name):
                 tool_schema.append(
                     json.dumps(
                         {
@@ -82,50 +98,68 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
                 )
 
             prompt = (
-                "You have access to the following tools:\n" + "\n".join(tool_schema) + "\n" + self.spec.tool_message_prompt
+                "You have access to the following tools:\n"
+                + "\n".join(tool_schema)
+                + "\n"
+                + self.spec.tool_message_prompt
             )
-            messages = messages + [UserMessage(content=[UserMessageText(text=prompt)])]
-
-        return messages
+            acc.append(UserMessage(content=[UserMessageText(text=prompt)]))
+        return acc
 
     async def _wrap_exe_call(
         self,
         exec_llm_call: Callable[
-            [CallContext, List[LLMMessage], List[LLMCallFunction], Union[Literal["str"], Dict[str, Any]]],
+            [List[LLMMessage], List[LLMCallFunction], Union[Literal["str"], Dict[str, Any]]],
             AsyncIterator[StreamEvent],
         ],
-        call_context: CallContext,
         tools: List[LLMCallFunction],
         messages: List[LLMMessage],
+        output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
-        ret_type = ToolCallResponse.model_json_schema() if tools else dict(type="string")
-        stream: AsyncIterator[StreamEvent] = exec_llm_call(
-            call_context, messages, [], ret_type
-        )
+        output_is_string = output_format == "str" or output_format.get('type') == "string"
+        if tools:
+            ret_type = dict(anyOf=[
+                ToolCallResponse.model_json_schema(),
+                dict(
+                    type="object",
+                    properties=dict(response=dict(type="string") if output_format == "str" else output_format),
+                    required=["response"],
+                )
+            ])
+        else:
+            ret_type = output_format
+        stream: AsyncIterator[StreamEvent] = exec_llm_call(messages, [], ret_type)
         # stream should be a single object output event
         async for event in stream:
-            if isinstance(event, ObjectOutputEvent):
-                toolCallResponse = ToolCallResponse.model_validate(event.content)
-                if toolCallResponse.tools:
-                    for tool_call in toolCallResponse.tools:
-                        yield LLMToolCallRequestEvent(tool_call=tool_call)
-                    if toolCallResponse.notes:
-                        yield StringOutputEvent(content=toolCallResponse.notes)
+            if tools and event.is_root_and_type(ObjectOutputEvent):
+                if event.content.get("response"):
+                    if output_is_string:
+                        yield StringOutputEvent(content=str(event.content["response"]), metdata=event.metadata)
+                    else:
+                        yield ObjectOutputEvent(content=event.content["response"], metdata=event.metadata)
                 else:
-                    yield StringOutputEvent(content=toolCallResponse.notes)
+                    tool_call_response = ToolCallResponse.model_validate(event.content)
+                    if (tool_call_response.notes or not tool_call_response.tools) and output_is_string:
+                        yield StringOutputEvent(content=tool_call_response.notes)
+                    for tool_call in tool_call_response.tools:
+                        yield LLMToolCallRequestEvent(tool_call=tool_call)
             else:
                 yield event
 
-    def create_assistant_message(self, call_context: CallContext, content: str, tool_call_events) -> LLMMessage:
-        if tool_call_events and len(tool_call_events) > 0:
+    def _transform_assistant_message(self, message: AssistantMessage) -> LLMMessage:
+        content = str(message.content)
+        if message.tool_calls:
             content += "\nCall the following tools\n"
-            for tool_call in tool_call_events:
-                content += f"\n{tool_call.tool_call.model_dump_json()}"
+            for tool_call in sorted(message.tool_calls, key=lambda x: x.tool_call_id):
+                content += f"\n{tool_call.model_dump_json()}"
         return AssistantMessage(
             type="assistant",
             content=content,
             tool_calls=[],
         )
 
-    def create_tool_response_message(self, logic_unit_name: str, tc: ToolCall, content: str) -> LLMMessage:
-        return UserMessage(content=[UserMessageText(text=f"Tool {tc.model_dump_json()} completed with value {content}")])
+    def _transform_tool_response_messages(self, responses: List[ToolResponseMessage]) -> LLMMessage:
+        content = []
+        for response in sorted(responses, key=lambda x: x.tool_call_id):
+            content.append(f"Tool {response.tool_call_id} completed with value: {response.result}")
+        return UserMessage(content=[UserMessageText(text="\n\n".join(content))])

@@ -1,5 +1,6 @@
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import type { HTMLAttributes, ImageMetadata } from 'astro/types';
+import type {ImageProps} from "./utils/images-optimization.ts";
 
 export interface Post {
   /** A unique ID number that identifies a post. */
@@ -284,3 +285,32 @@ export interface Content extends Omit<Headline,"classes">, Widget {
 }
 
 export interface Contact extends Omit<Headline,"classes">, Form, Widget {}
+
+export interface CodeTabItem {
+  title: string,
+  language: string,
+  content: string,
+}
+
+export interface ImageTab {
+  title: string,
+  src: string,
+  alt: string,
+  width?: number;
+  height?: number;
+  aspectRatio?: number;
+  objectFit?: string;
+  objectPosition?: string;
+  layout?: string;
+  background?: string;
+}
+
+export interface MarkdownTab {
+  title: string,
+  markdown: string,
+}
+
+export interface ContentWithTabs extends Omit<Headline,"classes">, Widget {
+  bullets: Array<Item>,
+  tabs: Array<CodeTabItem | ImageTab | MarkdownTab>
+}

@@ -1,17 +1,17 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: MistralSmall
   annotations:
     - title: "Mistral Small"
 spec:
-  implementation: APU
+  implementation: ConversationalAPU
   llm_unit:
     implementation: MistralGPT
     model: "mistral-small-latest"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "mistral-small-latest"

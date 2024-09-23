@@ -10,6 +10,7 @@ import compress from 'astro-compress';
 import astrowind from './src/integration';
 import {readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin} from './src/utils/frontmatter.mjs';
 import starlight from "@astrojs/starlight";
+import astroExpressiveCode from "astro-expressive-code";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const hasExternalScripts = false;
@@ -46,6 +47,7 @@ export default defineConfig({
     Logger: 1
   }),
     astrowind(),
+    astroExpressiveCode(),
     starlight({
       title: "Introduction",
       disable404Route: true,
@@ -57,7 +59,7 @@ export default defineConfig({
         {
           tag: 'script',
           content: '    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);\n' +
-            '    posthog.init(\'phc_9lcmDyxVkji98ggIqy2XvyVcItnrgdrMQhZBFp6Du5d\',{api_host:\'https://app.posthog.com\'})\n'
+            '    posthog.init(\'phc_9lcmDyxVkji98ggIqy2XvyVcItnrgdrMQhZBFp6Du5d\',{api_host:\'https://app.posthog.com\'});\n'
         },
       ],
       social: {
@@ -68,18 +70,16 @@ export default defineConfig({
         'x.com': 'https://twitter.com/AgentSDK',
       },
       sidebar: [
-        {
-          label: 'Introduction', link: '/docs/introduction'
-        },
         {label: 'Quickstart', link: '/docs/quickstart'},
         {
           label: 'How To',
           items: [
-            {label: 'Launch the WebUI', link: '/docs/howto/webui'},
-            {label: 'Agent-Agent Communication', link: '/docs/howto/communication'},
-            {label: 'Customizing Builtin Components', link: '/docs/howto/customize_builtins'},
-            {label: 'Custom Agent Templates', link: '/docs/howto/custom_agents'},
-            {label: 'Custom Components', link: '/docs/howto/using_references'},
+            {label: 'Authenticate LLMs', link: '/docs/howto/authenticate_llm'},
+            {label: 'Swap out LLMs', link: '/docs/howto/swap_llm'},
+            {label: 'Configure Agent-Agent Communication', link: '/docs/howto/communication'},
+            {label: 'Configure Built-in Components', link: '/docs/howto/configure_builtins'},
+            {label: 'Use References', link: '/docs/howto/using_references'},
+            {label: 'Build Custom Agent Templates', link: '/docs/howto/build_custom_agents'},
           ],
         },
         {
@@ -115,6 +115,7 @@ export default defineConfig({
             {
               label: 'FileMemoryBase', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/filememorybase/overview'},
+                {label: 'AzureFileMemory', link: '/docs/components/filememorybase/azurefilememory'},
                 {label: 'FileMemory', link: '/docs/components/filememorybase/filememory'},
                 {label: 'LocalFileMemory', link: '/docs/components/filememorybase/localfilememory'},
                 {label: 'S3FileMemory', link: '/docs/components/filememorybase/s3filememory'},
@@ -123,8 +124,10 @@ export default defineConfig({
             {
               label: 'Agents', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/agents/overview'},
-                {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent'},
+                {label: 'APIAgent', link: '/docs/components/agents/apiagent'},
                 {label: 'RetrieverAgent', link: '/docs/components/agents/retrieveragent'},
+                {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent'},
+                {label: 'SqlAgent', link: '/docs/components/agents/sqlagent'},
               ]
             },
             {
@@ -137,6 +140,8 @@ export default defineConfig({
                 {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo'},
                 {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo'},
                 {label: 'GPT4o', link: '/docs/components/apu/gpt4o'},
+                {label: 'GPT4o-mini', link: '/docs/components/apu/gpt4o-mini'},
+                {label: 'GPTo1Preview', link: '/docs/components/apu/gpto1preview'},
                 {label: 'Llamma3-8b', link: '/docs/components/apu/llamma3-8b'},
                 {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge'},
                 {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium'},
@@ -156,12 +161,16 @@ export default defineConfig({
             {
               label: 'LLMModel', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/llmmodel/overview'},
+                {label: 'LLMModel', link: '/docs/components/llmmodel/llmmodel'},
+                {label: 'claude-3-5-sonnet-20240620', link: '/docs/components/llmmodel/claude-3-5-sonnet-20240620'},
                 {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307'},
                 {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229'},
                 {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229'},
                 {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo'},
                 {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo'},
                 {label: 'gpt-4o', link: '/docs/components/llmmodel/gpt-4o'},
+                {label: 'gpt-4o-mini', link: '/docs/components/llmmodel/gpt-4o-mini'},
+                {label: 'gpt-o1-preview', link: '/docs/components/llmmodel/gpt-o1-preview'},
                 {label: 'llama3-8b', link: '/docs/components/llmmodel/llama3-8b'},
                 {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest'},
                 {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest'},
@@ -177,6 +186,7 @@ export default defineConfig({
                 {label: 'OpenAIImageUnit', link: '/docs/components/logicunit/openaiimageunit'},
                 {label: 'OpenAiSpeech', link: '/docs/components/logicunit/openaispeech'},
                 {label: 'Search', link: '/docs/components/logicunit/search'},
+                {label: 'VectaraSearch', link: '/docs/components/logicunit/vectarasearch'},
                 {label: 'WebSearch', link: '/docs/components/logicunit/websearch'},
               ]
             },
@@ -189,6 +199,7 @@ export default defineConfig({
             {
               label: 'DocumentLoader', collapsed: true, items: [
                 {label: 'Overview', link: '/docs/components/documentloader/overview'},
+                {label: 'AzureLoader', link: '/docs/components/documentloader/azureloader'},
                 {label: 'FilesystemLoader', link: '/docs/components/documentloader/filesystemloader'},
                 {label: 'GitHubLoader', link: '/docs/components/documentloader/githubloader'},
                 {label: 'S3Loader', link: '/docs/components/documentloader/s3loader'},
@@ -196,6 +207,9 @@ export default defineConfig({
             },
             // ### End Components ###
           ]
+        },
+        {
+          label: 'FAQ', link: '/docs/faq'
         },
         {
           label: 'Architecture',
@@ -210,8 +224,11 @@ export default defineConfig({
           ],
         },
         {label: 'Contributing', link: '/docs/contributing'},
-      ]
-    })
+      ],
+      editLink: {
+        baseUrl: 'https://github.com/eidolon-ai/eidolon/tree/main/webui/apps/docs',
+      },
+    }),
   ],
   image: {
     service: squooshImageService()
@@ -226,5 +243,12 @@ export default defineConfig({
         '~': path.resolve(__dirname, './src')
       }
     }
+  },
+  redirects: {
+    // '/old-page': '/new-page'
+    '/docs/components/simple_agent/': '/docs/components/agents/simpleagent/',
+    '/docs/components/simple_agent#defining-actions': '/docs/components/agents/simpleagent#51-actiondefinition',
+    '/docs/howto/customize_builtins/': '/docs/howto/configure_builtins/',
+    '/docs/howto/custom_agents/': '/docs/howto/build_custom_agents/'
   }
 });

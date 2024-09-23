@@ -1,16 +1,14 @@
 from __future__ import annotations
 
+import dill
 import inspect
-import io
 import os
+import textwrap
+import yaml
 from functools import wraps
 from glob import glob
-from typing import Optional
-
-import dill
 from pydantic import BaseModel
-from srsly.ruamel_yaml import YAML
-from srsly.ruamel_yaml.scalarstring import walk_tree
+from typing import Optional
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os import AgentOS
@@ -23,20 +21,34 @@ class ReplayConfig(BaseModel):
     digit_length: int = 3
 
 
+def str_presenter(dumper, data):
+    if "\n" in data or len(data) > 100:  # check for multiline string or long lines
+        # Convert Python newline format to YAML newline format
+        data = data.replace("\\n", "\n")
+        # Remove any leading/trailing whitespace
+        data = data.strip()
+        # Wrap long lines
+        lines = []
+        for line in data.split("\n"):
+            lines.extend(textwrap.wrap(line, width=80, break_long_words=False, replace_whitespace=False))
+        data = "\n".join(lines)
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+
+yaml.add_representer(str, str_presenter)
+
+
 def default_serializer(*args, **kwargs):
-    # this is not serializing multi-line strings well, we should consider swapping yaml parsers or customizing this
-    f = io.BytesIO()
-    with YAML(output=f) as yaml:
-        to_dump = dict(args=list(args), kwargs=kwargs)
-        walk_tree(to_dump)  # replaces multi line strings with LiteralScalarString
-        yaml.dump(to_dump, stream=f)
-    f.flush()
-    return f.getvalue().decode(), "yaml"
+    to_dump = dict(args=list(args), kwargs=kwargs)
+    yaml_string = yaml.dump(to_dump, default_flow_style=False)
+
+    print("****", yaml_string)
+    return yaml_string, "yaml"
 
 
 def default_deserializer(str_):
-    with YAML() as yaml:
-        obj = yaml.load(str_)
+    obj = yaml.safe_load(str_)
     return obj["args"], obj["kwargs"]
 
 
@@ -45,7 +57,7 @@ async def default_parser(resp):
 
 
 def replayable(
-    fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
+        fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
     config = AgentOSKernel.get_instance(ReplayConfig)
 

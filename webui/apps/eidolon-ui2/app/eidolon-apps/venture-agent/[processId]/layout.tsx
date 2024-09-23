@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react";
-import {ProcessProvider} from "@eidolon/components";
+import {ProcessProvider} from "@eidolon-ai/components/client";
 import PageWithStepper from "./PageWithStepper";
 
 interface ChatbotLayoutProps {

@@ -1,4 +1,5 @@
 import logging
+from typing import Iterable
 
 from opentelemetry import trace
 from pydantic import BaseModel
@@ -9,10 +10,12 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DataBlob
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
+from eidolon_ai_sdk.memory.document import Document
 from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.async_wrapper import make_async
 
 tracer = trace.get_tracer(__name__)
+logger = logging.getLogger("eidolon")
 
 
 class DocumentProcessorSpec(BaseModel):
@@ -28,14 +31,13 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
         Specable.__init__(self, **kwargs)
         self.parser = self.spec.parser.instantiate()
         self.splitter = self.spec.splitter.instantiate()
-        self.logger = logging.getLogger("eidolon")
 
     @make_async
-    def parse(self, data: bytes, mimetype: str, path: str):
+    def parse(self, data: bytes, mimetype: str, path: str) -> Iterable[Document]:
         return self.parser.parse(DataBlob.from_bytes(data=data, mimetype=mimetype, path=path))
 
     @make_async
-    def split(self, docs):
+    def split(self, docs) -> Iterable[Document]:
         return self.splitter.transform_documents(docs)
 
     async def addFile(self, collection_name: str, file_info: FileInfo):
@@ -55,16 +57,16 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
                         },
                     )
                 if len(docs) == 0:
-                    self.logger.debug(f"File contained no text {file_info.path}")
+                    logger.debug(f"File contained no text {file_info.path}")
                     return
                 with tracer.start_as_current_span("record similarity"):
                     await AgentOS.similarity_memory.add(collection_name, docs)
-                self.logger.debug(f"Added file {file_info.path}")
+                logger.debug(f"Added file {file_info.path}")
             except Exception as e:
-                if self.logger.isEnabledFor(logging.DEBUG):
-                    self.logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
                 else:
-                    self.logger.warning(f"Failed to parse file {file_info.path} ({e})")
+                    logger.warning(f"Failed to parse file {file_info.path} ({e})")
 
     async def removeFile(self, collection_name: str, path: str):
         with tracer.start_as_current_span("remove file"):

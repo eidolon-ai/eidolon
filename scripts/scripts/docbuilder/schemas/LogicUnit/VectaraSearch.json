@@ -1,0 +1,30 @@
+{
+  "description": "A logic unit for searching in Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.",
+  "properties": {
+    "implementation": {
+      "const": "VectaraSearch",
+      "description": "VectaraSearch"
+    },
+    "corpus_key": {
+      "description": "The corpus key to search in.",
+      "title": "Corpus Key",
+      "type": "string"
+    },
+    "description": {
+      "default": "Search documents related to {corpus_key}.",
+      "description": "Description of the tool presented to LLM. Will be formatted with corpus_key.",
+      "title": "Description",
+      "type": "string"
+    },
+    "vectara_url": {
+      "default": "https://api.vectara.io/",
+      "title": "Vectara Url",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_key"
+  ],
+  "title": "VectaraSearch",
+  "type": "object"
+}

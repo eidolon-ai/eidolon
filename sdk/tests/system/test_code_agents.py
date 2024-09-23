@@ -1,4 +1,5 @@
 from typing import Annotated
+from unittest.mock import patch
 
 import httpx
 import pytest
@@ -17,6 +18,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 
@@ -79,6 +81,15 @@ class HelloWorld:
             yield e
         async for e in _m(_s(5, 6, after=_m(_s(7, 8), context="c3")), context="c2"):
             yield e
+
+    @register_program()
+    async def get_agent_os_context(self):
+        return dict(
+            machine_name=AgentOS.machine_name,
+            agent_name=AgentOS.current_agent_name(),
+            user=AgentOS.current_user().model_dump(),
+            process=AgentOS.current_process_id(),
+        )
 
 
 async def _s(*_args, after=None):
@@ -253,6 +264,14 @@ class TestHelloWorld:
         assert inner["parent"]["trace"] in inner["traceparent"]
         assert inner["parent"]["span"] in inner["traceparent"]
 
+    async def test_get_agent_os_context(self, agent):
+        process = await agent.create_process()
+        resp = await process.action("get_agent_os_context")
+        assert resp.data["machine_name"] == "test_machine"
+        assert resp.data["agent_name"] == "HelloWorld"
+        assert resp.data["user"]["name"] == "noop default user"
+        assert resp.data["process"] == process.process_id
+
 
 class StateMachine:
     @register_action("ap")
@@ -273,6 +292,10 @@ class StateMachine:
     async def to_church(self):
         return AgentState(name="church", data="man of god")
 
+    @register_action("bar")
+    async def error(self):
+        raise Exception("big bad server error")
+
     @register_action("church")
     async def terminate(self):
         return "Only God can terminate me"
@@ -283,7 +306,7 @@ class StateMachine2(StateMachine):
 
 
 class TestStateMachine:
-    @pytest_asyncio.fixture(scope="class")
+    @pytest_asyncio.fixture(scope="class", autouse=True)
     async def server(self, run_app):
         async with run_app(StateMachine, StateMachine2) as ra:
             yield ra
@@ -317,6 +340,40 @@ class TestStateMachine:
         )
         assert post.state == "bar"
         assert post.data == "low man on the totem pole"
+
+    async def test_records_agent_transition_metrics(self):
+        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
+            metrics_enabled.return_value = True
+            status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+            with pytest.raises(AgentError):
+                await status.action("error")
+
+        posthog_events = mock.client.capture.call_args_list
+        process_state_transitions = [e.kwargs for e in posthog_events if e.kwargs["event"] == "process_state_transition"]
+        assert {e["properties"]["process_id"] for e in process_state_transitions} == {status.process_id}
+        assert process_state_transitions[0]['properties']['state'] == 'initialized'
+        assert process_state_transitions[1]['properties']['state'] == 'processing'
+        assert process_state_transitions[2]['properties']['state'] == 'bar'
+        assert process_state_transitions[3]['properties']['state'] == 'processing'
+        assert process_state_transitions[4]['properties']['state'] == 'unhandled_error'
+        assert process_state_transitions[4]['properties']['error'] == {'detail': 'big bad server error', 'status_code': 500}
+
+    async def test_records_http_metrics(self):
+        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
+            metrics_enabled.return_value = True
+            status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+            with pytest.raises(AgentError):
+                await status.action("error")
+
+        posthog_events = mock.client.capture.call_args_list
+        http_requests = [e.kwargs for e in posthog_events if e.kwargs["event"] == "http_request"]
+        assert http_requests[0]['properties']['method'] == 'POST'
+        assert http_requests[0]['properties']['response_code'] == 200
+        assert http_requests[0]['properties']['route'] == '/processes'
+        assert http_requests[1]['properties']['method'] == 'POST'
+        assert http_requests[1]['properties']['response_code'] == 200
+        assert http_requests[1]['properties']['route'] == '/processes/{process_id}/agent/{agent_name}/actions/{action_name}'
+        assert http_requests[2]['properties']['response_code'] == 500
 
     async def test_can_transition_state(self):
         init = await run_program(

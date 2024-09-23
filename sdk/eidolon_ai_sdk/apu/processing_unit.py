@@ -17,7 +17,7 @@ class ProcessingUnit(ABC):
     processing_unit_locator: ProcessingUnitLocator
     logger = logging.getLogger("eidolon")
 
-    def __init__(self, processing_unit_locator: ProcessingUnitLocator, **kwargs):
+    def __init__(self, processing_unit_locator: ProcessingUnitLocator = None, **kwargs):
         self.processing_unit_locator = processing_unit_locator
 
     def locate_unit(self, unit_type: Type[PU_T]) -> PU_T:

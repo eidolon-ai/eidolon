@@ -1,7 +1,7 @@
 ---
 title: DocumentManager Overview
-description: Overview of DocumentManager components
+description: "Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents"
 ---
-Overview of <class 'eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager'> components
+Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents
 ## Builtins
-* [DocumentManager](/docs/components/documentmanager/documentmanager/)
+* [DocumentManager](/docs/components/documentmanager/documentmanager/) (default)

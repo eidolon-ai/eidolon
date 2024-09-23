@@ -3,14 +3,13 @@
 import * as React from "react";
 import {useEffect} from "react";
 import {Box} from "@mui/material";
-import {executeOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
-import {CopilotPanel, CopilotParams, useProcess, useProcesses} from "@eidolon/components";
+import {executeOperation} from "@eidolon-ai/components/client";
+import {CopilotPanel, CopilotParams, useProcess, useProcesses} from "@eidolon-ai/components/client";
 import EnhancedTable from "./company_list";
 import {useRouter} from "next/navigation";
 import {Company, Thesis} from "../../types";
 import FloatingColumns from "@/components/floating-columns";
 import {useSession} from "next-auth/react";
-import {sleep} from "@/utils/index";
 
 const findCompanyChat = {
   "agent": "CompanyFinder",
@@ -34,7 +33,7 @@ export default function () {
   const {updateProcesses} = useProcesses()
 
   const updateCompanies = () => {
-    return executeOperation(app!.location, appOptions.agent, "get_companies", processStatus!.process_id, {}).then((inCompanies) => {
+    return executeOperation(app!.location, appOptions.agent, "get_companies", processStatus!.process_id, {}).then((inCompanies: any) => {
       const companies = (inCompanies || []) as Company[]
       (companies as Company[]).sort((a, b) => a.name.localeCompare(b.name))
       setCompanies(companies)
@@ -47,7 +46,7 @@ export default function () {
     }
     if (processStatus.state === "initialized" && !loading) {
       setLoading(true)
-      executeOperation(app!.location, app!.params.agent, "start_thesis", processStatus!.process_id, {}).then((response) => {
+      executeOperation(app!.location, app!.params.agent, "start_thesis", processStatus!.process_id, {}).then((response: any) => {
         setThesis(response)
         setCompanies([])
         return updateProcessStatus(app_name, processStatus.process_id)
@@ -56,10 +55,10 @@ export default function () {
       })
     } else if (processStatus.state === 'idle' && !loading) {
       setLoading(true)
-      executeOperation(app!.location, appOptions.agent, "get_thesis", processStatus.process_id, {}).then((thesis) => {
+      executeOperation(app!.location, appOptions.agent, "get_thesis", processStatus.process_id, {}).then((thesis: any) => {
         setThesis(thesis as Thesis)
         return updateCompanies()
-      }).catch((e) => {
+      }).catch((e: Error) => {
         console.error(e)
       }).finally(() => {
         setLoading(false)

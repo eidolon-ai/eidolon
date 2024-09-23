@@ -109,7 +109,7 @@ export const getSizes = (width?: number, layout?: Layout): string | undefined =>
 
 const pixelate = (value?: number) => (value || value === 0 ? `${value}px` : undefined);
 
-const getStyle = ({
+export const getStyle = ({
   width,
   height,
   aspectRatio,

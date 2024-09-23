@@ -1,18 +1,30 @@
-import {getAsset, getBlogPermalink} from './utils/permalinks';
+import {getAsset, getBlogPermalink, getPermalink} from './utils/permalinks';
 
 export const headerData = {
     links: [
       {
-        text: 'Docs',
-        href: '/docs/introduction',
+        text: 'Home',
+        href: '/',
+      },
+      {
+        text: 'Examples',
+        href: '/docs/recipes/chatbot',
+      },
+      {
+        text: 'Documentation',
+        href: '/docs/quickstart',
       },
       {
         text: 'Blog',
         href: getBlogPermalink(),
       },
       {
-        text: 'Events',
-        href: '#events',
+        text: 'FAQ',
+        href: '/docs/faq',
+      },
+      {
+        text: 'Videos',
+        href: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
       }
     ],
     actions: [
@@ -22,27 +34,63 @@ export const headerData = {
   }
 
 export const footerData = {
-  links: [
+    links: [
     {
-      title: 'Product',
+      title: 'Company',
       links: [
-        {text: 'Features', href: '#features'},
-        {text: 'Documentation', href: '/docs/introduction'},
+        {
+          text: 'Team',
+          href: getPermalink('/about'),
+        },
+        {
+          text: 'Terms of Service',
+          href: getPermalink('/terms'),
+        },
       ],
     },
     {
-      title: 'Project',
+      title: 'Resources',
       links: [
-        {text: 'About', href: '/about'},
+        {
+          text: 'Docs',
+          href: getPermalink('/docs/quickstart'),
+        },
+        {
+          text: 'Blog',
+          href: getBlogPermalink(),
+        },
+        {
+          text: 'FAQs',
+          href: getPermalink('/docs/faq'),
+        },
+        {
+          text: 'GitHub',
+          href: 'https://github.com/eidolon-ai/eidolon',
+        },
       ],
     },
-  ],
-  /*
-    secondaryLinks: [
-      { text: 'Terms', href: getPermalink('/terms') },
-      { text: 'Privacy Policy', href: getPermalink('/privacy') },
-    ],
-  */
+    {
+      title: 'Community',
+      links: [
+        {
+          text: 'Discord',
+          href: 'https://discord.gg/6kVQrHpeqG',
+        },
+        {
+          text: 'Twitter / X',
+          href: 'https://twitter.com/AgentSDK',
+        },
+        {
+          text: 'Youtube',
+          href: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
+        },
+        {
+          text: 'LinkedIn',
+          href: 'https://www.linkedin.com/company/august-data/',
+        },
+      ],
+    },
+   ],
   socialLinks: [
     {ariaLabel: 'X', icon: 'tabler:brand-x', href: 'https://twitter.com/AgentSDK'},
     {ariaLabel: 'LinkedIn', icon: 'tabler:brand-linkedin', href: 'https://www.linkedin.com/company/august-data/'},

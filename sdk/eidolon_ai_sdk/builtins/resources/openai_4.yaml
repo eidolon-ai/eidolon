@@ -1,19 +1,19 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: GPT4-turbo
   annotations:
     - title: "OpenAI GPT 4.0 Turbo"
 spec:
-    implementation: APU
+    implementation: ConversationalAPU
     audio_unit: OpenAiSpeech
     image_unit: OpenAIImageUnit
     llm_unit:
       implementation: OpenAIGPT
       model: "gpt-4-turbo"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "gpt-4-turbo"

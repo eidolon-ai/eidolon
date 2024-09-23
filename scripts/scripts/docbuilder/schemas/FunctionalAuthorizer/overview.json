@@ -1,0 +1,15 @@
+{
+  "title": "FunctionalAuthorizer",
+  "description": "Overview of FunctionalAuthorizer components",
+  "anyOf": [
+    {
+      "$ref": "file:./GlobPatternFunctionalAuthorizer.json"
+    },
+    {
+      "$ref": "file:./NoopFunctionalAuth.json"
+    }
+  ],
+  "reference_group": {
+    "type": "FunctionalAuthorizer"
+  }
+}

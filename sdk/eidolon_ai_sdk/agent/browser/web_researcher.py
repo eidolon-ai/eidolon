@@ -19,7 +19,8 @@ class WebResearcherSpec(BaseModel):
     scraping_agent: str = Field(description="The agent to use for scraping")
 
     system_prompt: str = Field(
-        dedent("""You have many tools available to you to help you find the information you need. Only use the relevant tools for the task at hand.
+        dedent(
+            """You have many tools available to you to help you find the information you need. Only use the relevant tools for the task at hand.
         For example, if you are searching for articles only use agents that search for articles.
       
         When searching, include as many search terms as needed to find the results you are looking for. Be very terse in the query parameters to get the best results.
@@ -37,10 +38,14 @@ class WebResearcherSpec(BaseModel):
             - RETURN: Return the answer and the source of the information.
           
         Let's think through step by step. Explain what you are going to do then call the tools to get it done all in the same cycle.
-        """),
-        description="The prompt to use for the system to ask the user for input"
+        """
+        ),
+        description="The prompt to use for the system to ask the user for input",
     )
-    system_prompt_postamble: str = Field("", description="A prompt to include after the system prompt. This is suitable for things like limiting the results to a topic")
+    system_prompt_postamble: str = Field(
+        "",
+        description="A prompt to include after the system prompt. This is suitable for things like limiting the results to a topic",
+    )
 
 
 class WebResearcher(Specable[WebResearcherSpec]):
@@ -57,8 +62,17 @@ class WebResearcher(Specable[WebResearcherSpec]):
         )
 
     @register_program()
-    async def search(self, process_id,
-                     question: Annotated[str, Body(description="The query. This can include instructions on date ranges, topics, sites to limit to, etc...", embed=True)]):
+    async def search(
+        self,
+        process_id,
+        question: Annotated[
+            str,
+            Body(
+                description="The query. This can include instructions on date ranges, topics, sites to limit to, etc...",
+                embed=True,
+            ),
+        ],
+    ):
         """
         This program will search for the given query. The question can include instructions on date ranges, topics, sites to limit to, etc...
         This method should be used to create a new search. Use it if this is a new topic or a different topic than a previous search.
@@ -78,9 +92,17 @@ class WebResearcher(Specable[WebResearcherSpec]):
         yield AgentStateEvent(state="idle")
 
     @register_action("idle")
-    async def followup_question(self, process_id,
-                                question: Annotated[
-                                    str, Body(description="The query. This can include instructions on date ranges, topics, sites to limit to, etc...", embed=True)]):
+    async def followup_question(
+        self,
+        process_id,
+        question: Annotated[
+            str,
+            Body(
+                description="The query. This can include instructions on date ranges, topics, sites to limit to, etc...",
+                embed=True,
+            ),
+        ],
+    ):
         """
         This action will ask a followup question. This is used to ask for more information about a prior search.
         :param process_id:

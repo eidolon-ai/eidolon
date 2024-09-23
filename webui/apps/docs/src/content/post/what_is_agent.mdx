@@ -80,7 +80,7 @@ other agents in the `agent_refs` field.
 Now let's look at how one would declare the configuration for this agent:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: qa
@@ -94,7 +94,7 @@ spec:
 In this example, we have a yaml file that declares the agent, the implementation of the agent, the other agents
 that this agent references, and a boolean flag that tells the APU to validate the agent before running it.
 The validate_agent flag is used in the implementation of this agent, which I didn't show in the code above.
-A full reference to this example can be found at [Custom Agents](/docs/howto/custom_agents)
+A full reference to this example can be found at [Custom Agents](/docs/howto/build_custom_agents)
 
 ## The SimpleAgent
 Eidolon comes with a built-in agent called SimpleAgent. The Simple Agent, as the name implies, is simple to configure
@@ -105,7 +105,7 @@ The SimpleAgent's easiest use is to build a chatbot interface. In fact, you can 
 chatbot available with **just configuration**. For example, here is the configuration for our chatbot agent:
 
 ```yaml
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
   name: conversational_agent
@@ -143,9 +143,9 @@ SimpleAgent is designed to be driven by configuration. Actions are defined in th
 multiple actions can be defined, tools can be added to all listed apu's or individually, and the agent can be configured
 to use multiple apu's at once.
 
-For more information on the SimpleAgent, see [Simple Agent](/docs/components/simple_agent)
+For more information on the SimpleAgent, see [Simple Agent](/docs/components/agents/simpleagent)
 
-For more information on customizing components, see [Component Customization](/docs/howto/customize_builtins)
+For more information on customizing components, see [How to Configure Built-in Components](/docs/howto/configure_builtins)
 
 For more blog posts about the APU, see [APU](/category/apu)
 

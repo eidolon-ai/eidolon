@@ -11,7 +11,6 @@ from eidolon_ai_client.events import (
     ObjectOutputEvent,
 )
 from eidolon_ai_client.util.logger import logger as eidolon_logger
-from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import (
     LLMMessage,
     AssistantMessage,
@@ -23,6 +22,7 @@ from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
 from eidolon_ai_sdk.util.replay import replayable
 
 logger = eidolon_logger.getChild("llm_unit")
+
 
 async def convert_to_ollama(message: LLMMessage):
     if isinstance(message, SystemMessage):
@@ -63,7 +63,6 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
 
     async def execute_llm(
         self,
-        call_context: CallContext,
         messages: List[LLMMessage],
         tools: List[LLMCallFunction],
         output_format: Union[Literal["str"], Dict[str, Any]],
@@ -85,9 +84,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
 
                 if content:
                     if can_stream_message:
-                        logger.debug(
-                            f"ollama llm stream response: {content}", extra=dict(content=content)
-                        )
+                        logger.debug(f"ollama llm stream response: {content}", extra=dict(content=content))
                         yield StringOutputEvent(content=content)
                     else:
                         complete_message += content
@@ -102,7 +99,6 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
                 yield ObjectOutputEvent(content=content)
         except ResponseError as e:
             raise HTTPException(status_code=e.status_code, detail=e.error)
-
 
     async def _build_request(self, messages, output_format):
         messages = [await convert_to_ollama(message) for message in messages]
@@ -151,7 +147,7 @@ async def _raw_parser(resp):
     2. Tool calls are ordered (No chunk for tool #2 until #1 is complete)
     """
     async for m_chunk in resp:
-        message = dict(content = m_chunk)
+        message = dict(content=m_chunk)
 
         if message["message"]:
             yield message["chunk"]["message"]["content"]

@@ -3,7 +3,7 @@ from typing import Tuple, List, Annotated, TypeVar, Dict
 from fastapi import Body
 from pydantic import BaseModel
 
-from eidolon_ai_client.client import Agent, ProcessStatus
+from eidolon_ai_client.client import ProcessStatus
 from eidolon_ai_client.events import AgentStateEvent, StringOutputEvent, ObjectOutputEvent
 from eidolon_ai_client.group_conversation import GroupConversation
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
@@ -112,11 +112,7 @@ class ConversationCoordinator(Specable[ConversationCoordinatorSpec]):
             for agent, conversation in conversations_per_agent.items():
                 if agent != agent_process.agent:
                     local_conversations.append(Thought(is_inner_voice=False, agent_name=agent, thought=conversation))
-            await (
-                Agent.get(agent_process.agent)
-                .process(agent_process.process_id)
-                .action("add_thoughts", {"thoughts": local_conversations})
-            )
+            await agent_process.action("add_thoughts", {"thoughts": local_conversations})
 
         for agent_process in group.agents:
             agent = agent_process.agent

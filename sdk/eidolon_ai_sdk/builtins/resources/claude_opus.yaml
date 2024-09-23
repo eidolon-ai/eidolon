@@ -1,19 +1,19 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: ClaudeOpus
   annotations:
     - title: "Claude Opus"
 spec:
-  implementation: APU
+  implementation: ConversationalAPU
   audio_unit: OpenAiSpeech
   image_unit: OpenAIImageUnit
   llm_unit:
     implementation: AnthropicLLMUnit
     model: "claude-3-opus-20240229"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: claude-3-opus-20240229

@@ -1,6 +1,6 @@
 ---
 publishDate: 2024-04-25T00:00:00Z
-title: 'Testing GenAI Applications'
+title: 'AI Agent Application Testing'
 excerpt: "There are only two hard things in Computer Science: testing llm applications and naming things."
 image: https://i.imgflip.com/8ny6dj.jpg
 tags:

@@ -17,23 +17,20 @@ def processes_resource():
         root_call_url="https://openlibrary.org",
         open_api_location="https://openlibrary.org/static/openapi.json",
         operations_to_expose=[
-            Operation(**{
-                "name": "get_books",
-                "path": "/api/books",
-                "method": "get",
-                "extra_query_params": {
-                    "format": "{{ENV_FORMAT}}"
+            Operation(
+                **{
+                    "name": "get_books",
+                    "path": "/api/books",
+                    "method": "get",
+                    "extra_query_params": {"format": "{{ENV_FORMAT}}"},
                 }
-            })
+            )
         ],
     )
     return AgentResource(
         apiVersion="eidolon/v1",
         metadata=Metadata(name="LocalAgent"),
-        spec=Reference(
-            implementation=fqn(APIAgent),
-            **spec.model_dump()
-        ),
+        spec=Reference(implementation=fqn(APIAgent), **spec.model_dump()),
     )
 
 
@@ -46,5 +43,5 @@ async def agent(processes_resource, run_app) -> Agent:
 async def test_get_processes(agent):
     process = await agent.create_process()
     os.environ["ENV_FORMAT"] = "json"
-    found = await process.action("get_books",{"bibkeys": 'OCLC:263296519'})
-    assert found.data.get('OCLC:263296519') is not None
+    found = await process.action("get_books", {"bibkeys": "OCLC:263296519"})
+    assert found.data.get("OCLC:263296519") is not None

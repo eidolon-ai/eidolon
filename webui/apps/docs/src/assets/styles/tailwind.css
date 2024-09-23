@@ -18,11 +18,23 @@
   .text-muted {
     color: var(--aw-color-text-muted);
   }
+  
+  .m-main {
+    margin-left: var(--aw-main-margin-sm);
+  }
+  
+  .m-main {
+    margin-left: var(--aw-main-margin-sm);
+  }
+  
+  .m-main {
+    margin-left: var(--aw-main-margin-sm);
+  }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center rounded-full border-gray-400 border bg-transparent font-medium text-center text-base text-page leading-snug transition py-3.5 px-6 md:px-8 ease-in duration-200 focus:ring-blue-500 focus:ring-offset-blue-200 focus:ring-2 focus:ring-offset-2 hover:bg-gray-100 hover:border-gray-600 dark:text-slate-300 dark:border-slate-500 dark:hover:bg-slate-800 dark:hover:border-slate-800 cursor-pointer;
+    @apply inline-flex items-center justify-center rounded-md border-gray-400 border bg-transparent font-medium text-center text-base text-page leading-snug transition py-1.5 px-2 md:px-4 ease-in duration-200 focus:ring-blue-500 focus:ring-offset-blue-200 focus:ring-2 focus:ring-offset-2 hover:bg-gray-100 hover:border-gray-600 dark:text-slate-300 dark:border-slate-500 dark:hover:bg-slate-800 dark:hover:border-slate-800 cursor-pointer;
   }
 
   .btn-primary {
@@ -83,8 +95,50 @@
   @apply rotate-45 translate-y-[-8px] translate-x-[14px];
 }
 
+:root {
+  --a-duration: 1.08s;
+  --a-duration-half: calc(var(--a-duration) / 2);
+  --a-delay: 0.15s;
+  --a-easing: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --line-opacity: 0.15;
+  --line-color: rgba(0, 0, 0, calc(var(--line-opacity) * 3));
+  --line-offset: 150px;
+  --line-offset-md: 100px;
+  --line-offset-sm: 50px;
+  --line-width: 1px;
+  --line-gap: 5px;
+  --line-fade-stop: 93%;
+}
+
 /* To deprecated */
 
 .dd *:first-child {
   margin-top: 0;
+}
+
+.sl-markdown-content .expressive-code figcaption + pre {
+  margin-top: 0;
+}
+
+.sl-markdown-content .expressive-code .ec-line {
+  margin-top: 0;
+}
+
+.sl-markdown-content ul {
+  min-width: 0;
+  padding-left: 2rem;
+  list-style-type: disc;
+  margin-top: -.25rem;
+}
+
+.sl-markdown-content ol {
+  min-width: 0;
+  padding-left: 2rem;
+  list-style-type: decimal;
+  margin-top: -.25rem;
+}
+
+.sl-markdown-content ol > li {
+  overflow-wrap: break-word;
+  white-space: normal;
 }

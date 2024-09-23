@@ -3,8 +3,8 @@
 import * as React from "react";
 import {useEffect} from "react";
 import {Box} from "@mui/material";
-import {executeOperation, streamOperation} from "@eidolon/components/src/client-api-helpers/process-event-helper";
-import {CopilotParams, useProcess} from "@eidolon/components";
+import {executeOperation, streamOperation} from "@eidolon-ai/components/client";
+import {CopilotParams, useProcess} from "@eidolon-ai/components/client";
 import {CompanyImageList} from "./CompanyImageList";
 import {Company} from "../../types";
 import CompanyDetailChat from "./company-detail-chat";
@@ -51,7 +51,7 @@ export default function () {
           const companiesToResearch = companies.filter((company) => !company.researched_details).map((company) => company.name)
 
           // noinspection JSIgnoredPromiseFromCall
-          streamOperation(app.location, appOptions.agent, "research_more_companies", processStatus.process_id, {companyNames: companiesToResearch}, (event) => {
+          streamOperation(app.location, appOptions.agent, "research_more_companies", processStatus.process_id, {companyNames: companiesToResearch}, (event: any) => {
             if (event.category === "output") {
               const newCompany = event.content as Company
               const index = companies.findIndex((c) => c.name === newCompany.name)

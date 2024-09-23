@@ -3,7 +3,10 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 from fastapi import Body
-from playwright.async_api import async_playwright
+try:
+    from playwright.async_api import async_playwright
+except ImportError:
+    async_playwright = None
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program
@@ -21,6 +24,7 @@ class WebScrapingAgentSpec(BaseModel):
     """
     The web scraping agent uses playwright to scrape a webpage and return the text, links and images.
     """
+
     summarizer: Literal["BeautifulSoup", "noop"] = "BeautifulSoup"
 
 
@@ -42,13 +46,17 @@ class WebScrapingAgent(Specable[WebScrapingAgentSpec]):
             raise ValueError(f"Summarizer {self.spec.summarizer} not supported")
 
     @register_program()
-    async def getPageContent(self, process_id, url: Annotated[str, Body(description="The URL to get the context of", embed=True)]):
+    async def getPageContent(
+        self, process_id, url: Annotated[str, Body(description="The URL to get the context of", embed=True)]
+    ):
         """
         Get the content of the page at the given URL
         :param process_id:
         :param url:
         :return:
         """
+        if not async_playwright:
+            raise ValueError("Playwright not installed. Please add playwright to your project.")
         await ProcessDoc.set_delete_on_terminate(process_id, True)
         async with async_playwright() as playwright:
             browser = await playwright.chromium.launch(headless=True)

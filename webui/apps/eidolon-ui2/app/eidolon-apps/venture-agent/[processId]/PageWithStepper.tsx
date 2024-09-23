@@ -4,7 +4,7 @@ import {Box, Step, StepButton, Stepper} from "@mui/material";
 import * as React from "react";
 import {Fragment, useEffect, useRef} from "react";
 import {usePathname} from "next/navigation";
-import {useProcess} from "@eidolon/components";
+import {useProcess} from "@eidolon-ai/components/client";
 
 interface ChatbotLayoutProps {
   children: JSX.Element

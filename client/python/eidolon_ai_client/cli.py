@@ -6,6 +6,8 @@ from functools import wraps
 from subprocess import call
 from typing import Optional, Annotated
 
+from httpx import ConnectError
+
 from eidolon_ai_client.client import Agent, Process, Machine, ProcessStatus
 from eidolon_ai_client.events import StringOutputEvent, ObjectOutputEvent, LLMToolCallRequestEvent, \
     AgentStateEvent
@@ -16,10 +18,9 @@ try:
     from rich.style import Style
     from rich.console import Console
     from rich.prompt import Prompt
-    from rich.panel import Panel
     from simple_term_menu import TerminalMenu
 except ImportError:
-    print("The CLI dependencies are not installed. Please install with 'pip install eidolon_ai_client[cli]'.")
+    print("The CLI dependencies are not installed. Please install with \"pip install -U 'eidolon_ai_client[cli]'\".")
     exit(1)
 
 app = typer.Typer()
@@ -41,11 +42,19 @@ def coro(f):
         except AgentError as e:
             err_console.print("Agent Error:", e)
             exit(1)
+        except ConnectError:
+            err_console.print(f"Connection Error: unable to connect to {server_loc}. Verify the server is running.")
+            dim_console.print("To specify a different server location, set the EIDOLON_SERVER environment variable.")
+            exit(1)
 
     return wrapper
 
 
-async def create(agent: Optional[str] = None, verbose: Optional[bool] = False, interactive: Optional[bool] = False):
+async def create(
+        agent: Annotated[Optional[str], typer.Option("--agent", "-a")] = None,
+        verbose: Annotated[Optional[bool], typer.Option("--verbose", "-v")] = False,
+        interactive: Annotated[Optional[bool], typer.Option("--interactive", "-i")] = False,
+):
     if not agent:
         agents = await Machine(machine=server_loc).list_agents()
         if len(agents) == 0:
@@ -68,6 +77,7 @@ async def create(agent: Optional[str] = None, verbose: Optional[bool] = False, i
         console.print(process.process_id)
     if interactive:
         await run(agent=process.agent, process_id=process.process_id, stream=True, interactive=True)
+    return process
 
 
 processes.command("create")(coro(create))
@@ -84,17 +94,18 @@ async def delete(process_id: str):
 
 async def run(
         action: Annotated[Optional[str], typer.Argument()] = None,
-        process_id: Optional[str] = None,
-        agent: Optional[str] = None,
-        body: Optional[str] = None,
-        stream: Optional[bool] = True,
-        interactive: Optional[bool] = False
+        process_id: Annotated[Optional[str], typer.Option("--process-id", "-pid")] = None,
+        agent: Annotated[Optional[str], typer.Option("--agent", "-a")] = None,
+        body: Annotated[Optional[str], typer.Option("--body", "--json", "-b", help="HTTP body. Parsed as json and then used as raw string if unparsable.")] = None,
+        stream: Annotated[Optional[bool], typer.Option("--stream", "-s")] = True,
+        interactive: Annotated[Optional[bool], typer.Option("--interactive", "-i")] = False
 ):
     process_status: Optional[ProcessStatus] = None
     if not process_id:
         with console.status("Fetching processes..."):
             processes_resp = await Machine(machine=server_loc).processes()
-        stati: list[ProcessStatus] = processes_resp.processes
+        create___ = "new process..."
+        stati: list[ProcessStatus] = [create___, *processes_resp.processes]
         if len(stati) == 0:
             err_console.print("No processes found.")
             exit(1)
@@ -107,6 +118,8 @@ async def run(
             process_status = stati[choice]
         else:
             process_status = stati[0]
+        if process_status == create___:
+            process_status = await create(agent, interactive=False)
         process_id = process_status.process_id
     if not agent:
         if not process_status:
@@ -142,8 +155,9 @@ async def run(
                     body = file.read()
     try:
         body = json.loads(body)
-    except json.JSONDecodeError:
-        pass
+    except json.JSONDecodeError as e:
+        if isinstance(body, str) and "{" in body or "[" in body:  # likely intended to be json
+            err_console.print("JSONDecodeError while parsing body:", e)
     except TypeError:
         pass
 
@@ -186,7 +200,9 @@ async def run(
 app.command("actions")(coro(run))
 
 
-def _status_display(status: ProcessStatus):
+def _status_display(status: ProcessStatus | str):
+    if isinstance(status, str):
+        return status
     display = [status.process_id, f"agent: {status.agent}", f"state: {status.state}"]
     if status.title:
         display.append(f"title: {status.title}")

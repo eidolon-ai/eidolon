@@ -1,17 +1,17 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: ClaudeHaiku
   annotations:
     - title: "Claude Haiku"
 spec:
-  implementation: APU
+  implementation: ConversationalAPU
   llm_unit:
     implementation: AnthropicLLMUnit
     model: "claude-3-haiku-20240307"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: claude-3-haiku-20240307

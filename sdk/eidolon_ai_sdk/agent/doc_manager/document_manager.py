@@ -48,11 +48,15 @@ class DocumentManagerSpec(BaseModel):
     name: str = Field(description="The name of the document manager (used to name database collections).")
     recheck_frequency: int = Field(default=60, description="The number of seconds between checks.")
     loader: AnnotatedReference[DocumentLoader]
-    doc_processor: AnnotatedReference[DocumentProcessor]
     concurrency: int = Field(default=8, description="The number of concurrent tasks to run.")
+    doc_processor: AnnotatedReference[DocumentProcessor]
 
 
 class DocumentManager(Specable[DocumentManagerSpec]):
+    """
+    Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents
+    """
+
     last_reload = 0
 
     def __init__(self, **kwargs):
@@ -89,7 +93,9 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                         tasks.add(asyncio.create_task(self.processor.addFile(self.collection_name, change.file_info)))
                         add_count += 1
                     elif isinstance(change, ModifiedFile):
-                        tasks.add(asyncio.create_task(self.processor.replaceFile(self.collection_name, change.file_info)))
+                        tasks.add(
+                            asyncio.create_task(self.processor.replaceFile(self.collection_name, change.file_info))
+                        )
                         replace_count += 1
                     elif isinstance(change, RemovedFile):
                         tasks.add(asyncio.create_task(self.processor.removeFile(self.collection_name, change.file_path)))

@@ -58,7 +58,7 @@ class Embedding(ABC, Specable[EmbeddingSpec]):
                 id=document.id,
                 embedding=text,
                 metadata=document.metadata,
-        )
+            )
 
     async def start(self):
         pass
@@ -95,6 +95,8 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
         self.llm = None
 
     async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
+        if not self.llm:
+            await self.start()
         response = await self.llm.embeddings.create(
             input=text,
             model=self.spec.model,  # Choose the model as per your requirement

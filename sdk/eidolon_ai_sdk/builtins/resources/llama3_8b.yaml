@@ -1,19 +1,19 @@
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: Llamma3-8b
   annotations:
     - title: "Llamma3 8b"
 spec:
-  implementation: APU
+  implementation: ConversationalAPU
   llm_unit:
     implementation: ToolCallLLMWrapper
     llm_unit:
       implementation: OllamaLLMUnit
       model: "llama3-8b"
 ---
-apiVersion: eidolon/v1
+apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
   name: "llama3-8b"

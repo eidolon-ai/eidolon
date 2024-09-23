@@ -18,7 +18,11 @@ class SecurityManagerSpec(BaseModel):
     functional_authorizer: AnnotatedReference[FunctionalAuthorizer]
     process_authorizer: AnnotatedReference[ProcessAuthorizer]
 
-    safe_paths: Set[str] = {"/system/health", "/docs", "/favicon.ico", "/openapi.json"}
+    safe_paths: Set[str] = ["/system/health", "/docs", "/favicon.ico", "/openapi.json"]
+
+    def __init__(self):
+        super().__init__()
+        self.safe_paths = set(self.safe_paths)
 
 
 class SecurityManagerImpl(Specable[SecurityManagerSpec], SecurityManager):

@@ -1,3 +1,5 @@
+from typing import List
+
 from jsonpath_ng.ext import parse
 
 
@@ -21,7 +23,7 @@ def filter_and_reconstruct_json(original_json, result_filters):
 
             # Extract the values and add them to the filtered item
             for match in matches:
-                path_parts = str(match.full_path).split('.')
+                path_parts = str(match.full_path).split(".")
                 current = filtered_item
 
                 def update_current(parent, path):
@@ -37,7 +39,7 @@ def filter_and_reconstruct_json(original_json, result_filters):
                 current_updater = None
 
                 for part in path_parts[:-1]:
-                    if part.startswith('[') and part.endswith(']'):
+                    if part.startswith("[") and part.endswith("]"):
                         index = int(part[1:-1])
                         if not isinstance(current, list):
                             current = current_updater([])
@@ -50,7 +52,7 @@ def filter_and_reconstruct_json(original_json, result_filters):
                             current[part] = {}
                         current = current[part]
 
-                if path_parts[-1].startswith('[') and path_parts[-1].endswith(']'):
+                if path_parts[-1].startswith("[") and path_parts[-1].endswith("]"):
                     index = int(path_parts[-1][1:-1])
                     if not isinstance(current, list):
                         current = []
@@ -67,3 +69,33 @@ def filter_and_reconstruct_json(original_json, result_filters):
     # Convert the filtered data back to a JSON string
     reconstructed_json = filtered_data
     return reconstructed_json
+
+
+def _process_item(item, path_obj: dict):
+    if isinstance(item, list):
+        filtered_item = []
+        for i in item:
+            filtered_item.append(_process_item(i, path_obj))
+        return filtered_item
+    elif isinstance(item, dict):
+        filtered_item = {}
+        for key, value in item.items():
+            if key in path_obj:
+                filtered_item[key] = _process_item(value, path_obj[key])
+        return filtered_item
+    else:
+        return item
+
+
+def filter_and_reconstruct_json_from_paths(original_json, paths: List[str]):
+    # convert the paths into an object
+    path_obj = {}
+    for path in paths:
+        path_parts = path.split(".")
+        current = path_obj
+        for part in path_parts:
+            if part not in current:
+                current[part] = {}
+            current = current[part]
+
+    return _process_item(original_json, path_obj)

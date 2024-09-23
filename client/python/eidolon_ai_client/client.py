@@ -126,7 +126,7 @@ class Process(BaseModel):
         if body:
             args["json"] = body
         json_ = await post_content(**args)
-        return ProcessStatus(**{"machine":self.machine, **json_})
+        return ProcessStatus(**{"machine": self.machine, **json_})
 
     def stream_action(self, agent: str, action_name: str, body: Optional[Any] = None, **kwargs) -> AgentResponseIterator:
         url = urljoin(self.machine, f"processes/{self.process_id}/agent/{agent}/actions/{action_name}")

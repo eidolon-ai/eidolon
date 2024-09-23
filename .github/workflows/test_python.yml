@@ -2,14 +2,34 @@ name: Test Python
 on:
   push:
     branches: [main]
-  pull_request:
+    paths:
+      - '**'
+      - '!k8s-operator/**'
+      - '!webui/**'
+      - '!examples/**'
+      - '!.all-contributorsrc'
+      - '!README.md'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '**'
+      - '!k8s-operator/**'
+      - '!webui/**'
+      - '!examples/**'
+      - '!.all-contributorsrc'
+      - '!README.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lock-files-up-to-date:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v5
@@ -21,80 +41,10 @@ jobs:
         run: |
           git status
           git diff --quiet
-
-  examples-test:
-    runs-on: ubuntu-latest
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check secrets
-        run: |
-          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
-            echo "Error: OPENAI_API_KEY is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.AZURE_AD_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_AD_TENANT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_TEST_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}" ]; then
-            echo "Error: One or more Azure secrets are not set"
-            exit 1
-          fi
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v5
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: always()
         with:
-          python-version: '3.12'
-          cache: 'poetry'
-      - run: poetry install
-        working-directory: examples
-      - run: poetry run playwright install
-        working-directory: examples
-      - run: poetry run ruff format .
-        working-directory: examples
-      - run: poetry run ruff check .
-        working-directory: examples
-      - run: mkdir -p /tmp/eidolon
-        working-directory: examples
-      - run: poetry run pytest
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          EIDOLON_DATA_DIR: /tmp/eidolon
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-          AZURE_AD_TEST_CLIENT_ID: ${{ secrets.AZURE_AD_TEST_CLIENT_ID }}
-          AZURE_AD_TEST_CLIENT_SECRET: ${{ secrets.AZURE_AD_TEST_CLIENT_SECRET }}
-        working-directory: examples
-      - uses: actions/upload-artifact@v4
-        if: ${{ !success() }}
-        with:
-          name: server-logs
-          path: /tmp/eidolon_test_logs/
-
-  test-quickstart-no-mongodb:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check secrets
-        run: |
-          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
-            echo "Error: OPENAI_API_KEY is not set"
-            exit 1
-          fi
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'poetry'
-      - run: poetry install
-        working-directory: examples
-      - run: poetry run pytest tests/test_quickstart.py
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        working-directory: examples
+          commit_message: "updating lock"
 
   sdk-test:
     runs-on: ubuntu-latest
@@ -111,7 +61,7 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'poetry'
-      - run: poetry install
+      - run: poetry install -E all
         working-directory: sdk
       - run: poetry run playwright install
         working-directory: sdk
@@ -128,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Install poetry ${{ matrix.python-version }}
@@ -137,7 +87,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
-      - run: poetry install
+      - run: poetry install -E all
         working-directory: sdk
       - run: poetry run playwright install
         working-directory: sdk

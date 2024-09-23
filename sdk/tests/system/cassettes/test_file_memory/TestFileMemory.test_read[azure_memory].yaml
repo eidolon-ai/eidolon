@@ -1,0 +1,168 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-client-request-id:
+      - 6c66b13a-33e5-11ef-9f4d-aec083e7debd
+      x-ms-date:
+      - Wed, 26 Jun 2024 17:56:33 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: GET
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-readazure-memory?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 26 Jun 2024 17:56:33 GMT
+      Etag:
+      - '"0x8DC9136AFAD1ABE"'
+      Last-Modified:
+      - Thu, 20 Jun 2024 14:38:44 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 6c66b13a-33e5-11ef-9f4d-aec083e7debd
+      x-ms-default-encryption-scope:
+      - $account-encryption-key
+      x-ms-deny-encryption-scope-override:
+      - 'false'
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-immutable-storage-with-versioning-enabled:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 875a97eb-e01e-00f1-3ef2-c7cb10000000
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: FOO
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 6ce35780-33e5-11ef-9f4d-aec083e7debd
+      x-ms-date:
+      - Wed, 26 Jun 2024 17:56:33 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: PUT
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-readazure-memory/foo
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - kBiQqOnIz21aGlQrIp/r/w==
+      Date:
+      - Wed, 26 Jun 2024 17:56:33 GMT
+      Etag:
+      - '"0x8DC960951270147"'
+      Last-Modified:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 6ce35780-33e5-11ef-9f4d-aec083e7debd
+      x-ms-content-crc64:
+      - wtij308CLwo=
+      x-ms-request-id:
+      - 875a9854-e01e-00f1-21f2-c7cb10000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.11.8 (macOS-14.5-arm64-arm-64bit)
+      authorization:
+      - XXXXXX
+      x-ms-client-request-id:
+      - 6cf2807a-33e5-11ef-9f4d-aec083e7debd
+      x-ms-date:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2024-05-04'
+    method: GET
+    uri: https://eidolon.blob.core.windows.net/eidolon-test-file-test-readazure-memory/foo
+  response:
+    body:
+      string: FOO
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '3'
+      Content-Range:
+      - bytes 0-2/3
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Wed, 26 Jun 2024 17:56:33 GMT
+      Etag:
+      - '"0x8DC960951270147"'
+      Last-Modified:
+      - Wed, 26 Jun 2024 17:56:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - kBiQqOnIz21aGlQrIp/r/w==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 6cf2807a-33e5-11ef-9f4d-aec083e7debd
+      x-ms-creation-time:
+      - Thu, 20 Jun 2024 14:38:44 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 875a98b0-e01e-00f1-78f2-c7cb10000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 206
+      message: Partial Content
+version: 1

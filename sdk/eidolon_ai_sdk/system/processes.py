@@ -7,6 +7,7 @@ from typing import ClassVar, Any, cast, AsyncIterable, Optional, Dict
 
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_client.events import StreamEvent
+from eidolon_ai_sdk.util.posthog import report_agent_state_change
 
 
 class MongoDoc(BaseModel, extra="allow"):
@@ -71,6 +72,23 @@ class ProcessDoc(MongoDoc):
     delete_on_terminate: bool = False
     error_info: Optional[Any] = None
     title: Optional[str] = None
+
+    @classmethod
+    async def create(cls, **data):
+        doc = cast(ProcessDoc, await super().create(**data))
+        report_agent_state_change(doc.record_id, doc.state, doc.error_info)
+        return doc
+
+    async def update(self, check_update_time=False, **data):
+        doc = await super().update(check_update_time, **data)
+        if "state" in data:
+            report_agent_state_change(self.record_id, doc.state, doc.error_info)
+        return doc
+
+    @classmethod
+    async def delete(cls, _id: str):
+        report_agent_state_change(_id, "$deleted")
+        return await super().delete(_id)
 
     @classmethod
     async def set_delete_on_terminate(cls, process_id: str, delete_on_terminate: bool = True):

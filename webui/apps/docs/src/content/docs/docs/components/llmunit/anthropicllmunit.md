@@ -1,15 +1,15 @@
 ---
 title: AnthropicLLMUnit
-description: Description of AnthropicLLMUnit component
+description: "Description of AnthropicLLMUnit component"
 ---
 
-| Property                             | Pattern | Type        | Deprecated | Definition | Title/Description  |
-| ------------------------------------ | ------- | ----------- | ---------- | ---------- | ------------------ |
-| - [implementation](#implementation ) | No      | const       | No         | -          | AnthropicLLMUnit   |
-| - [model](#model )                   | No      | object      | No         | -          | LLMModel Reference |
-| - [temperature](#temperature )       | No      | number      | No         | -          | Temperature        |
-| - [max_tokens](#max_tokens )         | No      | Combination | No         | -          | Max Tokens         |
-| - [client_args](#client_args )       | No      | object      | No         | -          | Client Args        |
+| Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |
+| ------------------------------------ | ------- | ------------------- | ---------- | --------------------------------- | ------------------------------- |
+| - [implementation](#implementation ) | No      | const               | No         | -                                 | AnthropicLLMUnit                |
+| - [model](#model )                   | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
+| - [temperature](#temperature )       | No      | number              | No         | -                                 | Temperature                     |
+| - [max_tokens](#max_tokens )         | No      | integer             | No         | -                                 | Max Tokens                      |
+| - [client_args](#client_args )       | No      | object              | No         | -                                 | Client Args                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -24,29 +24,14 @@ Specific value: `"AnthropicLLMUnit"`
 
 ## <a name="model"></a>2. Property `model`
 
-**Title:** LLMModel Reference
+|                |                                                |
+| -------------- | ---------------------------------------------- |
+| **Type**       | `Reference[LLMModel]`                          |
+| **Required**   | No                                             |
+| **Default**    | `{"implementation": "claude-3-opus-20240229"}` |
+| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)                 |
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `"claude-3-opus-20240229"`                                                |
-
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#model_implementation ) | No      | string | No         | -          | Implementation    |
-| - [](#model_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="model_implementation"></a>2.1. Property `implementation`
-
-**Title:** Implementation
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-| **Default**  | `null`   |
+**Description:** Overview of LLMModel components
 
 ## <a name="temperature"></a>3. Property `temperature`
 
@@ -62,31 +47,11 @@ Specific value: `"AnthropicLLMUnit"`
 
 **Title:** Max Tokens
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `combining`                                                               |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-
-| Any of(Option)                 |
-| ------------------------------ |
-| [item 0](#max_tokens_anyOf_i0) |
-| [item 1](#max_tokens_anyOf_i1) |
-
-### <a name="max_tokens_anyOf_i0"></a>4.1. Property `item 0`
-
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
 | **Required** | No        |
-
-### <a name="max_tokens_anyOf_i1"></a>4.2. Property `item 1`
-
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+| **Default**  | `null`    |
 
 ## <a name="client_args"></a>5. Property `client_args`
 

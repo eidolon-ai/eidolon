@@ -12,7 +12,6 @@ from eidolon_ai_client.events import (
     StringOutputEvent,
 )
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
-from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
@@ -30,12 +29,11 @@ class TestLLMUnit(LLMUnit):
 
     async def execute_llm(
         self,
-        call_context: CallContext,
         messages: List[LLMMessage],
         tools: List[LLMCallFunction],
         output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[StreamEvent]:
-        return self.fn(call_context, messages, tools, output_format)
+        return self.fn(messages, tools, output_format)
 
 
 def noop(*args, **kwargs):
@@ -152,38 +150,44 @@ here""",
 
 
 async def test_wrap_exe_call_converts_output():
-    cc = CallContext(process_id="123")
     mess = [UserMessage(content=[UserMessageText(text="123")])]
     tool_response = [ToolCall(tool_call_id="1", name="a", arguments={"x": "y"})]
 
-    async def exec_llm_mock(
-        call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
-    ):
-        assert output_schema == ToolCallResponse.model_json_schema()
-        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
+    async def exec_llm_mock(messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema):
+        assert output_schema['anyOf'][0] == ToolCallResponse.model_json_schema()
+        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response).model_dump())
 
     unit = make_wrapper("here", exec_llm_mock)
 
-    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, cc, [LLMCallFunction(name="foo", description="bar", parameters = dict())], mess)]
+    response = [
+        event
+        async for event in unit._wrap_exe_call(
+            exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters=dict())], mess
+        )
+    ]
     assert response == [LLMToolCallRequestEvent(tool_call=tool) for tool in tool_response]
 
 
 async def test_wrap_exe_call_yields_other_events():
-    cc = CallContext(process_id="123")
     mess = [UserMessage(content=[UserMessageText(text="123")])]
     tool_response = [ToolCall(tool_call_id="1", name="a", arguments={"x": "y"})]
 
     async def exec_llm_mock(
-        call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
+        messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
     ) -> AsyncIterator[StreamEvent]:
-        assert output_schema == ToolCallResponse.model_json_schema()
+        assert output_schema['anyOf'][0] == ToolCallResponse.model_json_schema()
         yield UserInputEvent(input="abc")
-        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
+        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response).model_dump())
         yield UserInputEvent(input="abc")
 
     unit = make_wrapper("here", exec_llm_mock)
 
-    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, cc, [LLMCallFunction(name="foo", description="bar", parameters = dict())], mess)]
+    response = [
+        event
+        async for event in unit._wrap_exe_call(
+            exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters=dict())], mess
+        )
+    ]
     assert response == [
         UserInputEvent(input="abc"),
         LLMToolCallRequestEvent(tool_call=tool_response[0]),
@@ -192,21 +196,24 @@ async def test_wrap_exe_call_yields_other_events():
 
 
 async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
-    cc = CallContext(process_id="123")
     mess = [UserMessage(content=[UserMessageText(text="123")])]
-    tool_response = []
 
     async def exec_llm_mock(
-        call_context: CallContext, messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
+        messages: List[LLMMessage], tools: List[LLMCallFunction], output_schema
     ) -> AsyncIterator[StreamEvent]:
-        assert output_schema == ToolCallResponse.model_json_schema()
+        assert output_schema['anyOf'][0] == ToolCallResponse.model_json_schema()
         yield UserInputEvent(input="abc")
-        yield ObjectOutputEvent(content=ToolCallResponse(tools=tool_response))
+        yield ObjectOutputEvent(content=ToolCallResponse(tools=[]).model_dump())
         yield UserInputEvent(input="abc")
 
     unit = make_wrapper("here", exec_llm_mock)
 
-    response = [event async for event in unit._wrap_exe_call(exec_llm_mock, cc, [LLMCallFunction(name="foo", description="bar", parameters = dict())], mess)]
+    response = [
+        event
+        async for event in unit._wrap_exe_call(
+            exec_llm_mock, [LLMCallFunction(name="foo", description="bar", parameters=dict())], mess
+        )
+    ]
     assert response == [UserInputEvent(input="abc"), StringOutputEvent(content=""), UserInputEvent(input="abc")]
 
 

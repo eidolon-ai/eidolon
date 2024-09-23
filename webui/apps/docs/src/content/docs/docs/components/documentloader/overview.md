@@ -1,9 +1,10 @@
 ---
 title: DocumentLoader Overview
-description: Overview of DocumentLoader components
+description: "Overview of DocumentLoader components"
 ---
-Overview of <class 'eidolon_ai_sdk.agent.doc_manager.loaders.base_loader.DocumentLoader'> components
+Overview of DocumentLoader components
 ## Builtins
-* [FilesystemLoader](/docs/components/documentloader/filesystemloader/)
+* [AzureLoader](/docs/components/documentloader/azureloader/)
+* [FilesystemLoader](/docs/components/documentloader/filesystemloader/) (default)
 * [GitHubLoader](/docs/components/documentloader/githubloader/)
 * [S3Loader](/docs/components/documentloader/s3loader/)

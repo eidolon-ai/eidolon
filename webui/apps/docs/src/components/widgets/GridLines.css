@@ -1,0 +1,153 @@
+.grid-line-horizontal {
+  position: absolute;
+  width: var(--line-width);
+  height: 100%;
+  top: 0;
+  background: linear-gradient(180deg, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+  background-size: var(--line-width) var(--line-gap);
+}
+
+.grid-line-bottom:after, .grid-line-top:before {
+  content: "";
+  position: absolute;
+  width: calc(100% + var(--line-offset));
+  left: calc(var(--line-offset) / 2 * -1);
+  height: var(--line-width);
+  background: linear-gradient(to right, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+  background-size: var(--line-gap) var(--line-width);
+  -webkit-mask: linear-gradient(to left, #fff var(--line-fade-stop), transparent), linear-gradient(to right, #fff var(--line-fade-stop), transparent), linear-gradient(#000, #000);
+  -webkit-mask-composite: destination-in;
+  mask-composite: exclude;
+}
+
+.dark {
+  --line-color: #fff;
+}
+
+.grid-line-top:before {
+  top: 0;
+}
+
+.grid-line-bottom:after {
+  bottom: -.1px;
+}
+
+.grid-line-horizontal[data-side=left] {
+  left: 0;
+}
+
+.grid-line-horizontal[data-side=right] {
+  right: 0;
+}
+
+.grid-line-horizontal[data-offset] {
+  height: calc(100% + var(--line-offset));
+  top: calc(var(--line-offset) / 2 * -1);
+}
+
+.grid-line-horizontal[data-fade=both] {
+  -webkit-mask: linear-gradient(to top, white var(--line-fade-stop), transparent), linear-gradient(to bottom, white var(--line-fade-stop), transparent), linear-gradient(#000, #000);
+  -webkit-mask-composite: destination-in;
+  mask-composite: exclude;
+}
+
+.grid-line-horizontal[data-fade=top] {
+  -webkit-mask: linear-gradient(to top, #ffffff calc(var(--line-fade-stop) / 2), transparent);
+}
+
+.grid-line-horizontal[data-fade=bottom] {
+  -webkit-mask: linear-gradient(to bottom, #ffffff calc(var(--line-fade-stop) / 2), transparent);
+}
+
+#main-title {
+  --intro_width: '';
+  --intro_height: '';
+  --intro_height_auto: '';
+}
+
+.grid-line-top:before, .grid-line-bottom:after {
+  animation-name: var(--intro_width);
+  animation-duration: var(--a-duration);
+  animation-timing-function: var(--a-easing);
+  animation-fill-mode: forwards;
+  animation-delay: var(--a-delay);
+  width: 0;
+}
+
+.grid-line-horizontal[data-fade=both] {
+  animation-name: var(--intro_height);
+  animation-duration: var(--a-duration);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--a-delay) * 3);
+  height: 0;
+}
+
+.grid-line-horizontal[data-fade=top] {
+  animation-name: var(--intro_height_auto);
+  animation-duration: var(--a-duration);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--a-delay) * 2);
+  height: 0;
+}
+
+.grid-line-horizontal[data-fade=none] {
+  animation-name: var(--intro_height_auto);
+  animation-duration: var(--a-duration);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--a-delay) * 2);
+  height: 0;
+}
+
+.grid-line-horizontal[data-fade=bottom] {
+  animation-name: var(--intro_height_auto);
+  animation-duration: var(--a-duration);
+  animation-timing-function: calc(var(--a-easing) + var(--a-delay));
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--a-delay) * 2);
+  height: 0;
+}
+
+@keyframes intro_width {
+  0% {
+    opacity: 1;
+    background: var(--aw-color-primary);
+    background-size: var(--line-gap) var(--line-width);
+  }
+  100% {
+    opacity: .3;
+    width: calc(100% + var(--line-offset));
+    background: linear-gradient(to right, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-gap) var(--line-width);
+  }
+}
+
+@keyframes intro_height {
+  0% {
+    opacity: 1;
+    background: var(--aw-color-accent);
+    background-size: var(--line-width) var(--line-gap);
+  }
+  100% {
+    opacity: .3;
+    height: calc(100% + var(--line-offset));
+    background: linear-gradient(180deg, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-width) var(--line-gap);
+  }
+}
+
+@keyframes intro_height_auto {
+  0% {
+    opacity: 1;
+    background: var(--aw-color-accent);
+    background-size: var(--line-width) var(--line-gap);
+  }
+  100% {
+    opacity: .3;
+    height: 100%;
+    background: linear-gradient(180deg, var(--line-color), var(--line-color) 50%, transparent 0, transparent);
+    background-size: var(--line-width) var(--line-gap);
+  }
+}

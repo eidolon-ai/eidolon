@@ -1,0 +1,12 @@
+{
+  "title": "Sampler",
+  "description": "Overview of Sampler components",
+  "anyOf": [
+    {
+      "$ref": "file:./CustomSampler.json"
+    }
+  ],
+  "reference_group": {
+    "type": "Sampler"
+  }
+}

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eidolon-operator-chart.fullname" . }}
+  labels:
+    {{- include "eidolon-operator-chart.labels" . | nindent 4 }}
+spec:
+  replicas: 1  # Operators typically run as a single instance
+  selector:
+    matchLabels:
+      {{- include "eidolon-operator-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "eidolon-operator-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "eidolon-operator-chart.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: WATCH_NAMESPACE
+              value: {{ .Values.watchNamespace | quote }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: {{ include "eidolon-operator-chart.fullname" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

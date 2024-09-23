@@ -2,7 +2,7 @@
 
 import {ListItem, ListItemText, Typography} from "@mui/material";
 import {useState} from "react";
-import {EidolonMarkdown} from "@eidolon/components/src/messages/eidolon-markdown";
+import {EidolonMarkdown} from "@eidolon-ai/components/client";
 
 interface ListItemWithCodeProps {
   title: string

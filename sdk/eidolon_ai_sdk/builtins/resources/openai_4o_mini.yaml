@@ -1,0 +1,28 @@
+---
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Reference
+metadata:
+  name: GPT4o-mini
+  annotations:
+    - title: "OpenAI GPT 4o mini"
+spec:
+    implementation: ConversationalAPU
+    audio_unit: OpenAiSpeech
+    image_unit: OpenAIImageUnit
+    llm_unit:
+      implementation: OpenAIGPT
+      model: "gpt-4o-mini"
+---
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Reference
+metadata:
+  name: "gpt-4o-mini"
+spec:
+  implementation: LLMModel
+  human_name: "GPT-4o-mini"
+  name: "gpt-4o-mini"
+  input_context_limit: 128000
+  output_context_limit: 4096
+  supports_tools: True
+  supports_image_input: True
+  supports_audio_input: False

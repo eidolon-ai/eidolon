@@ -1,0 +1,12 @@
+{
+  "title": "DocumentRetriever",
+  "description": "Overview of DocumentRetriever components",
+  "anyOf": [
+    {
+      "$ref": "file:./SimilarityMemoryRetriever.json"
+    }
+  ],
+  "reference_group": {
+    "type": "DocumentRetriever"
+  }
+}

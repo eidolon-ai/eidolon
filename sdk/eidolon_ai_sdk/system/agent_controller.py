@@ -7,6 +7,7 @@ import typing
 import uuid
 from collections.abc import AsyncIterator
 from inspect import Parameter
+from textwrap import dedent
 
 from bson import ObjectId
 from fastapi import FastAPI, Request, HTTPException
@@ -47,7 +48,6 @@ from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_event
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name
-from eidolon_ai_sdk.util.posthog import report_agent_action, report_new_process
 
 
 # todo, agent controller has become a mega impl, we should break up responsibilities
@@ -121,13 +121,14 @@ class AgentController:
         pass
 
     async def run_program(
-            self,
-            handler: FnHandler,
-            process_id: str,
-            **kwargs,
+        self,
+        handler: FnHandler,
+        process_id: str,
+        **kwargs,
     ):
         await self.security.check_permissions({"read", "update"}, self.name, process_id)
-        RequestContext.set("process_id", process_id)
+        RequestContext["agent_name"] = self.name
+        RequestContext["process_id"] = process_id
         request = typing.cast(Request, kwargs.pop("__request"))
         process = await self.get_latest_process_event(process_id)
         if not process:
@@ -164,6 +165,8 @@ class AgentController:
         parameters = inspect.signature(handler.fn).parameters
         if "process_id" in parameters:
             kwargs["process_id"] = process_id
+        if "agent_state" in parameters:
+            kwargs["agent_state"] = last_state
         if "request" in parameters and parameters["request"].annotation == Request:
             kwargs["request"] = request
 
@@ -195,11 +198,23 @@ class AgentController:
             )
         else:
             # run the program synchronously
-
             return await self.send_response(handler, process, last_state, **kwargs)
 
     async def _create_process(self, **kwargs):
-        process = await ProcessDoc.create(agent=self.name, **kwargs, _id=str(ObjectId()))
+        try:
+            process = await ProcessDoc.create(agent=self.name, **kwargs, _id=str(ObjectId()))
+        except Exception as e:
+            logger.error(
+                dedent(
+                    f"""
+            Unable to create process. This is likely due to a misconfigured or unreachable database.
+            If you are developing locally consider using LocalSymbolicMemory (-m local_dev)
+            {type(e).__name__}: {e}"""
+                ).strip()
+            )
+            raise HTTPException(
+                status_code=503, detail=f"{type(e).__name__} while creating process. See server logs for more details."
+            )
         if hasattr(self.agent, "create_process"):
             await self.agent.create_process(process.record_id)
         return process
@@ -207,13 +222,18 @@ class AgentController:
     async def send_response(self, handler: FnHandler, process: ProcessDoc, last_state: str, **kwargs) -> JSONResponse:
         state_change_event = None
         final_event = None
-        result_object = None
-        string_result = ""
+        results = []
+        last_result_type = None
         async for event in self.agent_event_stream(handler, process, last_state, **kwargs):
             if event.is_root_and_type(StringOutputEvent):
-                string_result += event.content
+                if last_result_type == StringOutputEvent:
+                    results[-1] += event.content
+                else:
+                    results.append(event.content)
+                last_result_type = StringOutputEvent
             elif event.is_root_and_type(ObjectOutputEvent):
-                result_object = event.content
+                results.append(event.content)
+                last_result_type = ObjectOutputEvent
             elif event.is_root_and_type(AgentStateEvent):
                 state_change_event = event
             elif event.is_root_and_type(EndStreamEvent):
@@ -231,7 +251,7 @@ class AgentController:
             data = final_event.reason
             status_code = final_event.details.get("status_code", 500)
         else:
-            data = result_object if result_object else string_result
+            data = None if not results else results[0] if len(results) == 1 else results
             status_code = 200
         return JSONResponse(
             SyncStateResponse(
@@ -250,55 +270,60 @@ class AgentController:
     async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
+
+        def get_start_event():
+            extra = {}
+            if "title" in handler.extra:
+                extra["title"] = handler.extra["title"]
+            if "sub_title" in handler.extra:
+                extra["sub_title"] = handler.extra["sub_title"]
+
+            return StartAgentCallEvent(
+                machine=AgentOS.current_machine_url(),
+                agent_name=self.name,
+                call_name=handler.name,
+                process_id=process.record_id,
+                **extra,
+            )
+
         events_to_store = []
         ended = False
         transitioned = False
         try:
             # allow the agent send a custom user input event or a custom start event
-            user_input_event_seen = False
-            start_event_seen = False
-            async for event in self.stream_agent_iterator(stream, process):
-                if event.is_root_and_type(UserInputEvent):
-                    user_input_event_seen = True
-                elif not user_input_event_seen:
-                    user_input_event_seen = True
-                    output_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))
-                    events_to_store.append(output_event)
-                    yield output_event
-                if event.is_root_and_type(StartAgentCallEvent):
-                    start_event_seen = True
-                elif not start_event_seen and not event.is_root_and_type(UserInputEvent):
-                    start_event_seen = True
-                    extra = {}
-                    if "title" in handler.extra:
-                        extra["title"] = handler.extra["title"]
-                    if "sub_title" in handler.extra:
-                        extra["sub_title"] = handler.extra["sub_title"]
+            seen_user_event = False
+            start_event = get_start_event()
+            if not handler.extra.get("custom_user_input_event", False):
+                seen_user_event = True
+                user_event = UserInputEvent(input=to_jsonable_python(kwargs, fallback=str))
+                events_to_store.extend([user_event, start_event])
+                yield user_event
+                yield start_event
 
-                    output_event = StartAgentCallEvent(
-                        machine=AgentOS.current_machine_url(),
-                        agent_name=self.name,
-                        call_name=handler.name,
-                        process_id=process.record_id,
-                        **extra,
-                    )
-                    events_to_store.append(output_event)
-                    yield output_event
-                if not ended:
+            async for event in self.stream_agent_iterator(stream, process):
+                if ended:
+                    logger.warning(f"Received event after end event ({event.event_type}), ignoring")
+                elif event.is_root_and_type(UserInputEvent):
+                    if seen_user_event:
+                        logger.warning("Duplicate user input event received from agent, ignoring")
+                    else:
+                        events_to_store.extend([event, start_event])
+                        yield event
+                        yield start_event
+                else:
                     ended = event.is_root_end_event()
                     transitioned = event.is_root_and_type(AgentStateEvent)
                     if (
-                            isinstance(event, StringOutputEvent)
-                            and events_to_store
-                            and isinstance(events_to_store[-1], StringOutputEvent)
-                            and event.stream_context == events_to_store[-1].stream_context
+                        isinstance(event, StringOutputEvent)
+                        and events_to_store
+                        and isinstance(events_to_store[-1], StringOutputEvent)
+                        and event.stream_context == events_to_store[-1].stream_context
                     ):
                         events_to_store[-1].content += event.content
                     else:
                         events_to_store.append(event)
                     yield event
-                else:
-                    logger.warning(f"Received event after end event ({event.event_type}), ignoring")
+
         except asyncio.CancelledError:
             logger.info(f"Process {process.record_id} was cancelled")
             if not ended:
@@ -317,7 +342,7 @@ class AgentController:
                 await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
-            self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
+        self, stream: AsyncIterator[StreamEvent], process: ProcessDoc
     ) -> AsyncIterator[StreamEvent]:
         state_change = None
         seen_end = False
@@ -384,6 +409,8 @@ class AgentController:
                 params["process_id"] = replace
         elif not isEndpointAProgram:
             params["process_id"] = Parameter("process_id", Parameter.KEYWORD_ONLY, annotation=str)
+        if "agent_state" in params:
+            del params["agent_state"]
 
         if "self" in params:
             del params["self"]
@@ -395,8 +422,7 @@ class AgentController:
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]
 
         async def _run_program(**_kwargs):
-            agent = type(self.agent).__name__
-            report_agent_action(agent)
+            RequestContext.set(key='agent_type', value=type(self.agent).__name__, propagate=False)
             return await self.run_program(handler, **_kwargs)
 
         _run_program.__signature__ = sig.replace(parameters=params_values, return_annotation=typing.Any)
@@ -439,7 +465,6 @@ class AgentController:
                 available_actions=[],
             )
             await history.upsert()
-        report_new_process()
         return JSONResponse(
             StateSummary(
                 agent=self.name,
@@ -488,21 +513,6 @@ class AgentController:
 
         await ProcessDoc.delete(_id=process_id)
         return num_deleted + 1
-
-    def doc_to_response(self, latest_record: ProcessDoc, data: typing.Any):
-        return JSONResponse(
-            SyncStateResponse(
-                process_id=latest_record.record_id,
-                state=latest_record.state,
-                data=data,
-                available_actions=self.get_available_actions(latest_record.state),
-                agent=self.name,
-                title=latest_record.title,
-                created=latest_record.created,
-                updated=latest_record.updated,
-            ).model_dump(),
-            200,
-        )
 
     def get_available_actions(self, state):
         return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]

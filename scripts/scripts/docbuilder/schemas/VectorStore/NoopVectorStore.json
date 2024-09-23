@@ -1,0 +1,10 @@
+{
+  "title": "NoopVectorStore",
+  "type": "object",
+  "properties": {
+    "implementation": {
+      "const": "NoopVectorStore",
+      "description": "NoopVectorStore"
+    }
+  }
+}

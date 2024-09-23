@@ -18,26 +18,21 @@
     },
     "loader": {
       "$ref": "file:../DocumentLoader/overview.json",
-      "default": "DocumentLoader"
-    },
-    "doc_processor": {
-      "additionalProperties": true,
-      "default": "DocumentProcessor",
-      "properties": {
-        "implementation": {
-          "default": null,
-          "title": "Implementation",
-          "type": "string"
-        }
-      },
-      "title": "DocumentProcessor Reference",
-      "type": "object"
+      "default": {
+        "implementation": "DocumentLoader"
+      }
     },
     "concurrency": {
       "default": 8,
       "description": "The number of concurrent tasks to run.",
       "title": "Concurrency",
       "type": "integer"
+    },
+    "doc_processor": {
+      "$ref": "file:../DocumentProcessor/overview.json",
+      "default": {
+        "implementation": "DocumentProcessor"
+      }
     }
   },
   "required": [
