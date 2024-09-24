@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import logging
+from functools import cache
 from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 
 from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
@@ -10,6 +11,8 @@ from pydantic.json_schema import JsonSchemaValue
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.util.class_utils import for_name, fqn
 from pydantic_core import core_schema as cs
+
+from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -117,27 +120,24 @@ class Reference(BaseModel):
                 else:
                     json_schema["anyOf"] = []
                     for r in AgentOSKernel.get_resources(ReferenceResource).values():
-                        # there is not a class for these psudo references, we can either make those classes dymaically, or create a custom ?generator? to handle them
+                        # there is not a class for these psudo references, we can either make those classes dynamically, or create a custom ?generator? to handle them
                         overrides = Reference[object, r.metadata.name]._transform(r.spec)
                         pointer = overrides.pop("implementation")
                         clz = for_name(pointer, object)
-
-                        model_clz = clz.specable_cls() if issubclass(clz, Specable) else clz
-
                         if issubclass(clz, cls._bound):
                             reference_details = dict(
-                                properies=dict(implementation=dict(const=r.metadata.name)),
-                                additionalProperties=False,
+                                overrides=overrides,
+                                clz=pointer,
+                                name=r.metadata.name
                             )
-                            if hasattr(model_clz, "__pydantic_core_schema__"):
-                                ref = handler(model_clz.__pydantic_core_schema__)
-                            else:
-                                # these are non-specable (ie, not configurable) instances, so we can largely ignore them
-                                ref = dict(
-                                    type="object",
-                                )
-                            ref['reference_details'] = reference_details
-                            json_schema["anyOf"].append(ref)
+                            ref = handler(_pseudo_pointer(r.metadata.name).__pydantic_core_schema__)
+                            ref_schema = handler.resolve_ref_schema(ref)
+                            if not 'reference_details' not in ref_schema:
+                                ref_schema['reference_details'] = reference_details
+                                # getschema of this, todo landing
+                                model_clz = clz.specable_cls() if issubclass(clz, Specable) else clz
+
+                        json_schema["anyOf"].append(ref)
 
                 return json_schema
 
@@ -263,3 +263,8 @@ class AnnotatedReference(Reference):
 class _ReferenceGetter(object):
     def __call__(self, p1, p2, dump):
         return Reference[(p1, p2)].model_validate(dump)
+
+
+@cache
+def _pseudo_pointer(name) -> Type[BaseModel]:
+    return schema_to_model(dict(type="object", properties={}), name)
