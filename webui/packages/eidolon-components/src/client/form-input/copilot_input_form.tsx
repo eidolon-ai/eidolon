@@ -104,8 +104,9 @@ export function CopilotInputForm({
               <RecorderElement
                 speechOptions={speechOptions}
                 setText={(text: string) => {
-                  setInput(text);
-                  handleAction()
+                  if (text.trim().length > 0) {
+                    doAction(text.trim(), uploadedFiles, selectedLLM).then()
+                  }
                 }}
               />
             )}

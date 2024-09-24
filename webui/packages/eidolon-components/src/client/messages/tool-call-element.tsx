@@ -1,3 +1,5 @@
+'use client'
+
 import React, {useState} from 'react';
 import {Crosshair, LoaderCircle, Minus, Plus} from 'lucide-react';
 import {DisplayElement, ToolCallElement} from "../lib/display-elements.js";
@@ -20,7 +22,7 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
   };
 
   const handleTargetClick = (element: DisplayElement) => {
-    console.log(element);
+    // router.push((element as ToolCallElement).process_id);
   };
 
   const getBgColor = (depth: number) => {
@@ -53,7 +55,7 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
               </div>
             )}
             <div
-              className={`w-5 h-5 rounded-full bg-amber-300 flex items-center justify-center mr-1 opacity-65 ${element.is_agent ? 'hidden' : 'hidden'}`}
+              className={`w-5 h-5 rounded-full bg-amber-300 flex items-center justify-center mr-1 opacity-65 ${element.is_agent ? '' : 'hidden'}`}
               onClick={() => handleTargetClick(element)}
             >
               <Crosshair className="w-4 h-4 text-black text-center"/>

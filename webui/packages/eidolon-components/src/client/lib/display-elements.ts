@@ -48,6 +48,7 @@ export interface ToolCallElement extends DisplayElement {
   sub_title: string,
   is_active: boolean,
   is_agent: boolean,
+  process_id: string,
   contextId: string,
   children: DisplayElement[]
   arguments: Record<string, unknown>
@@ -118,6 +119,7 @@ export const makeElement = (event: ChatEvent) => {
         sub_title: event.is_agent_call ? "" : (event.sub_title || ""),
         is_active: true,
         is_agent: event.is_agent_call || false,
+        process_id: event.process_id,
         contextId: event.context_id,
         arguments: event.tool_call.arguments,
         children: []
@@ -130,6 +132,7 @@ export const makeElement = (event: ChatEvent) => {
         is_active: true,
         is_agent: event.is_agent_call || false,
         contextId: event.context_id,
+        process_id: event.process_id,
         children: [],
         arguments: {}
       } as ToolCallElement

@@ -14,7 +14,7 @@ import {useHeader} from "./HeaderContext.tsx";
 export const Header: FunctionComponent<PropsWithChildren> = () => {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const isAuthenticated = useIsAuthenticated()
-  const { headerCenter } = useHeader()
+  const {headerCenter} = useHeader()
 
   const toggleMenu = () => setIsHelpOpen(!isHelpOpen);
 
@@ -29,8 +29,9 @@ export const Header: FunctionComponent<PropsWithChildren> = () => {
   }, []);
 
   const menuItems = [
-    {label: "Docs", href: "/docs"},
-    {label: "API", href: "/api"},
+    {label: "Documentation", href: "http://www.eidolonai.com/docs/quickstart"},
+    {label: "Blog", href: "http://www.eidolonai.com/blog"},
+    {label: "FAQs", href: "http://www.eidolonai.com/docs/faq"},
   ]
 
   const githubIcon = `<svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" 
@@ -45,7 +46,7 @@ fill="currentColor"/></svg>`
         <h1 className="text-xl ml-1 font-bold hidden md:block">Eidolon</h1>
       </a>
       <div>{headerCenter}</div>
-      <div className={"flex flex-col justify-end items-end w-full overflow-hidden"}>
+      <div className={"flex flex-col justify-end items-end w-full"}>
         <div className={"flex flex-row justify-end items-center gap-2"}>
           <div className="relative">
             <button
@@ -60,12 +61,13 @@ fill="currentColor"/></svg>`
             {isHelpOpen && (
               <nav
                 id="menu-items"
-                className="absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                className="absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
               >
                 <ul className="py-1">
                   {menuItems.map((item, index) => (
                     <li key={index}>
                       <a
+                        target="eidolon_docs"
                         href={item.href}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={toggleMenu}
