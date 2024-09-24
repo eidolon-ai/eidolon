@@ -114,7 +114,6 @@ export function EidolonChatPanel({operation, options, clearOptions}: EidolonChat
   }
 
   const goToProcess = (processId: string) => {
-    console.log("goToProcess", processId)
     router.push(`/eidolon-apps/${app.path}/${processId}`);
   }
 

@@ -54,7 +54,6 @@ export function CopilotInputPanel({
     }
 
     if (supportedLLMs && supportedLLMs?.length > 0) {
-      console.log("+++++here", selectedLLM)
       payload['execute_on_apu'] = selectedLLM
     }
 
