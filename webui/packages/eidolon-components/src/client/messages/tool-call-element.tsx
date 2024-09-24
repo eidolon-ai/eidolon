@@ -2,18 +2,18 @@
 
 import React, {useState} from 'react';
 import {Crosshair, LoaderCircle, Minus, Plus} from 'lucide-react';
-import {DisplayElement, ToolCallElement} from "../lib/display-elements.js";
+import {AgentStartElement, ToolCallElement} from "../lib/display-elements.js";
 import {ChatDisplayElement} from "./chat-display-element.js";
 import {EidolonMarkdown} from "./eidolon-markdown.js";
 
 export interface ToolCallElementProps {
-  machineUrl: string;
   element: ToolCallElement;
   agentName: string;
   depth: number;
+  goToProcess: (processId: string) => void;
 }
 
-export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, agentName, depth}) => {
+export const ToolCall: React.FC<ToolCallElementProps> = ({element, agentName, depth, goToProcess}) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = (e: React.MouseEvent) => {
@@ -21,9 +21,12 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
     setExpanded(!expanded);
   };
 
-  const handleTargetClick = (element: DisplayElement) => {
-    // router.push((element as ToolCallElement).process_id);
-  };
+  const handleTargetClick = (element: ToolCallElement) => {
+    const agentChild = element.children.find((child) => child.type === "agent-start") as AgentStartElement
+    if (agentChild) {
+      goToProcess(agentChild.process_id);
+    }
+  }
 
   const getBgColor = (depth: number) => {
     const colors = ['bg-gray-50', 'bg-gray-100', 'bg-gray-200', 'bg-gray-300',
@@ -46,7 +49,7 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
                onClick={handleExpandClick}
           >
             {element.is_agent && <span>{element.title}</span>}
-            {!element.is_agent && <div><span>{element.sub_title}</span></div>}
+            {!element.is_agent && <div><span>{element.sub_title || element.title}</span></div>}
           </div>
           <div className="flex items-center ml-2">
             {(element.is_active) && (
@@ -82,7 +85,7 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
               <div>
                 <h6 className="text-sm font-semibold mb-2">Input:</h6>
                 <div className="pl-4 border-l-2 border-gray-300">
-                  <EidolonMarkdown machineUrl={machineUrl}>
+                  <EidolonMarkdown>
                     {'```json\n' + JSON.stringify(element.arguments, null, 2) + "\n```"}
                   </EidolonMarkdown>
                 </div>
@@ -98,11 +101,11 @@ export const ToolCall: React.FC<ToolCallElementProps> = ({machineUrl, element, a
                       key={index}
                       userImage={undefined}
                       userName={undefined}
-                      machineUrl={machineUrl}
                       rawElement={child}
                       topLevel={false}
                       agentName={agentName}
                       depth={depth + 1}
+                      goToProcess={goToProcess}
                     />
                   );
                 }

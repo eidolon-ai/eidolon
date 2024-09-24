@@ -168,7 +168,6 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent + process_id + action
 
-    # todo, this needs to create history record before iterating
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext, type_: type):
         async def fn(_self, **kwargs):
             process = await agent.create_process()

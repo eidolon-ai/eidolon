@@ -2,14 +2,13 @@ import {EidolonMarkdown} from "./eidolon-markdown.js";
 import {UserRequestElement} from "../lib/display-elements.ts";
 
 export interface UserRequestElementProps {
-  machineUrl: string
   element: UserRequestElement
   topLevel: boolean
   userImage: string | null | undefined
   userName: string | null | undefined
 }
 
-export const UserRequestUIElement = ({element, topLevel, userName, userImage, machineUrl}: UserRequestElementProps) => {
+export const UserRequestUIElement = ({element, topLevel, userName, userImage}: UserRequestElementProps) => {
   const getUserInput = (element: UserRequestElement) => {
     let content: Record<string, unknown> = typeof element.content === "string" ? {body: element.content} : {...element.content as object}
     delete content["process_id"]
@@ -50,7 +49,7 @@ export const UserRequestUIElement = ({element, topLevel, userName, userImage, ma
     >
       {userAvatar}
       <div className={"mx-2"}>
-        <EidolonMarkdown machineUrl={machineUrl}>{getUserInput(element)}</EidolonMarkdown>
+        <EidolonMarkdown>{getUserInput(element)}</EidolonMarkdown>
       </div>
     </div>
   )

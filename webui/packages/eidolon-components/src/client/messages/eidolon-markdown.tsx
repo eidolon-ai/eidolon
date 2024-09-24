@@ -9,23 +9,25 @@ import rehypeWrap from "rehype-wrap-all";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import styles from "./eidolon-markdown.module.css";
 import "../eidolon.css"
-import { Copy } from 'lucide-react';
+import {Copy} from 'lucide-react';
 import {materialDark} from "react-syntax-highlighter/dist/cjs/styles/prism";
+import {useApp} from "../hooks/app-context.js";
 
 interface EidolonMarkdownProps {
-  machineUrl: string
   children: any
   showLineNumbers?: boolean
 }
 
-export const EidolonMarkdown = ({machineUrl, children, showLineNumbers}: EidolonMarkdownProps) => {
+export const EidolonMarkdown = ({children, showLineNumbers}: EidolonMarkdownProps) => {
   const pattern = /(https?:\/\/[^/]+)\/processes\/([^/]+)\/files\/([^/\s]+)/;
+  const {app} = useApp()
+
   const transformURL = (url: string) => {
     const match = url.match(pattern)
     if (match) {
       const processId = match[2]!
       const fileId = match[3]!
-      return `/api/eidolon/process/${processId}/files/${fileId}?machineURL=${machineUrl}`
+      return `/api/eidolon/process/${processId}/files/${fileId}?machineURL=${app!.location}`
     }
     return uriTransformer(url)
   }

@@ -155,7 +155,7 @@ export function CopilotInputForm({
               options={supportedLLMs}
               value={selectedLLM || supportedLLMs[0] || ''}
               onChange={setSelectedLLM}
-              className="max-w-xs" // Add any additional classes here
+              size="sm"
             />
           )}
           <p className={`text-xs self-end mb-1.5 text-gray-400 ${input && input.length ? 'opacity-100' : 'opacity-0'}`}>
@@ -165,5 +165,4 @@ export function CopilotInputForm({
       </div>
     </div>
   )
-    ;
 }

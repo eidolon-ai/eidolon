@@ -3,12 +3,11 @@ export { type ProcessStatusWithChildren, getProcessStatus, createProcess, delete
 export { EidolonEvents, type EidolonEventProps } from 'src/client/messages/eidolon-events.js';
 export { AgentProcess } from 'src/client/form-input/agent-process.js';
 export { EidolonMarkdown } from 'src/client/messages/eidolon-markdown.js';
-export { ChooseAgentForm } from "src/client/form-input/choose-agent-form.js";
 export { executeServerOperation, getChatEventInUI, streamOperation, executeOperation } from "src/client/client-api-helpers/process-event-helper.js";
 export { getOperations, getAgents, getApps, getApp } from "src/client/client-api-helpers/machine-helper.js";
 export { type ElementsAndLookup } from "src/client/lib/display-elements.js";
 export * from 'src/client/hooks/useProcessEvents.js';
-export { CopilotPanel } from 'src/client/form-input/conversation_panel.js';
+export { ConversationPanel } from 'src/client/form-input/conversation-panel.js';
 export {CopilotInputForm} from 'src/client/form-input/copilot_input_form.tsx'
 export {CopilotInputPanel} from 'src/client/form-input/copilot_input_panel.js'
 export { useProcessEvents } from 'src/client/hooks/useProcessEvents.js';

@@ -11,6 +11,7 @@ export interface AgentStartElement extends DisplayElement {
   callName: string
   title: string
   sub_title: string
+  process_id: string
   children: DisplayElement[]
 }
 
@@ -79,6 +80,7 @@ export const makeElement = (event: ChatEvent) => {
         agentName: event.agent_name,
         callName: event.call_name,
         title: event.title,
+        process_id: event.process_id,
         sub_title: event.sub_title,
         children: []
       } as AgentStartElement

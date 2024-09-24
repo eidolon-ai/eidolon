@@ -25,6 +25,6 @@ export function ButtonScrollToBottom() {
       </button>
     );
   } else {
-    return <div className="h-8" />;
+    // return <div className="h-8" />;
   }
 }

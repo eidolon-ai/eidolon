@@ -7,35 +7,36 @@ import {AgentCall} from "./agent-element.js";
 import {UserRequestUIElement} from "./user-request.js";
 
 export interface ChatDisplayElementProps {
-  machineUrl: string
   rawElement: DisplayElement
   agentName: string
   topLevel: boolean
   userImage: string | null | undefined
   userName: string | null | undefined
   depth: number
+  goToProcess: (processId: string) => void;
 }
 
-export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel, userImage, userName, depth}: ChatDisplayElementProps) => {
+export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage, userName, depth, goToProcess}: ChatDisplayElementProps) => {
   if (rawElement.hidden) {
     return null
   }
+
   switch (rawElement.type) {
     case "agent-start": {
       const agentStart = rawElement as AgentStartElement;
       if (agentStart.children.length === 0) {
         return null
       }
-      return <AgentCall machineUrl={machineUrl} element={agentStart} agentName={agentName}/>
+      return <AgentCall element={agentStart} agentName={agentName} goToProcess={goToProcess}/>
     }
     case "user-request": {
-      return <UserRequestUIElement element={rawElement as UserRequestElement} topLevel={topLevel} userName={userName} userImage={userImage} machineUrl={machineUrl}/>
+      return <UserRequestUIElement element={rawElement as UserRequestElement} topLevel={topLevel} userName={userName} userImage={userImage}/>
     }
     case "markdown": {
       const element = rawElement as MarkdownElement
       return (
         <div className={styles[`chat-indent`]}>
-          <EidolonMarkdown machineUrl={machineUrl}>{element.content}</EidolonMarkdown>
+          <EidolonMarkdown>{element.content}</EidolonMarkdown>
         </div>
       )
     }
@@ -43,7 +44,7 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
       const element = rawElement as JsonElement
       return (
         <div className={styles[`chat-indent`]}>
-          <EidolonMarkdown machineUrl={machineUrl}>{'```json\n' + JSON.stringify(element.content, undefined,
+          <EidolonMarkdown>{'```json\n' + JSON.stringify(element.content, undefined,
             "  ") + "\n```"}</EidolonMarkdown>
         </div>
       )
@@ -52,7 +53,7 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
       const element = rawElement as ToolCallElement
       return (
         <div className={styles[`chat-indent`]}>
-          <ToolCall machineUrl={machineUrl} element={element} agentName={agentName} depth={depth}/>
+          <ToolCall element={element} agentName={agentName} depth={depth} goToProcess={goToProcess}/>
         </div>
       )
     }
@@ -62,7 +63,7 @@ export const ChatDisplayElement = ({machineUrl, rawElement, agentName, topLevel,
         <div>
           <span className={styles[`chat-title`]}>Error</span>
           <div className={styles[`chat-indent`]}>
-            <EidolonMarkdown machineUrl={machineUrl}>{element.reason}</EidolonMarkdown>
+            <EidolonMarkdown>{element.reason}</EidolonMarkdown>
           </div>
         </div>
       )
