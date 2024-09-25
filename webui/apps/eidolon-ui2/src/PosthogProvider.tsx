@@ -13,7 +13,7 @@ if (typeof window !== 'undefined' && POSTHOG_KEY) {
 
   const realFetch = globalThis.fetch;
 
-  globalThis.fetch = function patchedFetch(uri, options) {
+  globalThis.fetch = async function patchedFetch(uri, options) {
     if (!options) {
       options = {};
     }

@@ -151,7 +151,6 @@ export class ProcessHandler {
   async GET(req: Request, {params}: { params: { processid: string } }): Promise<Response> {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      console.error('machineUrl is required')
       return new Response('machineUrl is required', {status: 422})
     }
     const processId = params.processid;

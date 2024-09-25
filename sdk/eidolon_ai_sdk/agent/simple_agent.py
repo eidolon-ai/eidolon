@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime
 from typing import List, Literal, Optional, Union, Dict, Any, AsyncIterable
 
@@ -271,14 +272,18 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         else:
             apu = self.apu
 
+        yield UserInputEvent(input=request_body, files=attached_files)
+
         # generate the tile if it is not generated
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         if self.spec.title_generation_mode == "auto" and not process_obj.title:
-            title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
-            response = await (await apu.new_thread(process_id)).run_request(prompts=[title_message])
-            await process_obj.update(title=response)
+            async def genTitle():
+                title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
+                response = await (await apu.new_thread(process_id)).run_request(prompts=[title_message])
+                await process_obj.update(title=response)
 
-        yield UserInputEvent(input=request_body, files=attached_files)
+            # noinspection PyAsyncCall
+            asyncio.create_task(genTitle())
 
         thread = await apu.main_thread(process_id)
         response = thread.stream_request(
