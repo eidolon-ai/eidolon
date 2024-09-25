@@ -25,7 +25,7 @@ const DevTools: React.FC = () => {
 
       app.agents = agents;
       setApp(app);
-      setExpandedAgents(Object.fromEntries(agentNames.map(agent => [agent, false])));
+      setExpandedAgents(Object.fromEntries(agentNames.map((agent, i) => [agent, i == 0])));
     });
   }, []);
 
@@ -66,7 +66,7 @@ const DevTools: React.FC = () => {
                             <div className={"flex justify-between items-center"}>
                               <div className="flex items-center space-x-2 mb-1">
                                 <Code size={16} className="text-blue-500"/>
-                                <span className="font-medium">{operation.summary} ({operation.name})</span>
+                                <span className="font-medium">{operation.summary + (operation.summary === operation.name ? '' : ` (${operation.name})`)}</span>
                               </div>
                               <button className="text-blue-400 underline opacity-0 group-hover:opacity-100 transition-opacity duration-200" onClick={() => executeOperation(agent, operation.name)}>Execute</button>
                             </div>

@@ -56,13 +56,15 @@ export function AgentInputForm({formData, setFormData, operations, agentOperatio
         <StyledSelect options={usableOperations.map(op => op.name)} value={agentOperation!} onChange={setAgentOperation}/>
       </div>
       <div className="flex-grow overflow-y-auto min-h-0">
-        <TailwindRJSFTheme
-          schema={schema}
-          uiSchema={uiSchema}
-          formData={formData}
-          onSubmit={onSubmit}
-          onChange={(e) => setFormData(e.formData)}
-        />
+        {schema && schema.type && (
+          <TailwindRJSFTheme
+            schema={schema}
+            uiSchema={uiSchema}
+            formData={formData}
+            onSubmit={onSubmit}
+            onChange={(e) => setFormData(e.formData)}
+          />
+        )}
       </div>
     </div>
   );

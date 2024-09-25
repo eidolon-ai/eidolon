@@ -6,7 +6,7 @@ import {
   DescriptionFieldProps,
   ErrorListProps,
   FieldTemplateProps,
-  IconButtonProps,
+  IconButtonProps, isObject,
   ObjectFieldTemplateProps,
   RJSFSchema,
   SubmitButtonProps,
@@ -239,6 +239,10 @@ const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = (props) => {
 // Updated widgets with consistent styling
 const TextWidget: React.FC<WidgetProps> = (props) => {
   const {id, required, readonly, disabled, value, onChange, onBlur, options} = props;
+  let displayValue = value
+  if (isObject(value)) {
+    displayValue = ''
+  }
   return (
     <input
       id={id}
@@ -248,7 +252,7 @@ const TextWidget: React.FC<WidgetProps> = (props) => {
       type={options.inputType || 'text'}
       required={required}
       disabled={disabled || readonly}
-      value={value || ''}
+      value={displayValue || ''}
       onChange={(event) => onChange(event.target.value)}
       onBlur={(event) => {
         if (onBlur) {
@@ -313,7 +317,6 @@ interface TailwindRJSFThemeProps {
 }
 
 const TailwindRJSFTheme: React.FC<TailwindRJSFThemeProps> = ({schema, uiSchema, formData, onSubmit, onChange}) => {
-
   const handleBlur = (id: string, value: any) => {
     const fieldSchema = schema.properties?.[id];
     if (fieldSchema) {
