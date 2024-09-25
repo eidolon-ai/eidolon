@@ -34,18 +34,21 @@ export function EidolonChatPanel({operation, options, clearOptions}: EidolonChat
 
   useEffect(() => {
     setHeaderCenter((
-      <div className={"mx-4 eidolon-handle-mouse-event flex flex-row justify-center items-center w-full flex-nowrap overflow-hidden"}>
-        <span className={"flex flex-row text-center"}><MessageSquare/></span>
-        <div className={"flex flex-row text-center m-2 text-gray-500 text-nowrap"}>
+      <div className="mx-4 eidolon-handle-mouse-event flex flex-row justify-center items-center w-full">
+        <span className="flex-shrink-0 flex items-center">
+          <MessageSquare/>
+        </span>
+        <div className="flex flex-row items-center m-2 text-gray-500 overflow-hidden">
           {breadcrumbs.map((b, i) => (
-            <div key={i} className={"flex flex-row overflow-ellipsis text-ellipsis"}>
-              {i > 0 && <span className={"mx-2"}>/</span>}
-              <a href={b.processId}>{b.title}</a>
+            <div key={i} className="flex items-center min-w-0">
+              {i > 0 && <span className="mx-2 flex-shrink-0">/</span>}
+              <a href={b.processId} className="truncate">
+                {b.title}
+              </a>
             </div>
           ))}
         </div>
-      </div>
-    ))
+      </div>))
     return () => setHeaderCenter(null) // Cleanup
   }, [setHeaderCenter, breadcrumbs, processStatus?.title])
 
@@ -93,6 +96,7 @@ export function EidolonChatPanel({operation, options, clearOptions}: EidolonChat
         return []
       }
     }
+
     loadBreadcrumb().then(bc => setBreadcrumbs(bc))
   }, [processStatus?.parent_process_id, processStatus?.title]);
 
