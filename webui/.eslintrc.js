@@ -9,7 +9,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["tailwind.config.js"],
+      files: ["tailwind.config.js", "jest.config.ts"],
       parserOptions: {
         project: null,
       },
