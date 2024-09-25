@@ -218,11 +218,11 @@ class TestSimpleTests:
     async def test_with_replay_points(self, file_memory_loc, record, llm_name):
         process = await Agent.get("with_tools").create_process()
         await process.action("converse", body="What is the meaning of life?")
-        stream = replay(file_memory_loc / record / f"001_{llm_name}")
+        stream = replay(file_memory_loc / record / f"002_{llm_name}")
         response = "".join([s async for s in stream])
         assert "42" in response
 
-        with open(file_memory_loc / record / f"001_{llm_name}" / "data.yaml", "r") as f:
+        with open(file_memory_loc / record / f"002_{llm_name}" / "data.yaml", "r") as f:
             assert "You are a helpful assistant" in f.read()
 
     async def test_agent_with_complex_refs(self):
