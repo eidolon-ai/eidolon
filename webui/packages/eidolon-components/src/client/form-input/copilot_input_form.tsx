@@ -110,7 +110,9 @@ export function CopilotInputForm({
                 }}
               />
             )}
-            <div className="flex flex-row w-full">
+            <div
+              id={"chat-input"}
+              className="flex flex-row w-full">
               <div className="flex-grow mr-2">
                 <CustomTextarea
                   placeholder={inputLabel}
@@ -137,6 +139,7 @@ export function CopilotInputForm({
                 </div>
               ) : (
                 <button
+                  id={'submit-chat'}
                   onClick={handleAction}
                   className={`p-1 text-white bg-[#FF6341bb] hover:bg-[#FF6341ff] focus:outline-none justify-center items-center rounded-md flex ${input && input.length > 0 ? "visible" : "invisible"}`}
                 >
