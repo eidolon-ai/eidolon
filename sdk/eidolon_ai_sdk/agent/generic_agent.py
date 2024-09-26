@@ -73,7 +73,7 @@ def make_input_schema(agent: object, handler: FnHandler) -> Type[BaseModel]:
         )
     required = ["body"]
     schema = {"type": "object", "properties": properties, "required": required}
-    return schema_to_model(schema, f"{handler.name.capitalize()}InputModel")
+    return schema_to_model(schema, f"{handler.name.capitalize()}InputModel", {})
 
 
 def make_output_schema(agent: object, handler: FnHandler) -> Type[Any]:
@@ -82,7 +82,7 @@ def make_output_schema(agent: object, handler: FnHandler) -> Type[Any]:
     if spec.output_schema == "str":
         return str
     elif spec.output_schema:
-        return schema_to_model(spec.output_schema, f"{handler.name.capitalize()}OutputModel")
+        return schema_to_model(spec.output_schema, f"{handler.name.capitalize()}OutputModel", {})
     else:
         raise ValueError("output_schema must be specified")
 

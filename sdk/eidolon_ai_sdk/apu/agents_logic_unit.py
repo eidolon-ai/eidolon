@@ -121,7 +121,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         return tools
 
     def _build_tool_def(self, agent, operation, name, schema, description, tool_call):
-        model = schema_to_model(schema, "InputModel")
+        model = schema_to_model(schema, "InputModel", {})
         return FnHandler(
             name=name,
             description=lambda a, b: description,
