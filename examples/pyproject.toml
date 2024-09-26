@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon_examples"
-version = "0.1.109"
+version = "0.1.111"
 description = ""
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -14,13 +14,13 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "examples"
-last-update-hash = "c3f05aaae2c9d18013932b2f54f1d19545b3d2f8"
+last-update-hash = "cfb7427eb43c9cf03b1e8222135eb5838f990d20"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
 setuptools = ">=69.0.2"
 transformers = "^4.35.2"
-eidolon-ai-sdk = "^0.1.132"
+eidolon-ai-sdk = "^0.1.134"
 eidolon-ai-client = "^0.1.35"
 pydub = "^0.25.1"
 ruamel-yaml = "^0.18.6"
