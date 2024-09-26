@@ -146,10 +146,11 @@ class PostHogMiddleware(BaseHTTPMiddleware):
         props = properties()
         props['response_type'] = request.headers.get("accept", "unknown")
         pre_sub = get_route_name(request)
-        post_sub = AGENT_PATTERN.sub(r"\1{agent_name}", pre_sub)  # replaces
-        post_sub = ACTIONS_PATTERN.sub(r"\1{action_name}", post_sub)
-        props['route'] = post_sub
-        props['method'] = request.method
+        if pre_sub:
+            post_sub = AGENT_PATTERN.sub(r"\1{agent_name}", pre_sub)  # replaces
+            post_sub = ACTIONS_PATTERN.sub(r"\1{action_name}", post_sub)
+            props['route'] = post_sub
+            props['method'] = request.method
         try:
             response = await call_next(request)
             props['response_code'] = response.status_code
