@@ -31,21 +31,5 @@
     "location": "http://localhost:8080",
     "type": "dev",
     "params": {}
-  },
-  "git-assistant": {
-    "name": "Git Assistant",
-    "description": "A basic chatbot using GPT-4-latest with conversational memory and no tools.",
-    "version": "0.1.0",
-    "image": "image.webp",
-    "type": "copilot",
-    "params": {
-      "agent": "chatbot",
-      "operation": "converse",
-      "inputLabel": "How can I help you?",
-      "titleOperationName": "generate_title",
-      "allowSpeech": true,
-      "speechAgent": "speech_agent",
-      "speechOperation": "speech_to_text"
-    }
   }
 }
