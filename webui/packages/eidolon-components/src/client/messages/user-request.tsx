@@ -45,10 +45,10 @@ export const UserRequestUIElement = ({element, topLevel, userName, userImage}: U
     )
   }
   return (
-    <div className={"flex flex-row border-r-4 rounded-xl py-3 px-2 w-fit user-element"}
+    <div className={`flex flex-row border-r-4 rounded-xl py-3 px-2 ${topLevel ? 'w-fit' : 'w-full'} user-element`}
     >
       {userAvatar}
-      <div className={"mx-2"}>
+      <div className={"mx-2 w-full"}>
         <EidolonMarkdown>{getUserInput(element)}</EidolonMarkdown>
       </div>
     </div>

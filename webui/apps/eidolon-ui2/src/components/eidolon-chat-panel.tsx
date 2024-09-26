@@ -126,7 +126,7 @@ export function EidolonChatPanel({operation, options, clearOptions}: EidolonChat
       ref={outerContainerRef}
       className={"flex flex-col items-center w-full h-full font-serif"}
     >
-      <div className={"w-[65vw] overflow-hidden h-full"}>
+      <div className={"w-[65%] max-w-[65%] overflow-hidden h-full"}>
         {!fetchError && !app && (<div>Loading...</div>)}
         {fetchError && (<div>{fetchError.message}</div>)}
         {app && !fetchError && (

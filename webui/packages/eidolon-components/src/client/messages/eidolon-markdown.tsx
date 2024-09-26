@@ -45,7 +45,7 @@ export const EidolonMarkdown = ({children, showLineNumbers}: EidolonMarkdownProp
         const {children, className, ...rest} = props
         const match = /language-(\w+)/.exec(className || '')
         return match ? (
-          <div className={"eidolon_md-code-block rounded-lg bg-gray-100 my-4"}>
+          <div className={"eidolon_md-code-block rounded-lg bg-gray-100 my-4 w-full"}>
             <div className={"eidolon_md-code-block-header flex flex-row justify-between items-center pt-[0.5em] px-4"}>
               <div className={"text-text-300 text-xs"}>{match[1]}</div>
               <button type="button"

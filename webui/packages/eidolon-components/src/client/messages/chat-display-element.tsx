@@ -17,7 +17,7 @@ export interface ChatDisplayElementProps {
 }
 
 export const ChatDisplayElement = ({rawElement, agentName, topLevel, userImage, userName, depth, goToProcess}: ChatDisplayElementProps) => {
-  if (rawElement.hidden) {
+  if (rawElement.metadata?.eidolon?.internal) {
     return null
   }
 

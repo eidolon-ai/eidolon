@@ -1,8 +1,13 @@
 import {ChatEvent} from "@eidolon-ai/client";
 
+interface MetadataObject {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export interface DisplayElement {
-  type: string
-  hidden?: boolean
+  type: string;
+  metadata?: MetadataObject;
 }
 
 export interface AgentStartElement extends DisplayElement {
@@ -82,37 +87,42 @@ export const makeElement = (event: ChatEvent) => {
         title: event.title,
         process_id: event.process_id,
         sub_title: event.sub_title,
-        children: []
+        children: [],
+        metadata: event.metadata
       } as AgentStartElement
     case "success":
       return {
-        type: "success"
+        type: "success",
+        metadata: event.metadata
       } as SuccessElement
     case "error":
       return {
         type: "error",
-        reason: event.reason
+        reason: event.reason,
+        metadata: event.metadata
       } as ErrorElement
     case "canceled":
       return {
-        type: "canceled"
+        type: "canceled",
+        metadata: event.metadata
       } as CanceledElement
     case "user_input":
       return {
         type: "user-request",
-        content: event.input
+        content: event.input,
+        metadata: event.metadata
       } as UserRequestElement
     case "string":
       return {
         type: "markdown",
         content: event.content,
-        hidden: event.hidden
+        metadata: event.metadata
       } as MarkdownElement
     case "object":
       return {
         type: "json",
         content: event.content,
-        hidden: event.hidden
+        metadata: event.metadata
       } as JsonElement
     case "tool_call_start":
       return {
@@ -124,7 +134,8 @@ export const makeElement = (event: ChatEvent) => {
         process_id: event.process_id,
         contextId: event.context_id,
         arguments: event.tool_call.arguments,
-        children: []
+        children: [],
+        metadata: event.metadata
       } as ToolCallElement
     case "context_start":
       return {
@@ -136,18 +147,21 @@ export const makeElement = (event: ChatEvent) => {
         contextId: event.context_id,
         process_id: event.process_id,
         children: [],
-        arguments: {}
+        arguments: {},
+        metadata: event.metadata
       } as ToolCallElement
     case "context_end":
       return {
         type: "tool-call-end",
-        contextId: event.context_id
+        contextId: event.context_id,
+        metadata: event.metadata
       } as ToolCallEndElement
     case "agent_state": {
       return {
         type: "agent-state",
         state: event.state,
-        availableActions: event.available_actions
+        availableActions: event.available_actions,
+        metadata: event.metadata
       } as AgentStateElement
     }
   }
