@@ -62,6 +62,7 @@ export const EidolonMarkdown = ({children, showLineNumbers}: EidolonMarkdownProp
               PreTag="div"
               language={match[1]}
               showLineNumbers={showLineNumbers}
+              wrapLongLines={true}
               style={{
                 ...materialDark,
                 "pre[class*=\"language-\"]": {...materialDark["pre[class*=\"language-\"]"]},

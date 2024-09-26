@@ -62,7 +62,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         onInput={handleInput}
         onPaste={handlePaste}
         translate="no"
-        className="break-words max-w-[60ch] p-2 outline-none focus:outline-none"
+        className="break-words outline-none focus:outline-none"
         data-placeholder={placeholder}
       />
     </div>
