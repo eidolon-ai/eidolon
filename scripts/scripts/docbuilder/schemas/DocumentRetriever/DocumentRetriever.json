@@ -1,0 +1,14 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "DocumentRetriever"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.document_retriever.SimilarityMemoryRetriever",
+    "group": "DocumentRetriever",
+    "name": "DocumentRetriever",
+    "overrides": {}
+  },
+  "type": "object"
+}

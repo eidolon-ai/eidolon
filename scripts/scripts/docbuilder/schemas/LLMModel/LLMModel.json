@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "LLMModel",
-      "description": "LLMModel"
-    },
     "human_name": {
       "title": "Human Name",
       "type": "string"
@@ -31,7 +27,16 @@
     "supports_audio_input": {
       "title": "Supports Audio Input",
       "type": "boolean"
+    },
+    "implementation": {
+      "const": "LLMModel"
     }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
+    "group": "LLMModel",
+    "name": "LLMModel",
+    "overrides": {}
   },
   "required": [
     "human_name",
@@ -40,9 +45,7 @@
     "output_context_limit",
     "supports_tools",
     "supports_image_input",
-    "supports_audio_input",
-    "implementation"
+    "supports_audio_input"
   ],
-  "title": "LLMModel",
   "type": "object"
 }

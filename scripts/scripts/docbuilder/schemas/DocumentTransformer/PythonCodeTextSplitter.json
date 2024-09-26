@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "PythonCodeTextSplitter",
-      "description": "PythonCodeTextSplitter"
-    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -49,11 +45,16 @@
       "description": "Whether the separator is a regex",
       "title": "Is Separator Regex",
       "type": "boolean"
+    },
+    "implementation": {
+      "const": "PythonCodeTextSplitter"
     }
   },
-  "title": "PythonCodeTextSplitter",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.PythonCodeTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "PythonCodeTextSplitter",
+    "overrides": {}
+  },
+  "type": "object"
 }

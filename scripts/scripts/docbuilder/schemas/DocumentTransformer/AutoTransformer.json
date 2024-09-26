@@ -1,13 +1,18 @@
 {
-  "title": "AutoTransformer",
-  "type": "object",
+  "additionalProperties": true,
   "properties": {
     "implementation": {
-      "const": "AutoTransformer",
-      "description": "AutoTransformer"
+      "const": "AutoTransformer"
     }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer.AutoTransformer",
+    "group": "DocumentTransformer",
+    "name": "AutoTransformer",
+    "overrides": {}
   },
   "required": [
     "implementation"
-  ]
+  ],
+  "type": "object"
 }

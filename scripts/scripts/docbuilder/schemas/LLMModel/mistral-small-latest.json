@@ -1,48 +1,66 @@
 {
   "properties": {
-    "implementation": {
-      "const": "mistral-small-latest",
-      "description": "mistral-small-latest"
-    },
     "human_name": {
+      "default": "Mistral Small",
       "title": "Human Name",
-      "type": "string",
-      "default": "Mistral Small"
+      "type": "string"
     },
     "name": {
+      "default": "mistral-small-latest",
       "title": "Name",
-      "type": "string",
-      "default": "mistral-small-latest"
+      "type": "string"
     },
     "input_context_limit": {
+      "default": 32000,
       "title": "Input Context Limit",
-      "type": "integer",
-      "default": 32000
+      "type": "integer"
     },
     "output_context_limit": {
+      "default": 4096,
       "title": "Output Context Limit",
-      "type": "integer",
-      "default": 4096
+      "type": "integer"
     },
     "supports_tools": {
+      "default": false,
       "title": "Supports Tools",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
     },
     "supports_image_input": {
+      "default": false,
       "title": "Supports Image Input",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
     },
     "supports_audio_input": {
+      "default": false,
       "title": "Supports Audio Input",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
+    },
+    "implementation": {
+      "const": "mistral-small-latest"
     }
   },
-  "title": "mistral-small-latest",
-  "type": "object",
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
+    "group": "LLMModel",
+    "name": "mistral-small-latest",
+    "overrides": {
+      "human_name": "Mistral Small",
+      "input_context_limit": 32000,
+      "name": "mistral-small-latest",
+      "output_context_limit": 4096,
+      "supports_audio_input": false,
+      "supports_image_input": false,
+      "supports_tools": false
+    }
+  },
   "required": [
-    "implementation"
-  ]
+    "human_name",
+    "name",
+    "input_context_limit",
+    "output_context_limit",
+    "supports_tools",
+    "supports_image_input",
+    "supports_audio_input"
+  ],
+  "type": "object"
 }

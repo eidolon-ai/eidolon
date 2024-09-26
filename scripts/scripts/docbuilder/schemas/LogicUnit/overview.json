@@ -1,33 +1,33 @@
 {
-  "title": "LogicUnit",
-  "description": "Overview of LogicUnit components",
   "anyOf": [
     {
-      "$ref": "./ApiLogicUnit.json"
+      "$ref": "../LogicUnit/ApiLogicUnit.json"
     },
     {
-      "$ref": "./AudioUnit.json"
+      "$ref": "../AudioUnit/AudioUnit.json"
     },
     {
-      "$ref": "./Browser.json"
+      "$ref": "../LogicUnit/Browser.json"
     },
     {
-      "$ref": "./OpenAIImageUnit.json"
+      "$ref": "../ImageUnit/OpenAIImageUnit.json"
     },
     {
-      "$ref": "./OpenAiSpeech.json"
+      "$ref": "../AudioUnit/OpenAiSpeech.json"
     },
     {
-      "$ref": "./Search.json"
+      "$ref": "../LogicUnit/Search.json"
     },
     {
-      "$ref": "./VectaraSearch.json"
+      "$ref": "../LogicUnit/VectaraSearch.json"
     },
     {
-      "$ref": "./WebSearch.json"
+      "$ref": "../LogicUnit/WebSearch.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "eidolon_ai_sdk.apu.logic_unit.LogicUnit",
     "type": "LogicUnit"
-  }
+  },
+  "title": "LogicUnit Reference"
 }

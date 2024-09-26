@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "HTMLHeaderTextSplitter",
-      "description": "HTMLHeaderTextSplitter"
-    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -51,12 +47,19 @@
       "description": "Return each element w/ associated headers",
       "title": "Return Each Element",
       "type": "boolean"
+    },
+    "implementation": {
+      "const": "HTMLHeaderTextSplitter"
     }
   },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.HTMLHeaderTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "HTMLHeaderTextSplitter",
+    "overrides": {}
+  },
   "required": [
-    "headers_to_split_on",
-    "implementation"
+    "headers_to_split_on"
   ],
-  "title": "HTMLHeaderTextSplitter",
   "type": "object"
 }

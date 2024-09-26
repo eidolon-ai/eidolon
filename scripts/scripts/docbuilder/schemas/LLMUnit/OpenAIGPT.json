@@ -1,14 +1,7 @@
 {
   "properties": {
-    "implementation": {
-      "const": "OpenAIGPT",
-      "description": "OpenAIGPT"
-    },
     "model": {
-      "$ref": "../LLMModel/overview.json",
-      "default": {
-        "implementation": "gpt-4-turbo"
-      }
+      "$ref": "../LLMModel/overview.json"
     },
     "temperature": {
       "default": 0.3,
@@ -43,15 +36,17 @@
       "type": "boolean"
     },
     "connection_handler": {
-      "$ref": "../OpenAIConnectionHandler/overview.json",
-      "default": {
-        "implementation": "OpenAIConnectionHandler"
-      }
+      "$ref": "../OpenAIConnectionHandler/overview.json"
+    },
+    "implementation": {
+      "const": "OpenAIGPT"
     }
   },
-  "title": "OpenAIGPT",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.open_ai_llm_unit.OpenAIGPT",
+    "group": "LLMUnit",
+    "name": "OpenAIGPT",
+    "overrides": {}
+  },
+  "type": "object"
 }

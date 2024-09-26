@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "Search",
-      "description": "Search"
-    },
     "cse_id": {
       "desctiption": "Google Custom Search Engine Id.",
       "title": "Cse Id",
@@ -47,11 +43,17 @@
       ],
       "default": {},
       "title": "Params"
+    },
+    "implementation": {
+      "const": "Search"
     }
   },
-  "title": "Search",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.web_search.Search",
+    "group": "LogicUnit",
+    "name": "Search",
+    "overrides": {}
+  },
+  "title": "SearchSpec",
+  "type": "object"
 }

@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "CharacterTextSplitter",
-      "description": "CharacterTextSplitter"
-    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -39,11 +35,16 @@
       "description": "Whether the separator is a regex",
       "title": "Is Separator Regex",
       "type": "boolean"
+    },
+    "implementation": {
+      "const": "CharacterTextSplitter"
     }
   },
-  "title": "CharacterTextSplitter",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.CharacterTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "CharacterTextSplitter",
+    "overrides": {}
+  },
+  "type": "object"
 }

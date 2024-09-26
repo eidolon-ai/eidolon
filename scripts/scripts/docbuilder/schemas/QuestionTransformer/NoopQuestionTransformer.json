@@ -1,13 +1,14 @@
 {
   "properties": {
     "implementation": {
-      "const": "NoopQuestionTransformer",
-      "description": "NoopQuestionTransformer"
+      "const": "NoopQuestionTransformer"
     }
   },
-  "title": "NoopQuestionTransformer",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.question_transformer.NoopQuestionTransformer",
+    "group": "QuestionTransformer",
+    "name": "NoopQuestionTransformer",
+    "overrides": {}
+  },
+  "type": "object"
 }

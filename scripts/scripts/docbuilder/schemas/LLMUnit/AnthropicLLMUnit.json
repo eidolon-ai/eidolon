@@ -1,14 +1,7 @@
 {
   "properties": {
-    "implementation": {
-      "const": "AnthropicLLMUnit",
-      "description": "AnthropicLLMUnit"
-    },
     "model": {
-      "$ref": "../LLMModel/overview.json",
-      "default": {
-        "implementation": "claude-3-opus-20240229"
-      }
+      "$ref": "../LLMModel/overview.json"
     },
     "temperature": {
       "default": 0.3,
@@ -31,11 +24,16 @@
       "default": {},
       "title": "Client Args",
       "type": "object"
+    },
+    "implementation": {
+      "const": "AnthropicLLMUnit"
     }
   },
-  "title": "AnthropicLLMUnit",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.anthropic_llm_unit.AnthropicLLMUnit",
+    "group": "LLMUnit",
+    "name": "AnthropicLLMUnit",
+    "overrides": {}
+  },
+  "type": "object"
 }

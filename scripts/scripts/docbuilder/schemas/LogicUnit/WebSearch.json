@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "WebSearch",
-      "description": "WebSearch"
-    },
     "summarizer": {
       "default": "BeautifulSoup",
       "enum": [
@@ -56,11 +52,17 @@
       ],
       "default": {},
       "title": "Params"
+    },
+    "implementation": {
+      "const": "WebSearch"
     }
   },
-  "title": "WebSearch",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.web_search.WebSearch",
+    "group": "LogicUnit",
+    "name": "WebSearch",
+    "overrides": {}
+  },
+  "title": "WebSearchConfig",
+  "type": "object"
 }

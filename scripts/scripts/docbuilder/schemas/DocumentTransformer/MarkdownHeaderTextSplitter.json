@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "MarkdownHeaderTextSplitter",
-      "description": "MarkdownHeaderTextSplitter"
-    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -51,12 +47,19 @@
       "description": "Return each line w/ associated headers",
       "title": "Return Each Line",
       "type": "boolean"
+    },
+    "implementation": {
+      "const": "MarkdownHeaderTextSplitter"
     }
   },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.MarkdownHeaderTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "MarkdownHeaderTextSplitter",
+    "overrides": {}
+  },
   "required": [
-    "headers_to_split_on",
-    "implementation"
+    "headers_to_split_on"
   ],
-  "title": "MarkdownHeaderTextSplitter",
   "type": "object"
 }

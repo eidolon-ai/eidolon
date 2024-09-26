@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "user_scoped": {
+      "title": "User Scoped",
+      "type": "boolean"
+    },
+    "llm_unit": {
+      "anyOf": [
+        {
+          "$ref": "../LLMUnit/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "implementation": {
+      "const": "LongTermMemoryUnit"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.longterm_memory_unit.LongTermMemoryUnit",
+    "group": "LongTermMemoryUnit",
+    "name": "LongTermMemoryUnit",
+    "overrides": {}
+  },
+  "required": [
+    "user_scoped"
+  ],
+  "type": "object"
+}

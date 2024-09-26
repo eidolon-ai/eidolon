@@ -1,48 +1,66 @@
 {
   "properties": {
-    "implementation": {
-      "const": "gpt-4o",
-      "description": "gpt-4o"
-    },
     "human_name": {
+      "default": "GPT-4o",
       "title": "Human Name",
-      "type": "string",
-      "default": "GPT-4o"
+      "type": "string"
     },
     "name": {
+      "default": "gpt-4o",
       "title": "Name",
-      "type": "string",
-      "default": "gpt-4o"
+      "type": "string"
     },
     "input_context_limit": {
+      "default": 128000,
       "title": "Input Context Limit",
-      "type": "integer",
-      "default": 128000
+      "type": "integer"
     },
     "output_context_limit": {
+      "default": 4096,
       "title": "Output Context Limit",
-      "type": "integer",
-      "default": 4096
+      "type": "integer"
     },
     "supports_tools": {
+      "default": true,
       "title": "Supports Tools",
-      "type": "boolean",
-      "default": true
+      "type": "boolean"
     },
     "supports_image_input": {
+      "default": true,
       "title": "Supports Image Input",
-      "type": "boolean",
-      "default": true
+      "type": "boolean"
     },
     "supports_audio_input": {
+      "default": false,
       "title": "Supports Audio Input",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
+    },
+    "implementation": {
+      "const": "gpt-4o"
     }
   },
-  "title": "gpt-4o",
-  "type": "object",
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
+    "group": "LLMModel",
+    "name": "gpt-4o",
+    "overrides": {
+      "human_name": "GPT-4o",
+      "input_context_limit": 128000,
+      "name": "gpt-4o",
+      "output_context_limit": 4096,
+      "supports_audio_input": false,
+      "supports_image_input": true,
+      "supports_tools": true
+    }
+  },
   "required": [
-    "implementation"
-  ]
+    "human_name",
+    "name",
+    "input_context_limit",
+    "output_context_limit",
+    "supports_tools",
+    "supports_image_input",
+    "supports_audio_input"
+  ],
+  "type": "object"
 }

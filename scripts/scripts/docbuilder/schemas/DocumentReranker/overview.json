@@ -1,12 +1,15 @@
 {
-  "title": "DocumentReranker",
-  "description": "Overview of DocumentReranker components",
   "anyOf": [
     {
-      "$ref": "./RAGFusionReranker.json"
+      "$ref": "../DocumentReranker/DocumentReranker.json"
+    },
+    {
+      "$ref": "../DocumentReranker/RAGFusionReranker.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "DocumentReranker",
     "type": "DocumentReranker"
-  }
+  },
+  "title": "DocumentReranker Reference"
 }

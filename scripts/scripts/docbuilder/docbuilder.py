@@ -1,10 +1,11 @@
+import copy
 import json
 import os
 import shutil
 import textwrap
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Dict, Self
+from typing import Optional, Dict, Self, cast, List
 
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
@@ -64,11 +65,74 @@ EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 def main():
     print("Generating docs...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
-    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    generate_json(dist_component_schemas)
+    schema = SimpleAgent.model_json_schema()
+    print("json generated")
+    shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    defs = schema.get("$defs", {})
+    transform_file_defs(schema, defs)
+    for k, v in defs.items():
+        write_loc = get_write_loc(v)
+        if write_loc:
+            copied = copy.deepcopy(v)
+            local_refs = find_local_refs(v)
+            relative_write_locs(copied, ".." + str(write_loc.parent))
+
+            if local_refs:
+                copied["$defs"] = {ref.removeprefix("#/$defs/"): defs[ref.removeprefix("#/$defs/")] for ref in local_refs}
+            os.makedirs((dist_component_schemas / write_loc).parent, exist_ok=True)
+            with open(dist_component_schemas / write_loc, 'w') as json_file:
+                json.dump(copied, json_file, indent=2)
+    print("json written")
+
+
     # write_md(dist_component_schemas)
     # update_sitemap()
-    print("Done")
+
+
+def get_write_loc(schema):
+    if "reference_pointer" in schema:  # group, should only be referenced by component
+        return Path(f"{schema['reference_pointer']['type']}/overview.json")
+    elif 'reference_details' in schema:  # component definition, should only be referenced by groups
+        return Path(f"{schema['reference_details']['group']}/{schema['reference_details']['name']}.json")
+    else:
+        return None
+
+
+def relative_write_locs(schema, loc):
+    if isinstance(schema, dict):
+        if "$ref" in schema:
+            schema["$ref"] = schema["$ref"].replace(loc, "./")
+        for v in schema.values():
+            relative_write_locs(v, loc)
+    elif isinstance(schema, list):
+        for i in schema:
+            relative_write_locs(i, loc)
+
+
+def transform_file_defs(schema, defs):
+    if isinstance(schema, dict):
+        if "$ref" in schema:
+            ref_key = schema["$ref"].removeprefix("#/$defs/")
+            write_loc = get_write_loc(defs[ref_key])
+            if write_loc:
+                schema['$ref'] = "../" + str(write_loc)
+        for v in schema.values():
+            transform_file_defs(v, defs)
+    elif isinstance(schema, list):
+        for i in schema:
+            transform_file_defs(i, defs)
+
+
+def find_local_refs(schema) -> List[str]:
+    if isinstance(schema, dict):
+        if "$ref" in schema:
+            return [schema["$ref"]] if schema["$ref"].startswith("#/$defs/") else []
+        else:
+            return [ref for v in schema.values() for ref in find_local_refs(v)]
+    elif isinstance(schema, list):
+        return [ref for i in schema for ref in find_local_refs(i)]
+    else:
+        return []
 
 
 def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro.config.mjs"):
@@ -160,35 +224,6 @@ def write_astro_md_file(content, description, title, write_file_loc):
 def template(template_file, **kwargs):
     with open(EIDOLON / "scripts" / "scripts" / "docbuilder" / template_file) as template:
         return Environment(undefined=StrictUndefined).from_string(template.read()).render(**kwargs)
-
-
-def generate_groups():
-    # Get all groups. Groups are any Reference base used by registered component
-    for r in AgentOSKernel.get_resources(ReferenceResource).values():
-        overrides = Reference[object, r.metadata.name]._transform(r.spec)
-        pointer = overrides.pop("implementation")
-        clz = for_name(pointer, object)
-        spec: Optional[BaseModel] = Reference.get_spec_type(clz)
-        if spec:
-            for vv in spec.model_fields.values():
-                v = vv.annotation
-                if hasattr(v, "_bound") and v._bound.__name__ not in groups:
-                    groups[v._bound.__name__] = Group(base=v._bound, document_in_sidebar=False)
-
-    # check all components to see which group they are in and add them to the group
-    for r in AgentOSKernel.get_resources(ReferenceResource).values():
-        key = r.metadata.name
-        overrides = Reference[object, key]._transform(r.spec)
-        pointer = overrides.pop("implementation")
-        clz = for_name(pointer, object)
-        for group_key, group in groups.items():
-            if key == group_key:
-                impl_tail = r.spec['implementation'].split(".")[-1]
-                if key == r.spec['implementation'] or "." in r.spec['implementation'] and key == impl_tail:
-                    group.components.append((key, clz, overrides))
-                group.default = impl_tail
-            elif not isinstance(group.base, str) and group != object and issubclass(clz, group.base):
-                group.components.append((key, clz, overrides))
 
 
 def generate_json(write_base):

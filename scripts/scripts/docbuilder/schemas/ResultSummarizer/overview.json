@@ -1,12 +1,12 @@
 {
-  "title": "ResultSummarizer",
-  "description": "Overview of ResultSummarizer components",
   "anyOf": [
     {
-      "$ref": "./ResultSummarizer.json"
+      "$ref": "../ResultSummarizer/ResultSummarizer.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "ResultSummarizer",
     "type": "ResultSummarizer"
-  }
+  },
+  "title": "ResultSummarizer Reference"
 }

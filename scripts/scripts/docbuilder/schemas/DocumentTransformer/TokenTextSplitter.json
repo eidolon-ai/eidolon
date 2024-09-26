@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "TokenTextSplitter",
-      "description": "TokenTextSplitter"
-    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -86,11 +82,16 @@
       "default": "all",
       "description": "Disallowed special tokens",
       "title": "Disallowed Special"
+    },
+    "implementation": {
+      "const": "TokenTextSplitter"
     }
   },
-  "title": "TokenTextSplitter",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.TokenTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "TokenTextSplitter",
+    "overrides": {}
+  },
+  "type": "object"
 }

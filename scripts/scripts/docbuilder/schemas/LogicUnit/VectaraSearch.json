@@ -1,10 +1,5 @@
 {
-  "description": "A logic unit for searching in Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.",
   "properties": {
-    "implementation": {
-      "const": "VectaraSearch",
-      "description": "VectaraSearch"
-    },
     "corpus_key": {
       "description": "The corpus key to search in.",
       "title": "Corpus Key",
@@ -20,12 +15,19 @@
       "default": "https://api.vectara.io/",
       "title": "Vectara Url",
       "type": "string"
+    },
+    "implementation": {
+      "const": "VectaraSearch"
     }
   },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.vectara.VectaraSearch",
+    "group": "LogicUnit",
+    "name": "VectaraSearch",
+    "overrides": {}
+  },
   "required": [
-    "corpus_key",
-    "implementation"
+    "corpus_key"
   ],
-  "title": "VectaraSearch",
   "type": "object"
 }

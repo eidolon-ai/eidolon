@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "SpacyTextSplitter",
-      "description": "SpacyTextSplitter"
-    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -45,11 +41,16 @@
       "description": "Maximum length of characters to process",
       "title": "Max Length",
       "type": "integer"
+    },
+    "implementation": {
+      "const": "SpacyTextSplitter"
     }
   },
-  "title": "SpacyTextSplitter",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.SpacyTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "SpacyTextSplitter",
+    "overrides": {}
+  },
+  "type": "object"
 }

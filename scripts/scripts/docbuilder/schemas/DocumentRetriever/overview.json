@@ -1,12 +1,15 @@
 {
-  "title": "DocumentRetriever",
-  "description": "Overview of DocumentRetriever components",
   "anyOf": [
     {
-      "$ref": "./SimilarityMemoryRetriever.json"
+      "$ref": "../DocumentRetriever/DocumentRetriever.json"
+    },
+    {
+      "$ref": "../DocumentRetriever/SimilarityMemoryRetriever.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "DocumentRetriever",
     "type": "DocumentRetriever"
-  }
+  },
+  "title": "DocumentRetriever Reference"
 }

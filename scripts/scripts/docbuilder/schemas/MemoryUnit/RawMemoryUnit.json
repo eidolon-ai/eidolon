@@ -1,13 +1,14 @@
 {
   "properties": {
     "implementation": {
-      "const": "RawMemoryUnit",
-      "description": "RawMemoryUnit"
+      "const": "RawMemoryUnit"
     }
   },
-  "title": "RawMemoryUnit",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.conversation_memory_unit.RawMemoryUnit",
+    "group": "MemoryUnit",
+    "name": "RawMemoryUnit",
+    "overrides": {}
+  },
+  "type": "object"
 }

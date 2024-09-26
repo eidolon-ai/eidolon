@@ -1,12 +1,12 @@
 {
-  "title": "IOUnit",
-  "description": "This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM\n\nThis can be overridden to provide custom IO handling.",
   "anyOf": [
     {
-      "$ref": "./IOUnit.json"
+      "$ref": "../IOUnit/IOUnit.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "IOUnit",
     "type": "IOUnit"
-  }
+  },
+  "title": "IOUnit Reference"
 }

@@ -1,12 +1,15 @@
 {
-  "title": "MemoryUnit",
-  "description": "Overview of MemoryUnit components",
   "anyOf": [
     {
-      "$ref": "./RawMemoryUnit.json"
+      "$ref": "../MemoryUnit/MemoryUnit.json"
+    },
+    {
+      "$ref": "../MemoryUnit/RawMemoryUnit.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "MemoryUnit",
     "type": "MemoryUnit"
-  }
+  },
+  "title": "MemoryUnit Reference"
 }

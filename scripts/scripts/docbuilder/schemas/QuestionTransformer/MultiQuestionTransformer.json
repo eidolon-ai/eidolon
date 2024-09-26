@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "MultiQuestionTransformer",
-      "description": "MultiQuestionTransformer"
-    },
     "keep_original": {
       "default": true,
       "description": "Whether to keep the original question in the output",
@@ -21,11 +17,16 @@
       "description": "The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}",
       "title": "Prompt",
       "type": "string"
+    },
+    "implementation": {
+      "const": "MultiQuestionTransformer"
     }
   },
-  "title": "MultiQuestionTransformer",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer.MultiQuestionTransformer",
+    "group": "QuestionTransformer",
+    "name": "MultiQuestionTransformer",
+    "overrides": {}
+  },
+  "type": "object"
 }

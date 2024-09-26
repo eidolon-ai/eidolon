@@ -141,7 +141,8 @@ class Reference(BaseModel):
                             reference_details = dict(
                                 overrides=overrides,
                                 clz=pointer,
-                                name=r.metadata.name
+                                name=r.metadata.name,
+                                group=json_schema["reference_pointer"]['type'],
                             )
                             ref = handler(_pseudo_pointer(r.metadata.name).__pydantic_core_schema__)
                             ref_schema = handler.resolve_ref_schema(ref)
@@ -157,6 +158,9 @@ class Reference(BaseModel):
                                     ref_schema['properties'].setdefault(key, {})['default'] = value
                             json_schema["anyOf"].append(ref)
 
+                if json_schema["anyOf"]:
+                    # sort any of by ref value name
+                    json_schema["anyOf"] = sorted(json_schema["anyOf"], key=lambda x: x['$ref'])
                 return json_schema
 
             @classmethod

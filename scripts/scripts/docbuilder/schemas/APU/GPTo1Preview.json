@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "GPTo1Preview",
-      "description": "GPTo1Preview"
-    },
     "max_num_function_calls": {
       "default": 10,
       "description": "The maximum number of function calls to make in a single request.",
@@ -11,34 +7,15 @@
       "type": "integer"
     },
     "io_unit": {
-      "$ref": "../IOUnit/overview.json",
-      "default": {
-        "implementation": "IOUnit"
-      }
+      "$ref": "../IOUnit/overview.json"
     },
     "memory_unit": {
-      "$ref": "../MemoryUnit/overview.json",
-      "default": {
-        "implementation": "MemoryUnit"
-      }
+      "$ref": "../MemoryUnit/overview.json"
     },
     "longterm_memory_unit": {
       "anyOf": [
         {
-          "additionalProperties": true,
-          "properties": {
-            "implementation": {
-              "default": "LongTermMemoryUnit",
-              "title": "Implementation",
-              "type": "string"
-            }
-          },
-          "reference_pointer": {
-            "default_impl": "LongTermMemoryUnit",
-            "type": "LongTermMemoryUnit"
-          },
-          "title": "LongTermMemoryUnit Reference",
-          "type": "object"
+          "$ref": "../LongTermMemoryUnit/overview.json"
         },
         {
           "type": "null"
@@ -51,12 +28,12 @@
       "default": {
         "implementation": "ToolCallLLMWrapper",
         "llm_unit": {
-          "implementation": "OpenAIGPT",
-          "temperature": 1,
-          "supports_system_messages": false,
           "can_stream": false,
           "force_json": false,
-          "model": "gpt-o1-preview"
+          "implementation": "OpenAIGPT",
+          "model": "gpt-o1-preview",
+          "supports_system_messages": false,
+          "temperature": 1
         }
       }
     },
@@ -82,20 +59,7 @@
     "image_unit": {
       "anyOf": [
         {
-          "additionalProperties": true,
-          "properties": {
-            "implementation": {
-              "default": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
-              "title": "Implementation",
-              "type": "string"
-            }
-          },
-          "reference_pointer": {
-            "default_impl": "eidolon_ai_sdk.apu.image_unit.ImageUnit",
-            "type": "ImageUnit"
-          },
-          "title": "ImageUnit Reference",
-          "type": "object"
+          "$ref": "../ImageUnit/overview.json"
         },
         {
           "type": "null"
@@ -114,16 +78,10 @@
       "type": "boolean"
     },
     "document_processor": {
-      "$ref": "../DocumentProcessor/overview.json",
-      "default": {
-        "implementation": "DocumentProcessor"
-      }
+      "$ref": "../DocumentProcessor/overview.json"
     },
     "retriever": {
-      "$ref": "../Retriever/overview.json",
-      "default": {
-        "implementation": "Retriever"
-      }
+      "$ref": "../Retriever/overview.json"
     },
     "retriever_apu": {
       "anyOf": [
@@ -135,11 +93,30 @@
         }
       ],
       "default": null
+    },
+    "implementation": {
+      "const": "GPTo1Preview"
     }
   },
-  "title": "GPTo1Preview",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.conversational_apu.ConversationalAPU",
+    "group": "APU",
+    "name": "GPTo1Preview",
+    "overrides": {
+      "audio_unit": "OpenAiSpeech",
+      "image_unit": "OpenAIImageUnit",
+      "llm_unit": {
+        "implementation": "ToolCallLLMWrapper",
+        "llm_unit": {
+          "can_stream": false,
+          "force_json": false,
+          "implementation": "OpenAIGPT",
+          "model": "gpt-o1-preview",
+          "supports_system_messages": false,
+          "temperature": 1
+        }
+      }
+    }
+  },
+  "type": "object"
 }

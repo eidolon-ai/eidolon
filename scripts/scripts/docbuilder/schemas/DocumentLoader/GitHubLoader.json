@@ -1,10 +1,5 @@
 {
-  "description": "Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories\nunless a TOKEN is provided",
   "properties": {
-    "implementation": {
-      "const": "GitHubLoader",
-      "description": "GitHubLoader"
-    },
     "owner": {
       "title": "Owner",
       "type": "string"
@@ -71,13 +66,20 @@
       ],
       "description": "Github token, can also be set via envar 'GITHUB_TOKEN'",
       "title": "Token"
+    },
+    "implementation": {
+      "const": "GitHubLoader"
     }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.github_loader.GitHubLoader",
+    "group": "DocumentLoader",
+    "name": "GitHubLoader",
+    "overrides": {}
   },
   "required": [
     "owner",
-    "repo",
-    "implementation"
+    "repo"
   ],
-  "title": "GitHubLoader",
   "type": "object"
 }

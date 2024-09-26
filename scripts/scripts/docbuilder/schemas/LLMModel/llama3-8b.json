@@ -1,48 +1,66 @@
 {
   "properties": {
-    "implementation": {
-      "const": "llama3-8b",
-      "description": "llama3-8b"
-    },
     "human_name": {
+      "default": "Mistral Small",
       "title": "Human Name",
-      "type": "string",
-      "default": "Mistral Small"
+      "type": "string"
     },
     "name": {
+      "default": "llama3",
       "title": "Name",
-      "type": "string",
-      "default": "llama3"
+      "type": "string"
     },
     "input_context_limit": {
+      "default": 8000,
       "title": "Input Context Limit",
-      "type": "integer",
-      "default": 8000
+      "type": "integer"
     },
     "output_context_limit": {
+      "default": 4096,
       "title": "Output Context Limit",
-      "type": "integer",
-      "default": 4096
+      "type": "integer"
     },
     "supports_tools": {
+      "default": false,
       "title": "Supports Tools",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
     },
     "supports_image_input": {
+      "default": true,
       "title": "Supports Image Input",
-      "type": "boolean",
-      "default": true
+      "type": "boolean"
     },
     "supports_audio_input": {
+      "default": false,
       "title": "Supports Audio Input",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
+    },
+    "implementation": {
+      "const": "llama3-8b"
     }
   },
-  "title": "llama3-8b",
-  "type": "object",
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
+    "group": "LLMModel",
+    "name": "llama3-8b",
+    "overrides": {
+      "human_name": "Mistral Small",
+      "input_context_limit": 8000,
+      "name": "llama3",
+      "output_context_limit": 4096,
+      "supports_audio_input": false,
+      "supports_image_input": true,
+      "supports_tools": false
+    }
+  },
   "required": [
-    "implementation"
-  ]
+    "human_name",
+    "name",
+    "input_context_limit",
+    "output_context_limit",
+    "supports_tools",
+    "supports_image_input",
+    "supports_audio_input"
+  ],
+  "type": "object"
 }

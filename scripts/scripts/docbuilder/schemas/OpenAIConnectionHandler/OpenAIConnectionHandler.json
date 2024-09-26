@@ -2,13 +2,14 @@
   "additionalProperties": true,
   "properties": {
     "implementation": {
-      "const": "OpenAIConnectionHandler",
-      "description": "OpenAIConnectionHandler"
+      "const": "OpenAIConnectionHandler"
     }
   },
-  "title": "OpenAIConnectionHandler",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.open_ai_connection_handler.OpenAIConnectionHandler",
+    "group": "OpenAIConnectionHandler",
+    "name": "OpenAIConnectionHandler",
+    "overrides": {}
+  },
+  "type": "object"
 }

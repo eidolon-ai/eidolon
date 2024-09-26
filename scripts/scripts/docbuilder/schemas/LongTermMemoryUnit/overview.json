@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../LongTermMemoryUnit/LongTermMemoryUnit.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "LongTermMemoryUnit",
+    "type": "LongTermMemoryUnit"
+  },
+  "title": "LongTermMemoryUnit Reference"
+}

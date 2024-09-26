@@ -1,10 +1,5 @@
 {
-  "description": "Loads documents from an S3 bucket.",
   "properties": {
-    "implementation": {
-      "const": "S3Loader",
-      "description": "S3Loader"
-    },
     "bucket": {
       "title": "Bucket",
       "type": "string"
@@ -67,12 +62,19 @@
       "default": "**",
       "title": "Pattern",
       "type": "string"
+    },
+    "implementation": {
+      "const": "S3Loader"
     }
   },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.s3_loader.S3Loader",
+    "group": "DocumentLoader",
+    "name": "S3Loader",
+    "overrides": {}
+  },
   "required": [
-    "bucket",
-    "implementation"
+    "bucket"
   ],
-  "title": "S3Loader",
   "type": "object"
 }

@@ -1,15 +1,15 @@
 {
-  "title": "Retriever",
-  "description": "Overview of Retriever components",
   "anyOf": [
     {
-      "$ref": "./Retriever.json"
+      "$ref": "../Retriever/Retriever.json"
     },
     {
-      "$ref": "./RetrieverAgent.json"
+      "$ref": "../Retriever/RetrieverAgent.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "Retriever",
     "type": "Retriever"
-  }
+  },
+  "title": "Retriever Reference"
 }

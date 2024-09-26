@@ -1,14 +1,7 @@
 {
   "properties": {
-    "implementation": {
-      "const": "OllamaLLMUnit",
-      "description": "OllamaLLMUnit"
-    },
     "model": {
-      "$ref": "../LLMModel/overview.json",
-      "default": {
-        "implementation": "llama3"
-      }
+      "$ref": "../LLMModel/overview.json"
     },
     "temperature": {
       "default": 0.3,
@@ -36,11 +29,16 @@
       "default": {},
       "title": "Client Options",
       "type": "object"
+    },
+    "implementation": {
+      "const": "OllamaLLMUnit"
     }
   },
-  "title": "OllamaLLMUnit",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.ollama_llm_unit.OllamaLLMUnit",
+    "group": "LLMUnit",
+    "name": "OllamaLLMUnit",
+    "overrides": {}
+  },
+  "type": "object"
 }

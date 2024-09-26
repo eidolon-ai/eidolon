@@ -1,15 +1,18 @@
 {
-  "title": "QuestionTransformer",
-  "description": "Overview of QuestionTransformer components",
   "anyOf": [
     {
-      "$ref": "./MultiQuestionTransformer.json"
+      "$ref": "../QuestionTransformer/MultiQuestionTransformer.json"
     },
     {
-      "$ref": "./NoopQuestionTransformer.json"
+      "$ref": "../QuestionTransformer/NoopQuestionTransformer.json"
+    },
+    {
+      "$ref": "../QuestionTransformer/QuestionTransformer.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "QuestionTransformer",
     "type": "QuestionTransformer"
-  }
+  },
+  "title": "QuestionTransformer Reference"
 }

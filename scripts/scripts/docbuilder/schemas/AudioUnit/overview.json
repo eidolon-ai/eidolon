@@ -1,12 +1,15 @@
 {
-  "title": "AudioUnit",
-  "description": "Overview of AudioUnit components",
   "anyOf": [
     {
-      "$ref": "./OpenAiSpeech.json"
+      "$ref": "../AudioUnit/AudioUnit.json"
+    },
+    {
+      "$ref": "../AudioUnit/OpenAiSpeech.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "eidolon_ai_sdk.apu.audio_unit.AudioUnit",
     "type": "AudioUnit"
-  }
+  },
+  "title": "AudioUnit Reference"
 }

@@ -1,48 +1,66 @@
 {
   "properties": {
-    "implementation": {
-      "const": "claude-3-sonnet-20240229",
-      "description": "claude-3-sonnet-20240229"
-    },
     "human_name": {
+      "default": "Claude Sonnet",
       "title": "Human Name",
-      "type": "string",
-      "default": "Claude Sonnet"
+      "type": "string"
     },
     "name": {
+      "default": "claude-3-sonnet-20240229",
       "title": "Name",
-      "type": "string",
-      "default": "claude-3-sonnet-20240229"
+      "type": "string"
     },
     "input_context_limit": {
+      "default": 200000,
       "title": "Input Context Limit",
-      "type": "integer",
-      "default": 200000
+      "type": "integer"
     },
     "output_context_limit": {
+      "default": 4096,
       "title": "Output Context Limit",
-      "type": "integer",
-      "default": 4096
+      "type": "integer"
     },
     "supports_tools": {
+      "default": false,
       "title": "Supports Tools",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
     },
     "supports_image_input": {
+      "default": true,
       "title": "Supports Image Input",
-      "type": "boolean",
-      "default": true
+      "type": "boolean"
     },
     "supports_audio_input": {
+      "default": false,
       "title": "Supports Audio Input",
-      "type": "boolean",
-      "default": false
+      "type": "boolean"
+    },
+    "implementation": {
+      "const": "claude-3-sonnet-20240229"
     }
   },
-  "title": "claude-3-sonnet-20240229",
-  "type": "object",
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
+    "group": "LLMModel",
+    "name": "claude-3-sonnet-20240229",
+    "overrides": {
+      "human_name": "Claude Sonnet",
+      "input_context_limit": 200000,
+      "name": "claude-3-sonnet-20240229",
+      "output_context_limit": 4096,
+      "supports_audio_input": false,
+      "supports_image_input": true,
+      "supports_tools": false
+    }
+  },
   "required": [
-    "implementation"
-  ]
+    "human_name",
+    "name",
+    "input_context_limit",
+    "output_context_limit",
+    "supports_tools",
+    "supports_image_input",
+    "supports_audio_input"
+  ],
+  "type": "object"
 }

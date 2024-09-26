@@ -1,9 +1,5 @@
 {
   "properties": {
-    "implementation": {
-      "const": "Browser",
-      "description": "Browser"
-    },
     "summarizer": {
       "default": "BeautifulSoup",
       "enum": [
@@ -12,11 +8,16 @@
       ],
       "title": "Summarizer",
       "type": "string"
+    },
+    "implementation": {
+      "const": "Browser"
     }
   },
-  "title": "Browser",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.web_search.Browser",
+    "group": "LogicUnit",
+    "name": "Browser",
+    "overrides": {}
+  },
+  "type": "object"
 }

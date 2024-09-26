@@ -1,12 +1,15 @@
 {
-  "title": "DocumentParser",
-  "description": "Overview of DocumentParser components",
   "anyOf": [
     {
-      "$ref": "./AutoParser.json"
+      "$ref": "../DocumentParser/AutoParser.json"
+    },
+    {
+      "$ref": "../DocumentParser/DocumentParser.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "DocumentParser",
     "type": "DocumentParser"
-  }
+  },
+  "title": "DocumentParser Reference"
 }

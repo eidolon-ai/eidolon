@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "root_dir": {
+      "title": "Root Dir",
+      "type": "string"
+    },
+    "pattern": {
+      "default": "**/*",
+      "title": "Pattern",
+      "type": "string"
+    },
+    "implementation": {
+      "const": "DocumentLoader"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader.FilesystemLoader",
+    "group": "DocumentLoader",
+    "name": "DocumentLoader",
+    "overrides": {}
+  },
+  "required": [
+    "root_dir"
+  ],
+  "type": "object"
+}

@@ -1,21 +1,24 @@
 {
-  "title": "DocumentLoader",
-  "description": "Overview of DocumentLoader components",
   "anyOf": [
     {
-      "$ref": "./AzureLoader.json"
+      "$ref": "../DocumentLoader/AzureLoader.json"
     },
     {
-      "$ref": "./FilesystemLoader.json"
+      "$ref": "../DocumentLoader/DocumentLoader.json"
     },
     {
-      "$ref": "./GitHubLoader.json"
+      "$ref": "../DocumentLoader/FilesystemLoader.json"
     },
     {
-      "$ref": "./S3Loader.json"
+      "$ref": "../DocumentLoader/GitHubLoader.json"
+    },
+    {
+      "$ref": "../DocumentLoader/S3Loader.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "DocumentLoader",
     "type": "DocumentLoader"
-  }
+  },
+  "title": "DocumentLoader Reference"
 }

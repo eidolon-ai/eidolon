@@ -1,12 +1,12 @@
 {
-  "title": "DocumentProcessor",
-  "description": "Overview of DocumentProcessor components",
   "anyOf": [
     {
-      "$ref": "./DocumentProcessor.json"
+      "$ref": "../DocumentProcessor/DocumentProcessor.json"
     }
   ],
-  "reference_group": {
+  "reference_pointer": {
+    "default_impl": "DocumentProcessor",
     "type": "DocumentProcessor"
-  }
+  },
+  "title": "DocumentProcessor Reference"
 }

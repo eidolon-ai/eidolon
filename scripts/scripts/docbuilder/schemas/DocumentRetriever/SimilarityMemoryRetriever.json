@@ -1,13 +1,14 @@
 {
   "properties": {
     "implementation": {
-      "const": "SimilarityMemoryRetriever",
-      "description": "SimilarityMemoryRetriever"
+      "const": "SimilarityMemoryRetriever"
     }
   },
-  "title": "SimilarityMemoryRetriever",
-  "type": "object",
-  "required": [
-    "implementation"
-  ]
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.document_retriever.SimilarityMemoryRetriever",
+    "group": "DocumentRetriever",
+    "name": "SimilarityMemoryRetriever",
+    "overrides": {}
+  },
+  "type": "object"
 }
