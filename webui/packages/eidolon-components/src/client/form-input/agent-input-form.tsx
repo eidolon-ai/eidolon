@@ -25,7 +25,10 @@ export function AgentInputForm({formData, setFormData, operations, agentOperatio
     if (app && processState) {
       const newUsableOperations = operations.filter((op) => processState.available_actions.includes(op.name));
       setUsableOperations(newUsableOperations);
-      const operationInfo = agentOperation ? newUsableOperations.find(p => p.name == agentOperation) : newUsableOperations[0];
+      let operationInfo = agentOperation ? newUsableOperations.find(p => p.name == agentOperation) : newUsableOperations[0];
+      if (!operationInfo) {
+        operationInfo = newUsableOperations.length > 0 ? newUsableOperations[0] : undefined
+      }
       if (operationInfo) {
         if (agentOperation != operationInfo.name) {
           setAgentOperation(operationInfo.name);
@@ -35,8 +38,8 @@ export function AgentInputForm({formData, setFormData, operations, agentOperatio
     }
   }, [operations, processState, app]);
 
-  const handleOperationChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const operationInfo = usableOperations.find(op => op.name === event.target.value)
+  const handleOperationChange = (oper: string) => {
+    const operationInfo = usableOperations.find(op => op.name === oper)
     setAgentOperation(operationInfo?.name);
     if (operationInfo) {
       setSchema({...operationInfo.schema, title: undefined} as RJSFSchema);
@@ -53,7 +56,7 @@ export function AgentInputForm({formData, setFormData, operations, agentOperatio
         <label htmlFor="operation" className="block text-sm font-medium text-gray-700 mb-1">
           Operation
         </label>
-        <StyledSelect options={usableOperations.map(op => op.name)} value={agentOperation!} onChange={setAgentOperation}/>
+        <StyledSelect options={usableOperations.map(op => op.name)} value={agentOperation!} onChange={handleOperationChange}/>
       </div>
       <div className="flex-grow overflow-y-auto min-h-0">
         {schema && schema.type && (

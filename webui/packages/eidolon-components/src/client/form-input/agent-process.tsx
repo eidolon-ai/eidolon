@@ -38,6 +38,7 @@ export function AgentProcess({ selectedOperation, handleAction, handleCancel, ha
   const handleSubmit = async (formJson: Record<string, any>) => {
     const operation = operations.find(op => op.name === agentOperation)!;
     console.log("submitting", operation.machine, operation.agent, operation.name, formJson);
+    setFormData({})
     await handleAction(operation.name, formJson);
   };
 
@@ -134,7 +135,7 @@ export function AgentProcess({ selectedOperation, handleAction, handleCancel, ha
   };
 
   return (
-    <div className={`font-sans bg-white rounded-lg shadow-lg p-4 mb-4 transition-all duration-300 ease-in-out ${bigForm ? 'h-[70vh]' : 'h-64'} w-full`}>
+    <div className={`font-sans bg-white rounded-lg shadow-lg p-4 mb-4 transition-all duration-300 ease-in-out ${bigForm ? 'min-h-[50vh] h-[50vh]' : 'min-h-52 h-52'} w-full`}>
       <div className="text-center -mt-12 h-12">
         <ButtonScrollToBottom />
       </div>
