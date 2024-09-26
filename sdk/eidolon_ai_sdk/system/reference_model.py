@@ -81,6 +81,17 @@ class Reference(BaseModel):
         extra="allow",
     )
 
+    @classmethod
+    def __get_pydantic_json_schema__(
+            cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        json_schema = handler(core_schema)
+        json_schema = handler.resolve_ref_schema(json_schema)
+        json_schema["properties"] = dict(implementation=dict(type="string"))
+        if "Used to create references to other classes." in json_schema['description']:  # delete description if it is not overridden
+            del json_schema['description']
+        return json_schema
+
     def __class_getitem__(cls, params):
         if not isinstance(params, tuple):
             params = (params, fqn(params))
@@ -96,6 +107,8 @@ class Reference(BaseModel):
                 json_schema = handler(core_schema)
                 json_schema = handler.resolve_ref_schema(json_schema)
                 json_schema["title"] = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__) + " Reference"
+                if cls.__doc__:
+                    json_schema['description'] = cls.__doc__
                 json_schema["reference_pointer"] = {
                     "type": cls._bound if isinstance(cls._bound, str) else cls._bound.__name__,
                     "default_impl": cls._default,
@@ -132,12 +145,17 @@ class Reference(BaseModel):
                             )
                             ref = handler(_pseudo_pointer(r.metadata.name).__pydantic_core_schema__)
                             ref_schema = handler.resolve_ref_schema(ref)
-                            if not 'reference_details' not in ref_schema:
+                            if 'reference_details' not in ref_schema:
                                 ref_schema['reference_details'] = reference_details
-                                # getschema of this, todo landing
-                                model_clz = clz.specable_cls() if issubclass(clz, Specable) else clz
-
-                        json_schema["anyOf"].append(ref)
+                                ref_clz = clz.specable_cls() if issubclass(clz, Specable) else clz
+                                obj_ref = ref_clz.__get_pydantic_json_schema__(ref_clz.__pydantic_core_schema__, handler) if hasattr(ref_clz, "__pydantic_core_schema__") else copy.deepcopy(loose_object)
+                                actual_ref_schema = handler.resolve_ref_schema(obj_ref)
+                                actual_ref_schema['properties']['implementation'] = dict(const=r.metadata.name)
+                                actual_ref_schema.pop("$defs", None)
+                                ref_schema.update(actual_ref_schema)
+                                for key, value in overrides.items():
+                                    ref_schema['properties'].setdefault(key, {})['default'] = value
+                            json_schema["anyOf"].append(ref)
 
                 return json_schema
 
