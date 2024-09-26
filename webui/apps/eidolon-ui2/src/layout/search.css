@@ -1,0 +1,59 @@
+.DocSearch-Button {
+  background: transparent;
+  color: inherit;
+  margin: 0;
+  border: none;
+}
+
+.DocSearch-Button:hover {
+  background: transparent;
+  color: inherit;
+  border: none;
+  box-shadow: none;
+}
+
+.DocSearch-Button-Keys {
+  border: 1px solid #ccc;
+  min-width: auto;
+  padding-top: 2px;
+  border-radius: 4px;
+  background: #fff;
+} 
+
+.DocSearch-Button-Key {
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  /*padding: 2px;*/
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  /*margin-right: 0;*/
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.DocSearch-Button-Keys > kbd:first-of-type {
+  padding-right: 0;
+  left: 4px;
+}
+.DocSearch-Button-Keys kbd:last-of-type {
+  padding-left: 0;
+  font-size: small;
+  right: 4px;
+}
+
+.DocSearch-Button .DocSearch-Search-Icon {
+  color: #000;
+}
+
+.DocSearch-Input {
+  background: transparent;
+}
+
+.DocSearch-Input:focus {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}

@@ -1,18 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  /* required for sticky elements: HeaderMobile, and so on */
-  max-height: 100vh;
+    max-width: 100vw;
+    overflow-x: hidden;
+    /* required for sticky elements: HeaderMobile, and so on */
+    max-height: 100vh;
+
+    --eidolon-bg: #f8f8f8;
+    --eidolon-bg-2: #f6f6f6;
+    --eidolon-primary: #FF6341;
+    --eidolon-user-element: #4163FF18;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
+}
+
+.titanium-background {
+    background: linear-gradient(135deg, var(--eidolon-bg) 0%, var(--eidolon-bg-2) 50%, var(--eidolon-bg) 100%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+}
+
+.titanium-background::before {
+    z-index: 0;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(255, 255, 255, 0.2) 30%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0.2) 70%,
+            transparent 90%
+    );
+    animation: shine-move 20s infinite ease-in-out;
+}
+
+@keyframes shine-move {
+    0%, 100% {
+        transform: translateY(50%);
+    }
+    50% {
+        transform: translateY(-50%);
+    }
+}
+
+.titanium-content {
+    z-index: 2;
+    position: relative;
+    /* Ensure content remains static */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+.user-element {
+    background-color: var(--eidolon-user-element);
+}
+
+
+button {
+@apply font-bold py-2 px-4 rounded bg-transparent border-none;
+}
+
+button:hover {
+@apply bg-gray-200;
 }

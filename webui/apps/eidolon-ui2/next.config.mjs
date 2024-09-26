@@ -1,12 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    modularizeImports: {
-        'react-icons/ai': {
-            transform: 'react-icons/ai/{{member}}',
-        },
+    devIndicators: {
+        autoPrerender: false,
     },
     output: 'standalone',
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'avatars.githubusercontent.com',
+                pathname: '/**',
+            },
+        ],
+    },
 };
 
 export default nextConfig;

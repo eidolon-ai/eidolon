@@ -1,6 +1,8 @@
+'use server'
+
 import _appRegistry from '../../eidolon-apps.json'
 import {CopilotParams, EidolonApp} from "@eidolon-ai/components/client";
-import * as fs from "fs";
+import fs from "fs";
 import {notFound} from "next/navigation";
 
 let appRegistry = _appRegistry
@@ -25,8 +27,12 @@ export interface AgentLocation {
 // our cached functions cannot be async, so we cannot use. We have the same issue when dynamically loading appRegistry
 for (const [key, value] of Object.entries(appRegistry)) {
   const app = value as EidolonApp
-  const image = await import(`../../app/eidolon-apps/${key}/${app.image}`)
-  app.image = image.default.src
+  try {
+    const image = await import(`../../app/eidolon-apps/${key}/${app.image}`)
+    app.image = image.default.src
+  } catch (e) {
+    console.error("Failed to load image for app ", key, " with error ", e)
+  }
 }
 
 
@@ -75,6 +81,7 @@ function getAppsRaw() {
     app.path = `${key}`
     if (app.type === 'copilot') {
       const params = app.params as CopilotParams
+      params.type = 'copilot'
       if (params.custom_page) {
         app.path = `${params.custom_page}`
       } else {
@@ -86,6 +93,10 @@ function getAppsRaw() {
         app.location = location.machine
         console.log("setting ", params.agent, " machine ", location.machine)
       }
+    } else {
+      const params = app.params || {}
+      params.type = 'dev'
+      app.params = params
     }
     if (process.env.EIDOLON_SERVER) {
       app.location = process.env.EIDOLON_SERVER
@@ -100,7 +111,7 @@ function getAppsRaw() {
 
 let apps: Record<string, EidolonApp> | undefined = undefined
 
-export function getAppRegistry() {
+export async function getAppRegistry() {
   if (apps === undefined) {
     apps = getAppsRaw()
   }
@@ -108,8 +119,8 @@ export function getAppRegistry() {
 }
 
 
-export function getApp(path: string): EidolonApp {
-  let app = getAppRegistry()[path];
+export async function getApp(path: string): Promise<EidolonApp> {
+  let app = (await getAppRegistry())[path];
   if (!app) {
     notFound()
   } else {

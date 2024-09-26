@@ -1,45 +1,8 @@
-import {DisplayElement, ElementsAndLookup, makeElement, MarkdownElement} from "../lib/display-elements.ts";
 import {createParser, ParsedEvent, ParseEvent} from "eventsource-parser";
 import {ChatEvent} from "@eidolon-ai/client";
 
-const getLastStreamContext = (stream_context: string) => {
-  const contextChain: string[] = stream_context.split(".")
-  return contextChain[contextChain.length - 1]!
-}
-
-const processEvent = (event: ChatEvent, elements: ElementsAndLookup) => {
-  const element = makeElement(event)
-  if (element) {
-    let lastElement: DisplayElement | undefined
-    if (event.stream_context) {
-      const lastContext = getLastStreamContext(event.stream_context)
-      const parent = elements.lookup[lastContext]!
-      lastElement = parent.children[parent.children.length - 1]
-    } else {
-      lastElement = elements.elements[elements.elements.length - 1]
-    }
-    if (lastElement?.type === "markdown" && element.type === "markdown") {
-      const mdElement = lastElement as MarkdownElement
-      mdElement.content = mdElement.content + event.content
-    } else {
-      if (element.type === "tool-call") {
-        elements.lookup[element.contextId] = element
-      } else if (element.type === "tool-call-end") {
-        elements.lookup[element.contextId]!.is_active = false
-      }
-      if (event.stream_context) {
-        const lastContext = getLastStreamContext(event.stream_context)
-        const parent = elements.lookup[lastContext]!
-        parent.children.push(element)
-      } else {
-        elements.elements.push(element)
-      }
-    }
-  }
-}
-
 export async function executeOperation(machineUrl: string, agent: string, operation: string, processId: string,
-                                       data: string | Record<string, any>) {
+                                       data: string | Record<string, unknown>) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     method: "POST",
     headers: {
@@ -51,9 +14,9 @@ export async function executeOperation(machineUrl: string, agent: string, operat
   return await response.json()
 }
 
-export async function streamOperation(machineUrl: string, agent: string, operation: string, processId: string, data: Record<string, any>,
-                                      // eslint-disable-next-line no-unused-vars
-                                      handleEvent: (data: Record<string, any>) => void,
+export async function streamOperation(machineUrl: string, agent: string, operation: string, processId: string, data: Record<string, unknown>,
+                                       
+                                      handleEvent: (data: Record<string, unknown>) => void,
 ) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     method: "POST",
@@ -80,7 +43,7 @@ export async function streamOperation(machineUrl: string, agent: string, operati
     }
   };
 
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const {done, value} = await reader.read();
     if (done) break;
@@ -90,9 +53,9 @@ export async function streamOperation(machineUrl: string, agent: string, operati
 }
 
 export async function executeServerOperation(machineUrl: string, agent: string, operation: string, processId: string,
-                                             data: Record<string, any>, elementsAndLookup: ElementsAndLookup,
-                                             // eslint-disable-next-line no-unused-vars
-                                             updateElements: (elements: ElementsAndLookup) => void, cancelFetchController: AbortController) {
+                                             data: unknown | Record<string, unknown>,
+                                             processEvent: (event: ChatEvent) => void,
+                                             cancelFetchController: AbortController) {
   const response = await fetch(`/api/eidolon/process/${processId}/events`, {
     signal: cancelFetchController.signal,
     method: "POST",
@@ -111,9 +74,7 @@ export async function executeServerOperation(machineUrl: string, agent: string, 
       const eventSourceParser = createParser((inEvent: ParseEvent) => {
         const event = inEvent as ParsedEvent
         const data = JSON.parse(event.data)
-        const local_elements = {...elementsAndLookup}
-        processEvent(data as ChatEvent, local_elements)
-        updateElements(local_elements)
+        processEvent(data as ChatEvent)
       })
       eventSourceParser.feed(chunk)
     } catch (error) {
@@ -121,7 +82,7 @@ export async function executeServerOperation(machineUrl: string, agent: string, 
     }
   };
 
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const {done, value} = await reader.read();
     if (done) break;
@@ -130,7 +91,7 @@ export async function executeServerOperation(machineUrl: string, agent: string, 
   }
 }
 
-export async function getChatEventInUI(machineUrl: string, processId: string) {
+export async function getChatEventInUI(machineUrl: string, processId: string, processEvent: (event: ChatEvent) => void) {
   const response = await fetch(`/api/eidolon/process/${processId}/events?machineURL=${machineUrl}`, {
     method: "GET"
   })
@@ -140,10 +101,7 @@ export async function getChatEventInUI(machineUrl: string, processId: string) {
   }
 
   const events = (await response.json()) as ChatEvent[]
-  const local_elements: ElementsAndLookup = {elements: [], lookup: {}}
   events.forEach(event => {
-    processEvent(event, local_elements)
+    processEvent(event)
   })
-
-  return local_elements
 }

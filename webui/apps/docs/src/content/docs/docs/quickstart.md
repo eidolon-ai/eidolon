@@ -62,15 +62,7 @@ agent-server-1  | INFO - Starting agent 'hello-world'
 agent-server-1  | INFO - Collecting anonymous metrics, to disable metrics set DISABLE_ANONYMOUS_METRICS
 agent-server-1  | INFO - Server Started in 3.36s
 ```
-
-</br>
-
-**You are up and running with an agent!  🎉**
-
-Hello world! 👋
-</br></br>
-
->🚨 A common error is not having a funded account. Go to <a href="https://platform.openai.com/settings/organization/billing/overview" target=_blank>OpenAI Billing</a> to get sorted out.
+<br>
 
 >🤔 Running into problems? 
 Get help from us on <a href="https://discord.com/invite/6kVQrHpeqG" target=_blank>Discord</a> 📞 or submit an <a href="https://github.com/eidolon-ai/eidolon/issues/new/choose" target=_blank>issue on GitHub</a>. We want you to _love_ ❤️  working with Eidolon. If there's a problem, we want to fix it 🛠.
@@ -83,22 +75,16 @@ Now that Eidolon is running, let's try it out! You can use the WebUI or command 
 
 A _Developer Tool_ web application is deployed to your server on port 3000. You can use the Developer Tool with any of your Eidolon applications.
 
-To converse with your Eidolon agent for the first time:
+To converse with your Eidolon agent for the first time...
 
 1. Open a web browser to http://localhost:3000 (or replace localhost with your server URL).
 2. Click the **Eidolon Developer Tool** app card.
+3. Click **Execute** on your agent's "converse" action to begin a new conversation.
+4. Say `hello!` to your agent in the text box.
 
-![WebUI](~/assets/images/eidolon-webui-developer-tools.png)
+Did your agent respond to you? 🍾 Congratulations! You successfully created your first agent machine.
 
-3. Click **Add Chat** from the upper left corner.
-
-![New Chat](~/assets/images/eidolon-webui-new-chat.png)
-
-4. Click **Start**.
-
-5. Say `hello!` to your agent in the text box.
-
-Did your agent respond to you? 🍾 Congratulations! You successfully created your first agent machine. 
+>🚨 A common error is not having a funded account. If you have run into this error head over to <a href="https://platform.openai.com/settings/organization/billing/overview" target=_blank>OpenAI Billing</a> to sort this out.
 
 ### Command Line Interface (CLI)
 
