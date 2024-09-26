@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "../DocumentReranker/DocumentReranker.json"
+      "$ref": "./DocumentReranker.json"
     },
     {
-      "$ref": "../DocumentReranker/RAGFusionReranker.json"
+      "$ref": "./RAGFusionReranker.json"
     }
   ],
   "reference_pointer": {

@@ -1,7 +1,7 @@
 {
   "anyOf": [
     {
-      "$ref": "../ImageUnit/OpenAIImageUnit.json"
+      "$ref": "./OpenAIImageUnit.json"
     }
   ],
   "reference_pointer": {

@@ -6,7 +6,7 @@
       "type": "string"
     },
     "llm_unit": {
-      "$ref": "../LLMUnit/overview.json"
+      "$ref": "./overview.json"
     },
     "model": {
       "anyOf": [

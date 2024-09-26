@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "../AudioUnit/AudioUnit.json"
+      "$ref": "./AudioUnit.json"
     },
     {
-      "$ref": "../AudioUnit/OpenAiSpeech.json"
+      "$ref": "./OpenAiSpeech.json"
     }
   ],
   "reference_pointer": {

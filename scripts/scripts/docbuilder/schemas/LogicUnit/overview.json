@@ -1,13 +1,13 @@
 {
   "anyOf": [
     {
-      "$ref": "../LogicUnit/ApiLogicUnit.json"
+      "$ref": "./ApiLogicUnit.json"
     },
     {
       "$ref": "../AudioUnit/AudioUnit.json"
     },
     {
-      "$ref": "../LogicUnit/Browser.json"
+      "$ref": "./Browser.json"
     },
     {
       "$ref": "../ImageUnit/OpenAIImageUnit.json"
@@ -16,13 +16,13 @@
       "$ref": "../AudioUnit/OpenAiSpeech.json"
     },
     {
-      "$ref": "../LogicUnit/Search.json"
+      "$ref": "./Search.json"
     },
     {
-      "$ref": "../LogicUnit/VectaraSearch.json"
+      "$ref": "./VectaraSearch.json"
     },
     {
-      "$ref": "../LogicUnit/WebSearch.json"
+      "$ref": "./WebSearch.json"
     }
   ],
   "reference_pointer": {

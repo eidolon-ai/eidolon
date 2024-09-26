@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "../Retriever/Retriever.json"
+      "$ref": "./Retriever.json"
     },
     {
-      "$ref": "../Retriever/RetrieverAgent.json"
+      "$ref": "./RetrieverAgent.json"
     }
   ],
   "reference_pointer": {

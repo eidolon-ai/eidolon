@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "../MemoryUnit/MemoryUnit.json"
+      "$ref": "./MemoryUnit.json"
     },
     {
-      "$ref": "../MemoryUnit/RawMemoryUnit.json"
+      "$ref": "./RawMemoryUnit.json"
     }
   ],
   "reference_pointer": {

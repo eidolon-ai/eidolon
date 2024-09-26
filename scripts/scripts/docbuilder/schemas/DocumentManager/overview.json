@@ -1,7 +1,7 @@
 {
   "anyOf": [
     {
-      "$ref": "../DocumentManager/DocumentManager.json"
+      "$ref": "./DocumentManager.json"
     }
   ],
   "reference_pointer": {

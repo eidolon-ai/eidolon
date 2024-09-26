@@ -1,7 +1,7 @@
 {
   "anyOf": [
     {
-      "$ref": "../LongTermMemoryUnit/LongTermMemoryUnit.json"
+      "$ref": "./LongTermMemoryUnit.json"
     }
   ],
   "reference_pointer": {

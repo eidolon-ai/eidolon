@@ -1,46 +1,46 @@
 {
   "anyOf": [
     {
-      "$ref": "../APU/APU.json"
+      "$ref": "./APU.json"
     },
     {
-      "$ref": "../APU/ClaudeHaiku.json"
+      "$ref": "./ClaudeHaiku.json"
     },
     {
-      "$ref": "../APU/ClaudeOpus.json"
+      "$ref": "./ClaudeOpus.json"
     },
     {
-      "$ref": "../APU/ClaudeSonnet.json"
+      "$ref": "./ClaudeSonnet.json"
     },
     {
-      "$ref": "../APU/ConversationalAPU.json"
+      "$ref": "./ConversationalAPU.json"
     },
     {
-      "$ref": "../APU/GPT3.5-turbo.json"
+      "$ref": "./GPT3.5-turbo.json"
     },
     {
-      "$ref": "../APU/GPT4-turbo.json"
+      "$ref": "./GPT4-turbo.json"
     },
     {
-      "$ref": "../APU/GPT4o.json"
+      "$ref": "./GPT4o.json"
     },
     {
-      "$ref": "../APU/GPT4o-mini.json"
+      "$ref": "./GPT4o-mini.json"
     },
     {
-      "$ref": "../APU/GPTo1Preview.json"
+      "$ref": "./GPTo1Preview.json"
     },
     {
-      "$ref": "../APU/Llamma3-8b.json"
+      "$ref": "./Llamma3-8b.json"
     },
     {
-      "$ref": "../APU/MistralLarge.json"
+      "$ref": "./MistralLarge.json"
     },
     {
-      "$ref": "../APU/MistralMedium.json"
+      "$ref": "./MistralMedium.json"
     },
     {
-      "$ref": "../APU/MistralSmall.json"
+      "$ref": "./MistralSmall.json"
     }
   ],
   "reference_pointer": {

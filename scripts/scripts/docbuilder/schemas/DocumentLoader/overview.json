@@ -1,19 +1,19 @@
 {
   "anyOf": [
     {
-      "$ref": "../DocumentLoader/AzureLoader.json"
+      "$ref": "./AzureLoader.json"
     },
     {
-      "$ref": "../DocumentLoader/DocumentLoader.json"
+      "$ref": "./DocumentLoader.json"
     },
     {
-      "$ref": "../DocumentLoader/FilesystemLoader.json"
+      "$ref": "./FilesystemLoader.json"
     },
     {
-      "$ref": "../DocumentLoader/GitHubLoader.json"
+      "$ref": "./GitHubLoader.json"
     },
     {
-      "$ref": "../DocumentLoader/S3Loader.json"
+      "$ref": "./S3Loader.json"
     }
   ],
   "reference_pointer": {

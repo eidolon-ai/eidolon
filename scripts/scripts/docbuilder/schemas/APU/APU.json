@@ -75,7 +75,7 @@
     "retriever_apu": {
       "anyOf": [
         {
-          "$ref": "../APU/overview.json"
+          "$ref": "./overview.json"
         },
         {
           "type": "null"

@@ -1,22 +1,22 @@
 {
   "anyOf": [
     {
-      "$ref": "../LLMUnit/AnthropicLLMUnit.json"
+      "$ref": "./AnthropicLLMUnit.json"
     },
     {
-      "$ref": "../LLMUnit/LLMUnit.json"
+      "$ref": "./LLMUnit.json"
     },
     {
-      "$ref": "../LLMUnit/MistralGPT.json"
+      "$ref": "./MistralGPT.json"
     },
     {
-      "$ref": "../LLMUnit/OllamaLLMUnit.json"
+      "$ref": "./OllamaLLMUnit.json"
     },
     {
-      "$ref": "../LLMUnit/OpenAIGPT.json"
+      "$ref": "./OpenAIGPT.json"
     },
     {
-      "$ref": "../LLMUnit/ToolCallLLMWrapper.json"
+      "$ref": "./ToolCallLLMWrapper.json"
     }
   ],
   "reference_pointer": {

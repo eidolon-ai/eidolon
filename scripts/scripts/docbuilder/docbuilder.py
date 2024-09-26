@@ -75,7 +75,7 @@ def main():
         if write_loc:
             copied = copy.deepcopy(v)
             local_refs = find_local_refs(v)
-            relative_write_locs(copied, ".." + str(write_loc.parent))
+            relative_write_locs(copied, "../" + str(write_loc.parent) + "/")
 
             if local_refs:
                 copied["$defs"] = {ref.removeprefix("#/$defs/"): defs[ref.removeprefix("#/$defs/")] for ref in local_refs}
