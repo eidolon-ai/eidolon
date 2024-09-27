@@ -33,6 +33,8 @@ Specific value: `"Search"`
 | **Type**     | `string` |
 | **Required** | No       |
 
+**Description:** Google Custom Search Engine Id.
+
 ## <a name="cse_token"></a>3. Property `cse_token`
 
 **Title:** Cse Token
@@ -41,6 +43,8 @@ Specific value: `"Search"`
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** Google Project dev token, must have search permissions.
 
 ## <a name="name"></a>4. Property `name`
 

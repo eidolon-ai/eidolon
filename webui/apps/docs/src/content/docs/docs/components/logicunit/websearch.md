@@ -48,6 +48,8 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
+**Description:** Google Custom Search Engine Id.
+
 ## <a name="cse_token"></a>4. Property `cse_token`
 
 **Title:** Cse Token
@@ -56,6 +58,8 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** Google Project dev token, must have search permissions.
 
 ## <a name="name"></a>5. Property `name`
 

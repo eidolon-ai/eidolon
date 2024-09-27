@@ -402,10 +402,11 @@ To learn more, check out our blog article APU: [What is it and how does it work?
 | ------------ | ------------------ |
 | **Type**     | `enum (of string)` |
 | **Required** | No                 |
-| **Default**  | `"on_request"`     |
+| **Default**  | `"auto"`           |
 
 Must be one of:
 * "none"
 * "on_request"
+* "auto"
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,15 @@
+/* all styles in this file will be prepended with eidolon_ */
+.md-code-block {
+}
+
+.md-code-block pre[class*=\"language-\"] {
+    line-height: 1.25em
+}
+
+.md-code-block code[class*=\"language-\"] {
+    line-height: 1.25em
+}
+
+.md-code-block-header {
+
+}

@@ -1,12 +1,12 @@
 {
   "properties": {
     "cse_id": {
-      "desctiption": "Google Custom Search Engine Id.",
+      "description": "Google Custom Search Engine Id.",
       "title": "Cse Id",
       "type": "string"
     },
     "cse_token": {
-      "desctiption": "Google Project dev token, must have search permissions.",
+      "description": "Google Project dev token, must have search permissions.",
       "title": "Cse Token",
       "type": "string"
     },

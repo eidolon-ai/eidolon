@@ -145,11 +145,6 @@ class TestSimpleTests:
         resp = await process.action("converse", body=dict(a1="What is the capital of", a2="France?"))
         assert "paris" in resp.data.lower()
 
-    async def test_generating_title(self):
-        process = await Agent.get("json_output").create_process()
-        resp = await process.action("generate_title", body="What is the capital of France?")
-        assert "france" in resp.data.lower()
-
     async def test_json_input(self):
         process = await Agent.get("json_input").create_process()
         resp = await process.action("converse", body=dict(one_int=1, three_default="three"))
@@ -167,7 +162,7 @@ class TestSimpleTests:
         process = await Agent.get("states").create_process()
         status = await process.status()
         assert status.state == "initialized"
-        assert status.available_actions == ["first", "generate_title"]
+        assert status.available_actions == ["first"]
         first = await process.action("first", body="What is the capital of France?")
         status = await first.status()
         assert status.state == "s2"
@@ -176,7 +171,7 @@ class TestSimpleTests:
         second = await first.action("second", body="What about Spain?")
         status = await second.status()
         assert status.state == "idle"
-        assert status.available_actions == ["generate_title"]
+        assert status.available_actions == []
         assert "madrid" in second.data.lower()
 
         with pytest.raises(AgentError) as e:
@@ -223,11 +218,11 @@ class TestSimpleTests:
     async def test_with_replay_points(self, file_memory_loc, record, llm_name):
         process = await Agent.get("with_tools").create_process()
         await process.action("converse", body="What is the meaning of life?")
-        stream = replay(file_memory_loc / record / f"001_{llm_name}")
+        stream = replay(file_memory_loc / record / f"002_{llm_name}")
         response = "".join([s async for s in stream])
         assert "42" in response
 
-        with open(file_memory_loc / record / f"001_{llm_name}" / "data.yaml", "r") as f:
+        with open(file_memory_loc / record / f"002_{llm_name}" / "data.yaml", "r") as f:
             assert "You are a helpful assistant" in f.read()
 
     async def test_agent_with_complex_refs(self):
