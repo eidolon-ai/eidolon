@@ -2,20 +2,28 @@
 title: ProcessFileSystemImpl
 description: "Description of ProcessFileSystemImpl component"
 ---
+# Schema Docs
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description     |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------- |
-| + [implementation](#implementation ) | No      | const  | No         | -          | ProcessFileSystemImpl |
-| - [root](#root )                     | No      | string | No         | -          | Root                  |
+- [1. Property `implementation`](#implementation)
+- [2. Property `root`](#root)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
+| - [root](#root )                     | No      | string | No         | -          | Root              |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** ProcessFileSystemImpl
+| **Required** | No      |
 
 Specific value: `"ProcessFileSystemImpl"`
 

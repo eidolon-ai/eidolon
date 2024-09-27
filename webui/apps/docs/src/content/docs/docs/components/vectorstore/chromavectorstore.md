@@ -2,10 +2,21 @@
 title: ChromaVectorStore
 description: "Description of ChromaVectorStore component"
 ---
+# Schema Docs
+
+- [1. Property `implementation`](#implementation)
+- [2. Property `root_document_directory`](#root_document_directory)
+- [3. Property `url`](#url)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| + [implementation](#implementation )                   | No      | const  | No         | -          | ChromaVectorStore       |
+| - [implementation](#implementation )                   | No      | const  | No         | -          | -                       |
 | - [root_document_directory](#root_document_directory ) | No      | string | No         | -          | Root Document Directory |
 | - [url](#url )                                         | No      | string | No         | -          | Url                     |
 
@@ -14,9 +25,7 @@ description: "Description of ChromaVectorStore component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** ChromaVectorStore
+| **Required** | No      |
 
 Specific value: `"ChromaVectorStore"`
 

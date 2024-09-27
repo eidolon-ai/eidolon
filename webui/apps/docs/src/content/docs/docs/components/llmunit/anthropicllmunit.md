@@ -2,36 +2,57 @@
 title: AnthropicLLMUnit
 description: "Description of AnthropicLLMUnit component"
 ---
+# Schema Docs
 
-| Property                             | Pattern | Type                | Deprecated | Definition                   | Title/Description               |
-| ------------------------------------ | ------- | ------------------- | ---------- | ---------------------------- | ------------------------------- |
-| + [implementation](#implementation ) | No      | const               | No         | -                            | AnthropicLLMUnit                |
-| - [model](#model )                   | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
-| - [temperature](#temperature )       | No      | number              | No         | -                            | Temperature                     |
-| - [max_tokens](#max_tokens )         | No      | integer             | No         | -                            | Max Tokens                      |
-| - [client_args](#client_args )       | No      | object              | No         | -                            | Client Args                     |
+- [1. Property `implementation`](#implementation)
+- [2. Property `model`](#model)
+  - [2.1. Property `implementation`](#model_implementation)
+- [3. Property `temperature`](#temperature)
+- [4. Property `max_tokens`](#max_tokens)
+- [5. Property `client_args`](#client_args)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+
+| Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const   | No         | -          | -                 |
+| - [model](#model )                   | No      | object  | No         | -          | -                 |
+| - [temperature](#temperature )       | No      | number  | No         | -          | Temperature       |
+| - [max_tokens](#max_tokens )         | No      | integer | No         | -          | Max Tokens        |
+| - [client_args](#client_args )       | No      | object  | No         | -          | Client Args       |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** AnthropicLLMUnit
+| **Required** | No      |
 
 Specific value: `"AnthropicLLMUnit"`
 
 ## <a name="model"></a>2. Property `model`
 
-|                |                                                |
-| -------------- | ---------------------------------------------- |
-| **Type**       | `Reference[LLMModel]`                          |
-| **Required**   | No                                             |
-| **Default**    | `{"implementation": "claude-3-opus-20240229"}` |
-| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)                      |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-**Description:** Overview of LLMModel components
+| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#model_implementation ) | No      | string | No         | -          | -                 |
+| - [](#model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+### <a name="model_implementation"></a>2.1. Property `implementation`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ## <a name="temperature"></a>3. Property `temperature`
 

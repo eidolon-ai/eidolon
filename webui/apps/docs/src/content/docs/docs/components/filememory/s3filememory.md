@@ -2,10 +2,26 @@
 title: S3FileMemory
 description: "Description of S3FileMemory component"
 ---
+# Schema Docs
+
+- [1. Property `implementation`](#implementation)
+- [2. Property `bucket`](#bucket)
+- [3. Property `region_name`](#region_name)
+- [4. Property `aws_access_key_id`](#aws_access_key_id)
+- [5. Property `aws_secret_access_key`](#aws_secret_access_key)
+- [6. Property `aws_session_token`](#aws_session_token)
+- [7. Property `session_args`](#session_args)
+- [8. Property `create_bucket_on_startup`](#create_bucket_on_startup)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description        |
 | -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| + [implementation](#implementation )                     | No      | const   | No         | -          | S3FileMemory             |
+| - [implementation](#implementation )                     | No      | const   | No         | -          | -                        |
 | + [bucket](#bucket )                                     | No      | string  | No         | -          | Bucket                   |
 | - [region_name](#region_name )                           | No      | string  | No         | -          | Region Name              |
 | - [aws_access_key_id](#aws_access_key_id )               | No      | string  | No         | -          | Aws Access Key Id        |
@@ -19,9 +35,7 @@ description: "Description of S3FileMemory component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** S3FileMemory
+| **Required** | No      |
 
 Specific value: `"S3FileMemory"`
 

@@ -1,8 +1,9 @@
 ---
 title: FunctionalAuthorizer Overview
-description: "Overview of FunctionalAuthorizer components"
+description: "None"
 ---
-Overview of FunctionalAuthorizer components
+Overview of the FunctionalAuthorizercomponent
 ## Builtins
 * [GlobPatternFunctionalAuthorizer](/docs/components/functionalauthorizer/globpatternfunctionalauthorizer/)
-* [NoopFunctionalAuth](/docs/components/functionalauthorizer/noopfunctionalauth/) (default)
+* [FunctionalAuthorizer](/docs/components/functionalauthorizer/functionalauthorizer/) (default)
+* [NoopFunctionalAuth](/docs/components/functionalauthorizer/noopfunctionalauth/)

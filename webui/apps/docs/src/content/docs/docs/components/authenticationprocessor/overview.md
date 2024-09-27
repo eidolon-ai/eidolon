@@ -1,9 +1,10 @@
 ---
 title: AuthenticationProcessor Overview
-description: "Overview of AuthenticationProcessor components"
+description: "None"
 ---
-Overview of AuthenticationProcessor components
+Overview of the AuthenticationProcessorcomponent
 ## Builtins
 * [AzureJWTProcessor](/docs/components/authenticationprocessor/azurejwtprocessor/)
 * [GoogleJWTProcessor](/docs/components/authenticationprocessor/googlejwtprocessor/)
-* [NoopAuthProcessor](/docs/components/authenticationprocessor/noopauthprocessor/) (default)
+* [AuthenticationProcessor](/docs/components/authenticationprocessor/authenticationprocessor/) (default)
+* [NoopAuthProcessor](/docs/components/authenticationprocessor/noopauthprocessor/)

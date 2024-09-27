@@ -2,80 +2,65 @@ import copy
 import json
 import os
 import shutil
-import textwrap
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Dict, Self, cast, List
+from typing import List
 
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
-from pydantic import BaseModel, model_validator
 
 from eidolon_ai_sdk.agent.api_agent import APIAgent
-from eidolon_ai_sdk.agent.doc_manager.document_manager import DocumentManager
-from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
-from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory, SymbolicMemory
-from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMModel
-from eidolon_ai_sdk.apu.logic_unit import LogicUnit
-from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
-from eidolon_ai_sdk.system.agent_machine import AgentMachine
-from eidolon_ai_sdk.system.kernel import AgentOSKernel
-from eidolon_ai_sdk.system.reference_model import Reference
-from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
-from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.system.resources.resources_base import Resource
-from eidolon_ai_sdk.util.class_utils import for_name, fqn
+from eidolon_ai_sdk.util.class_utils import fqn
 
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
 
-
 def main():
-    print("Generating docs...")
+    print("Generating json...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
 
-    accumulated_schema = {"$defs": {
-        "Agent": {
-            "title": "Agent",
-            "description": "Overview of Agent components",
-            "anyOf": [],
-            "reference_pointer": {
-                "type": "Agent",
-                "default_impl": "SimpleAgent",
-            }
-        }
-    }}
-    for agent in [SimpleAgent, RetrieverAgent, APIAgent, SqlAgent]:
-        schema = agent.model_json_schema()
-        schema['properties']['implementation'] = {
-            "const": agent.__name__,
-        }
-        schema['reference_details'] = dict(
-            overrides={},
-            clz=fqn(agent),
-            name=agent.__name__,
-            group="Agent",
-        )
-        accumulated_schema["$defs"].update(schema.pop("$defs", {}))
-        accumulated_schema["$defs"][agent.__name__] = schema
-        accumulated_schema["$defs"]["Agent"]["anyOf"].append({"$ref": f"#/$defs/{agent.__name__}"})
+    # accumulated_schema = {"$defs": {
+    #     "Agent": {
+    #         "title": "Agent",
+    #         "description": "Overview of Agent components",
+    #         "anyOf": [],
+    #         "reference_pointer": {
+    #             "type": "Agent",
+    #             "default_impl": "SimpleAgent",
+    #         }
+    #     }
+    # }}
+    # for agent in [SimpleAgent, RetrieverAgent, APIAgent, SqlAgent]:
+    #     schema = agent.model_json_schema()
+    #     schema['properties']['implementation'] = {
+    #         "const": agent.__name__,
+    #     }
+    #     schema['reference_details'] = dict(
+    #         overrides={},
+    #         clz=fqn(agent),
+    #         name=agent.__name__,
+    #         group="Agent",
+    #     )
+    #     accumulated_schema["$defs"].update(schema.pop("$defs", {}))
+    #     accumulated_schema["$defs"][agent.__name__] = schema
+    #     accumulated_schema["$defs"]["Agent"]["anyOf"].append({"$ref": f"#/$defs/{agent.__name__}"})
+    #
+    # machine_schema = MachineResource.model_json_schema()
+    # accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
+    #
+    # print("writing json...")
+    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    # write_json_schema(dist_component_schemas, accumulated_schema)
 
-    machine_schema = MachineResource.model_json_schema()
-    accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
+    print("writing md...")
+    write_md(dist_component_schemas)
 
-    print("json generated")
-    shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    write_json_schema(dist_component_schemas, accumulated_schema)
-    print("json written")
-
-
-    # write_md(dist_component_schemas)
+    # print("updating sitemap...")
     # update_sitemap()
 
 
@@ -173,54 +158,52 @@ cut_after_str = """|                           |                                
 def write_md(read_loc,
              write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     shutil.rmtree(write_loc, ignore_errors=True)
-    for k, g in groups.items():
-        write_file_loc = write_loc / url_safe(k) / "overview.md"
+    for k in os.listdir(read_loc):
+        try:
+            with open(read_loc / k / "overview.json", 'r') as json_file:
+                g = json.load(json_file)
+        except FileNotFoundError:
+            print(f"Skipping {k} as it has no overview.json")
+            continue
+
         title = f"{k} Overview"
         content = ["## Builtins"]
-        for name, _, _ in g.get_components():
+        components = []
+        for c in [c for c in os.listdir(read_loc / k) if c != "overview.json"]:
+            with open(read_loc / k / c, 'r') as json_file:
+                components.append(json.load(json_file))
+        for component_schema in components:
+            name = component_schema['reference_details']['name']
             content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
-            if name == g.default:
+            if name == g['reference_pointer']['default_impl']:
                 content[-1] += " (default)"
-        with open(read_loc / k / "overview.json", 'r') as json_file:
-            description = json.load(json_file)['description']
-        write_astro_md_file(g.description + "\n" + "\n".join(content), description, title, write_file_loc)
 
-    with TemporaryDirectory() as tempdir:
-        tempdir = Path(tempdir)
-        shutil.copytree(read_loc, tempdir, dirs_exist_ok=True)
-        for root, dirs, files in os.walk(tempdir):
-            for file in files:
-                with open(os.path.join(root, file), 'r') as json_file:
-                    obj = json.load(json_file)
-                    clean_ref_groups_for_md(obj)
-                with open(os.path.join(root, file), 'w') as json_file:
-                    json.dump(obj, json_file, indent=2)
+        write_astro_md_file(
+            f"Overview of the {g['title']} component" + "\n" + "\n".join(content),
+            g.get('description'),
+            title,
+            write_loc / url_safe(k) / "overview.md"
+        )
 
-        for k, g in groups.items():
-            for component, _, _ in g.get_components():
-                write_file_loc = write_loc / url_safe(k) / (url_safe(component.replace(".json", "")) + ".md")
-                with open(tempdir / k / (component + ".json"), 'r') as json_file:
-                    obj = json.load(json_file)
-                    title = obj.get('title', component)
-                    description = f"Description of {title} component"
-                content = generate_from_schema(tempdir / k / (component + ".json"), config=GenerationConfiguration(
+        for schema in components:
+            schema = copy.deepcopy(schema)
+            clean_ref_groups_for_md(schema)
+            title = schema.get('title', schema['reference_details']['name'])
+            description = f"Description of {title} component"
+
+            with TemporaryDirectory() as tempdir:
+                with open(Path(tempdir) / c, 'w') as temp_json_file:
+                    json.dump(schema, temp_json_file, indent=2)
+                content = generate_from_schema(Path(tempdir) / c, config=GenerationConfiguration(
                     show_breadcrumbs=False,
                     template_name="md",
                     with_footer=False,
                 ))
-
-                content = content[(content.index(cut_after_str) + len(cut_after_str)):]
-                # for name in groups.keys():
-                #     content = content.replace(f"`[Reference[{name}]](/docs/components/{url_safe(name)}/overview)`",
-                #                               f"[`Reference[{name}]`](/docs/components/{url_safe(name)}/overview)")
-
-                write_astro_md_file(content, description, title, write_file_loc)
+                # content = content[(content.index(cut_after_str) + len(cut_after_str)):]
+                write_astro_md_file(content, description, title, write_loc / url_safe(k) / (url_safe(schema['reference_details']['name']) + ".md"))
 
 
 def write_astro_md_file(content, description, title, write_file_loc):
-    for name, group in groups.items():
-        content = content.replace(f"../{name}/overview.json",
-                                  f"[{name}](/docs/components/{url_safe(name)}/overview)")
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
     md_str = template("template_component_md", title=title, description=description, content=content)
@@ -233,30 +216,26 @@ def template(template_file, **kwargs):
         return Environment(undefined=StrictUndefined).from_string(template.read()).render(**kwargs)
 
 
-def generate_json(write_base):
-    schema = SimpleAgent.model_json_schema()
-    print(schema)
-
-
 def clean_ref_groups_for_md(schema, seen=None):
     seen = seen or set()
     if id(schema) in seen:
         return
+
+    seen.add(id(schema))
     if isinstance(schema, dict):  # inline optional types for easier to read markdown
         if "anyOf" in schema and len(schema['anyOf']) == 2 and [s for s in schema['anyOf'] if len(s) == 1 and s.get("type") == "null"] and schema.get('default') is None:
             any_of = schema.pop('anyOf')
             object_type = [s for s in any_of if not (len(s) == 1 and s.get("type") == "null")][0]
             schema.update(object_type)
-        if "reference_group" in schema:
-            if "anyOf" in schema:
-                del schema['anyOf']
-                schema['type'] = f"Reference[{schema['reference_group']['type']}]"
-        else:
-            for v in schema.values():
-                clean_ref_groups_for_md(v, {id(schema), *seen})
+        if "$ref" in schema and schema["$ref"].endswith("overview.json"):
+            del schema["$ref"]
+            schema['properties'] = dict(implementation=dict(type="string"))
+            schema['additionalProperties'] = True
+        for v in schema.values():
+            clean_ref_groups_for_md(v, seen)
     elif isinstance(schema, list):
         for i in schema:
-            clean_ref_groups_for_md(i, {id(schema), *seen})
+            clean_ref_groups_for_md(i, seen)
     else:
         pass
 

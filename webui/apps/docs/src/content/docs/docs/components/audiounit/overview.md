@@ -1,7 +1,8 @@
 ---
 title: AudioUnit Overview
-description: "Overview of AudioUnit components"
+description: "None"
 ---
-Overview of AudioUnit components
+Overview of the AudioUnitcomponent
 ## Builtins
-* [OpenAiSpeech](/docs/components/audiounit/openaispeech/) (default)
+* [AudioUnit](/docs/components/audiounit/audiounit/)
+* [OpenAiSpeech](/docs/components/audiounit/openaispeech/)

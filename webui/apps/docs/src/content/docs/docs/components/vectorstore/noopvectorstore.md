@@ -2,6 +2,15 @@
 title: NoopVectorStore
 description: "Description of NoopVectorStore component"
 ---
+# Schema Docs
+
+- [1. Property `implementation`](#implementation)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
@@ -13,8 +22,6 @@ description: "Description of NoopVectorStore component"
 | ------------ | ------- |
 | **Type**     | `const` |
 | **Required** | Yes     |
-
-**Description:** NoopVectorStore
 
 Specific value: `"NoopVectorStore"`
 

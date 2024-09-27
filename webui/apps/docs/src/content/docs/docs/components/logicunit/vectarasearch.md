@@ -2,12 +2,22 @@
 title: VectaraSearch
 description: "Description of VectaraSearch component"
 ---
+# Schema Docs
 
-**Description:** A logic unit for searching in Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.
+- [1. Property `implementation`](#implementation)
+- [2. Property `corpus_key`](#corpus_key)
+- [3. Property `description`](#description)
+- [4. Property `vectara_url`](#vectara_url)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const  | No         | -          | VectaraSearch     |
+| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
 | + [corpus_key](#corpus_key )         | No      | string | No         | -          | Corpus Key        |
 | - [description](#description )       | No      | string | No         | -          | Description       |
 | - [vectara_url](#vectara_url )       | No      | string | No         | -          | Vectara Url       |
@@ -17,9 +27,7 @@ description: "Description of VectaraSearch component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** VectaraSearch
+| **Required** | No      |
 
 Specific value: `"VectaraSearch"`
 

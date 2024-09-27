@@ -1,18 +1,19 @@
 ---
 title: DocumentTransformer Overview
-description: "Overview of DocumentTransformer components"
+description: "None"
 ---
-Overview of DocumentTransformer components
+Overview of the DocumentTransformercomponent
 ## Builtins
-* [AutoTransformer](/docs/components/documenttransformer/autotransformer/) (default)
 * [CharacterTextSplitter](/docs/components/documenttransformer/charactertextsplitter/)
-* [HTMLHeaderTextSplitter](/docs/components/documenttransformer/htmlheadertextsplitter/)
-* [LatexTextSplitter](/docs/components/documenttransformer/latextextsplitter/)
-* [MarkdownHeaderTextSplitter](/docs/components/documenttransformer/markdownheadertextsplitter/)
-* [MarkdownTextSplitter](/docs/components/documenttransformer/markdowntextsplitter/)
-* [NLTKTextSplitter](/docs/components/documenttransformer/nltktextsplitter/)
 * [PythonCodeTextSplitter](/docs/components/documenttransformer/pythoncodetextsplitter/)
-* [RecursiveCharacterTextSplitter](/docs/components/documenttransformer/recursivecharactertextsplitter/)
+* [MarkdownTextSplitter](/docs/components/documenttransformer/markdowntextsplitter/)
+* [AutoTransformer](/docs/components/documenttransformer/autotransformer/)
+* [LatexTextSplitter](/docs/components/documenttransformer/latextextsplitter/)
+* [DocumentTransformer](/docs/components/documenttransformer/documenttransformer/) (default)
+* [TokenTextSplitter](/docs/components/documenttransformer/tokentextsplitter/)
+* [MarkdownHeaderTextSplitter](/docs/components/documenttransformer/markdownheadertextsplitter/)
+* [NLTKTextSplitter](/docs/components/documenttransformer/nltktextsplitter/)
+* [HTMLHeaderTextSplitter](/docs/components/documenttransformer/htmlheadertextsplitter/)
 * [SentenceTransformersTokenTextSplitter](/docs/components/documenttransformer/sentencetransformerstokentextsplitter/)
 * [SpacyTextSplitter](/docs/components/documenttransformer/spacytextsplitter/)
-* [TokenTextSplitter](/docs/components/documenttransformer/tokentextsplitter/)
+* [RecursiveCharacterTextSplitter](/docs/components/documenttransformer/recursivecharactertextsplitter/)

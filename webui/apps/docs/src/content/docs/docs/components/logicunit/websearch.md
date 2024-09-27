@@ -1,11 +1,31 @@
 ---
-title: WebSearch
-description: "Description of WebSearch component"
+title: WebSearchConfig
+description: "Description of WebSearchConfig component"
 ---
+# WebSearchConfig
+
+- [1. Property `implementation`](#implementation)
+- [2. Property `summarizer`](#summarizer)
+- [3. Property `cse_id`](#cse_id)
+- [4. Property `cse_token`](#cse_token)
+- [5. Property `name`](#name)
+- [6. Property `description`](#description)
+- [7. Property `defaultDateRestrict`](#defaultDateRestrict)
+- [8. Property `params`](#params)
+  - [8.1. Property `item 0`](#params_anyOf_i0)
+  - [8.2. Property `item 1`](#params_anyOf_i1)
+
+**Title:** WebSearchConfig
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------- |
-| + [implementation](#implementation )           | No      | const            | No         | -          | WebSearch           |
+| - [implementation](#implementation )           | No      | const            | No         | -          | -                   |
 | - [summarizer](#summarizer )                   | No      | enum (of string) | No         | -          | Summarizer          |
 | - [cse_id](#cse_id )                           | No      | string           | No         | -          | Cse Id              |
 | - [cse_token](#cse_token )                     | No      | string           | No         | -          | Cse Token           |
@@ -19,9 +39,7 @@ description: "Description of WebSearch component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** WebSearch
+| **Required** | No      |
 
 Specific value: `"WebSearch"`
 

@@ -2,22 +2,32 @@
 title: MultiQuestionTransformer
 description: "Description of MultiQuestionTransformer component"
 ---
+# Schema Docs
 
-| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description        |
-| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| + [implementation](#implementation )         | No      | const   | No         | -          | MultiQuestionTransformer |
-| - [keep_original](#keep_original )           | No      | boolean | No         | -          | Keep Original            |
-| - [number_to_generate](#number_to_generate ) | No      | integer | No         | -          | Number To Generate       |
-| - [prompt](#prompt )                         | No      | string  | No         | -          | Prompt                   |
+- [1. Property `implementation`](#implementation)
+- [2. Property `keep_original`](#keep_original)
+- [3. Property `number_to_generate`](#number_to_generate)
+- [4. Property `prompt`](#prompt)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+
+| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description  |
+| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------ |
+| - [implementation](#implementation )         | No      | const   | No         | -          | -                  |
+| - [keep_original](#keep_original )           | No      | boolean | No         | -          | Keep Original      |
+| - [number_to_generate](#number_to_generate ) | No      | integer | No         | -          | Number To Generate |
+| - [prompt](#prompt )                         | No      | string  | No         | -          | Prompt             |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** MultiQuestionTransformer
+| **Required** | No      |
 
 Specific value: `"MultiQuestionTransformer"`
 

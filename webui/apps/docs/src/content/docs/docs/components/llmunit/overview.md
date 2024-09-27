@@ -1,11 +1,12 @@
 ---
 title: LLMUnit Overview
-description: "Overview of LLMUnit components"
+description: "None"
 ---
-Overview of LLMUnit components
+Overview of the LLMUnitcomponent
 ## Builtins
 * [AnthropicLLMUnit](/docs/components/llmunit/anthropicllmunit/)
-* [MistralGPT](/docs/components/llmunit/mistralgpt/)
 * [OllamaLLMUnit](/docs/components/llmunit/ollamallmunit/)
-* [OpenAIGPT](/docs/components/llmunit/openaigpt/) (default)
+* [MistralGPT](/docs/components/llmunit/mistralgpt/)
+* [LLMUnit](/docs/components/llmunit/llmunit/) (default)
+* [OpenAIGPT](/docs/components/llmunit/openaigpt/)
 * [ToolCallLLMWrapper](/docs/components/llmunit/toolcallllmwrapper/)

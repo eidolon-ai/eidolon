@@ -1,7 +1,8 @@
 ---
 title: SimilarityMemory Overview
-description: "Overview of SimilarityMemory components"
+description: "None"
 ---
-Overview of SimilarityMemory components
+Overview of the SimilarityMemorycomponent
 ## Builtins
-* [SimilarityMemoryImpl](/docs/components/similaritymemory/similaritymemoryimpl/) (default)
+* [SimilarityMemory](/docs/components/similaritymemory/similaritymemory/) (default)
+* [SimilarityMemoryImpl](/docs/components/similaritymemory/similaritymemoryimpl/)

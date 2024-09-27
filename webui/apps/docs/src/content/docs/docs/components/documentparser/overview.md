@@ -1,7 +1,8 @@
 ---
 title: DocumentParser Overview
-description: "Overview of DocumentParser components"
+description: "None"
 ---
-Overview of DocumentParser components
+Overview of the DocumentParsercomponent
 ## Builtins
-* [AutoParser](/docs/components/documentparser/autoparser/) (default)
+* [AutoParser](/docs/components/documentparser/autoparser/)
+* [DocumentParser](/docs/components/documentparser/documentparser/) (default)

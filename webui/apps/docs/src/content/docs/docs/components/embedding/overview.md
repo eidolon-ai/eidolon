@@ -1,8 +1,9 @@
 ---
 title: Embedding Overview
-description: "Overview of Embedding components"
+description: "None"
 ---
-Overview of Embedding components
+Overview of the Embeddingcomponent
 ## Builtins
+* [OpenAIEmbedding](/docs/components/embedding/openaiembedding/)
+* [Embedding](/docs/components/embedding/embedding/) (default)
 * [NoopEmbedding](/docs/components/embedding/noopembedding/)
-* [OpenAIEmbedding](/docs/components/embedding/openaiembedding/) (default)

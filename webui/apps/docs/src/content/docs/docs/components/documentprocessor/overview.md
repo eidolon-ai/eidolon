@@ -1,7 +1,7 @@
 ---
 title: DocumentProcessor Overview
-description: "Overview of DocumentProcessor components"
+description: "None"
 ---
-Overview of DocumentProcessor components
+Overview of the DocumentProcessorcomponent
 ## Builtins
 * [DocumentProcessor](/docs/components/documentprocessor/documentprocessor/) (default)

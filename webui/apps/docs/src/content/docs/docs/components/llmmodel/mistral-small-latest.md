@@ -2,26 +2,40 @@
 title: mistral-small-latest
 description: "Description of mistral-small-latest component"
 ---
+# Schema Docs
+
+- [1. Property `implementation`](#implementation)
+- [2. Property `human_name`](#human_name)
+- [3. Property `name`](#name)
+- [4. Property `input_context_limit`](#input_context_limit)
+- [5. Property `output_context_limit`](#output_context_limit)
+- [6. Property `supports_tools`](#supports_tools)
+- [7. Property `supports_image_input`](#supports_image_input)
+- [8. Property `supports_audio_input`](#supports_audio_input)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| + [implementation](#implementation )             | No      | const   | No         | -          | mistral-small-latest |
-| - [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
-| - [name](#name )                                 | No      | string  | No         | -          | Name                 |
-| - [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| - [output_context_limit](#output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| - [supports_tools](#supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| - [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| - [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| - [implementation](#implementation )             | No      | const   | No         | -          | -                    |
+| + [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** mistral-small-latest
+| **Required** | No      |
 
 Specific value: `"mistral-small-latest"`
 
@@ -32,7 +46,7 @@ Specific value: `"mistral-small-latest"`
 |              |                   |
 | ------------ | ----------------- |
 | **Type**     | `string`          |
-| **Required** | No                |
+| **Required** | Yes               |
 | **Default**  | `"Mistral Small"` |
 
 ## <a name="name"></a>3. Property `name`
@@ -42,7 +56,7 @@ Specific value: `"mistral-small-latest"`
 |              |                          |
 | ------------ | ------------------------ |
 | **Type**     | `string`                 |
-| **Required** | No                       |
+| **Required** | Yes                      |
 | **Default**  | `"mistral-small-latest"` |
 
 ## <a name="input_context_limit"></a>4. Property `input_context_limit`
@@ -52,7 +66,7 @@ Specific value: `"mistral-small-latest"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `32000`   |
 
 ## <a name="output_context_limit"></a>5. Property `output_context_limit`
@@ -62,7 +76,7 @@ Specific value: `"mistral-small-latest"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `4096`    |
 
 ## <a name="supports_tools"></a>6. Property `supports_tools`
@@ -72,7 +86,7 @@ Specific value: `"mistral-small-latest"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `false`   |
 
 ## <a name="supports_image_input"></a>7. Property `supports_image_input`
@@ -82,7 +96,7 @@ Specific value: `"mistral-small-latest"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `false`   |
 
 ## <a name="supports_audio_input"></a>8. Property `supports_audio_input`
@@ -92,7 +106,7 @@ Specific value: `"mistral-small-latest"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `false`   |
 
 ----------------------------------------------------------------------------------------------------------------------------

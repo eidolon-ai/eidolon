@@ -2,10 +2,21 @@
 title: MongoSymbolicMemory
 description: "Description of MongoSymbolicMemory component"
 ---
+# Schema Docs
+
+- [1. Property `implementation`](#implementation)
+- [2. Property `mongo_connection_string`](#mongo_connection_string)
+- [3. Property `mongo_database_name`](#mongo_database_name)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| + [implementation](#implementation )                   | No      | const  | No         | -          | MongoSymbolicMemory     |
+| - [implementation](#implementation )                   | No      | const  | No         | -          | -                       |
 | - [mongo_connection_string](#mongo_connection_string ) | No      | string | No         | -          | Mongo Connection String |
 | - [mongo_database_name](#mongo_database_name )         | No      | string | No         | -          | Mongo Database Name     |
 
@@ -14,9 +25,7 @@ description: "Description of MongoSymbolicMemory component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** MongoSymbolicMemory
+| **Required** | No      |
 
 Specific value: `"MongoSymbolicMemory"`
 

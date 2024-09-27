@@ -2,22 +2,34 @@
 title: ToolCallLLMWrapper
 description: "Description of ToolCallLLMWrapper component"
 ---
+# Schema Docs
 
-| Property                                       | Pattern | Type                | Deprecated | Definition                   | Title/Description               |
-| ---------------------------------------------- | ------- | ------------------- | ---------- | ---------------------------- | ------------------------------- |
-| + [implementation](#implementation )           | No      | const               | No         | -                            | ToolCallLLMWrapper              |
-| - [tool_message_prompt](#tool_message_prompt ) | No      | string              | No         | -                            | Tool Message Prompt             |
-| - [llm_unit](#llm_unit )                       | No      | Reference[LLMUnit]  | No         | In [LLMUnit](/docs/components/llmunit/overview)  | Overview of LLMUnit components  |
-| - [model](#model )                             | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
+- [1. Property `implementation`](#implementation)
+- [2. Property `tool_message_prompt`](#tool_message_prompt)
+- [3. Property `llm_unit`](#llm_unit)
+  - [3.1. Property `implementation`](#llm_unit_implementation)
+- [4. Property `model`](#model)
+  - [4.1. Property `implementation`](#model_implementation)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+
+| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description   |
+| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |
+| - [implementation](#implementation )           | No      | const  | No         | -          | -                   |
+| - [tool_message_prompt](#tool_message_prompt ) | No      | string | No         | -          | Tool Message Prompt |
+| - [llm_unit](#llm_unit )                       | No      | object | No         | -          | -                   |
+| - [model](#model )                             | No      | object | No         | -          | -                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** ToolCallLLMWrapper
+| **Required** | No      |
 
 Specific value: `"ToolCallLLMWrapper"`
 
@@ -33,24 +45,43 @@ Specific value: `"ToolCallLLMWrapper"`
 
 ## <a name="llm_unit"></a>3. Property `llm_unit`
 
-|                |                                 |
-| -------------- | ------------------------------- |
-| **Type**       | `Reference[LLMUnit]`            |
-| **Required**   | No                              |
-| **Default**    | `{"implementation": "LLMUnit"}` |
-| **Defined in** | [LLMUnit](/docs/components/llmunit/overview)        |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-**Description:** Overview of LLMUnit components
+| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#llm_unit_implementation ) | No      | string | No         | -          | -                 |
+| - [](#llm_unit_additionalProperties )         | No      | object | No         | -          | -                 |
+
+### <a name="llm_unit_implementation"></a>3.1. Property `implementation`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ## <a name="model"></a>4. Property `model`
 
-|                |                           |
-| -------------- | ------------------------- |
-| **Type**       | `Reference[LLMModel]`     |
-| **Required**   | No                        |
-| **Default**    | `null`                    |
-| **Defined in** | [LLMModel](/docs/components/llmmodel/overview) |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `null`                                                                    |
 
-**Description:** Overview of LLMModel components
+| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [implementation](#model_implementation ) | No      | string | No         | -          | -                 |
+| - [](#model_additionalProperties )         | No      | object | No         | -          | -                 |
+
+### <a name="model_implementation"></a>4.1. Property `implementation`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------

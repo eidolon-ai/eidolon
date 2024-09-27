@@ -2,25 +2,38 @@
 title: CharacterTextSplitter
 description: "Description of CharacterTextSplitter component"
 ---
+# Schema Docs
 
-| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description     |
-| -------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------- |
-| + [implementation](#implementation )         | No      | const   | No         | -          | CharacterTextSplitter |
-| - [chunk_size](#chunk_size )                 | No      | integer | No         | -          | Chunk Size            |
-| - [chunk_overlap](#chunk_overlap )           | No      | integer | No         | -          | Chunk Overlap         |
-| - [keep_separator](#keep_separator )         | No      | boolean | No         | -          | Keep Separator        |
-| - [strip_whitespace](#strip_whitespace )     | No      | boolean | No         | -          | Strip Whitespace      |
-| - [separator](#separator )                   | No      | string  | No         | -          | Separator             |
-| - [is_separator_regex](#is_separator_regex ) | No      | boolean | No         | -          | Is Separator Regex    |
+- [1. Property `implementation`](#implementation)
+- [2. Property `chunk_size`](#chunk_size)
+- [3. Property `chunk_overlap`](#chunk_overlap)
+- [4. Property `keep_separator`](#keep_separator)
+- [5. Property `strip_whitespace`](#strip_whitespace)
+- [6. Property `separator`](#separator)
+- [7. Property `is_separator_regex`](#is_separator_regex)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+
+| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description  |
+| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------ |
+| - [implementation](#implementation )         | No      | const   | No         | -          | -                  |
+| - [chunk_size](#chunk_size )                 | No      | integer | No         | -          | Chunk Size         |
+| - [chunk_overlap](#chunk_overlap )           | No      | integer | No         | -          | Chunk Overlap      |
+| - [keep_separator](#keep_separator )         | No      | boolean | No         | -          | Keep Separator     |
+| - [strip_whitespace](#strip_whitespace )     | No      | boolean | No         | -          | Strip Whitespace   |
+| - [separator](#separator )                   | No      | string  | No         | -          | Separator          |
+| - [is_separator_regex](#is_separator_regex ) | No      | boolean | No         | -          | Is Separator Regex |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** CharacterTextSplitter
+| **Required** | No      |
 
 Specific value: `"CharacterTextSplitter"`
 

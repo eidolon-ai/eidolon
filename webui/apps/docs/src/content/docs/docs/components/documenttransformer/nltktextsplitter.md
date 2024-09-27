@@ -2,10 +2,25 @@
 title: NLTKTextSplitter
 description: "Description of NLTKTextSplitter component"
 ---
+# Schema Docs
+
+- [1. Property `implementation`](#implementation)
+- [2. Property `chunk_size`](#chunk_size)
+- [3. Property `chunk_overlap`](#chunk_overlap)
+- [4. Property `keep_separator`](#keep_separator)
+- [5. Property `strip_whitespace`](#strip_whitespace)
+- [6. Property `separator`](#separator)
+- [7. Property `language`](#language)
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ---------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation )     | No      | const   | No         | -          | NLTKTextSplitter  |
+| - [implementation](#implementation )     | No      | const   | No         | -          | -                 |
 | - [chunk_size](#chunk_size )             | No      | integer | No         | -          | Chunk Size        |
 | - [chunk_overlap](#chunk_overlap )       | No      | integer | No         | -          | Chunk Overlap     |
 | - [keep_separator](#keep_separator )     | No      | boolean | No         | -          | Keep Separator    |
@@ -18,9 +33,7 @@ description: "Description of NLTKTextSplitter component"
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
-
-**Description:** NLTKTextSplitter
+| **Required** | No      |
 
 Specific value: `"NLTKTextSplitter"`
 
