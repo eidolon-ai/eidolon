@@ -3,13 +3,13 @@ title: AnthropicLLMUnit
 description: "Description of AnthropicLLMUnit component"
 ---
 
-| Property                             | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
-| ------------------------------------ | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation ) | No      | const   | No         | -                    | -                                                                                                             |
-| - [model](#model )                   | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [temperature](#temperature )       | No      | number  | No         | -                    | Temperature                                                                                                   |
-| - [max_tokens](#max_tokens )         | No      | integer | No         | -                    | Max Tokens                                                                                                    |
-| - [client_args](#client_args )       | No      | object  | No         | -                    | Client Args                                                                                                   |
+| Property                             | Pattern | Type                | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------------------- | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const               | No         | -          | -                 |
+| - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | -                 |
+| - [temperature](#temperature )       | No      | number              | No         | -          | Temperature       |
+| - [max_tokens](#max_tokens )         | No      | integer             | No         | -          | Max Tokens        |
+| - [client_args](#client_args )       | No      | object              | No         | -          | Client Args       |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -22,14 +22,10 @@ Specific value: `"AnthropicLLMUnit"`
 
 ## <a name="model"></a>2. Property `model`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                       |
+| ------------ | --------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
+| **Required** | No                    |
 
 ## <a name="temperature"></a>3. Property `temperature`
 

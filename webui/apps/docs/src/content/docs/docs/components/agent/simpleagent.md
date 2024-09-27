@@ -7,16 +7,16 @@ description: "Description of SimpleAgent component"
 agent is designed to be a flexible, modular component that can interact with various processing units and perform a
 range of actions based on its configuration.
 
-| Property                                           | Pattern | Type             | Deprecated | Definition           | Title/Description                                                                                             |
-| -------------------------------------------------- | ------- | ---------------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )               | No      | const            | No         | -                    | -                                                                                                             |
-| - [description](#description )                     | No      | string           | No         | -                    | Description                                                                                                   |
-| - [system_prompt](#system_prompt )                 | No      | string           | No         | -                    | System Prompt                                                                                                 |
-| - [agent_refs](#agent_refs )                       | No      | array of string  | No         | -                    | Agent Refs                                                                                                    |
-| - [actions](#actions )                             | No      | array            | No         | -                    | Actions                                                                                                       |
-| - [apu](#apu )                                     | No      | object           | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [apus](#apus )                                   | No      | array            | No         | -                    | Apus                                                                                                          |
-| - [title_generation_mode](#title_generation_mode ) | No      | enum (of string) | No         | -                    | Title Generation Mode                                                                                         |
+| Property                                           | Pattern | Type             | Deprecated | Definition | Title/Description     |
+| -------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------- |
+| - [implementation](#implementation )               | No      | const            | No         | -          | -                     |
+| - [description](#description )                     | No      | string           | No         | -          | Description           |
+| - [system_prompt](#system_prompt )                 | No      | string           | No         | -          | System Prompt         |
+| - [agent_refs](#agent_refs )                       | No      | array of string  | No         | -          | Agent Refs            |
+| - [actions](#actions )                             | No      | array            | No         | -          | Actions               |
+| - [apu](#apu )                                     | No      | [Reference[APU]](/docs/components/apu/overview)   | No         | -          | -                     |
+| - [apus](#apus )                                   | No      | array            | No         | -          | Apus                  |
+| - [title_generation_mode](#title_generation_mode ) | No      | enum (of string) | No         | -          | Title Generation Mode |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -309,14 +309,10 @@ Specific value: `"str"`
 
 ## <a name="apu"></a>6. Property `apu`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                  |
+| ------------ | ---------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
+| **Required** | No               |
 
 ## <a name="apus"></a>7. Property `apus`
 
@@ -349,11 +345,11 @@ Specific value: `"str"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | #/$defs/NamedAPU                                                          |
 
-| Property                          | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
-| --------------------------------- | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [title](#apus_items_title )     | No      | string  | No         | -                    | Title                                                                                                         |
-| - [apu](#apus_items_apu )         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [default](#apus_items_default ) | No      | boolean | No         | -                    | Default                                                                                                       |
+| Property                          | Pattern | Type           | Deprecated | Definition | Title/Description |
+| --------------------------------- | ------- | -------------- | ---------- | ---------- | ----------------- |
+| - [title](#apus_items_title )     | No      | string         | No         | -          | Title             |
+| - [apu](#apus_items_apu )         | No      | [Reference[APU]](/docs/components/apu/overview) | No         | -          | -                 |
+| - [default](#apus_items_default ) | No      | boolean        | No         | -          | Default           |
 
 #### <a name="apus_items_title"></a>7.1.1. Property `title`
 
@@ -367,14 +363,10 @@ Specific value: `"str"`
 
 #### <a name="apus_items_apu"></a>7.1.2. Property `apu`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                  |
+| ------------ | ---------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
+| **Required** | No               |
 
 #### <a name="apus_items_default"></a>7.1.3. Property `default`
 

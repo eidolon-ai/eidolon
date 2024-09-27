@@ -3,11 +3,11 @@ title: DocumentProcessor
 description: "Description of DocumentProcessor component"
 ---
 
-| Property                             | Pattern | Type   | Deprecated | Definition           | Title/Description                                                                                             |
-| ------------------------------------ | ------- | ------ | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -                    | -                                                                                                             |
-| - [parser](#parser )                 | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [splitter](#splitter )             | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| Property                             | Pattern | Type                           | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const                          | No         | -          | -                 |
+| - [parser](#parser )                 | No      | [Reference[DocumentParser]](/docs/components/documentparser/overview)      | No         | -          | -                 |
+| - [splitter](#splitter )             | No      | [Reference[DocumentTransformer]](/docs/components/documenttransformer/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -20,24 +20,16 @@ Specific value: `"DocumentProcessor"`
 
 ## <a name="parser"></a>2. Property `parser`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | [`Reference[DocumentParser]`](/docs/components/documentparser/overview) |
+| **Required** | No                          |
 
 ## <a name="splitter"></a>3. Property `splitter`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                  |
+| ------------ | -------------------------------- |
+| **Type**     | [`Reference[DocumentTransformer]`](/docs/components/documenttransformer/overview) |
+| **Required** | No                               |
 
 ----------------------------------------------------------------------------------------------------------------------------

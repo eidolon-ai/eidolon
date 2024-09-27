@@ -3,14 +3,14 @@ title: OllamaLLMUnit
 description: "Description of OllamaLLMUnit component"
 ---
 
-| Property                             | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
-| ------------------------------------ | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation ) | No      | const   | No         | -                    | -                                                                                                             |
-| - [model](#model )                   | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [temperature](#temperature )       | No      | number  | No         | -                    | Temperature                                                                                                   |
-| - [force_json](#force_json )         | No      | boolean | No         | -                    | Force Json                                                                                                    |
-| - [max_tokens](#max_tokens )         | No      | integer | No         | -                    | Max Tokens                                                                                                    |
-| - [client_options](#client_options ) | No      | object  | No         | -                    | Client Options                                                                                                |
+| Property                             | Pattern | Type                | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------------------- | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation ) | No      | const               | No         | -          | -                 |
+| - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | -                 |
+| - [temperature](#temperature )       | No      | number              | No         | -          | Temperature       |
+| - [force_json](#force_json )         | No      | boolean             | No         | -          | Force Json        |
+| - [max_tokens](#max_tokens )         | No      | integer             | No         | -          | Max Tokens        |
+| - [client_options](#client_options ) | No      | object              | No         | -          | Client Options    |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -23,14 +23,10 @@ Specific value: `"OllamaLLMUnit"`
 
 ## <a name="model"></a>2. Property `model`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                       |
+| ------------ | --------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
+| **Required** | No                    |
 
 ## <a name="temperature"></a>3. Property `temperature`
 

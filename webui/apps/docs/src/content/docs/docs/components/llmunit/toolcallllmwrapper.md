@@ -3,12 +3,12 @@ title: ToolCallLLMWrapper
 description: "Description of ToolCallLLMWrapper component"
 ---
 
-| Property                                       | Pattern | Type   | Deprecated | Definition           | Title/Description                                                                                             |
-| ---------------------------------------------- | ------- | ------ | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )           | No      | const  | No         | -                    | -                                                                                                             |
-| - [tool_message_prompt](#tool_message_prompt ) | No      | string | No         | -                    | Tool Message Prompt                                                                                           |
-| - [llm_unit](#llm_unit )                       | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [model](#model )                             | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| Property                                       | Pattern | Type                | Deprecated | Definition | Title/Description   |
+| ---------------------------------------------- | ------- | ------------------- | ---------- | ---------- | ------------------- |
+| - [implementation](#implementation )           | No      | const               | No         | -          | -                   |
+| - [tool_message_prompt](#tool_message_prompt ) | No      | string              | No         | -          | Tool Message Prompt |
+| - [llm_unit](#llm_unit )                       | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview)  | No         | -          | -                   |
+| - [model](#model )                             | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | -                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -31,25 +31,17 @@ Specific value: `"ToolCallLLMWrapper"`
 
 ## <a name="llm_unit"></a>3. Property `llm_unit`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                      |
+| ------------ | -------------------- |
+| **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview) |
+| **Required** | No                   |
 
 ## <a name="model"></a>4. Property `model`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                       |
+| ------------ | --------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
+| **Required** | No                    |
+| **Default**  | `null`                |
 
 ----------------------------------------------------------------------------------------------------------------------------

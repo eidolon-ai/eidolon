@@ -9,6 +9,6 @@ of symbols, providing a high-level interface to store and retrieve symbolic info
 ---
 Overview of the SymbolicMemory component
 ## Builtins
-* [MongoSymbolicMemory](/docs/components/symbolicmemory/mongosymbolicmemory/)
-* [LocalSymbolicMemory](/docs/components/symbolicmemory/localsymbolicmemory/)
+* [MongoSymbolicMemory](/docs/components/mongosymbolicmemory/mongosymbolicmemory/)
+* [LocalSymbolicMemory](/docs/components/localsymbolicmemory/localsymbolicmemory/)
 * [SymbolicMemory](/docs/components/symbolicmemory/symbolicmemory/) (default)

@@ -3,22 +3,22 @@ title: Llamma3-8b
 description: "Description of Llamma3-8b component"
 ---
 
-| Property                                             | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
-| ---------------------------------------------------- | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )                 | No      | const   | No         | -                    | -                                                                                                             |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer | No         | -                    | Max Num Function Calls                                                                                        |
-| - [io_unit](#io_unit )                               | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [memory_unit](#memory_unit )                       | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [longterm_memory_unit](#longterm_memory_unit )     | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [llm_unit](#llm_unit )                             | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [logic_units](#logic_units )                       | No      | array   | No         | -                    | Logic Units                                                                                                   |
-| - [audio_unit](#audio_unit )                         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [image_unit](#image_unit )                         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [record_conversation](#record_conversation )       | No      | boolean | No         | -                    | Record Conversation                                                                                           |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean | No         | -                    | Allow Tool Errors                                                                                             |
-| - [document_processor](#document_processor )         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [retriever](#retriever )                           | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [retriever_apu](#retriever_apu )                   | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |
+| ---------------------------------------------------- | ------- | ----------------------------- | ---------- | ---------- | ---------------------- |
+| - [implementation](#implementation )                 | No      | const                         | No         | -          | -                      |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer                       | No         | -          | Max Num Function Calls |
+| - [io_unit](#io_unit )                               | No      | [Reference[IOUnit]](/docs/components/iounit/overview)             | No         | -          | -                      |
+| - [memory_unit](#memory_unit )                       | No      | [Reference[MemoryUnit]](/docs/components/memoryunit/overview)         | No         | -          | -                      |
+| - [longterm_memory_unit](#longterm_memory_unit )     | No      | [Reference[LongTermMemoryUnit]](/docs/components/longtermmemoryunit/overview) | No         | -          | -                      |
+| - [llm_unit](#llm_unit )                             | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview)            | No         | -          | -                      |
+| - [logic_units](#logic_units )                       | No      | array of [Reference[LogicUnit]](/docs/components/logicunit/overview) | No         | -          | Logic Units            |
+| - [audio_unit](#audio_unit )                         | No      | [Reference[AudioUnit]](/docs/components/audiounit/overview)          | No         | -          | -                      |
+| - [image_unit](#image_unit )                         | No      | [Reference[ImageUnit]](/docs/components/imageunit/overview)          | No         | -          | -                      |
+| - [record_conversation](#record_conversation )       | No      | boolean                       | No         | -          | Record Conversation    |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean                       | No         | -          | Allow Tool Errors      |
+| - [document_processor](#document_processor )         | No      | [Reference[DocumentProcessor]](/docs/components/documentprocessor/overview)  | No         | -          | -                      |
+| - [retriever](#retriever )                           | No      | [Reference[Retriever]](/docs/components/retriever/overview)          | No         | -          | -                      |
+| - [retriever_apu](#retriever_apu )                   | No      | [Reference[APU]](/docs/components/apu/overview)                | No         | -          | -                      |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -43,59 +43,43 @@ Specific value: `"Llamma3-8b"`
 
 ## <a name="io_unit"></a>3. Property `io_unit`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                     |
+| ------------ | ------------------- |
+| **Type**     | [`Reference[IOUnit]`](/docs/components/iounit/overview) |
+| **Required** | No                  |
 
 ## <a name="memory_unit"></a>4. Property `memory_unit`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                         |
+| ------------ | ----------------------- |
+| **Type**     | [`Reference[MemoryUnit]`](/docs/components/memoryunit/overview) |
+| **Required** | No                      |
 
 ## <a name="longterm_memory_unit"></a>5. Property `longterm_memory_unit`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                 |
+| ------------ | ------------------------------- |
+| **Type**     | [`Reference[LongTermMemoryUnit]`](/docs/components/longtermmemoryunit/overview) |
+| **Required** | No                              |
+| **Default**  | `null`                          |
 
 ## <a name="llm_unit"></a>6. Property `llm_unit`
 
-|                           |                                                                                                                   |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                          |
-| **Required**              | No                                                                                                                |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.")                                         |
-| **Default**               | `{"implementation": "ToolCallLLMWrapper", "llm_unit": {"implementation": "OllamaLLMUnit", "model": "llama3-8b"}}` |
-| **Defined in**            | file:../test.json                                                                                                 |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                                                                                                   |
+| ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview)                                                                                              |
+| **Required** | No                                                                                                                |
+| **Default**  | `{"implementation": "ToolCallLLMWrapper", "llm_unit": {"implementation": "OllamaLLMUnit", "model": "llama3-8b"}}` |
 
 ## <a name="logic_units"></a>7. Property `logic_units`
 
 **Title:** Logic Units
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-| **Default**  | `[]`    |
+|              |                                 |
+| ------------ | ------------------------------- |
+| **Type**     | `array of [Reference[LogicUnit]](/docs/components/logicunit/overview)` |
+| **Required** | No                              |
+| **Default**  | `[]`                            |
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -105,44 +89,32 @@ Specific value: `"Llamma3-8b"`
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be | Description                                                                                                   |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [test.json](#logic_units_items) | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| Each item of this array must be         | Description |
+| --------------------------------------- | ----------- |
+| [logic_units items](#logic_units_items) | -           |
 
-### <a name="autogenerated_heading_2"></a>7.1. test.json
+### <a name="autogenerated_heading_2"></a>7.1. logic_units items
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                        |
+| ------------ | ---------------------- |
+| **Type**     | [`Reference[LogicUnit]`](/docs/components/logicunit/overview) |
+| **Required** | No                     |
 
 ## <a name="audio_unit"></a>8. Property `audio_unit`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                        |
+| ------------ | ---------------------- |
+| **Type**     | [`Reference[AudioUnit]`](/docs/components/audiounit/overview) |
+| **Required** | No                     |
+| **Default**  | `null`                 |
 
 ## <a name="image_unit"></a>9. Property `image_unit`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                        |
+| ------------ | ---------------------- |
+| **Type**     | [`Reference[ImageUnit]`](/docs/components/imageunit/overview) |
+| **Required** | No                     |
+| **Default**  | `null`                 |
 
 ## <a name="record_conversation"></a>10. Property `record_conversation`
 
@@ -166,36 +138,24 @@ Specific value: `"Llamma3-8b"`
 
 ## <a name="document_processor"></a>12. Property `document_processor`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                |
+| ------------ | ------------------------------ |
+| **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview) |
+| **Required** | No                             |
 
 ## <a name="retriever"></a>13. Property `retriever`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                        |
+| ------------ | ---------------------- |
+| **Type**     | [`Reference[Retriever]`](/docs/components/retriever/overview) |
+| **Required** | No                     |
 
 ## <a name="retriever_apu"></a>14. Property `retriever_apu`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `null`                                                                    |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                  |
+| ------------ | ---------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
+| **Required** | No               |
+| **Default**  | `null`           |
 
 ----------------------------------------------------------------------------------------------------------------------------

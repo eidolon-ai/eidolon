@@ -4,5 +4,5 @@ description: "None"
 ---
 Overview of the OpenAIConnectionHandler component
 ## Builtins
-* [AzureOpenAIConnectionHandler](/docs/components/openaiconnectionhandler/azureopenaiconnectionhandler/)
+* [AzureOpenAIConnectionHandler](/docs/components/azureopenaiconnectionhandler/azureopenaiconnectionhandler/)
 * [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/openaiconnectionhandler/) (default)

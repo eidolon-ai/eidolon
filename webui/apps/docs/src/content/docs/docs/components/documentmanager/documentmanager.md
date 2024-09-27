@@ -3,14 +3,14 @@ title: DocumentManager
 description: "Description of DocumentManager component"
 ---
 
-| Property                                   | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
-| ------------------------------------------ | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )       | No      | const   | No         | -                    | -                                                                                                             |
-| + [name](#name )                           | No      | string  | No         | -                    | Name                                                                                                          |
-| - [recheck_frequency](#recheck_frequency ) | No      | integer | No         | -                    | Recheck Frequency                                                                                             |
-| - [loader](#loader )                       | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [concurrency](#concurrency )             | No      | integer | No         | -                    | Concurrency                                                                                                   |
-| - [doc_processor](#doc_processor )         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| Property                                   | Pattern | Type                         | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | ---------------------------- | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation )       | No      | const                        | No         | -          | -                 |
+| + [name](#name )                           | No      | string                       | No         | -          | Name              |
+| - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -          | Recheck Frequency |
+| - [loader](#loader )                       | No      | [Reference[DocumentLoader]](/docs/components/documentloader/overview)    | No         | -          | -                 |
+| - [concurrency](#concurrency )             | No      | integer                      | No         | -          | Concurrency       |
+| - [doc_processor](#doc_processor )         | No      | [Reference[DocumentProcessor]](/docs/components/documentprocessor/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -46,14 +46,10 @@ Specific value: `"DocumentManager"`
 
 ## <a name="loader"></a>4. Property `loader`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | [`Reference[DocumentLoader]`](/docs/components/documentloader/overview) |
+| **Required** | No                          |
 
 ## <a name="concurrency"></a>5. Property `concurrency`
 
@@ -69,13 +65,9 @@ Specific value: `"DocumentManager"`
 
 ## <a name="doc_processor"></a>6. Property `doc_processor`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                |
+| ------------ | ------------------------------ |
+| **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview) |
+| **Required** | No                             |
 
 ----------------------------------------------------------------------------------------------------------------------------

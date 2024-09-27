@@ -3,16 +3,16 @@ title: OpenAIGPT
 description: "Description of OpenAIGPT component"
 ---
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
-| -------------------------------------------------------- | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )                     | No      | const   | No         | -                    | -                                                                                                             |
-| - [model](#model )                                       | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [temperature](#temperature )                           | No      | number  | No         | -                    | Temperature                                                                                                   |
-| - [force_json](#force_json )                             | No      | boolean | No         | -                    | Force Json                                                                                                    |
-| - [max_tokens](#max_tokens )                             | No      | integer | No         | -                    | Max Tokens                                                                                                    |
-| - [supports_system_messages](#supports_system_messages ) | No      | boolean | No         | -                    | Supports System Messages                                                                                      |
-| - [can_stream](#can_stream )                             | No      | boolean | No         | -                    | Can Stream                                                                                                    |
-| - [connection_handler](#connection_handler )             | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| Property                                                 | Pattern | Type                               | Deprecated | Definition | Title/Description        |
+| -------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | ------------------------ |
+| - [implementation](#implementation )                     | No      | const                              | No         | -          | -                        |
+| - [model](#model )                                       | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview)                | No         | -          | -                        |
+| - [temperature](#temperature )                           | No      | number                             | No         | -          | Temperature              |
+| - [force_json](#force_json )                             | No      | boolean                            | No         | -          | Force Json               |
+| - [max_tokens](#max_tokens )                             | No      | integer                            | No         | -          | Max Tokens               |
+| - [supports_system_messages](#supports_system_messages ) | No      | boolean                            | No         | -          | Supports System Messages |
+| - [can_stream](#can_stream )                             | No      | boolean                            | No         | -          | Can Stream               |
+| - [connection_handler](#connection_handler )             | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | -                        |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -25,14 +25,10 @@ Specific value: `"OpenAIGPT"`
 
 ## <a name="model"></a>2. Property `model`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                       |
+| ------------ | --------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
+| **Required** | No                    |
 
 ## <a name="temperature"></a>3. Property `temperature`
 
@@ -86,13 +82,9 @@ Specific value: `"OpenAIGPT"`
 
 ## <a name="connection_handler"></a>8. Property `connection_handler`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                      |
+| ------------ | ------------------------------------ |
+| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview) |
+| **Required** | No                                   |
 
 ----------------------------------------------------------------------------------------------------------------------------

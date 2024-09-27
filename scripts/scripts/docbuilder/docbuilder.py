@@ -159,31 +159,32 @@ cut_after_str = """|                           |                                
 def write_md(read_loc,
              write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     shutil.rmtree(write_loc, ignore_errors=True)
-    for k in os.listdir(read_loc):
-        try:
-            with open(read_loc / k / "overview.json", 'r') as json_file:
-                g = json.load(json_file)
-        except FileNotFoundError:
-            print(f"Skipping {k} as it has no overview.json")
-            continue
-
-        title = f"{k} Overview"
+    group_files = os.listdir(read_loc)
+    groups = []
+    for group in group_files:
+        with open(read_loc / group / "overview.json", 'r') as json_file:
+            groups.append(json.load(json_file))
+    group_names = [g['reference_pointer']['type'] for g in groups]
+    for group in groups:
+        group_name = group['reference_pointer']['type']
+        title = f"{group_name} Overview"
         content = ["## Builtins"]
         components = []
-        for c in [c for c in os.listdir(read_loc / k) if c != "overview.json"]:
-            with open(read_loc / k / c, 'r') as json_file:
+        for c in [c for c in os.listdir(read_loc / group_name) if c != "overview.json"]:
+            with open(read_loc / group_name / c, 'r') as json_file:
                 components.append(json.load(json_file))
         for component_schema in components:
-            name = component_schema['reference_details']['name']
-            content.append(f"* [{name}](/docs/components/{url_safe(k)}/{url_safe(name)}/)")
-            if name == g['reference_pointer']['default_impl']:
+            component_name = component_schema['reference_details']['name']
+            content.append(f"* [{component_name}](/docs/components/{url_safe(component_name)}/{url_safe(component_name)}/)")
+            if component_name == group['reference_pointer']['default_impl']:
                 content[-1] += " (default)"
 
         write_astro_md_file(
-            f"Overview of the {g['title']} component" + "\n" + "\n".join(content),
-            g.get('description'),
+            f"Overview of the {group_name} component" + "\n" + "\n".join(content),
+            group.get('description'),
             title,
-            write_loc / url_safe(k) / "overview.md"
+            write_loc / url_safe(group_name) / "overview.md",
+            group_names
         )
 
         for schema in components:
@@ -201,10 +202,15 @@ def write_md(read_loc,
                     with_footer=False,
                 ))
                 content = content[(content.index(cut_after_str) + len(cut_after_str)):]
-                write_astro_md_file(content, description, title, write_loc / url_safe(k) / (url_safe(schema['reference_details']['name']) + ".md"))
+                write_astro_md_file(content, description, title, write_loc / url_safe(group_name) / (url_safe(schema['reference_details']['name']) + ".md"), group_names)
 
 
-def write_astro_md_file(content, description, title, write_file_loc):
+def write_astro_md_file(content, description, title, write_file_loc, group_names: List[str]):
+    for name in group_names:
+        replacement = f"[Reference[{name}]](/docs/components/{url_safe(name)}/overview)"
+        content = content.replace(f"Reference[{name}]", replacement)
+        content = content.replace(f"`{replacement}`", f"[`Reference[{name}]`](/docs/components/{url_safe(name)}/overview)")
+
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
     md_str = template("template_component_md", title=title, description=description, content=content)
@@ -228,11 +234,10 @@ def clean_ref_groups_for_md(schema, seen=None):
             any_of = schema.pop('anyOf')
             object_type = [s for s in any_of if not (len(s) == 1 and s.get("type") == "null")][0]
             schema.update(object_type)
-        if "$ref" in schema and schema["$ref"].endswith("overview.json"):
-            schema['$ref'] = "file:../test.json"
-            # del schema["$ref"]
-            # schema['properties'] = dict(implementation=dict(type="string"))
-            # schema['additionalProperties'] = True
+        if "$ref" in schema and schema["$ref"].endswith("/overview.json"):
+            ref: str = schema.pop("$ref")
+            group = ref.removeprefix("../").removesuffix("/overview.json")
+            schema['type'] = f"Reference[{group}]"
         for v in schema.values():
             clean_ref_groups_for_md(v, seen)
     elif isinstance(schema, list):

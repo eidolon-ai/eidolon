@@ -3,14 +3,14 @@ title: Retriever
 description: "Description of Retriever component"
 ---
 
-| Property                                         | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
-| ------------------------------------------------ | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -                    | -                                                                                                             |
-| - [max_num_results](#max_num_results )           | No      | integer | No         | -                    | Max Num Results                                                                                               |
-| - [question_transformer](#question_transformer ) | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [document_retriever](#document_retriever )     | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [document_reranker](#document_reranker )       | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
-| - [result_summarizer](#result_summarizer )       | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| Property                                         | Pattern | Type                           | Deprecated | Definition | Title/Description |
+| ------------------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ----------------- |
+| - [implementation](#implementation )             | No      | const                          | No         | -          | -                 |
+| - [max_num_results](#max_num_results )           | No      | integer                        | No         | -          | Max Num Results   |
+| - [question_transformer](#question_transformer ) | No      | [Reference[QuestionTransformer]](/docs/components/questiontransformer/overview) | No         | -          | -                 |
+| - [document_retriever](#document_retriever )     | No      | [Reference[DocumentRetriever]](/docs/components/documentretriever/overview)   | No         | -          | -                 |
+| - [document_reranker](#document_reranker )       | No      | [Reference[DocumentReranker]](/docs/components/documentreranker/overview)    | No         | -          | -                 |
+| - [result_summarizer](#result_summarizer )       | No      | [Reference[ResultSummarizer]](/docs/components/resultsummarizer/overview)    | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -35,46 +35,30 @@ Specific value: `"Retriever"`
 
 ## <a name="question_transformer"></a>3. Property `question_transformer`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                  |
+| ------------ | -------------------------------- |
+| **Type**     | [`Reference[QuestionTransformer]`](/docs/components/questiontransformer/overview) |
+| **Required** | No                               |
 
 ## <a name="document_retriever"></a>4. Property `document_retriever`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                                |
+| ------------ | ------------------------------ |
+| **Type**     | [`Reference[DocumentRetriever]`](/docs/components/documentretriever/overview) |
+| **Required** | No                             |
 
 ## <a name="document_reranker"></a>5. Property `document_reranker`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                               |
+| ------------ | ----------------------------- |
+| **Type**     | [`Reference[DocumentReranker]`](/docs/components/documentreranker/overview) |
+| **Required** | No                            |
 
 ## <a name="result_summarizer"></a>6. Property `result_summarizer`
 
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | file:../test.json                                                         |
-
-**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
+|              |                               |
+| ------------ | ----------------------------- |
+| **Type**     | [`Reference[ResultSummarizer]`](/docs/components/resultsummarizer/overview) |
+| **Required** | No                            |
 
 ----------------------------------------------------------------------------------------------------------------------------

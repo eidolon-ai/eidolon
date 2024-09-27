@@ -4,6 +4,6 @@ description: "None"
 ---
 Overview of the FunctionalAuthorizer component
 ## Builtins
-* [GlobPatternFunctionalAuthorizer](/docs/components/functionalauthorizer/globpatternfunctionalauthorizer/)
+* [GlobPatternFunctionalAuthorizer](/docs/components/globpatternfunctionalauthorizer/globpatternfunctionalauthorizer/)
 * [FunctionalAuthorizer](/docs/components/functionalauthorizer/functionalauthorizer/) (default)
-* [NoopFunctionalAuth](/docs/components/functionalauthorizer/noopfunctionalauth/)
+* [NoopFunctionalAuth](/docs/components/noopfunctionalauth/noopfunctionalauth/)

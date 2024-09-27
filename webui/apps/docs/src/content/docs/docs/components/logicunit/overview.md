@@ -4,8 +4,8 @@ description: "None"
 ---
 Overview of the LogicUnit component
 ## Builtins
-* [WebSearch](/docs/components/logicunit/websearch/)
-* [Search](/docs/components/logicunit/search/)
-* [VectaraSearch](/docs/components/logicunit/vectarasearch/)
-* [ApiLogicUnit](/docs/components/logicunit/apilogicunit/)
-* [Browser](/docs/components/logicunit/browser/)
+* [WebSearch](/docs/components/websearch/websearch/)
+* [Search](/docs/components/search/search/)
+* [VectaraSearch](/docs/components/vectarasearch/vectarasearch/)
+* [ApiLogicUnit](/docs/components/apilogicunit/apilogicunit/)
+* [Browser](/docs/components/browser/browser/)
