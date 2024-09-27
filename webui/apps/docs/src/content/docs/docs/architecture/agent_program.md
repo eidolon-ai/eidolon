@@ -116,11 +116,11 @@ spec:
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
   actions:
     - user_prompt: "{{instruction}}"
-    - input_schema:
+      input_schema:
         instruction:
         type: string
-    - output_schema: 'str'
-    - allow_file_upload: True
+      output_schema: 'str'
+      allow_file_upload: True
 ```
 
 Notice the **kind** is set to **SimpleAgent**. This is a special type of agent that is used for single question agents that use an LLM to answer questions. The **spec** field contains the specification for the agent. The specification is a YAML file that defines the configuration parameters for an agent.

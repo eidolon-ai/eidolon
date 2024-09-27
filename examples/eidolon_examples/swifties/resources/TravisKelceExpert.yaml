@@ -21,13 +21,13 @@ spec:
     If you get see system messages suggesting feedback, incorporate it as fact.
   actions:
     - user_prompt: |  
-      {{statement}}
+        {{statement}}
       
-      Be concise.
-    - input_schema:
-      statement:
-        type: string
-        description: The statement or question for your Travis Kelce expert to respond to.
+        Be concise.
+      input_schema:
+        statement:
+          type: string
+          description: The statement or question for your Travis Kelce expert to respond to.
   apu:
     implementation: eidolon_examples.swifties.validating_cpu.ValidatingCPU
     logic_units: [WebSearch]

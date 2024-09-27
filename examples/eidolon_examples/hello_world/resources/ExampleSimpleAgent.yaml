@@ -2,11 +2,13 @@ apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 
 metadata:
-  name: ExampleGeneric
+  name: ExampleSimple
 
 spec:
   description: "This is an example of a simple agent which can be used to create a conversational agent."
   agent_refs: ["StateMachine", "HelloWorld", "TreeOfThoughts"]
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
   actions:
-    - user_prompt: "{{instruction}}"
+    - name: question
+      user_prompt: "{{instruction}}"
+      
