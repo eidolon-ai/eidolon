@@ -156,6 +156,7 @@ class Reference(BaseModel):
                                 group_component_ref = ref
                             ref_schema = handler.resolve_ref_schema(ref)
                             if 'reference_details' not in ref_schema:
+                                ref_schema['title'] = r.metadata.name
                                 ref_schema['reference_details'] = reference_details
                                 ref_clz = clz.specable_cls() if issubclass(clz, Specable) else clz
                                 obj_ref = ref_clz.__get_pydantic_json_schema__(ref_clz.__pydantic_core_schema__, handler) if hasattr(ref_clz, "__pydantic_core_schema__") else copy.deepcopy(loose_object)
