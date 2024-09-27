@@ -16,7 +16,7 @@ Overview of the APU component
 * [ClaudeHaiku](/docs/components/apu/claudehaiku/)
 * [Llamma3-8b](/docs/components/apu/llamma3-8b/)
 * [GPTo1Preview](/docs/components/apu/gpto1preview/)
-* [APU](/docs/components/apu/apu/)
+* [APU](/docs/components/apu/apu/) (default)
 * [GPT4o-mini](/docs/components/apu/gpt4o-mini/)
 * [MistralSmall](/docs/components/apu/mistralsmall/)
 * [MistralLarge](/docs/components/apu/mistrallarge/)

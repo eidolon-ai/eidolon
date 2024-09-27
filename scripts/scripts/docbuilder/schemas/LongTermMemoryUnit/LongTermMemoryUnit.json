@@ -10,7 +10,7 @@
     "llm_unit": {
       "anyOf": [
         {
-          "$ref": "../OpenAIConnectionHandler/overview.json"
+          "$ref": "../LLMUnit/overview.json"
         },
         {
           "type": "null"

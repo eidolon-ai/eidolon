@@ -107,9 +107,12 @@ class Reference(BaseModel):
             def __get_pydantic_json_schema__(
                 cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
             ) -> JsonSchemaValue:
+                title = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__)
+
+                core_schema['ref'] = f"Reference[{title}]"
                 json_schema = handler(core_schema)
                 json_schema = handler.resolve_ref_schema(json_schema)
-                json_schema["title"] = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__)
+                json_schema["title"] = title
                 if cls._bound.__doc__:
                     json_schema['description'] = textwrap.dedent(cls._bound.__doc__).strip()
                 json_schema["reference_pointer"] = {

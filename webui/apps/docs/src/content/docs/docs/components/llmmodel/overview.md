@@ -17,4 +17,4 @@ Overview of the LLMModel component
 * [llama3-8b](/docs/components/llmmodel/llama3-8b/)
 * [gpt-o1-preview](/docs/components/llmmodel/gpt-o1-preview/)
 * [claude-3-sonnet-20240229](/docs/components/llmmodel/claude-3-sonnet-20240229/)
-* [gpt-4-turbo](/docs/components/llmmodel/gpt-4-turbo/)
+* [gpt-4-turbo](/docs/components/llmmodel/gpt-4-turbo/) (default)

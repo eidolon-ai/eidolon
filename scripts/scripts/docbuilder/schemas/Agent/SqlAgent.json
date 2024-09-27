@@ -4,10 +4,10 @@
       "const": "SqlAgent"
     },
     "client": {
-      "$ref": "../AgentMachine/overview.json"
+      "$ref": "../SqlClient/overview.json"
     },
     "apu": {
-      "$ref": "../SymbolicMemory/overview.json"
+      "$ref": "../APU/overview.json"
     },
     "description": {
       "default": "An agent for interacting with data. Can respond to queries provided in natural language.",

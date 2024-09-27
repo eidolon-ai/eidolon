@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "./SecurityManager.json"
+      "$ref": "../SecurityManager/SecurityManager.json"
     },
     {
-      "$ref": "./SecurityManagerImpl.json"
+      "$ref": "../SecurityManager/SecurityManagerImpl.json"
     }
   ],
   "reference_pointer": {

@@ -4,7 +4,7 @@
       "const": "LLMUnit"
     },
     "model": {
-      "$ref": "../VectorStore/overview.json"
+      "$ref": "../LLMModel/overview.json"
     },
     "temperature": {
       "default": 0.3,
@@ -39,7 +39,7 @@
       "type": "boolean"
     },
     "connection_handler": {
-      "$ref": "../SecurityManager/overview.json"
+      "$ref": "../OpenAIConnectionHandler/overview.json"
     }
   },
   "reference_details": {

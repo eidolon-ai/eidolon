@@ -4,7 +4,7 @@
       "const": "MistralGPT"
     },
     "model": {
-      "$ref": "../AuthenticationProcessor/overview.json"
+      "$ref": "../LLMModel/overview.json"
     },
     "temperature": {
       "default": 0.3,

@@ -4,7 +4,7 @@
       "const": "AnthropicLLMUnit"
     },
     "model": {
-      "$ref": "../FunctionalAuthorizer/overview.json"
+      "$ref": "../LLMModel/overview.json"
     },
     "temperature": {
       "default": 0.3,

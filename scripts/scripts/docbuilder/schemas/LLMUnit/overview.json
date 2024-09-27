@@ -1,26 +1,26 @@
 {
   "anyOf": [
     {
-      "$ref": "./AnthropicLLMUnit.json"
+      "$ref": "../LLMUnit/AnthropicLLMUnit.json"
     },
     {
-      "$ref": "./LLMUnit.json"
+      "$ref": "../LLMUnit/LLMUnit.json"
     },
     {
-      "$ref": "./MistralGPT.json"
+      "$ref": "../LLMUnit/MistralGPT.json"
     },
     {
-      "$ref": "./OllamaLLMUnit.json"
+      "$ref": "../LLMUnit/OllamaLLMUnit.json"
     },
     {
-      "$ref": "./OpenAIGPT.json"
+      "$ref": "../LLMUnit/OpenAIGPT.json"
     },
     {
-      "$ref": "./ToolCallLLMWrapper.json"
+      "$ref": "../LLMUnit/ToolCallLLMWrapper.json"
     }
   ],
   "reference_pointer": {
-    "default_impl": "LLMUnit",
+    "default_impl": "eidolon_ai_sdk.apu.llm_unit.LLMUnit",
     "type": "LLMUnit"
   },
   "title": "LLMUnit"

@@ -1,7 +1,7 @@
 {
   "anyOf": [
     {
-      "$ref": "./AgentMachine.json"
+      "$ref": "../AgentMachine/AgentMachine.json"
     }
   ],
   "reference_pointer": {

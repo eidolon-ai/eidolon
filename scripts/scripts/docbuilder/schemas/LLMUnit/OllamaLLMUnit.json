@@ -4,7 +4,7 @@
       "const": "OllamaLLMUnit"
     },
     "model": {
-      "$ref": "../ProcessAuthorizer/overview.json"
+      "$ref": "../LLMModel/overview.json"
     },
     "temperature": {
       "default": 0.3,

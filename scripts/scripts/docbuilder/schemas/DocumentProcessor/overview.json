@@ -1,7 +1,7 @@
 {
   "anyOf": [
     {
-      "$ref": "./DocumentProcessor.json"
+      "$ref": "../DocumentProcessor/DocumentProcessor.json"
     }
   ],
   "reference_pointer": {

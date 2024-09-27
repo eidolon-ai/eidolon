@@ -9,7 +9,7 @@
       "type": "string"
     },
     "llm_unit": {
-      "$ref": "../ProcessFileSystem/overview.json"
+      "$ref": "../LLMUnit/overview.json"
     },
     "model": {
       "anyOf": [

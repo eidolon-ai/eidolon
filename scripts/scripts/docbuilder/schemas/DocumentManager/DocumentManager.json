@@ -15,7 +15,7 @@
       "type": "integer"
     },
     "loader": {
-      "$ref": "../OpenAIConnectionHandler/overview.json"
+      "$ref": "../DocumentLoader/overview.json"
     },
     "concurrency": {
       "default": 8,
@@ -24,7 +24,7 @@
       "type": "integer"
     },
     "doc_processor": {
-      "$ref": "../VectorStore/overview.json"
+      "$ref": "../DocumentProcessor/overview.json"
     }
   },
   "reference_details": {

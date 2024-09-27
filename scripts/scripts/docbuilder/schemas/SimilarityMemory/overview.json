@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "./SimilarityMemory.json"
+      "$ref": "../SimilarityMemory/SimilarityMemory.json"
     },
     {
-      "$ref": "./SimilarityMemoryImpl.json"
+      "$ref": "../SimilarityMemory/SimilarityMemoryImpl.json"
     }
   ],
   "reference_pointer": {

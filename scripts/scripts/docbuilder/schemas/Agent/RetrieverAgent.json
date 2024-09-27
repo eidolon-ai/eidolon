@@ -11,16 +11,16 @@
       "type": "integer"
     },
     "question_transformer": {
-      "$ref": "../AgentMachine/overview.json"
+      "$ref": "../QuestionTransformer/overview.json"
     },
     "document_retriever": {
-      "$ref": "../SymbolicMemory/overview.json"
+      "$ref": "../DocumentRetriever/overview.json"
     },
     "document_reranker": {
-      "$ref": "../FileMemory/overview.json"
+      "$ref": "../DocumentReranker/overview.json"
     },
     "result_summarizer": {
-      "$ref": "../SimilarityMemory/overview.json"
+      "$ref": "../ResultSummarizer/overview.json"
     },
     "name": {
       "description": "The name of the document store to use.",
@@ -61,7 +61,7 @@
     "document_manager": {
       "anyOf": [
         {
-          "$ref": "../Embedding/overview.json"
+          "$ref": "../DocumentManager/overview.json"
         },
         {
           "type": "null"
@@ -72,7 +72,7 @@
     "apu": {
       "allOf": [
         {
-          "$ref": "../FunctionalAuthorizer/overview.json"
+          "$ref": "../APU/overview.json"
         }
       ],
       "description": "The APU to use for question transformation."

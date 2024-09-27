@@ -1,13 +1,13 @@
 {
   "anyOf": [
     {
-      "$ref": "./MultiQuestionTransformer.json"
+      "$ref": "../QuestionTransformer/MultiQuestionTransformer.json"
     },
     {
-      "$ref": "./NoopQuestionTransformer.json"
+      "$ref": "../QuestionTransformer/NoopQuestionTransformer.json"
     },
     {
-      "$ref": "./QuestionTransformer.json"
+      "$ref": "../QuestionTransformer/QuestionTransformer.json"
     }
   ],
   "reference_pointer": {

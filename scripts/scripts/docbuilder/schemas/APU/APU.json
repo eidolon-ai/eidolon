@@ -10,15 +10,15 @@
       "type": "integer"
     },
     "io_unit": {
-      "$ref": "../FileMemory/overview.json"
+      "$ref": "../IOUnit/overview.json"
     },
     "memory_unit": {
-      "$ref": "../SimilarityMemory/overview.json"
+      "$ref": "../MemoryUnit/overview.json"
     },
     "longterm_memory_unit": {
       "anyOf": [
         {
-          "$ref": "../Embedding/overview.json"
+          "$ref": "../LongTermMemoryUnit/overview.json"
         },
         {
           "type": "null"
@@ -78,7 +78,7 @@
     "retriever_apu": {
       "anyOf": [
         {
-          "$ref": "./overview.json"
+          "$ref": "../APU/overview.json"
         },
         {
           "type": "null"

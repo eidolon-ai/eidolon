@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "./PrivateAuthorizer.json"
+      "$ref": "../ProcessAuthorizer/PrivateAuthorizer.json"
     },
     {
-      "$ref": "./ProcessAuthorizer.json"
+      "$ref": "../ProcessAuthorizer/ProcessAuthorizer.json"
     }
   ],
   "reference_pointer": {

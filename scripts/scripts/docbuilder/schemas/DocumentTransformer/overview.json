@@ -1,43 +1,43 @@
 {
   "anyOf": [
     {
-      "$ref": "./AutoTransformer.json"
+      "$ref": "../DocumentTransformer/AutoTransformer.json"
     },
     {
-      "$ref": "./CharacterTextSplitter.json"
+      "$ref": "../DocumentTransformer/CharacterTextSplitter.json"
     },
     {
-      "$ref": "./DocumentTransformer.json"
+      "$ref": "../DocumentTransformer/DocumentTransformer.json"
     },
     {
-      "$ref": "./HTMLHeaderTextSplitter.json"
+      "$ref": "../DocumentTransformer/HTMLHeaderTextSplitter.json"
     },
     {
-      "$ref": "./LatexTextSplitter.json"
+      "$ref": "../DocumentTransformer/LatexTextSplitter.json"
     },
     {
-      "$ref": "./MarkdownHeaderTextSplitter.json"
+      "$ref": "../DocumentTransformer/MarkdownHeaderTextSplitter.json"
     },
     {
-      "$ref": "./MarkdownTextSplitter.json"
+      "$ref": "../DocumentTransformer/MarkdownTextSplitter.json"
     },
     {
-      "$ref": "./NLTKTextSplitter.json"
+      "$ref": "../DocumentTransformer/NLTKTextSplitter.json"
     },
     {
-      "$ref": "./PythonCodeTextSplitter.json"
+      "$ref": "../DocumentTransformer/PythonCodeTextSplitter.json"
     },
     {
-      "$ref": "./RecursiveCharacterTextSplitter.json"
+      "$ref": "../DocumentTransformer/RecursiveCharacterTextSplitter.json"
     },
     {
-      "$ref": "./SentenceTransformersTokenTextSplitter.json"
+      "$ref": "../DocumentTransformer/SentenceTransformersTokenTextSplitter.json"
     },
     {
-      "$ref": "./SpacyTextSplitter.json"
+      "$ref": "../DocumentTransformer/SpacyTextSplitter.json"
     },
     {
-      "$ref": "./TokenTextSplitter.json"
+      "$ref": "../DocumentTransformer/TokenTextSplitter.json"
     }
   ],
   "reference_pointer": {

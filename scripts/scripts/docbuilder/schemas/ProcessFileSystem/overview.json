@@ -1,10 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "./ProcessFileSystem.json"
+      "$ref": "../ProcessFileSystem/ProcessFileSystem.json"
     },
     {
-      "$ref": "./ProcessFileSystemImpl.json"
+      "$ref": "../ProcessFileSystem/ProcessFileSystemImpl.json"
     }
   ],
   "reference_pointer": {

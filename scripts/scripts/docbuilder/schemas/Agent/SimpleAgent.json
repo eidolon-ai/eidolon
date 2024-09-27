@@ -56,7 +56,7 @@
       "type": "array"
     },
     "apu": {
-      "$ref": "../AgentMachine/overview.json"
+      "$ref": "../APU/overview.json"
     },
     "apus": {
       "default": [],

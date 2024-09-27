@@ -1,0 +1,15 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../SqlClient/SqlAlchemy.json"
+    },
+    {
+      "$ref": "../SqlClient/SqlClient.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "SqlClient",
+    "type": "SqlClient"
+  },
+  "title": "SqlClient"
+}

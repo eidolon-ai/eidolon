@@ -1,0 +1,24 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../DocumentLoader/AzureLoader.json"
+    },
+    {
+      "$ref": "../DocumentLoader/DocumentLoader.json"
+    },
+    {
+      "$ref": "../DocumentLoader/FilesystemLoader.json"
+    },
+    {
+      "$ref": "../DocumentLoader/GitHubLoader.json"
+    },
+    {
+      "$ref": "../DocumentLoader/S3Loader.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "DocumentLoader",
+    "type": "DocumentLoader"
+  },
+  "title": "DocumentLoader"
+}

@@ -1,51 +1,51 @@
 {
   "anyOf": [
     {
-      "$ref": "./APU.json"
+      "$ref": "../APU/APU.json"
     },
     {
-      "$ref": "./ClaudeHaiku.json"
+      "$ref": "../APU/ClaudeHaiku.json"
     },
     {
-      "$ref": "./ClaudeOpus.json"
+      "$ref": "../APU/ClaudeOpus.json"
     },
     {
-      "$ref": "./ClaudeSonnet.json"
+      "$ref": "../APU/ClaudeSonnet.json"
     },
     {
-      "$ref": "./ConversationalAPU.json"
+      "$ref": "../APU/ConversationalAPU.json"
     },
     {
-      "$ref": "./GPT3.5-turbo.json"
+      "$ref": "../APU/GPT3.5-turbo.json"
     },
     {
-      "$ref": "./GPT4-turbo.json"
+      "$ref": "../APU/GPT4-turbo.json"
     },
     {
-      "$ref": "./GPT4o.json"
+      "$ref": "../APU/GPT4o.json"
     },
     {
-      "$ref": "./GPT4o-mini.json"
+      "$ref": "../APU/GPT4o-mini.json"
     },
     {
-      "$ref": "./GPTo1Preview.json"
+      "$ref": "../APU/GPTo1Preview.json"
     },
     {
-      "$ref": "./Llamma3-8b.json"
+      "$ref": "../APU/Llamma3-8b.json"
     },
     {
-      "$ref": "./MistralLarge.json"
+      "$ref": "../APU/MistralLarge.json"
     },
     {
-      "$ref": "./MistralMedium.json"
+      "$ref": "../APU/MistralMedium.json"
     },
     {
-      "$ref": "./MistralSmall.json"
+      "$ref": "../APU/MistralSmall.json"
     }
   ],
   "description": "The APU is the main interface for the Agent to interact with the LLM.\nThe APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.\n\nTo learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).",
   "reference_pointer": {
-    "default_impl": "eidolon_ai_sdk.apu.apu.APU",
+    "default_impl": "APU",
     "type": "APU"
   },
   "title": "APU"
