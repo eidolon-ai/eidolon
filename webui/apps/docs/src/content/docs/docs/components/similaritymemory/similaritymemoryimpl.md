@@ -20,16 +20,18 @@ Specific value: `"SimilarityMemoryImpl"`
 
 ## <a name="embedder"></a>2. Property `embedder`
 
-|              |                        |
-| ------------ | ---------------------- |
-| **Type**     | [`Reference[Embedding]`](/docs/components/embedding/overview) |
-| **Required** | No                     |
+|              |                                   |
+| ------------ | --------------------------------- |
+| **Type**     | [`Reference[Embedding]`](/docs/components/embedding/overview)            |
+| **Required** | No                                |
+| **Default**  | `{"implementation": "Embedding"}` |
 
 ## <a name="vector_store"></a>3. Property `vector_store`
 
-|              |                          |
-| ------------ | ------------------------ |
-| **Type**     | [`Reference[VectorStore]`](/docs/components/vectorstore/overview) |
-| **Required** | No                       |
+|              |                                     |
+| ------------ | ----------------------------------- |
+| **Type**     | [`Reference[VectorStore]`](/docs/components/vectorstore/overview)            |
+| **Required** | No                                  |
+| **Default**  | `{"implementation": "VectorStore"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------

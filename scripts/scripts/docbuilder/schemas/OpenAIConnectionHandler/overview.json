@@ -2,9 +2,6 @@
   "anyOf": [
     {
       "$ref": "../OpenAIConnectionHandler/AzureOpenAIConnectionHandler.json"
-    },
-    {
-      "$ref": "../OpenAIConnectionHandler/OpenAIConnectionHandler.json"
     }
   ],
   "reference_pointer": {

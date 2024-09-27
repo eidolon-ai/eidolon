@@ -2,9 +2,6 @@
   "anyOf": [
     {
       "$ref": "../DocumentParser/AutoParser.json"
-    },
-    {
-      "$ref": "../DocumentParser/DocumentParser.json"
     }
   ],
   "reference_pointer": {

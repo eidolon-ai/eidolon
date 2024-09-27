@@ -5,4 +5,3 @@ description: "None"
 Overview of the ProcessFileSystem component
 ## Builtins
 * [ProcessFileSystemImpl](/docs/components/processfilesystemimpl/processfilesystemimpl/)
-* [ProcessFileSystem](/docs/components/processfilesystem/processfilesystem/) (default)

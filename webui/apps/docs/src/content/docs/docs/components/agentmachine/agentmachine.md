@@ -24,46 +24,51 @@ Specific value: `"AgentMachine"`
 
 ## <a name="symbolic_memory"></a>2. Property `symbolic_memory`
 
-|              |                             |
-| ------------ | --------------------------- |
-| **Type**     | [`Reference[SymbolicMemory]`](/docs/components/symbolicmemory/overview) |
-| **Required** | No                          |
+|              |                                        |
+| ------------ | -------------------------------------- |
+| **Type**     | [`Reference[SymbolicMemory]`](/docs/components/symbolicmemory/overview)            |
+| **Required** | No                                     |
+| **Default**  | `{"implementation": "SymbolicMemory"}` |
 
 **Description:** The Symbolic Memory implementation.
 
 ## <a name="file_memory"></a>3. Property `file_memory`
 
-|              |                         |
-| ------------ | ----------------------- |
-| **Type**     | [`Reference[FileMemory]`](/docs/components/filememory/overview) |
-| **Required** | No                      |
+|              |                                    |
+| ------------ | ---------------------------------- |
+| **Type**     | [`Reference[FileMemory]`](/docs/components/filememory/overview)            |
+| **Required** | No                                 |
+| **Default**  | `{"implementation": "FileMemory"}` |
 
 **Description:** The File Memory implementation.
 
 ## <a name="similarity_memory"></a>4. Property `similarity_memory`
 
-|              |                               |
-| ------------ | ----------------------------- |
-| **Type**     | [`Reference[SimilarityMemory]`](/docs/components/similaritymemory/overview) |
-| **Required** | No                            |
+|              |                                          |
+| ------------ | ---------------------------------------- |
+| **Type**     | [`Reference[SimilarityMemory]`](/docs/components/similaritymemory/overview)            |
+| **Required** | No                                       |
+| **Default**  | `{"implementation": "SimilarityMemory"}` |
 
 **Description:** The Vector Memory implementation.
 
 ## <a name="security_manager"></a>5. Property `security_manager`
 
-|              |                              |
-| ------------ | ---------------------------- |
-| **Type**     | [`Reference[SecurityManager]`](/docs/components/securitymanager/overview) |
-| **Required** | No                           |
+|              |                                         |
+| ------------ | --------------------------------------- |
+| **Type**     | [`Reference[SecurityManager]`](/docs/components/securitymanager/overview)            |
+| **Required** | No                                      |
+| **Default**  | `{"implementation": "SecurityManager"}` |
 
 **Description:** The Security Manager implementation.
 
 ## <a name="process_file_system"></a>6. Property `process_file_system`
 
-|              |                                |
-| ------------ | ------------------------------ |
-| **Type**     | [`Reference[ProcessFileSystem]`](/docs/components/processfilesystem/overview) |
-| **Required** | No                             |
+|              |                                           |
+| ------------ | ----------------------------------------- |
+| **Type**     | [`Reference[ProcessFileSystem]`](/docs/components/processfilesystem/overview)            |
+| **Required** | No                                        |
+| **Default**  | `{"implementation": "ProcessFileSystem"}` |
 
 **Description:** The Process File System implementation. Used to store files related to processes.
 

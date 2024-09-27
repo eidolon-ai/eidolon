@@ -6,7 +6,6 @@ Overview of the LLMModel component
 ## Builtins
 * [mistral-small-latest](/docs/components/mistral-small-latest/mistral-small-latest/)
 * [claude-3-5-sonnet-20240620](/docs/components/claude-3-5-sonnet-20240620/claude-3-5-sonnet-20240620/)
-* [LLMModel](/docs/components/llmmodel/llmmodel/)
 * [claude-3-haiku-20240307](/docs/components/claude-3-haiku-20240307/claude-3-haiku-20240307/)
 * [mistral-large-latest](/docs/components/mistral-large-latest/mistral-large-latest/)
 * [gpt-4o-mini](/docs/components/gpt-4o-mini/gpt-4o-mini/)

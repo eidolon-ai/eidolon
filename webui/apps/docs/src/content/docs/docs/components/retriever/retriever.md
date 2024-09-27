@@ -35,30 +35,34 @@ Specific value: `"Retriever"`
 
 ## <a name="question_transformer"></a>3. Property `question_transformer`
 
-|              |                                  |
-| ------------ | -------------------------------- |
-| **Type**     | [`Reference[QuestionTransformer]`](/docs/components/questiontransformer/overview) |
-| **Required** | No                               |
+|              |                                             |
+| ------------ | ------------------------------------------- |
+| **Type**     | [`Reference[QuestionTransformer]`](/docs/components/questiontransformer/overview)            |
+| **Required** | No                                          |
+| **Default**  | `{"implementation": "QuestionTransformer"}` |
 
 ## <a name="document_retriever"></a>4. Property `document_retriever`
 
-|              |                                |
-| ------------ | ------------------------------ |
-| **Type**     | [`Reference[DocumentRetriever]`](/docs/components/documentretriever/overview) |
-| **Required** | No                             |
+|              |                                           |
+| ------------ | ----------------------------------------- |
+| **Type**     | [`Reference[DocumentRetriever]`](/docs/components/documentretriever/overview)            |
+| **Required** | No                                        |
+| **Default**  | `{"implementation": "DocumentRetriever"}` |
 
 ## <a name="document_reranker"></a>5. Property `document_reranker`
 
-|              |                               |
-| ------------ | ----------------------------- |
-| **Type**     | [`Reference[DocumentReranker]`](/docs/components/documentreranker/overview) |
-| **Required** | No                            |
+|              |                                          |
+| ------------ | ---------------------------------------- |
+| **Type**     | [`Reference[DocumentReranker]`](/docs/components/documentreranker/overview)            |
+| **Required** | No                                       |
+| **Default**  | `{"implementation": "DocumentReranker"}` |
 
 ## <a name="result_summarizer"></a>6. Property `result_summarizer`
 
-|              |                               |
-| ------------ | ----------------------------- |
-| **Type**     | [`Reference[ResultSummarizer]`](/docs/components/resultsummarizer/overview) |
-| **Required** | No                            |
+|              |                                          |
+| ------------ | ---------------------------------------- |
+| **Type**     | [`Reference[ResultSummarizer]`](/docs/components/resultsummarizer/overview)            |
+| **Required** | No                                       |
+| **Default**  | `{"implementation": "ResultSummarizer"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------

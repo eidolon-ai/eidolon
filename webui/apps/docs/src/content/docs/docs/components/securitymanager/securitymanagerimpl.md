@@ -22,24 +22,27 @@ Specific value: `"SecurityManagerImpl"`
 
 ## <a name="authentication_processor"></a>2. Property `authentication_processor`
 
-|              |                                      |
-| ------------ | ------------------------------------ |
-| **Type**     | [`Reference[AuthenticationProcessor]`](/docs/components/authenticationprocessor/overview) |
-| **Required** | No                                   |
+|              |                                                 |
+| ------------ | ----------------------------------------------- |
+| **Type**     | [`Reference[AuthenticationProcessor]`](/docs/components/authenticationprocessor/overview)            |
+| **Required** | No                                              |
+| **Default**  | `{"implementation": "AuthenticationProcessor"}` |
 
 ## <a name="functional_authorizer"></a>3. Property `functional_authorizer`
 
-|              |                                   |
-| ------------ | --------------------------------- |
-| **Type**     | [`Reference[FunctionalAuthorizer]`](/docs/components/functionalauthorizer/overview) |
-| **Required** | No                                |
+|              |                                              |
+| ------------ | -------------------------------------------- |
+| **Type**     | [`Reference[FunctionalAuthorizer]`](/docs/components/functionalauthorizer/overview)            |
+| **Required** | No                                           |
+| **Default**  | `{"implementation": "FunctionalAuthorizer"}` |
 
 ## <a name="process_authorizer"></a>4. Property `process_authorizer`
 
-|              |                                |
-| ------------ | ------------------------------ |
-| **Type**     | [`Reference[ProcessAuthorizer]`](/docs/components/processauthorizer/overview) |
-| **Required** | No                             |
+|              |                                           |
+| ------------ | ----------------------------------------- |
+| **Type**     | [`Reference[ProcessAuthorizer]`](/docs/components/processauthorizer/overview)            |
+| **Required** | No                                        |
+| **Default**  | `{"implementation": "ProcessAuthorizer"}` |
 
 ## <a name="safe_paths"></a>5. Property `safe_paths`
 

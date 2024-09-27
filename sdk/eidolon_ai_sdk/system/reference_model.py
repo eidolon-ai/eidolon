@@ -107,6 +107,8 @@ class Reference(BaseModel):
             def __get_pydantic_json_schema__(
                 cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
             ) -> JsonSchemaValue:
+                from eidolon_ai_sdk.system.kernel import AgentOSKernel
+
                 title = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__)
 
                 core_schema['ref'] = f"Reference[{title}]"
@@ -119,12 +121,10 @@ class Reference(BaseModel):
                     "type": cls._bound if isinstance(cls._bound, str) else cls._bound.__name__,
                     "default_impl": cls._default,
                 }
+
                 del json_schema['type']
                 del json_schema['properties']
                 del json_schema["additionalProperties"]
-
-
-                from eidolon_ai_sdk.system.kernel import AgentOSKernel
 
                 assert isinstance(cls._bound, type)
 
@@ -138,6 +138,7 @@ class Reference(BaseModel):
                     json_schema.update(**copy.deepcopy(loose_object))
                 else:
                     json_schema["anyOf"] = []
+                    group_component_ref = None
                     for r in AgentOSKernel.get_resources(ReferenceResource).values():
                         # there is not a class for these psudo references, we can either make those classes dynamically, or create a custom ?generator? to handle them
                         overrides = Reference[object, r.metadata.name]._transform(r.spec)
@@ -151,6 +152,8 @@ class Reference(BaseModel):
                                 group=json_schema["reference_pointer"]['type'],
                             )
                             ref = handler(_pseudo_pointer(r.metadata.name).__pydantic_core_schema__)
+                            if r.metadata.name == json_schema["reference_pointer"]['type']:
+                                group_component_ref = ref
                             ref_schema = handler.resolve_ref_schema(ref)
                             if 'reference_details' not in ref_schema:
                                 ref_schema['reference_details'] = reference_details
@@ -168,9 +171,12 @@ class Reference(BaseModel):
                                     ref_schema['properties'].setdefault(key, {})['default'] = value
                             json_schema["anyOf"].append(ref)
 
-                if json_schema["anyOf"]:
-                    # sort any of by ref value name
                     json_schema["anyOf"] = sorted(json_schema["anyOf"], key=lambda x: x['$ref'])
+                    if len(json_schema["anyOf"]) > 1:
+                        json_schema["anyOf"] = [js for js in json_schema["anyOf"] if js != group_component_ref]
+                        json_schema["anyOf"] = json_schema["anyOf"][1:] + json_schema["anyOf"][:1]
+
+
                 return json_schema
 
             @classmethod

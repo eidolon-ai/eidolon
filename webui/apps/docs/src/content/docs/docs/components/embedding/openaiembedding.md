@@ -32,9 +32,10 @@ Specific value: `"OpenAIEmbedding"`
 
 ## <a name="connection_handler"></a>3. Property `connection_handler`
 
-|              |                                      |
-| ------------ | ------------------------------------ |
-| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview) |
-| **Required** | No                                   |
+|              |                                                 |
+| ------------ | ----------------------------------------------- |
+| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview)            |
+| **Required** | No                                              |
+| **Default**  | `{"implementation": "OpenAIConnectionHandler"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------

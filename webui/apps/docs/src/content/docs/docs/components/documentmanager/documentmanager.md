@@ -46,10 +46,11 @@ Specific value: `"DocumentManager"`
 
 ## <a name="loader"></a>4. Property `loader`
 
-|              |                             |
-| ------------ | --------------------------- |
-| **Type**     | [`Reference[DocumentLoader]`](/docs/components/documentloader/overview) |
-| **Required** | No                          |
+|              |                                        |
+| ------------ | -------------------------------------- |
+| **Type**     | [`Reference[DocumentLoader]`](/docs/components/documentloader/overview)            |
+| **Required** | No                                     |
+| **Default**  | `{"implementation": "DocumentLoader"}` |
 
 ## <a name="concurrency"></a>5. Property `concurrency`
 
@@ -65,9 +66,10 @@ Specific value: `"DocumentManager"`
 
 ## <a name="doc_processor"></a>6. Property `doc_processor`
 
-|              |                                |
-| ------------ | ------------------------------ |
-| **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview) |
-| **Required** | No                             |
+|              |                                           |
+| ------------ | ----------------------------------------- |
+| **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview)            |
+| **Required** | No                                        |
+| **Default**  | `{"implementation": "DocumentProcessor"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -1,12 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../LLMModel/LLMModel.json"
-    },
-    {
-      "$ref": "../LLMModel/claude-3-5-sonnet-20240620.json"
-    },
-    {
       "$ref": "../LLMModel/claude-3-haiku-20240307.json"
     },
     {
@@ -41,6 +35,9 @@
     },
     {
       "$ref": "../LLMModel/mistral-small-latest.json"
+    },
+    {
+      "$ref": "../LLMModel/claude-3-5-sonnet-20240620.json"
     }
   ],
   "reference_pointer": {

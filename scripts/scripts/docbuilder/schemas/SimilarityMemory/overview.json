@@ -1,9 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../SimilarityMemory/SimilarityMemory.json"
-    },
-    {
       "$ref": "../SimilarityMemory/SimilarityMemoryImpl.json"
     }
   ],

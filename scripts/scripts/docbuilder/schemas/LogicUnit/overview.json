@@ -1,9 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../LogicUnit/ApiLogicUnit.json"
-    },
-    {
       "$ref": "../AudioUnit/AudioUnit.json"
     },
     {
@@ -23,6 +20,9 @@
     },
     {
       "$ref": "../LogicUnit/WebSearch.json"
+    },
+    {
+      "$ref": "../LogicUnit/ApiLogicUnit.json"
     }
   ],
   "reference_pointer": {

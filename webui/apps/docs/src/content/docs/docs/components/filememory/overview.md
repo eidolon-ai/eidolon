@@ -13,6 +13,5 @@ agent's memory."
 Overview of the FileMemory component
 ## Builtins
 * [AzureFileMemory](/docs/components/azurefilememory/azurefilememory/)
-* [FileMemory](/docs/components/filememory/filememory/) (default)
 * [LocalFileMemory](/docs/components/localfilememory/localfilememory/)
 * [S3FileMemory](/docs/components/s3filememory/s3filememory/)

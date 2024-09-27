@@ -9,7 +9,6 @@ Overview of the DocumentTransformer component
 * [MarkdownTextSplitter](/docs/components/markdowntextsplitter/markdowntextsplitter/)
 * [AutoTransformer](/docs/components/autotransformer/autotransformer/)
 * [LatexTextSplitter](/docs/components/latextextsplitter/latextextsplitter/)
-* [DocumentTransformer](/docs/components/documenttransformer/documenttransformer/) (default)
 * [TokenTextSplitter](/docs/components/tokentextsplitter/tokentextsplitter/)
 * [MarkdownHeaderTextSplitter](/docs/components/markdownheadertextsplitter/markdownheadertextsplitter/)
 * [NLTKTextSplitter](/docs/components/nltktextsplitter/nltktextsplitter/)

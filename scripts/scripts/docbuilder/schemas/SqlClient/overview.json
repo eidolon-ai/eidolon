@@ -2,9 +2,6 @@
   "anyOf": [
     {
       "$ref": "../SqlClient/SqlAlchemy.json"
-    },
-    {
-      "$ref": "../SqlClient/SqlClient.json"
     }
   ],
   "reference_pointer": {

@@ -1,9 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../DocumentRetriever/DocumentRetriever.json"
-    },
-    {
       "$ref": "../DocumentRetriever/SimilarityMemoryRetriever.json"
     }
   ],

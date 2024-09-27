@@ -1,12 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../APU/APU.json"
-    },
-    {
-      "$ref": "../APU/ClaudeHaiku.json"
-    },
-    {
       "$ref": "../APU/ClaudeOpus.json"
     },
     {
@@ -41,6 +35,9 @@
     },
     {
       "$ref": "../APU/MistralSmall.json"
+    },
+    {
+      "$ref": "../APU/ClaudeHaiku.json"
     }
   ],
   "description": "The APU is the main interface for the Agent to interact with the LLM.\nThe APU provides a set of capabilities that encapsulate LLM functionality and creates a clear separation between business logic and the underlying LLM implementation.\n\nTo learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/).",

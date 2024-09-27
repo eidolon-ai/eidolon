@@ -1,9 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../DocumentReranker/DocumentReranker.json"
-    },
-    {
       "$ref": "../DocumentReranker/RAGFusionReranker.json"
     }
   ],

@@ -49,10 +49,11 @@ Specific value: `"OpenAIImageUnit"`
 
 ## <a name="connection_handler"></a>4. Property `connection_handler`
 
-|              |                                      |
-| ------------ | ------------------------------------ |
-| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview) |
-| **Required** | No                                   |
+|              |                                                 |
+| ------------ | ----------------------------------------------- |
+| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview)            |
+| **Required** | No                                              |
+| **Default**  | `{"implementation": "OpenAIConnectionHandler"}` |
 
 ## <a name="image_to_text_model"></a>5. Property `image_to_text_model`
 

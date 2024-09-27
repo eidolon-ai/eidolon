@@ -44,31 +44,35 @@ Specific value: `"RetrieverAgent"`
 
 ## <a name="question_transformer"></a>3. Property `question_transformer`
 
-|              |                                  |
-| ------------ | -------------------------------- |
-| **Type**     | [`Reference[QuestionTransformer]`](/docs/components/questiontransformer/overview) |
-| **Required** | No                               |
+|              |                                             |
+| ------------ | ------------------------------------------- |
+| **Type**     | [`Reference[QuestionTransformer]`](/docs/components/questiontransformer/overview)            |
+| **Required** | No                                          |
+| **Default**  | `{"implementation": "QuestionTransformer"}` |
 
 ## <a name="document_retriever"></a>4. Property `document_retriever`
 
-|              |                                |
-| ------------ | ------------------------------ |
-| **Type**     | [`Reference[DocumentRetriever]`](/docs/components/documentretriever/overview) |
-| **Required** | No                             |
+|              |                                           |
+| ------------ | ----------------------------------------- |
+| **Type**     | [`Reference[DocumentRetriever]`](/docs/components/documentretriever/overview)            |
+| **Required** | No                                        |
+| **Default**  | `{"implementation": "DocumentRetriever"}` |
 
 ## <a name="document_reranker"></a>5. Property `document_reranker`
 
-|              |                               |
-| ------------ | ----------------------------- |
-| **Type**     | [`Reference[DocumentReranker]`](/docs/components/documentreranker/overview) |
-| **Required** | No                            |
+|              |                                          |
+| ------------ | ---------------------------------------- |
+| **Type**     | [`Reference[DocumentReranker]`](/docs/components/documentreranker/overview)            |
+| **Required** | No                                       |
+| **Default**  | `{"implementation": "DocumentReranker"}` |
 
 ## <a name="result_summarizer"></a>6. Property `result_summarizer`
 
-|              |                               |
-| ------------ | ----------------------------- |
-| **Type**     | [`Reference[ResultSummarizer]`](/docs/components/resultsummarizer/overview) |
-| **Required** | No                            |
+|              |                                          |
+| ------------ | ---------------------------------------- |
+| **Type**     | [`Reference[ResultSummarizer]`](/docs/components/resultsummarizer/overview)            |
+| **Required** | No                                       |
+| **Default**  | `{"implementation": "ResultSummarizer"}` |
 
 ## <a name="name"></a>7. Property `name`
 
@@ -146,10 +150,11 @@ Specific value: `"RetrieverAgent"`
 
 ## <a name="apu"></a>12. Property `apu`
 
-|              |                  |
-| ------------ | ---------------- |
-| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
-| **Required** | No               |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview)            |
+| **Required** | No                          |
+| **Default**  | `{"implementation": "APU"}` |
 
 **Description:** The APU to use for question transformation.
 

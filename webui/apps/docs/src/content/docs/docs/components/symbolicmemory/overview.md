@@ -11,4 +11,3 @@ Overview of the SymbolicMemory component
 ## Builtins
 * [MongoSymbolicMemory](/docs/components/mongosymbolicmemory/mongosymbolicmemory/)
 * [LocalSymbolicMemory](/docs/components/localsymbolicmemory/localsymbolicmemory/)
-* [SymbolicMemory](/docs/components/symbolicmemory/symbolicmemory/) (default)

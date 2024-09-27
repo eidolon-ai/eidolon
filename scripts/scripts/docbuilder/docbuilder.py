@@ -189,7 +189,7 @@ def write_md(read_loc,
 
         for schema in components:
             schema = copy.deepcopy(schema)
-            clean_ref_groups_for_md(schema)
+            clean_ref_groups_for_md(schema, {g["reference_pointer"]['type']: g["reference_pointer"]['default_impl'] for g in groups})
             title = schema.get('title', schema['reference_details']['name'])
             description = f"Description of {title} component"
 
@@ -223,7 +223,7 @@ def template(template_file, **kwargs):
         return Environment(undefined=StrictUndefined).from_string(template.read()).render(**kwargs)
 
 
-def clean_ref_groups_for_md(schema, seen=None):
+def clean_ref_groups_for_md(schema, group_defaults, seen=None):
     seen = seen or set()
     if id(schema) in seen:
         return
@@ -238,11 +238,13 @@ def clean_ref_groups_for_md(schema, seen=None):
             ref: str = schema.pop("$ref")
             group = ref.removeprefix("../").removesuffix("/overview.json")
             schema['type'] = f"Reference[{group}]"
+            if 'default' not in schema:
+                schema['default'] = dict(implementation=group_defaults[group])
         for v in schema.values():
-            clean_ref_groups_for_md(v, seen)
+            clean_ref_groups_for_md(v, group_defaults, seen)
     elif isinstance(schema, list):
         for i in schema:
-            clean_ref_groups_for_md(i, seen)
+            clean_ref_groups_for_md(i, group_defaults, seen)
     else:
         pass
 

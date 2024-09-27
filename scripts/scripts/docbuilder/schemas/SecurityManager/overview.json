@@ -1,9 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../SecurityManager/SecurityManager.json"
-    },
-    {
       "$ref": "../SecurityManager/SecurityManagerImpl.json"
     }
   ],

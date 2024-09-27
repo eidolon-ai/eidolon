@@ -20,16 +20,18 @@ Specific value: `"DocumentProcessor"`
 
 ## <a name="parser"></a>2. Property `parser`
 
-|              |                             |
-| ------------ | --------------------------- |
-| **Type**     | [`Reference[DocumentParser]`](/docs/components/documentparser/overview) |
-| **Required** | No                          |
+|              |                                        |
+| ------------ | -------------------------------------- |
+| **Type**     | [`Reference[DocumentParser]`](/docs/components/documentparser/overview)            |
+| **Required** | No                                     |
+| **Default**  | `{"implementation": "DocumentParser"}` |
 
 ## <a name="splitter"></a>3. Property `splitter`
 
-|              |                                  |
-| ------------ | -------------------------------- |
-| **Type**     | [`Reference[DocumentTransformer]`](/docs/components/documenttransformer/overview) |
-| **Required** | No                               |
+|              |                                             |
+| ------------ | ------------------------------------------- |
+| **Type**     | [`Reference[DocumentTransformer]`](/docs/components/documenttransformer/overview)            |
+| **Required** | No                                          |
+| **Default**  | `{"implementation": "DocumentTransformer"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------

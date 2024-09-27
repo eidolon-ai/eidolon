@@ -1,13 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "../VectorStore/ChromaVectorStore.json"
-    },
-    {
       "$ref": "../VectorStore/NoopVectorStore.json"
     },
     {
-      "$ref": "../VectorStore/VectorStore.json"
+      "$ref": "../VectorStore/ChromaVectorStore.json"
     }
   ],
   "reference_pointer": {

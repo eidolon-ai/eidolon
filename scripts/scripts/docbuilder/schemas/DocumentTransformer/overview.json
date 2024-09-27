@@ -1,13 +1,7 @@
 {
   "anyOf": [
     {
-      "$ref": "../DocumentTransformer/AutoTransformer.json"
-    },
-    {
       "$ref": "../DocumentTransformer/CharacterTextSplitter.json"
-    },
-    {
-      "$ref": "../DocumentTransformer/DocumentTransformer.json"
     },
     {
       "$ref": "../DocumentTransformer/HTMLHeaderTextSplitter.json"
@@ -38,6 +32,9 @@
     },
     {
       "$ref": "../DocumentTransformer/TokenTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/AutoTransformer.json"
     }
   ],
   "reference_pointer": {

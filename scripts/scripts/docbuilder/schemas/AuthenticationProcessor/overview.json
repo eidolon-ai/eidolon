@@ -1,16 +1,13 @@
 {
   "anyOf": [
     {
-      "$ref": "../AuthenticationProcessor/AuthenticationProcessor.json"
-    },
-    {
-      "$ref": "../AuthenticationProcessor/AzureJWTProcessor.json"
-    },
-    {
       "$ref": "../AuthenticationProcessor/GoogleJWTProcessor.json"
     },
     {
       "$ref": "../AuthenticationProcessor/NoopAuthProcessor.json"
+    },
+    {
+      "$ref": "../AuthenticationProcessor/AzureJWTProcessor.json"
     }
   ],
   "reference_pointer": {

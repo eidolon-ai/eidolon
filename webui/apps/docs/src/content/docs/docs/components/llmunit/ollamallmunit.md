@@ -23,10 +23,11 @@ Specific value: `"OllamaLLMUnit"`
 
 ## <a name="model"></a>2. Property `model`
 
-|              |                       |
-| ------------ | --------------------- |
-| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview) |
-| **Required** | No                    |
+|              |                                     |
+| ------------ | ----------------------------------- |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview)               |
+| **Required** | No                                  |
+| **Default**  | `{"implementation": "gpt-4-turbo"}` |
 
 ## <a name="temperature"></a>3. Property `temperature`
 

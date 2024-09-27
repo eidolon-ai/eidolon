@@ -31,10 +31,11 @@ Specific value: `"ToolCallLLMWrapper"`
 
 ## <a name="llm_unit"></a>3. Property `llm_unit`
 
-|              |                      |
-| ------------ | -------------------- |
-| **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview) |
-| **Required** | No                   |
+|              |                                                             |
+| ------------ | ----------------------------------------------------------- |
+| **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview)                                        |
+| **Required** | No                                                          |
+| **Default**  | `{"implementation": "eidolon_ai_sdk.apu.llm_unit.LLMUnit"}` |
 
 ## <a name="model"></a>4. Property `model`
 

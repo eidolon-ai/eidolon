@@ -1,9 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../AudioUnit/AudioUnit.json"
-    },
-    {
       "$ref": "../AudioUnit/OpenAiSpeech.json"
     }
   ],

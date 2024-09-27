@@ -27,17 +27,19 @@ Specific value: `"SqlAgent"`
 
 ## <a name="client"></a>2. Property `client`
 
-|              |                        |
-| ------------ | ---------------------- |
-| **Type**     | [`Reference[SqlClient]`](/docs/components/sqlclient/overview) |
-| **Required** | No                     |
+|              |                                   |
+| ------------ | --------------------------------- |
+| **Type**     | [`Reference[SqlClient]`](/docs/components/sqlclient/overview)            |
+| **Required** | No                                |
+| **Default**  | `{"implementation": "SqlClient"}` |
 
 ## <a name="apu"></a>3. Property `apu`
 
-|              |                  |
-| ------------ | ---------------- |
-| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
-| **Required** | No               |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview)            |
+| **Required** | No                          |
+| **Default**  | `{"implementation": "APU"}` |
 
 ## <a name="description"></a>4. Property `description`
 

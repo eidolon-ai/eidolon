@@ -1,13 +1,10 @@
 {
   "anyOf": [
     {
-      "$ref": "../Embedding/Embedding.json"
+      "$ref": "../Embedding/OpenAIEmbedding.json"
     },
     {
       "$ref": "../Embedding/NoopEmbedding.json"
-    },
-    {
-      "$ref": "../Embedding/OpenAIEmbedding.json"
     }
   ],
   "reference_pointer": {

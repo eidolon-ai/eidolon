@@ -1,9 +1,6 @@
 {
   "anyOf": [
     {
-      "$ref": "../ProcessFileSystem/ProcessFileSystem.json"
-    },
-    {
       "$ref": "../ProcessFileSystem/ProcessFileSystemImpl.json"
     }
   ],

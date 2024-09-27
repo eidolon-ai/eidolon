@@ -309,10 +309,11 @@ Specific value: `"str"`
 
 ## <a name="apu"></a>6. Property `apu`
 
-|              |                  |
-| ------------ | ---------------- |
-| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
-| **Required** | No               |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview)            |
+| **Required** | No                          |
+| **Default**  | `{"implementation": "APU"}` |
 
 ## <a name="apus"></a>7. Property `apus`
 
@@ -363,10 +364,11 @@ Specific value: `"str"`
 
 #### <a name="apus_items_apu"></a>7.1.2. Property `apu`
 
-|              |                  |
-| ------------ | ---------------- |
-| **Type**     | [`Reference[APU]`](/docs/components/apu/overview) |
-| **Required** | No               |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview)            |
+| **Required** | No                          |
+| **Default**  | `{"implementation": "APU"}` |
 
 #### <a name="apus_items_default"></a>7.1.3. Property `default`
 

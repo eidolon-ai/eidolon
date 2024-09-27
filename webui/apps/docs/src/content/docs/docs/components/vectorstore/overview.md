@@ -6,4 +6,3 @@ Overview of the VectorStore component
 ## Builtins
 * [ChromaVectorStore](/docs/components/chromavectorstore/chromavectorstore/)
 * [NoopVectorStore](/docs/components/noopvectorstore/noopvectorstore/)
-* [VectorStore](/docs/components/vectorstore/vectorstore/) (default)
