@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "GitHubLoader"
+    },
     "owner": {
       "title": "Owner",
       "type": "string"
@@ -66,9 +69,6 @@
       ],
       "description": "Github token, can also be set via envar 'GITHUB_TOKEN'",
       "title": "Token"
-    },
-    "implementation": {
-      "const": "GitHubLoader"
     }
   },
   "reference_details": {

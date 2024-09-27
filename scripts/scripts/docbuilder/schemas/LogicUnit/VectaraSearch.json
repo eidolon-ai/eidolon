@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "VectaraSearch"
+    },
     "corpus_key": {
       "description": "The corpus key to search in.",
       "title": "Corpus Key",
@@ -15,9 +18,6 @@
       "default": "https://api.vectara.io/",
       "title": "Vectara Url",
       "type": "string"
-    },
-    "implementation": {
-      "const": "VectaraSearch"
     }
   },
   "reference_details": {

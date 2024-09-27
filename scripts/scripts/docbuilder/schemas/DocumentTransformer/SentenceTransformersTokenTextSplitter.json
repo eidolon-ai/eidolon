@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "SentenceTransformersTokenTextSplitter"
+    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -41,9 +44,6 @@
       "default": null,
       "description": "Number of tokens per chunk",
       "title": "Tokens Per Chunk"
-    },
-    "implementation": {
-      "const": "SentenceTransformersTokenTextSplitter"
     }
   },
   "reference_details": {

@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "mistral-medium-latest"
+    },
     "human_name": {
       "default": "Mistral Medium",
       "title": "Human Name",
@@ -34,9 +37,6 @@
       "default": false,
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "mistral-medium-latest"
     }
   },
   "reference_details": {

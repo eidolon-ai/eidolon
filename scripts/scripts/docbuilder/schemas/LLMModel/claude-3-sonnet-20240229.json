@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "claude-3-sonnet-20240229"
+    },
     "human_name": {
       "default": "Claude Sonnet",
       "title": "Human Name",
@@ -34,9 +37,6 @@
       "default": false,
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "claude-3-sonnet-20240229"
     }
   },
   "reference_details": {

@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "RetrieverAgent"
+    },
     "max_num_results": {
       "default": 10,
       "description": "The maximum number of results to consider.",
@@ -72,9 +75,6 @@
         }
       ],
       "description": "The APU to use for question transformation."
-    },
-    "implementation": {
-      "const": "RetrieverAgent"
     }
   },
   "reference_details": {

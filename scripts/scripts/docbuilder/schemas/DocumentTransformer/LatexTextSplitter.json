@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "LatexTextSplitter"
+    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -45,9 +48,6 @@
       "description": "Whether the separator is a regex",
       "title": "Is Separator Regex",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "LatexTextSplitter"
     }
   },
   "reference_details": {

@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "MultiQuestionTransformer"
+    },
     "keep_original": {
       "default": true,
       "description": "Whether to keep the original question in the output",
@@ -17,9 +20,6 @@
       "description": "The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}",
       "title": "Prompt",
       "type": "string"
-    },
-    "implementation": {
-      "const": "MultiQuestionTransformer"
     }
   },
   "reference_details": {

@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "AzureLoader"
+    },
     "azure_ad_token_provider": {
       "anyOf": [
         {
@@ -30,9 +33,6 @@
       "default": "**",
       "title": "Pattern",
       "type": "string"
-    },
-    "implementation": {
-      "const": "AzureLoader"
     }
   },
   "reference_details": {

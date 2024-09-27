@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "LongTermMemoryUnit"
+    },
     "user_scoped": {
       "title": "User Scoped",
       "type": "boolean"
@@ -14,9 +17,6 @@
         }
       ],
       "default": null
-    },
-    "implementation": {
-      "const": "LongTermMemoryUnit"
     }
   },
   "reference_details": {

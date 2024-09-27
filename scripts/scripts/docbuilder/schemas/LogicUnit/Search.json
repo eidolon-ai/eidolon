@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "Search"
+    },
     "cse_id": {
       "description": "Google Custom Search Engine Id.",
       "title": "Cse Id",
@@ -43,9 +46,6 @@
       ],
       "default": {},
       "title": "Params"
-    },
-    "implementation": {
-      "const": "Search"
     }
   },
   "reference_details": {

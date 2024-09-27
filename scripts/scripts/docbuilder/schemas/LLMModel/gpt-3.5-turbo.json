@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "gpt-3.5-turbo"
+    },
     "human_name": {
       "default": "GPT-3.5 Turbo",
       "title": "Human Name",
@@ -34,9 +37,6 @@
       "default": false,
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "gpt-3.5-turbo"
     }
   },
   "reference_details": {

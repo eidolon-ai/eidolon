@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "gpt-o1-preview"
+    },
     "human_name": {
       "default": "GPT-o1",
       "title": "Human Name",
@@ -34,9 +37,6 @@
       "default": false,
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "gpt-o1-preview"
     }
   },
   "reference_details": {

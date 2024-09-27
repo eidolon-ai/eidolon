@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "Browser"
+    },
     "summarizer": {
       "default": "BeautifulSoup",
       "enum": [
@@ -8,9 +11,6 @@
       ],
       "title": "Summarizer",
       "type": "string"
-    },
-    "implementation": {
-      "const": "Browser"
     }
   },
   "reference_details": {

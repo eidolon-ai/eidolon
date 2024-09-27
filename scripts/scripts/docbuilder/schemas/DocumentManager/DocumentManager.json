@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "DocumentManager"
+    },
     "name": {
       "description": "The name of the document manager (used to name database collections).",
       "title": "Name",
@@ -22,9 +25,6 @@
     },
     "doc_processor": {
       "$ref": "../DocumentProcessor/overview.json"
-    },
-    "implementation": {
-      "const": "DocumentManager"
     }
   },
   "reference_details": {

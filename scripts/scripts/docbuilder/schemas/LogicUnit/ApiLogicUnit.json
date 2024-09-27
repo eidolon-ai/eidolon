@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "ApiLogicUnit"
+    },
     "title": {
       "description": "Title of the API",
       "title": "Title",
@@ -40,9 +43,6 @@
       "description": "Maximum size of response content to allow. If the response is larger than this, an error will be raised. Default is 50k",
       "title": "Max Response Size",
       "type": "integer"
-    },
-    "implementation": {
-      "const": "ApiLogicUnit"
     }
   },
   "reference_details": {

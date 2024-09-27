@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "claude-3-haiku-20240307"
+    },
     "human_name": {
       "default": "Claude Haiku",
       "title": "Human Name",
@@ -34,9 +37,6 @@
       "default": false,
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "claude-3-haiku-20240307"
     }
   },
   "reference_details": {

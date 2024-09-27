@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "OpenAIImageUnit"
+    },
     "image_to_text_prompt": {
       "default": "Use the following prompt to describe the image:",
       "description": "The prompt to use for the conversion. The text should be very verbose and detailed.",
@@ -37,9 +40,6 @@
       "description": "The system prompt to use for text to image.",
       "title": "Image To Text System Prompt",
       "type": "string"
-    },
-    "implementation": {
-      "const": "OpenAIImageUnit"
     }
   },
   "reference_details": {

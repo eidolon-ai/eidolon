@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "TokenTextSplitter"
+    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -82,9 +85,6 @@
       "default": "all",
       "description": "Disallowed special tokens",
       "title": "Disallowed Special"
-    },
-    "implementation": {
-      "const": "TokenTextSplitter"
     }
   },
   "reference_details": {

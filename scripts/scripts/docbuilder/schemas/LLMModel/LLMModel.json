@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "LLMModel"
+    },
     "human_name": {
       "title": "Human Name",
       "type": "string"
@@ -27,9 +30,6 @@
     "supports_audio_input": {
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "LLMModel"
     }
   },
   "reference_details": {

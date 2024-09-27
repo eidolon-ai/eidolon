@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "llama3-8b"
+    },
     "human_name": {
       "default": "Mistral Small",
       "title": "Human Name",
@@ -34,9 +37,6 @@
       "default": false,
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "llama3-8b"
     }
   },
   "reference_details": {

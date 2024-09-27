@@ -1,13 +1,13 @@
 {
   "properties": {
+    "implementation": {
+      "const": "DocumentProcessor"
+    },
     "parser": {
       "$ref": "../DocumentParser/overview.json"
     },
     "splitter": {
       "$ref": "../DocumentTransformer/overview.json"
-    },
-    "implementation": {
-      "const": "DocumentProcessor"
     }
   },
   "reference_details": {

@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "SpacyTextSplitter"
+    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -41,9 +44,6 @@
       "description": "Maximum length of characters to process",
       "title": "Max Length",
       "type": "integer"
-    },
-    "implementation": {
-      "const": "SpacyTextSplitter"
     }
   },
   "reference_details": {

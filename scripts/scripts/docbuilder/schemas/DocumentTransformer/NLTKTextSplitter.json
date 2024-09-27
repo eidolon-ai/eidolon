@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "NLTKTextSplitter"
+    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -35,9 +38,6 @@
       "description": "Language to use for tokenization",
       "title": "Language",
       "type": "string"
-    },
-    "implementation": {
-      "const": "NLTKTextSplitter"
     }
   },
   "reference_details": {

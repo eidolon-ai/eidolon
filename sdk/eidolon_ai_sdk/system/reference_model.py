@@ -152,6 +152,10 @@ class Reference(BaseModel):
                                 obj_ref = ref_clz.__get_pydantic_json_schema__(ref_clz.__pydantic_core_schema__, handler) if hasattr(ref_clz, "__pydantic_core_schema__") else copy.deepcopy(loose_object)
                                 actual_ref_schema = handler.resolve_ref_schema(obj_ref)
                                 actual_ref_schema['properties']['implementation'] = dict(const=r.metadata.name)
+                                actual_ref_schema['properties'] = dict(  # put implementation at the top
+                                    implementation=actual_ref_schema['properties'].pop('implementation'),
+                                    **actual_ref_schema['properties']
+                                )
                                 actual_ref_schema.pop("$defs", None)
                                 ref_schema.update(actual_ref_schema)
                                 for key, value in overrides.items():

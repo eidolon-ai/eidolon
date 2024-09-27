@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "Retriever"
+    },
     "max_num_results": {
       "default": 10,
       "description": "The maximum number of results to consider.",
@@ -17,9 +20,6 @@
     },
     "result_summarizer": {
       "$ref": "../ResultSummarizer/overview.json"
-    },
-    "implementation": {
-      "const": "Retriever"
     }
   },
   "reference_details": {

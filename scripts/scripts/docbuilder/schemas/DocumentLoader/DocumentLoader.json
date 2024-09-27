@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "DocumentLoader"
+    },
     "root_dir": {
       "title": "Root Dir",
       "type": "string"
@@ -8,9 +11,6 @@
       "default": "**/*",
       "title": "Pattern",
       "type": "string"
-    },
-    "implementation": {
-      "const": "DocumentLoader"
     }
   },
   "reference_details": {

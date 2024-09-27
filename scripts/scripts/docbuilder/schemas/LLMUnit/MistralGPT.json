@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "MistralGPT"
+    },
     "model": {
       "$ref": "../LLMModel/overview.json"
     },
@@ -29,9 +32,6 @@
       "default": {},
       "title": "Client Args",
       "type": "object"
-    },
-    "implementation": {
-      "const": "MistralGPT"
     }
   },
   "reference_details": {

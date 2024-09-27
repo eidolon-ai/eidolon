@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "WebSearch"
+    },
     "summarizer": {
       "default": "BeautifulSoup",
       "enum": [
@@ -52,9 +55,6 @@
       ],
       "default": {},
       "title": "Params"
-    },
-    "implementation": {
-      "const": "WebSearch"
     }
   },
   "reference_details": {

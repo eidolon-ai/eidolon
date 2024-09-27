@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "S3Loader"
+    },
     "bucket": {
       "title": "Bucket",
       "type": "string"
@@ -62,9 +65,6 @@
       "default": "**",
       "title": "Pattern",
       "type": "string"
-    },
-    "implementation": {
-      "const": "S3Loader"
     }
   },
   "reference_details": {

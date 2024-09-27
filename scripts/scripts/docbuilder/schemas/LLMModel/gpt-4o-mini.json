@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "gpt-4o-mini"
+    },
     "human_name": {
       "default": "GPT-4o-mini",
       "title": "Human Name",
@@ -34,9 +37,6 @@
       "default": false,
       "title": "Supports Audio Input",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "gpt-4o-mini"
     }
   },
   "reference_details": {

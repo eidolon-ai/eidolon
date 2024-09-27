@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "OpenAIGPT"
+    },
     "model": {
       "$ref": "../LLMModel/overview.json"
     },
@@ -37,9 +40,6 @@
     },
     "connection_handler": {
       "$ref": "../OpenAIConnectionHandler/overview.json"
-    },
-    "implementation": {
-      "const": "OpenAIGPT"
     }
   },
   "reference_details": {

@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "OllamaLLMUnit"
+    },
     "model": {
       "$ref": "../LLMModel/overview.json"
     },
@@ -29,9 +32,6 @@
       "default": {},
       "title": "Client Options",
       "type": "object"
-    },
-    "implementation": {
-      "const": "OllamaLLMUnit"
     }
   },
   "reference_details": {

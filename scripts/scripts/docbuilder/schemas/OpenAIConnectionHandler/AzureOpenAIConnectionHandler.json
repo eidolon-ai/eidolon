@@ -1,6 +1,9 @@
 {
   "additionalProperties": true,
   "properties": {
+    "implementation": {
+      "const": "AzureOpenAIConnectionHandler"
+    },
     "azure_ad_token_provider": {
       "anyOf": [
         {
@@ -25,9 +28,6 @@
       "default": "2024-02-01",
       "title": "Api Version",
       "type": "string"
-    },
-    "implementation": {
-      "const": "AzureOpenAIConnectionHandler"
     }
   },
   "reference_details": {

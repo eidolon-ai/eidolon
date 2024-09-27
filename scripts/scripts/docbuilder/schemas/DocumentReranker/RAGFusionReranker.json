@@ -1,13 +1,13 @@
 {
   "properties": {
+    "implementation": {
+      "const": "RAGFusionReranker"
+    },
     "k": {
       "default": 60,
       "description": "The rerank factor.",
       "title": "K",
       "type": "integer"
-    },
-    "implementation": {
-      "const": "RAGFusionReranker"
     }
   },
   "reference_details": {

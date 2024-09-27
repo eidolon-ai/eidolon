@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "HTMLHeaderTextSplitter"
+    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -47,9 +50,6 @@
       "description": "Return each element w/ associated headers",
       "title": "Return Each Element",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "HTMLHeaderTextSplitter"
     }
   },
   "reference_details": {

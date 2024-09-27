@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "MarkdownHeaderTextSplitter"
+    },
     "chunk_size": {
       "default": 4000,
       "description": "Maximum size of chunks to return",
@@ -47,9 +50,6 @@
       "description": "Return each line w/ associated headers",
       "title": "Return Each Line",
       "type": "boolean"
-    },
-    "implementation": {
-      "const": "MarkdownHeaderTextSplitter"
     }
   },
   "reference_details": {
