@@ -31,53 +31,9 @@
       "$ref": "#/$defs/Metadata"
     },
     "spec": {
-      "kind": "object",
-      "properties": {
-        "properties": {
-          "implementation": {
-            "const": "AgentMachine",
-            "description": "AgentMachine"
-          },
-          "symbolic_memory": {
-            "$ref": "../schemas/SymbolicMemory/overview.json",
-            "default": {
-              "implementation": "SymbolicMemory"
-            }
-          },
-          "file_memory": {
-            "$ref": "../schemas/FileMemory/overview.json",
-            "default": {
-              "implementation": "FileMemory"
-            }
-          },
-          "similarity_memory": {
-            "$ref": "../schemas/SimilarityMemory/overview.json",
-            "default": {
-              "implementation": "SimilarityMemory"
-            }
-          },
-          "security_manager": {
-            "$ref": "../schemas/SecurityManager/overview.json",
-            "default": {
-              "implementation": "SecurityManager"
-            }
-          },
-          "process_file_system": {
-            "$ref": "../schemas/ProcessFileSystem/overview.json",
-            "default": {
-              "implementation": "ProcessFileSystem"
-            }
-          },
-          "fail_on_agent_start_error": {
-            "default": false,
-            "description": "If true, the machine will fail to start if an agent fails to start. Default: False",
-            "title": "Fail On Agent Start Error",
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      }
+      "$ref": "../schemas/AgentMachine/overview.json"
     }
+
   },
   "required": [
     "apiVersion",
