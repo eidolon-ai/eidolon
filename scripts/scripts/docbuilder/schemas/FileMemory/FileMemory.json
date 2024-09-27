@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "FileMemory"
+    },
+    "root_dir": {
+      "default": "/tmp/eidolon/file_memory",
+      "description": "The root directory to store files in.",
+      "title": "Root Dir",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.local_file_memory.LocalFileMemory",
+    "group": "FileMemory",
+    "name": "FileMemory",
+    "overrides": {}
+  },
+  "type": "object"
+}

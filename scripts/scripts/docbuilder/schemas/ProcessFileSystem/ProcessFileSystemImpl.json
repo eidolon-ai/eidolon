@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "ProcessFileSystemImpl"
+    },
+    "root": {
+      "default": "processes",
+      "title": "Root",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.system.process_file_system.ProcessFileSystemImpl",
+    "group": "ProcessFileSystem",
+    "name": "ProcessFileSystemImpl",
+    "overrides": {}
+  },
+  "type": "object"
+}

@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "SimilarityMemory"
+    },
+    "embedder": {
+      "$ref": "../Embedding/overview.json"
+    },
+    "vector_store": {
+      "$ref": "../VectorStore/overview.json"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.similarity_memory.SimilarityMemoryImpl",
+    "group": "SimilarityMemory",
+    "name": "SimilarityMemory",
+    "overrides": {}
+  },
+  "type": "object"
+}

@@ -1,0 +1,56 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "AzureFileMemory"
+    },
+    "azure_ad_token_provider": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "account_url": {
+      "description": "The URL of the Azure storage account of the form https://<OAUTH_STORAGE_ACCOUNT_NAME>.blob.core.windows.net.",
+      "title": "Account Url",
+      "type": "string"
+    },
+    "container": {
+      "description": "The name of the container to use.",
+      "title": "Container",
+      "type": "string"
+    },
+    "create_container_on_startup": {
+      "default": false,
+      "description": "If true, the container will be created on startup if not already present.",
+      "title": "Create Container On Startup",
+      "type": "boolean"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.azure_file_memory.AzureFileMemory",
+    "group": "FileMemory",
+    "name": "AzureFileMemory",
+    "overrides": {}
+  },
+  "required": [
+    "account_url",
+    "container"
+  ],
+  "type": "object",
+  "$defs": {
+    "Reference": {
+      "additionalProperties": true,
+      "properties": {
+        "implementation": {
+          "type": "string"
+        }
+      },
+      "title": "Reference",
+      "type": "object"
+    }
+  }
+}

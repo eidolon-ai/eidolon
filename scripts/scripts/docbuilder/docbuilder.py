@@ -30,44 +30,56 @@ from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.resources.resources_base import Resource
-from eidolon_ai_sdk.util.class_utils import for_name
-
-
-class Group(BaseModel):
-    base: type | str
-    components: list[tuple[str, type, dict]] = []
-    description: str = None
-    document_in_sidebar: bool = True
-    default: Optional[str] = None
-
-    def sort_components(self):
-        self.components = sorted(self.components, key=lambda x: x[0])
-
-    @model_validator(mode='after')
-    def update_description(self) -> Self:
-        if not self.description:
-            if isinstance(self.base, type) and self.base.__doc__:
-                self.description = textwrap.dedent(self.base.__doc__).strip()
-            elif isinstance(self.base, type):
-                self.description = f"Overview of {self.base.__name__} components"
-            else:
-                self.description = f"Overview of {self.base} components"
-        return self
-
-    def get_components(self):
-        self.sort_components()
-        return self.components
-
+from eidolon_ai_sdk.util.class_utils import for_name, fqn
 
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+
 
 
 def main():
     print("Generating docs...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
-    schema = SimpleAgent.model_json_schema()
+
+    accumulated_schema = {"$defs": {
+        "Agent": {
+            "title": "Agent",
+            "description": "Overview of Agent components",
+            "anyOf": [],
+            "reference_pointer": {
+                "type": "Agent",
+                "default_impl": "SimpleAgent",
+            }
+        }
+    }}
+    for agent in [SimpleAgent, RetrieverAgent, APIAgent, SqlAgent]:
+        schema = agent.model_json_schema()
+        schema['properties']['implementation'] = {
+            "const": agent.__name__,
+        }
+        schema['reference_details'] = dict(
+            overrides={},
+            clz=fqn(agent),
+            name=agent.__name__,
+            group="Agent",
+        )
+        accumulated_schema["$defs"].update(schema.pop("$defs", {}))
+        accumulated_schema["$defs"][agent.__name__] = schema
+        accumulated_schema["$defs"]["Agent"]["anyOf"].append({"$ref": f"#/$defs/{agent.__name__}"})
+
+    machine_schema = MachineResource.model_json_schema()
+    accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
+
     print("json generated")
     shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    write_json_schema(dist_component_schemas, accumulated_schema)
+    print("json written")
+
+
+    # write_md(dist_component_schemas)
+    # update_sitemap()
+
+
+def write_json_schema(dist_component_schemas, schema):
     defs = schema.get("$defs", {})
     transform_file_defs(schema, defs)
     for k, v in defs.items():
@@ -82,11 +94,6 @@ def main():
             os.makedirs((dist_component_schemas / write_loc).parent, exist_ok=True)
             with open(dist_component_schemas / write_loc, 'w') as json_file:
                 json.dump(copied, json_file, indent=2)
-    print("json written")
-
-
-    # write_md(dist_component_schemas)
-    # update_sitemap()
 
 
 def get_write_loc(schema):

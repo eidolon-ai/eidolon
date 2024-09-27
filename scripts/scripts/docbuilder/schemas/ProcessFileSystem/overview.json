@@ -1,0 +1,15 @@
+{
+  "anyOf": [
+    {
+      "$ref": "./ProcessFileSystem.json"
+    },
+    {
+      "$ref": "./ProcessFileSystemImpl.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "ProcessFileSystem",
+    "type": "ProcessFileSystem"
+  },
+  "title": "ProcessFileSystem"
+}

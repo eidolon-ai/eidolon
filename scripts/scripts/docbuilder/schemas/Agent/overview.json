@@ -1,0 +1,22 @@
+{
+  "title": "Agent",
+  "description": "Overview of Agent components",
+  "anyOf": [
+    {
+      "$ref": "./SimpleAgent.json"
+    },
+    {
+      "$ref": "../Retriever/RetrieverAgent.json"
+    },
+    {
+      "$ref": "./APIAgent.json"
+    },
+    {
+      "$ref": "./SqlAgent.json"
+    }
+  ],
+  "reference_pointer": {
+    "type": "Agent",
+    "default_impl": "SimpleAgent"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "SecurityManagerImpl"
+    },
+    "authentication_processor": {
+      "$ref": "../AuthenticationProcessor/overview.json"
+    },
+    "functional_authorizer": {
+      "$ref": "../FunctionalAuthorizer/overview.json"
+    },
+    "process_authorizer": {
+      "$ref": "../ProcessAuthorizer/overview.json"
+    },
+    "safe_paths": {
+      "default": [
+        "/system/health",
+        "/docs",
+        "/favicon.ico",
+        "/openapi.json"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Safe Paths",
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.security.security_manager.SecurityManagerImpl",
+    "group": "SecurityManager",
+    "name": "SecurityManagerImpl",
+    "overrides": {}
+  },
+  "type": "object"
+}

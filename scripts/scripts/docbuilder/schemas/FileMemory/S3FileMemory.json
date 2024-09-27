@@ -1,0 +1,80 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "S3FileMemory"
+    },
+    "bucket": {
+      "title": "Bucket",
+      "type": "string"
+    },
+    "region_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Region Name"
+    },
+    "aws_access_key_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Aws Access Key Id"
+    },
+    "aws_secret_access_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Aws Secret Access Key"
+    },
+    "aws_session_token": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Aws Session Token"
+    },
+    "session_args": {
+      "default": {},
+      "description": "Additional arguments to pass to the boto3 session.",
+      "title": "Session Args",
+      "type": "object"
+    },
+    "create_bucket_on_startup": {
+      "default": false,
+      "title": "Create Bucket On Startup",
+      "type": "boolean"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.s3_file_memory.S3FileMemory",
+    "group": "FileMemory",
+    "name": "S3FileMemory",
+    "overrides": {}
+  },
+  "required": [
+    "bucket"
+  ],
+  "type": "object"
+}

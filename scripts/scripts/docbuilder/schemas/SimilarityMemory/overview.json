@@ -1,0 +1,15 @@
+{
+  "anyOf": [
+    {
+      "$ref": "./SimilarityMemory.json"
+    },
+    {
+      "$ref": "./SimilarityMemoryImpl.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "SimilarityMemory",
+    "type": "SimilarityMemory"
+  },
+  "title": "SimilarityMemory"
+}

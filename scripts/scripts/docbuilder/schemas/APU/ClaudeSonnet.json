@@ -10,15 +10,15 @@
       "type": "integer"
     },
     "io_unit": {
-      "$ref": "../IOUnit/overview.json"
+      "$ref": "../FileMemory/overview.json"
     },
     "memory_unit": {
-      "$ref": "../MemoryUnit/overview.json"
+      "$ref": "../SimilarityMemory/overview.json"
     },
     "longterm_memory_unit": {
       "anyOf": [
         {
-          "$ref": "../LongTermMemoryUnit/overview.json"
+          "$ref": "../Embedding/overview.json"
         },
         {
           "type": "null"

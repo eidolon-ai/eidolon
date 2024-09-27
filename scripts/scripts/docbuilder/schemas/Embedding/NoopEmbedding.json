@@ -1,0 +1,14 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "NoopEmbedding"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.embeddings.NoopEmbedding",
+    "group": "Embedding",
+    "name": "NoopEmbedding",
+    "overrides": {}
+  },
+  "type": "object"
+}

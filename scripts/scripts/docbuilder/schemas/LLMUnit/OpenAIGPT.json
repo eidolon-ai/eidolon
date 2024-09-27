@@ -4,7 +4,7 @@
       "const": "OpenAIGPT"
     },
     "model": {
-      "$ref": "../LLMModel/overview.json"
+      "$ref": "../VectorStore/overview.json"
     },
     "temperature": {
       "default": 0.3,
@@ -39,7 +39,7 @@
       "type": "boolean"
     },
     "connection_handler": {
-      "$ref": "../OpenAIConnectionHandler/overview.json"
+      "$ref": "../SecurityManager/overview.json"
     }
   },
   "reference_details": {

@@ -1,0 +1,120 @@
+{
+  "description": "An Agent that can call rest endpoints documented via OpenAPI (Swagger).",
+  "properties": {
+    "title": {
+      "description": "Title of the API",
+      "title": "Title",
+      "type": "string"
+    },
+    "root_call_url": {
+      "description": "Root URL of the API to call",
+      "title": "Root Call Url",
+      "type": "string"
+    },
+    "open_api_location": {
+      "description": "Location of the OpenAPI schema",
+      "title": "Open Api Location",
+      "type": "string"
+    },
+    "operations_to_expose": {
+      "description": "Operations to expose",
+      "items": {
+        "$ref": "#/$defs/Operation"
+      },
+      "title": "Operations To Expose",
+      "type": "array"
+    },
+    "extra_header_params": {
+      "default": {},
+      "description": "Extra header parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
+      "title": "Extra Header Params",
+      "type": "object"
+    },
+    "extra_query_params": {
+      "default": {},
+      "description": "Extra query parameters to add to every call. This can be a jinja template where the variables in the template are ENV variables (matching case)",
+      "title": "Extra Query Params",
+      "type": "object"
+    },
+    "max_response_size": {
+      "default": 51200,
+      "description": "Maximum size of response content to allow. If the response is larger than this, an error will be raised. Default is 50k",
+      "title": "Max Response Size",
+      "type": "integer"
+    },
+    "implementation": {
+      "const": "APIAgent"
+    }
+  },
+  "required": [
+    "title",
+    "root_call_url",
+    "open_api_location",
+    "operations_to_expose"
+  ],
+  "title": "APIAgentSpec",
+  "type": "object",
+  "reference_details": {
+    "overrides": {},
+    "clz": "eidolon_ai_sdk.agent.api_agent.APIAgent",
+    "name": "APIAgent",
+    "group": "Agent"
+  },
+  "$defs": {
+    "Operation": {
+      "properties": {
+        "name": {
+          "description": "Name of the operation",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the operation",
+          "title": "Description"
+        },
+        "path": {
+          "description": "Path of the operation. Must match exactly including path parameters",
+          "title": "Path",
+          "type": "string"
+        },
+        "method": {
+          "description": "HTTP method of the operation.  get and post are supported",
+          "title": "Method",
+          "type": "string"
+        },
+        "result_filters": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters to apply to the result of the operation per json ref spec",
+          "title": "Result Filters"
+        }
+      },
+      "required": [
+        "name",
+        "path",
+        "method"
+      ],
+      "title": "Operation",
+      "type": "object"
+    }
+  }
+}

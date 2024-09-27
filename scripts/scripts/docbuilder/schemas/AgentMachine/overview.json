@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "./AgentMachine.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "AgentMachine",
+    "type": "AgentMachine"
+  },
+  "title": "AgentMachine"
+}

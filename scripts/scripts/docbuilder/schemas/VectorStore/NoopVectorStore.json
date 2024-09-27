@@ -1,0 +1,18 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "NoopVectorStore"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.noop_memory.NoopVectorStore",
+    "group": "VectorStore",
+    "name": "NoopVectorStore",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "type": "object"
+}

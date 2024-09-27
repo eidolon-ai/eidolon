@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "OpenAIEmbedding"
+    },
+    "model": {
+      "default": "text-embedding-ada-002",
+      "description": "The name of the model to use.",
+      "title": "Model",
+      "type": "string"
+    },
+    "connection_handler": {
+      "$ref": "../OpenAIConnectionHandler/overview.json"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.embeddings.OpenAIEmbedding",
+    "group": "Embedding",
+    "name": "OpenAIEmbedding",
+    "overrides": {}
+  },
+  "type": "object"
+}

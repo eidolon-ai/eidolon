@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "ChromaVectorStore"
+    },
+    "root_document_directory": {
+      "default": "vector_memory",
+      "description": "The root directory where the vector memory will store documents.",
+      "title": "Root Document Directory",
+      "type": "string"
+    },
+    "url": {
+      "default": "file://${EIDOLON_DATA_DIR}/doc_producer",
+      "description": "The url of the chroma database. Use http(s)://$HOST:$PORT?header1=value1&header2=value2 to pass headers to the database.Use file://$PATH to use a local file database.",
+      "title": "Url",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.chroma_vector_store.ChromaVectorStore",
+    "group": "VectorStore",
+    "name": "ChromaVectorStore",
+    "overrides": {}
+  },
+  "type": "object"
+}

@@ -1,0 +1,18 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "ProcessAuthorizer"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.security.process_authorizer.PrivateAuthorizer",
+    "group": "ProcessAuthorizer",
+    "name": "ProcessAuthorizer",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "type": "object"
+}

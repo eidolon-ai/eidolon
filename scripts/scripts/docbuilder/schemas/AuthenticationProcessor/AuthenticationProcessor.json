@@ -1,0 +1,18 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "AuthenticationProcessor"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.security.authentication_processor.NoopAuthProcessor",
+    "group": "AuthenticationProcessor",
+    "name": "AuthenticationProcessor",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "type": "object"
+}

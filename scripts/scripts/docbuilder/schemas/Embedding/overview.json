@@ -1,0 +1,18 @@
+{
+  "anyOf": [
+    {
+      "$ref": "./Embedding.json"
+    },
+    {
+      "$ref": "./NoopEmbedding.json"
+    },
+    {
+      "$ref": "./OpenAIEmbedding.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "Embedding",
+    "type": "Embedding"
+  },
+  "title": "Embedding"
+}

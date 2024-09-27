@@ -1,0 +1,18 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "GlobPatternFunctionalAuthorizer"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.security.functional_authorizer.GlobPatternFunctionalAuthorizer",
+    "group": "FunctionalAuthorizer",
+    "name": "GlobPatternFunctionalAuthorizer",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "type": "object"
+}

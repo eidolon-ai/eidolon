@@ -1,0 +1,21 @@
+{
+  "anyOf": [
+    {
+      "$ref": "./AuthenticationProcessor.json"
+    },
+    {
+      "$ref": "./AzureJWTProcessor.json"
+    },
+    {
+      "$ref": "./GoogleJWTProcessor.json"
+    },
+    {
+      "$ref": "./NoopAuthProcessor.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "AuthenticationProcessor",
+    "type": "AuthenticationProcessor"
+  },
+  "title": "AuthenticationProcessor"
+}

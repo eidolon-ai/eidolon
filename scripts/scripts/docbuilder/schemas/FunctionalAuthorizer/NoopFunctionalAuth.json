@@ -1,0 +1,18 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "NoopFunctionalAuth"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.security.functional_authorizer.NoopFunctionalAuth",
+    "group": "FunctionalAuthorizer",
+    "name": "NoopFunctionalAuth",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "type": "object"
+}
