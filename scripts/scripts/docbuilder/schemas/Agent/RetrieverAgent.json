@@ -1,8 +1,6 @@
 {
+  "description": "A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.\nThe agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.",
   "properties": {
-    "implementation": {
-      "const": "RetrieverAgent"
-    },
     "max_num_results": {
       "default": 10,
       "description": "The maximum number of results to consider.",
@@ -10,16 +8,16 @@
       "type": "integer"
     },
     "question_transformer": {
-      "$ref": "../QuestionTransformer/overview.json"
+      "$ref": "../AgentMachine/overview.json"
     },
     "document_retriever": {
-      "$ref": "../DocumentRetriever/overview.json"
+      "$ref": "../SymbolicMemory/overview.json"
     },
     "document_reranker": {
-      "$ref": "../DocumentReranker/overview.json"
+      "$ref": "../FileMemory/overview.json"
     },
     "result_summarizer": {
-      "$ref": "../ResultSummarizer/overview.json"
+      "$ref": "../SimilarityMemory/overview.json"
     },
     "name": {
       "description": "The name of the document store to use.",
@@ -60,7 +58,7 @@
     "document_manager": {
       "anyOf": [
         {
-          "$ref": "../DocumentManager/overview.json"
+          "$ref": "../Embedding/overview.json"
         },
         {
           "type": "null"
@@ -71,21 +69,25 @@
     "apu": {
       "allOf": [
         {
-          "$ref": "../APU/overview.json"
+          "$ref": "../FunctionalAuthorizer/overview.json"
         }
       ],
       "description": "The APU to use for question transformation."
+    },
+    "implementation": {
+      "const": "RetrieverAgent"
     }
-  },
-  "reference_details": {
-    "clz": "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent",
-    "group": "Retriever",
-    "name": "RetrieverAgent",
-    "overrides": {}
   },
   "required": [
     "name",
     "description"
   ],
-  "type": "object"
+  "title": "RetrieverAgentSpec",
+  "type": "object",
+  "reference_details": {
+    "overrides": {},
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent",
+    "name": "RetrieverAgent",
+    "group": "Agent"
+  }
 }
