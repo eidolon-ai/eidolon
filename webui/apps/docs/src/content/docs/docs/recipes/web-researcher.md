@@ -49,7 +49,7 @@ We also have a list of available [APUs](/docs/components/apu/overview) in resour
 We did not need to make any customization to support multimedia within the APU, this is turned on by default 🚀.
 
 ## Try it out!
-First let's fork for Eidolon's web researcher repository, clone it to your local machine, and start your server.
+First let's clone the Eidolon's web researcher repository to your local machine and start your server.
 ```bash
 git clone https://github.com/eidolon-ai/web-researcher.git
 cd web-researcher
