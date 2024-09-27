@@ -3,12 +3,12 @@ title: ToolCallLLMWrapper
 description: "Description of ToolCallLLMWrapper component"
 ---
 
-| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description   |
-| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |
-| - [implementation](#implementation )           | No      | const  | No         | -          | -                   |
-| - [tool_message_prompt](#tool_message_prompt ) | No      | string | No         | -          | Tool Message Prompt |
-| - [llm_unit](#llm_unit )                       | No      | object | No         | -          | -                   |
-| - [model](#model )                             | No      | object | No         | -          | -                   |
+| Property                                       | Pattern | Type   | Deprecated | Definition           | Title/Description                                                                                             |
+| ---------------------------------------------- | ------- | ------ | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )           | No      | const  | No         | -                    | -                                                                                                             |
+| - [tool_message_prompt](#tool_message_prompt ) | No      | string | No         | -                    | Tool Message Prompt                                                                                           |
+| - [llm_unit](#llm_unit )                       | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [model](#model )                             | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -36,18 +36,9 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#llm_unit_implementation ) | No      | string | No         | -          | -                 |
-| - [](#llm_unit_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="llm_unit_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="model"></a>4. Property `model`
 
@@ -57,17 +48,8 @@ Specific value: `"ToolCallLLMWrapper"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `null`                                                                    |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#model_implementation ) | No      | string | No         | -          | -                 |
-| - [](#model_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="model_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ----------------------------------------------------------------------------------------------------------------------------

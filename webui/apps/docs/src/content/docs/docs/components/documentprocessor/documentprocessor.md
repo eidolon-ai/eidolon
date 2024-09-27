@@ -3,11 +3,11 @@ title: DocumentProcessor
 description: "Description of DocumentProcessor component"
 ---
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| - [parser](#parser )                 | No      | object | No         | -          | -                 |
-| - [splitter](#splitter )             | No      | object | No         | -          | -                 |
+| Property                             | Pattern | Type   | Deprecated | Definition           | Title/Description                                                                                             |
+| ------------------------------------ | ------- | ------ | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation ) | No      | const  | No         | -                    | -                                                                                                             |
+| - [parser](#parser )                 | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [splitter](#splitter )             | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -25,18 +25,9 @@ Specific value: `"DocumentProcessor"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#parser_implementation ) | No      | string | No         | -          | -                 |
-| - [](#parser_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="parser_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="splitter"></a>3. Property `splitter`
 
@@ -45,17 +36,8 @@ Specific value: `"DocumentProcessor"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#splitter_implementation ) | No      | string | No         | -          | -                 |
-| - [](#splitter_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="splitter_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ----------------------------------------------------------------------------------------------------------------------------

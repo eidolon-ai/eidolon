@@ -3,11 +3,11 @@ title: SimilarityMemoryImpl
 description: "Description of SimilarityMemoryImpl component"
 ---
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| - [embedder](#embedder )             | No      | object | No         | -          | -                 |
-| - [vector_store](#vector_store )     | No      | object | No         | -          | -                 |
+| Property                             | Pattern | Type   | Deprecated | Definition           | Title/Description                                                                                             |
+| ------------------------------------ | ------- | ------ | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation ) | No      | const  | No         | -                    | -                                                                                                             |
+| - [embedder](#embedder )             | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [vector_store](#vector_store )     | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -25,18 +25,9 @@ Specific value: `"SimilarityMemoryImpl"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#embedder_implementation ) | No      | string | No         | -          | -                 |
-| - [](#embedder_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="embedder_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="vector_store"></a>3. Property `vector_store`
 
@@ -45,17 +36,8 @@ Specific value: `"SimilarityMemoryImpl"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                          | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#vector_store_implementation ) | No      | string | No         | -          | -                 |
-| - [](#vector_store_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="vector_store_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ----------------------------------------------------------------------------------------------------------------------------

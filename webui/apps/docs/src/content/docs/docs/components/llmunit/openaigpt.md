@@ -3,16 +3,16 @@ title: OpenAIGPT
 description: "Description of OpenAIGPT component"
 ---
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description        |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#implementation )                     | No      | const   | No         | -          | -                        |
-| - [model](#model )                                       | No      | object  | No         | -          | -                        |
-| - [temperature](#temperature )                           | No      | number  | No         | -          | Temperature              |
-| - [force_json](#force_json )                             | No      | boolean | No         | -          | Force Json               |
-| - [max_tokens](#max_tokens )                             | No      | integer | No         | -          | Max Tokens               |
-| - [supports_system_messages](#supports_system_messages ) | No      | boolean | No         | -          | Supports System Messages |
-| - [can_stream](#can_stream )                             | No      | boolean | No         | -          | Can Stream               |
-| - [connection_handler](#connection_handler )             | No      | object  | No         | -          | -                        |
+| Property                                                 | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
+| -------------------------------------------------------- | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )                     | No      | const   | No         | -                    | -                                                                                                             |
+| - [model](#model )                                       | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [temperature](#temperature )                           | No      | number  | No         | -                    | Temperature                                                                                                   |
+| - [force_json](#force_json )                             | No      | boolean | No         | -                    | Force Json                                                                                                    |
+| - [max_tokens](#max_tokens )                             | No      | integer | No         | -                    | Max Tokens                                                                                                    |
+| - [supports_system_messages](#supports_system_messages ) | No      | boolean | No         | -                    | Supports System Messages                                                                                      |
+| - [can_stream](#can_stream )                             | No      | boolean | No         | -                    | Can Stream                                                                                                    |
+| - [connection_handler](#connection_handler )             | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -30,18 +30,9 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#model_implementation ) | No      | string | No         | -          | -                 |
-| - [](#model_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="model_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="temperature"></a>3. Property `temperature`
 
@@ -100,17 +91,8 @@ Specific value: `"OpenAIGPT"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#connection_handler_implementation ) | No      | string | No         | -          | -                 |
-| - [](#connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="connection_handler_implementation"></a>8.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ----------------------------------------------------------------------------------------------------------------------------

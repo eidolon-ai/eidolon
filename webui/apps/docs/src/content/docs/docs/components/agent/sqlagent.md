@@ -3,18 +3,18 @@ title: SqlAgent
 description: "Description of SqlAgent component"
 ---
 
-| Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
-| ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | -                    |
-| - [client](#client )                             | No      | object  | No         | -          | -                    |
-| - [apu](#apu )                                   | No      | object  | No         | -          | -                    |
-| - [description](#description )                   | No      | string  | No         | -          | Description          |
-| - [system_prompt](#system_prompt )               | No      | string  | No         | -          | System Prompt        |
-| - [user_prompt](#user_prompt )                   | No      | string  | No         | -          | User Prompt          |
-| - [clarification_prompt](#clarification_prompt ) | No      | string  | No         | -          | Clarification Prompt |
-| - [response_prompt](#response_prompt )           | No      | string  | No         | -          | Response Prompt      |
-| - [error_prompt](#error_prompt )                 | No      | string  | No         | -          | Error Prompt         |
-| - [num_retries](#num_retries )                   | No      | integer | No         | -          | Num Retries          |
+| Property                                         | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
+| ------------------------------------------------ | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )             | No      | const   | No         | -                    | -                                                                                                             |
+| - [client](#client )                             | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [apu](#apu )                                   | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [description](#description )                   | No      | string  | No         | -                    | Description                                                                                                   |
+| - [system_prompt](#system_prompt )               | No      | string  | No         | -                    | System Prompt                                                                                                 |
+| - [user_prompt](#user_prompt )                   | No      | string  | No         | -                    | User Prompt                                                                                                   |
+| - [clarification_prompt](#clarification_prompt ) | No      | string  | No         | -                    | Clarification Prompt                                                                                          |
+| - [response_prompt](#response_prompt )           | No      | string  | No         | -                    | Response Prompt                                                                                               |
+| - [error_prompt](#error_prompt )                 | No      | string  | No         | -                    | Error Prompt                                                                                                  |
+| - [num_retries](#num_retries )                   | No      | integer | No         | -                    | Num Retries                                                                                                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -32,18 +32,9 @@ Specific value: `"SqlAgent"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#client_implementation ) | No      | string | No         | -          | -                 |
-| - [](#client_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="client_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="apu"></a>3. Property `apu`
 
@@ -52,18 +43,9 @@ Specific value: `"SqlAgent"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#apu_implementation ) | No      | string | No         | -          | -                 |
-| - [](#apu_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="apu_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="description"></a>4. Property `description`
 

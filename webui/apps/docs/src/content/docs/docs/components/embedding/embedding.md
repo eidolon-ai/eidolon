@@ -3,11 +3,11 @@ title: Embedding
 description: "Description of Embedding component"
 ---
 
-| Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )         | No      | const  | No         | -          | -                 |
-| - [model](#model )                           | No      | string | No         | -          | Model             |
-| - [connection_handler](#connection_handler ) | No      | object | No         | -          | -                 |
+| Property                                     | Pattern | Type   | Deprecated | Definition           | Title/Description                                                                                             |
+| -------------------------------------------- | ------- | ------ | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )         | No      | const  | No         | -                    | -                                                                                                             |
+| - [model](#model )                           | No      | string | No         | -                    | Model                                                                                                         |
+| - [connection_handler](#connection_handler ) | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -37,17 +37,8 @@ Specific value: `"Embedding"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#connection_handler_implementation ) | No      | string | No         | -          | -                 |
-| - [](#connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="connection_handler_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ----------------------------------------------------------------------------------------------------------------------------

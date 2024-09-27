@@ -3,16 +3,16 @@ title: OpenAIImageUnit
 description: "Description of OpenAIImageUnit component"
 ---
 
-| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description           |
-| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------- |
-| - [implementation](#implementation )                           | No      | const  | No         | -          | -                           |
-| - [image_to_text_prompt](#image_to_text_prompt )               | No      | string | No         | -          | Image To Text Prompt        |
-| - [text_to_image_prompt](#text_to_image_prompt )               | No      | string | No         | -          | Text To Image Prompt        |
-| - [connection_handler](#connection_handler )                   | No      | object | No         | -          | -                           |
-| - [image_to_text_model](#image_to_text_model )                 | No      | string | No         | -          | Image To Text Model         |
-| - [text_to_image_model](#text_to_image_model )                 | No      | string | No         | -          | Text To Image Model         |
-| - [temperature](#temperature )                                 | No      | number | No         | -          | Temperature                 |
-| - [image_to_text_system_prompt](#image_to_text_system_prompt ) | No      | string | No         | -          | Image To Text System Prompt |
+| Property                                                       | Pattern | Type   | Deprecated | Definition           | Title/Description                                                                                             |
+| -------------------------------------------------------------- | ------- | ------ | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )                           | No      | const  | No         | -                    | -                                                                                                             |
+| - [image_to_text_prompt](#image_to_text_prompt )               | No      | string | No         | -                    | Image To Text Prompt                                                                                          |
+| - [text_to_image_prompt](#text_to_image_prompt )               | No      | string | No         | -                    | Text To Image Prompt                                                                                          |
+| - [connection_handler](#connection_handler )                   | No      | object | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [image_to_text_model](#image_to_text_model )                 | No      | string | No         | -                    | Image To Text Model                                                                                           |
+| - [text_to_image_model](#text_to_image_model )                 | No      | string | No         | -                    | Text To Image Model                                                                                           |
+| - [temperature](#temperature )                                 | No      | number | No         | -                    | Temperature                                                                                                   |
+| - [image_to_text_system_prompt](#image_to_text_system_prompt ) | No      | string | No         | -                    | Image To Text System Prompt                                                                                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -54,18 +54,9 @@ Specific value: `"OpenAIImageUnit"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#connection_handler_implementation ) | No      | string | No         | -          | -                 |
-| - [](#connection_handler_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="connection_handler_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="image_to_text_model"></a>5. Property `image_to_text_model`
 

@@ -6,11 +6,11 @@ description: "Description of AgentMachine component"
 | Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                 |
 | ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------- |
 | - [implementation](#implementation )                       | No      | const   | No         | -          | -                                                                                 |
-| - [symbolic_memory](#symbolic_memory )                     | No      | object  | No         | -          | The Symbolic Memory implementation.                                               |
-| - [file_memory](#file_memory )                             | No      | object  | No         | -          | The File Memory implementation.                                                   |
-| - [similarity_memory](#similarity_memory )                 | No      | object  | No         | -          | The Vector Memory implementation.                                                 |
-| - [security_manager](#security_manager )                   | No      | object  | No         | -          | The Security Manager implementation.                                              |
-| - [process_file_system](#process_file_system )             | No      | object  | No         | -          | The Process File System implementation. Used to store files related to processes. |
+| - [symbolic_memory](#symbolic_memory )                     | No      | object  | No         | In         | The Symbolic Memory implementation.                                               |
+| - [file_memory](#file_memory )                             | No      | object  | No         | In         | The File Memory implementation.                                                   |
+| - [similarity_memory](#similarity_memory )                 | No      | object  | No         | In         | The Vector Memory implementation.                                                 |
+| - [security_manager](#security_manager )                   | No      | object  | No         | In         | The Security Manager implementation.                                              |
+| - [process_file_system](#process_file_system )             | No      | object  | No         | In         | The Process File System implementation. Used to store files related to processes. |
 | - [fail_on_agent_start_error](#fail_on_agent_start_error ) | No      | boolean | No         | -          | Fail On Agent Start Error                                                         |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -29,20 +29,9 @@ Specific value: `"AgentMachine"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            |                                                                           |
 
 **Description:** The Symbolic Memory implementation.
-
-| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#symbolic_memory_implementation ) | No      | string | No         | -          | -                 |
-| - [](#symbolic_memory_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="symbolic_memory_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="file_memory"></a>3. Property `file_memory`
 
@@ -51,20 +40,9 @@ Specific value: `"AgentMachine"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            |                                                                           |
 
 **Description:** The File Memory implementation.
-
-| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#file_memory_implementation ) | No      | string | No         | -          | -                 |
-| - [](#file_memory_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="file_memory_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="similarity_memory"></a>4. Property `similarity_memory`
 
@@ -73,20 +51,9 @@ Specific value: `"AgentMachine"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            |                                                                           |
 
 **Description:** The Vector Memory implementation.
-
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#similarity_memory_implementation ) | No      | string | No         | -          | -                 |
-| - [](#similarity_memory_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="similarity_memory_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="security_manager"></a>5. Property `security_manager`
 
@@ -95,20 +62,9 @@ Specific value: `"AgentMachine"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            |                                                                           |
 
 **Description:** The Security Manager implementation.
-
-| Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#security_manager_implementation ) | No      | string | No         | -          | -                 |
-| - [](#security_manager_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="security_manager_implementation"></a>5.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="process_file_system"></a>6. Property `process_file_system`
 
@@ -117,20 +73,9 @@ Specific value: `"AgentMachine"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            |                                                                           |
 
 **Description:** The Process File System implementation. Used to store files related to processes.
-
-| Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#process_file_system_implementation ) | No      | string | No         | -          | -                 |
-| - [](#process_file_system_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="process_file_system_implementation"></a>6.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 ## <a name="fail_on_agent_start_error"></a>7. Property `fail_on_agent_start_error`
 

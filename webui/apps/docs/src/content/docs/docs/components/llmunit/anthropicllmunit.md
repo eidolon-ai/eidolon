@@ -3,13 +3,13 @@ title: AnthropicLLMUnit
 description: "Description of AnthropicLLMUnit component"
 ---
 
-| Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const   | No         | -          | -                 |
-| - [model](#model )                   | No      | object  | No         | -          | -                 |
-| - [temperature](#temperature )       | No      | number  | No         | -          | Temperature       |
-| - [max_tokens](#max_tokens )         | No      | integer | No         | -          | Max Tokens        |
-| - [client_args](#client_args )       | No      | object  | No         | -          | Client Args       |
+| Property                             | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
+| ------------------------------------ | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation ) | No      | const   | No         | -                    | -                                                                                                             |
+| - [model](#model )                   | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [temperature](#temperature )       | No      | number  | No         | -                    | Temperature                                                                                                   |
+| - [max_tokens](#max_tokens )         | No      | integer | No         | -                    | Max Tokens                                                                                                    |
+| - [client_args](#client_args )       | No      | object  | No         | -                    | Client Args                                                                                                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -27,18 +27,9 @@ Specific value: `"AnthropicLLMUnit"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#model_implementation ) | No      | string | No         | -          | -                 |
-| - [](#model_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="model_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="temperature"></a>3. Property `temperature`
 

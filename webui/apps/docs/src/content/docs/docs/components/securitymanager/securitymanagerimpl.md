@@ -3,13 +3,13 @@ title: SecurityManagerImpl
 description: "Description of SecurityManagerImpl component"
 ---
 
-| Property                                                 | Pattern | Type            | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )                     | No      | const           | No         | -          | -                 |
-| - [authentication_processor](#authentication_processor ) | No      | object          | No         | -          | -                 |
-| - [functional_authorizer](#functional_authorizer )       | No      | object          | No         | -          | -                 |
-| - [process_authorizer](#process_authorizer )             | No      | object          | No         | -          | -                 |
-| - [safe_paths](#safe_paths )                             | No      | array of string | No         | -          | Safe Paths        |
+| Property                                                 | Pattern | Type            | Deprecated | Definition           | Title/Description                                                                                             |
+| -------------------------------------------------------- | ------- | --------------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )                     | No      | const           | No         | -                    | -                                                                                                             |
+| - [authentication_processor](#authentication_processor ) | No      | object          | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [functional_authorizer](#functional_authorizer )       | No      | object          | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [process_authorizer](#process_authorizer )             | No      | object          | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [safe_paths](#safe_paths )                             | No      | array of string | No         | -                    | Safe Paths                                                                                                    |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -27,18 +27,9 @@ Specific value: `"SecurityManagerImpl"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#authentication_processor_implementation ) | No      | string | No         | -          | -                 |
-| - [](#authentication_processor_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="authentication_processor_implementation"></a>2.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="functional_authorizer"></a>3. Property `functional_authorizer`
 
@@ -47,18 +38,9 @@ Specific value: `"SecurityManagerImpl"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#functional_authorizer_implementation ) | No      | string | No         | -          | -                 |
-| - [](#functional_authorizer_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="functional_authorizer_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="process_authorizer"></a>4. Property `process_authorizer`
 
@@ -67,18 +49,9 @@ Specific value: `"SecurityManagerImpl"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#process_authorizer_implementation ) | No      | string | No         | -          | -                 |
-| - [](#process_authorizer_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="process_authorizer_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="safe_paths"></a>5. Property `safe_paths`
 

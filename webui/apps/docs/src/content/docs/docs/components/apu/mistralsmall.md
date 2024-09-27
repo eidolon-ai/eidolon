@@ -3,22 +3,22 @@ title: MistralSmall
 description: "Description of MistralSmall component"
 ---
 
-| Property                                             | Pattern | Type    | Deprecated | Definition | Title/Description      |
-| ---------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
-| - [implementation](#implementation )                 | No      | const   | No         | -          | -                      |
-| - [max_num_function_calls](#max_num_function_calls ) | No      | integer | No         | -          | Max Num Function Calls |
-| - [io_unit](#io_unit )                               | No      | object  | No         | -          | -                      |
-| - [memory_unit](#memory_unit )                       | No      | object  | No         | -          | -                      |
-| - [longterm_memory_unit](#longterm_memory_unit )     | No      | object  | No         | -          | -                      |
-| - [llm_unit](#llm_unit )                             | No      | object  | No         | -          | -                      |
-| - [logic_units](#logic_units )                       | No      | array   | No         | -          | Logic Units            |
-| - [audio_unit](#audio_unit )                         | No      | object  | No         | -          | -                      |
-| - [image_unit](#image_unit )                         | No      | object  | No         | -          | -                      |
-| - [record_conversation](#record_conversation )       | No      | boolean | No         | -          | Record Conversation    |
-| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean | No         | -          | Allow Tool Errors      |
-| - [document_processor](#document_processor )         | No      | object  | No         | -          | -                      |
-| - [retriever](#retriever )                           | No      | object  | No         | -          | -                      |
-| - [retriever_apu](#retriever_apu )                   | No      | object  | No         | -          | -                      |
+| Property                                             | Pattern | Type    | Deprecated | Definition           | Title/Description                                                                                             |
+| ---------------------------------------------------- | ------- | ------- | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| - [implementation](#implementation )                 | No      | const   | No         | -                    | -                                                                                                             |
+| - [max_num_function_calls](#max_num_function_calls ) | No      | integer | No         | -                    | Max Num Function Calls                                                                                        |
+| - [io_unit](#io_unit )                               | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [memory_unit](#memory_unit )                       | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [longterm_memory_unit](#longterm_memory_unit )     | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [llm_unit](#llm_unit )                             | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [logic_units](#logic_units )                       | No      | array   | No         | -                    | Logic Units                                                                                                   |
+| - [audio_unit](#audio_unit )                         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [image_unit](#image_unit )                         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [record_conversation](#record_conversation )       | No      | boolean | No         | -                    | Record Conversation                                                                                           |
+| - [allow_tool_errors](#allow_tool_errors )           | No      | boolean | No         | -                    | Allow Tool Errors                                                                                             |
+| - [document_processor](#document_processor )         | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [retriever](#retriever )                           | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
+| - [retriever_apu](#retriever_apu )                   | No      | object  | No         | In file:../test.json | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -48,18 +48,9 @@ Specific value: `"MistralSmall"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#io_unit_implementation ) | No      | string | No         | -          | -                 |
-| - [](#io_unit_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="io_unit_implementation"></a>3.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="memory_unit"></a>4. Property `memory_unit`
 
@@ -68,18 +59,9 @@ Specific value: `"MistralSmall"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#memory_unit_implementation ) | No      | string | No         | -          | -                 |
-| - [](#memory_unit_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="memory_unit_implementation"></a>4.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="longterm_memory_unit"></a>5. Property `longterm_memory_unit`
 
@@ -89,18 +71,9 @@ Specific value: `"MistralSmall"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `null`                                                                    |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#longterm_memory_unit_implementation ) | No      | string | No         | -          | -                 |
-| - [](#longterm_memory_unit_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="longterm_memory_unit_implementation"></a>5.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="llm_unit"></a>6. Property `llm_unit`
 
@@ -110,18 +83,9 @@ Specific value: `"MistralSmall"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{"implementation": "MistralGPT", "model": "mistral-small-latest"}`       |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#llm_unit_implementation ) | No      | string | No         | -          | -                 |
-| - [](#llm_unit_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="llm_unit_implementation"></a>6.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="logic_units"></a>7. Property `logic_units`
 
@@ -141,29 +105,20 @@ Specific value: `"MistralSmall"`
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be         | Description |
-| --------------------------------------- | ----------- |
-| [logic_units items](#logic_units_items) | -           |
+| Each item of this array must be | Description                                                                                                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [test.json](#logic_units_items) | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
-### <a name="autogenerated_heading_2"></a>7.1. logic_units items
+### <a name="autogenerated_heading_2"></a>7.1. test.json
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#logic_units_items_implementation ) | No      | string | No         | -          | -                 |
-| - [](#logic_units_items_additionalProperties )         | No      | object | No         | -          | -                 |
-
-#### <a name="logic_units_items_implementation"></a>7.1.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="audio_unit"></a>8. Property `audio_unit`
 
@@ -173,18 +128,9 @@ Specific value: `"MistralSmall"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `null`                                                                    |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#audio_unit_implementation ) | No      | string | No         | -          | -                 |
-| - [](#audio_unit_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="audio_unit_implementation"></a>8.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="image_unit"></a>9. Property `image_unit`
 
@@ -194,18 +140,9 @@ Specific value: `"MistralSmall"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `null`                                                                    |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#image_unit_implementation ) | No      | string | No         | -          | -                 |
-| - [](#image_unit_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="image_unit_implementation"></a>9.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="record_conversation"></a>10. Property `record_conversation`
 
@@ -234,18 +171,9 @@ Specific value: `"MistralSmall"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#document_processor_implementation ) | No      | string | No         | -          | -                 |
-| - [](#document_processor_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="document_processor_implementation"></a>12.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="retriever"></a>13. Property `retriever`
 
@@ -254,18 +182,9 @@ Specific value: `"MistralSmall"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#retriever_implementation ) | No      | string | No         | -          | -                 |
-| - [](#retriever_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="retriever_implementation"></a>13.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ## <a name="retriever_apu"></a>14. Property `retriever_apu`
 
@@ -275,17 +194,8 @@ Specific value: `"MistralSmall"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `null`                                                                    |
+| **Defined in**            | file:../test.json                                                         |
 
-| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#retriever_apu_implementation ) | No      | string | No         | -          | -                 |
-| - [](#retriever_apu_additionalProperties )         | No      | object | No         | -          | -                 |
-
-### <a name="retriever_apu_implementation"></a>14.1. Property `implementation`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+**Description:** 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️
 
 ----------------------------------------------------------------------------------------------------------------------------
