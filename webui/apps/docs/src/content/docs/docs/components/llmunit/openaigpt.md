@@ -2,24 +2,6 @@
 title: OpenAIGPT
 description: "Description of OpenAIGPT component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `model`](#model)
-  - [2.1. Property `implementation`](#model_implementation)
-- [3. Property `temperature`](#temperature)
-- [4. Property `force_json`](#force_json)
-- [5. Property `max_tokens`](#max_tokens)
-- [6. Property `supports_system_messages`](#supports_system_messages)
-- [7. Property `can_stream`](#can_stream)
-- [8. Property `connection_handler`](#connection_handler)
-  - [8.1. Property `implementation`](#connection_handler_implementation)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description        |
 | -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |

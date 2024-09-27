@@ -2,7 +2,7 @@
 title: ProcessFileSystem Overview
 description: "None"
 ---
-Overview of the ProcessFileSystemcomponent
+Overview of the ProcessFileSystem component
 ## Builtins
 * [ProcessFileSystemImpl](/docs/components/processfilesystem/processfilesystemimpl/)
 * [ProcessFileSystem](/docs/components/processfilesystem/processfilesystem/) (default)

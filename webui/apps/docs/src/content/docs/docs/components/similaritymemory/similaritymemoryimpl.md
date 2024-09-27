@@ -2,19 +2,6 @@
 title: SimilarityMemoryImpl
 description: "Description of SimilarityMemoryImpl component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `embedder`](#embedder)
-  - [2.1. Property `implementation`](#embedder_implementation)
-- [3. Property `vector_store`](#vector_store)
-  - [3.1. Property `implementation`](#vector_store_implementation)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |

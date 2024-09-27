@@ -2,18 +2,6 @@
 title: AzureJWTProcessor
 description: "Description of AzureJWTProcessor component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `client_id`](#client_id)
-- [3. Property `tenant_id`](#tenant_id)
-- [4. Property `issuer_prefix`](#issuer_prefix)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |

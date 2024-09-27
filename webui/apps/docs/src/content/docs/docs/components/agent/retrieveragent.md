@@ -2,36 +2,6 @@
 title: RetrieverAgentSpec
 description: "Description of RetrieverAgentSpec component"
 ---
-# RetrieverAgentSpec
-
-- [1. Property `max_num_results`](#max_num_results)
-- [2. Property `question_transformer`](#question_transformer)
-  - [2.1. Property `implementation`](#question_transformer_implementation)
-- [3. Property `document_retriever`](#document_retriever)
-  - [3.1. Property `implementation`](#document_retriever_implementation)
-- [4. Property `document_reranker`](#document_reranker)
-  - [4.1. Property `implementation`](#document_reranker_implementation)
-- [5. Property `result_summarizer`](#result_summarizer)
-  - [5.1. Property `implementation`](#result_summarizer_implementation)
-- [6. Property `name`](#name)
-- [7. Property `description`](#description)
-- [8. Property `loader_root_location`](#loader_root_location)
-- [9. Property `loader_pattern`](#loader_pattern)
-  - [9.1. Property `item 0`](#loader_pattern_anyOf_i0)
-  - [9.2. Property `item 1`](#loader_pattern_anyOf_i1)
-- [10. Property `document_manager`](#document_manager)
-  - [10.1. Property `implementation`](#document_manager_implementation)
-- [11. Property `apu`](#apu)
-  - [11.1. Property `implementation`](#apu_implementation)
-- [12. Property `implementation`](#implementation)
-
-**Title:** RetrieverAgentSpec
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 **Description:** A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.
 The agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.

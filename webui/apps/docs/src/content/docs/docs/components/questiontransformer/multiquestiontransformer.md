@@ -2,18 +2,6 @@
 title: MultiQuestionTransformer
 description: "Description of MultiQuestionTransformer component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `keep_original`](#keep_original)
-- [3. Property `number_to_generate`](#number_to_generate)
-- [4. Property `prompt`](#prompt)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description  |
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------ |

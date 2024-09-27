@@ -2,17 +2,6 @@
 title: SymbolicMemory
 description: "Description of SymbolicMemory component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `mongo_connection_string`](#mongo_connection_string)
-- [3. Property `mongo_database_name`](#mongo_database_name)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |

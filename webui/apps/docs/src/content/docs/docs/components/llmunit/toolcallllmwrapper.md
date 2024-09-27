@@ -2,20 +2,6 @@
 title: ToolCallLLMWrapper
 description: "Description of ToolCallLLMWrapper component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `tool_message_prompt`](#tool_message_prompt)
-- [3. Property `llm_unit`](#llm_unit)
-  - [3.1. Property `implementation`](#llm_unit_implementation)
-- [4. Property `model`](#model)
-  - [4.1. Property `implementation`](#model_implementation)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |

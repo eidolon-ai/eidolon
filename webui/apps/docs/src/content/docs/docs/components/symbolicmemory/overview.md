@@ -7,7 +7,7 @@ and stopping the memory service, and CRUD (Create, Read, Update, Delete) operati
 on symbolic data. Implementations of this class are expected to manage collections
 of symbols, providing a high-level interface to store and retrieve symbolic information."
 ---
-Overview of the SymbolicMemorycomponent
+Overview of the SymbolicMemory component
 ## Builtins
 * [MongoSymbolicMemory](/docs/components/symbolicmemory/mongosymbolicmemory/)
 * [LocalSymbolicMemory](/docs/components/symbolicmemory/localsymbolicmemory/)

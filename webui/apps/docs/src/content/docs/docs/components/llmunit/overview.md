@@ -2,7 +2,7 @@
 title: LLMUnit Overview
 description: "None"
 ---
-Overview of the LLMUnitcomponent
+Overview of the LLMUnit component
 ## Builtins
 * [AnthropicLLMUnit](/docs/components/llmunit/anthropicllmunit/)
 * [OllamaLLMUnit](/docs/components/llmunit/ollamallmunit/)

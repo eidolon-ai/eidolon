@@ -2,7 +2,7 @@
 title: QuestionTransformer Overview
 description: "None"
 ---
-Overview of the QuestionTransformercomponent
+Overview of the QuestionTransformer component
 ## Builtins
 * [QuestionTransformer](/docs/components/questiontransformer/questiontransformer/) (default)
 * [MultiQuestionTransformer](/docs/components/questiontransformer/multiquestiontransformer/)

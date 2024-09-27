@@ -2,20 +2,6 @@
 title: AnthropicLLMUnit
 description: "Description of AnthropicLLMUnit component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `model`](#model)
-  - [2.1. Property `implementation`](#model_implementation)
-- [3. Property `temperature`](#temperature)
-- [4. Property `max_tokens`](#max_tokens)
-- [5. Property `client_args`](#client_args)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |

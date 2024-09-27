@@ -2,18 +2,6 @@
 title: OpenAIEmbedding
 description: "Description of OpenAIEmbedding component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `model`](#model)
-- [3. Property `connection_handler`](#connection_handler)
-  - [3.1. Property `implementation`](#connection_handler_implementation)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |

@@ -2,16 +2,6 @@
 title: RAGFusionReranker
 description: "Description of RAGFusionReranker component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `k`](#k)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |

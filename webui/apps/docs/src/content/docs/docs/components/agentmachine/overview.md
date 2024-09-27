@@ -2,6 +2,6 @@
 title: AgentMachine Overview
 description: "None"
 ---
-Overview of the AgentMachinecomponent
+Overview of the AgentMachine component
 ## Builtins
 * [AgentMachine](/docs/components/agentmachine/agentmachine/) (default)

@@ -2,7 +2,7 @@
 title: LogicUnit Overview
 description: "None"
 ---
-Overview of the LogicUnitcomponent
+Overview of the LogicUnit component
 ## Builtins
 * [WebSearch](/docs/components/logicunit/websearch/)
 * [Search](/docs/components/logicunit/search/)

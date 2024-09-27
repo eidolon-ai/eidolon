@@ -2,24 +2,6 @@
 title: Retriever
 description: "Description of Retriever component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `max_num_results`](#max_num_results)
-- [3. Property `question_transformer`](#question_transformer)
-  - [3.1. Property `implementation`](#question_transformer_implementation)
-- [4. Property `document_retriever`](#document_retriever)
-  - [4.1. Property `implementation`](#document_retriever_implementation)
-- [5. Property `document_reranker`](#document_reranker)
-  - [5.1. Property `implementation`](#document_reranker_implementation)
-- [6. Property `result_summarizer`](#result_summarizer)
-  - [6.1. Property `implementation`](#result_summarizer_implementation)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |

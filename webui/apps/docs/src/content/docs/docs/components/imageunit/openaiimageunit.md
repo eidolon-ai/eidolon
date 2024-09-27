@@ -2,23 +2,6 @@
 title: OpenAIImageUnit
 description: "Description of OpenAIImageUnit component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `image_to_text_prompt`](#image_to_text_prompt)
-- [3. Property `text_to_image_prompt`](#text_to_image_prompt)
-- [4. Property `connection_handler`](#connection_handler)
-  - [4.1. Property `implementation`](#connection_handler_implementation)
-- [5. Property `image_to_text_model`](#image_to_text_model)
-- [6. Property `text_to_image_model`](#text_to_image_model)
-- [7. Property `temperature`](#temperature)
-- [8. Property `image_to_text_system_prompt`](#image_to_text_system_prompt)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description           |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------- |

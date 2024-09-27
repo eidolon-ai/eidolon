@@ -199,7 +199,7 @@ def write_md(read_loc,
                     template_name="md",
                     with_footer=False,
                 ))
-                # content = content[(content.index(cut_after_str) + len(cut_after_str)):]
+                content = content[(content.index(cut_after_str) + len(cut_after_str)):]
                 write_astro_md_file(content, description, title, write_loc / url_safe(k) / (url_safe(schema['reference_details']['name']) + ".md"))
 
 

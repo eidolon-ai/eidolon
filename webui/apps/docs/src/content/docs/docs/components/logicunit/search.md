@@ -2,25 +2,6 @@
 title: SearchSpec
 description: "Description of SearchSpec component"
 ---
-# SearchSpec
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `cse_id`](#cse_id)
-- [3. Property `cse_token`](#cse_token)
-- [4. Property `name`](#name)
-- [5. Property `description`](#description)
-- [6. Property `defaultDateRestrict`](#defaultDateRestrict)
-- [7. Property `params`](#params)
-  - [7.1. Property `item 0`](#params_anyOf_i0)
-  - [7.2. Property `item 1`](#params_anyOf_i1)
-
-**Title:** SearchSpec
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------- |

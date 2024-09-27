@@ -2,19 +2,6 @@
 title: OpenAiSpeech
 description: "Description of OpenAiSpeech component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `text_to_speech_model`](#text_to_speech_model)
-- [3. Property `text_to_speech_voice`](#text_to_speech_voice)
-- [4. Property `speech_to_text_model`](#speech_to_text_model)
-- [5. Property `speech_to_text_temperature`](#speech_to_text_temperature)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |
 | ------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | -------------------------- |

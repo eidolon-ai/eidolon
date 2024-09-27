@@ -2,28 +2,6 @@
 title: SqlAgentSpec
 description: "Description of SqlAgentSpec component"
 ---
-# SqlAgentSpec
-
-- [1. Property `client`](#client)
-  - [1.1. Property `implementation`](#client_implementation)
-- [2. Property `apu`](#apu)
-  - [2.1. Property `implementation`](#apu_implementation)
-- [3. Property `description`](#description)
-- [4. Property `system_prompt`](#system_prompt)
-- [5. Property `user_prompt`](#user_prompt)
-- [6. Property `clarification_prompt`](#clarification_prompt)
-- [7. Property `response_prompt`](#response_prompt)
-- [8. Property `error_prompt`](#error_prompt)
-- [9. Property `num_retries`](#num_retries)
-- [10. Property `implementation`](#implementation)
-
-**Title:** SqlAgentSpec
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |

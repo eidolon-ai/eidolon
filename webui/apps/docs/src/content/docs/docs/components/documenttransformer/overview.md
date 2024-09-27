@@ -2,7 +2,7 @@
 title: DocumentTransformer Overview
 description: "None"
 ---
-Overview of the DocumentTransformercomponent
+Overview of the DocumentTransformer component
 ## Builtins
 * [CharacterTextSplitter](/docs/components/documenttransformer/charactertextsplitter/)
 * [PythonCodeTextSplitter](/docs/components/documenttransformer/pythoncodetextsplitter/)

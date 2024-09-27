@@ -2,19 +2,6 @@
 title: DocumentProcessor
 description: "Description of DocumentProcessor component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `parser`](#parser)
-  - [2.1. Property `implementation`](#parser_implementation)
-- [3. Property `splitter`](#splitter)
-  - [3.1. Property `implementation`](#splitter_implementation)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |

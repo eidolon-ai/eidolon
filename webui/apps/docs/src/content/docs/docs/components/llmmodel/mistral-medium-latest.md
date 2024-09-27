@@ -2,22 +2,6 @@
 title: mistral-medium-latest
 description: "Description of mistral-medium-latest component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `human_name`](#human_name)
-- [3. Property `name`](#name)
-- [4. Property `input_context_limit`](#input_context_limit)
-- [5. Property `output_context_limit`](#output_context_limit)
-- [6. Property `supports_tools`](#supports_tools)
-- [7. Property `supports_image_input`](#supports_image_input)
-- [8. Property `supports_audio_input`](#supports_audio_input)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |

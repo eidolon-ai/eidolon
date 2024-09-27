@@ -2,26 +2,6 @@
 title: WebSearchConfig
 description: "Description of WebSearchConfig component"
 ---
-# WebSearchConfig
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `summarizer`](#summarizer)
-- [3. Property `cse_id`](#cse_id)
-- [4. Property `cse_token`](#cse_token)
-- [5. Property `name`](#name)
-- [6. Property `description`](#description)
-- [7. Property `defaultDateRestrict`](#defaultDateRestrict)
-- [8. Property `params`](#params)
-  - [8.1. Property `item 0`](#params_anyOf_i0)
-  - [8.2. Property `item 1`](#params_anyOf_i1)
-
-**Title:** WebSearchConfig
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------- |

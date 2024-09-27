@@ -2,20 +2,6 @@
 title: AzureFileMemory
 description: "Description of AzureFileMemory component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `azure_ad_token_provider`](#azure_ad_token_provider)
-  - [2.1. Property `implementation`](#azure_ad_token_provider_implementation)
-- [3. Property `account_url`](#account_url)
-- [4. Property `container`](#container)
-- [5. Property `create_container_on_startup`](#create_container_on_startup)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                                       | Pattern | Type    | Deprecated | Definition           | Title/Description           |
 | -------------------------------------------------------------- | ------- | ------- | ---------- | -------------------- | --------------------------- |

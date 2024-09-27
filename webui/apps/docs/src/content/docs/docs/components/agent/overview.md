@@ -2,7 +2,7 @@
 title: Agent Overview
 description: "Overview of Agent components"
 ---
-Overview of the Agentcomponent
+Overview of the Agent component
 ## Builtins
 * [APIAgent](/docs/components/agent/apiagent/)
 * [SimpleAgent](/docs/components/agent/simpleagent/) (default)

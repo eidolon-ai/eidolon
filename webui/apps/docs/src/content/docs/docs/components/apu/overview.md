@@ -5,7 +5,7 @@ The APU provides a set of capabilities that encapsulate LLM functionality and cr
 
 To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/)."
 ---
-Overview of the APUcomponent
+Overview of the APU component
 ## Builtins
 * [ClaudeOpus](/docs/components/apu/claudeopus/)
 * [GPT3.5-turbo](/docs/components/apu/gpt3_5-turbo/)

@@ -2,7 +2,7 @@
 title: LLMModel Overview
 description: "None"
 ---
-Overview of the LLMModelcomponent
+Overview of the LLMModel component
 ## Builtins
 * [mistral-small-latest](/docs/components/llmmodel/mistral-small-latest/)
 * [claude-3-5-sonnet-20240620](/docs/components/llmmodel/claude-3-5-sonnet-20240620/)

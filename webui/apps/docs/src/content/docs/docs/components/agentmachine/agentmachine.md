@@ -2,26 +2,6 @@
 title: AgentMachine
 description: "Description of AgentMachine component"
 ---
-# Schema Docs
-
-- [1. Property `implementation`](#implementation)
-- [2. Property `symbolic_memory`](#symbolic_memory)
-  - [2.1. Property `implementation`](#symbolic_memory_implementation)
-- [3. Property `file_memory`](#file_memory)
-  - [3.1. Property `implementation`](#file_memory_implementation)
-- [4. Property `similarity_memory`](#similarity_memory)
-  - [4.1. Property `implementation`](#similarity_memory_implementation)
-- [5. Property `security_manager`](#security_manager)
-  - [5.1. Property `implementation`](#security_manager_implementation)
-- [6. Property `process_file_system`](#process_file_system)
-  - [6.1. Property `implementation`](#process_file_system_implementation)
-- [7. Property `fail_on_agent_start_error`](#fail_on_agent_start_error)
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                 |
 | ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------- |
