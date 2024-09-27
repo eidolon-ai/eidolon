@@ -169,7 +169,7 @@ This resource is registered with the AgentOS and can be accessed by agents in th
 
 ```yaml
 apiVersion: server.eidolonai.com/v1alpha1
-kind: GenericAgent
+kind: SimpleAgent
 metadata:
   name: qa
 

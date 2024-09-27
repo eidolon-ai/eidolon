@@ -3,7 +3,6 @@ kind: Agent
 metadata:
   name: TravisKelceExpert
 spec:
-  implementation: GenericAgent
   description: "Your personalized expert on Travis Kelce."
   system_prompt: |
     You are an football expert with a focus on Travis Kelce. You love the game and enjoy helping new fans learn.
@@ -20,14 +19,15 @@ spec:
     You may make multiple searches to answer questions. When responding, add specific citations to your response.
     
     If you get see system messages suggesting feedback, incorporate it as fact.
-  user_prompt: |  
-    {{statement}}
-    
-    Be concise.
-  input_schema:
-    statement:
-      type: string
-      description: The statement or question for your Travis Kelce expert to respond to.
+  actions:
+    - user_prompt: |  
+        {{statement}}
+      
+        Be concise.
+      input_schema:
+        statement:
+          type: string
+          description: The statement or question for your Travis Kelce expert to respond to.
   apu:
     implementation: eidolon_examples.swifties.validating_cpu.ValidatingCPU
     logic_units: [WebSearch]
