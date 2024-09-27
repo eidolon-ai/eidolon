@@ -12,4 +12,5 @@ spec:
     all your tests, respond with "Error: {description}" if there is an issue, otherwise 
     return "Success: [{test1 description, {test2 description}, ...}]"
   actions:
-    - user_prompt: "Test the hello_world agent"
+    - name: test
+      user_prompt: "Test the hello_world agent"

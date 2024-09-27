@@ -11,4 +11,6 @@ spec:
   actions:
     - name: question
       user_prompt: "{{instruction}}"
+    - name: respond
+      user_prompt: "{{statement}}"
       
