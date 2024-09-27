@@ -231,18 +231,6 @@ def generate_json(write_base):
     print(schema)
 
 
-def inline_refs(schema, defs):
-    if isinstance(schema, dict):
-        if "$ref" in schema and "_Reference" in schema["$ref"]:
-            return defs[schema["$ref"].replace("#/$defs/", "")]
-        else:
-            return {k: inline_refs(v, defs) for k, v in schema.items()}
-    elif isinstance(schema, list):
-        return [inline_refs(i, defs) for i in schema]
-    else:
-        return schema
-
-
 def clean_ref_groups_for_md(schema, seen=None):
     seen = seen or set()
     if id(schema) in seen:

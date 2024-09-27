@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import logging
+import textwrap
 from functools import cache
 from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
 
@@ -107,8 +108,8 @@ class Reference(BaseModel):
                 json_schema = handler(core_schema)
                 json_schema = handler.resolve_ref_schema(json_schema)
                 json_schema["title"] = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__) + " Reference"
-                if cls.__doc__:
-                    json_schema['description'] = cls.__doc__
+                if cls._bound.__doc__:
+                    json_schema['description'] = textwrap.dedent(cls._bound.__doc__).strip()
                 json_schema["reference_pointer"] = {
                     "type": cls._bound if isinstance(cls._bound, str) else cls._bound.__name__,
                     "default_impl": cls._default,
