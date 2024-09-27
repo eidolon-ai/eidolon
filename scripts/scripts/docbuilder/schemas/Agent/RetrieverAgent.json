@@ -1,6 +1,9 @@
 {
   "description": "A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.\nThe agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.",
   "properties": {
+    "implementation": {
+      "const": "RetrieverAgent"
+    },
     "max_num_results": {
       "default": 10,
       "description": "The maximum number of results to consider.",
@@ -73,16 +76,13 @@
         }
       ],
       "description": "The APU to use for question transformation."
-    },
-    "implementation": {
-      "const": "RetrieverAgent"
     }
   },
   "required": [
     "name",
     "description"
   ],
-  "title": "RetrieverAgentSpec",
+  "title": "RetrieverAgent",
   "type": "object",
   "reference_details": {
     "overrides": {},

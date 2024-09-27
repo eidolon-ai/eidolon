@@ -1,10 +1,11 @@
 ---
-title: SqlAgentSpec
-description: "Description of SqlAgentSpec component"
+title: SqlAgent
+description: "Description of SqlAgent component"
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
+| - [implementation](#implementation )             | No      | const   | No         | -          | -                    |
 | - [client](#client )                             | No      | object  | No         | -          | -                    |
 | - [apu](#apu )                                   | No      | object  | No         | -          | -                    |
 | - [description](#description )                   | No      | string  | No         | -          | Description          |
@@ -14,9 +15,17 @@ description: "Description of SqlAgentSpec component"
 | - [response_prompt](#response_prompt )           | No      | string  | No         | -          | Response Prompt      |
 | - [error_prompt](#error_prompt )                 | No      | string  | No         | -          | Error Prompt         |
 | - [num_retries](#num_retries )                   | No      | integer | No         | -          | Num Retries          |
-| - [implementation](#implementation )             | No      | const   | No         | -          | -                    |
 
-## <a name="client"></a>1. Property `client`
+## <a name="implementation"></a>1. Property `implementation`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `const` |
+| **Required** | No      |
+
+Specific value: `"SqlAgent"`
+
+## <a name="client"></a>2. Property `client`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -29,14 +38,14 @@ description: "Description of SqlAgentSpec component"
 | - [implementation](#client_implementation ) | No      | string | No         | -          | -                 |
 | - [](#client_additionalProperties )         | No      | object | No         | -          | -                 |
 
-### <a name="client_implementation"></a>1.1. Property `implementation`
+### <a name="client_implementation"></a>2.1. Property `implementation`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="apu"></a>2. Property `apu`
+## <a name="apu"></a>3. Property `apu`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -49,14 +58,14 @@ description: "Description of SqlAgentSpec component"
 | - [implementation](#apu_implementation ) | No      | string | No         | -          | -                 |
 | - [](#apu_additionalProperties )         | No      | object | No         | -          | -                 |
 
-### <a name="apu_implementation"></a>2.1. Property `implementation`
+### <a name="apu_implementation"></a>3.1. Property `implementation`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="description"></a>3. Property `description`
+## <a name="description"></a>4. Property `description`
 
 **Title:** Description
 
@@ -66,7 +75,7 @@ description: "Description of SqlAgentSpec component"
 | **Required** | No                                                                                           |
 | **Default**  | `"An agent for interacting with data. Can respond to queries provided in natural language."` |
 
-## <a name="system_prompt"></a>4. Property `system_prompt`
+## <a name="system_prompt"></a>5. Property `system_prompt`
 
 **Title:** System Prompt
 
@@ -76,7 +85,7 @@ description: "Description of SqlAgentSpec component"
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                     |
 | **Default**  | `"\n    You are a helpful assistant that is a sql expert and helps a user query a {{ protocol }} database and analyse the response.\n    \n    Here is the database schema:\n    {{ metadata }}\n    \n    Use your as needed tools to investigate the database with the goal of providing the user with the query that they need.\n    \n    Think carefully.\n    "` |
 
-## <a name="user_prompt"></a>5. Property `user_prompt`
+## <a name="user_prompt"></a>6. Property `user_prompt`
 
 **Title:** User Prompt
 
@@ -86,7 +95,7 @@ description: "Description of SqlAgentSpec component"
 | **Required** | No                |
 | **Default**  | `"{{ message }}"` |
 
-## <a name="clarification_prompt"></a>6. Property `clarification_prompt`
+## <a name="clarification_prompt"></a>7. Property `clarification_prompt`
 
 **Title:** Clarification Prompt
 
@@ -96,7 +105,7 @@ description: "Description of SqlAgentSpec component"
 | **Required** | No                                                                                                              |
 | **Default**  | `"What clarifying information do you need? Phrase your response as an explicit question or several questions."` |
 
-## <a name="response_prompt"></a>7. Property `response_prompt`
+## <a name="response_prompt"></a>8. Property `response_prompt`
 
 **Title:** Response Prompt
 
@@ -106,7 +115,7 @@ description: "Description of SqlAgentSpec component"
 | **Required** | No                                                  |
 | **Default**  | `"What is your response? Be explicit and concise."` |
 
-## <a name="error_prompt"></a>8. Property `error_prompt`
+## <a name="error_prompt"></a>9. Property `error_prompt`
 
 **Title:** Error Prompt
 
@@ -116,7 +125,7 @@ description: "Description of SqlAgentSpec component"
 | **Required** | No                                                                     |
 | **Default**  | `"An error occurred executing the query \"{{ query }}\": {{ error }}"` |
 
-## <a name="num_retries"></a>9. Property `num_retries`
+## <a name="num_retries"></a>10. Property `num_retries`
 
 **Title:** Num Retries
 
@@ -125,14 +134,5 @@ description: "Description of SqlAgentSpec component"
 | **Type**     | `integer` |
 | **Required** | No        |
 | **Default**  | `3`       |
-
-## <a name="implementation"></a>10. Property `implementation`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `const` |
-| **Required** | No      |
-
-Specific value: `"SqlAgent"`
 
 ----------------------------------------------------------------------------------------------------------------------------

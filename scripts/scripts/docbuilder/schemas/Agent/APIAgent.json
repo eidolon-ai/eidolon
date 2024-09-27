@@ -1,6 +1,9 @@
 {
   "description": "An Agent that can call rest endpoints documented via OpenAPI (Swagger).",
   "properties": {
+    "implementation": {
+      "const": "APIAgent"
+    },
     "title": {
       "description": "Title of the API",
       "title": "Title",
@@ -41,9 +44,6 @@
       "description": "Maximum size of response content to allow. If the response is larger than this, an error will be raised. Default is 50k",
       "title": "Max Response Size",
       "type": "integer"
-    },
-    "implementation": {
-      "const": "APIAgent"
     }
   },
   "required": [
@@ -52,7 +52,7 @@
     "open_api_location",
     "operations_to_expose"
   ],
-  "title": "APIAgentSpec",
+  "title": "APIAgent",
   "type": "object",
   "reference_details": {
     "overrides": {},

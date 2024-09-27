@@ -1,5 +1,8 @@
 {
   "properties": {
+    "implementation": {
+      "const": "SqlAgent"
+    },
     "client": {
       "$ref": "../AgentMachine/overview.json"
     },
@@ -40,12 +43,9 @@
       "default": 3,
       "title": "Num Retries",
       "type": "integer"
-    },
-    "implementation": {
-      "const": "SqlAgent"
     }
   },
-  "title": "SqlAgentSpec",
+  "title": "SqlAgent",
   "type": "object",
   "reference_details": {
     "overrides": {},

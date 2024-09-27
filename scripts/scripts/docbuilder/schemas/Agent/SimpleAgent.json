@@ -1,6 +1,9 @@
 {
   "description": "The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This\nagent is designed to be a flexible, modular component that can interact with various processing units and perform a\nrange of actions based on its configuration.",
   "properties": {
+    "implementation": {
+      "const": "SimpleAgent"
+    },
     "description": {
       "anyOf": [
         {
@@ -72,12 +75,9 @@
       ],
       "title": "Title Generation Mode",
       "type": "string"
-    },
-    "implementation": {
-      "const": "SimpleAgent"
     }
   },
-  "title": "SimpleAgentSpec",
+  "title": "SimpleAgent",
   "type": "object",
   "reference_details": {
     "overrides": {},

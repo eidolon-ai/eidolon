@@ -31,7 +31,9 @@ class Specable(Generic[T]):
 
     @classmethod
     def model_json_schema(cls):
-        return cls.specable_cls().model_json_schema()
+        schema = cls.specable_cls().model_json_schema()
+        schema["title"] = cls.__name__
+        return schema
 
     @classmethod
     def specable_cls(cls):

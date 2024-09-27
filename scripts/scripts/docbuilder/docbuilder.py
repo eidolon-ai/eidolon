@@ -24,38 +24,39 @@ def main():
     print("Generating json...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
 
-    # accumulated_schema = {"$defs": {
-    #     "Agent": {
-    #         "title": "Agent",
-    #         "description": "Overview of Agent components",
-    #         "anyOf": [],
-    #         "reference_pointer": {
-    #             "type": "Agent",
-    #             "default_impl": "SimpleAgent",
-    #         }
-    #     }
-    # }}
-    # for agent in [SimpleAgent, RetrieverAgent, APIAgent, SqlAgent]:
-    #     schema = agent.model_json_schema()
-    #     schema['properties']['implementation'] = {
-    #         "const": agent.__name__,
-    #     }
-    #     schema['reference_details'] = dict(
-    #         overrides={},
-    #         clz=fqn(agent),
-    #         name=agent.__name__,
-    #         group="Agent",
-    #     )
-    #     accumulated_schema["$defs"].update(schema.pop("$defs", {}))
-    #     accumulated_schema["$defs"][agent.__name__] = schema
-    #     accumulated_schema["$defs"]["Agent"]["anyOf"].append({"$ref": f"#/$defs/{agent.__name__}"})
-    #
-    # machine_schema = MachineResource.model_json_schema()
-    # accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
-    #
-    # print("writing json...")
-    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    # write_json_schema(dist_component_schemas, accumulated_schema)
+    accumulated_schema = {"$defs": {
+        "Agent": {
+            "title": "Agent",
+            "description": "Overview of Agent components",
+            "anyOf": [],
+            "reference_pointer": {
+                "type": "Agent",
+                "default_impl": "SimpleAgent",
+            }
+        }
+    }}
+    for agent in [SimpleAgent, RetrieverAgent, APIAgent, SqlAgent]:
+        schema = agent.model_json_schema()
+        schema['properties']['implementation'] = {
+            "const": agent.__name__,
+        }
+        schema['properties'] = dict(implementation=schema['properties'].pop('implementation'), **schema['properties'])
+        schema['reference_details'] = dict(
+            overrides={},
+            clz=fqn(agent),
+            name=agent.__name__,
+            group="Agent",
+        )
+        accumulated_schema["$defs"].update(schema.pop("$defs", {}))
+        accumulated_schema["$defs"][agent.__name__] = schema
+        accumulated_schema["$defs"]["Agent"]["anyOf"].append({"$ref": f"#/$defs/{agent.__name__}"})
+
+    machine_schema = MachineResource.model_json_schema()
+    accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
+
+    print("writing json...")
+    shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    write_json_schema(dist_component_schemas, accumulated_schema)
 
     print("writing md...")
     write_md(dist_component_schemas)
