@@ -1,6 +1,6 @@
 import {EidolonClient, HttpException} from "@eidolon-ai/client";
 
-export async function processHeadersAndResponse(request: Request, promise: Promise<any>) {
+export async function processHeadersAndResponse(request: Request, promise: Promise<unknown>): Promise<Response> {
   const realFetch = globalThis.fetch || fetch;
   /*global globalThis*/
 
@@ -33,12 +33,12 @@ export async function processHeadersAndResponse(request: Request, promise: Promi
   })
 }
 
-export async function convertException(promise: Promise<any>) {
+export async function convertException(promise: Promise<Response>): Promise<Response> {
   return promise.catch((e) => {
     if (e instanceof HttpException) {
       return new Response(e.statusText, {status: e.status, statusText: e.statusText})
     } else if (e instanceof Error) {
-      // @ts-ignore
+      // @ts-expect-error - cause is not defined in Error
       if (e?.cause?.code === 'ECONNREFUSED') {
         return new Response('Server Down', {status: 503})
       }
@@ -122,7 +122,7 @@ export class ProcessesHandler {
   }
 
   async POST(req: Request): Promise<Response> {
-    let reqBody = await req.json();
+    const reqBody = await req.json();
     const machineUrl = reqBody["machineUrl"]
     const agent = reqBody["agent"]
     const title = reqBody["title"]
@@ -151,10 +151,9 @@ export class ProcessHandler {
   async GET(req: Request, {params}: { params: { processid: string } }): Promise<Response> {
     const machineUrl = new URL(req.url).searchParams.get('machineURL')
     if (!machineUrl) {
-      console.error('machineUrl is required')
       return new Response('machineUrl is required', {status: 422})
     }
-    let processId = params.processid;
+    const processId = params.processid;
     if (!processId) {
       console.error('params.processid is required')
       return new Response('params.processid is required', {status: 422})
@@ -211,12 +210,12 @@ export class ProcessEventsHandler {
       const machineUrl = reqBody["machineUrl"]
       const agent = reqBody["agent"]
       const operation = reqBody["operation"]
-      const data = reqBody["data"] as Record<string, any>
+      const data = reqBody["data"] as Record<string, unknown>
 
       const processId = params.processid;
       if (req.headers.get("Accept") === "text/event-stream") {
         let done = false;
-        let textEncoder = new TextEncoder();
+        const textEncoder = new TextEncoder();
         const retStream = new ReadableStream({
           start: async (controller) => {
             const resp = this.execOperation(machineUrl, processId, agent, operation, data);
@@ -245,8 +244,7 @@ export class ProcessEventsHandler {
         });
       } else {
         const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
-        let response = Response.json((await client.process(processId).agent(agent).action(operation, data))["data"], {status: 200});
-        return response;
+        return Response.json((await client.process(processId).agent(agent).action(operation, data))["data"], {status: 200});
       }
     } catch (error) {
       console.error('Error fetching information:', error);
@@ -254,7 +252,7 @@ export class ProcessEventsHandler {
     }
   }
 
-  async* execOperation(machineUrl: string, processId: string, agent: string, operation: string, reqBody: Record<string, any>) {
+  async* execOperation(machineUrl: string, processId: string, agent: string, operation: string, reqBody: Record<string, unknown>) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     for await (const e of client.process(processId).agent(agent).stream_action(operation, reqBody)) {
       yield e
@@ -336,7 +334,7 @@ export class FileHandler {
     return client.process(processId).delete_file(fileId)
   }
 
-  async setMetadata(machineUrl: string, processId: string, fileId: string, metadata: Record<string, any>) {
+  async setMetadata(machineUrl: string, processId: string, fileId: string, metadata: Record<string, unknown>) {
     const client = new EidolonClient(machineUrl, getAuthHeaders(await this.accessTokenFn()))
     return client.process(processId).set_metadata(fileId, metadata)
   }

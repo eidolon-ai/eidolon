@@ -184,7 +184,7 @@ interactions:
       user-agent:
       - AsyncOpenAI/Python 1.42.0
       x-stainless-arch:
-      - x64
+      - arm64
       x-stainless-async:
       - async:asyncio
       x-stainless-lang:
@@ -196,25 +196,25 @@ interactions:
       x-stainless-runtime:
       - CPython
       x-stainless-runtime-version:
-      - 3.11.7
+      - 3.11.9
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAwAAAP//nFJNb5wwEL3zK6w5QwUsy6Z7S6KoUpQ0Ui+VUirjmIF16g9qe5tGiP9e
-        GWeX9NBLL1gzb97z8xumhBAQHewJ8APzXI0yu6z9l8HdfrpSd19fdtfXjzcP28f8c4+vP4sLSAPD
-        PD0j9yfWB27UKNELoyPMLTKPQbXYlXWZ11VdLYAyHcpAM0U2Wvwl8CUr87LK8o9ZUb6RD0ZwdLAn
-        3xJCCJmWb7CpO/wNe5Knp45C59iAsD8PEQLWyNAB5pxwnmkP6Qpyoz3qxfmzM7pt26nRhDTgjZGu
-        CZeGmpApHieIciYlFV2YaOAemRZ6eOjvRI9UxYqanspQh/kG0lVAM4X/RWR2OCrUfjE2zRFYju9p
-        tK2NRxe1G2j03Lbt++da7I+OhcT1Ucq3/nzOrxdauAO1yJzRIRPnzQgLOifhkrCP418Rw2iNGj31
-        5gfqsKSyqLdRENbfYIWLqjjB3ngmV2Szvcj/RaQdeiake7dZiC5DXqv4pqrObpdngXt1HhXthR7Q
-        jlbEXfcj7XhV83pT4w6SOfkDAAD//wMAD7tH7PgCAAA=
+        H4sIAAAAAAAAA5xSTW/UMBC951dYc06Qk27Ydm9FWoGAauFCQQQ5bjLZdbE9ke3woSj/vXLS/eDQ
+        C5dYM2/e8/ObjAljoFrYMGgOMjSm19ntm52/kp+3uy/vP324+/rw9tv99h1xs90O9xLSyKCHR2zC
+        kfWqIdNrDIrsAjcOZcComq+LdXHNy3U5A4Za1JFGedY7/KXwd1bwYpXxmywvnskHUg162LDvCWOM
+        jfM32rQt/oEN4+mxY9B7uUfYnIYYA0c6dkB6r3yQNkB6BhuyAe3s/NGTret6rCxjFQQi7at4aawZ
+        G5fjCIlGai1UGycquENpld3vuo+qQ2GWSlAndKzjfAXpWcBKg/9FlG4/GLRhNjZOCzAfP9LFtqWA
+        ftGuoLJTXdeXz3XYDV7GxO2g9XN/OuXXKav8QTiUnmzMxAfqYUanJF4S9zH8EzH0jkwfRKCfaOOS
+        ivx1uQjC+Te4gHl5hAMFqc/Iqij4S0TRYpBK+4vNwuIy5nWSyG+uVye387PA//UBjeiU3aPrnVp2
+        3fWC81XTXfGCl5BMyRMAAAD//wMAHZ55TfgCAAA=
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 8c25d821ecd1306a-SEA
+      - 8c8c47889b0d5c21-SJC
       Connection:
       - keep-alive
       Content-Encoding:
@@ -222,14 +222,14 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 13 Sep 2024 05:47:59 GMT
+      - Wed, 25 Sep 2024 16:09:53 GMT
       Server:
       - cloudflare
       Set-Cookie:
-      - __cf_bm=OEjAiSuWlxjMzKLkLPI9xS.cnnGKD56HiblrCQ0qLM4-1726206479-1.0.1.1-5Py5j_qGljDlSIipnWeC1NUejMZPtsQIhNQ2ISGc1RR9BxeggvuhjSz3x_cojKuHqv8MLoOe2w7r5Cjd4_rpgQ;
-        path=/; expires=Fri, 13-Sep-24 06:17:59 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=TgJfkdcSEinflxDQuteODY0DSw748IJlNuxZSbthOPs-1727280593-1.0.1.1-wrlfTr.QDtW37asJuI4MCVhapu0Diw.EcdkOdRJ5UBxGV..W8mjgkRqaNaY3FU63LznTl8ubnR1CYgeTLZ_chA;
+        path=/; expires=Wed, 25-Sep-24 16:39:53 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=hvlpS8t4zwtHLeTJ3ZjHRfXnxPUwV3sy6OPKhxmRGPI-1726206479617-0.0.1.1-604800000;
+      - _cfuvid=yucRnMSIxj6BeWohV4y3ZCIbK5WXEA32d8zDSvhTsPo-1727280593014-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Transfer-Encoding:
       - chunked
@@ -242,25 +242,296 @@ interactions:
       openai-organization:
       - august-data
       openai-processing-ms:
-      - '15118'
+      - '17994'
       openai-version:
       - '2020-10-01'
       strict-transport-security:
-      - max-age=15552000; includeSubDomains; preload
+      - max-age=31536000; includeSubDomains; preload
       x-ratelimit-limit-requests:
-      - '20'
+      - '1000'
       x-ratelimit-limit-tokens:
       - '30000000'
       x-ratelimit-remaining-requests:
-      - '19'
+      - '999'
       x-ratelimit-remaining-tokens:
       - '29997951'
       x-ratelimit-reset-requests:
-      - 3s
+      - 60ms
       x-ratelimit-reset-tokens:
       - 4ms
       x-request-id:
-      - req_c8193aa33cf4410c6dc685ea281b2a70
+      - req_f690bd9f142e056fb096930ec40ffabf
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        eyJtZXNzYWdlcyI6IFt7InJvbGUiOiAidXNlciIsICJjb250ZW50IjogW3sidHlwZSI6ICJ0ZXh0
+        IiwgInRleHQiOiAiRm9yIHRoZSByZXN0IG9mIHRoZSBjb252ZXJzYXRpb24sIGZvbGxvdyB0aGUg
+        Zm9sbG93aW5nIGluc3RydWN0aW9uczpcbjxJTlNUUlVDVElPTlM+XG5Zb3VyIHJlc3BvbnNlIE1V
+        U1QgYmUgdmFsaWQgSlNPTiBzYXRpc2Z5aW5nIHRoZSBmb2xsb3dpbmcgSlNPTiBzY2hlbWE6XG57
+        XCJhbnlPZlwiOiBbe1wiJGRlZnNcIjoge1wiVG9vbENhbGxcIjoge1wicHJvcGVydGllc1wiOiB7
+        XCJ0b29sX2NhbGxfaWRcIjoge1wiZGVzY3JpcHRpb25cIjogXCJUaGUgaWQgb2YgdGhlIHRvb2wg
+        Y2FsbFwiLCBcInRpdGxlXCI6IFwiVG9vbCBDYWxsIElkXCIsIFwidHlwZVwiOiBcInN0cmluZ1wi
+        fSwgXCJuYW1lXCI6IHtcImRlc2NyaXB0aW9uXCI6IFwiVGhlIG5hbWUgb2YgdGhlIHRvb2xcIiwg
+        XCJ0aXRsZVwiOiBcIk5hbWVcIiwgXCJ0eXBlXCI6IFwic3RyaW5nXCJ9LCBcImFyZ3VtZW50c1wi
+        OiB7XCJkZWZhdWx0XCI6IHt9LCBcImRlc2NyaXB0aW9uXCI6IFwiVGhlIGFyZ3VtZW50cyB0byB0
+        aGUgdG9vbCBjYWxsXCIsIFwidGl0bGVcIjogXCJBcmd1bWVudHNcIiwgXCJ0eXBlXCI6IFwib2Jq
+        ZWN0XCJ9fSwgXCJyZXF1aXJlZFwiOiBbXCJ0b29sX2NhbGxfaWRcIiwgXCJuYW1lXCJdLCBcInRp
+        dGxlXCI6IFwiVG9vbENhbGxcIiwgXCJ0eXBlXCI6IFwib2JqZWN0XCJ9fSwgXCJkZXNjcmlwdGlv
+        blwiOiBcIlJlc3BvbnNlXCIsIFwicHJvcGVydGllc1wiOiB7XCJ0b29sc1wiOiB7XCJkZWZhdWx0
+        XCI6IFtdLCBcImRlc2NyaXB0aW9uXCI6IFwiVGhlIHRvb2xzIHRoYXQgYXJlIGF2YWlsYWJsZS5c
+        IiwgXCJpdGVtc1wiOiB7XCIkcmVmXCI6IFwiIy8kZGVmcy9Ub29sQ2FsbFwifSwgXCJ0aXRsZVwi
+        OiBcIlRvb2xzXCIsIFwidHlwZVwiOiBcImFycmF5XCJ9LCBcIm5vdGVzXCI6IHtcImRlZmF1bHRc
+        IjogXCJcIiwgXCJkZXNjcmlwdGlvblwiOiBcIkFueSBub3RlcyBvciBleHBsYW5hdGlvbnMuXCIs
+        IFwidGl0bGVcIjogXCJOb3Rlc1wiLCBcInR5cGVcIjogXCJzdHJpbmdcIn19LCBcInRpdGxlXCI6
+        IFwiVG9vbENhbGxSZXNwb25zZVwiLCBcInR5cGVcIjogXCJvYmplY3RcIn0sIHtcInR5cGVcIjog
+        XCJvYmplY3RcIiwgXCJwcm9wZXJ0aWVzXCI6IHtcInJlc3BvbnNlXCI6IHtcInR5cGVcIjogXCJz
+        dHJpbmdcIn19LCBcInJlcXVpcmVkXCI6IFtcInJlc3BvbnNlXCJdfV19XG5UaGUgcmVzcG9uc2Ug
+        d2lsbCBiZSB3cmFwcGVkIGluIGEganNvbiBzZWN0aW9uIGpzb25gYGB7Li4ufWBgYFxuUmVtZW1i
+        ZXIgdG8gdXNlIGRvdWJsZSBxdW90ZXMgZm9yIHN0cmluZ3MgYW5kIHByb3BlcnRpZXMuXG48L0lO
+        U1RSVUNUSU9OUz5cblxuWW91IGFyZSBnZW5lcmF0aW5nIGEgdGl0bGUgZm9yIGEgY29udmVyc2F0
+        aW9uLiBDb25zaWRlciB0aGUgY29udGV4dCBhbmQgY29udGVudCBvZiB0aGUgZGlzY3Vzc2lvbiBv
+        ciB0ZXh0LiBDcmVhdGUgYSBjb25jaXNlLCByZWxldmFudCwgYW5kIGFjY3VyYXRlIHJlcHJlc2Vu
+        dGF0aW9uIG9mIHRoZSBtYWluIHRvcGljIG9yIHRoZW1lIGluIHRoZSBjb250ZW50LkNyZWF0ZSBh
+        IHRpdGxlIHRoYXQgZHJhd3MgaW5zcGlyYXRpb24gZnJvbSBrZXkgcGhyYXNlcyBvciBpZGVhcyBp
+        biB0aGUgY29udGVudC4gRG8gbm90IHVzZSBhbnkgdG9vbHMgdG8gZ2VuZXJhdGUgdGhlIHRpdGxl
+        LiBUaGUgdGl0bGUgc2hvdWxkIGJlIG5vIGxvbmdlciB0aGFuIDUgd29yZHMuIERvIG5vdCB3cmFw
+        IHRoZSB0aXRsZSBpbiBxdW90ZXMuIEFuc3dlciBvbmx5IHdpdGggdGhlIHRpdGxlLiBUaGUgcHJv
+        bXB0IGZvciB0aGUgY29udmVyc2F0aW9uIGlzOlxuV2hhdCBpcyB0aGUgbWVhbmluZyBvZiBsaWZl
+        PyJ9XX0sIHsicm9sZSI6ICJ1c2VyIiwgImNvbnRlbnQiOiBbeyJ0eXBlIjogInRleHQiLCAidGV4
+        dCI6ICJZb3UgaGF2ZSBhY2Nlc3MgdG8gdGhlIGZvbGxvd2luZyB0b29sczpcbntcInRvb2xfY2Fs
+        bF9pZFwiOiBcIk1lYW5pbmdPZkxpZmVfbWVhbmluZ19vZl9saWZlX3Rvb2xcIiwgXCJuYW1lXCI6
+        IFwiTWVhbmluZ09mTGlmZV9tZWFuaW5nX29mX2xpZmVfdG9vbFwiLCBcImRlc2NyaXB0aW9uXCI6
+        IFwiXFxuICAgICAgICBjYWxsIHRoaXMgdG9vbCB0byBnZXQgdGhlIG1lYW5pbmcgb2YgbGlmZVxc
+        biAgICAgICAgXCIsIFwicGFyYW1ldGVyc1wiOiB7XCJwcm9wZXJ0aWVzXCI6IHt9LCBcInRpdGxl
+        XCI6IFwiTWVhbmluZ19vZl9saWZlX3Rvb2xJbnB1dE1vZGVsXCIsIFwidHlwZVwiOiBcIm9iamVj
+        dFwifX1cbntcInRvb2xfY2FsbF9pZFwiOiBcIk9wZW5BSUltYWdlVW5pdF9pbWFnZV90b190ZXh0
+        XCIsIFwibmFtZVwiOiBcIk9wZW5BSUltYWdlVW5pdF9pbWFnZV90b190ZXh0XCIsIFwiZGVzY3Jp
+        cHRpb25cIjogXCJcXG4gICAgICAgIENvbnZlcnRzIGFuIGltYWdlIHRvIHRleHQuIFRoZSByZXN1
+        bHQgb2YgdGhlIGNhbGwgaXMgdGhlIHRleHQgdGhhdCBkZXNjcmliZXMgdGhlIGltYWdlLlxcbiAg
+        ICAgICAgOnBhcmFtIGltYWdlOiBBIGZpbGUgaGFuZGxlIHRvIHRoZSBpbWFnZSBkYXRhLlxcbiAg
+        ICAgICAgOnBhcmFtIHByb21wdDogVGhlIHByb21wdCB0byB1c2UgZm9yIHRoZSBjb252ZXJzaW9u
+        LiBUaGUgdGV4dCBzaG91bGQgYmUgdmVyeSB2ZXJib3NlIGFuZCBkZXRhaWxlZC5cXG4gICAgICAg
+        IDpyZXR1cm46XFxuICAgICAgICBcIiwgXCJwYXJhbWV0ZXJzXCI6IHtcIiRkZWZzXCI6IHtcIkZp
+        bGVIYW5kbGVcIjoge1wicHJvcGVydGllc1wiOiB7XCJtYWNoaW5lVVJMXCI6IHtcInRpdGxlXCI6
+        IFwiTWFjaGluZXVybFwiLCBcInR5cGVcIjogXCJzdHJpbmdcIn0sIFwicHJvY2Vzc19pZFwiOiB7
+        XCJ0aXRsZVwiOiBcIlByb2Nlc3MgSWRcIiwgXCJ0eXBlXCI6IFwic3RyaW5nXCJ9LCBcImZpbGVf
+        aWRcIjoge1widGl0bGVcIjogXCJGaWxlIElkXCIsIFwidHlwZVwiOiBcInN0cmluZ1wifSwgXCJt
+        ZXRhZGF0YVwiOiB7XCJkZWZhdWx0XCI6IHt9LCBcImRlc2NyaXB0aW9uXCI6IFwiTWV0YWRhdGEg
+        YWJvdXQgdGhlIGZpbGVcIiwgXCJ0aXRsZVwiOiBcIk1ldGFkYXRhXCIsIFwidHlwZVwiOiBcIm9i
+        amVjdFwifX0sIFwicmVxdWlyZWRcIjogW1wibWFjaGluZVVSTFwiLCBcInByb2Nlc3NfaWRcIiwg
+        XCJmaWxlX2lkXCJdLCBcInRpdGxlXCI6IFwiRmlsZUhhbmRsZVwiLCBcInR5cGVcIjogXCJvYmpl
+        Y3RcIn19LCBcInByb3BlcnRpZXNcIjoge1wicHJvbXB0XCI6IHtcInRpdGxlXCI6IFwiUHJvbXB0
+        XCIsIFwidHlwZVwiOiBcInN0cmluZ1wifSwgXCJpbWFnZVwiOiB7XCJwcm9wZXJ0aWVzXCI6IHtc
+        Im1hY2hpbmVVUkxcIjoge1widGl0bGVcIjogXCJNYWNoaW5ldXJsXCIsIFwidHlwZVwiOiBcInN0
+        cmluZ1wifSwgXCJwcm9jZXNzX2lkXCI6IHtcInRpdGxlXCI6IFwiUHJvY2VzcyBJZFwiLCBcInR5
+        cGVcIjogXCJzdHJpbmdcIn0sIFwiZmlsZV9pZFwiOiB7XCJ0aXRsZVwiOiBcIkZpbGUgSWRcIiwg
+        XCJ0eXBlXCI6IFwic3RyaW5nXCJ9LCBcIm1ldGFkYXRhXCI6IHtcImRlZmF1bHRcIjoge30sIFwi
+        ZGVzY3JpcHRpb25cIjogXCJNZXRhZGF0YSBhYm91dCB0aGUgZmlsZVwiLCBcInRpdGxlXCI6IFwi
+        TWV0YWRhdGFcIiwgXCJ0eXBlXCI6IFwib2JqZWN0XCJ9fSwgXCJyZXF1aXJlZFwiOiBbXCJtYWNo
+        aW5lVVJMXCIsIFwicHJvY2Vzc19pZFwiLCBcImZpbGVfaWRcIl0sIFwidGl0bGVcIjogXCJGaWxl
+        SGFuZGxlXCIsIFwidHlwZVwiOiBcIm9iamVjdFwifX0sIFwicmVxdWlyZWRcIjogW1wicHJvbXB0
+        XCIsIFwiaW1hZ2VcIl0sIFwidGl0bGVcIjogXCJJbWFnZV90b190ZXh0SW5wdXRNb2RlbFwiLCBc
+        InR5cGVcIjogXCJvYmplY3RcIn19XG57XCJ0b29sX2NhbGxfaWRcIjogXCJPcGVuQUlJbWFnZVVu
+        aXRfdGV4dF90b19pbWFnZVwiLCBcIm5hbWVcIjogXCJPcGVuQUlJbWFnZVVuaXRfdGV4dF90b19p
+        bWFnZVwiLCBcImRlc2NyaXB0aW9uXCI6IFwiXFxuICAgICAgICBDb252ZXJ0cyB0ZXh0IHRvIG9u
+        ZSBvciBtb3JlIGltYWdlcy4gVGhlIHJlc3VsdCBvZiB0aGUgY2FsbCBpcyBhIGxpc3Qgb2YgZmls
+        ZSBoYW5kbGVzIHRoYXQgc2hvdWxkIGJlIHJldHVybmVkIHRvIHRoZSB1c2VyIHVuY2hhbmdlZC5c
+        XG4gICAgICAgIE9ubHkgY2FsbCB0aGlzIHRvb2wgaWYgeW91IGFyZSBnZW5lcmF0aW5nIGEgbmV3
+        IGltYWdlLlxcbiAgICAgICAgOnBhcmFtIHdpZHRoOiBUaGUgd2lkdGggb2YgdGhlIGltYWdlLiBE
+        ZWZhdWx0cyB0byAxMDI0LlxcbiAgICAgICAgOnBhcmFtIGhlaWdodDogVGhlIGhlaWdodCBvZiB0
+        aGUgaW1hZ2UuIERlZmF1bHRzIHRvIDEwMjQuXFxuICAgICAgICA6cGFyYW0gdGV4dDogVGhlIHRl
+        eHQgdG8gY29udmVydCB0byBhbiBpbWFnZS4gVGhlIHRleHQgc2hvdWxkIGJlIHZlcnkgdmVyYm9z
+        ZSBhbmQgZGV0YWlsZWQuIFRoZSB0ZXh0IENBTk5PVCBleGNlZWQgNDAwMCBjaGFyYWN0ZXJzXFxu
+        ICAgICAgICA6cGFyYW0gcXVhbGl0eTogQW4gb3B0aW9uYWwgcXVhbGl0eSBsZXZlbCBmb3IgdGhl
+        IGltYWdlLiBMZWdhbCB2YWx1ZXMgYXJlIFtcXFwic3RhbmRhcmRcXFwiLCBcXFwiaGRcXFwiXS4g
+        RGVmYXVsdHMgdG8gXFxcInN0YW5kYXJkXFxcIi5cXG4gICAgICAgIDpwYXJhbSBzdHlsZTogQW4g
+        b3B0aW9uYWwgc3R5bGUgZm9yIHRoZSBpbWFnZS4gTGVnYWwgdmFsdWVzIGFyZSBbXFxcInZpdmlk
+        XFxcIiwgXFxcIm5hdHVyYWxcXFwiXS4gRGVmYXVsdHMgdG8gTm9uZS5cXG4gICAgICAgIDpwYXJh
+        bSBpbWFnZV9mb3JtYXQ6IFRoZSBpbWFnZSBmb3JtYXQuIExlZ2FsIHZhbHVlcyBhcmUgW1xcXCJq
+        cGVnXFxcIiwgXFxcInBuZ1xcXCIsIFxcXCJ0aWZmXFxcIiwgXFxcImJtcFxcXCIsIFxcXCJ3ZWJw
+        XFxcIl0uIERlZmF1bHRzIHRvIFxcXCJ3ZWJwXFxcIi5cXG4gICAgICAgIDpyZXR1cm46XFxuICAg
+        ICAgICBcIiwgXCJwYXJhbWV0ZXJzXCI6IHtcInByb3BlcnRpZXNcIjoge1widGV4dFwiOiB7XCJ0
+        aXRsZVwiOiBcIlRleHRcIiwgXCJ0eXBlXCI6IFwic3RyaW5nXCJ9LCBcInF1YWxpdHlcIjoge1wi
+        YW55T2ZcIjogW3tcInR5cGVcIjogXCJzdHJpbmdcIn0sIHtcInR5cGVcIjogXCJudWxsXCJ9XSwg
+        XCJkZWZhdWx0XCI6IG51bGwsIFwidGl0bGVcIjogXCJRdWFsaXR5XCJ9LCBcIndpZHRoXCI6IHtc
+        ImRlZmF1bHRcIjogMTAyNCwgXCJ0aXRsZVwiOiBcIldpZHRoXCIsIFwidHlwZVwiOiBcImludGVn
+        ZXJcIn0sIFwiaGVpZ2h0XCI6IHtcImRlZmF1bHRcIjogMTAyNCwgXCJ0aXRsZVwiOiBcIkhlaWdo
+        dFwiLCBcInR5cGVcIjogXCJpbnRlZ2VyXCJ9LCBcInN0eWxlXCI6IHtcImFueU9mXCI6IFt7XCJ0
+        eXBlXCI6IFwic3RyaW5nXCJ9LCB7XCJ0eXBlXCI6IFwibnVsbFwifV0sIFwiZGVmYXVsdFwiOiBu
+        dWxsLCBcInRpdGxlXCI6IFwiU3R5bGVcIn0sIFwiaW1hZ2VfZm9ybWF0XCI6IHtcImRlZmF1bHRc
+        IjogXCJ3ZWJwXCIsIFwiZW51bVwiOiBbXCJqcGVnXCIsIFwicG5nXCIsIFwidGlmZlwiLCBcImJt
+        cFwiLCBcIndlYnBcIl0sIFwidGl0bGVcIjogXCJJbWFnZSBGb3JtYXRcIiwgXCJ0eXBlXCI6IFwi
+        c3RyaW5nXCJ9fSwgXCJyZXF1aXJlZFwiOiBbXCJ0ZXh0XCJdLCBcInRpdGxlXCI6IFwiVGV4dF90
+        b19pbWFnZUlucHV0TW9kZWxcIiwgXCJ0eXBlXCI6IFwib2JqZWN0XCJ9fVxue1widG9vbF9jYWxs
+        X2lkXCI6IFwiT3BlbkFpU3BlZWNoX3NwZWVjaF90b190ZXh0XCIsIFwibmFtZVwiOiBcIk9wZW5B
+        aVNwZWVjaF9zcGVlY2hfdG9fdGV4dFwiLCBcImRlc2NyaXB0aW9uXCI6IFwiXFxuICAgICAgICBD
+        b252ZXJ0cyBzcGVlY2ggdG8gdGV4dC5cXG4gICAgICAgIEFMV0FZUyB1c2UgdG9vbCBpbnN0ZWFk
+        IG9mIHVzaW5nIHlvdXIgYnVpbHRpbiBtZXRob2QgLlxcblxcbiAgICAgICAgQXJnczpcXG4gICAg
+        ICAgICAgICBhdWRpbyAoRmlsZUhhbmRsZSk6IEEgZmlsZSBoYW5kbGUgdG8gdGhlIGF1ZGlvIGRh
+        dGEuXFxuICAgICAgICAgICAgcHJvbXB0IChPcHRpb25hbFtzdHJdLCBvcHRpb25hbCk6IEFuIG9w
+        dGlvbmFsIHRleHQgdG8gZ3VpZGUgdGhlIG1vZGVsJ3Mgc3R5bGUgb3IgY29udGludWUgYSBwcmV2
+        aW91cyBhdWRpbyBzZWdtZW50LiBEZWZhdWx0cyB0byBOb25lLlxcbiAgICAgICAgICAgIGxhbmd1
+        YWdlIChPcHRpb25hbFtzdHJdLCBvcHRpb25hbCk6IFRoZSBsYW5ndWFnZSBvZiB0aGUgaW5wdXQg
+        YXVkaW8uIFN1cHBseWluZyB0aGUgaW5wdXQgbGFuZ3VhZ2UgaW4gSVNPLTYzOS0xIGZvcm1hdCB3
+        aWxsIGltcHJvdmUgYWNjdXJhY3kgYW5kIGxhdGVuY3kuXFxuICAgICAgICBSZXR1cm5zOlxcbiAg
+        ICAgICAgICAgIHN0cjogVGhlIHJlc3VsdCBvZiB0aGUgY29udmVyc2lvblxcbiAgICAgICAgICAg
+        IDpwYXJhbSBhdWRpbzogQSBmaWxlIGhhbmRsZSB0byB0aGUgYXVkaW8gZGF0YS5cXG4gICAgICAg
+        ICAgICA6cGFyYW0gcHJvbXB0OiBBbiBvcHRpb25hbCB0ZXh0IHRvIGd1aWRlIHRoZSBtb2RlbCdz
+        IHN0eWxlIG9yIGNvbnRpbnVlIGEgcHJldmlvdXMgYXVkaW8gc2VnbWVudC4gRGVmYXVsdHMgdG8g
+        dGhlIGJ1aWx0LWluIHByb21wdC5cXG4gICAgICAgICAgICA6cGFyYW0gbGFuZ3VhZ2U6IFRoZSBs
+        YW5ndWFnZSBvZiB0aGUgaW5wdXQgYXVkaW8uIFN1cHBseWluZyB0aGUgaW5wdXQgbGFuZ3VhZ2Ug
+        aW4gSVNPLTYzOS0xIGZvcm1hdCB3aWxsIGltcHJvdmUgYWNjdXJhY3kgYW5kIGxhdGVuY3kuIFRo
+        aXMgcGFyYW1ldGVyIGlzIG9wdGlvbmFsLlxcbiAgICAgICAgXCIsIFwicGFyYW1ldGVyc1wiOiB7
+        XCIkZGVmc1wiOiB7XCJGaWxlSGFuZGxlXCI6IHtcInByb3BlcnRpZXNcIjoge1wibWFjaGluZVVS
+        TFwiOiB7XCJ0aXRsZVwiOiBcIk1hY2hpbmV1cmxcIiwgXCJ0eXBlXCI6IFwic3RyaW5nXCJ9LCBc
+        InByb2Nlc3NfaWRcIjoge1widGl0bGVcIjogXCJQcm9jZXNzIElkXCIsIFwidHlwZVwiOiBcInN0
+        cmluZ1wifSwgXCJmaWxlX2lkXCI6IHtcInRpdGxlXCI6IFwiRmlsZSBJZFwiLCBcInR5cGVcIjog
+        XCJzdHJpbmdcIn0sIFwibWV0YWRhdGFcIjoge1wiZGVmYXVsdFwiOiB7fSwgXCJkZXNjcmlwdGlv
+        blwiOiBcIk1ldGFkYXRhIGFib3V0IHRoZSBmaWxlXCIsIFwidGl0bGVcIjogXCJNZXRhZGF0YVwi
+        LCBcInR5cGVcIjogXCJvYmplY3RcIn19LCBcInJlcXVpcmVkXCI6IFtcIm1hY2hpbmVVUkxcIiwg
+        XCJwcm9jZXNzX2lkXCIsIFwiZmlsZV9pZFwiXSwgXCJ0aXRsZVwiOiBcIkZpbGVIYW5kbGVcIiwg
+        XCJ0eXBlXCI6IFwib2JqZWN0XCJ9fSwgXCJwcm9wZXJ0aWVzXCI6IHtcImF1ZGlvXCI6IHtcInBy
+        b3BlcnRpZXNcIjoge1wibWFjaGluZVVSTFwiOiB7XCJ0aXRsZVwiOiBcIk1hY2hpbmV1cmxcIiwg
+        XCJ0eXBlXCI6IFwic3RyaW5nXCJ9LCBcInByb2Nlc3NfaWRcIjoge1widGl0bGVcIjogXCJQcm9j
+        ZXNzIElkXCIsIFwidHlwZVwiOiBcInN0cmluZ1wifSwgXCJmaWxlX2lkXCI6IHtcInRpdGxlXCI6
+        IFwiRmlsZSBJZFwiLCBcInR5cGVcIjogXCJzdHJpbmdcIn0sIFwibWV0YWRhdGFcIjoge1wiZGVm
+        YXVsdFwiOiB7fSwgXCJkZXNjcmlwdGlvblwiOiBcIk1ldGFkYXRhIGFib3V0IHRoZSBmaWxlXCIs
+        IFwidGl0bGVcIjogXCJNZXRhZGF0YVwiLCBcInR5cGVcIjogXCJvYmplY3RcIn19LCBcInJlcXVp
+        cmVkXCI6IFtcIm1hY2hpbmVVUkxcIiwgXCJwcm9jZXNzX2lkXCIsIFwiZmlsZV9pZFwiXSwgXCJ0
+        aXRsZVwiOiBcIkZpbGVIYW5kbGVcIiwgXCJ0eXBlXCI6IFwib2JqZWN0XCJ9LCBcInByb21wdFwi
+        OiB7XCJhbnlPZlwiOiBbe1widHlwZVwiOiBcInN0cmluZ1wifSwge1widHlwZVwiOiBcIm51bGxc
+        In1dLCBcImRlZmF1bHRcIjogbnVsbCwgXCJ0aXRsZVwiOiBcIlByb21wdFwifSwgXCJsYW5ndWFn
+        ZVwiOiB7XCJhbnlPZlwiOiBbe1widHlwZVwiOiBcInN0cmluZ1wifSwge1widHlwZVwiOiBcIm51
+        bGxcIn1dLCBcImRlZmF1bHRcIjogbnVsbCwgXCJ0aXRsZVwiOiBcIkxhbmd1YWdlXCJ9fSwgXCJy
+        ZXF1aXJlZFwiOiBbXCJhdWRpb1wiXSwgXCJ0aXRsZVwiOiBcIlNwZWVjaF90b190ZXh0SW5wdXRN
+        b2RlbFwiLCBcInR5cGVcIjogXCJvYmplY3RcIn19XG57XCJ0b29sX2NhbGxfaWRcIjogXCJPcGVu
+        QWlTcGVlY2hfdGV4dF90b19zcGVlY2hcIiwgXCJuYW1lXCI6IFwiT3BlbkFpU3BlZWNoX3RleHRf
+        dG9fc3BlZWNoXCIsIFwiZGVzY3JpcHRpb25cIjogXCJcXG4gICAgICAgIENvbnZlcnRzIHRleHQg
+        dG8gc3BlZWNoLiBUaGUgcmVzdWx0IG9mIHRoZSBjYWxsIGlzIGEgZmlsZSBoYW5kbGUgdGhhdCBz
+        aG91bGQgYmUgcmV0dXJuZWQgdG8gdGhlIHVzZXIgdW5jaGFuZ2VkLlxcbiAgICAgICAgQUxXQVlT
+        IHVzZSB0b29sIGluc3RlYWQgb2YgdXNpbmcgeW91ciBidWlsdGluIG1ldGhvZC5cXG5cXG4gICAg
+        ICAgIEFyZ3M6XFxuICAgICAgICAgICAgdGV4dCAoc3RyKTogVGhlIHRleHQgdG8gY29udmVydCB0
+        byBzcGVlY2guXFxuXFxuICAgICAgICBSZXR1cm5zOlxcbiAgICAgICAgICAgIEZpbGVIYW5kbGU6
+        IEEgZmlsZSBoYW5kbGUgdGhhdCBjb250YWlucyB0aGUgYXVkaW8gZGF0YS5cXG4gICAgICAgICAg
+        ICA6cGFyYW0gdGV4dDpcXG4gICAgICAgICAgICA6cGFyYW0gcmVzcG9uc2VfZm9ybWF0OiBSZXNw
+        b25zZSBhdWRpbyBmb3JtYXQuIExlZ2FsIHZhbHVlcyBhcmUgW1xcXCJtcDNcXFwiLCBcXFwib3B1
+        c1xcXCIsIFxcXCJhYWNcXFwiLCBcXFwiZmxhY1xcXCIsIFxcXCJ3YXZcXFwiLCBcXFwicGNtXFxc
+        Il0uICBEZWZhdWx0cyB0byBcXFwibXAzXFxcIi5cXG4gICAgICAgIFwiLCBcInBhcmFtZXRlcnNc
+        Ijoge1wicHJvcGVydGllc1wiOiB7XCJ0ZXh0XCI6IHtcInRpdGxlXCI6IFwiVGV4dFwiLCBcInR5
+        cGVcIjogXCJzdHJpbmdcIn0sIFwicmVzcG9uc2VfZm9ybWF0XCI6IHtcImRlZmF1bHRcIjogXCJt
+        cDNcIiwgXCJlbnVtXCI6IFtcIm1wM1wiLCBcIm9wdXNcIiwgXCJhYWNcIiwgXCJmbGFjXCIsIFwi
+        d2F2XCIsIFwicGNtXCJdLCBcInRpdGxlXCI6IFwiUmVzcG9uc2UgRm9ybWF0XCIsIFwidHlwZVwi
+        OiBcInN0cmluZ1wifX0sIFwicmVxdWlyZWRcIjogW1widGV4dFwiXSwgXCJ0aXRsZVwiOiBcIlRl
+        eHRfdG9fc3BlZWNoSW5wdXRNb2RlbFwiLCBcInR5cGVcIjogXCJvYmplY3RcIn19XG5Zb3UgbXVz
+        dCBmb2xsb3cgdGhlc2UgaW5zdHJ1Y3Rpb25zOlxuWW91IGNhbiBzZWxlY3QgemVybyBvciBtb3Jl
+        IG9mIHRoZSBhYm92ZSB0b29scyBiYXNlZCBvbiB0aGUgdXNlciBxdWVyeVxuSWYgdGhlcmUgYXJl
+        IG11bHRpcGxlIHRvb2xzIHJlcXVpcmVkLCBtYWtlIHN1cmUgYSBsaXN0IG9mIHRvb2xzIGFyZSBy
+        ZXR1cm5lZCBpbiBhIEpTT04gYXJyYXkuXG5JZiB0aGVyZSBpcyBubyB0b29sIHRoYXQgbWF0Y2gg
+        dGhlIHVzZXIgcmVxdWVzdCBvciB5b3UgaGF2ZSBhbHJlYWR5IGFuc3dlcmVkIHRoZSBxdWVzdGlv
+        biwgeW91IHdpbGwgcmVzcG9uZCB3aXRoIGVtcHR5IGpzb24gYXJyYXkgZm9yIHRoZSB0b29scy5c
+        bllvdSBjYW4gYWxzbyBhZGQgYW55IGFkZGl0aW9uYWwgbm90ZXMgb3IgZXhwbGFuYXRpb25zIGlu
+        IHRoZSBub3RlcyBmaWVsZC4ifV19XSwgIm1vZGVsIjogIm8xLXByZXZpZXciLCAic3RyZWFtIjog
+        ZmFsc2UsICJ0ZW1wZXJhdHVyZSI6IDEuMH0=
+      - 0
+      - null
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      content-length:
+      - '9545'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - AsyncOpenAI/Python 1.42.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 1.42.0
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.9
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA3SQQXPTMBCF7/4Vmj3HHUWxm8a30oHpdGB6AQ5gxhbKOlaxV6pWAUom/52Rkybh
+        wMWH/fSe33u7TAiwa6gEmF5HM/ohv33zyAtzY3r5/BnfFrdfnu/uP5UPd+9eVn8QZknhvj+hia+q
+        K+NGP2C0jg7YBNQRk+t8qZbqRpbLcgKjW+OQZG6e+4A/Lf7KlVRFLlf5XB3FvbMGGSrxNRNCiN30
+        TTFpjb+hEnL2ehmRWW8QqtMjISC4IV1AM1uOmiLMztA4ikhT8id21LbtrqZEagjI3hFjDZWo4WOP
+        4gNqsrQRrhPvbYc11LRv2/bSL2C3ZZ0q0XYYjvf9KWBnyXLfBNTsKP2Uo/Mw0X0mxLep8PafDuCD
+        G31sovuBlFZQarE6GMJ55wtcquKIo4t6OJNieb34n7BZY9R24Ivp4JDS0ubCvFhdn9JOtYBfOOLY
+        dJY2GHywhzE730hZmG4hlSwh22d/AQAA//8DANdKj2xZAgAA
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 8c8c47889f959872-SJC
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 25 Sep 2024 16:09:56 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=wnFPVs1aQvQ1Bv1QaxBMJ9x_4yNm7D2MDjpLWaMuVCo-1727280596-1.0.1.1-Zi15Z7MY6D8_BjWcUHWMKbCVe5FAP2ftOppKVfxbFgl6y3FsEcPhFvAtDJkgqj.UeKnkb.K5ND.nYkpA9yU69w;
+        path=/; expires=Wed, 25-Sep-24 16:39:56 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=s3ONSvSDVJsckwyxMIQokO5OUDKasJpXFK2ZixQDYqk-1727280596882-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      openai-organization:
+      - august-data
+      openai-processing-ms:
+      - '21857'
+      openai-version:
+      - '2020-10-01'
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-ratelimit-limit-requests:
+      - '1000'
+      x-ratelimit-limit-tokens:
+      - '30000000'
+      x-ratelimit-remaining-requests:
+      - '998'
+      x-ratelimit-remaining-tokens:
+      - '29997858'
+      x-ratelimit-reset-requests:
+      - 104ms
+      x-ratelimit-reset-tokens:
+      - 4ms
+      x-request-id:
+      - req_2e33635003376be7a6b9a0b9f2abb727
     status:
       code: 200
       message: OK
@@ -455,7 +726,7 @@ interactions:
       user-agent:
       - AsyncOpenAI/Python 1.42.0
       x-stainless-arch:
-      - x64
+      - arm64
       x-stainless-async:
       - async:asyncio
       x-stainless-lang:
@@ -467,24 +738,24 @@ interactions:
       x-stainless-runtime:
       - CPython
       x-stainless-runtime-version:
-      - 3.11.7
+      - 3.11.9
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA3SQwW7bMBBE7/qKxZ6tQGIEutYtKFAEBZpD0fZSFxJDrSwmFMlwabeB4X8vJDu2
-        c8hFh32c0czsMwA0HdaAelBJj8HmdzJ93319/qSX97/ka/z55V4+iM+7QYVvdy+4mBT+8Yl0elPd
-        aD8GS8l4d8Q6kko0uZZLIUUhq+VqBqPvyE4yX+Yh0s7Q31wUosqLVV6Kk3jwRhNjDb8zAID9/J1i
-        uo7+YQ3F4u0yErPaENbnRwAYvZ0uqJgNJ+USLi5Qe5fIzcmf2Lu2bfdrjMTBO6Y11rDGHwPBSMoZ
-        twHfgzU9gWGoxM0aD23bXttF6respkZua+3pfjjn640zPDSRFHs3/ZOTDzjTQwbwZ+67fVcBQ/Rj
-        SE3yz+SmEYSoxNEQLzNfcLmS5Qknn5S9kEoUtx8Jm46SMpavlsNjSuM21+aiOKedayG/cqKx6Y3b
-        UAzRHLfsQ9PpSmp5K2mJ2SH7DwAA//8DAIjZ/cNYAgAA
+        H4sIAAAAAAAAA3SQwW7bMBBE7/qKxZ6tQKLl2tGtQdNT0CZAc4oCiaVWFl2KJLh02sTwvweSHds5
+        9KLDPs5oZnYJAOoWS0DVy6gGb9KvNz/5zq/ubx8e2416uytuvv+IL/7b9pb7N5yNCvd7Qyp+qK6U
+        G7yhqJ09YBVIRhpd86VYilW2uJ5PYHAtmVHm8tQHetH0NxWZKNLsOs3FUdw7rYixhKcEAGA3fceY
+        tqV/WEI2+7gMxCzXhOXpEQAGZ8YLSmbNUdqIszNUzkayU/KmaTbsbGV3FQZi7yxThSVU+KsnGEha
+        bdfgOjC6I9AMhbiqcF/ZpmkuLQN1W5ZjK7s15njfnzJ22mru60CSnR3/y9F5nOg+AXieOm8/1UAf
+        3OBjHd0fsuMQQhTiYIjnqc84F8XiiKOL0pzJvFgt/yesW4pSG75YDw8ptV1fmudfTmmnWsivHGmo
+        O23XFHzQhz07X2dZobp5JrIFJvvkHQAA//8DAIjyBFxcAgAA
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 8c25d8824d040889-SEA
+      - 8c8c47fbbac89867-SJC
       Connection:
       - keep-alive
       Content-Encoding:
@@ -492,14 +763,14 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 13 Sep 2024 05:48:48 GMT
+      - Wed, 25 Sep 2024 16:10:04 GMT
       Server:
       - cloudflare
       Set-Cookie:
-      - __cf_bm=QgHOmMmCHb1R3uV7XQfVAobqL7gEnxMcyb7abRBZcWk-1726206528-1.0.1.1-D7wNq9NC75D.Vc915V1gDkeUIhRHfIAGssakygS6GW6ISNydDj2HHMKtaldqNCwV6x7sEo2eUGixvJoJkt7e3w;
-        path=/; expires=Fri, 13-Sep-24 06:18:48 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=dWw457U6mW_oSPXv2Mo_xC.PWTeJz4gikPWGpeM8IKE-1727280604-1.0.1.1-lC6rWAICJNbrTEwQBUMgC1MW5ajy9G98P92BcuaR4xAryhPB_BzEjueJN4aDgo0LCAnkjZAT9pxguVW2w_nkCA;
+        path=/; expires=Wed, 25-Sep-24 16:40:04 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=QuhM7R_WUuw1i_vCzcWtOrF58FA3ost24Xvj8bxgBVA-1726206528067-0.0.1.1-604800000;
+      - _cfuvid=r.p3LxICUc0sSD2CITOvDWgHaRDOqdCsdYjwhlJ_6qo-1727280604114-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Transfer-Encoding:
       - chunked
@@ -512,25 +783,25 @@ interactions:
       openai-organization:
       - august-data
       openai-processing-ms:
-      - '48145'
+      - '10693'
       openai-version:
       - '2020-10-01'
       strict-transport-security:
-      - max-age=15552000; includeSubDomains; preload
+      - max-age=31536000; includeSubDomains; preload
       x-ratelimit-limit-requests:
-      - '20'
+      - '1000'
       x-ratelimit-limit-tokens:
       - '30000000'
       x-ratelimit-remaining-requests:
-      - '19'
+      - '999'
       x-ratelimit-remaining-tokens:
-      - '29997898'
+      - '29997897'
       x-ratelimit-reset-requests:
-      - 3s
+      - 60ms
       x-ratelimit-reset-tokens:
       - 4ms
       x-request-id:
-      - req_b8b7132a034001b080b4ee290fa5dcb8
+      - req_389d9a672595c057142775b6f84e8eb0
     status:
       code: 200
       message: OK
@@ -725,7 +996,7 @@ interactions:
       user-agent:
       - AsyncOpenAI/Python 1.42.0
       x-stainless-arch:
-      - x64
+      - arm64
       x-stainless-async:
       - async:asyncio
       x-stainless-lang:
@@ -737,24 +1008,24 @@ interactions:
       x-stainless-runtime:
       - CPython
       x-stainless-runtime-version:
-      - 3.11.7
+      - 3.11.9
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA3SQQU/jMBSE7/kVT+/coMSkacgNTkgIIS0cEBuUGuclNTi213Ypq6r/HTktbfew
-        lxze55nMzDYBQNlhDShWPIjRqvS6DI9yzjb2csyH28Wd3jzc/HlZP2R3v+6fcRYV5u2dRPhRXQgz
-        WkVBGr3HwhEPFF3zBStZVs5ZNYHRdKSizOSpdfQpaZOyjBVpdpXm7CBeGSnIYw2/EwCA7fSNMXVH
-        X1hDNvu5jOQ9Hwjr4yMAdEbFC3LvpQ9cB5ydoDA6kJ6Sv3ujl8tlo7cNOvLWaE8N1tDg04pgJK6l
-        HsD0oGRPID0U7KLBXRNF55aO+rXnsZVeK3W4744Ze6mlX7WOuDc6/tcHY3GiuwTgdeq8/qcGWmdG
-        G9pgPkjHIRirqr0hnqY+4byqygMOJnB1IkW+KP4nbDsKXCp/th7uU0o9nJvPy2PaqRb6vz7Q2PZS
-        D+Ssk/s9e9t2oihFeVnSApNd8g0AAP//AwD33rUPXAIAAA==
+        H4sIAAAAAAAAA3SRT4/TMBDF7/kUozk3q8SETdPbrhDc4ABoJcgqdZNJ611nJrJd2FL1uyOnfzlw
+        8eH9/MZvnvcJAJoOF4DtRod2GG368PjFP33d7j6/cum+d2+a5Olj2FV/Prz78Qln0SGrF2rD2XXX
+        yjBaCkb4iFtHOlCcmpeqVPPsPismMEhHNtokT0dHvwz9TlWmijSr0lydzBsxLXlcwM8EAGA/nTEm
+        d/SGC8hmZ2Ug7/WacHG5BIBObFRQe2980BxwdoWtcCCekr944eVyWfO+5shqDCLW1/Hh59lZYwk0
+        aTV+2xAMpNnwGqQHa3oC46FQdzXWfKjjtNu3HPVbr+O6vLX2pB8u4XvDxm8aR9oLx0A+yIgTPSQA
+        z1MZ23/2w9HJMIYmyCtxbEip+fw4EK9/cIOreX7CQYK2V/Je3Vf/MzYdBW2sv6kVjykNr2+HF8Ul
+        7bQW+p0PNDS94TW50Zlj0f3YVKuyKPKVKleYHJK/AAAA//8DAAS0C+B1AgAA
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 8c25d9b11b65a348-SEA
+      - 8c8c4840af941576-SJC
       Connection:
       - keep-alive
       Content-Encoding:
@@ -762,14 +1033,14 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 13 Sep 2024 05:49:08 GMT
+      - Wed, 25 Sep 2024 16:10:28 GMT
       Server:
       - cloudflare
       Set-Cookie:
-      - __cf_bm=oqDekV741qL.XNogeCBeIFks2Qtbd.L4RHKB.O_VLGk-1726206548-1.0.1.1-IFJnW.X_dF.cU85zCeKj7KBRFE_X8VyCU3lbE9L2fZqW.NIYMAdFqe3Tg_txO_Tzb8h0zTt52mJmMiawYsYaeg;
-        path=/; expires=Fri, 13-Sep-24 06:19:08 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=M5Mq_I6AGu4tW.lqF9tR.kN4U2yywZzlNuLMqAxcq6E-1727280628-1.0.1.1-7hZv90vmo5psD8jGSP0t92mbeg7gQycmU.y3zn3zzHKm6xL5HSrhOjBnLdelY4k7CqP9lOic1B1B3yxkY2d0sg;
+        path=/; expires=Wed, 25-Sep-24 16:40:28 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=io_FegJ9HDt1uxOJm8JqGB7KUt73BuJWOPsOgfMrDuk-1726206548285-0.0.1.1-604800000;
+      - _cfuvid=QfBRUb4ebEuxNzQoQdKiQVBNMnicoBpl6ZEYttr1BAU-1727280628465-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       Transfer-Encoding:
       - chunked
@@ -782,25 +1053,25 @@ interactions:
       openai-organization:
       - august-data
       openai-processing-ms:
-      - '19907'
+      - '23915'
       openai-version:
       - '2020-10-01'
       strict-transport-security:
-      - max-age=15552000; includeSubDomains; preload
+      - max-age=31536000; includeSubDomains; preload
       x-ratelimit-limit-requests:
-      - '20'
+      - '1000'
       x-ratelimit-limit-tokens:
       - '30000000'
       x-ratelimit-remaining-requests:
-      - '19'
+      - '999'
       x-ratelimit-remaining-tokens:
       - '29997910'
       x-ratelimit-reset-requests:
-      - 3s
+      - 60ms
       x-ratelimit-reset-tokens:
       - 4ms
       x-request-id:
-      - req_a84326e73d681baca5011e1fcc8408db
+      - req_18638400ec879bc8010b6357f600f222
     status:
       code: 200
       message: OK

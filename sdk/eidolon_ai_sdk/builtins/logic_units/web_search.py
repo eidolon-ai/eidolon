@@ -69,17 +69,20 @@ class Browser(LogicUnit, Specable[BrowseSpec]):
                 raise ValueError(f"Summarizer {self.spec.summarizer} not supported")
 
 
-# Requires custom search engine + token setup in google project. See more at https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list
+# Requires Google project, Custom Search Engine ID, and API key. 
+# For CSE_ID see https://programmablesearchengine.google.com/controlpanel/all
+# For CSE_TOKEN (API KEY) see https://developers.google.com/custom-search/v1/introduction
+# Add CSE_ID and CSE_TOKEN to .env and restart server
 class SearchSpec(BaseModel):
     cse_id: str = Field(
         default_factory=lambda: os.environ["CSE_ID"],
         validate_default=True,
-        desctiption="Google Custom Search Engine Id.",
+        description="Google Custom Search Engine Id.",
     )
     cse_token: str = Field(
         default_factory=lambda: os.environ["CSE_TOKEN"],
         validate_default=True,
-        desctiption="Google Project dev token, must have search permissions.",
+        description="Google Project dev token, must have search permissions.",
     )
     name: str = "search"
     description: str = None

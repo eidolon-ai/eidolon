@@ -1,105 +1,74 @@
-'use client'
-
-import validator from '@rjsf/validator-ajv8';
-import {Form} from "@rjsf/mui";
 import {useEffect, useState} from "react";
-import {FormControl, MenuItem, Select, SelectChangeEvent, TextField} from "@mui/material";
-import {OperationInfo, ProcessStatus} from "@eidolon-ai/client";
-
-const log = (type: any) => console.log.bind(console, type);
+import {OperationInfo} from "@eidolon-ai/client";
+import {RJSFSchema, UiSchema} from '@rjsf/utils';
+import TailwindRJSFTheme from "./rjsf-tailwind.js";
+import {useProcess} from "../hooks/process_context.js";
+import {useApp} from "../hooks/app-context.js";
+import StyledSelect from "./styled-select.js";
 
 interface AgentInputFormProps {
-  // eslint-disable-next-line no-unused-vars
-  handleSubmit: (formJson: Record<string, any>) => void
-  operations: OperationInfo[]
-  isProgram: boolean
-  processState?: ProcessStatus
+  formData: unknown;
+  setFormData: (data: unknown) => void;
+  operations: OperationInfo[];
+  agentOperation?: string
+  setAgentOperation: (operation: string | undefined) => void;
+  onSubmit: () => void
 }
 
-
-function getAvailableOperations(operations: OperationInfo[], processState: ProcessStatus | undefined): OperationInfo[] {
-  if (processState) {
-    return operations.filter((op) => processState.available_actions.includes(op.name))
-  } else {
-    return []
-  }
-}
-
-export function AgentInputForm({handleSubmit, operations, isProgram, processState}: AgentInputFormProps) {
-  const [agentOperation, setAgentOperation] = useState<number>(0);
-  // Form state
-  const [schema, setSchema] = useState<any>({})
-  const [title, setTitle] = useState<string>("")
-  const [formData, setFormData] = useState<any>({})
-  const [usableOperations, setUsableOperations] = useState<OperationInfo[]>(getAvailableOperations(operations, processState))
+export function AgentInputForm({formData, setFormData, operations, agentOperation, setAgentOperation, onSubmit}: AgentInputFormProps) {
+  const [schema, setSchema] = useState<RJSFSchema>({});
+  const [usableOperations, setUsableOperations] = useState<OperationInfo[]>([]);
+  const {processStatus: processState} = useProcess()
+  const {app} = useApp()
 
   useEffect(() => {
-    setUsableOperations(getAvailableOperations(operations, processState))
-    const operationInfo = usableOperations[0]
-    if (operationInfo) {
-      setAgentOperation(0)
-      delete operationInfo.schema?.title
-      setSchema(operationInfo.schema)
+    if (app && processState) {
+      const newUsableOperations = operations.filter((op) => processState.available_actions.includes(op.name));
+      setUsableOperations(newUsableOperations);
+      let operationInfo = agentOperation ? newUsableOperations.find(p => p.name == agentOperation) : newUsableOperations[0];
+      if (!operationInfo) {
+        operationInfo = newUsableOperations.length > 0 ? newUsableOperations[0] : undefined
+      }
+      if (operationInfo) {
+        if (agentOperation != operationInfo.name) {
+          setAgentOperation(operationInfo.name);
+        }
+        setSchema({...operationInfo.schema, title: undefined} as RJSFSchema);
+      }
     }
-    return () => {}
-  }, [operations, processState])
+  }, [operations, processState, app]);
 
-  // @ts-ignore
+  const handleOperationChange = (oper: string) => {
+    const operationInfo = usableOperations.find(op => op.name === oper)
+    setAgentOperation(operationInfo?.name);
+    if (operationInfo) {
+      setSchema({...operationInfo.schema, title: undefined} as RJSFSchema);
+      setFormData({});
+    }
+  };
+
+  const uiSchema: UiSchema = {
+    'ui:submitButtonOptions': {norender: true}
+  };
   return (
-    <form
-      id={"agent-input-form"}
-      onSubmit={(event) => {
-        event.preventDefault();
-        handleSubmit({data: formData, title: title, operation: usableOperations[agentOperation]})
-      }}
-    >
-      <FormControl variant={"standard"} fullWidth={true}>
-        {isProgram && (
-          <TextField
-            sx={{marginBottom: '16px'}}
-            label={"Title"}
-            required={true}
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
+    <div className="w-full h-full flex flex-col p-4 space-y-2">
+      <div>
+        <label htmlFor="operation" className="block text-sm font-medium text-gray-700 mb-1">
+          Operation
+        </label>
+        <StyledSelect options={usableOperations.map(op => op.name)} value={agentOperation!} onChange={handleOperationChange}/>
+      </div>
+      <div className="flex-grow overflow-y-auto min-h-0">
+        {schema && schema.type && (
+          <TailwindRJSFTheme
+            schema={schema}
+            uiSchema={uiSchema}
+            formData={formData}
+            onSubmit={onSubmit}
+            onChange={(e) => setFormData(e.formData)}
           />
         )}
-        <Select
-          labelId={"op_label"}
-          label={"Operation"}
-          value={usableOperations?.length ? agentOperation : ''}
-          onChange={(event: SelectChangeEvent<number>) => {
-            let operationInfo = usableOperations[event.target.value as number];
-            setAgentOperation(event.target.value as number);
-            if (operationInfo) {
-              delete operationInfo.schema?.title
-              setSchema(operationInfo.schema)
-            }
-          }}
-        >
-          {usableOperations.map((op, index) => (
-            <MenuItem
-              key={index}
-              value={index}
-            >{op.label}</MenuItem>
-          ))}
-        </Select>
-        <div style={{width: '90%'}}>
-          <Form
-            id={"agent-input-form"}
-            tagName={"div"}
-            schema={schema}
-            liveValidate={true}
-            // @ts-ignore
-            validator={validator}
-            onChange={(data) => {
-              setFormData(data.formData)
-            }}
-            onError={log('errors')}
-            uiSchema={{'ui:submitButtonOptions': {norender: true}}}
-          >
-          </Form>
-        </div>
-      </FormControl>
-    </form>
-  )
+      </div>
+    </div>
+  );
 }

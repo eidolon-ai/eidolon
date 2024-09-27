@@ -1,6 +1,5 @@
 'use client';
 import {ComponentType, createContext, Dispatch, FunctionComponent, PropsWithChildren, useContext, useReducer,} from 'react';
-// import useMediaQuery from '@mui/material/useMediaQuery';
 import AppReducer from './AppReducer';
 import {IS_SERVER, localStorageGet} from '../utils';
 

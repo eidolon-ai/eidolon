@@ -7,6 +7,12 @@
     gap: .625rem;
 }
 
+.markdown a {
+    color: #0070f3;
+    text-decoration: none;
+    border-bottom: 1px solid #0070f3;
+}
+
 .markdown > p {
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -86,7 +92,7 @@
     font-size: .9em;
 }
 
-.markdown code {
+.markdown p code {
     font-size: .85rem;
     padding: 1px 2px;
     color: rgb(124, 27, 19);

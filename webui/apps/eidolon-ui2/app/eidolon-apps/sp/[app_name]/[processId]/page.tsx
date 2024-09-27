@@ -1,10 +1,8 @@
 'use client'
 
-import * as React from "react";
-import {CopilotPanel, CopilotParams, useProcess} from "@eidolon-ai/components/client";
-import {Box} from "@mui/material";
-import {useSession} from "next-auth/react";
-import {useEffect} from "react";
+import {EidolonChatPanel} from "@/components/eidolon-chat-panel.tsx";
+import {useNewChatOptions} from "../new-chat-options.tsx";
+import {ProcessProvider} from "@eidolon-ai/components/client";
 
 export interface ProcessPageProps {
   params: {
@@ -14,28 +12,11 @@ export interface ProcessPageProps {
 }
 
 export default function ({params}: ProcessPageProps) {
-  const {app, fetchError, processStatus, updateProcessStatus} = useProcess()
-  const {data: session} = useSession()
+  const {options, clearOptions} = useNewChatOptions()
 
-  useEffect(() => {
-    updateProcessStatus(params.app_name, params.processId)
-  }, [processStatus?.state]);
-
-  if (!fetchError && !app) {
-    return <div>Loading...</div>
-  }
-  if (fetchError) {
-    return <div>{fetchError.message}</div>
-  }
   return (
-    <Box sx={{width: '65vw'}}>
-      <CopilotPanel
-        machineUrl={app!.location}
-        processId={params.processId}
-        copilotParams={app!.params as CopilotParams}
-        userName={session?.user?.name}
-        userImage={session?.user?.image}
-      />
-    </Box>
+    <ProcessProvider processId={params.processId}>
+      <EidolonChatPanel options={options} clearOptions={clearOptions}/>
+    </ProcessProvider>
   )
 }

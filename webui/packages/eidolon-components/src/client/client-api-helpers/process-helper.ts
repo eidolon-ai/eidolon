@@ -13,7 +13,7 @@ export async function getProcessStatus(machineUrl: string, process_id: string) {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
-      return resp.json().then((json: Record<string, any>) => json as ProcessStatus)
+      return resp.json().then((json) => json as ProcessStatus)
     })
 }
 
@@ -25,7 +25,13 @@ export async function createProcess(machineUrl: string, agent: string, title: st
     if (resp.status === 404) {
       return null
     }
-    return resp.json().then((json: Record<string, any>) => json as ProcessStatus)
+    if (resp.status === 200) {
+      return resp.json().then((json) => json as ProcessStatus)
+    } else {
+      return resp.text().then(text => {
+        throw new HttpException(`Failed to create process: ${resp.statusText} - ${text}`, resp.status)
+      })
+    }
   })
 }
 

@@ -82,6 +82,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 name,
                 body_schema,
                 description,
+                endpoint_schema.get("summary", agent),
                 self._process_tool(agent_client, action, allowed_pids, call_context, type_),
             )
             return tool
@@ -104,6 +105,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     name = self._name(agent, action=action)
                     schema = machine_schema["paths"][path]["post"]
                     description = self._description(schema, name)
+                    title = schema.get("summary", agent)
                     _type, body_schema = self._body_schema(schema, name)
                     tool = self._build_tool_def(
                         agent,
@@ -111,6 +113,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                         name,
                         body_schema,
                         description,
+                        title,
                         self._program_tool(agent_client, action, call_context, _type),
                     )
                     tools.append(tool)
@@ -120,7 +123,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                     logger.warning(f"unable to build tool {path}", exc_info=True)
         return tools
 
-    def _build_tool_def(self, agent, operation, name, schema, description, tool_call):
+    def _build_tool_def(self, agent, operation, name, schema, description, title, tool_call):
         model = schema_to_model(schema, "InputModel")
         return FnHandler(
             name=name,
@@ -129,7 +132,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
             output_model_fn=lambda a, b: Any,
             fn=tool_call,
             extra={
-                "title": agent,
+                "title": title,
                 "sub_title": operation,
                 "agent_call": True,
             },
@@ -165,11 +168,11 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
         action = "_" + action if action else ""
         return self.spec.tool_prefix + "_" + agent + process_id + action
 
-    # todo, this needs to create history record before iterating
     def _program_tool(self, agent: Agent, program: str, call_context: CallContext, type_: type):
         async def fn(_self, **kwargs):
             process = await agent.create_process()
             yield ObjectOutputEvent(
+                metadata=dict(eidolon=dict(internal=True)),
                 content=dict(
                     action="created new conversation",
                     conversation_id=process.process_id,

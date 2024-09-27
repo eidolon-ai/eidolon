@@ -9,18 +9,18 @@ export async function getAgents(machineUrl: string) {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
-      return resp.json().then((json: Record<string, any>) => json as string[])
+      return resp.json().then((json) => json as string[])
     })
 }
 
-export async function getOperations(machineUrl: string, agent: string) {
+export async function getOperations(machineUrl: string, agent: string): Promise<OperationInfo[]> {
   return await fetch(`/api/eidolon/machine/${agent}?machineURL=${machineUrl}`, {
     method: "GET"
   }).then(resp => {
-      if (resp.status !== 200) {
-        throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
-      }
-    return resp.json().then((json: Record<string, any>) => json as OperationInfo[])
+    if (resp.status !== 200) {
+      throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
+    }
+    return resp.json().then((json) => json as OperationInfo[])
   })
 }
 
@@ -32,6 +32,11 @@ export async function getApps(): Promise<Record<string, EidolonApp>> {
       if (resp.status !== 200) {
         throw new HttpException(`Failed to fetch processes: ${resp.statusText}`, resp.status)
       }
-      return resp.json().then((json: Record<string, any>) => json as Record<string, EidolonApp>)
+      return resp.json().then((json) => json as Record<string, EidolonApp>)
     })
+}
+
+export async function getApp(appName: string): Promise<EidolonApp | undefined> {
+  const apps = await getApps();
+  return apps[appName]
 }
