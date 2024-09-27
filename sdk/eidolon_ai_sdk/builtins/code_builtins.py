@@ -26,7 +26,6 @@ from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTr
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters import CharacterTextSplitter, LatexTextSplitter, MarkdownTextSplitter, PythonCodeTextSplitter, SpacyTextSplitter, \
     NLTKTextSplitter, RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter, TokenTextSplitter, HTMLHeaderTextSplitter, MarkdownHeaderTextSplitter
-from eidolon_ai_sdk.agent.generic_agent import GenericAgent
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.document_retriever import SimilarityMemoryRetriever, DocumentRetriever
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
@@ -141,7 +140,6 @@ def named_builtins() -> List[ReferenceResource]:
         # agents
         ("Agent", SimpleAgent),
         SimpleAgent,
-        GenericAgent,  # deprecated
         TreeOfThoughtsAgent,
         RetrieverAgent,
         AutonomousSpeechAgent,

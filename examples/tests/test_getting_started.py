@@ -14,7 +14,7 @@ class TestAgentCommunication:
         ) as server:
             yield server
 
-    async def test_can_hit_generic_agent(self, server_loc):
+    async def test_can_hit_simple_agent(self, server_loc):
         process = await Machine(machine=server_loc).agent("hello_world").create_process()
         response = await process.action("question", body=dict(name="Joe Dirt"))
         assert "Joe Dirt" in response.data
@@ -36,7 +36,7 @@ class TestCustomAgents:
         ) as server:
             yield server
 
-    async def test_can_hit_generic_agent(self, server_loc):
+    async def test_can_hit_simple_agent(self, server_loc):
         process = await Machine(machine=server_loc).agent("hello_world").create_process()
         response = await process.action("enter", body=dict(name="Joe Dirt"))
         assert "Joe Dirt" in response.data
