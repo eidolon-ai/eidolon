@@ -8,7 +8,7 @@
     "azure_ad_token_provider": {
       "anyOf": [
         {
-          "$ref": "#/$defs/Reference"
+          "$ref": "#/$defs/_Reference"
         },
         {
           "type": "null"
@@ -43,7 +43,7 @@
   "title": "AzureOpenAIConnectionHandler",
   "type": "object",
   "$defs": {
-    "Reference": {
+    "_Reference": {
       "additionalProperties": true,
       "properties": {
         "implementation": {
@@ -51,7 +51,7 @@
           "type": "string"
         }
       },
-      "title": "Reference",
+      "title": "_Reference",
       "type": "object"
     }
   }

@@ -3,14 +3,14 @@ title: AzureLoader
 description: Description of the AzureLoader component
 ---
 
-| Property                                                       | Pattern | Type    | Deprecated | Definition           | Title/Description           |
-| -------------------------------------------------------------- | ------- | ------- | ---------- | -------------------- | --------------------------- |
-| + [implementation](#implementation )                           | No      | const   | No         | -                    | Implementation              |
-| - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | In #/$defs/Reference | -                           |
-| + [account_url](#account_url )                                 | No      | string  | No         | -                    | Account Url                 |
-| + [container](#container )                                     | No      | string  | No         | -                    | Container                   |
-| - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -                    | Create Container On Startup |
-| - [pattern](#pattern )                                         | No      | string  | No         | -                    | Pattern                     |
+| Property                                                       | Pattern | Type    | Deprecated | Definition            | Title/Description           |
+| -------------------------------------------------------------- | ------- | ------- | ---------- | --------------------- | --------------------------- |
+| + [implementation](#implementation )                           | No      | const   | No         | -                     | Implementation              |
+| - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | In #/$defs/_Reference | -                           |
+| + [account_url](#account_url )                                 | No      | string  | No         | -                     | Account Url                 |
+| + [container](#container )                                     | No      | string  | No         | -                     | Container                   |
+| - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -                     | Create Container On Startup |
+| - [pattern](#pattern )                                         | No      | string  | No         | -                     | Pattern                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -30,7 +30,7 @@ Specific value: `"AzureLoader"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | #/$defs/Reference                                                         |
+| **Defined in**            | #/$defs/_Reference                                                        |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |

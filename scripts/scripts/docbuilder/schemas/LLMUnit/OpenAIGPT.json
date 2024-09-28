@@ -40,8 +40,22 @@
       "title": "Can Stream",
       "type": "boolean"
     },
+    "client_args": {
+      "default": {},
+      "title": "Client Args",
+      "type": "object"
+    },
     "connection_handler": {
-      "$ref": "../OpenAIConnectionHandler/overview.json"
+      "anyOf": [
+        {
+          "$ref": "../OpenAIConnectionHandler/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "deprecated": true
     }
   },
   "reference_details": {

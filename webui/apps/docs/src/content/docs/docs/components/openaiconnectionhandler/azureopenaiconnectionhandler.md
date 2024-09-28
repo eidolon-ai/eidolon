@@ -3,13 +3,13 @@ title: AzureOpenAIConnectionHandler
 description: Description of the AzureOpenAIConnectionHandler component
 ---
 
-| Property                                               | Pattern | Type            | Deprecated | Definition           | Title/Description     |
-| ------------------------------------------------------ | ------- | --------------- | ---------- | -------------------- | --------------------- |
-| + [implementation](#implementation )                   | No      | const           | No         | -                    | Implementation        |
-| - [azure_ad_token_provider](#azure_ad_token_provider ) | No      | object          | No         | In #/$defs/Reference | -                     |
-| - [token_provider_scopes](#token_provider_scopes )     | No      | array of string | No         | -                    | Token Provider Scopes |
-| - [api_version](#api_version )                         | No      | string          | No         | -                    | Api Version           |
-| - [](#additionalProperties )                           | No      | object          | No         | -                    | -                     |
+| Property                                               | Pattern | Type            | Deprecated | Definition            | Title/Description     |
+| ------------------------------------------------------ | ------- | --------------- | ---------- | --------------------- | --------------------- |
+| + [implementation](#implementation )                   | No      | const           | No         | -                     | Implementation        |
+| - [azure_ad_token_provider](#azure_ad_token_provider ) | No      | object          | No         | In #/$defs/_Reference | -                     |
+| - [token_provider_scopes](#token_provider_scopes )     | No      | array of string | No         | -                     | Token Provider Scopes |
+| - [api_version](#api_version )                         | No      | string          | No         | -                     | Api Version           |
+| - [](#additionalProperties )                           | No      | object          | No         | -                     | -                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -29,7 +29,7 @@ Specific value: `"AzureOpenAIConnectionHandler"`
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Defined in**            | #/$defs/Reference                                                         |
+| **Defined in**            | #/$defs/_Reference                                                        |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |

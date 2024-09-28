@@ -114,7 +114,7 @@ class Reference(BaseModel):
             json_schema = handler(core_schema)
             json_schema = handler.resolve_ref_schema(json_schema)
             json_schema["properties"] = dict(implementation=dict(type="string", title="Implementation"))
-            if "Used to create references to other classes." in json_schema['description']:  # delete description if it is not overridden
+            if "Used to create references to other classes." in json_schema.get('description', ""):  # delete description if it is not overridden
                 del json_schema['description']
             return json_schema
 

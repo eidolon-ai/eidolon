@@ -1,6 +1,9 @@
 {
   "anyOf": [
     {
+      "$ref": "../LLMUnit/AzureLLMUnit.json"
+    },
+    {
       "$ref": "../LLMUnit/MistralGPT.json"
     },
     {

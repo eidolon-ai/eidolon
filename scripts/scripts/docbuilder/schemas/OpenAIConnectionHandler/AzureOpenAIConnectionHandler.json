@@ -8,20 +8,7 @@
     "azure_ad_token_provider": {
       "anyOf": [
         {
-          "additionalProperties": true,
-          "properties": {
-            "implementation": {
-              "default": "builtins.object",
-              "title": "Implementation",
-              "type": "string"
-            }
-          },
-          "reference_pointer": {
-            "default_impl": "builtins.object",
-            "type": "object"
-          },
-          "title": "object Reference",
-          "type": "object"
+          "$ref": "#/$defs/_Reference"
         },
         {
           "type": "null"
@@ -56,7 +43,7 @@
   "title": "AzureOpenAIConnectionHandler",
   "type": "object",
   "$defs": {
-    "Reference": {
+    "_Reference": {
       "additionalProperties": true,
       "properties": {
         "implementation": {
@@ -64,7 +51,7 @@
           "type": "string"
         }
       },
-      "title": "Reference",
+      "title": "_Reference",
       "type": "object"
     }
   }

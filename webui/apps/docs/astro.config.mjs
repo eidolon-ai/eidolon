@@ -261,6 +261,10 @@ export default defineConfig({
                     "link": "/docs/components/llmunit/anthropicllmunit"
                   },
                   {
+                    "label": "AzureLLMUnit",
+                    "link": "/docs/components/llmunit/azurellmunit"
+                  },
+                  {
                     "label": "MistralGPT",
                     "link": "/docs/components/llmunit/mistralgpt"
                   },
