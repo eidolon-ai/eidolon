@@ -2,7 +2,6 @@
 title: llama3-8b
 description: "Description of llama3-8b component"
 ---
-
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
 | - [implementation](#implementation )             | No      | const   | No         | -          | -                    |

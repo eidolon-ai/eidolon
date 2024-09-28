@@ -2,7 +2,6 @@
 title: gpt-4o
 description: "Description of gpt-4o component"
 ---
-
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
 | - [implementation](#implementation )             | No      | const   | No         | -          | -                    |

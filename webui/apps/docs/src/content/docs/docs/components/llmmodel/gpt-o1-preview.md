@@ -2,7 +2,6 @@
 title: gpt-o1-preview
 description: "Description of gpt-o1-preview component"
 ---
-
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
 | - [implementation](#implementation )             | No      | const   | No         | -          | -                    |

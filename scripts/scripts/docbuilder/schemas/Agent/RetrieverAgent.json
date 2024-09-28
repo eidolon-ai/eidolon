@@ -84,6 +84,7 @@
   ],
   "title": "RetrieverAgent",
   "type": "object",
+  "additionalProperties": false,
   "reference_details": {
     "overrides": {},
     "clz": "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent",

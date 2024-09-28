@@ -2,7 +2,6 @@
 title: ClaudeOpus
 description: "Description of ClaudeOpus component"
 ---
-
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |
 | ---------------------------------------------------- | ------- | ----------------------------- | ---------- | ---------- | ---------------------- |
 | - [implementation](#implementation )                 | No      | const                         | No         | -          | -                      |

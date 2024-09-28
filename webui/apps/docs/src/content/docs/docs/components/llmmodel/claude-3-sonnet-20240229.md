@@ -2,7 +2,6 @@
 title: claude-3-sonnet-20240229
 description: "Description of claude-3-sonnet-20240229 component"
 ---
-
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
 | - [implementation](#implementation )             | No      | const   | No         | -          | -                    |

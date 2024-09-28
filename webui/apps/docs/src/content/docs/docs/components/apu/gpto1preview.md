@@ -2,7 +2,6 @@
 title: GPTo1Preview
 description: "Description of GPTo1Preview component"
 ---
-
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |
 | ---------------------------------------------------- | ------- | ----------------------------- | ---------- | ---------- | ---------------------- |
 | - [implementation](#implementation )                 | No      | const                         | No         | -          | -                      |

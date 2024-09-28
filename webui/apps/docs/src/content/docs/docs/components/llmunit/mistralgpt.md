@@ -2,7 +2,6 @@
 title: MistralGPT
 description: "Description of MistralGPT component"
 ---
-
 | Property                             | Pattern | Type                | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------------------- | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation ) | No      | const               | No         | -          | -                 |

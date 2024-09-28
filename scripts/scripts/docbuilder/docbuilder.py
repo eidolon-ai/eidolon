@@ -148,12 +148,7 @@ def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro
         components_file.write(''.join(lines[finish_index:]))
 
 
-cut_after_str = """|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-"""
+cut_before_str = "| Property  "
 
 
 def write_md(read_loc,
@@ -201,7 +196,7 @@ def write_md(read_loc,
                     template_name="md",
                     with_footer=False,
                 ))
-                content = content[(content.index(cut_after_str) + len(cut_after_str)):]
+                content = content[content.index(cut_before_str):]
                 write_astro_md_file(content, description, title, write_loc / url_safe(group_name) / (url_safe(schema['reference_details']['name']) + ".md"), group_names)
 
 

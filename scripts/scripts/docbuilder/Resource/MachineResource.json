@@ -9,23 +9,22 @@
           "type": "string"
         }
       },
+      "required": [
+          "name"
+      ],
       "title": "Metadata",
       "type": "object"
     }
   },
   "properties": {
     "apiVersion": {
-      "title": "Apiversion",
-      "type": "string"
+      "title": "ApiVersion",
+      "const": "server.eidolonai.com/v1alpha1"
     },
     "kind": {
       "const": "Machine",
       "default": "Machine",
-      "enum": [
-        "Machine"
-      ],
-      "title": "Kind",
-      "type": "string"
+      "title": "Kind"
     },
     "metadata": {
       "$ref": "#/$defs/Metadata"
@@ -37,6 +36,7 @@
   },
   "required": [
     "apiVersion",
+    "kind",
     "metadata"
   ],
   "title": "MachineResource",

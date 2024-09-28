@@ -9,23 +9,22 @@
           "type": "string"
         }
       },
+      "required": [
+        "name"
+      ],
       "title": "Metadata",
       "type": "object"
     }
   },
   "properties": {
     "apiVersion": {
-      "title": "Apiversion",
-      "type": "string"
+      "title": "ApiVersion",
+      "const": "server.eidolonai.com/v1alpha1"
     },
     "kind": {
       "const": "Agent",
       "default": "Agent",
-      "enum": [
-        "Agent"
-      ],
-      "title": "Kind",
-      "type": "string"
+      "title": "Kind"
     },
     "metadata": {
       "allOf": [
@@ -43,6 +42,7 @@
   },
   "required": [
     "apiVersion",
+    "kind",
     "spec"
   ],
   "title": "AgentResource",

@@ -54,6 +54,7 @@
   ],
   "title": "APIAgent",
   "type": "object",
+  "additionalProperties": false,
   "reference_details": {
     "overrides": {},
     "clz": "eidolon_ai_sdk.agent.api_agent.APIAgent",

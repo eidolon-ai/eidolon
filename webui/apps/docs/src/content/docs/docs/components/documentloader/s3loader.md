@@ -2,7 +2,6 @@
 title: S3Loader
 description: "Description of S3Loader component"
 ---
-
 | Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [implementation](#implementation )               | No      | const  | No         | -          | -                     |

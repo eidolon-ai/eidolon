@@ -2,7 +2,6 @@
 title: LongTermMemoryUnit
 description: "Description of LongTermMemoryUnit component"
 ---
-
 | Property                             | Pattern | Type               | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------------------ | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation ) | No      | const              | No         | -          | -                 |

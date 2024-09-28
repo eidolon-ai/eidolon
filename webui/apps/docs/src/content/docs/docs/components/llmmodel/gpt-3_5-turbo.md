@@ -2,7 +2,6 @@
 title: gpt-3.5-turbo
 description: "Description of gpt-3.5-turbo component"
 ---
-
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
 | - [implementation](#implementation )             | No      | const   | No         | -          | -                    |

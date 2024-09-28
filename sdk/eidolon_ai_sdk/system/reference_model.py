@@ -31,8 +31,11 @@ class Specable(Generic[T]):
 
     @classmethod
     def model_json_schema(cls):
-        schema = cls.specable_cls().model_json_schema()
+        spec_clz = cls.specable_cls()
+        schema = spec_clz.model_json_schema()
         schema["title"] = cls.__name__
+        if "extra" not in spec_clz.model_config:  # default to no extra props
+            schema["additionalProperties"] = False
         return schema
 
     @classmethod
@@ -160,14 +163,16 @@ class Reference(BaseModel):
                                 ref_schema['reference_details'] = reference_details
                                 ref_clz = clz.specable_cls() if issubclass(clz, Specable) else clz
                                 obj_ref = ref_clz.__get_pydantic_json_schema__(ref_clz.__pydantic_core_schema__, handler) if hasattr(ref_clz, "__pydantic_core_schema__") else copy.deepcopy(loose_object)
-                                actual_ref_schema = handler.resolve_ref_schema(obj_ref)
-                                actual_ref_schema['properties']['implementation'] = dict(const=r.metadata.name)
-                                actual_ref_schema['properties'] = dict(  # put implementation at the top
-                                    implementation=actual_ref_schema['properties'].pop('implementation'),
-                                    **actual_ref_schema['properties']
+                                desired_ref_schema = handler.resolve_ref_schema(obj_ref)
+                                desired_ref_schema['properties']['implementation'] = dict(const=r.metadata.name)
+                                desired_ref_schema['properties'] = dict(  # put implementation at the top
+                                    implementation=desired_ref_schema['properties'].pop('implementation'),
+                                    **desired_ref_schema['properties']
                                 )
-                                actual_ref_schema.pop("$defs", None)
-                                ref_schema.update(actual_ref_schema)
+                                desired_ref_schema.pop("$defs", None)
+                                if not hasattr(ref_clz, "model_config") or "extra" not in ref_clz.model_config:  # default to no extra props
+                                    desired_ref_schema["additionalProperties"] = False
+                                ref_schema.update(desired_ref_schema)
                                 for key, value in overrides.items():
                                     ref_schema['properties'].setdefault(key, {})['default'] = value
                             json_schema["anyOf"].append(ref)

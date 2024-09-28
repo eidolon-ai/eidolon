@@ -2,7 +2,6 @@
 title: AzureJWTProcessor
 description: "Description of AzureJWTProcessor component"
 ---
-
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation ) | No      | const  | No         | -          | -                 |

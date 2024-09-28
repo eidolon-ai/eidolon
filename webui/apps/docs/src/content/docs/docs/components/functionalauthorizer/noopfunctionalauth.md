@@ -2,11 +2,9 @@
 title: NoopFunctionalAuth
 description: "Description of NoopFunctionalAuth component"
 ---
-
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| - [](#additionalProperties )         | No      | object | No         | -          | -                 |
+| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation ) | No      | const | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
 

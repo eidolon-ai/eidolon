@@ -2,7 +2,6 @@
 title: SimilarityMemoryImpl
 description: "Description of SimilarityMemoryImpl component"
 ---
-
 | Property                             | Pattern | Type                   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ---------------------- | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation ) | No      | const                  | No         | -          | -                 |

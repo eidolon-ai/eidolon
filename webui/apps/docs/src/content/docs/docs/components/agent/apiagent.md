@@ -2,9 +2,6 @@
 title: APIAgent
 description: "Description of APIAgent component"
 ---
-
-**Description:** An Agent that can call rest endpoints documented via OpenAPI (Swagger).
-
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
 | - [implementation](#implementation )             | No      | const   | No         | -          | -                    |

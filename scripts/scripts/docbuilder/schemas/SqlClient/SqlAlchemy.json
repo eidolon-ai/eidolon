@@ -1,4 +1,5 @@
 {
+  "additionalProperties": false,
   "description": "A client for executing SQL queries using SQLAlchemy.\nSee https://docs.sqlalchemy.org/ for connection configuration details.\n\nPerforms cursory checks when `select_only` is set to True. Additionally ensure user is restricted to allowed permissions.",
   "properties": {
     "implementation": {

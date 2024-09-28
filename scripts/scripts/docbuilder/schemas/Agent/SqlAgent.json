@@ -47,6 +47,7 @@
   },
   "title": "SqlAgent",
   "type": "object",
+  "additionalProperties": false,
   "reference_details": {
     "overrides": {},
     "clz": "eidolon_ai_sdk.agent.sql_agent.agent.SqlAgent",

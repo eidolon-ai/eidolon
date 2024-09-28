@@ -79,6 +79,7 @@
   },
   "title": "SimpleAgent",
   "type": "object",
+  "additionalProperties": false,
   "reference_details": {
     "overrides": {},
     "clz": "eidolon_ai_sdk.agent.simple_agent.SimpleAgent",

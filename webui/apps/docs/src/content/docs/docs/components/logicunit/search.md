@@ -2,7 +2,6 @@
 title: SearchSpec
 description: "Description of SearchSpec component"
 ---
-
 | Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------- |
 | - [implementation](#implementation )           | No      | const       | No         | -          | -                   |

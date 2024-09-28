@@ -3,32 +3,16 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
-        <entry key="JSON Schema version 4">
-          <value>
-            <SchemaInfo>
-              <option name="name" value="JSON Schema version 4" />
-              <option name="relativePathToSchema" value="http://json-schema.org/draft-04/schema" />
-              <option name="applicationDefined" value="true" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="path" value="scripts/scripts/docbuilder/Resource/AgentResource.json" />
-                  </Item>
-                </list>
-              </option>
-            </SchemaInfo>
-          </value>
-        </entry>
-        <entry key="overview">
+        <entry key="AgentResource">
           <value>
             <SchemaInfo>
               <option name="generatedName" value="New Schema" />
-              <option name="name" value="overview" />
-              <option name="relativePathToSchema" value="scripts/scripts/docbuilder/schemas/Resource/overview.json" />
+              <option name="name" value="AgentResource" />
+              <option name="relativePathToSchema" value="scripts/scripts/docbuilder/Resource/AgentResource.json" />
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="examples/eidolon_examples/tmp/agemt.yml" />
+                    <option name="path" value="scripts/scripts/docbuilder/test.yaml" />
                   </Item>
                 </list>
               </option>

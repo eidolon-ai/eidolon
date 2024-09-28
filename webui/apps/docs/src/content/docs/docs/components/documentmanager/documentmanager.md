@@ -2,7 +2,6 @@
 title: DocumentManager
 description: "Description of DocumentManager component"
 ---
-
 | Property                                   | Pattern | Type                         | Deprecated | Definition | Title/Description |
 | ------------------------------------------ | ------- | ---------------------------- | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation )       | No      | const                        | No         | -          | -                 |

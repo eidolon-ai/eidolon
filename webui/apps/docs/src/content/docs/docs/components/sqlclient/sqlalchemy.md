@@ -2,12 +2,6 @@
 title: SqlAlchemy
 description: "Description of SqlAlchemy component"
 ---
-
-**Description:** A client for executing SQL queries using SQLAlchemy.
-See https://docs.sqlalchemy.org/ for connection configuration details.
-
-Performs cursory checks when `select_only` is set to True. Additionally ensure user is restricted to allowed permissions.
-
 | Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation )       | No      | const   | No         | -          | -                 |

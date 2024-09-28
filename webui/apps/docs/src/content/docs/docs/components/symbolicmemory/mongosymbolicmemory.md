@@ -2,7 +2,6 @@
 title: MongoSymbolicMemory
 description: "Description of MongoSymbolicMemory component"
 ---
-
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
 | - [implementation](#implementation )                   | No      | const  | No         | -          | -                       |

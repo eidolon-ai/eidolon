@@ -2,7 +2,6 @@
 title: Retriever
 description: "Description of Retriever component"
 ---
-
 | Property                                         | Pattern | Type                           | Deprecated | Definition | Title/Description |
 | ------------------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation )             | No      | const                          | No         | -          | -                 |

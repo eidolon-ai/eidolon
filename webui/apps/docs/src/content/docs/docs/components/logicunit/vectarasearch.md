@@ -2,7 +2,6 @@
 title: VectaraSearch
 description: "Description of VectaraSearch component"
 ---
-
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
