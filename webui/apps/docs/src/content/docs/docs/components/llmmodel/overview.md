@@ -2,7 +2,7 @@
 title: LLMModel Overview
 description: "None"
 ---
-# Overview of the LLMModel component
+Overview of the LLMModel component
 ## Builtins
 * [claude-3-5-sonnet-20240620](/docs/components/llmmodel/claude-3-5-sonnet-20240620/)
 * [claude-3-haiku-20240307](/docs/components/llmmodel/claude-3-haiku-20240307/)

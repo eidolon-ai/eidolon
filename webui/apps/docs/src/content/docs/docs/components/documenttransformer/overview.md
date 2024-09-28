@@ -2,7 +2,7 @@
 title: DocumentTransformer Overview
 description: "None"
 ---
-# Overview of the DocumentTransformer component
+Overview of the DocumentTransformer component
 ## Builtins
 * [AutoTransformer](/docs/components/documenttransformer/autotransformer/)
 * [CharacterTextSplitter](/docs/components/documenttransformer/charactertextsplitter/)

@@ -188,7 +188,7 @@ def write_md(read_loc,
             f"title: {group_name} Overview",
             f'description: "{group.get("description")}"',
             "---",
-            f"# Overview of the {group_name} component",
+            f"Overview of the {group_name} component",
             "## Builtins"
         ]
         components = []

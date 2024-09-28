@@ -2,7 +2,7 @@
 title: DocumentLoader Overview
 description: "None"
 ---
-# Overview of the DocumentLoader component
+Overview of the DocumentLoader component
 ## Builtins
 * [AzureLoader](/docs/components/documentloader/azureloader/)
 * [FilesystemLoader](/docs/components/documentloader/filesystemloader/)
