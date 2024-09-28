@@ -136,9 +136,6 @@ def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro
         components_file.write(''.join(lines[finish_index:]))
 
 
-cut_before_str = "| Property  "
-
-
 def write_md(read_loc,
              write_loc=EIDOLON / "webui" / "apps" / "docs" / "src" / "content" / "docs" / "docs" / "components"):
     shutil.rmtree(write_loc, ignore_errors=True)
@@ -148,8 +145,7 @@ def write_md(read_loc,
         with open(read_loc / group / "overview.json", 'r') as json_file:
             groups.append(json.load(json_file))
     group_names = [g['reference_pointer']['type'] for g in groups]
-    # for group in groups:
-    for group in (g for g in groups if g['title'] == "Agent"):
+    for group in groups:
         group_name = group['reference_pointer']['type']
         title = f"{group_name} Overview"
         content = ["## Builtins"]
