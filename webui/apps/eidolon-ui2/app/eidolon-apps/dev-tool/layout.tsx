@@ -1,15 +1,28 @@
-import {ProcessWithListLayout} from "../../../components/ProcessWithListLayout"
+'use client'
+
 import {getApp} from "@/utils/eidolon-apps";
+import {EidolonApp} from "@eidolon-ai/components/client";
+import {useEffect, useState} from "react";
+import {MainAppLayout} from "@/layout/main-app-layout.tsx";
 
 interface DevToolLayoutProps {
   children: JSX.Element
 }
 
 export default function DevToolLayout({children}: DevToolLayoutProps) {
-  const app = getApp('dev-tool')!
+  const [app, setApp] = useState<EidolonApp | undefined>(undefined)
+
+  useEffect(() => {
+    getApp('dev-tool').then(setApp)
+  }, []);
+
   return (
-    <ProcessWithListLayout app={app}>
-      {children}
-    </ProcessWithListLayout>
+    <>
+      {app && (
+        <MainAppLayout app_name={'dev-tool'}>
+            {children}
+        </MainAppLayout>
+      )}
+    </>
   )
 }

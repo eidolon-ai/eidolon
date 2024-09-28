@@ -4,7 +4,7 @@
   "workspaces": [
     "packages/*"
   ],
-  "version": "1.0.64",
+  "version": "1.0.65",
   "scripts": {
     "build": "turbo build",
     "watch": "turbo watch",
@@ -22,13 +22,13 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "prettier": "^3.3.3",
-    "turbo": "^2.0.7"
+    "turbo": "^2.1.2"
   },
   "packageManager": "pnpm@9.1.4",
   "engines": {
     "node": ">=18"
   },
   "eidolon": {
-    "last-update-hash": "790d475897675ce8de8f4eedaf427cae60ca8532"
+    "last-update-hash": "27753a3c068956c17d0c7bb3f39c26ded780ede2"
   }
 }

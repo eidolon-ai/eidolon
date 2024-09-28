@@ -79,6 +79,6 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
             extra={
                 "title": action.title,
                 "sub_title": action.sub_title,
-                "agent_call": True,
+                "agent_call": False,
             },
         )

@@ -1,17 +1,13 @@
-import {NextPage} from "next";
-import {Box, Typography} from "@mui/material";
+import React from 'react';
+import { NextPage } from "next";
 
 const DevTools: NextPage = () => {
   return (
-    <Box component="main" sx={{
-      flexGrow: 1, p: 3, alignItems: "center", height: "100%", display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-    }}>
-      <Typography paragraph variant={"h3"}>
+    <main className="flex-grow p-6 flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-3xl font-bold text-center">
         Eidolon Kubernetes Controller
-      </Typography>
-    </Box>
+      </h1>
+    </main>
   );
 }
 

@@ -3,7 +3,6 @@ kind: Agent
 metadata:
   name: qa
 spec:
-  implementation: GenericAgent
   description: "This is a qa agent responsible for making sure the hello_agent is functioning properly"
   agent_refs: ["hello_world"]
   system_prompt: >-
@@ -12,4 +11,6 @@ spec:
     determine if they are operating in a justifiable manner. When you have performed 
     all your tests, respond with "Error: {description}" if there is an issue, otherwise 
     return "Success: [{test1 description, {test2 description}, ...}]"
-  user_prompt: "Test the hello_world agent"
+  actions:
+    - name: question
+      user_prompt: "Test the hello_world agent"

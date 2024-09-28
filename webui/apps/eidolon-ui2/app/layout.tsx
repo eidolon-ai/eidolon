@@ -1,43 +1,50 @@
 import {FunctionComponent, PropsWithChildren} from 'react';
-import {Metadata, Viewport} from 'next';
-import {SimplePaletteColorOptions} from '@mui/material';
+import {Metadata} from 'next';
 import {AppStoreProvider} from '@/store';
-import defaultTheme, {ThemeProvider} from '@/theme';
 import CurrentLayout from '@/layout';
 import './globals.css';
 import {SessionProvider} from "next-auth/react";
 import {EidolonProvider} from "@eidolon-ai/components/client";
 import {PHProvider} from "@/PosthogProvider.tsx";
 import "@eidolon-ai/components/client-css";
+import {Merriweather, PT_Serif, Roboto} from 'next/font/google'
 
-const THEME_COLOR = (defaultTheme.palette?.primary as SimplePaletteColorOptions)?.main || '#FFFFFF';
+const font = Roboto({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+})
 
+const ptSerif = PT_Serif({
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-pt-serif',
+  display: 'swap',
+})
 export const metadata: Metadata = {
   title: 'Eidolon',
   description: 'Eidolon',
   // TODO: Add Open Graph metadata
 };
 
-export const viewport: Viewport = {
-  themeColor: THEME_COLOR,
-}
-
 const RootLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
   return (
-    <html lang="en">
+    <html lang="en" className={`${font.className} ${ptSerif.className}`}>
     <PHProvider>
       <body>
-      <SessionProvider>
-        <AppStoreProvider>
-          <EidolonProvider>
-            <ThemeProvider>
+      <div className={"titanium-background"}/>
+      <div className={"titanium-content font-sans"}>
+        <SessionProvider>
+          <AppStoreProvider>
+            <EidolonProvider>
               <CurrentLayout>
                 {children}
               </CurrentLayout>
-            </ThemeProvider>
-          </EidolonProvider>
-        </AppStoreProvider>
-      </SessionProvider>
+            </EidolonProvider>
+          </AppStoreProvider>
+        </SessionProvider>
+      </div>
       </body>
     </PHProvider>
     </html>
