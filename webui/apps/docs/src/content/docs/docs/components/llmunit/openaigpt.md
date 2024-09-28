@@ -12,6 +12,7 @@ description: "Description of OpenAIGPT component"
 | - [max_tokens](#max_tokens )                             | No      | integer                            | No         | -                                                | Max Tokens                                     |
 | - [supports_system_messages](#supports_system_messages ) | No      | boolean                            | No         | -                                                | Supports System Messages                       |
 | - [can_stream](#can_stream )                             | No      | boolean                            | No         | -                                                | Can Stream                                     |
+| - [client_args](#client_args )                           | No      | object                             | No         | -                                                | Client Args                                    |
 | - [connection_handler](#connection_handler )             | No      | Reference[OpenAIConnectionHandler] | No         | In [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) | Overview of OpenAIConnectionHandler components |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -86,14 +87,25 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="connection_handler"></a>8. Property `connection_handler`
+## <a name="client_args"></a>8. Property `client_args`
 
-|                |                                                 |
-| -------------- | ----------------------------------------------- |
-| **Type**       | `Reference[OpenAIConnectionHandler]`            |
-| **Required**   | No                                              |
-| **Default**    | `{"implementation": "OpenAIConnectionHandler"}` |
-| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)   |
+**Title:** Client Args
+
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Default**               | `{}`                                                                      |
+
+## <a name="connection_handler"></a>9. Property `connection_handler`
+
+|                |                                               |
+| -------------- | --------------------------------------------- |
+| **Type**       | `Reference[OpenAIConnectionHandler]`          |
+| **Required**   | No                                            |
+| **Default**    | `null`                                        |
+| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) |
 
 **Description:** Overview of OpenAIConnectionHandler components
 
