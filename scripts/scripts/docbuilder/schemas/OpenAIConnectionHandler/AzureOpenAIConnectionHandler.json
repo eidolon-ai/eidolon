@@ -8,7 +8,20 @@
     "azure_ad_token_provider": {
       "anyOf": [
         {
-          "$ref": "#/$defs/Reference"
+          "additionalProperties": true,
+          "properties": {
+            "implementation": {
+              "default": "builtins.object",
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "reference_pointer": {
+            "default_impl": "builtins.object",
+            "type": "object"
+          },
+          "title": "object Reference",
+          "type": "object"
         },
         {
           "type": "null"

@@ -18,7 +18,7 @@ def _get_default_token_provider():
 
 
 class AzureFileMemorySpec(BaseModel):
-    azure_ad_token_provider: Optional[Reference] = Field(default_factory=_get_default_token_provider)
+    azure_ad_token_provider: Optional[Reference[object]] = Field(default_factory=_get_default_token_provider)
     account_url: str = Field(
         description="The URL of the Azure storage account of the form https://<OAUTH_STORAGE_ACCOUNT_NAME>.blob.core.windows.net."
     )

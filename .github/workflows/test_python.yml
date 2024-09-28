@@ -46,6 +46,31 @@ jobs:
         with:
           commit_message: "updating lock"
 
+  docs-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install -E docbuilder
+        working-directory: scripts
+      - run: poetry run python scripts/docbuilder/docbuilder.py
+        working-directory: scripts
+      - name: Checking if lock files are out of date, (run "poetry run python scripts/docbuilder/docbuilder.py" to fix)
+        run: |
+          git status
+          git diff --quiet
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: always()
+        with:
+          commit_message: "Updating component docs"
+
   sdk-test:
     runs-on: ubuntu-latest
     services:

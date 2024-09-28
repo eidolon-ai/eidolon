@@ -33,6 +33,8 @@ class Resource(BaseModel):
 
 
 def load_resources(paths: Iterable[str | Path]):
+    if not hasattr(paths, "__iter__"):
+        paths = [paths]
     for path in paths:
         path = str(path)
         logger.debug(f"Loading resources from {os.path.abspath(path)}")
