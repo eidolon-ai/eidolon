@@ -47,6 +47,9 @@
     "name": "NLTKTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "NLTKTextSplitter",
   "type": "object"
 }

@@ -52,6 +52,9 @@
     "name": "SqlAgent",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "SqlAgent",
   "type": "object"
 }

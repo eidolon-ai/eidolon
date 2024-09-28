@@ -11,6 +11,9 @@
     "name": "RawMemoryUnit",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "RawMemoryUnit",
   "type": "object"
 }

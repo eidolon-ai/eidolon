@@ -1,48 +1,33 @@
 ---
 title: RetrieverAgent
-description: "Description of RetrieverAgent component"
+description: Description of the RetrieverAgent component
 ---
 
-# RetrieverAgent
+| Property                                         | Pattern | Type                           | Deprecated | Definition | Title/Description                           |
+| ------------------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ------------------------------------------- |
+| + [implementation](#implementation )             | No      | const                          | No         | -          | -                                           |
+| - [max_num_results](#max_num_results )           | No      | integer                        | No         | -          | Max Num Results                             |
+| - [question_transformer](#question_transformer ) | No      | [Reference[QuestionTransformer]](/docs/components/questiontransformer/overview) | No         | -          | -                                           |
+| - [document_retriever](#document_retriever )     | No      | [Reference[DocumentRetriever]](/docs/components/documentretriever/overview)   | No         | -          | -                                           |
+| - [document_reranker](#document_reranker )       | No      | [Reference[DocumentReranker]](/docs/components/documentreranker/overview)    | No         | -          | -                                           |
+| - [result_summarizer](#result_summarizer )       | No      | [Reference[ResultSummarizer]](/docs/components/resultsummarizer/overview)    | No         | -          | -                                           |
+| + [name](#name )                                 | No      | string                         | No         | -          | Name                                        |
+| + [description](#description )                   | No      | string                         | No         | -          | Description                                 |
+| - [loader_root_location](#loader_root_location ) | No      | string                         | No         | -          | Loader Root Location                        |
+| - [loader_pattern](#loader_pattern )             | No      | Combination                    | No         | -          | Loader Pattern                              |
+| - [document_manager](#document_manager )         | No      | [Reference[DocumentManager]](/docs/components/documentmanager/overview)     | No         | -          | -                                           |
+| - [apu](#apu )                                   | No      | [Reference[APU]](/docs/components/apu/overview)                 | No         | -          | The APU to use for question transformation. |
 
-- [1. [Optional] Property implementation](#implementation)
-- [2. [Optional] Property max_num_results](#max_num_results)
-- [3. [Optional] Property question_transformer](#question_transformer)
-- [4. [Optional] Property document_retriever](#document_retriever)
-- [5. [Optional] Property document_reranker](#document_reranker)
-- [6. [Optional] Property result_summarizer](#result_summarizer)
-- [7. [Required] Property name](#name)
-- [8. [Required] Property description](#description)
-- [9. [Optional] Property loader_root_location](#loader_root_location)
-- [10. [Optional] Property loader_pattern](#loader_pattern)
-  - [10.1. Property `item 0`](#loader_pattern_anyOf_i0)
-  - [10.2. Property `item 1`](#loader_pattern_anyOf_i1)
-- [11. [Optional] Property document_manager](#document_manager)
-- [12. [Optional] Property apu](#apu)
-
-<details>
-<summary>
-<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
-
-</summary>
-<blockquote>
+## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 Specific value: `"RetrieverAgent"`
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="max_num_results"></a>2. [Optional] Property max_num_results</strong>  
-
-</summary>
-<blockquote>
+## <a name="max_num_results"></a>2. Property `max_num_results`
 
 **Title:** Max Num Results
 
@@ -54,15 +39,7 @@ Specific value: `"RetrieverAgent"`
 
 **Description:** The maximum number of results to consider.
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="question_transformer"></a>3. [Optional] Property question_transformer</strong>  
-
-</summary>
-<blockquote>
+## <a name="question_transformer"></a>3. Property `question_transformer`
 
 |              |                                             |
 | ------------ | ------------------------------------------- |
@@ -70,15 +47,7 @@ Specific value: `"RetrieverAgent"`
 | **Required** | No                                          |
 | **Default**  | `{"implementation": "QuestionTransformer"}` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="document_retriever"></a>4. [Optional] Property document_retriever</strong>  
-
-</summary>
-<blockquote>
+## <a name="document_retriever"></a>4. Property `document_retriever`
 
 |              |                                           |
 | ------------ | ----------------------------------------- |
@@ -86,15 +55,7 @@ Specific value: `"RetrieverAgent"`
 | **Required** | No                                        |
 | **Default**  | `{"implementation": "DocumentRetriever"}` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="document_reranker"></a>5. [Optional] Property document_reranker</strong>  
-
-</summary>
-<blockquote>
+## <a name="document_reranker"></a>5. Property `document_reranker`
 
 |              |                                          |
 | ------------ | ---------------------------------------- |
@@ -102,15 +63,7 @@ Specific value: `"RetrieverAgent"`
 | **Required** | No                                       |
 | **Default**  | `{"implementation": "DocumentReranker"}` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="result_summarizer"></a>6. [Optional] Property result_summarizer</strong>  
-
-</summary>
-<blockquote>
+## <a name="result_summarizer"></a>6. Property `result_summarizer`
 
 |              |                                          |
 | ------------ | ---------------------------------------- |
@@ -118,15 +71,7 @@ Specific value: `"RetrieverAgent"`
 | **Required** | No                                       |
 | **Default**  | `{"implementation": "ResultSummarizer"}` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="name"></a>7. [Required] Property name</strong>  
-
-</summary>
-<blockquote>
+## <a name="name"></a>7. Property `name`
 
 **Title:** Name
 
@@ -137,15 +82,7 @@ Specific value: `"RetrieverAgent"`
 
 **Description:** The name of the document store to use.
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="description"></a>8. [Required] Property description</strong>  
-
-</summary>
-<blockquote>
+## <a name="description"></a>8. Property `description`
 
 **Title:** Description
 
@@ -156,15 +93,7 @@ Specific value: `"RetrieverAgent"`
 
 **Description:** A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="loader_root_location"></a>9. [Optional] Property loader_root_location</strong>  
-
-</summary>
-<blockquote>
+## <a name="loader_root_location"></a>9. Property `loader_root_location`
 
 **Title:** Loader Root Location
 
@@ -176,15 +105,7 @@ Specific value: `"RetrieverAgent"`
 
 **Description:** A URL specifying the root location of the loader.
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="loader_pattern"></a>10. [Optional] Property loader_pattern</strong>  
-
-</summary>
-<blockquote>
+## <a name="loader_pattern"></a>10. Property `loader_pattern`
 
 **Title:** Loader Pattern
 
@@ -197,14 +118,10 @@ Specific value: `"RetrieverAgent"`
 
 **Description:** The search pattern to use when loading files.
 
-<blockquote>
-
 | Any of(Option)                     |
 | ---------------------------------- |
 | [item 0](#loader_pattern_anyOf_i0) |
 | [item 1](#loader_pattern_anyOf_i1) |
-
-<blockquote>
 
 ### <a name="loader_pattern_anyOf_i0"></a>10.1. Property `item 0`
 
@@ -213,9 +130,6 @@ Specific value: `"RetrieverAgent"`
 | **Type**     | `string` |
 | **Required** | No       |
 
-</blockquote>
-<blockquote>
-
 ### <a name="loader_pattern_anyOf_i1"></a>10.2. Property `item 1`
 
 |              |        |
@@ -223,19 +137,7 @@ Specific value: `"RetrieverAgent"`
 | **Type**     | `null` |
 | **Required** | No     |
 
-</blockquote>
-
-</blockquote>
-
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="document_manager"></a>11. [Optional] Property document_manager</strong>  
-
-</summary>
-<blockquote>
+## <a name="document_manager"></a>11. Property `document_manager`
 
 |              |                              |
 | ------------ | ---------------------------- |
@@ -243,15 +145,7 @@ Specific value: `"RetrieverAgent"`
 | **Required** | No                           |
 | **Default**  | `null`                       |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="apu"></a>12. [Optional] Property apu</strong>  
-
-</summary>
-<blockquote>
+## <a name="apu"></a>12. Property `apu`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -260,8 +154,5 @@ Specific value: `"RetrieverAgent"`
 | **Default**  | `{"implementation": "APU"}` |
 
 **Description:** The APU to use for question transformation.
-
-</blockquote>
-</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

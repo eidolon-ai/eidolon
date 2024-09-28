@@ -35,7 +35,8 @@
     "overrides": {}
   },
   "required": [
-    "name"
+    "name",
+    "implementation"
   ],
   "title": "DocumentManager",
   "type": "object"

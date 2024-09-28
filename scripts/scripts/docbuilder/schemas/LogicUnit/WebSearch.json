@@ -64,6 +64,9 @@
     "name": "WebSearch",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "WebSearchConfig",
   "type": "object"
 }

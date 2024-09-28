@@ -86,7 +86,8 @@
   },
   "required": [
     "name",
-    "description"
+    "description",
+    "implementation"
   ],
   "title": "RetrieverAgent",
   "type": "object"

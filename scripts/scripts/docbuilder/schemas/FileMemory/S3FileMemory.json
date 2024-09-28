@@ -75,7 +75,8 @@
     "overrides": {}
   },
   "required": [
-    "bucket"
+    "bucket",
+    "implementation"
   ],
   "title": "S3FileMemory",
   "type": "object"

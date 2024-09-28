@@ -148,6 +148,7 @@ def write_md(read_loc,
         with open(read_loc / group / "overview.json", 'r') as json_file:
             groups.append(json.load(json_file))
     group_names = [g['reference_pointer']['type'] for g in groups]
+    # for group in groups:
     for group in (g for g in groups if g['title'] == "Agent"):
         group_name = group['reference_pointer']['type']
         title = f"{group_name} Overview"
@@ -196,7 +197,7 @@ def write_astro_md_file(content, description, title, write_file_loc, group_names
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
     # todo, quick hack while debugging template. remove before merging
-    if not content.startswith("---"):
+    if not content.lstrip().startswith("---"):
         content = template("template_component_md", title=title, description=description, content=content)
     with open(write_file_loc, 'w') as md_file:
         md_file.write(content)

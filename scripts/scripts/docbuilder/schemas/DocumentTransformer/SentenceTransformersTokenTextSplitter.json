@@ -53,6 +53,9 @@
     "name": "SentenceTransformersTokenTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "SentenceTransformersTokenTextSplitter",
   "type": "object"
 }

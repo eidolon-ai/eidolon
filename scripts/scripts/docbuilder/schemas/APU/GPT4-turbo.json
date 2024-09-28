@@ -105,6 +105,9 @@
       }
     }
   },
+  "required": [
+    "implementation"
+  ],
   "title": "GPT4-turbo",
   "type": "object"
 }

@@ -11,6 +11,9 @@
     "name": "SimilarityMemoryRetriever",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "SimilarityMemoryRetriever",
   "type": "object"
 }

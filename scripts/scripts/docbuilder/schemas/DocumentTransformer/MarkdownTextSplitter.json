@@ -57,6 +57,9 @@
     "name": "MarkdownTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "MarkdownTextSplitter",
   "type": "object"
 }

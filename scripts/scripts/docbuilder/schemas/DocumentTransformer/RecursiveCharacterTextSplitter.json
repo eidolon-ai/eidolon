@@ -57,6 +57,9 @@
     "name": "RecursiveCharacterTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "RecursiveCharacterTextSplitter",
   "type": "object"
 }

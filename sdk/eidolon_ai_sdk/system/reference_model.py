@@ -147,7 +147,6 @@ class Reference(BaseModel):
                         obj_ref = dict(
                             type="object",
                             properties=dict(implementation=dict(type="string")),
-                            required=["implementation"],
                             additionalProperties=True,
                         )
                     desired_ref_schema = handler.resolve_ref_schema(obj_ref)
@@ -159,6 +158,7 @@ class Reference(BaseModel):
                     desired_ref_schema.pop("$defs", None)
                     if not hasattr(ref_clz, "model_config") or "extra" not in ref_clz.model_config:  # default to no extra props
                         desired_ref_schema["additionalProperties"] = False
+                    desired_ref_schema.setdefault("required", []).append("implementation")
                     ref_schema.update(desired_ref_schema)
                     for key, value in overrides.items():
                         ref_schema['properties'].setdefault(key, {})['default'] = value

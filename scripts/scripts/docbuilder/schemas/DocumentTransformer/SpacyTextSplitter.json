@@ -53,6 +53,9 @@
     "name": "SpacyTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "SpacyTextSplitter",
   "type": "object"
 }

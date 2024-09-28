@@ -51,6 +51,9 @@
     "name": "OpenAiSpeech",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "OpenAiSpeech",
   "type": "object"
 }

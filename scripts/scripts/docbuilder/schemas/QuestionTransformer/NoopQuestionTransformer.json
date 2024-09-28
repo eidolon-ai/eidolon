@@ -11,6 +11,9 @@
     "name": "NoopQuestionTransformer",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "NoopQuestionTransformer",
   "type": "object"
 }

@@ -17,6 +17,9 @@
     "name": "DocumentProcessor",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "DocumentProcessor",
   "type": "object"
 }

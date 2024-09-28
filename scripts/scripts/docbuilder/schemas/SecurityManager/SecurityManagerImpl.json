@@ -34,6 +34,9 @@
     "name": "SecurityManagerImpl",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "SecurityManagerImpl",
   "type": "object"
 }

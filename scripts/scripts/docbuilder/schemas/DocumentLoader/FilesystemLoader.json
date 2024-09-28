@@ -21,7 +21,8 @@
     "overrides": {}
   },
   "required": [
-    "root_dir"
+    "root_dir",
+    "implementation"
   ],
   "title": "FilesystemLoader",
   "type": "object"

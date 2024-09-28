@@ -1,9 +1,9 @@
-{# 
+{#
     content is a template and not a macro in md
         because macro parameters are not through context
-        when rendering a template from the macro and it caused
+        when rendering a template from the macro  and it caused
         serious problems when using recursive calls
-    mandatory context parameters: 
+    mandatory context parameters:
     schema
 #}
 {# context parameters default values #}
@@ -24,13 +24,23 @@
 {% include "section_description.md" %}
 {% endif %}
 
+{# Display examples #}
+{% set examples = schema.examples %}
+{% if examples %}
+    {% include "section_examples.md" %}
+{% endif %}
+
 {% if schema.should_be_a_link(config) %}
 {% elif schema.refers_to -%}
     {%- with schema=schema.refers_to_merged, skip_headers=True, depth=depth -%}
         {% include "content.md" %}
     {% endwith %}
 {% else %}
-   
+    {# Properties, pattern properties, additional properties #}
+    {% if schema.is_object %}
+    {{- schema | md_properties_table | md_generate_table -}}
+    {% endif %}
+
     {# Combining: allOf, anyOf, oneOf, not #}
     {% if schema.kw_all_of %}
         {% with operator="allOf", title="All of(Requirement)", current_node=schema.kw_all_of, skip_required=True %}
@@ -77,16 +87,8 @@
         {% include "section_array.md" %}
     {% endif %}
 
-    {# Display examples #}
-    {% set examples = schema.examples %}
-    {% if examples %}
-        {% include "section_examples.md" %}
-    {% endif %}
-
     {# details of Properties, pattern properties, additional properties #}
     {% if schema.is_object %}
-    {% with skip_required=False %}
-        {% include "section_properties_details.md" %}
-    {% endwith %}
+    {% include "section_properties_details.md" %}
     {% endif %}
 {% endif %}

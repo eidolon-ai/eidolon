@@ -36,6 +36,9 @@
     "name": "AzureOpenAIConnectionHandler",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "AzureOpenAIConnectionHandler",
   "type": "object",
   "$defs": {

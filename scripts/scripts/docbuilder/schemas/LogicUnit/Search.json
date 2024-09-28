@@ -55,6 +55,9 @@
     "name": "Search",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "SearchSpec",
   "type": "object"
 }

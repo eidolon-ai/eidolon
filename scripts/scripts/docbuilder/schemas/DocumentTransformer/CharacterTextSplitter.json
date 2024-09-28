@@ -47,6 +47,9 @@
     "name": "CharacterTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "CharacterTextSplitter",
   "type": "object"
 }

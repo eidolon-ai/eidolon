@@ -57,6 +57,9 @@
     "name": "PythonCodeTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "PythonCodeTextSplitter",
   "type": "object"
 }

@@ -51,6 +51,9 @@
     "name": "AudioUnit",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "AudioUnit",
   "type": "object"
 }

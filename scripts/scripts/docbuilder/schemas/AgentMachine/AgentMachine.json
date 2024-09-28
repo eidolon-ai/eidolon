@@ -57,6 +57,9 @@
     "name": "AgentMachine",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "AgentMachine",
   "type": "object"
 }

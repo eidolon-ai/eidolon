@@ -23,6 +23,9 @@
     "name": "MongoSymbolicMemory",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "MongoSymbolicMemory",
   "type": "object"
 }

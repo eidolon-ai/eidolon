@@ -20,6 +20,9 @@
     "name": "OpenAIEmbedding",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "OpenAIEmbedding",
   "type": "object"
 }

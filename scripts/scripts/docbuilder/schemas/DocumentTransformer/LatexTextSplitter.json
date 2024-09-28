@@ -57,6 +57,9 @@
     "name": "LatexTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "LatexTextSplitter",
   "type": "object"
 }

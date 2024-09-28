@@ -44,7 +44,8 @@
   },
   "required": [
     "account_url",
-    "container"
+    "container",
+    "implementation"
   ],
   "title": "AzureLoader",
   "type": "object",

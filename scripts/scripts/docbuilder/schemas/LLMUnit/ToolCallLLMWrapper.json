@@ -30,6 +30,9 @@
     "name": "ToolCallLLMWrapper",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "ToolCallLLMWrapper",
   "type": "object"
 }

@@ -94,6 +94,9 @@
     "name": "ConversationalAPU",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "ConversationalAPU",
   "type": "object"
 }

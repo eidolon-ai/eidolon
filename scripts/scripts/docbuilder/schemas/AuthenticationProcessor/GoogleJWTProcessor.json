@@ -29,6 +29,9 @@
     "name": "GoogleJWTProcessor",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "GoogleJWTProcessor",
   "type": "object"
 }

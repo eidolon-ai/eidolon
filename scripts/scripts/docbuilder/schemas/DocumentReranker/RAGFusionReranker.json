@@ -17,6 +17,9 @@
     "name": "RAGFusionReranker",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "RAGFusionReranker",
   "type": "object"
 }

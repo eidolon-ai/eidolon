@@ -49,6 +49,9 @@
     "name": "OpenAIImageUnit",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "OpenAIImageUnit",
   "type": "object"
 }

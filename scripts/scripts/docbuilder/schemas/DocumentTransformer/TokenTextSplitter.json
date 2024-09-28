@@ -94,6 +94,9 @@
     "name": "TokenTextSplitter",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "TokenTextSplitter",
   "type": "object"
 }

@@ -29,6 +29,9 @@
     "name": "Retriever",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "Retriever",
   "type": "object"
 }

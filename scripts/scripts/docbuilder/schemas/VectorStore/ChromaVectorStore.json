@@ -23,6 +23,9 @@
     "name": "ChromaVectorStore",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "ChromaVectorStore",
   "type": "object"
 }

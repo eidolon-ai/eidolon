@@ -27,7 +27,8 @@
     "overrides": {}
   },
   "required": [
-    "user_scoped"
+    "user_scoped",
+    "implementation"
   ],
   "title": "LongTermMemoryUnit",
   "type": "object"

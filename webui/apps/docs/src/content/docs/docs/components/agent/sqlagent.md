@@ -1,44 +1,31 @@
 ---
 title: SqlAgent
-description: "Description of SqlAgent component"
+description: Description of the SqlAgent component
 ---
 
-# SqlAgent
+| Property                                         | Pattern | Type                 | Deprecated | Definition | Title/Description    |
+| ------------------------------------------------ | ------- | -------------------- | ---------- | ---------- | -------------------- |
+| + [implementation](#implementation )             | No      | const                | No         | -          | -                    |
+| - [client](#client )                             | No      | [Reference[SqlClient]](/docs/components/sqlclient/overview) | No         | -          | -                    |
+| - [apu](#apu )                                   | No      | [Reference[APU]](/docs/components/apu/overview)       | No         | -          | -                    |
+| - [description](#description )                   | No      | string               | No         | -          | Description          |
+| - [system_prompt](#system_prompt )               | No      | string               | No         | -          | System Prompt        |
+| - [user_prompt](#user_prompt )                   | No      | string               | No         | -          | User Prompt          |
+| - [clarification_prompt](#clarification_prompt ) | No      | string               | No         | -          | Clarification Prompt |
+| - [response_prompt](#response_prompt )           | No      | string               | No         | -          | Response Prompt      |
+| - [error_prompt](#error_prompt )                 | No      | string               | No         | -          | Error Prompt         |
+| - [num_retries](#num_retries )                   | No      | integer              | No         | -          | Num Retries          |
 
-- [1. [Optional] Property implementation](#implementation)
-- [2. [Optional] Property client](#client)
-- [3. [Optional] Property apu](#apu)
-- [4. [Optional] Property description](#description)
-- [5. [Optional] Property system_prompt](#system_prompt)
-- [6. [Optional] Property user_prompt](#user_prompt)
-- [7. [Optional] Property clarification_prompt](#clarification_prompt)
-- [8. [Optional] Property response_prompt](#response_prompt)
-- [9. [Optional] Property error_prompt](#error_prompt)
-- [10. [Optional] Property num_retries](#num_retries)
-
-<details>
-<summary>
-<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
-
-</summary>
-<blockquote>
+## <a name="implementation"></a>1. Property `implementation`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
+| **Required** | Yes     |
 
 Specific value: `"SqlAgent"`
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="client"></a>2. [Optional] Property client</strong>  
-
-</summary>
-<blockquote>
+## <a name="client"></a>2. Property `client`
 
 |              |                                   |
 | ------------ | --------------------------------- |
@@ -46,15 +33,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                                |
 | **Default**  | `{"implementation": "SqlClient"}` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="apu"></a>3. [Optional] Property apu</strong>  
-
-</summary>
-<blockquote>
+## <a name="apu"></a>3. Property `apu`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -62,15 +41,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                          |
 | **Default**  | `{"implementation": "APU"}` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="description"></a>4. [Optional] Property description</strong>  
-
-</summary>
-<blockquote>
+## <a name="description"></a>4. Property `description`
 
 **Title:** Description
 
@@ -80,15 +51,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                                                                                           |
 | **Default**  | `"An agent for interacting with data. Can respond to queries provided in natural language."` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="system_prompt"></a>5. [Optional] Property system_prompt</strong>  
-
-</summary>
-<blockquote>
+## <a name="system_prompt"></a>5. Property `system_prompt`
 
 **Title:** System Prompt
 
@@ -98,15 +61,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                                                                                                                                                                                                                                                                                                                                                                     |
 | **Default**  | `"\n    You are a helpful assistant that is a sql expert and helps a user query a {{ protocol }} database and analyse the response.\n    \n    Here is the database schema:\n    {{ metadata }}\n    \n    Use your as needed tools to investigate the database with the goal of providing the user with the query that they need.\n    \n    Think carefully.\n    "` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="user_prompt"></a>6. [Optional] Property user_prompt</strong>  
-
-</summary>
-<blockquote>
+## <a name="user_prompt"></a>6. Property `user_prompt`
 
 **Title:** User Prompt
 
@@ -116,15 +71,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                |
 | **Default**  | `"{{ message }}"` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="clarification_prompt"></a>7. [Optional] Property clarification_prompt</strong>  
-
-</summary>
-<blockquote>
+## <a name="clarification_prompt"></a>7. Property `clarification_prompt`
 
 **Title:** Clarification Prompt
 
@@ -134,15 +81,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                                                                                                              |
 | **Default**  | `"What clarifying information do you need? Phrase your response as an explicit question or several questions."` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="response_prompt"></a>8. [Optional] Property response_prompt</strong>  
-
-</summary>
-<blockquote>
+## <a name="response_prompt"></a>8. Property `response_prompt`
 
 **Title:** Response Prompt
 
@@ -152,15 +91,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                                                  |
 | **Default**  | `"What is your response? Be explicit and concise."` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="error_prompt"></a>9. [Optional] Property error_prompt</strong>  
-
-</summary>
-<blockquote>
+## <a name="error_prompt"></a>9. Property `error_prompt`
 
 **Title:** Error Prompt
 
@@ -170,15 +101,7 @@ Specific value: `"SqlAgent"`
 | **Required** | No                                                                     |
 | **Default**  | `"An error occurred executing the query \"{{ query }}\": {{ error }}"` |
 
-</blockquote>
-</details>
-
-<details>
-<summary>
-<strong> <a name="num_retries"></a>10. [Optional] Property num_retries</strong>  
-
-</summary>
-<blockquote>
+## <a name="num_retries"></a>10. Property `num_retries`
 
 **Title:** Num Retries
 
@@ -187,8 +110,5 @@ Specific value: `"SqlAgent"`
 | **Type**     | `integer` |
 | **Required** | No        |
 | **Default**  | `3`       |
-
-</blockquote>
-</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

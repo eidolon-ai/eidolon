@@ -29,6 +29,9 @@
     "name": "AzureJWTProcessor",
     "overrides": {}
   },
+  "required": [
+    "implementation"
+  ],
   "title": "AzureJWTProcessor",
   "type": "object"
 }
