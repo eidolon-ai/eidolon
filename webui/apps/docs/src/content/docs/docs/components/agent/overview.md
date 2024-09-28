@@ -1,6 +1,6 @@
 ---
 title: Agent Overview
-description: "Overview of Agent components"
+description: "None"
 ---
 Overview of the Agent component
 ## Builtins

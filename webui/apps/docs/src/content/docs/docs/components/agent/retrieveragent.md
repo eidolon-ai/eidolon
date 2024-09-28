@@ -1,23 +1,7 @@
 ---
 title: RetrieverAgent
-description: "Description of RetrieverAgent component"
+description: Description of the RetrieverAgent component
 ---
-# RetrieverAgent
-
-- [1. [Optional] Property implementation](#implementation)
-- [2. [Optional] Property max_num_results](#max_num_results)
-- [3. [Optional] Property question_transformer](#question_transformer)
-- [4. [Optional] Property document_retriever](#document_retriever)
-- [5. [Optional] Property document_reranker](#document_reranker)
-- [6. [Optional] Property result_summarizer](#result_summarizer)
-- [7. [Required] Property name](#name)
-- [8. [Required] Property description](#description)
-- [9. [Optional] Property loader_root_location](#loader_root_location)
-- [10. [Optional] Property loader_pattern](#loader_pattern)
-  - [10.1. Property `item 0`](#loader_pattern_anyOf_i0)
-  - [10.2. Property `item 1`](#loader_pattern_anyOf_i1)
-- [11. [Optional] Property document_manager](#document_manager)
-- [12. [Optional] Property apu](#apu)
 
 **Title:** RetrieverAgent
 
@@ -27,12 +11,9 @@ description: "Description of RetrieverAgent component"
 | **Required**              | No                                                      |
 | **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
 
-**Description:** A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.
-The agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.
-
 <details>
 <summary>
-<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+<strong> [Optional] Property implementation</strong>  
 
 </summary>
 <blockquote>
@@ -49,7 +30,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="max_num_results"></a>2. [Optional] Property max_num_results</strong>  
+<strong> [Optional] Property max_num_results</strong>  
 
 </summary>
 <blockquote>
@@ -69,7 +50,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="question_transformer"></a>3. [Optional] Property question_transformer</strong>  
+<strong> [Optional] Property question_transformer</strong>  
 
 </summary>
 <blockquote>
@@ -85,7 +66,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="document_retriever"></a>4. [Optional] Property document_retriever</strong>  
+<strong> [Optional] Property document_retriever</strong>  
 
 </summary>
 <blockquote>
@@ -101,7 +82,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="document_reranker"></a>5. [Optional] Property document_reranker</strong>  
+<strong> [Optional] Property document_reranker</strong>  
 
 </summary>
 <blockquote>
@@ -117,7 +98,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="result_summarizer"></a>6. [Optional] Property result_summarizer</strong>  
+<strong> [Optional] Property result_summarizer</strong>  
 
 </summary>
 <blockquote>
@@ -133,7 +114,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="name"></a>7. [Required] Property name</strong>  
+<strong> [Required] Property name</strong>  
 
 </summary>
 <blockquote>
@@ -152,7 +133,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="description"></a>8. [Required] Property description</strong>  
+<strong> [Required] Property description</strong>  
 
 </summary>
 <blockquote>
@@ -171,7 +152,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="loader_root_location"></a>9. [Optional] Property loader_root_location</strong>  
+<strong> [Optional] Property loader_root_location</strong>  
 
 </summary>
 <blockquote>
@@ -191,7 +172,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="loader_pattern"></a>10. [Optional] Property loader_pattern</strong>  
+<strong> [Optional] Property loader_pattern</strong>  
 
 </summary>
 <blockquote>
@@ -216,7 +197,7 @@ Specific value: `"RetrieverAgent"`
 
 <blockquote>
 
-### <a name="loader_pattern_anyOf_i0"></a>10.1. Property `item 0`
+## <a name="loader_pattern_anyOf_i0"></a>1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
@@ -226,7 +207,7 @@ Specific value: `"RetrieverAgent"`
 </blockquote>
 <blockquote>
 
-### <a name="loader_pattern_anyOf_i1"></a>10.2. Property `item 1`
+## <a name="loader_pattern_anyOf_i1"></a>2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -242,7 +223,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="document_manager"></a>11. [Optional] Property document_manager</strong>  
+<strong> [Optional] Property document_manager</strong>  
 
 </summary>
 <blockquote>
@@ -258,7 +239,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> <a name="apu"></a>12. [Optional] Property apu</strong>  
+<strong> [Optional] Property apu</strong>  
 
 </summary>
 <blockquote>

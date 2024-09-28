@@ -9,11 +9,13 @@ from typing import List
 from jinja2 import Environment, StrictUndefined
 from json_schema_for_humans.generate import generate_from_schema
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
+from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.api_agent import APIAgent
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
+from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.util.class_utils import fqn
 
@@ -23,12 +25,12 @@ EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 def main():
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
 
-    # print("Generating json...")
-    # json_schema = generate_schema()
-    #
-    # print("writing json...")
-    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    # write_json_schema(dist_component_schemas, json_schema)
+    print("Generating json...")
+    json_schema = generate_schema()
+
+    print("writing json...")
+    shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    write_json_schema(dist_component_schemas, json_schema)
 
     print("writing md...")
     write_md(dist_component_schemas)
@@ -37,35 +39,17 @@ def main():
     # update_sitemap()
 
 
+class AgentBuilder(BaseModel):
+    documented_agents: Reference["Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent]
+
+
 def generate_schema():
-    accumulated_schema = {"$defs": {
-        "Agent": {
-            "title": "Agent",
-            "description": "Overview of Agent components",
-            "anyOf": [],
-            "reference_pointer": {
-                "type": "Agent",
-                "default_impl": "SimpleAgent",
-            }
-        }
-    }}
-    for agent in [SimpleAgent, RetrieverAgent, APIAgent, SqlAgent]:
-        schema = agent.model_json_schema()
-        schema['properties']['implementation'] = {
-            "const": agent.__name__,
-        }
-        schema['properties'] = dict(implementation=schema['properties'].pop('implementation'), **schema['properties'])
-        schema['reference_details'] = dict(
-            overrides={},
-            clz=fqn(agent),
-            name=agent.__name__,
-            group="Agent",
-        )
-        accumulated_schema["$defs"].update(schema.pop("$defs", {}))
-        accumulated_schema["$defs"][agent.__name__] = schema
-        accumulated_schema["$defs"]["Agent"]["anyOf"].append({"$ref": f"#/$defs/{agent.__name__}"})
+    accumulated_schema = {"$defs": {}}
+
     machine_schema = MachineResource.model_json_schema()
     accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
+    fake_agent_schema = AgentBuilder.model_json_schema()
+    accumulated_schema["$defs"].update(fake_agent_schema.pop("$defs", {}))
     return accumulated_schema
 
 
@@ -164,7 +148,7 @@ def write_md(read_loc,
         with open(read_loc / group / "overview.json", 'r') as json_file:
             groups.append(json.load(json_file))
     group_names = [g['reference_pointer']['type'] for g in groups]
-    for group in groups:
+    for group in (g for g in groups if g['title'] == "Agent"):
         group_name = group['reference_pointer']['type']
         title = f"{group_name} Overview"
         content = ["## Builtins"]
@@ -211,9 +195,11 @@ def write_astro_md_file(content, description, title, write_file_loc, group_names
 
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
-    md_str = template("template_component_md", title=title, description=description, content=content)
+    # todo, quick hack while debugging template. remove before merging
+    if not content.startswith("---"):
+        content = template("template_component_md", title=title, description=description, content=content)
     with open(write_file_loc, 'w') as md_file:
-        md_file.write(md_str)
+        md_file.write(content)
 
 
 def template(template_file, **kwargs):

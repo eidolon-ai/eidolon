@@ -41,7 +41,7 @@
     }
   ],
   "reference_pointer": {
-    "default_impl": "gpt-4-turbo",
+    "default_impl": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
     "type": "LLMModel"
   },
   "title": "LLMModel"

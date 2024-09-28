@@ -1,4 +1,5 @@
 {
+  "additionalProperties": false,
   "properties": {
     "implementation": {
       "const": "SqlAgent"
@@ -45,13 +46,12 @@
       "type": "integer"
     }
   },
-  "title": "SqlAgent",
-  "type": "object",
-  "additionalProperties": false,
   "reference_details": {
-    "overrides": {},
     "clz": "eidolon_ai_sdk.agent.sql_agent.agent.SqlAgent",
+    "group": "Agent",
     "name": "SqlAgent",
-    "group": "Agent"
-  }
+    "overrides": {}
+  },
+  "title": "SqlAgent",
+  "type": "object"
 }

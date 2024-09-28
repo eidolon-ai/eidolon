@@ -1,5 +1,5 @@
 {
-  "description": "A RetrieverAgent is an agent that will take a query, rewrite it for better similarity vector search, and then perform the vector search on the document store.\nThe agent will dynamically load and embed files, so it is not performant for loading large bodies of files, but performs very well for small to medium-sized document stores (hundreds to thousands of documents) which are updating frequently.",
+  "additionalProperties": false,
   "properties": {
     "implementation": {
       "const": "RetrieverAgent"
@@ -78,17 +78,16 @@
       "description": "The APU to use for question transformation."
     }
   },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent",
+    "group": "Agent",
+    "name": "RetrieverAgent",
+    "overrides": {}
+  },
   "required": [
     "name",
     "description"
   ],
   "title": "RetrieverAgent",
-  "type": "object",
-  "additionalProperties": false,
-  "reference_details": {
-    "overrides": {},
-    "clz": "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent",
-    "name": "RetrieverAgent",
-    "group": "Agent"
-  }
+  "type": "object"
 }
