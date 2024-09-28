@@ -17,7 +17,6 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
-from eidolon_ai_sdk.util.class_utils import fqn
 
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
@@ -35,8 +34,8 @@ def main():
     print("writing md...")
     write_md(dist_component_schemas)
 
-    # print("updating sitemap...")
-    # update_sitemap()
+    print("updating sitemap...")
+    update_sitemap()
 
 
 class AgentBuilder(BaseModel):
@@ -116,6 +115,43 @@ def find_local_refs(schema) -> List[str]:
         return []
 
 
+sitemap_groups = {
+    "Machine": {
+        "collapsed": True,
+        "Symbolic Memory": "SymbolicMemory",
+        "Similarity Memory": "SimilarityMemory",
+        "File Memory": "FileMemory",
+    },
+    "Agents": "Agent",
+    "APUs": "APU",
+    "LLM Providers": "LLMUnit",
+    "Tools": "LogicUnit",
+}
+
+
+def build_sitemap(d: dict, schema_loc: Path):
+    acc = []
+    for k, v in d.items():
+        if isinstance(v, str):
+            component_names = [n.removeprefix(f"../{k}/").removesuffix(".json") for n in os.listdir(schema_loc / v) if n != "overview.json"]
+            component_names.sort()
+            acc.append(dict(
+                label=k,
+                collapsed=True,
+                items=[
+                    dict(label="Overview", link=f"/docs/components/{url_safe(v)}/overview"),
+                    *(dict(label=name, link=f"/docs/components/{url_safe(v)}/{url_safe(name)}") for name in component_names)
+                ]
+            ))
+        else:
+            acc.append(dict(
+                label=k,
+                collapsed=v.pop("collapsed", False),
+                items=build_sitemap(v, schema_loc)
+            ))
+    return acc
+
+
 def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro.config.mjs"):
     with open(astro_config_loc, "r") as astro_config_file:
         lines = astro_config_file.readlines()
@@ -125,11 +161,11 @@ def update_sitemap(astro_config_loc=EIDOLON / "webui" / "apps" / "docs" / "astro
             start_index = i
         if "### End Components ###" in lines[i]:
             finish_index = i
-    args = [dict(name=name, safe_name=url_safe(name), components=[
-        dict(name=c_name, safe_name=url_safe(c_name)) for c_name, _, _ in g.get_components()
-    ]) for name, g in groups.items() if g.document_in_sidebar]
-    templated = template("template_sitemap_mjs", groups=args)
+    assert start_index is not None and finish_index is not None, "Could not find start and end of components in astro.config.mjs"
 
+    sitemap = build_sitemap(sitemap_groups, EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas")
+    sitemap = json.dumps(sitemap, indent=2)
+    templated = "\n".join(" " * 12 + line for line in sitemap.splitlines()) + "\n"
     with open(astro_config_loc, "w") as components_file:
         components_file.write(''.join(lines[:start_index + 1]))
         components_file.write(templated)
