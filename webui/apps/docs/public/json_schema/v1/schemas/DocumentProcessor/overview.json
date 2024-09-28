@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../DocumentProcessor/DocumentProcessor.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "DocumentProcessor",
+    "type": "DocumentProcessor"
+  },
+  "title": "DocumentProcessor"
+}

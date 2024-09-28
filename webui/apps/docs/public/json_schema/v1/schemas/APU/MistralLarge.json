@@ -1,0 +1,114 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "MistralLarge",
+      "title": "Implementation"
+    },
+    "max_num_function_calls": {
+      "default": 10,
+      "description": "The maximum number of function calls to make in a single request.",
+      "title": "Max Num Function Calls",
+      "type": "integer"
+    },
+    "io_unit": {
+      "$ref": "../IOUnit/overview.json"
+    },
+    "memory_unit": {
+      "$ref": "../MemoryUnit/overview.json"
+    },
+    "longterm_memory_unit": {
+      "anyOf": [
+        {
+          "$ref": "../LongTermMemoryUnit/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "llm_unit": {
+      "$ref": "../LLMUnit/overview.json",
+      "default": {
+        "implementation": "MistralGPT",
+        "model": "mistral-large-latest"
+      }
+    },
+    "logic_units": {
+      "default": [],
+      "items": {
+        "$ref": "../LogicUnit/overview.json"
+      },
+      "title": "Logic Units",
+      "type": "array"
+    },
+    "audio_unit": {
+      "anyOf": [
+        {
+          "$ref": "../AudioUnit/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "OpenAiSpeech"
+    },
+    "image_unit": {
+      "anyOf": [
+        {
+          "$ref": "../ImageUnit/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "OpenAIImageUnit"
+    },
+    "record_conversation": {
+      "default": true,
+      "title": "Record Conversation",
+      "type": "boolean"
+    },
+    "allow_tool_errors": {
+      "default": true,
+      "title": "Allow Tool Errors",
+      "type": "boolean"
+    },
+    "document_processor": {
+      "$ref": "../DocumentProcessor/overview.json"
+    },
+    "retriever": {
+      "$ref": "../Retriever/overview.json"
+    },
+    "retriever_apu": {
+      "anyOf": [
+        {
+          "$ref": "../APU/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.conversational_apu.ConversationalAPU",
+    "group": "APU",
+    "name": "MistralLarge",
+    "overrides": {
+      "audio_unit": "OpenAiSpeech",
+      "image_unit": "OpenAIImageUnit",
+      "llm_unit": {
+        "implementation": "MistralGPT",
+        "model": "mistral-large-latest"
+      }
+    }
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "ConversationalAPU",
+  "type": "object"
+}

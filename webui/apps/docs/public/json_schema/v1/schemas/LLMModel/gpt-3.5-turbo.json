@@ -1,0 +1,69 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "gpt-3.5-turbo",
+      "title": "Implementation"
+    },
+    "human_name": {
+      "default": "GPT-3.5 Turbo",
+      "title": "Human Name",
+      "type": "string"
+    },
+    "name": {
+      "default": "gpt-3.5-turbo",
+      "title": "Name",
+      "type": "string"
+    },
+    "input_context_limit": {
+      "default": 16385,
+      "title": "Input Context Limit",
+      "type": "integer"
+    },
+    "output_context_limit": {
+      "default": 4096,
+      "title": "Output Context Limit",
+      "type": "integer"
+    },
+    "supports_tools": {
+      "default": true,
+      "title": "Supports Tools",
+      "type": "boolean"
+    },
+    "supports_image_input": {
+      "default": false,
+      "title": "Supports Image Input",
+      "type": "boolean"
+    },
+    "supports_audio_input": {
+      "default": false,
+      "title": "Supports Audio Input",
+      "type": "boolean"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
+    "group": "LLMModel",
+    "name": "gpt-3.5-turbo",
+    "overrides": {
+      "human_name": "GPT-3.5 Turbo",
+      "input_context_limit": 16385,
+      "name": "gpt-3.5-turbo",
+      "output_context_limit": 4096,
+      "supports_audio_input": false,
+      "supports_image_input": false,
+      "supports_tools": true
+    }
+  },
+  "required": [
+    "human_name",
+    "name",
+    "input_context_limit",
+    "output_context_limit",
+    "supports_tools",
+    "supports_image_input",
+    "supports_audio_input",
+    "implementation"
+  ],
+  "title": "gpt-3.5-turbo",
+  "type": "object"
+}

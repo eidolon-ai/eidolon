@@ -37,6 +37,11 @@ def main():
     print("updating sitemap...")
     update_sitemap()
 
+    print("copying schema to site...")
+    shutil.rmtree(EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1", ignore_errors=True)
+    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas", EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'schemas')
+    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "Resource", EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'resources')
+
 
 class AgentBuilder(BaseModel):
     documented_agents: Reference["Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent]
@@ -63,7 +68,8 @@ def write_json_schema(dist_component_schemas, schema):
             # relative_write_locs(copied, "../" + str(write_loc.parent) + "/")
 
             if local_refs:
-                copied["$defs"] = {ref.removeprefix("#/$defs/"): defs[ref.removeprefix("#/$defs/")] for ref in local_refs}
+                copied["$defs"] = {ref.removeprefix("#/$defs/"): defs[ref.removeprefix("#/$defs/")] for ref in
+                                   local_refs}
             os.makedirs((dist_component_schemas / write_loc).parent, exist_ok=True)
             with open(dist_component_schemas / write_loc, 'w') as json_file:
                 json.dump(copied, json_file, indent=2)
@@ -133,14 +139,16 @@ def build_sitemap(d: dict, schema_loc: Path):
     acc = []
     for k, v in d.items():
         if isinstance(v, str):
-            component_names = [n.removeprefix(f"../{k}/").removesuffix(".json") for n in os.listdir(schema_loc / v) if n != "overview.json"]
+            component_names = [n.removeprefix(f"../{k}/").removesuffix(".json") for n in os.listdir(schema_loc / v) if
+                               n != "overview.json"]
             component_names.sort()
             acc.append(dict(
                 label=k,
                 collapsed=True,
                 items=[
                     dict(label="Overview", link=f"/docs/components/{url_safe(v)}/overview"),
-                    *(dict(label=name, link=f"/docs/components/{url_safe(v)}/{url_safe(name)}") for name in component_names)
+                    *(dict(label=name, link=f"/docs/components/{url_safe(v)}/{url_safe(name)}") for name in
+                      component_names)
                 ]
             ))
         else:
@@ -209,7 +217,9 @@ def write_md(read_loc,
 
         for schema in components:
             schema = copy.deepcopy(schema)
-            clean_ref_groups_for_md(schema, {g["reference_pointer"]['type']: g["reference_pointer"]['default_impl'] for g in groups})
+            clean_ref_groups_for_md(schema,
+                                    {g["reference_pointer"]['type']: g["reference_pointer"]['default_impl'] for g in
+                                     groups})
             title = schema.get('title', schema['reference_details']['name'])
             description = f"Description of {title} component"
 
@@ -221,14 +231,16 @@ def write_md(read_loc,
                     custom_template_path=str(Path(__file__).parent / "templates" / "custom" / "base.md"),
                     with_footer=False,
                 ))
-                write_astro_md_file(content, write_loc / url_safe(group_name) / (url_safe(schema['reference_details']['name']) + ".md"), group_names)
+                write_astro_md_file(content, write_loc / url_safe(group_name) / (
+                            url_safe(schema['reference_details']['name']) + ".md"), group_names)
 
 
 def write_astro_md_file(content, write_file_loc, group_names: List[str]):
     for name in group_names:
         replacement = f"[Reference[{name}]](/docs/components/{url_safe(name)}/overview)"
         content = content.replace(f"Reference[{name}]", replacement)
-        content = content.replace(f"`{replacement}`", f"[`Reference[{name}]`](/docs/components/{url_safe(name)}/overview)")
+        content = content.replace(f"`{replacement}`",
+                                  f"[`Reference[{name}]`](/docs/components/{url_safe(name)}/overview)")
 
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
@@ -248,7 +260,9 @@ def clean_ref_groups_for_md(schema, group_defaults, seen=None):
 
     seen.add(id(schema))
     if isinstance(schema, dict):  # inline optional types for easier to read markdown
-        if "anyOf" in schema and len(schema['anyOf']) == 2 and [s for s in schema['anyOf'] if len(s) == 1 and s.get("type") == "null"] and schema.get('default') is None:
+        if "anyOf" in schema and len(schema['anyOf']) == 2 and [s for s in schema['anyOf'] if
+                                                                len(s) == 1 and s.get("type") == "null"] and schema.get(
+                'default') is None:
             any_of = schema.pop('anyOf')
             object_type = [s for s in any_of if not (len(s) == 1 and s.get("type") == "null")][0]
             schema.update(object_type)

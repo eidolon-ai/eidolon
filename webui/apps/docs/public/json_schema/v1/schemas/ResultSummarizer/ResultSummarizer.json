@@ -1,0 +1,20 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "ResultSummarizer",
+      "title": "Implementation"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.result_summarizer.ResultSummarizer",
+    "group": "ResultSummarizer",
+    "name": "ResultSummarizer",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "ResultSummarizer",
+  "type": "object"
+}

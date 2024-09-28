@@ -1,0 +1,20 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "IOUnit",
+      "title": "Implementation"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.agent_io.IOUnit",
+    "group": "IOUnit",
+    "name": "IOUnit",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "IOUnit",
+  "type": "object"
+}

@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../OpenAIConnectionHandler/AzureOpenAIConnectionHandler.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "OpenAIConnectionHandler",
+    "type": "OpenAIConnectionHandler"
+  },
+  "title": "OpenAIConnectionHandler"
+}

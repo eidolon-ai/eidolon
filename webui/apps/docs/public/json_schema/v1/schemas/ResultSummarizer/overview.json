@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../ResultSummarizer/ResultSummarizer.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "ResultSummarizer",
+    "type": "ResultSummarizer"
+  },
+  "title": "ResultSummarizer"
+}

@@ -1,0 +1,66 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "RecursiveCharacterTextSplitter",
+      "title": "Implementation"
+    },
+    "chunk_size": {
+      "default": 4000,
+      "description": "Maximum size of chunks to return",
+      "title": "Chunk Size",
+      "type": "integer"
+    },
+    "chunk_overlap": {
+      "default": 200,
+      "description": "Overlap in characters between chunks",
+      "title": "Chunk Overlap",
+      "type": "integer"
+    },
+    "keep_separator": {
+      "default": false,
+      "description": "Whether to keep the separator in the chunks",
+      "title": "Keep Separator",
+      "type": "boolean"
+    },
+    "strip_whitespace": {
+      "default": true,
+      "description": "If `True`, strips whitespace from the start and end of every document",
+      "title": "Strip Whitespace",
+      "type": "boolean"
+    },
+    "separators": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Separators to split on",
+      "title": "Separators"
+    },
+    "is_separator_regex": {
+      "default": false,
+      "description": "Whether the separator is a regex",
+      "title": "Is Separator Regex",
+      "type": "boolean"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.RecursiveCharacterTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "RecursiveCharacterTextSplitter",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "RecursiveCharacterTextSplitter",
+  "type": "object"
+}

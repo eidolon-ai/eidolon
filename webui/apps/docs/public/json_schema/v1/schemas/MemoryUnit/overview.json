@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../MemoryUnit/RawMemoryUnit.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "MemoryUnit",
+    "type": "MemoryUnit"
+  },
+  "title": "MemoryUnit"
+}

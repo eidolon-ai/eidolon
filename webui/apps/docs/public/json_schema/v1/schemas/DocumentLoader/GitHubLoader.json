@@ -1,0 +1,89 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "GitHubLoader",
+      "title": "Implementation"
+    },
+    "owner": {
+      "title": "Owner",
+      "type": "string"
+    },
+    "repo": {
+      "title": "Repo",
+      "type": "string"
+    },
+    "client_args": {
+      "default": {},
+      "title": "Client Args",
+      "type": "object"
+    },
+    "root_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Root Path"
+    },
+    "pattern": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ],
+      "default": "**",
+      "title": "Pattern"
+    },
+    "exclude": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ],
+      "default": [],
+      "title": "Exclude"
+    },
+    "token": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Github token, can also be set via envar 'GITHUB_TOKEN'",
+      "title": "Token"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.github_loader.GitHubLoader",
+    "group": "DocumentLoader",
+    "name": "GitHubLoader",
+    "overrides": {}
+  },
+  "required": [
+    "owner",
+    "repo",
+    "implementation"
+  ],
+  "title": "GitHubLoader",
+  "type": "object"
+}

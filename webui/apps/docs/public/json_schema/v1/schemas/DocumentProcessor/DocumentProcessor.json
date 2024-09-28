@@ -1,0 +1,26 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "DocumentProcessor",
+      "title": "Implementation"
+    },
+    "parser": {
+      "$ref": "../DocumentParser/overview.json"
+    },
+    "splitter": {
+      "$ref": "../DocumentTransformer/overview.json"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.document_processor.DocumentProcessor",
+    "group": "DocumentProcessor",
+    "name": "DocumentProcessor",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "DocumentProcessor",
+  "type": "object"
+}

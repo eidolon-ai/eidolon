@@ -1,0 +1,24 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../LLMUnit/MistralGPT.json"
+    },
+    {
+      "$ref": "../LLMUnit/OllamaLLMUnit.json"
+    },
+    {
+      "$ref": "../LLMUnit/OpenAIGPT.json"
+    },
+    {
+      "$ref": "../LLMUnit/ToolCallLLMWrapper.json"
+    },
+    {
+      "$ref": "../LLMUnit/AnthropicLLMUnit.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "LLMUnit",
+    "type": "LLMUnit"
+  },
+  "title": "LLMUnit"
+}

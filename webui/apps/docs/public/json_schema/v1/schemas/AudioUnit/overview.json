@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../AudioUnit/OpenAiSpeech.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "eidolon_ai_sdk.apu.audio_unit.AudioUnit",
+    "type": "AudioUnit"
+  },
+  "title": "AudioUnit"
+}

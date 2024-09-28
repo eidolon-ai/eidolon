@@ -1,0 +1,44 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "DocumentManager",
+      "title": "Implementation"
+    },
+    "name": {
+      "description": "The name of the document manager (used to name database collections).",
+      "title": "Name",
+      "type": "string"
+    },
+    "recheck_frequency": {
+      "default": 60,
+      "description": "The number of seconds between checks.",
+      "title": "Recheck Frequency",
+      "type": "integer"
+    },
+    "loader": {
+      "$ref": "../DocumentLoader/overview.json"
+    },
+    "concurrency": {
+      "default": 8,
+      "description": "The number of concurrent tasks to run.",
+      "title": "Concurrency",
+      "type": "integer"
+    },
+    "doc_processor": {
+      "$ref": "../DocumentProcessor/overview.json"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.document_manager.DocumentManager",
+    "group": "DocumentManager",
+    "name": "DocumentManager",
+    "overrides": {}
+  },
+  "required": [
+    "name",
+    "implementation"
+  ],
+  "title": "DocumentManager",
+  "type": "object"
+}

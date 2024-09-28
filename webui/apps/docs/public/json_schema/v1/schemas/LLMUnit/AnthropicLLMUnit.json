@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "AnthropicLLMUnit",
+      "title": "Implementation"
+    },
+    "model": {
+      "$ref": "../LLMModel/overview.json"
+    },
+    "temperature": {
+      "default": 0.3,
+      "title": "Temperature",
+      "type": "number"
+    },
+    "max_tokens": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Tokens"
+    },
+    "client_args": {
+      "default": {},
+      "title": "Client Args",
+      "type": "object"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.anthropic_llm_unit.AnthropicLLMUnit",
+    "group": "LLMUnit",
+    "name": "AnthropicLLMUnit",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "AnthropicLLMUnit",
+  "type": "object"
+}

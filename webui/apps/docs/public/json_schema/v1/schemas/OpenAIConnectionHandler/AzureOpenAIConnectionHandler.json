@@ -1,0 +1,58 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "AzureOpenAIConnectionHandler",
+      "title": "Implementation"
+    },
+    "azure_ad_token_provider": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Reference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "token_provider_scopes": {
+      "default": [
+        "https://cognitiveservices.azure.com/.default"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Token Provider Scopes",
+      "type": "array"
+    },
+    "api_version": {
+      "default": "2024-02-01",
+      "title": "Api Version",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.open_ai_connection_handler.AzureOpenAIConnectionHandler",
+    "group": "OpenAIConnectionHandler",
+    "name": "AzureOpenAIConnectionHandler",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "AzureOpenAIConnectionHandler",
+  "type": "object",
+  "$defs": {
+    "Reference": {
+      "additionalProperties": true,
+      "properties": {
+        "implementation": {
+          "title": "Implementation",
+          "type": "string"
+        }
+      },
+      "title": "Reference",
+      "type": "object"
+    }
+  }
+}

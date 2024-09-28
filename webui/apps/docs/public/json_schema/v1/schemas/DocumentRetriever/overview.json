@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../DocumentRetriever/SimilarityMemoryRetriever.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "DocumentRetriever",
+    "type": "DocumentRetriever"
+  },
+  "title": "DocumentRetriever"
+}

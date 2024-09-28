@@ -1,0 +1,103 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "TokenTextSplitter",
+      "title": "Implementation"
+    },
+    "chunk_size": {
+      "default": 4000,
+      "description": "Maximum size of chunks to return",
+      "title": "Chunk Size",
+      "type": "integer"
+    },
+    "chunk_overlap": {
+      "default": 200,
+      "description": "Overlap in characters between chunks",
+      "title": "Chunk Overlap",
+      "type": "integer"
+    },
+    "keep_separator": {
+      "default": false,
+      "description": "Whether to keep the separator in the chunks",
+      "title": "Keep Separator",
+      "type": "boolean"
+    },
+    "strip_whitespace": {
+      "default": true,
+      "description": "If `True`, strips whitespace from the start and end of every document",
+      "title": "Strip Whitespace",
+      "type": "boolean"
+    },
+    "encoding_name": {
+      "default": "gpt2",
+      "description": "Encoding name",
+      "title": "Encoding Name",
+      "type": "string"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Model name",
+      "title": "Model"
+    },
+    "allowed_special": {
+      "anyOf": [
+        {
+          "const": "all",
+          "enum": [
+            "all"
+          ],
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ],
+      "default": [],
+      "description": "Allowed special tokens",
+      "title": "Allowed Special"
+    },
+    "disallowed_special": {
+      "anyOf": [
+        {
+          "const": "all",
+          "enum": [
+            "all"
+          ],
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ],
+      "default": "all",
+      "description": "Disallowed special tokens",
+      "title": "Disallowed Special"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.TokenTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "TokenTextSplitter",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "TokenTextSplitter",
+  "type": "object"
+}

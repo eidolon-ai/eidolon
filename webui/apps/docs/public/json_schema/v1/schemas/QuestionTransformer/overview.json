@@ -1,0 +1,15 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../QuestionTransformer/NoopQuestionTransformer.json"
+    },
+    {
+      "$ref": "../QuestionTransformer/MultiQuestionTransformer.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "QuestionTransformer",
+    "type": "QuestionTransformer"
+  },
+  "title": "QuestionTransformer"
+}

@@ -1,0 +1,69 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "HTMLHeaderTextSplitter",
+      "title": "Implementation"
+    },
+    "chunk_size": {
+      "default": 4000,
+      "description": "Maximum size of chunks to return",
+      "title": "Chunk Size",
+      "type": "integer"
+    },
+    "chunk_overlap": {
+      "default": 200,
+      "description": "Overlap in characters between chunks",
+      "title": "Chunk Overlap",
+      "type": "integer"
+    },
+    "keep_separator": {
+      "default": false,
+      "description": "Whether to keep the separator in the chunks",
+      "title": "Keep Separator",
+      "type": "boolean"
+    },
+    "strip_whitespace": {
+      "default": true,
+      "description": "If `True`, strips whitespace from the start and end of every document",
+      "title": "Strip Whitespace",
+      "type": "boolean"
+    },
+    "headers_to_split_on": {
+      "description": "Headers we want to track, e.g., h1, h2, etc.",
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Headers To Split On",
+      "type": "array"
+    },
+    "return_each_element": {
+      "default": false,
+      "description": "Return each element w/ associated headers",
+      "title": "Return Each Element",
+      "type": "boolean"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.HTMLHeaderTextSplitter",
+    "group": "DocumentTransformer",
+    "name": "HTMLHeaderTextSplitter",
+    "overrides": {}
+  },
+  "required": [
+    "headers_to_split_on",
+    "implementation"
+  ],
+  "title": "HTMLHeaderTextSplitter",
+  "type": "object"
+}

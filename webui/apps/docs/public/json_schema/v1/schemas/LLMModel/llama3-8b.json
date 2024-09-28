@@ -1,0 +1,69 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "llama3-8b",
+      "title": "Implementation"
+    },
+    "human_name": {
+      "default": "Mistral Small",
+      "title": "Human Name",
+      "type": "string"
+    },
+    "name": {
+      "default": "llama3",
+      "title": "Name",
+      "type": "string"
+    },
+    "input_context_limit": {
+      "default": 8000,
+      "title": "Input Context Limit",
+      "type": "integer"
+    },
+    "output_context_limit": {
+      "default": 4096,
+      "title": "Output Context Limit",
+      "type": "integer"
+    },
+    "supports_tools": {
+      "default": false,
+      "title": "Supports Tools",
+      "type": "boolean"
+    },
+    "supports_image_input": {
+      "default": true,
+      "title": "Supports Image Input",
+      "type": "boolean"
+    },
+    "supports_audio_input": {
+      "default": false,
+      "title": "Supports Audio Input",
+      "type": "boolean"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
+    "group": "LLMModel",
+    "name": "llama3-8b",
+    "overrides": {
+      "human_name": "Mistral Small",
+      "input_context_limit": 8000,
+      "name": "llama3",
+      "output_context_limit": 4096,
+      "supports_audio_input": false,
+      "supports_image_input": true,
+      "supports_tools": false
+    }
+  },
+  "required": [
+    "human_name",
+    "name",
+    "input_context_limit",
+    "output_context_limit",
+    "supports_tools",
+    "supports_image_input",
+    "supports_audio_input",
+    "implementation"
+  ],
+  "title": "llama3-8b",
+  "type": "object"
+}

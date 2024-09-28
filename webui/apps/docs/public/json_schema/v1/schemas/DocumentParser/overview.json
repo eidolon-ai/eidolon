@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../DocumentParser/AutoParser.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "DocumentParser",
+    "type": "DocumentParser"
+  },
+  "title": "DocumentParser"
+}

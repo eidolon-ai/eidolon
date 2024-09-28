@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "VectaraSearch",
+      "title": "Implementation"
+    },
+    "corpus_key": {
+      "description": "The corpus key to search in.",
+      "title": "Corpus Key",
+      "type": "string"
+    },
+    "description": {
+      "default": "Search documents related to {corpus_key}.",
+      "description": "Description of the tool presented to LLM. Will be formatted with corpus_key.",
+      "title": "Description",
+      "type": "string"
+    },
+    "vectara_url": {
+      "default": "https://api.vectara.io/",
+      "title": "Vectara Url",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.vectara.VectaraSearch",
+    "group": "LogicUnit",
+    "name": "VectaraSearch",
+    "overrides": {}
+  },
+  "required": [
+    "corpus_key",
+    "implementation"
+  ],
+  "title": "VectaraSearch",
+  "type": "object"
+}

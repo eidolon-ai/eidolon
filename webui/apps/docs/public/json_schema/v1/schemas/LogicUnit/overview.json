@@ -1,0 +1,33 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../AudioUnit/AudioUnit.json"
+    },
+    {
+      "$ref": "../LogicUnit/Browser.json"
+    },
+    {
+      "$ref": "../ImageUnit/OpenAIImageUnit.json"
+    },
+    {
+      "$ref": "../AudioUnit/OpenAiSpeech.json"
+    },
+    {
+      "$ref": "../LogicUnit/Search.json"
+    },
+    {
+      "$ref": "../LogicUnit/VectaraSearch.json"
+    },
+    {
+      "$ref": "../LogicUnit/WebSearch.json"
+    },
+    {
+      "$ref": "../LogicUnit/ApiLogicUnit.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "eidolon_ai_sdk.apu.logic_unit.LogicUnit",
+    "type": "LogicUnit"
+  },
+  "title": "LogicUnit"
+}

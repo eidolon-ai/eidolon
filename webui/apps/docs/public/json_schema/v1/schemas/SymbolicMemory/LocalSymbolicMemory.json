@@ -1,0 +1,20 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "implementation": {
+      "const": "LocalSymbolicMemory",
+      "title": "Implementation"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.memory.local_symbolic_memory.LocalSymbolicMemory",
+    "group": "SymbolicMemory",
+    "name": "LocalSymbolicMemory",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "LocalSymbolicMemory",
+  "type": "object"
+}

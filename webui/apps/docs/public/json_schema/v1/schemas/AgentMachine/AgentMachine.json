@@ -1,0 +1,66 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "AgentMachine",
+      "title": "Implementation"
+    },
+    "symbolic_memory": {
+      "allOf": [
+        {
+          "$ref": "../SymbolicMemory/overview.json"
+        }
+      ],
+      "description": "The Symbolic Memory implementation."
+    },
+    "file_memory": {
+      "allOf": [
+        {
+          "$ref": "../FileMemory/overview.json"
+        }
+      ],
+      "description": "The File Memory implementation."
+    },
+    "similarity_memory": {
+      "allOf": [
+        {
+          "$ref": "../SimilarityMemory/overview.json"
+        }
+      ],
+      "description": "The Vector Memory implementation."
+    },
+    "security_manager": {
+      "allOf": [
+        {
+          "$ref": "../SecurityManager/overview.json"
+        }
+      ],
+      "description": "The Security Manager implementation."
+    },
+    "process_file_system": {
+      "allOf": [
+        {
+          "$ref": "../ProcessFileSystem/overview.json"
+        }
+      ],
+      "description": "The Process File System implementation. Used to store files related to processes."
+    },
+    "fail_on_agent_start_error": {
+      "default": false,
+      "description": "If true, the machine will fail to start if an agent fails to start. Default: False",
+      "title": "Fail On Agent Start Error",
+      "type": "boolean"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.system.agent_machine.AgentMachine",
+    "group": "AgentMachine",
+    "name": "AgentMachine",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "AgentMachine",
+  "type": "object"
+}

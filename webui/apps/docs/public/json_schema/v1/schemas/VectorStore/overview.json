@@ -1,0 +1,15 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../VectorStore/NoopVectorStore.json"
+    },
+    {
+      "$ref": "../VectorStore/ChromaVectorStore.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "VectorStore",
+    "type": "VectorStore"
+  },
+  "title": "VectorStore"
+}

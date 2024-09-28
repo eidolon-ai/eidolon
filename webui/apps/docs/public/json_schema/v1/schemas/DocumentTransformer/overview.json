@@ -1,0 +1,45 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../DocumentTransformer/CharacterTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/HTMLHeaderTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/LatexTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/MarkdownHeaderTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/MarkdownTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/NLTKTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/PythonCodeTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/RecursiveCharacterTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/SentenceTransformersTokenTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/SpacyTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/TokenTextSplitter.json"
+    },
+    {
+      "$ref": "../DocumentTransformer/AutoTransformer.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "DocumentTransformer",
+    "type": "DocumentTransformer"
+  },
+  "title": "DocumentTransformer"
+}

@@ -1,0 +1,26 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "RAGFusionReranker",
+      "title": "Implementation"
+    },
+    "k": {
+      "default": 60,
+      "description": "The rerank factor.",
+      "title": "K",
+      "type": "integer"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.document_reranker.RAGFusionReranker",
+    "group": "DocumentReranker",
+    "name": "RAGFusionReranker",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "RAGFusionReranker",
+  "type": "object"
+}

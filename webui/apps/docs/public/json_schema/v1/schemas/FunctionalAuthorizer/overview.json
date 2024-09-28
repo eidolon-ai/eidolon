@@ -1,0 +1,15 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../FunctionalAuthorizer/NoopFunctionalAuth.json"
+    },
+    {
+      "$ref": "../FunctionalAuthorizer/GlobPatternFunctionalAuthorizer.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "FunctionalAuthorizer",
+    "type": "FunctionalAuthorizer"
+  },
+  "title": "FunctionalAuthorizer"
+}

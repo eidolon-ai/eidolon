@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "Retriever",
+      "title": "Implementation"
+    },
+    "max_num_results": {
+      "default": 10,
+      "description": "The maximum number of results to consider.",
+      "title": "Max Num Results",
+      "type": "integer"
+    },
+    "question_transformer": {
+      "$ref": "../QuestionTransformer/overview.json"
+    },
+    "document_retriever": {
+      "$ref": "../DocumentRetriever/overview.json"
+    },
+    "document_reranker": {
+      "$ref": "../DocumentReranker/overview.json"
+    },
+    "result_summarizer": {
+      "$ref": "../ResultSummarizer/overview.json"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.retriever.Retriever",
+    "group": "Retriever",
+    "name": "Retriever",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "Retriever",
+  "type": "object"
+}

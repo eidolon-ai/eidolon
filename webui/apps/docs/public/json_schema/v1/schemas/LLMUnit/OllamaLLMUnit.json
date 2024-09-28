@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "OllamaLLMUnit",
+      "title": "Implementation"
+    },
+    "model": {
+      "$ref": "../LLMModel/overview.json"
+    },
+    "temperature": {
+      "default": 0.3,
+      "title": "Temperature",
+      "type": "number"
+    },
+    "force_json": {
+      "default": true,
+      "title": "Force Json",
+      "type": "boolean"
+    },
+    "max_tokens": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Tokens"
+    },
+    "client_options": {
+      "default": {},
+      "title": "Client Options",
+      "type": "object"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.ollama_llm_unit.OllamaLLMUnit",
+    "group": "LLMUnit",
+    "name": "OllamaLLMUnit",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "OllamaLLMUnit",
+  "type": "object"
+}

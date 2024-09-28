@@ -1,0 +1,20 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "AutoParser",
+      "title": "Implementation"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.doc_manager.parsers.auto_parser.AutoParser",
+    "group": "DocumentParser",
+    "name": "AutoParser",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "AutoParser",
+  "type": "object"
+}

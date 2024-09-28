@@ -1,0 +1,73 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "WebSearch",
+      "title": "Implementation"
+    },
+    "summarizer": {
+      "default": "BeautifulSoup",
+      "enum": [
+        "BeautifulSoup",
+        "noop"
+      ],
+      "title": "Summarizer",
+      "type": "string"
+    },
+    "cse_id": {
+      "description": "Google Custom Search Engine Id.",
+      "title": "Cse Id",
+      "type": "string"
+    },
+    "cse_token": {
+      "description": "Google Project dev token, must have search permissions.",
+      "title": "Cse Token",
+      "type": "string"
+    },
+    "name": {
+      "default": "search",
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "default": null,
+      "title": "Description",
+      "type": "string"
+    },
+    "defaultDateRestrict": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Defaultdaterestrict"
+    },
+    "params": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": {},
+      "title": "Params"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.web_search.WebSearch",
+    "group": "LogicUnit",
+    "name": "WebSearch",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "WebSearch",
+  "type": "object"
+}

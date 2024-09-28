@@ -1,0 +1,227 @@
+{
+  "additionalProperties": false,
+  "description": "The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This\nagent is designed to be a flexible, modular component that can interact with various processing units and perform a\nrange of actions based on its configuration.",
+  "properties": {
+    "implementation": {
+      "const": "SimpleAgent",
+      "title": "Implementation"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "system_prompt": {
+      "default": "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task.",
+      "title": "System Prompt",
+      "type": "string"
+    },
+    "agent_refs": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Agent Refs",
+      "type": "array"
+    },
+    "actions": {
+      "default": [
+        {
+          "name": "converse",
+          "title": null,
+          "sub_title": null,
+          "description": null,
+          "user_prompt": "{{ body }}",
+          "input_schema": {},
+          "output_schema": "str",
+          "allow_file_upload": false,
+          "supported_mime_types": [],
+          "allowed_states": [
+            "initialized",
+            "idle",
+            "http_error"
+          ],
+          "output_state": "idle"
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/ActionDefinition"
+      },
+      "title": "Actions",
+      "type": "array"
+    },
+    "apu": {
+      "$ref": "../APU/overview.json"
+    },
+    "apus": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/NamedAPU"
+      },
+      "title": "Apus",
+      "type": "array"
+    },
+    "title_generation_mode": {
+      "default": "auto",
+      "enum": [
+        "none",
+        "on_request",
+        "auto"
+      ],
+      "title": "Title Generation Mode",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.simple_agent.SimpleAgent",
+    "group": "Agent",
+    "name": "SimpleAgent",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "SimpleAgent",
+  "type": "object",
+  "$defs": {
+    "ActionDefinition": {
+      "properties": {
+        "name": {
+          "default": "converse",
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "sub_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "user_prompt": {
+          "default": "{{ body }}",
+          "title": "User Prompt",
+          "type": "string"
+        },
+        "input_schema": {
+          "additionalProperties": {
+            "type": "object"
+          },
+          "default": {},
+          "title": "Input Schema",
+          "type": "object"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "const": "str",
+              "enum": [
+                "str"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ],
+          "default": "str",
+          "title": "Output Schema"
+        },
+        "allow_file_upload": {
+          "default": false,
+          "title": "Allow File Upload",
+          "type": "boolean"
+        },
+        "supported_mime_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Supported Mime Types",
+          "type": "array"
+        },
+        "allowed_states": {
+          "default": [
+            "initialized",
+            "idle",
+            "http_error"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed States",
+          "type": "array"
+        },
+        "output_state": {
+          "default": "idle",
+          "title": "Output State",
+          "type": "string"
+        }
+      },
+      "title": "ActionDefinition",
+      "type": "object"
+    },
+    "NamedAPU": {
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "apu": {
+          "$ref": "../APU/overview.json"
+        },
+        "default": {
+          "type": "boolean",
+          "default": false,
+          "title": "Default"
+        }
+      },
+      "title": "NamedAPU",
+      "type": "object"
+    }
+  }
+}
