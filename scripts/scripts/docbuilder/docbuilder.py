@@ -23,12 +23,12 @@ EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 def main():
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
 
-    print("Generating json...")
-    json_schema = generate_schema()
-
-    print("writing json...")
-    shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    write_json_schema(dist_component_schemas, json_schema)
+    # print("Generating json...")
+    # json_schema = generate_schema()
+    #
+    # print("writing json...")
+    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    # write_json_schema(dist_component_schemas, json_schema)
 
     print("writing md...")
     write_md(dist_component_schemas)
@@ -197,11 +197,9 @@ def write_md(read_loc,
                     json.dump(schema, temp_json_file, indent=2)
                 content = generate_from_schema(Path(tempdir) / c, config=GenerationConfiguration(
                     show_breadcrumbs=False,
-                    templates_directory = Path(__file__).parent / "templates",
-                    template_name="md_nested",
+                    custom_template_path=str(Path(__file__).parent / "templates" / "custom" / "base.md"),
                     with_footer=False,
                 ))
-                # content = content[content.index(cut_before_str):]
                 write_astro_md_file(content, description, title, write_loc / url_safe(group_name) / (url_safe(schema['reference_details']['name']) + ".md"), group_names)
 
 
