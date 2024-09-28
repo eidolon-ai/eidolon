@@ -2,15 +2,28 @@
 title: AudioUnit
 description: "Description of AudioUnit component"
 ---
-| Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |
-| ------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | -------------------------- |
-| - [implementation](#implementation )                         | No      | const            | No         | -          | -                          |
-| - [text_to_speech_model](#text_to_speech_model )             | No      | enum (of string) | No         | -          | Text To Speech Model       |
-| - [text_to_speech_voice](#text_to_speech_voice )             | No      | enum (of string) | No         | -          | Text To Speech Voice       |
-| - [speech_to_text_model](#speech_to_text_model )             | No      | const            | No         | -          | Speech To Text Model       |
-| - [speech_to_text_temperature](#speech_to_text_temperature ) | No      | number           | No         | -          | Speech To Text Temperature |
+# AudioUnit
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property text_to_speech_model](#text_to_speech_model)
+- [3. [Optional] Property text_to_speech_voice](#text_to_speech_voice)
+- [4. [Optional] Property speech_to_text_model](#speech_to_text_model)
+- [5. [Optional] Property speech_to_text_temperature](#speech_to_text_temperature)
+
+**Title:** AudioUnit
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -19,7 +32,15 @@ description: "Description of AudioUnit component"
 
 Specific value: `"AudioUnit"`
 
-## <a name="text_to_speech_model"></a>2. Property `text_to_speech_model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="text_to_speech_model"></a>2. [Optional] Property text_to_speech_model</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Text To Speech Model
 
@@ -35,7 +56,15 @@ Must be one of:
 * "tts-1"
 * "tts-1-hd"
 
-## <a name="text_to_speech_voice"></a>3. Property `text_to_speech_voice`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="text_to_speech_voice"></a>3. [Optional] Property text_to_speech_voice</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Text To Speech Voice
 
@@ -55,7 +84,15 @@ Must be one of:
 * "nova"
 * "shimmer"
 
-## <a name="speech_to_text_model"></a>4. Property `speech_to_text_model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="speech_to_text_model"></a>4. [Optional] Property speech_to_text_model</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Speech To Text Model
 
@@ -71,7 +108,15 @@ Must be one of:
 * "whisper-1"
 Specific value: `"whisper-1"`
 
-## <a name="speech_to_text_temperature"></a>5. Property `speech_to_text_temperature`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="speech_to_text_temperature"></a>5. [Optional] Property speech_to_text_temperature</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Speech To Text Temperature
 
@@ -82,5 +127,8 @@ Specific value: `"whisper-1"`
 | **Default**  | `0.3`    |
 
 **Description:** The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use log probability to automatically increase the temperature until certain thresholds are hit.
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

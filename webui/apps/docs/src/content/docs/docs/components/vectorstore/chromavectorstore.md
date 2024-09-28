@@ -2,13 +2,26 @@
 title: ChromaVectorStore
 description: "Description of ChromaVectorStore component"
 ---
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )                   | No      | const  | No         | -          | -                       |
-| - [root_document_directory](#root_document_directory ) | No      | string | No         | -          | Root Document Directory |
-| - [url](#url )                                         | No      | string | No         | -          | Url                     |
+# ChromaVectorStore
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property root_document_directory](#root_document_directory)
+- [3. [Optional] Property url](#url)
+
+**Title:** ChromaVectorStore
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -17,7 +30,15 @@ description: "Description of ChromaVectorStore component"
 
 Specific value: `"ChromaVectorStore"`
 
-## <a name="root_document_directory"></a>2. Property `root_document_directory`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="root_document_directory"></a>2. [Optional] Property root_document_directory</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Root Document Directory
 
@@ -29,7 +50,15 @@ Specific value: `"ChromaVectorStore"`
 
 **Description:** The root directory where the vector memory will store documents.
 
-## <a name="url"></a>3. Property `url`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="url"></a>3. [Optional] Property url</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Url
 
@@ -40,5 +69,8 @@ Specific value: `"ChromaVectorStore"`
 | **Default**  | `"file://${EIDOLON_DATA_DIR}/doc_producer"` |
 
 **Description:** The url of the chroma database. Use http(s)://$HOST:$PORT?header1=value1&header2=value2 to pass headers to the database.Use file://$PATH to use a local file database.
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

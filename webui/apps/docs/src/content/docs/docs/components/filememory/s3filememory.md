@@ -2,18 +2,31 @@
 title: S3FileMemory
 description: "Description of S3FileMemory component"
 ---
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description        |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#implementation )                     | No      | const   | No         | -          | -                        |
-| + [bucket](#bucket )                                     | No      | string  | No         | -          | Bucket                   |
-| - [region_name](#region_name )                           | No      | string  | No         | -          | Region Name              |
-| - [aws_access_key_id](#aws_access_key_id )               | No      | string  | No         | -          | Aws Access Key Id        |
-| - [aws_secret_access_key](#aws_secret_access_key )       | No      | string  | No         | -          | Aws Secret Access Key    |
-| - [aws_session_token](#aws_session_token )               | No      | string  | No         | -          | Aws Session Token        |
-| - [session_args](#session_args )                         | No      | object  | No         | -          | Session Args             |
-| - [create_bucket_on_startup](#create_bucket_on_startup ) | No      | boolean | No         | -          | Create Bucket On Startup |
+# S3FileMemory
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Required] Property bucket](#bucket)
+- [3. [Optional] Property region_name](#region_name)
+- [4. [Optional] Property aws_access_key_id](#aws_access_key_id)
+- [5. [Optional] Property aws_secret_access_key](#aws_secret_access_key)
+- [6. [Optional] Property aws_session_token](#aws_session_token)
+- [7. [Optional] Property session_args](#session_args)
+- [8. [Optional] Property create_bucket_on_startup](#create_bucket_on_startup)
+
+**Title:** S3FileMemory
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -22,7 +35,15 @@ description: "Description of S3FileMemory component"
 
 Specific value: `"S3FileMemory"`
 
-## <a name="bucket"></a>2. Property `bucket`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="bucket"></a>2. [Required] Property bucket</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Bucket
 
@@ -31,7 +52,15 @@ Specific value: `"S3FileMemory"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="region_name"></a>3. Property `region_name`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="region_name"></a>3. [Optional] Property region_name</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Region Name
 
@@ -41,7 +70,15 @@ Specific value: `"S3FileMemory"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="aws_access_key_id"></a>4. Property `aws_access_key_id`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="aws_access_key_id"></a>4. [Optional] Property aws_access_key_id</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Aws Access Key Id
 
@@ -51,7 +88,15 @@ Specific value: `"S3FileMemory"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="aws_secret_access_key"></a>5. Property `aws_secret_access_key`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="aws_secret_access_key"></a>5. [Optional] Property aws_secret_access_key</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Aws Secret Access Key
 
@@ -61,7 +106,15 @@ Specific value: `"S3FileMemory"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="aws_session_token"></a>6. Property `aws_session_token`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="aws_session_token"></a>6. [Optional] Property aws_session_token</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Aws Session Token
 
@@ -71,7 +124,15 @@ Specific value: `"S3FileMemory"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="session_args"></a>7. Property `session_args`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="session_args"></a>7. [Optional] Property session_args</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Session Args
 
@@ -84,7 +145,15 @@ Specific value: `"S3FileMemory"`
 
 **Description:** Additional arguments to pass to the boto3 session.
 
-## <a name="create_bucket_on_startup"></a>8. Property `create_bucket_on_startup`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="create_bucket_on_startup"></a>8. [Optional] Property create_bucket_on_startup</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Create Bucket On Startup
 
@@ -93,5 +162,8 @@ Specific value: `"S3FileMemory"`
 | **Type**     | `boolean` |
 | **Required** | No        |
 | **Default**  | `false`   |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

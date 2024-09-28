@@ -2,13 +2,26 @@
 title: MongoSymbolicMemory
 description: "Description of MongoSymbolicMemory component"
 ---
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )                   | No      | const  | No         | -          | -                       |
-| - [mongo_connection_string](#mongo_connection_string ) | No      | string | No         | -          | Mongo Connection String |
-| - [mongo_database_name](#mongo_database_name )         | No      | string | No         | -          | Mongo Database Name     |
+# MongoSymbolicMemory
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property mongo_connection_string](#mongo_connection_string)
+- [3. [Optional] Property mongo_database_name](#mongo_database_name)
+
+**Title:** MongoSymbolicMemory
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -17,7 +30,15 @@ description: "Description of MongoSymbolicMemory component"
 
 Specific value: `"MongoSymbolicMemory"`
 
-## <a name="mongo_connection_string"></a>2. Property `mongo_connection_string`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="mongo_connection_string"></a>2. [Optional] Property mongo_connection_string</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Mongo Connection String
 
@@ -29,7 +50,15 @@ Specific value: `"MongoSymbolicMemory"`
 
 **Description:** The connection string to the MongoDB instance.
 
-## <a name="mongo_database_name"></a>3. Property `mongo_database_name`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="mongo_database_name"></a>3. [Optional] Property mongo_database_name</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Mongo Database Name
 
@@ -40,5 +69,8 @@ Specific value: `"MongoSymbolicMemory"`
 | **Default**  | `"eidolon"` |
 
 **Description:** The name of the MongoDB database to use.
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

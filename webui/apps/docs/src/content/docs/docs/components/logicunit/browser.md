@@ -2,12 +2,25 @@
 title: Browser
 description: "Description of Browser component"
 ---
-| Property                             | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const            | No         | -          | -                 |
-| - [summarizer](#summarizer )         | No      | enum (of string) | No         | -          | Summarizer        |
+# Browser
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property summarizer](#summarizer)
+
+**Title:** Browser
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -16,7 +29,15 @@ description: "Description of Browser component"
 
 Specific value: `"Browser"`
 
-## <a name="summarizer"></a>2. Property `summarizer`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="summarizer"></a>2. [Optional] Property summarizer</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Summarizer
 
@@ -29,5 +50,8 @@ Specific value: `"Browser"`
 Must be one of:
 * "BeautifulSoup"
 * "noop"
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

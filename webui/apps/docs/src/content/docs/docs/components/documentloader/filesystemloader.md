@@ -2,13 +2,26 @@
 title: FilesystemLoader
 description: "Description of FilesystemLoader component"
 ---
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| + [root_dir](#root_dir )             | No      | string | No         | -          | Root Dir          |
-| - [pattern](#pattern )               | No      | string | No         | -          | Pattern           |
+# FilesystemLoader
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Required] Property root_dir](#root_dir)
+- [3. [Optional] Property pattern](#pattern)
+
+**Title:** FilesystemLoader
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -17,7 +30,15 @@ description: "Description of FilesystemLoader component"
 
 Specific value: `"FilesystemLoader"`
 
-## <a name="root_dir"></a>2. Property `root_dir`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="root_dir"></a>2. [Required] Property root_dir</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Root Dir
 
@@ -26,7 +47,15 @@ Specific value: `"FilesystemLoader"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="pattern"></a>3. Property `pattern`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="pattern"></a>3. [Optional] Property pattern</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Pattern
 
@@ -35,5 +64,8 @@ Specific value: `"FilesystemLoader"`
 | **Type**     | `string` |
 | **Required** | No       |
 | **Default**  | `"**/*"` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

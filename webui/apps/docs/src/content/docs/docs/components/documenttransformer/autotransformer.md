@@ -2,11 +2,24 @@
 title: AutoTransformer
 description: "Description of AutoTransformer component"
 ---
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const | No         | -          | -                 |
+# AutoTransformer
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Required] Property implementation](#implementation)
+
+**Title:** AutoTransformer
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Required] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -14,5 +27,8 @@ description: "Description of AutoTransformer component"
 | **Required** | Yes     |
 
 Specific value: `"AutoTransformer"`
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

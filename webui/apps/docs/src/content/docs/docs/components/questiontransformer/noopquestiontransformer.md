@@ -2,11 +2,24 @@
 title: NoopQuestionTransformer
 description: "Description of NoopQuestionTransformer component"
 ---
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | -                 |
+# NoopQuestionTransformer
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+
+**Title:** NoopQuestionTransformer
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -14,5 +27,8 @@ description: "Description of NoopQuestionTransformer component"
 | **Required** | No      |
 
 Specific value: `"NoopQuestionTransformer"`
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

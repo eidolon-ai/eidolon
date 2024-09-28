@@ -2,13 +2,26 @@
 title: OpenAIEmbedding
 description: "Description of OpenAIEmbedding component"
 ---
-| Property                                     | Pattern | Type                               | Deprecated | Definition | Title/Description |
-| -------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )         | No      | const                              | No         | -          | -                 |
-| - [model](#model )                           | No      | string                             | No         | -          | Model             |
-| - [connection_handler](#connection_handler ) | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | -                 |
+# OpenAIEmbedding
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property model](#model)
+- [3. [Optional] Property connection_handler](#connection_handler)
+
+**Title:** OpenAIEmbedding
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -17,7 +30,15 @@ description: "Description of OpenAIEmbedding component"
 
 Specific value: `"OpenAIEmbedding"`
 
-## <a name="model"></a>2. Property `model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="model"></a>2. [Optional] Property model</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Model
 
@@ -29,12 +50,23 @@ Specific value: `"OpenAIEmbedding"`
 
 **Description:** The name of the model to use.
 
-## <a name="connection_handler"></a>3. Property `connection_handler`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="connection_handler"></a>3. [Optional] Property connection_handler</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                                 |
 | ------------ | ----------------------------------------------- |
 | **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview)            |
 | **Required** | No                                              |
 | **Default**  | `{"implementation": "OpenAIConnectionHandler"}` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

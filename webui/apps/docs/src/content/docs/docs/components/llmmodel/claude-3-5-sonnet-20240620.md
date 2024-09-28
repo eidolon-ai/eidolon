@@ -2,18 +2,31 @@
 title: claude-3-5-sonnet-20240620
 description: "Description of claude-3-5-sonnet-20240620 component"
 ---
-| Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
-| ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | -                    |
-| + [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
-| + [name](#name )                                 | No      | string  | No         | -          | Name                 |
-| + [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| + [output_context_limit](#output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| + [supports_tools](#supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| + [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| + [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+# claude-3-5-sonnet-20240620
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Required] Property human_name](#human_name)
+- [3. [Required] Property name](#name)
+- [4. [Required] Property input_context_limit](#input_context_limit)
+- [5. [Required] Property output_context_limit](#output_context_limit)
+- [6. [Required] Property supports_tools](#supports_tools)
+- [7. [Required] Property supports_image_input](#supports_image_input)
+- [8. [Required] Property supports_audio_input](#supports_audio_input)
+
+**Title:** claude-3-5-sonnet-20240620
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -22,7 +35,15 @@ description: "Description of claude-3-5-sonnet-20240620 component"
 
 Specific value: `"claude-3-5-sonnet-20240620"`
 
-## <a name="human_name"></a>2. Property `human_name`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="human_name"></a>2. [Required] Property human_name</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Human Name
 
@@ -32,7 +53,15 @@ Specific value: `"claude-3-5-sonnet-20240620"`
 | **Required** | Yes               |
 | **Default**  | `"Claude Sonnet"` |
 
-## <a name="name"></a>3. Property `name`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="name"></a>3. [Required] Property name</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Name
 
@@ -42,7 +71,15 @@ Specific value: `"claude-3-5-sonnet-20240620"`
 | **Required** | Yes                            |
 | **Default**  | `"claude-3-5-sonnet-20240620"` |
 
-## <a name="input_context_limit"></a>4. Property `input_context_limit`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="input_context_limit"></a>4. [Required] Property input_context_limit</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Input Context Limit
 
@@ -52,7 +89,15 @@ Specific value: `"claude-3-5-sonnet-20240620"`
 | **Required** | Yes       |
 | **Default**  | `200000`  |
 
-## <a name="output_context_limit"></a>5. Property `output_context_limit`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="output_context_limit"></a>5. [Required] Property output_context_limit</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Output Context Limit
 
@@ -62,7 +107,15 @@ Specific value: `"claude-3-5-sonnet-20240620"`
 | **Required** | Yes       |
 | **Default**  | `8192`    |
 
-## <a name="supports_tools"></a>6. Property `supports_tools`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="supports_tools"></a>6. [Required] Property supports_tools</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Supports Tools
 
@@ -72,7 +125,15 @@ Specific value: `"claude-3-5-sonnet-20240620"`
 | **Required** | Yes       |
 | **Default**  | `false`   |
 
-## <a name="supports_image_input"></a>7. Property `supports_image_input`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="supports_image_input"></a>7. [Required] Property supports_image_input</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Supports Image Input
 
@@ -82,7 +143,15 @@ Specific value: `"claude-3-5-sonnet-20240620"`
 | **Required** | Yes       |
 | **Default**  | `true`    |
 
-## <a name="supports_audio_input"></a>8. Property `supports_audio_input`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="supports_audio_input"></a>8. [Required] Property supports_audio_input</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Supports Audio Input
 
@@ -91,5 +160,8 @@ Specific value: `"claude-3-5-sonnet-20240620"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 | **Default**  | `false`   |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -2,16 +2,29 @@
 title: MistralGPT
 description: "Description of MistralGPT component"
 ---
-| Property                             | Pattern | Type                | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const               | No         | -          | -                 |
-| - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | -                 |
-| - [temperature](#temperature )       | No      | number              | No         | -          | Temperature       |
-| - [force_json](#force_json )         | No      | boolean             | No         | -          | Force Json        |
-| - [max_tokens](#max_tokens )         | No      | integer             | No         | -          | Max Tokens        |
-| - [client_args](#client_args )       | No      | object              | No         | -          | Client Args       |
+# MistralGPT
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property model](#model)
+- [3. [Optional] Property temperature](#temperature)
+- [4. [Optional] Property force_json](#force_json)
+- [5. [Optional] Property max_tokens](#max_tokens)
+- [6. [Optional] Property client_args](#client_args)
+
+**Title:** MistralGPT
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -20,7 +33,15 @@ description: "Description of MistralGPT component"
 
 Specific value: `"MistralGPT"`
 
-## <a name="model"></a>2. Property `model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="model"></a>2. [Optional] Property model</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                     |
 | ------------ | ----------------------------------- |
@@ -28,7 +49,15 @@ Specific value: `"MistralGPT"`
 | **Required** | No                                  |
 | **Default**  | `{"implementation": "gpt-4-turbo"}` |
 
-## <a name="temperature"></a>3. Property `temperature`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="temperature"></a>3. [Optional] Property temperature</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Temperature
 
@@ -38,7 +67,15 @@ Specific value: `"MistralGPT"`
 | **Required** | No       |
 | **Default**  | `0.3`    |
 
-## <a name="force_json"></a>4. Property `force_json`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="force_json"></a>4. [Optional] Property force_json</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Force Json
 
@@ -48,7 +85,15 @@ Specific value: `"MistralGPT"`
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="max_tokens"></a>5. Property `max_tokens`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="max_tokens"></a>5. [Optional] Property max_tokens</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Max Tokens
 
@@ -58,7 +103,15 @@ Specific value: `"MistralGPT"`
 | **Required** | No        |
 | **Default**  | `null`    |
 
-## <a name="client_args"></a>6. Property `client_args`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="client_args"></a>6. [Optional] Property client_args</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Client Args
 
@@ -68,5 +121,8 @@ Specific value: `"MistralGPT"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

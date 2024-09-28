@@ -2,11 +2,24 @@
 title: SimilarityMemoryRetriever
 description: "Description of SimilarityMemoryRetriever component"
 ---
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | -                 |
+# SimilarityMemoryRetriever
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+
+**Title:** SimilarityMemoryRetriever
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -14,5 +27,8 @@ description: "Description of SimilarityMemoryRetriever component"
 | **Required** | No      |
 
 Specific value: `"SimilarityMemoryRetriever"`
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -2,13 +2,26 @@
 title: LongTermMemoryUnit
 description: "Description of LongTermMemoryUnit component"
 ---
-| Property                             | Pattern | Type               | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------------------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const              | No         | -          | -                 |
-| + [user_scoped](#user_scoped )       | No      | boolean            | No         | -          | User Scoped       |
-| - [llm_unit](#llm_unit )             | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview) | No         | -          | -                 |
+# LongTermMemoryUnit
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Required] Property user_scoped](#user_scoped)
+- [3. [Optional] Property llm_unit](#llm_unit)
+
+**Title:** LongTermMemoryUnit
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -17,7 +30,15 @@ description: "Description of LongTermMemoryUnit component"
 
 Specific value: `"LongTermMemoryUnit"`
 
-## <a name="user_scoped"></a>2. Property `user_scoped`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="user_scoped"></a>2. [Required] Property user_scoped</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** User Scoped
 
@@ -26,12 +47,23 @@ Specific value: `"LongTermMemoryUnit"`
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-## <a name="llm_unit"></a>3. Property `llm_unit`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="llm_unit"></a>3. [Optional] Property llm_unit</strong>  
+
+</summary>
+<blockquote>
 
 |              |                      |
 | ------------ | -------------------- |
 | **Type**     | [`Reference[LLMUnit]`](/docs/components/llmunit/overview) |
 | **Required** | No                   |
 | **Default**  | `null`               |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -2,16 +2,29 @@
 title: DocumentManager
 description: "Description of DocumentManager component"
 ---
-| Property                                   | Pattern | Type                         | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ---------------------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )       | No      | const                        | No         | -          | -                 |
-| + [name](#name )                           | No      | string                       | No         | -          | Name              |
-| - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -          | Recheck Frequency |
-| - [loader](#loader )                       | No      | [Reference[DocumentLoader]](/docs/components/documentloader/overview)    | No         | -          | -                 |
-| - [concurrency](#concurrency )             | No      | integer                      | No         | -          | Concurrency       |
-| - [doc_processor](#doc_processor )         | No      | [Reference[DocumentProcessor]](/docs/components/documentprocessor/overview) | No         | -          | -                 |
+# DocumentManager
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Required] Property name](#name)
+- [3. [Optional] Property recheck_frequency](#recheck_frequency)
+- [4. [Optional] Property loader](#loader)
+- [5. [Optional] Property concurrency](#concurrency)
+- [6. [Optional] Property doc_processor](#doc_processor)
+
+**Title:** DocumentManager
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -20,7 +33,15 @@ description: "Description of DocumentManager component"
 
 Specific value: `"DocumentManager"`
 
-## <a name="name"></a>2. Property `name`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="name"></a>2. [Required] Property name</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Name
 
@@ -31,7 +52,15 @@ Specific value: `"DocumentManager"`
 
 **Description:** The name of the document manager (used to name database collections).
 
-## <a name="recheck_frequency"></a>3. Property `recheck_frequency`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="recheck_frequency"></a>3. [Optional] Property recheck_frequency</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Recheck Frequency
 
@@ -43,7 +72,15 @@ Specific value: `"DocumentManager"`
 
 **Description:** The number of seconds between checks.
 
-## <a name="loader"></a>4. Property `loader`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="loader"></a>4. [Optional] Property loader</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                        |
 | ------------ | -------------------------------------- |
@@ -51,7 +88,15 @@ Specific value: `"DocumentManager"`
 | **Required** | No                                     |
 | **Default**  | `{"implementation": "DocumentLoader"}` |
 
-## <a name="concurrency"></a>5. Property `concurrency`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="concurrency"></a>5. [Optional] Property concurrency</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Concurrency
 
@@ -63,12 +108,23 @@ Specific value: `"DocumentManager"`
 
 **Description:** The number of concurrent tasks to run.
 
-## <a name="doc_processor"></a>6. Property `doc_processor`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="doc_processor"></a>6. [Optional] Property doc_processor</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                           |
 | ------------ | ----------------------------------------- |
 | **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview)            |
 | **Required** | No                                        |
 | **Default**  | `{"implementation": "DocumentProcessor"}` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -2,12 +2,25 @@
 title: RAGFusionReranker
 description: "Description of RAGFusionReranker component"
 ---
-| Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const   | No         | -          | -                 |
-| - [k](#k )                           | No      | integer | No         | -          | K                 |
+# RAGFusionReranker
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property k](#k)
+
+**Title:** RAGFusionReranker
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -16,7 +29,15 @@ description: "Description of RAGFusionReranker component"
 
 Specific value: `"RAGFusionReranker"`
 
-## <a name="k"></a>2. Property `k`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="k"></a>2. [Optional] Property k</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** K
 
@@ -27,5 +48,8 @@ Specific value: `"RAGFusionReranker"`
 | **Default**  | `60`      |
 
 **Description:** The rerank factor.
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

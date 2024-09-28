@@ -2,13 +2,26 @@
 title: DocumentProcessor
 description: "Description of DocumentProcessor component"
 ---
-| Property                             | Pattern | Type                           | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const                          | No         | -          | -                 |
-| - [parser](#parser )                 | No      | [Reference[DocumentParser]](/docs/components/documentparser/overview)      | No         | -          | -                 |
-| - [splitter](#splitter )             | No      | [Reference[DocumentTransformer]](/docs/components/documenttransformer/overview) | No         | -          | -                 |
+# DocumentProcessor
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property parser](#parser)
+- [3. [Optional] Property splitter](#splitter)
+
+**Title:** DocumentProcessor
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -17,7 +30,15 @@ description: "Description of DocumentProcessor component"
 
 Specific value: `"DocumentProcessor"`
 
-## <a name="parser"></a>2. Property `parser`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="parser"></a>2. [Optional] Property parser</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                        |
 | ------------ | -------------------------------------- |
@@ -25,12 +46,23 @@ Specific value: `"DocumentProcessor"`
 | **Required** | No                                     |
 | **Default**  | `{"implementation": "DocumentParser"}` |
 
-## <a name="splitter"></a>3. Property `splitter`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="splitter"></a>3. [Optional] Property splitter</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                             |
 | ------------ | ------------------------------------------- |
 | **Type**     | [`Reference[DocumentTransformer]`](/docs/components/documenttransformer/overview)            |
 | **Required** | No                                          |
 | **Default**  | `{"implementation": "DocumentTransformer"}` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

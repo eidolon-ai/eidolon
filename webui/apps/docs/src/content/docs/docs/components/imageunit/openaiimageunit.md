@@ -2,18 +2,31 @@
 title: OpenAIImageUnit
 description: "Description of OpenAIImageUnit component"
 ---
-| Property                                                       | Pattern | Type                               | Deprecated | Definition | Title/Description           |
-| -------------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | --------------------------- |
-| - [implementation](#implementation )                           | No      | const                              | No         | -          | -                           |
-| - [image_to_text_prompt](#image_to_text_prompt )               | No      | string                             | No         | -          | Image To Text Prompt        |
-| - [text_to_image_prompt](#text_to_image_prompt )               | No      | string                             | No         | -          | Text To Image Prompt        |
-| - [connection_handler](#connection_handler )                   | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | -                           |
-| - [image_to_text_model](#image_to_text_model )                 | No      | string                             | No         | -          | Image To Text Model         |
-| - [text_to_image_model](#text_to_image_model )                 | No      | string                             | No         | -          | Text To Image Model         |
-| - [temperature](#temperature )                                 | No      | number                             | No         | -          | Temperature                 |
-| - [image_to_text_system_prompt](#image_to_text_system_prompt ) | No      | string                             | No         | -          | Image To Text System Prompt |
+# OpenAIImageUnit
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property image_to_text_prompt](#image_to_text_prompt)
+- [3. [Optional] Property text_to_image_prompt](#text_to_image_prompt)
+- [4. [Optional] Property connection_handler](#connection_handler)
+- [5. [Optional] Property image_to_text_model](#image_to_text_model)
+- [6. [Optional] Property text_to_image_model](#text_to_image_model)
+- [7. [Optional] Property temperature](#temperature)
+- [8. [Optional] Property image_to_text_system_prompt](#image_to_text_system_prompt)
+
+**Title:** OpenAIImageUnit
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -22,7 +35,15 @@ description: "Description of OpenAIImageUnit component"
 
 Specific value: `"OpenAIImageUnit"`
 
-## <a name="image_to_text_prompt"></a>2. Property `image_to_text_prompt`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="image_to_text_prompt"></a>2. [Optional] Property image_to_text_prompt</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Image To Text Prompt
 
@@ -34,7 +55,15 @@ Specific value: `"OpenAIImageUnit"`
 
 **Description:** The prompt to use for the conversion. The text should be very verbose and detailed.
 
-## <a name="text_to_image_prompt"></a>3. Property `text_to_image_prompt`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="text_to_image_prompt"></a>3. [Optional] Property text_to_image_prompt</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Text To Image Prompt
 
@@ -46,7 +75,15 @@ Specific value: `"OpenAIImageUnit"`
 
 **Description:** The prompt to use for the conversion. The text should be very verbose and detailed.
 
-## <a name="connection_handler"></a>4. Property `connection_handler`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="connection_handler"></a>4. [Optional] Property connection_handler</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                                 |
 | ------------ | ----------------------------------------------- |
@@ -54,7 +91,15 @@ Specific value: `"OpenAIImageUnit"`
 | **Required** | No                                              |
 | **Default**  | `{"implementation": "OpenAIConnectionHandler"}` |
 
-## <a name="image_to_text_model"></a>5. Property `image_to_text_model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="image_to_text_model"></a>5. [Optional] Property image_to_text_model</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Image To Text Model
 
@@ -66,7 +111,15 @@ Specific value: `"OpenAIImageUnit"`
 
 **Description:** The model to use for the vision LLM.
 
-## <a name="text_to_image_model"></a>6. Property `text_to_image_model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="text_to_image_model"></a>6. [Optional] Property text_to_image_model</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Text To Image Model
 
@@ -78,7 +131,15 @@ Specific value: `"OpenAIImageUnit"`
 
 **Description:** The model to use for the vision LLM.
 
-## <a name="temperature"></a>7. Property `temperature`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="temperature"></a>7. [Optional] Property temperature</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Temperature
 
@@ -88,7 +149,15 @@ Specific value: `"OpenAIImageUnit"`
 | **Required** | No       |
 | **Default**  | `0.3`    |
 
-## <a name="image_to_text_system_prompt"></a>8. Property `image_to_text_system_prompt`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="image_to_text_system_prompt"></a>8. [Optional] Property image_to_text_system_prompt</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Image To Text System Prompt
 
@@ -99,5 +168,8 @@ Specific value: `"OpenAIImageUnit"`
 | **Default**  | `"You are an expert at answering questions about images. You are presented with an image and a question and must answer the question based on the information in the image."` |
 
 **Description:** The system prompt to use for text to image.
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

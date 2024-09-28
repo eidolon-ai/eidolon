@@ -2,16 +2,29 @@
 title: Retriever
 description: "Description of Retriever component"
 ---
-| Property                                         | Pattern | Type                           | Deprecated | Definition | Title/Description |
-| ------------------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )             | No      | const                          | No         | -          | -                 |
-| - [max_num_results](#max_num_results )           | No      | integer                        | No         | -          | Max Num Results   |
-| - [question_transformer](#question_transformer ) | No      | [Reference[QuestionTransformer]](/docs/components/questiontransformer/overview) | No         | -          | -                 |
-| - [document_retriever](#document_retriever )     | No      | [Reference[DocumentRetriever]](/docs/components/documentretriever/overview)   | No         | -          | -                 |
-| - [document_reranker](#document_reranker )       | No      | [Reference[DocumentReranker]](/docs/components/documentreranker/overview)    | No         | -          | -                 |
-| - [result_summarizer](#result_summarizer )       | No      | [Reference[ResultSummarizer]](/docs/components/resultsummarizer/overview)    | No         | -          | -                 |
+# Retriever
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property max_num_results](#max_num_results)
+- [3. [Optional] Property question_transformer](#question_transformer)
+- [4. [Optional] Property document_retriever](#document_retriever)
+- [5. [Optional] Property document_reranker](#document_reranker)
+- [6. [Optional] Property result_summarizer](#result_summarizer)
+
+**Title:** Retriever
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -20,7 +33,15 @@ description: "Description of Retriever component"
 
 Specific value: `"Retriever"`
 
-## <a name="max_num_results"></a>2. Property `max_num_results`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="max_num_results"></a>2. [Optional] Property max_num_results</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Max Num Results
 
@@ -32,7 +53,15 @@ Specific value: `"Retriever"`
 
 **Description:** The maximum number of results to consider.
 
-## <a name="question_transformer"></a>3. Property `question_transformer`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="question_transformer"></a>3. [Optional] Property question_transformer</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                             |
 | ------------ | ------------------------------------------- |
@@ -40,7 +69,15 @@ Specific value: `"Retriever"`
 | **Required** | No                                          |
 | **Default**  | `{"implementation": "QuestionTransformer"}` |
 
-## <a name="document_retriever"></a>4. Property `document_retriever`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="document_retriever"></a>4. [Optional] Property document_retriever</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                           |
 | ------------ | ----------------------------------------- |
@@ -48,7 +85,15 @@ Specific value: `"Retriever"`
 | **Required** | No                                        |
 | **Default**  | `{"implementation": "DocumentRetriever"}` |
 
-## <a name="document_reranker"></a>5. Property `document_reranker`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="document_reranker"></a>5. [Optional] Property document_reranker</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                          |
 | ------------ | ---------------------------------------- |
@@ -56,12 +101,23 @@ Specific value: `"Retriever"`
 | **Required** | No                                       |
 | **Default**  | `{"implementation": "DocumentReranker"}` |
 
-## <a name="result_summarizer"></a>6. Property `result_summarizer`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="result_summarizer"></a>6. [Optional] Property result_summarizer</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                          |
 | ------------ | ---------------------------------------- |
 | **Type**     | [`Reference[ResultSummarizer]`](/docs/components/resultsummarizer/overview)            |
 | **Required** | No                                       |
 | **Default**  | `{"implementation": "ResultSummarizer"}` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

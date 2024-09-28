@@ -2,17 +2,30 @@
 title: SentenceTransformersTokenTextSplitter
 description: "Description of SentenceTransformersTokenTextSplitter component"
 ---
-| Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ---------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation )     | No      | const   | No         | -          | -                 |
-| - [chunk_size](#chunk_size )             | No      | integer | No         | -          | Chunk Size        |
-| - [chunk_overlap](#chunk_overlap )       | No      | integer | No         | -          | Chunk Overlap     |
-| - [keep_separator](#keep_separator )     | No      | boolean | No         | -          | Keep Separator    |
-| - [strip_whitespace](#strip_whitespace ) | No      | boolean | No         | -          | Strip Whitespace  |
-| - [model](#model )                       | No      | string  | No         | -          | Model             |
-| - [tokens_per_chunk](#tokens_per_chunk ) | No      | integer | No         | -          | Tokens Per Chunk  |
+# SentenceTransformersTokenTextSplitter
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property chunk_size](#chunk_size)
+- [3. [Optional] Property chunk_overlap](#chunk_overlap)
+- [4. [Optional] Property keep_separator](#keep_separator)
+- [5. [Optional] Property strip_whitespace](#strip_whitespace)
+- [6. [Optional] Property model](#model)
+- [7. [Optional] Property tokens_per_chunk](#tokens_per_chunk)
+
+**Title:** SentenceTransformersTokenTextSplitter
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -21,7 +34,15 @@ description: "Description of SentenceTransformersTokenTextSplitter component"
 
 Specific value: `"SentenceTransformersTokenTextSplitter"`
 
-## <a name="chunk_size"></a>2. Property `chunk_size`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="chunk_size"></a>2. [Optional] Property chunk_size</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Chunk Size
 
@@ -33,7 +54,15 @@ Specific value: `"SentenceTransformersTokenTextSplitter"`
 
 **Description:** Maximum size of chunks to return
 
-## <a name="chunk_overlap"></a>3. Property `chunk_overlap`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="chunk_overlap"></a>3. [Optional] Property chunk_overlap</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Chunk Overlap
 
@@ -43,7 +72,15 @@ Specific value: `"SentenceTransformersTokenTextSplitter"`
 | **Required** | No        |
 | **Default**  | `50`      |
 
-## <a name="keep_separator"></a>4. Property `keep_separator`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="keep_separator"></a>4. [Optional] Property keep_separator</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Keep Separator
 
@@ -55,7 +92,15 @@ Specific value: `"SentenceTransformersTokenTextSplitter"`
 
 **Description:** Whether to keep the separator in the chunks
 
-## <a name="strip_whitespace"></a>5. Property `strip_whitespace`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="strip_whitespace"></a>5. [Optional] Property strip_whitespace</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Strip Whitespace
 
@@ -67,7 +112,15 @@ Specific value: `"SentenceTransformersTokenTextSplitter"`
 
 **Description:** If `True`, strips whitespace from the start and end of every document
 
-## <a name="model"></a>6. Property `model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="model"></a>6. [Optional] Property model</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Model
 
@@ -79,7 +132,15 @@ Specific value: `"SentenceTransformersTokenTextSplitter"`
 
 **Description:** Model name
 
-## <a name="tokens_per_chunk"></a>7. Property `tokens_per_chunk`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="tokens_per_chunk"></a>7. [Optional] Property tokens_per_chunk</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Tokens Per Chunk
 
@@ -90,5 +151,8 @@ Specific value: `"SentenceTransformersTokenTextSplitter"`
 | **Default**  | `null`    |
 
 **Description:** Number of tokens per chunk
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

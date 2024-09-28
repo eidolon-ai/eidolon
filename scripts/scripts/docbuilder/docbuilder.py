@@ -21,9 +21,23 @@ EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 
 
 def main():
-    print("Generating json...")
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
 
+    print("Generating json...")
+    json_schema = generate_schema()
+
+    print("writing json...")
+    shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    write_json_schema(dist_component_schemas, json_schema)
+
+    print("writing md...")
+    write_md(dist_component_schemas)
+
+    # print("updating sitemap...")
+    # update_sitemap()
+
+
+def generate_schema():
     accumulated_schema = {"$defs": {
         "Agent": {
             "title": "Agent",
@@ -50,19 +64,9 @@ def main():
         accumulated_schema["$defs"].update(schema.pop("$defs", {}))
         accumulated_schema["$defs"][agent.__name__] = schema
         accumulated_schema["$defs"]["Agent"]["anyOf"].append({"$ref": f"#/$defs/{agent.__name__}"})
-
     machine_schema = MachineResource.model_json_schema()
     accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
-
-    print("writing json...")
-    shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    write_json_schema(dist_component_schemas, accumulated_schema)
-
-    print("writing md...")
-    write_md(dist_component_schemas)
-
-    # print("updating sitemap...")
-    # update_sitemap()
+    return accumulated_schema
 
 
 def write_json_schema(dist_component_schemas, schema):
@@ -193,10 +197,11 @@ def write_md(read_loc,
                     json.dump(schema, temp_json_file, indent=2)
                 content = generate_from_schema(Path(tempdir) / c, config=GenerationConfiguration(
                     show_breadcrumbs=False,
-                    template_name="md",
+                    templates_directory = Path(__file__).parent / "templates",
+                    template_name="md_nested",
                     with_footer=False,
                 ))
-                content = content[content.index(cut_before_str):]
+                # content = content[content.index(cut_before_str):]
                 write_astro_md_file(content, description, title, write_loc / url_safe(group_name) / (url_safe(schema['reference_details']['name']) + ".md"), group_names)
 
 

@@ -2,17 +2,32 @@
 title: SearchSpec
 description: "Description of SearchSpec component"
 ---
-| Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
-| ---------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------- |
-| - [implementation](#implementation )           | No      | const       | No         | -          | -                   |
-| - [cse_id](#cse_id )                           | No      | string      | No         | -          | Cse Id              |
-| - [cse_token](#cse_token )                     | No      | string      | No         | -          | Cse Token           |
-| - [name](#name )                               | No      | string      | No         | -          | Name                |
-| - [description](#description )                 | No      | string      | No         | -          | Description         |
-| - [defaultDateRestrict](#defaultDateRestrict ) | No      | string      | No         | -          | Defaultdaterestrict |
-| - [params](#params )                           | No      | Combination | No         | -          | Params              |
+# SearchSpec
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property cse_id](#cse_id)
+- [3. [Optional] Property cse_token](#cse_token)
+- [4. [Optional] Property name](#name)
+- [5. [Optional] Property description](#description)
+- [6. [Optional] Property defaultDateRestrict](#defaultDateRestrict)
+- [7. [Optional] Property params](#params)
+  - [7.1. Property `item 0`](#params_anyOf_i0)
+  - [7.2. Property `item 1`](#params_anyOf_i1)
+
+**Title:** SearchSpec
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -21,7 +36,15 @@ description: "Description of SearchSpec component"
 
 Specific value: `"Search"`
 
-## <a name="cse_id"></a>2. Property `cse_id`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="cse_id"></a>2. [Optional] Property cse_id</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Cse Id
 
@@ -32,7 +55,15 @@ Specific value: `"Search"`
 
 **Description:** Google Custom Search Engine Id.
 
-## <a name="cse_token"></a>3. Property `cse_token`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="cse_token"></a>3. [Optional] Property cse_token</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Cse Token
 
@@ -43,7 +74,15 @@ Specific value: `"Search"`
 
 **Description:** Google Project dev token, must have search permissions.
 
-## <a name="name"></a>4. Property `name`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="name"></a>4. [Optional] Property name</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Name
 
@@ -53,7 +92,15 @@ Specific value: `"Search"`
 | **Required** | No         |
 | **Default**  | `"search"` |
 
-## <a name="description"></a>5. Property `description`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="description"></a>5. [Optional] Property description</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Description
 
@@ -63,7 +110,15 @@ Specific value: `"Search"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="defaultDateRestrict"></a>6. Property `defaultDateRestrict`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="defaultDateRestrict"></a>6. [Optional] Property defaultDateRestrict</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Defaultdaterestrict
 
@@ -73,7 +128,15 @@ Specific value: `"Search"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="params"></a>7. Property `params`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="params"></a>7. [Optional] Property params</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Params
 
@@ -84,10 +147,14 @@ Specific value: `"Search"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
+<blockquote>
+
 | Any of(Option)             |
 | -------------------------- |
 | [item 0](#params_anyOf_i0) |
 | [item 1](#params_anyOf_i1) |
+
+<blockquote>
 
 ### <a name="params_anyOf_i0"></a>7.1. Property `item 0`
 
@@ -97,11 +164,21 @@ Specific value: `"Search"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
+</blockquote>
+<blockquote>
+
 ### <a name="params_anyOf_i1"></a>7.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
+
+</blockquote>
+
+</blockquote>
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

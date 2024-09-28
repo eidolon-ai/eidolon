@@ -2,14 +2,27 @@
 title: GoogleJWTProcessor
 description: "Description of GoogleJWTProcessor component"
 ---
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| - [jwks_url](#jwks_url )             | No      | string | No         | -          | Jwks Url          |
-| - [audience](#audience )             | No      | string | No         | -          | Audience          |
-| - [issuer](#issuer )                 | No      | string | No         | -          | Issuer            |
+# GoogleJWTProcessor
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property jwks_url](#jwks_url)
+- [3. [Optional] Property audience](#audience)
+- [4. [Optional] Property issuer](#issuer)
+
+**Title:** GoogleJWTProcessor
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -18,7 +31,15 @@ description: "Description of GoogleJWTProcessor component"
 
 Specific value: `"GoogleJWTProcessor"`
 
-## <a name="jwks_url"></a>2. Property `jwks_url`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="jwks_url"></a>2. [Optional] Property jwks_url</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Jwks Url
 
@@ -30,7 +51,15 @@ Specific value: `"GoogleJWTProcessor"`
 
 **Description:** The URL to fetch the JWKS from. Defaults to https://www.googleapis.com/oauth2/v3/certs
 
-## <a name="audience"></a>3. Property `audience`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="audience"></a>3. [Optional] Property audience</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Audience
 
@@ -42,7 +71,15 @@ Specific value: `"GoogleJWTProcessor"`
 
 **Description:** Your google client ID. Defaults to the environment variable GOOGLE_CLIENT_ID
 
-## <a name="issuer"></a>4. Property `issuer`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="issuer"></a>4. [Optional] Property issuer</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Issuer
 
@@ -53,5 +90,8 @@ Specific value: `"GoogleJWTProcessor"`
 | **Default**  | `"accounts.google.com"` |
 
 **Description:** The issuer of the JWT. Defaults to accounts.google.com
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

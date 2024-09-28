@@ -2,15 +2,29 @@
 title: AzureFileMemory
 description: "Description of AzureFileMemory component"
 ---
-| Property                                                       | Pattern | Type    | Deprecated | Definition           | Title/Description           |
-| -------------------------------------------------------------- | ------- | ------- | ---------- | -------------------- | --------------------------- |
-| - [implementation](#implementation )                           | No      | const   | No         | -                    | -                           |
-| - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | In #/$defs/Reference | -                           |
-| + [account_url](#account_url )                                 | No      | string  | No         | -                    | Account Url                 |
-| + [container](#container )                                     | No      | string  | No         | -                    | Container                   |
-| - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -                    | Create Container On Startup |
+# AzureFileMemory
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property azure_ad_token_provider](#azure_ad_token_provider)
+  - [2.1. [Optional] Property implementation](#azure_ad_token_provider_implementation)
+- [3. [Required] Property account_url](#account_url)
+- [4. [Required] Property container](#container)
+- [5. [Optional] Property create_container_on_startup](#create_container_on_startup)
+
+**Title:** AzureFileMemory
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -19,7 +33,15 @@ description: "Description of AzureFileMemory component"
 
 Specific value: `"AzureFileMemory"`
 
-## <a name="azure_ad_token_provider"></a>2. Property `azure_ad_token_provider`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="azure_ad_token_provider"></a>2. [Optional] Property azure_ad_token_provider</strong>  
+
+</summary>
+<blockquote>
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -28,19 +50,30 @@ Specific value: `"AzureFileMemory"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | #/$defs/Reference                                                         |
 
-| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#azure_ad_token_provider_implementation ) | No      | string | No         | -          | -                 |
-| - [](#azure_ad_token_provider_additionalProperties )         | No      | object | No         | -          | -                 |
+<details>
+<summary>
+<strong> <a name="azure_ad_token_provider_implementation"></a>2.1. [Optional] Property implementation</strong>  
 
-### <a name="azure_ad_token_provider_implementation"></a>2.1. Property `implementation`
+</summary>
+<blockquote>
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="account_url"></a>3. Property `account_url`
+</blockquote>
+</details>
+
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="account_url"></a>3. [Required] Property account_url</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Account Url
 
@@ -51,7 +84,15 @@ Specific value: `"AzureFileMemory"`
 
 **Description:** The URL of the Azure storage account of the form https://<OAUTH_STORAGE_ACCOUNT_NAME>.blob.core.windows.net.
 
-## <a name="container"></a>4. Property `container`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="container"></a>4. [Required] Property container</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Container
 
@@ -62,7 +103,15 @@ Specific value: `"AzureFileMemory"`
 
 **Description:** The name of the container to use.
 
-## <a name="create_container_on_startup"></a>5. Property `create_container_on_startup`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="create_container_on_startup"></a>5. [Optional] Property create_container_on_startup</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Create Container On Startup
 
@@ -73,5 +122,8 @@ Specific value: `"AzureFileMemory"`
 | **Default**  | `false`   |
 
 **Description:** If true, the container will be created on startup if not already present.
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

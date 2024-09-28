@@ -2,11 +2,24 @@
 title: NoopAuthProcessor
 description: "Description of NoopAuthProcessor component"
 ---
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const | No         | -          | -                 |
+# NoopAuthProcessor
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Required] Property implementation](#implementation)
+
+**Title:** NoopAuthProcessor
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Required] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -14,5 +27,8 @@ description: "Description of NoopAuthProcessor component"
 | **Required** | Yes     |
 
 Specific value: `"NoopAuthProcessor"`
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

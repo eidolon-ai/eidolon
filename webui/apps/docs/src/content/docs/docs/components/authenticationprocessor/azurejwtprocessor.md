@@ -2,14 +2,27 @@
 title: AzureJWTProcessor
 description: "Description of AzureJWTProcessor component"
 ---
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| - [client_id](#client_id )           | No      | string | No         | -          | Client Id         |
-| - [tenant_id](#tenant_id )           | No      | string | No         | -          | Tenant Id         |
-| - [issuer_prefix](#issuer_prefix )   | No      | string | No         | -          | Issuer Prefix     |
+# AzureJWTProcessor
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property client_id](#client_id)
+- [3. [Optional] Property tenant_id](#tenant_id)
+- [4. [Optional] Property issuer_prefix](#issuer_prefix)
+
+**Title:** AzureJWTProcessor
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -18,7 +31,15 @@ description: "Description of AzureJWTProcessor component"
 
 Specific value: `"AzureJWTProcessor"`
 
-## <a name="client_id"></a>2. Property `client_id`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="client_id"></a>2. [Optional] Property client_id</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Client Id
 
@@ -30,7 +51,15 @@ Specific value: `"AzureJWTProcessor"`
 
 **Description:** Your azure client or application ID. Defaults to the environment variable AZURE_CLIENT_ID
 
-## <a name="tenant_id"></a>3. Property `tenant_id`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="tenant_id"></a>3. [Optional] Property tenant_id</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Tenant Id
 
@@ -42,7 +71,15 @@ Specific value: `"AzureJWTProcessor"`
 
 **Description:** The tenant id of the JWT. Defaults to the environment variable AZURE_TENANT_ID
 
-## <a name="issuer_prefix"></a>4. Property `issuer_prefix`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="issuer_prefix"></a>4. [Optional] Property issuer_prefix</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Issuer Prefix
 
@@ -53,5 +90,8 @@ Specific value: `"AzureJWTProcessor"`
 | **Default**  | `"https://sts.windows.net"` |
 
 **Description:** The issuer prefix of the JWT. Defaults to sts.windows.net.  The tenant id will be appended to this value.  For example, sts.windows.net/your_tenant_id
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

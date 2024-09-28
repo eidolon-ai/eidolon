@@ -2,12 +2,25 @@
 title: ProcessFileSystemImpl
 description: "Description of ProcessFileSystemImpl component"
 ---
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| - [root](#root )                     | No      | string | No         | -          | Root              |
+# ProcessFileSystemImpl
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property root](#root)
+
+**Title:** ProcessFileSystemImpl
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -16,7 +29,15 @@ description: "Description of ProcessFileSystemImpl component"
 
 Specific value: `"ProcessFileSystemImpl"`
 
-## <a name="root"></a>2. Property `root`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="root"></a>2. [Optional] Property root</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Root
 
@@ -25,5 +46,8 @@ Specific value: `"ProcessFileSystemImpl"`
 | **Type**     | `string`      |
 | **Required** | No            |
 | **Default**  | `"processes"` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

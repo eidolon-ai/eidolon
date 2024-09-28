@@ -2,18 +2,33 @@
 title: WebSearchConfig
 description: "Description of WebSearchConfig component"
 ---
-| Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description   |
-| ---------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------- |
-| - [implementation](#implementation )           | No      | const            | No         | -          | -                   |
-| - [summarizer](#summarizer )                   | No      | enum (of string) | No         | -          | Summarizer          |
-| - [cse_id](#cse_id )                           | No      | string           | No         | -          | Cse Id              |
-| - [cse_token](#cse_token )                     | No      | string           | No         | -          | Cse Token           |
-| - [name](#name )                               | No      | string           | No         | -          | Name                |
-| - [description](#description )                 | No      | string           | No         | -          | Description         |
-| - [defaultDateRestrict](#defaultDateRestrict ) | No      | string           | No         | -          | Defaultdaterestrict |
-| - [params](#params )                           | No      | Combination      | No         | -          | Params              |
+# WebSearchConfig
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property summarizer](#summarizer)
+- [3. [Optional] Property cse_id](#cse_id)
+- [4. [Optional] Property cse_token](#cse_token)
+- [5. [Optional] Property name](#name)
+- [6. [Optional] Property description](#description)
+- [7. [Optional] Property defaultDateRestrict](#defaultDateRestrict)
+- [8. [Optional] Property params](#params)
+  - [8.1. Property `item 0`](#params_anyOf_i0)
+  - [8.2. Property `item 1`](#params_anyOf_i1)
+
+**Title:** WebSearchConfig
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -22,7 +37,15 @@ description: "Description of WebSearchConfig component"
 
 Specific value: `"WebSearch"`
 
-## <a name="summarizer"></a>2. Property `summarizer`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="summarizer"></a>2. [Optional] Property summarizer</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Summarizer
 
@@ -36,7 +59,15 @@ Must be one of:
 * "BeautifulSoup"
 * "noop"
 
-## <a name="cse_id"></a>3. Property `cse_id`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="cse_id"></a>3. [Optional] Property cse_id</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Cse Id
 
@@ -47,7 +78,15 @@ Must be one of:
 
 **Description:** Google Custom Search Engine Id.
 
-## <a name="cse_token"></a>4. Property `cse_token`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="cse_token"></a>4. [Optional] Property cse_token</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Cse Token
 
@@ -58,7 +97,15 @@ Must be one of:
 
 **Description:** Google Project dev token, must have search permissions.
 
-## <a name="name"></a>5. Property `name`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="name"></a>5. [Optional] Property name</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Name
 
@@ -68,7 +115,15 @@ Must be one of:
 | **Required** | No         |
 | **Default**  | `"search"` |
 
-## <a name="description"></a>6. Property `description`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="description"></a>6. [Optional] Property description</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Description
 
@@ -78,7 +133,15 @@ Must be one of:
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="defaultDateRestrict"></a>7. Property `defaultDateRestrict`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="defaultDateRestrict"></a>7. [Optional] Property defaultDateRestrict</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Defaultdaterestrict
 
@@ -88,7 +151,15 @@ Must be one of:
 | **Required** | No       |
 | **Default**  | `null`   |
 
-## <a name="params"></a>8. Property `params`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="params"></a>8. [Optional] Property params</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Params
 
@@ -99,10 +170,14 @@ Must be one of:
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
 
+<blockquote>
+
 | Any of(Option)             |
 | -------------------------- |
 | [item 0](#params_anyOf_i0) |
 | [item 1](#params_anyOf_i1) |
+
+<blockquote>
 
 ### <a name="params_anyOf_i0"></a>8.1. Property `item 0`
 
@@ -112,11 +187,21 @@ Must be one of:
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
+</blockquote>
+<blockquote>
+
 ### <a name="params_anyOf_i1"></a>8.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
 | **Type**     | `null` |
 | **Required** | No     |
+
+</blockquote>
+
+</blockquote>
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

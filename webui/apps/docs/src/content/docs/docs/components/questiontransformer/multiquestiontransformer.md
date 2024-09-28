@@ -2,14 +2,27 @@
 title: MultiQuestionTransformer
 description: "Description of MultiQuestionTransformer component"
 ---
-| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description  |
-| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------ |
-| - [implementation](#implementation )         | No      | const   | No         | -          | -                  |
-| - [keep_original](#keep_original )           | No      | boolean | No         | -          | Keep Original      |
-| - [number_to_generate](#number_to_generate ) | No      | integer | No         | -          | Number To Generate |
-| - [prompt](#prompt )                         | No      | string  | No         | -          | Prompt             |
+# MultiQuestionTransformer
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property keep_original](#keep_original)
+- [3. [Optional] Property number_to_generate](#number_to_generate)
+- [4. [Optional] Property prompt](#prompt)
+
+**Title:** MultiQuestionTransformer
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -18,7 +31,15 @@ description: "Description of MultiQuestionTransformer component"
 
 Specific value: `"MultiQuestionTransformer"`
 
-## <a name="keep_original"></a>2. Property `keep_original`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="keep_original"></a>2. [Optional] Property keep_original</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Keep Original
 
@@ -30,7 +51,15 @@ Specific value: `"MultiQuestionTransformer"`
 
 **Description:** Whether to keep the original question in the output
 
-## <a name="number_to_generate"></a>3. Property `number_to_generate`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="number_to_generate"></a>3. [Optional] Property number_to_generate</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Number To Generate
 
@@ -42,7 +71,15 @@ Specific value: `"MultiQuestionTransformer"`
 
 **Description:** The number of questions to generate
 
-## <a name="prompt"></a>4. Property `prompt`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="prompt"></a>4. [Optional] Property prompt</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Prompt
 
@@ -53,5 +90,8 @@ Specific value: `"MultiQuestionTransformer"`
 | **Default**  | `"You are an AI language model assistant. Your task is to generate {{number_to_generate}} different versions of the given user \n    question to retrieve relevant documents from a vector  database. By generating multiple perspectives on the user question, \n    your goal is to help the user overcome some of the limitations of distance-based similarity search. Provide these alternative \n    questions separated by newlines. Original question: {{question}}"` |
 
 **Description:** The prompt to be used for the question transformer. This should be a template where the user question is the field {{question}}
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

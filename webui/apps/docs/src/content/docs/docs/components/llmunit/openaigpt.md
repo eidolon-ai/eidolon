@@ -2,18 +2,31 @@
 title: OpenAIGPT
 description: "Description of OpenAIGPT component"
 ---
-| Property                                                 | Pattern | Type                               | Deprecated | Definition | Title/Description        |
-| -------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#implementation )                     | No      | const                              | No         | -          | -                        |
-| - [model](#model )                                       | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview)                | No         | -          | -                        |
-| - [temperature](#temperature )                           | No      | number                             | No         | -          | Temperature              |
-| - [force_json](#force_json )                             | No      | boolean                            | No         | -          | Force Json               |
-| - [max_tokens](#max_tokens )                             | No      | integer                            | No         | -          | Max Tokens               |
-| - [supports_system_messages](#supports_system_messages ) | No      | boolean                            | No         | -          | Supports System Messages |
-| - [can_stream](#can_stream )                             | No      | boolean                            | No         | -          | Can Stream               |
-| - [connection_handler](#connection_handler )             | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | -                        |
+# OpenAIGPT
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property model](#model)
+- [3. [Optional] Property temperature](#temperature)
+- [4. [Optional] Property force_json](#force_json)
+- [5. [Optional] Property max_tokens](#max_tokens)
+- [6. [Optional] Property supports_system_messages](#supports_system_messages)
+- [7. [Optional] Property can_stream](#can_stream)
+- [8. [Optional] Property connection_handler](#connection_handler)
+
+**Title:** OpenAIGPT
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -22,7 +35,15 @@ description: "Description of OpenAIGPT component"
 
 Specific value: `"OpenAIGPT"`
 
-## <a name="model"></a>2. Property `model`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="model"></a>2. [Optional] Property model</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                     |
 | ------------ | ----------------------------------- |
@@ -30,7 +51,15 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No                                  |
 | **Default**  | `{"implementation": "gpt-4-turbo"}` |
 
-## <a name="temperature"></a>3. Property `temperature`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="temperature"></a>3. [Optional] Property temperature</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Temperature
 
@@ -40,7 +69,15 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No       |
 | **Default**  | `0.3`    |
 
-## <a name="force_json"></a>4. Property `force_json`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="force_json"></a>4. [Optional] Property force_json</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Force Json
 
@@ -50,7 +87,15 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="max_tokens"></a>5. Property `max_tokens`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="max_tokens"></a>5. [Optional] Property max_tokens</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Max Tokens
 
@@ -60,7 +105,15 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No        |
 | **Default**  | `null`    |
 
-## <a name="supports_system_messages"></a>6. Property `supports_system_messages`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="supports_system_messages"></a>6. [Optional] Property supports_system_messages</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Supports System Messages
 
@@ -70,7 +123,15 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="can_stream"></a>7. Property `can_stream`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="can_stream"></a>7. [Optional] Property can_stream</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Can Stream
 
@@ -80,12 +141,23 @@ Specific value: `"OpenAIGPT"`
 | **Required** | No        |
 | **Default**  | `true`    |
 
-## <a name="connection_handler"></a>8. Property `connection_handler`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="connection_handler"></a>8. [Optional] Property connection_handler</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                                 |
 | ------------ | ----------------------------------------------- |
 | **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview)            |
 | **Required** | No                                              |
 | **Default**  | `{"implementation": "OpenAIConnectionHandler"}` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

@@ -2,12 +2,25 @@
 title: LocalFileMemory
 description: "Description of LocalFileMemory component"
 ---
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| - [root_dir](#root_dir )             | No      | string | No         | -          | Root Dir          |
+# LocalFileMemory
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property root_dir](#root_dir)
+
+**Title:** LocalFileMemory
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -16,7 +29,15 @@ description: "Description of LocalFileMemory component"
 
 Specific value: `"LocalFileMemory"`
 
-## <a name="root_dir"></a>2. Property `root_dir`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="root_dir"></a>2. [Optional] Property root_dir</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Root Dir
 
@@ -27,5 +48,8 @@ Specific value: `"LocalFileMemory"`
 | **Default**  | `"/tmp/eidolon/file_memory"` |
 
 **Description:** The root directory to store files in.
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

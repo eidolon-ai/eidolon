@@ -2,13 +2,26 @@
 title: SimilarityMemoryImpl
 description: "Description of SimilarityMemoryImpl component"
 ---
-| Property                             | Pattern | Type                   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ---------------------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const                  | No         | -          | -                 |
-| - [embedder](#embedder )             | No      | [Reference[Embedding]](/docs/components/embedding/overview)   | No         | -          | -                 |
-| - [vector_store](#vector_store )     | No      | [Reference[VectorStore]](/docs/components/vectorstore/overview) | No         | -          | -                 |
+# SimilarityMemoryImpl
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property embedder](#embedder)
+- [3. [Optional] Property vector_store](#vector_store)
+
+**Title:** SimilarityMemoryImpl
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -17,7 +30,15 @@ description: "Description of SimilarityMemoryImpl component"
 
 Specific value: `"SimilarityMemoryImpl"`
 
-## <a name="embedder"></a>2. Property `embedder`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="embedder"></a>2. [Optional] Property embedder</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                   |
 | ------------ | --------------------------------- |
@@ -25,12 +46,23 @@ Specific value: `"SimilarityMemoryImpl"`
 | **Required** | No                                |
 | **Default**  | `{"implementation": "Embedding"}` |
 
-## <a name="vector_store"></a>3. Property `vector_store`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="vector_store"></a>3. [Optional] Property vector_store</strong>  
+
+</summary>
+<blockquote>
 
 |              |                                     |
 | ------------ | ----------------------------------- |
 | **Type**     | [`Reference[VectorStore]`](/docs/components/vectorstore/overview)            |
 | **Required** | No                                  |
 | **Default**  | `{"implementation": "VectorStore"}` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------

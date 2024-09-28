@@ -2,14 +2,27 @@
 title: VectaraSearch
 description: "Description of VectaraSearch component"
 ---
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | -                 |
-| + [corpus_key](#corpus_key )         | No      | string | No         | -          | Corpus Key        |
-| - [description](#description )       | No      | string | No         | -          | Description       |
-| - [vectara_url](#vectara_url )       | No      | string | No         | -          | Vectara Url       |
+# VectaraSearch
 
-## <a name="implementation"></a>1. Property `implementation`
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Required] Property corpus_key](#corpus_key)
+- [3. [Optional] Property description](#description)
+- [4. [Optional] Property vectara_url](#vectara_url)
+
+**Title:** VectaraSearch
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| **Type**                  | `object`                                                |
+| **Required**              | No                                                      |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+
+<details>
+<summary>
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
+
+</summary>
+<blockquote>
 
 |              |         |
 | ------------ | ------- |
@@ -18,7 +31,15 @@ description: "Description of VectaraSearch component"
 
 Specific value: `"VectaraSearch"`
 
-## <a name="corpus_key"></a>2. Property `corpus_key`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="corpus_key"></a>2. [Required] Property corpus_key</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Corpus Key
 
@@ -29,7 +50,15 @@ Specific value: `"VectaraSearch"`
 
 **Description:** The corpus key to search in.
 
-## <a name="description"></a>3. Property `description`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="description"></a>3. [Optional] Property description</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Description
 
@@ -41,7 +70,15 @@ Specific value: `"VectaraSearch"`
 
 **Description:** Description of the tool presented to LLM. Will be formatted with corpus_key.
 
-## <a name="vectara_url"></a>4. Property `vectara_url`
+</blockquote>
+</details>
+
+<details>
+<summary>
+<strong> <a name="vectara_url"></a>4. [Optional] Property vectara_url</strong>  
+
+</summary>
+<blockquote>
 
 **Title:** Vectara Url
 
@@ -50,5 +87,8 @@ Specific value: `"VectaraSearch"`
 | **Type**     | `string`                    |
 | **Required** | No                          |
 | **Default**  | `"https://api.vectara.io/"` |
+
+</blockquote>
+</details>
 
 ----------------------------------------------------------------------------------------------------------------------------
