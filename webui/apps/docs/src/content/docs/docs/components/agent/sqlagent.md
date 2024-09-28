@@ -1,19 +1,24 @@
 ---
 title: SqlAgent
-description: Description of the SqlAgent component
+description: "Description of SqlAgent component"
 ---
 
-**Title:** SqlAgent
+# SqlAgent
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property client](#client)
+- [3. [Optional] Property apu](#apu)
+- [4. [Optional] Property description](#description)
+- [5. [Optional] Property system_prompt](#system_prompt)
+- [6. [Optional] Property user_prompt](#user_prompt)
+- [7. [Optional] Property clarification_prompt](#clarification_prompt)
+- [8. [Optional] Property response_prompt](#response_prompt)
+- [9. [Optional] Property error_prompt](#error_prompt)
+- [10. [Optional] Property num_retries](#num_retries)
 
 <details>
 <summary>
-<strong> [Optional] Property implementation</strong>  
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
 
 </summary>
 <blockquote>
@@ -30,7 +35,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property client</strong>  
+<strong> <a name="client"></a>2. [Optional] Property client</strong>  
 
 </summary>
 <blockquote>
@@ -46,7 +51,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property apu</strong>  
+<strong> <a name="apu"></a>3. [Optional] Property apu</strong>  
 
 </summary>
 <blockquote>
@@ -62,7 +67,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property description</strong>  
+<strong> <a name="description"></a>4. [Optional] Property description</strong>  
 
 </summary>
 <blockquote>
@@ -80,7 +85,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property system_prompt</strong>  
+<strong> <a name="system_prompt"></a>5. [Optional] Property system_prompt</strong>  
 
 </summary>
 <blockquote>
@@ -98,7 +103,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property user_prompt</strong>  
+<strong> <a name="user_prompt"></a>6. [Optional] Property user_prompt</strong>  
 
 </summary>
 <blockquote>
@@ -116,7 +121,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property clarification_prompt</strong>  
+<strong> <a name="clarification_prompt"></a>7. [Optional] Property clarification_prompt</strong>  
 
 </summary>
 <blockquote>
@@ -134,7 +139,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property response_prompt</strong>  
+<strong> <a name="response_prompt"></a>8. [Optional] Property response_prompt</strong>  
 
 </summary>
 <blockquote>
@@ -152,7 +157,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property error_prompt</strong>  
+<strong> <a name="error_prompt"></a>9. [Optional] Property error_prompt</strong>  
 
 </summary>
 <blockquote>
@@ -170,7 +175,7 @@ Specific value: `"SqlAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property num_retries</strong>  
+<strong> <a name="num_retries"></a>10. [Optional] Property num_retries</strong>  
 
 </summary>
 <blockquote>

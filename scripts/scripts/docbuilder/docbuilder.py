@@ -25,12 +25,12 @@ EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 def main():
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
 
-    print("Generating json...")
-    json_schema = generate_schema()
-
-    print("writing json...")
-    shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    write_json_schema(dist_component_schemas, json_schema)
+    # print("Generating json...")
+    # json_schema = generate_schema()
+    #
+    # print("writing json...")
+    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    # write_json_schema(dist_component_schemas, json_schema)
 
     print("writing md...")
     write_md(dist_component_schemas)

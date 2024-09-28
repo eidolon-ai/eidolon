@@ -1,19 +1,28 @@
 ---
 title: RetrieverAgent
-description: Description of the RetrieverAgent component
+description: "Description of RetrieverAgent component"
 ---
 
-**Title:** RetrieverAgent
+# RetrieverAgent
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+- [1. [Optional] Property implementation](#implementation)
+- [2. [Optional] Property max_num_results](#max_num_results)
+- [3. [Optional] Property question_transformer](#question_transformer)
+- [4. [Optional] Property document_retriever](#document_retriever)
+- [5. [Optional] Property document_reranker](#document_reranker)
+- [6. [Optional] Property result_summarizer](#result_summarizer)
+- [7. [Required] Property name](#name)
+- [8. [Required] Property description](#description)
+- [9. [Optional] Property loader_root_location](#loader_root_location)
+- [10. [Optional] Property loader_pattern](#loader_pattern)
+  - [10.1. Property `item 0`](#loader_pattern_anyOf_i0)
+  - [10.2. Property `item 1`](#loader_pattern_anyOf_i1)
+- [11. [Optional] Property document_manager](#document_manager)
+- [12. [Optional] Property apu](#apu)
 
 <details>
 <summary>
-<strong> [Optional] Property implementation</strong>  
+<strong> <a name="implementation"></a>1. [Optional] Property implementation</strong>  
 
 </summary>
 <blockquote>
@@ -30,7 +39,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property max_num_results</strong>  
+<strong> <a name="max_num_results"></a>2. [Optional] Property max_num_results</strong>  
 
 </summary>
 <blockquote>
@@ -50,7 +59,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property question_transformer</strong>  
+<strong> <a name="question_transformer"></a>3. [Optional] Property question_transformer</strong>  
 
 </summary>
 <blockquote>
@@ -66,7 +75,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property document_retriever</strong>  
+<strong> <a name="document_retriever"></a>4. [Optional] Property document_retriever</strong>  
 
 </summary>
 <blockquote>
@@ -82,7 +91,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property document_reranker</strong>  
+<strong> <a name="document_reranker"></a>5. [Optional] Property document_reranker</strong>  
 
 </summary>
 <blockquote>
@@ -98,7 +107,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property result_summarizer</strong>  
+<strong> <a name="result_summarizer"></a>6. [Optional] Property result_summarizer</strong>  
 
 </summary>
 <blockquote>
@@ -114,7 +123,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Required] Property name</strong>  
+<strong> <a name="name"></a>7. [Required] Property name</strong>  
 
 </summary>
 <blockquote>
@@ -133,7 +142,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Required] Property description</strong>  
+<strong> <a name="description"></a>8. [Required] Property description</strong>  
 
 </summary>
 <blockquote>
@@ -152,7 +161,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property loader_root_location</strong>  
+<strong> <a name="loader_root_location"></a>9. [Optional] Property loader_root_location</strong>  
 
 </summary>
 <blockquote>
@@ -172,7 +181,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property loader_pattern</strong>  
+<strong> <a name="loader_pattern"></a>10. [Optional] Property loader_pattern</strong>  
 
 </summary>
 <blockquote>
@@ -197,7 +206,7 @@ Specific value: `"RetrieverAgent"`
 
 <blockquote>
 
-## <a name="loader_pattern_anyOf_i0"></a>1. Property `item 0`
+### <a name="loader_pattern_anyOf_i0"></a>10.1. Property `item 0`
 
 |              |          |
 | ------------ | -------- |
@@ -207,7 +216,7 @@ Specific value: `"RetrieverAgent"`
 </blockquote>
 <blockquote>
 
-## <a name="loader_pattern_anyOf_i1"></a>2. Property `item 1`
+### <a name="loader_pattern_anyOf_i1"></a>10.2. Property `item 1`
 
 |              |        |
 | ------------ | ------ |
@@ -223,7 +232,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property document_manager</strong>  
+<strong> <a name="document_manager"></a>11. [Optional] Property document_manager</strong>  
 
 </summary>
 <blockquote>
@@ -239,7 +248,7 @@ Specific value: `"RetrieverAgent"`
 
 <details>
 <summary>
-<strong> [Optional] Property apu</strong>  
+<strong> <a name="apu"></a>12. [Optional] Property apu</strong>  
 
 </summary>
 <blockquote>
