@@ -4,6 +4,6 @@ description: "This is the IO unit for the APU. It is responsible for converting 
 
 This can be overridden to provide custom IO handling."
 ---
-Overview of the IOUnit component
+# Overview of the IOUnit component
 ## Builtins
 * [IOUnit](/docs/components/iounit/iounit/) (default)

@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "WebSearch"
+      "const": "WebSearch",
+      "title": "Implementation"
     },
     "summarizer": {
       "default": "BeautifulSoup",
@@ -67,6 +68,6 @@
   "required": [
     "implementation"
   ],
-  "title": "WebSearchConfig",
+  "title": "WebSearch",
   "type": "object"
 }

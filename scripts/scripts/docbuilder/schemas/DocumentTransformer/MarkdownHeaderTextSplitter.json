@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "MarkdownHeaderTextSplitter"
+      "const": "MarkdownHeaderTextSplitter",
+      "title": "Implementation"
     },
     "chunk_size": {
       "default": 4000,

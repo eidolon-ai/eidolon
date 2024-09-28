@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "RetrieverAgent"
+      "const": "RetrieverAgent",
+      "title": "Implementation"
     },
     "max_num_results": {
       "default": 10,

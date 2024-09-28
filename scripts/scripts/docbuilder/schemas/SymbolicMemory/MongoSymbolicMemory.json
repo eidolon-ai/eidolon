@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "MongoSymbolicMemory"
+      "const": "MongoSymbolicMemory",
+      "title": "Implementation"
     },
     "mongo_connection_string": {
       "default": "mongodb://localhost:27017/?directConnection=true",

@@ -1,6 +1,6 @@
 ---
-title: SimpleAgentSpec
-description: Description of the SimpleAgentSpec component
+title: SimpleAgent
+description: Description of the SimpleAgent component
 ---
 
 **Description:** The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This

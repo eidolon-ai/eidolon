@@ -1,8 +1,9 @@
 {
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "implementation": {
-      "const": "NoopAuthProcessor"
+      "const": "NoopAuthProcessor",
+      "title": "Implementation"
     }
   },
   "reference_details": {

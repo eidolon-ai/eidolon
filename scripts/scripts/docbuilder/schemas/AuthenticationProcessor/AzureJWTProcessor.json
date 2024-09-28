@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "AzureJWTProcessor"
+      "const": "AzureJWTProcessor",
+      "title": "Implementation"
     },
     "client_id": {
       "default": null,

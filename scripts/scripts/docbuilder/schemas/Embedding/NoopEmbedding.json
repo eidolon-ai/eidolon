@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "NoopEmbedding"
+      "const": "NoopEmbedding",
+      "title": "Implementation"
     }
   },
   "reference_details": {

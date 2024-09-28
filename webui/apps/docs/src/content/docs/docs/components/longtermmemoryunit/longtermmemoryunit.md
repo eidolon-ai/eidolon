@@ -5,11 +5,13 @@ description: Description of the LongTermMemoryUnit component
 
 | Property                             | Pattern | Type               | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------------------ | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const              | No         | -          | -                 |
+| + [implementation](#implementation ) | No      | const              | No         | -          | Implementation    |
 | + [user_scoped](#user_scoped )       | No      | boolean            | No         | -          | User Scoped       |
 | - [llm_unit](#llm_unit )             | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

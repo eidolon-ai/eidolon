@@ -5,12 +5,14 @@ description: Description of the MultiQuestionTransformer component
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description  |
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------ |
-| + [implementation](#implementation )         | No      | const   | No         | -          | -                  |
+| + [implementation](#implementation )         | No      | const   | No         | -          | Implementation     |
 | - [keep_original](#keep_original )           | No      | boolean | No         | -          | Keep Original      |
 | - [number_to_generate](#number_to_generate ) | No      | integer | No         | -          | Number To Generate |
 | - [prompt](#prompt )                         | No      | string  | No         | -          | Prompt             |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

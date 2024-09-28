@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "ChromaVectorStore"
+      "const": "ChromaVectorStore",
+      "title": "Implementation"
     },
     "root_document_directory": {
       "default": "vector_memory",

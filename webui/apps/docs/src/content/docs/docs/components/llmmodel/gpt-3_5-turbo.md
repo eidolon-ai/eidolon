@@ -5,7 +5,7 @@ description: Description of the gpt-3.5-turbo component
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| + [implementation](#implementation )             | No      | const   | No         | -          | -                    |
+| + [implementation](#implementation )             | No      | const   | No         | -          | Implementation       |
 | + [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
 | + [name](#name )                                 | No      | string  | No         | -          | Name                 |
 | + [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
@@ -15,6 +15,8 @@ description: Description of the gpt-3.5-turbo component
 | + [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

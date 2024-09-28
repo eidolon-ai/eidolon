@@ -5,12 +5,14 @@ description: Description of the AzureJWTProcessor component
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const  | No         | -          | -                 |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
 | - [client_id](#client_id )           | No      | string | No         | -          | Client Id         |
 | - [tenant_id](#tenant_id )           | No      | string | No         | -          | Tenant Id         |
 | - [issuer_prefix](#issuer_prefix )   | No      | string | No         | -          | Issuer Prefix     |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

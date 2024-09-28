@@ -1,8 +1,9 @@
 {
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "implementation": {
-      "const": "GlobPatternFunctionalAuthorizer"
+      "const": "GlobPatternFunctionalAuthorizer",
+      "title": "Implementation"
     }
   },
   "reference_details": {

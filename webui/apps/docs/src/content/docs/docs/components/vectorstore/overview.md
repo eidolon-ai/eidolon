@@ -2,7 +2,7 @@
 title: VectorStore Overview
 description: "None"
 ---
-Overview of the VectorStore component
+# Overview of the VectorStore component
 ## Builtins
-* [ChromaVectorStore](/docs/components/chromavectorstore/chromavectorstore/)
-* [NoopVectorStore](/docs/components/noopvectorstore/noopvectorstore/)
+* [ChromaVectorStore](/docs/components/vectorstore/chromavectorstore/)
+* [NoopVectorStore](/docs/components/vectorstore/noopvectorstore/)

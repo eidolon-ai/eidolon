@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "MultiQuestionTransformer"
+      "const": "MultiQuestionTransformer",
+      "title": "Implementation"
     },
     "keep_original": {
       "default": true,

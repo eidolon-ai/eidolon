@@ -5,10 +5,12 @@ description: Description of the RAGFusionReranker component
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const   | No         | -          | -                 |
+| + [implementation](#implementation ) | No      | const   | No         | -          | Implementation    |
 | - [k](#k )                           | No      | integer | No         | -          | K                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

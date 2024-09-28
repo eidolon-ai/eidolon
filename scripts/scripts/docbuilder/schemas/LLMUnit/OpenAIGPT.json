@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "OpenAIGPT"
+      "const": "OpenAIGPT",
+      "title": "Implementation"
     },
     "model": {
       "$ref": "../LLMModel/overview.json"

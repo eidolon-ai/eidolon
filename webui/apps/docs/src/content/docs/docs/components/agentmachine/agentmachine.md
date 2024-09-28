@@ -5,7 +5,7 @@ description: Description of the AgentMachine component
 
 | Property                                                   | Pattern | Type                         | Deprecated | Definition | Title/Description                                                                 |
 | ---------------------------------------------------------- | ------- | ---------------------------- | ---------- | ---------- | --------------------------------------------------------------------------------- |
-| + [implementation](#implementation )                       | No      | const                        | No         | -          | -                                                                                 |
+| + [implementation](#implementation )                       | No      | const                        | No         | -          | Implementation                                                                    |
 | - [symbolic_memory](#symbolic_memory )                     | No      | [Reference[SymbolicMemory]](/docs/components/symbolicmemory/overview)    | No         | -          | The Symbolic Memory implementation.                                               |
 | - [file_memory](#file_memory )                             | No      | [Reference[FileMemory]](/docs/components/filememory/overview)        | No         | -          | The File Memory implementation.                                                   |
 | - [similarity_memory](#similarity_memory )                 | No      | [Reference[SimilarityMemory]](/docs/components/similaritymemory/overview)  | No         | -          | The Vector Memory implementation.                                                 |
@@ -14,6 +14,8 @@ description: Description of the AgentMachine component
 | - [fail_on_agent_start_error](#fail_on_agent_start_error ) | No      | boolean                      | No         | -          | Fail On Agent Start Error                                                         |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

@@ -5,13 +5,15 @@ description: Description of the AzureOpenAIConnectionHandler component
 
 | Property                                               | Pattern | Type            | Deprecated | Definition           | Title/Description     |
 | ------------------------------------------------------ | ------- | --------------- | ---------- | -------------------- | --------------------- |
-| + [implementation](#implementation )                   | No      | const           | No         | -                    | -                     |
+| + [implementation](#implementation )                   | No      | const           | No         | -                    | Implementation        |
 | - [azure_ad_token_provider](#azure_ad_token_provider ) | No      | object          | No         | In #/$defs/Reference | -                     |
 | - [token_provider_scopes](#token_provider_scopes )     | No      | array of string | No         | -                    | Token Provider Scopes |
 | - [api_version](#api_version )                         | No      | string          | No         | -                    | Api Version           |
 | - [](#additionalProperties )                           | No      | object          | No         | -                    | -                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
@@ -31,10 +33,12 @@ Specific value: `"AzureOpenAIConnectionHandler"`
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#azure_ad_token_provider_implementation ) | No      | string | No         | -          | -                 |
+| - [implementation](#azure_ad_token_provider_implementation ) | No      | string | No         | -          | Implementation    |
 | - [](#azure_ad_token_provider_additionalProperties )         | No      | object | No         | -          | -                 |
 
 ### <a name="azure_ad_token_provider_implementation"></a>2.1. Property `implementation`
+
+**Title:** Implementation
 
 |              |          |
 | ------------ | -------- |

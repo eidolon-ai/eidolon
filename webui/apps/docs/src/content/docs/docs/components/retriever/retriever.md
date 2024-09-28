@@ -5,7 +5,7 @@ description: Description of the Retriever component
 
 | Property                                         | Pattern | Type                           | Deprecated | Definition | Title/Description |
 | ------------------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation )             | No      | const                          | No         | -          | -                 |
+| + [implementation](#implementation )             | No      | const                          | No         | -          | Implementation    |
 | - [max_num_results](#max_num_results )           | No      | integer                        | No         | -          | Max Num Results   |
 | - [question_transformer](#question_transformer ) | No      | [Reference[QuestionTransformer]](/docs/components/questiontransformer/overview) | No         | -          | -                 |
 | - [document_retriever](#document_retriever )     | No      | [Reference[DocumentRetriever]](/docs/components/documentretriever/overview)   | No         | -          | -                 |
@@ -13,6 +13,8 @@ description: Description of the Retriever component
 | - [result_summarizer](#result_summarizer )       | No      | [Reference[ResultSummarizer]](/docs/components/resultsummarizer/overview)    | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

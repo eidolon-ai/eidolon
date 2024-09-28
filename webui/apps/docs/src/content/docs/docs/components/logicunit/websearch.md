@@ -1,11 +1,11 @@
 ---
-title: WebSearchConfig
-description: Description of the WebSearchConfig component
+title: WebSearch
+description: Description of the WebSearch component
 ---
 
 | Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------- |
-| + [implementation](#implementation )           | No      | const            | No         | -          | -                   |
+| + [implementation](#implementation )           | No      | const            | No         | -          | Implementation      |
 | - [summarizer](#summarizer )                   | No      | enum (of string) | No         | -          | Summarizer          |
 | - [cse_id](#cse_id )                           | No      | string           | No         | -          | Cse Id              |
 | - [cse_token](#cse_token )                     | No      | string           | No         | -          | Cse Token           |
@@ -15,6 +15,8 @@ description: Description of the WebSearchConfig component
 | - [params](#params )                           | No      | Combination      | No         | -          | Params              |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

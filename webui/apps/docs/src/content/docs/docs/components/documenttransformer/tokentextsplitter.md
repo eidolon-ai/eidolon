@@ -5,7 +5,7 @@ description: Description of the TokenTextSplitter component
 
 | Property                                     | Pattern | Type        | Deprecated | Definition | Title/Description  |
 | -------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------ |
-| + [implementation](#implementation )         | No      | const       | No         | -          | -                  |
+| + [implementation](#implementation )         | No      | const       | No         | -          | Implementation     |
 | - [chunk_size](#chunk_size )                 | No      | integer     | No         | -          | Chunk Size         |
 | - [chunk_overlap](#chunk_overlap )           | No      | integer     | No         | -          | Chunk Overlap      |
 | - [keep_separator](#keep_separator )         | No      | boolean     | No         | -          | Keep Separator     |
@@ -16,6 +16,8 @@ description: Description of the TokenTextSplitter component
 | - [disallowed_special](#disallowed_special ) | No      | Combination | No         | -          | Disallowed Special |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

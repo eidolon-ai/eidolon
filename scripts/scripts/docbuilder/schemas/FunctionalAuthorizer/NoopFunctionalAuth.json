@@ -1,8 +1,9 @@
 {
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "implementation": {
-      "const": "NoopFunctionalAuth"
+      "const": "NoopFunctionalAuth",
+      "title": "Implementation"
     }
   },
   "reference_details": {

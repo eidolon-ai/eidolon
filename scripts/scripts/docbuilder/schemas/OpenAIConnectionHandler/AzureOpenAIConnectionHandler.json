@@ -2,7 +2,8 @@
   "additionalProperties": true,
   "properties": {
     "implementation": {
-      "const": "AzureOpenAIConnectionHandler"
+      "const": "AzureOpenAIConnectionHandler",
+      "title": "Implementation"
     },
     "azure_ad_token_provider": {
       "anyOf": [
@@ -46,6 +47,7 @@
       "additionalProperties": true,
       "properties": {
         "implementation": {
+          "title": "Implementation",
           "type": "string"
         }
       },

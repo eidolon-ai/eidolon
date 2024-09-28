@@ -1,11 +1,11 @@
 ---
-title: MistralMedium
-description: Description of the MistralMedium component
+title: ConversationalAPU
+description: Description of the ConversationalAPU component
 ---
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |
 | ---------------------------------------------------- | ------- | ----------------------------- | ---------- | ---------- | ---------------------- |
-| + [implementation](#implementation )                 | No      | const                         | No         | -          | -                      |
+| + [implementation](#implementation )                 | No      | const                         | No         | -          | Implementation         |
 | - [max_num_function_calls](#max_num_function_calls ) | No      | integer                       | No         | -          | Max Num Function Calls |
 | - [io_unit](#io_unit )                               | No      | [Reference[IOUnit]](/docs/components/iounit/overview)             | No         | -          | -                      |
 | - [memory_unit](#memory_unit )                       | No      | [Reference[MemoryUnit]](/docs/components/memoryunit/overview)         | No         | -          | -                      |
@@ -21,6 +21,8 @@ description: Description of the MistralMedium component
 | - [retriever_apu](#retriever_apu )                   | No      | [Reference[APU]](/docs/components/apu/overview)                | No         | -          | -                      |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

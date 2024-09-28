@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "NoopQuestionTransformer"
+      "const": "NoopQuestionTransformer",
+      "title": "Implementation"
     }
   },
   "reference_details": {

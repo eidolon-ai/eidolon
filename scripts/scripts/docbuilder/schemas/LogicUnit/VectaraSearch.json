@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "VectaraSearch"
+      "const": "VectaraSearch",
+      "title": "Implementation"
     },
     "corpus_key": {
       "description": "The corpus key to search in.",

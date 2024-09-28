@@ -1,8 +1,8 @@
 {
-  "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "gpt-3.5-turbo"
+      "const": "gpt-3.5-turbo",
+      "title": "Implementation"
     },
     "human_name": {
       "default": "GPT-3.5 Turbo",

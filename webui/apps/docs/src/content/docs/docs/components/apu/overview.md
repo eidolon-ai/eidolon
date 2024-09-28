@@ -5,18 +5,18 @@ The APU provides a set of capabilities that encapsulate LLM functionality and cr
 
 To learn more, check out our blog article APU: [What is it and how does it work?](https://www.eidolonai.com/what_is_apu/)."
 ---
-Overview of the APU component
+# Overview of the APU component
 ## Builtins
-* [ClaudeOpus](/docs/components/claudeopus/claudeopus/)
-* [GPT3.5-turbo](/docs/components/gpt3_5-turbo/gpt3_5-turbo/)
-* [ConversationalAPU](/docs/components/conversationalapu/conversationalapu/)
-* [GPT4-turbo](/docs/components/gpt4-turbo/gpt4-turbo/)
-* [GPT4o](/docs/components/gpt4o/gpt4o/)
-* [MistralMedium](/docs/components/mistralmedium/mistralmedium/)
-* [ClaudeHaiku](/docs/components/claudehaiku/claudehaiku/)
-* [Llamma3-8b](/docs/components/llamma3-8b/llamma3-8b/)
-* [GPTo1Preview](/docs/components/gpto1preview/gpto1preview/)
-* [GPT4o-mini](/docs/components/gpt4o-mini/gpt4o-mini/)
-* [MistralSmall](/docs/components/mistralsmall/mistralsmall/)
-* [MistralLarge](/docs/components/mistrallarge/mistrallarge/)
-* [ClaudeSonnet](/docs/components/claudesonnet/claudesonnet/)
+* [ClaudeHaiku](/docs/components/apu/claudehaiku/)
+* [ClaudeOpus](/docs/components/apu/claudeopus/)
+* [ClaudeSonnet](/docs/components/apu/claudesonnet/)
+* [ConversationalAPU](/docs/components/apu/conversationalapu/)
+* [GPT3.5-turbo](/docs/components/apu/gpt3_5-turbo/)
+* [GPT4-turbo](/docs/components/apu/gpt4-turbo/)
+* [GPT4o](/docs/components/apu/gpt4o/)
+* [GPT4o-mini](/docs/components/apu/gpt4o-mini/)
+* [GPTo1Preview](/docs/components/apu/gpto1preview/)
+* [Llamma3-8b](/docs/components/apu/llamma3-8b/)
+* [MistralLarge](/docs/components/apu/mistrallarge/)
+* [MistralMedium](/docs/components/apu/mistralmedium/)
+* [MistralSmall](/docs/components/apu/mistralsmall/)

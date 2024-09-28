@@ -1,17 +1,19 @@
 ---
-title: AudioUnit
-description: Description of the AudioUnit component
+title: OpenAiSpeech
+description: Description of the OpenAiSpeech component
 ---
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |
 | ------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | -------------------------- |
-| + [implementation](#implementation )                         | No      | const            | No         | -          | -                          |
+| + [implementation](#implementation )                         | No      | const            | No         | -          | Implementation             |
 | - [text_to_speech_model](#text_to_speech_model )             | No      | enum (of string) | No         | -          | Text To Speech Model       |
 | - [text_to_speech_voice](#text_to_speech_voice )             | No      | enum (of string) | No         | -          | Text To Speech Voice       |
 | - [speech_to_text_model](#speech_to_text_model )             | No      | const            | No         | -          | Speech To Text Model       |
 | - [speech_to_text_temperature](#speech_to_text_temperature ) | No      | number           | No         | -          | Speech To Text Temperature |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "GitHubLoader"
+      "const": "GitHubLoader",
+      "title": "Implementation"
     },
     "owner": {
       "title": "Owner",

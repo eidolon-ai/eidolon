@@ -2,6 +2,6 @@
 title: ImageUnit Overview
 description: "None"
 ---
-Overview of the ImageUnit component
+# Overview of the ImageUnit component
 ## Builtins
-* [OpenAIImageUnit](/docs/components/openaiimageunit/openaiimageunit/)
+* [OpenAIImageUnit](/docs/components/imageunit/openaiimageunit/)

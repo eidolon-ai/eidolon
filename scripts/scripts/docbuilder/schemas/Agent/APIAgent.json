@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "APIAgent"
+      "const": "APIAgent",
+      "title": "Implementation"
     },
     "title": {
       "description": "Title of the API",

@@ -5,7 +5,7 @@ description: Description of the GitHubLoader component
 
 | Property                             | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const       | No         | -          | -                 |
+| + [implementation](#implementation ) | No      | const       | No         | -          | Implementation    |
 | + [owner](#owner )                   | No      | string      | No         | -          | Owner             |
 | + [repo](#repo )                     | No      | string      | No         | -          | Repo              |
 | - [client_args](#client_args )       | No      | object      | No         | -          | Client Args       |
@@ -15,6 +15,8 @@ description: Description of the GitHubLoader component
 | - [token](#token )                   | No      | string      | No         | -          | Token             |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

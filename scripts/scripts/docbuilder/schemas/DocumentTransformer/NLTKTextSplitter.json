@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "NLTKTextSplitter"
+      "const": "NLTKTextSplitter",
+      "title": "Implementation"
     },
     "chunk_size": {
       "default": 4000,

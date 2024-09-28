@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "Llamma3-8b"
+      "const": "Llamma3-8b",
+      "title": "Implementation"
     },
     "max_num_function_calls": {
       "default": 10,
@@ -112,6 +113,6 @@
   "required": [
     "implementation"
   ],
-  "title": "Llamma3-8b",
+  "title": "ConversationalAPU",
   "type": "object"
 }

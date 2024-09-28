@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "OpenAIImageUnit"
+      "const": "OpenAIImageUnit",
+      "title": "Implementation"
     },
     "image_to_text_prompt": {
       "default": "Use the following prompt to describe the image:",

@@ -5,7 +5,7 @@ description: Description of the MistralGPT component
 
 | Property                             | Pattern | Type                | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------------------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const               | No         | -          | -                 |
+| + [implementation](#implementation ) | No      | const               | No         | -          | Implementation    |
 | - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | -                 |
 | - [temperature](#temperature )       | No      | number              | No         | -          | Temperature       |
 | - [force_json](#force_json )         | No      | boolean             | No         | -          | Force Json        |
@@ -13,6 +13,8 @@ description: Description of the MistralGPT component
 | - [client_args](#client_args )       | No      | object              | No         | -          | Client Args       |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

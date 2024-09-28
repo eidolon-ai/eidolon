@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "LocalFileMemory"
+      "const": "LocalFileMemory",
+      "title": "Implementation"
     },
     "root_dir": {
       "default": "/tmp/eidolon/file_memory",

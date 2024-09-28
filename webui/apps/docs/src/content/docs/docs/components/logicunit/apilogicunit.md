@@ -5,7 +5,7 @@ description: Description of the ApiLogicUnit component
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| + [implementation](#implementation )             | No      | const   | No         | -          | -                    |
+| + [implementation](#implementation )             | No      | const   | No         | -          | Implementation       |
 | + [title](#title )                               | No      | string  | No         | -          | Title                |
 | + [root_call_url](#root_call_url )               | No      | string  | No         | -          | Root Call Url        |
 | + [open_api_location](#open_api_location )       | No      | string  | No         | -          | Open Api Location    |
@@ -15,6 +15,8 @@ description: Description of the ApiLogicUnit component
 | - [max_response_size](#max_response_size )       | No      | integer | No         | -          | Max Response Size    |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

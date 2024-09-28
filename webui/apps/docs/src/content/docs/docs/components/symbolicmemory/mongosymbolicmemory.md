@@ -5,11 +5,13 @@ description: Description of the MongoSymbolicMemory component
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| + [implementation](#implementation )                   | No      | const  | No         | -          | -                       |
+| + [implementation](#implementation )                   | No      | const  | No         | -          | Implementation          |
 | - [mongo_connection_string](#mongo_connection_string ) | No      | string | No         | -          | Mongo Connection String |
 | - [mongo_database_name](#mongo_database_name )         | No      | string | No         | -          | Mongo Database Name     |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

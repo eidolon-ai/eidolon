@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "LongTermMemoryUnit"
+      "const": "LongTermMemoryUnit",
+      "title": "Implementation"
     },
     "user_scoped": {
       "title": "User Scoped",

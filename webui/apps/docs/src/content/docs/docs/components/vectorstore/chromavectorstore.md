@@ -5,11 +5,13 @@ description: Description of the ChromaVectorStore component
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| + [implementation](#implementation )                   | No      | const  | No         | -          | -                       |
+| + [implementation](#implementation )                   | No      | const  | No         | -          | Implementation          |
 | - [root_document_directory](#root_document_directory ) | No      | string | No         | -          | Root Document Directory |
 | - [url](#url )                                         | No      | string | No         | -          | Url                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

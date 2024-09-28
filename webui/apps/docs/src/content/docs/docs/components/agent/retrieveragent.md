@@ -5,7 +5,7 @@ description: Description of the RetrieverAgent component
 
 | Property                                         | Pattern | Type                           | Deprecated | Definition | Title/Description                           |
 | ------------------------------------------------ | ------- | ------------------------------ | ---------- | ---------- | ------------------------------------------- |
-| + [implementation](#implementation )             | No      | const                          | No         | -          | -                                           |
+| + [implementation](#implementation )             | No      | const                          | No         | -          | Implementation                              |
 | - [max_num_results](#max_num_results )           | No      | integer                        | No         | -          | Max Num Results                             |
 | - [question_transformer](#question_transformer ) | No      | [Reference[QuestionTransformer]](/docs/components/questiontransformer/overview) | No         | -          | -                                           |
 | - [document_retriever](#document_retriever )     | No      | [Reference[DocumentRetriever]](/docs/components/documentretriever/overview)   | No         | -          | -                                           |
@@ -19,6 +19,8 @@ description: Description of the RetrieverAgent component
 | - [apu](#apu )                                   | No      | [Reference[APU]](/docs/components/apu/overview)                 | No         | -          | The APU to use for question transformation. |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "FilesystemLoader"
+      "const": "FilesystemLoader",
+      "title": "Implementation"
     },
     "root_dir": {
       "title": "Root Dir",

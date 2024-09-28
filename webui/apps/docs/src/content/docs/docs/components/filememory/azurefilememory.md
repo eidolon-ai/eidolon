@@ -5,13 +5,15 @@ description: Description of the AzureFileMemory component
 
 | Property                                                       | Pattern | Type    | Deprecated | Definition           | Title/Description           |
 | -------------------------------------------------------------- | ------- | ------- | ---------- | -------------------- | --------------------------- |
-| + [implementation](#implementation )                           | No      | const   | No         | -                    | -                           |
+| + [implementation](#implementation )                           | No      | const   | No         | -                    | Implementation              |
 | - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | In #/$defs/Reference | -                           |
 | + [account_url](#account_url )                                 | No      | string  | No         | -                    | Account Url                 |
 | + [container](#container )                                     | No      | string  | No         | -                    | Container                   |
 | - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -                    | Create Container On Startup |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
@@ -31,10 +33,12 @@ Specific value: `"AzureFileMemory"`
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#azure_ad_token_provider_implementation ) | No      | string | No         | -          | -                 |
+| - [implementation](#azure_ad_token_provider_implementation ) | No      | string | No         | -          | Implementation    |
 | - [](#azure_ad_token_provider_additionalProperties )         | No      | object | No         | -          | -                 |
 
 ### <a name="azure_ad_token_provider_implementation"></a>2.1. Property `implementation`
+
+**Title:** Implementation
 
 |              |          |
 | ------------ | -------- |

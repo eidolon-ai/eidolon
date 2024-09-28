@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "RecursiveCharacterTextSplitter"
+      "const": "RecursiveCharacterTextSplitter",
+      "title": "Implementation"
     },
     "chunk_size": {
       "default": 4000,

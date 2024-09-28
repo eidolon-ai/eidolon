@@ -5,12 +5,14 @@ description: Description of the VectaraSearch component
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const  | No         | -          | -                 |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
 | + [corpus_key](#corpus_key )         | No      | string | No         | -          | Corpus Key        |
 | - [description](#description )       | No      | string | No         | -          | Description       |
 | - [vectara_url](#vectara_url )       | No      | string | No         | -          | Vectara Url       |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

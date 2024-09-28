@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "MistralMedium"
+      "const": "MistralMedium",
+      "title": "Implementation"
     },
     "max_num_function_calls": {
       "default": 10,
@@ -106,6 +107,6 @@
   "required": [
     "implementation"
   ],
-  "title": "MistralMedium",
+  "title": "ConversationalAPU",
   "type": "object"
 }

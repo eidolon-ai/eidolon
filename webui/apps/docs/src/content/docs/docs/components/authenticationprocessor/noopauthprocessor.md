@@ -3,11 +3,14 @@ title: NoopAuthProcessor
 description: Description of the NoopAuthProcessor component
 ---
 
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const | No         | -          | -                 |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
+| - [](#additionalProperties )         | No      | object | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "Retriever"
+      "const": "Retriever",
+      "title": "Implementation"
     },
     "max_num_results": {
       "default": 10,

@@ -5,12 +5,14 @@ description: Description of the ToolCallLLMWrapper component
 
 | Property                                       | Pattern | Type                | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ------------------- | ---------- | ---------- | ------------------- |
-| + [implementation](#implementation )           | No      | const               | No         | -          | -                   |
+| + [implementation](#implementation )           | No      | const               | No         | -          | Implementation      |
 | - [tool_message_prompt](#tool_message_prompt ) | No      | string              | No         | -          | Tool Message Prompt |
 | - [llm_unit](#llm_unit )                       | No      | [Reference[LLMUnit]](/docs/components/llmunit/overview)  | No         | -          | -                   |
 | - [model](#model )                             | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | -                   |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "ApiLogicUnit"
+      "const": "ApiLogicUnit",
+      "title": "Implementation"
     },
     "title": {
       "description": "Title of the API",

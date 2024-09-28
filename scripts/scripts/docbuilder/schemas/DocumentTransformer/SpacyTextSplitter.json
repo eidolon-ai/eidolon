@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "SpacyTextSplitter"
+      "const": "SpacyTextSplitter",
+      "title": "Implementation"
     },
     "chunk_size": {
       "default": 4000,

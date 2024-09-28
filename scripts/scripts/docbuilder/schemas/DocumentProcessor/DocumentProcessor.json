@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "DocumentProcessor"
+      "const": "DocumentProcessor",
+      "title": "Implementation"
     },
     "parser": {
       "$ref": "../DocumentParser/overview.json"

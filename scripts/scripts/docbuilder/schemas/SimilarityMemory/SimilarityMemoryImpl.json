@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "SimilarityMemoryImpl"
+      "const": "SimilarityMemoryImpl",
+      "title": "Implementation"
     },
     "embedder": {
       "$ref": "../Embedding/overview.json"

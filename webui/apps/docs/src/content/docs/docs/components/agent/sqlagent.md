@@ -5,7 +5,7 @@ description: Description of the SqlAgent component
 
 | Property                                         | Pattern | Type                 | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | -------------------- | ---------- | ---------- | -------------------- |
-| + [implementation](#implementation )             | No      | const                | No         | -          | -                    |
+| + [implementation](#implementation )             | No      | const                | No         | -          | Implementation       |
 | - [client](#client )                             | No      | [Reference[SqlClient]](/docs/components/sqlclient/overview) | No         | -          | -                    |
 | - [apu](#apu )                                   | No      | [Reference[APU]](/docs/components/apu/overview)       | No         | -          | -                    |
 | - [description](#description )                   | No      | string               | No         | -          | Description          |
@@ -17,6 +17,8 @@ description: Description of the SqlAgent component
 | - [num_retries](#num_retries )                   | No      | integer              | No         | -          | Num Retries          |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

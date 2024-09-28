@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "ProcessFileSystemImpl"
+      "const": "ProcessFileSystemImpl",
+      "title": "Implementation"
     },
     "root": {
       "default": "processes",

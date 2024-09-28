@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "S3Loader"
+      "const": "S3Loader",
+      "title": "Implementation"
     },
     "bucket": {
       "title": "Bucket",

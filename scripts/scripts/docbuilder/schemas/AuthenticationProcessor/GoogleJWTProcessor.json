@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "GoogleJWTProcessor"
+      "const": "GoogleJWTProcessor",
+      "title": "Implementation"
     },
     "jwks_url": {
       "default": "https://www.googleapis.com/oauth2/v3/certs",

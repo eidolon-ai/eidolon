@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "OpenAIEmbedding"
+      "const": "OpenAIEmbedding",
+      "title": "Implementation"
     },
     "model": {
       "default": "text-embedding-ada-002",

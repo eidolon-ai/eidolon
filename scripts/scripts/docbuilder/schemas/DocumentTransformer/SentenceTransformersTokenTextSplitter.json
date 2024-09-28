@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "SentenceTransformersTokenTextSplitter"
+      "const": "SentenceTransformersTokenTextSplitter",
+      "title": "Implementation"
     },
     "chunk_size": {
       "default": 4000,

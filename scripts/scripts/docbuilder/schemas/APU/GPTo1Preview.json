@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "GPTo1Preview"
+      "const": "GPTo1Preview",
+      "title": "Implementation"
     },
     "max_num_function_calls": {
       "default": 10,
@@ -122,6 +123,6 @@
   "required": [
     "implementation"
   ],
-  "title": "GPTo1Preview",
+  "title": "ConversationalAPU",
   "type": "object"
 }

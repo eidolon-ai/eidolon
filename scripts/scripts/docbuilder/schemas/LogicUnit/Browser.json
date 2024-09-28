@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "Browser"
+      "const": "Browser",
+      "title": "Implementation"
     },
     "summarizer": {
       "default": "BeautifulSoup",

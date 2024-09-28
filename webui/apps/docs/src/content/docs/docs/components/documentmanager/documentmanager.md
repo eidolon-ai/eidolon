@@ -5,7 +5,7 @@ description: Description of the DocumentManager component
 
 | Property                                   | Pattern | Type                         | Deprecated | Definition | Title/Description |
 | ------------------------------------------ | ------- | ---------------------------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation )       | No      | const                        | No         | -          | -                 |
+| + [implementation](#implementation )       | No      | const                        | No         | -          | Implementation    |
 | + [name](#name )                           | No      | string                       | No         | -          | Name              |
 | - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -          | Recheck Frequency |
 | - [loader](#loader )                       | No      | [Reference[DocumentLoader]](/docs/components/documentloader/overview)    | No         | -          | -                 |
@@ -13,6 +13,8 @@ description: Description of the DocumentManager component
 | - [doc_processor](#doc_processor )         | No      | [Reference[DocumentProcessor]](/docs/components/documentprocessor/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

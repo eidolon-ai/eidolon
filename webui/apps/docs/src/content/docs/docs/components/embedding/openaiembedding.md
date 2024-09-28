@@ -5,11 +5,13 @@ description: Description of the OpenAIEmbedding component
 
 | Property                                     | Pattern | Type                               | Deprecated | Definition | Title/Description |
 | -------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation )         | No      | const                              | No         | -          | -                 |
+| + [implementation](#implementation )         | No      | const                              | No         | -          | Implementation    |
 | - [model](#model )                           | No      | string                             | No         | -          | Model             |
 | - [connection_handler](#connection_handler ) | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

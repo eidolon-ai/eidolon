@@ -25,12 +25,12 @@ EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 def main():
     dist_component_schemas = EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas"
 
-    # print("Generating json...")
-    # json_schema = generate_schema()
-    #
-    # print("writing json...")
-    # shutil.rmtree(dist_component_schemas, ignore_errors=True)
-    # write_json_schema(dist_component_schemas, json_schema)
+    print("Generating json...")
+    json_schema = generate_schema()
+
+    print("writing json...")
+    shutil.rmtree(dist_component_schemas, ignore_errors=True)
+    write_json_schema(dist_component_schemas, json_schema)
 
     print("writing md...")
     write_md(dist_component_schemas)
@@ -147,22 +147,26 @@ def write_md(read_loc,
     group_names = [g['reference_pointer']['type'] for g in groups]
     for group in groups:
         group_name = group['reference_pointer']['type']
-        title = f"{group_name} Overview"
-        content = ["## Builtins"]
+        content = [
+            "---",
+            f"title: {group_name} Overview",
+            f'description: "{group.get("description")}"',
+            "---",
+            f"# Overview of the {group_name} component",
+            "## Builtins"
+        ]
         components = []
         for c in [c for c in os.listdir(read_loc / group_name) if c != "overview.json"]:
             with open(read_loc / group_name / c, 'r') as json_file:
                 components.append(json.load(json_file))
-        for component_schema in components:
+        for component_schema in sorted(components, key=lambda c: c['reference_details']['name']):
             component_name = component_schema['reference_details']['name']
-            content.append(f"* [{component_name}](/docs/components/{url_safe(component_name)}/{url_safe(component_name)}/)")
+            content.append(f"* [{component_name}](/docs/components/{url_safe(group_name)}/{url_safe(component_name)}/)")
             if component_name == group['reference_pointer']['default_impl']:
                 content[-1] += " (default)"
 
         write_astro_md_file(
-            f"Overview of the {group_name} component" + "\n" + "\n".join(content),
-            group.get('description'),
-            title,
+            "\n".join(content),
             write_loc / url_safe(group_name) / "overview.md",
             group_names
         )
@@ -181,10 +185,10 @@ def write_md(read_loc,
                     custom_template_path=str(Path(__file__).parent / "templates" / "custom" / "base.md"),
                     with_footer=False,
                 ))
-                write_astro_md_file(content, description, title, write_loc / url_safe(group_name) / (url_safe(schema['reference_details']['name']) + ".md"), group_names)
+                write_astro_md_file(content, write_loc / url_safe(group_name) / (url_safe(schema['reference_details']['name']) + ".md"), group_names)
 
 
-def write_astro_md_file(content, description, title, write_file_loc, group_names: List[str]):
+def write_astro_md_file(content, write_file_loc, group_names: List[str]):
     for name in group_names:
         replacement = f"[Reference[{name}]](/docs/components/{url_safe(name)}/overview)"
         content = content.replace(f"Reference[{name}]", replacement)
@@ -192,9 +196,6 @@ def write_astro_md_file(content, description, title, write_file_loc, group_names
 
     os.makedirs(os.path.dirname(write_file_loc), exist_ok=True)
 
-    # todo, quick hack while debugging template. remove before merging
-    if not content.lstrip().startswith("---"):
-        content = template("template_component_md", title=title, description=description, content=content)
     with open(write_file_loc, 'w') as md_file:
         md_file.write(content)
 

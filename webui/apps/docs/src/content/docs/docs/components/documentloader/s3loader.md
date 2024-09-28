@@ -5,7 +5,7 @@ description: Description of the S3Loader component
 
 | Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
-| + [implementation](#implementation )               | No      | const  | No         | -          | -                     |
+| + [implementation](#implementation )               | No      | const  | No         | -          | Implementation        |
 | + [bucket](#bucket )                               | No      | string | No         | -          | Bucket                |
 | - [region_name](#region_name )                     | No      | string | No         | -          | Region Name           |
 | - [aws_access_key_id](#aws_access_key_id )         | No      | string | No         | -          | Aws Access Key Id     |
@@ -15,6 +15,8 @@ description: Description of the S3Loader component
 | - [pattern](#pattern )                             | No      | string | No         | -          | Pattern               |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

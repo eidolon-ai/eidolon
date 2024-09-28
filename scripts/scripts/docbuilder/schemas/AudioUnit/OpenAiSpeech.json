@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "OpenAiSpeech"
+      "const": "OpenAiSpeech",
+      "title": "Implementation"
     },
     "text_to_speech_model": {
       "default": "tts-1-hd",

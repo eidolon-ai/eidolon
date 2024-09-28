@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "AudioUnit"
+      "const": "AudioUnit",
+      "title": "Implementation"
     },
     "text_to_speech_model": {
       "default": "tts-1-hd",
@@ -54,6 +55,6 @@
   "required": [
     "implementation"
   ],
-  "title": "AudioUnit",
+  "title": "OpenAiSpeech",
   "type": "object"
 }

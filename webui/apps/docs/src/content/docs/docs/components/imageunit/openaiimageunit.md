@@ -5,7 +5,7 @@ description: Description of the OpenAIImageUnit component
 
 | Property                                                       | Pattern | Type                               | Deprecated | Definition | Title/Description           |
 | -------------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | --------------------------- |
-| + [implementation](#implementation )                           | No      | const                              | No         | -          | -                           |
+| + [implementation](#implementation )                           | No      | const                              | No         | -          | Implementation              |
 | - [image_to_text_prompt](#image_to_text_prompt )               | No      | string                             | No         | -          | Image To Text Prompt        |
 | - [text_to_image_prompt](#text_to_image_prompt )               | No      | string                             | No         | -          | Text To Image Prompt        |
 | - [connection_handler](#connection_handler )                   | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | -                           |
@@ -15,6 +15,8 @@ description: Description of the OpenAIImageUnit component
 | - [image_to_text_system_prompt](#image_to_text_system_prompt ) | No      | string                             | No         | -          | Image To Text System Prompt |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

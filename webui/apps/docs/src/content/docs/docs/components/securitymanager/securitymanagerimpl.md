@@ -5,13 +5,15 @@ description: Description of the SecurityManagerImpl component
 
 | Property                                                 | Pattern | Type                               | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation )                     | No      | const                              | No         | -          | -                 |
+| + [implementation](#implementation )                     | No      | const                              | No         | -          | Implementation    |
 | - [authentication_processor](#authentication_processor ) | No      | [Reference[AuthenticationProcessor]](/docs/components/authenticationprocessor/overview) | No         | -          | -                 |
 | - [functional_authorizer](#functional_authorizer )       | No      | [Reference[FunctionalAuthorizer]](/docs/components/functionalauthorizer/overview)    | No         | -          | -                 |
 | - [process_authorizer](#process_authorizer )             | No      | [Reference[ProcessAuthorizer]](/docs/components/processauthorizer/overview)       | No         | -          | -                 |
 | - [safe_paths](#safe_paths )                             | No      | array of string                    | No         | -          | Safe Paths        |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

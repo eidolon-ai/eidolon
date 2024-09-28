@@ -1,8 +1,9 @@
 {
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "implementation": {
-      "const": "AutoTransformer"
+      "const": "AutoTransformer",
+      "title": "Implementation"
     }
   },
   "reference_details": {

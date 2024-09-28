@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "SecurityManagerImpl"
+      "const": "SecurityManagerImpl",
+      "title": "Implementation"
     },
     "authentication_processor": {
       "$ref": "../AuthenticationProcessor/overview.json"

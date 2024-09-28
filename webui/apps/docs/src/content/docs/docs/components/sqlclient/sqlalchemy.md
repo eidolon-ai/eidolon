@@ -10,7 +10,7 @@ Performs cursory checks when `select_only` is set to True. Additionally ensure u
 
 | Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation )       | No      | const   | No         | -          | -                 |
+| + [implementation](#implementation )       | No      | const   | No         | -          | Implementation    |
 | - [protocol](#protocol )                   | No      | string  | No         | -          | Protocol          |
 | - [connection_string](#connection_string ) | No      | string  | No         | -          | Connection String |
 | - [engine_kwargs](#engine_kwargs )         | No      | object  | No         | -          | Engine Kwargs     |
@@ -18,6 +18,8 @@ Performs cursory checks when `select_only` is set to True. Additionally ensure u
 | - [metadata](#metadata )                   | No      | array   | No         | -          | Metadata          |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

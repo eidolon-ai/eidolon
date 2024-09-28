@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "DocumentManager"
+      "const": "DocumentManager",
+      "title": "Implementation"
     },
     "name": {
       "description": "The name of the document manager (used to name database collections).",

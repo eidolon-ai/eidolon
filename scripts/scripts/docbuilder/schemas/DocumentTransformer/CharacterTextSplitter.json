@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "CharacterTextSplitter"
+      "const": "CharacterTextSplitter",
+      "title": "Implementation"
     },
     "chunk_size": {
       "default": 4000,

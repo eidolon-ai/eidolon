@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "RAGFusionReranker"
+      "const": "RAGFusionReranker",
+      "title": "Implementation"
     },
     "k": {
       "default": 60,

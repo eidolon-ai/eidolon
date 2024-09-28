@@ -5,11 +5,13 @@ description: Description of the SimilarityMemoryImpl component
 
 | Property                             | Pattern | Type                   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ---------------------- | ---------- | ---------- | ----------------- |
-| + [implementation](#implementation ) | No      | const                  | No         | -          | -                 |
+| + [implementation](#implementation ) | No      | const                  | No         | -          | Implementation    |
 | - [embedder](#embedder )             | No      | [Reference[Embedding]](/docs/components/embedding/overview)   | No         | -          | -                 |
 | - [vector_store](#vector_store )     | No      | [Reference[VectorStore]](/docs/components/vectorstore/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |

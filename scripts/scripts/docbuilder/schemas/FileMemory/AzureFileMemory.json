@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "AzureFileMemory"
+      "const": "AzureFileMemory",
+      "title": "Implementation"
     },
     "azure_ad_token_provider": {
       "anyOf": [
@@ -49,6 +50,7 @@
       "additionalProperties": true,
       "properties": {
         "implementation": {
+          "title": "Implementation",
           "type": "string"
         }
       },

@@ -10,8 +10,8 @@ All methods in this class are abstract and must be implemented by a subclass
 that provides the specific logic for handling file operations related to the
 agent's memory."
 ---
-Overview of the FileMemory component
+# Overview of the FileMemory component
 ## Builtins
-* [AzureFileMemory](/docs/components/azurefilememory/azurefilememory/)
-* [LocalFileMemory](/docs/components/localfilememory/localfilememory/)
-* [S3FileMemory](/docs/components/s3filememory/s3filememory/)
+* [AzureFileMemory](/docs/components/filememory/azurefilememory/)
+* [LocalFileMemory](/docs/components/filememory/localfilememory/)
+* [S3FileMemory](/docs/components/filememory/s3filememory/)

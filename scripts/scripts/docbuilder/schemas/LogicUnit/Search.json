@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "Search"
+      "const": "Search",
+      "title": "Implementation"
     },
     "cse_id": {
       "description": "Google Custom Search Engine Id.",
@@ -58,6 +59,6 @@
   "required": [
     "implementation"
   ],
-  "title": "SearchSpec",
+  "title": "Search",
   "type": "object"
 }

@@ -1,8 +1,8 @@
 {
-  "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "claude-3-sonnet-20240229"
+      "const": "claude-3-sonnet-20240229",
+      "title": "Implementation"
     },
     "human_name": {
       "default": "Claude Sonnet",

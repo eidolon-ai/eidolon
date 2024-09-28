@@ -1,8 +1,8 @@
 {
-  "additionalProperties": false,
   "properties": {
     "implementation": {
-      "const": "gpt-4-turbo"
+      "const": "gpt-4-turbo",
+      "title": "Implementation"
     },
     "human_name": {
       "default": "GPT-4 Turbo",
