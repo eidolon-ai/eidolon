@@ -2,7 +2,6 @@ import argparse
 import asyncio
 import logging
 import os.path
-from pathlib import Path
 
 import dotenv
 import uvicorn
