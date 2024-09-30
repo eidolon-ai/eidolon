@@ -5,7 +5,6 @@ from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 
-
 @fixture(scope="module", autouse=True)
 async def server(run_app):
     resources = [
@@ -19,6 +18,7 @@ async def server(run_app):
     ]
     async with run_app(*resources) as ra:
         yield ra
+
 
 async def test_gemini(server):
     process = await Agent.get("default").create_process()

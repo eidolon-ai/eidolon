@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import os
@@ -102,7 +103,7 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
-        logger.info("executing open ai llm request", extra=request)
+        logger.info("Executing Gemini LLM request", extra=request)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
         llm_request = replayable(fn=_llm_request(), name_override="gemini_completion", parser=_raw_parser)
@@ -111,9 +112,9 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
         generative_args = {
             "model_name": self.model.name,
             "generation_config": {
-                "maxOutputTokens": self.spec.max_tokens or 4000,
+                "max_output_tokens": self.spec.max_tokens or 4000,
                 "temperature": self.temperature,
-                "candidateCount": 1,
+                "candidate_count": 1,
             },
         }
         if "systemInstruction" in request:
@@ -121,10 +122,7 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
             del request["systemInstruction"]
         try:
             async for in_message in llm_request(client_args=generative_args, **request):
-                print(in_message)
                 message = cast(GenerateContentResponse, in_message).text
-                # message = cast(MessageStreamEvent, in_message)
-                #         complete_message += content
 
                 if message:
                     if can_stream_message:
@@ -134,7 +132,6 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
                         yield StringOutputEvent(content=message)
                     else:
                         complete_message += message
-
 
             if len(tools_to_call) > 0:
                 logger.info(f"gemini llm tool calls: {tools_to_call}", extra=dict(tool_calls=tools_to_call))
@@ -151,12 +148,6 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
         except Exception as e:
             logger.exception(e)
             raise HTTPException(502, f"Gemini Error: {e}") from e
-        # except APIConnectionError as e:
-        #     raise HTTPException(502, f"Anthropic Error: {e.message}") from e
-        # except RateLimitError as e:
-        #     raise HTTPException(429, "Anthropic Rate Limit Exceeded") from e
-        # except BrokenResponseError as e:
-        #     raise HTTPException(502, f"Anthropic Status Error: {e.message}") from e
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
@@ -188,16 +179,10 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
                 new_messages.append(message)
             last_message = message
 
-        # request = {
-        #     "messages": new_messages,
-        #     "model": self.model.name,
-        #     "temperature": self.temperature,
-        # }
         request = {"contents": new_messages}
         if system_prompt:
             request["systemInstruction"] = {"role": "user", "parts": [system_prompt]}
 
-        logger.debug(new_messages)
         if len(tools) > 0:
             request["tools"] = tools
         return is_string, request
@@ -205,24 +190,95 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
     async def _build_tools(self, inTools):
         tools = []
         for tool in inTools:
-            # del tool.parameters["$defs"]
-            # remove_key_from_dict(tool.parameters, "title")
-            # remove_key_from_dict(tool.parameters, "default")
-            # remove_key_from_dict(tool.parameters, "anyOf")
-            print(tool.parameters)
-            tools.append(Tool([dict(name=tool.name, description=tool.description, parameters=tool.parameters)]))
+            params = JsonSchemaToGoogleProtobufSchemaConverter().convert_to_protobuf(tool.parameters)
+
+            tools.append(
+                {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "parameters": params,
+                }
+            )
         return tools
 
 
-def remove_key_from_dict(d, key_to_remove):
-    if isinstance(d, dict):
-        if key_to_remove in d:
-            del d[key_to_remove]
-        for value in d.values():
-            remove_key_from_dict(value, key_to_remove)
-    elif isinstance(d, list):
-        for item in d:
-            remove_key_from_dict(item, key_to_remove)
+class JsonSchemaToGoogleProtobufSchemaConverter:
+    def convert_to_protobuf(self, json_schema: dict) -> dict:
+        # The Gemini tool spec only supports a subset of OpenAPI schemas:
+        # https://github.com/googleapis/google-cloud-python/blob/main/packages/google-ai-generativelanguage/google/ai/generativelanguage_v1beta/types/content.py#L641
+
+        params = copy.deepcopy(json_schema)
+
+        self._remove_key_from_dict(params, '$defs')
+        self._remove_key_from_dict(params, 'title')
+        self._remove_key_from_dict(params, 'default')
+
+        self._remove_object_types_without_properties(params)
+
+        self._replace_anyOf_values(params)
+        self._rename_type_values(params)
+
+        return params
+
+    def _remove_key_from_dict(self, d, key_to_remove):
+        if isinstance(d, dict):
+            if key_to_remove in d:
+                del d[key_to_remove]
+            for value in d.values():
+                self._remove_key_from_dict(value, key_to_remove)
+        elif isinstance(d, list):
+            for item in d:
+                self._remove_key_from_dict(item, key_to_remove)
+
+    def _replace_anyOf_values(self, d: dict):
+        if isinstance(d, dict):
+            if 'anyOf' in d:
+                values = d['anyOf']
+                if not isinstance(values, list):
+                    raise ValueError(f"Unexpected 'anyOf' value type: {type(values)}")
+
+                d['type'] = values[0]['type']
+                del d['anyOf']
+            for value in d.values():
+                self._replace_anyOf_values(value)
+        elif isinstance(d, list):
+            for item in d:
+                self._replace_anyOf_values(item)
+
+    def _remove_object_types_without_properties(self, d: dict):
+        if isinstance(d, dict):
+            keys_to_del = []
+
+            for key, value in d.items():
+                self._remove_object_types_without_properties(value)
+
+                if isinstance(value, dict):
+                    if 'type' in value and value['type'] == 'object' and 'properties' not in value:
+                        keys_to_del.append(key)
+
+            for k in keys_to_del:
+                del d[k]
+
+        elif isinstance(d, list):
+            for item in d:
+                self._remove_object_types_without_properties(item)
+
+    def _rename_type_values(self, d: dict):
+        if isinstance(d, dict):
+            # The field name "type" is not supported in the Protobuf serialization; it must be renamed to "type_".
+            # See: google.ai.generativelanguage_v1beta.types.content.Schema
+
+            if 'type' in d:
+                # The type values are uppercased, per the ENUM definitions:
+                # See: google.ai.generativelanguage_v1beta.types.content.Type
+                d['type_'] = d['type'].upper()
+                del d['type']
+            for value in d.values():
+                self._rename_type_values(value)
+        elif isinstance(d, list):
+            for item in d:
+                self._rename_type_values(item)
+
 
 def _llm_request():
     async def fn(client_args: dict = None, **kwargs):
