@@ -22,7 +22,7 @@ class Resource(BaseModel):
     apiVersion: str
     kind: str
     metadata: Metadata = Metadata()
-    spec: dict = {}
+    spec: dict | str = {}
 
     @classmethod
     def kind_literal(cls) -> Optional[str]:
