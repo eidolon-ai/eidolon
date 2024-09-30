@@ -10,13 +10,14 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
+from dotenv import find_dotenv
 from typer.main import except_hook, _typer_developer_exception_attr_name
 from typer.models import DeveloperExceptionConfig
 from eidolon_ai_sdk.util.replay import replay
 
 app = typer.Typer()
 
-dotenv.load_dotenv()
+dotenv.load_dotenv(find_dotenv(usecwd=True))
 
 
 def coro(f):

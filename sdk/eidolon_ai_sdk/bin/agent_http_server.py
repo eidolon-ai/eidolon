@@ -2,9 +2,11 @@ import argparse
 import asyncio
 import logging
 import os.path
+from pathlib import Path
 
 import dotenv
 import uvicorn
+from dotenv import find_dotenv
 
 from eidolon_ai_sdk.bin.server import start_os, start_app
 from eidolon_ai_sdk.system.resources.resources_base import load_resources
@@ -93,8 +95,18 @@ def main():
     kwargs = {}
     if args.reload:
         kwargs["reload"] = True
-        kwargs["reload_dirs"] = [".", *(p if os.path.isdir(p) else os.path.dirname(p) for p in args.yaml_path)]
-        kwargs["reload_includes"] = ["*.yml", "*.yaml", "*.py"]
+        kwargs["reload_dirs"] = [os.getcwd()]
+        kwargs["reload_includes"] = ["*.yml", "*.yaml", "*.py", ".env"]
+
+        potential_watch_locs = args.yaml_path
+        potential_watch_locs.extend(args.dotenv or [])
+        local_env = find_dotenv(usecwd=True)
+        if local_env:
+            potential_watch_locs.append(local_env)
+
+        for f in potential_watch_locs:
+            if os.path.relpath(f).startswith(".."):
+                kwargs["reload_dirs"].append(os.path.abspath(f) if os.path.isdir(f) else os.path.abspath(os.path.dirname(f)))
 
     uvicorn.run(
         "eidolon_ai_sdk.bin.agent_http_server:app", host="0.0.0.0", port=args.port, log_level=log_level_str, **kwargs
