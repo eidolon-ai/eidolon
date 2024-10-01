@@ -36,7 +36,8 @@
   "required": [
     "apiVersion",
     "kind",
-    "metadata"
+    "metadata",
+    "spec"
   ],
   "title": "MachineResource",
   "type": "object"

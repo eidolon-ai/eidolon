@@ -71,7 +71,11 @@
       "default": null
     },
     "apu": {
-      "$ref": "../APU/overview.json",
+      "allOf": [
+        {
+          "$ref": "../APU/overview.json"
+        }
+      ],
       "description": "The APU to use for question transformation."
     }
   },

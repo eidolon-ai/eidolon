@@ -6,23 +6,43 @@
       "title": "Implementation"
     },
     "symbolic_memory": {
-      "$ref": "../SymbolicMemory/overview.json",
+      "allOf": [
+        {
+          "$ref": "../SymbolicMemory/overview.json"
+        }
+      ],
       "description": "The Symbolic Memory implementation."
     },
     "file_memory": {
-      "$ref": "../FileMemory/overview.json",
+      "allOf": [
+        {
+          "$ref": "../FileMemory/overview.json"
+        }
+      ],
       "description": "The File Memory implementation."
     },
     "similarity_memory": {
-      "$ref": "../SimilarityMemory/overview.json",
+      "allOf": [
+        {
+          "$ref": "../SimilarityMemory/overview.json"
+        }
+      ],
       "description": "The Vector Memory implementation."
     },
     "security_manager": {
-      "$ref": "../SecurityManager/overview.json",
+      "allOf": [
+        {
+          "$ref": "../SecurityManager/overview.json"
+        }
+      ],
       "description": "The Security Manager implementation."
     },
     "process_file_system": {
-      "$ref": "../ProcessFileSystem/overview.json",
+      "allOf": [
+        {
+          "$ref": "../ProcessFileSystem/overview.json"
+        }
+      ],
       "description": "The Process File System implementation. Used to store files related to processes."
     },
     "fail_on_agent_start_error": {

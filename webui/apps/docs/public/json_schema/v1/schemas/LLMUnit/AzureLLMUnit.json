@@ -6,7 +6,11 @@
       "title": "Implementation"
     },
     "model": {
-      "$ref": "../LLMModel/overview.json",
+      "allOf": [
+        {
+          "$ref": "../LLMModel/overview.json"
+        }
+      ],
       "description": "The model to use for the LLM. Since Azure deployments use custom names, no default is provided. See https://www.eidolonai.com/docs/howto/swap_llm for more details. on defining custom models."
     },
     "temperature": {
