@@ -135,8 +135,11 @@ class Reference(BaseModel):
     def _merge(cls, d1, d2):
         for k, v in d1.items():
             if isinstance(v, dict):
-                d2[k] = d2.get(k, {})
-                cls._merge(v, d2.get(k, {}))
+                d2v = d2.setdefault(k, {})
+                if isinstance(d2v, str):
+                    d2v = dict(implementation=d2v)
+                    d2[k] = d2v
+                cls._merge(v, d2v)
             else:
                 d2[k] = v
 
