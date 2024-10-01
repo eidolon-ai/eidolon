@@ -43,7 +43,7 @@ module.exports = {
         // Ignore dotfiles
         ".*.js",
         "index.ts",
-        "jest.config.ts",
+        "jest.config.mjs",
         "node_modules/",
         "dist/",
         "test/",

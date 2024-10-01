@@ -2,12 +2,14 @@ import os
 from typing import Optional, cast, List
 
 from azure.identity import get_bearer_token_provider, EnvironmentCredential
-from openai import AsyncOpenAI, AsyncStream
+from openai import AsyncOpenAI, AsyncStream, NotFoundError, OpenAIError
 from openai.lib.azure import AsyncAzureOpenAI
 from openai.types import ImagesResponse
 from openai.types.chat import ChatCompletionChunk, ChatCompletion
 from pydantic import BaseModel, Field
+from fastapi import HTTPException
 
+from eidolon_ai_sdk.apu.apu import APUException
 from eidolon_ai_sdk.system.reference_model import Specable, Reference
 from eidolon_ai_sdk.util.replay import replayable
 
@@ -22,7 +24,7 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
 
     async def completion(self, **kwargs) -> ChatCompletion | AsyncStream[ChatCompletionChunk]:
         return await replayable(
-            fn=lambda **_kwargs: self.makeClient().chat.completions.create(**_kwargs),
+            fn=lambda **_kwargs: self._make_request(**_kwargs),
             parser=_replay_parser,
             name_override="openai_completion",
         )(**kwargs)
@@ -30,6 +32,29 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
     async def generate_image(self, **kwargs) -> ImagesResponse:
         # todo, image generation should be repayable, but needs custom parser
         return await self.makeClient().images.generate(**kwargs)
+
+    async def _make_request(self, **kwargs):
+        try:
+            client = self.makeClient()
+        except OpenAIError as e:
+            raise HTTPException(500, str(e)) from e
+        try:
+            return await client.chat.completions.create(**kwargs)
+        except NotFoundError as e:
+            # The user likely does not have access to the requested named model or the model name is invalid.
+            # A typical response looks like this:
+            # {
+            #   "error": {
+            #     "message": "The model `gpt-4-turbo` does not exist or you do not have access to it.",
+            #     "type": "invalid_request_error",
+            #     "code": "model_not_found"
+            #   }
+            # }
+            message = (
+                f"{e.message}\n"
+                "OpenAI accounts that do not have sufficient credits may not have access to some models."
+            )
+            raise APUException(description=message)
 
 
 def get_default_token_provider():
@@ -48,7 +73,7 @@ class AzureOpenAIConnectionHandlerSpec(OpenAIConnectionHandlerSpec):
         - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
     """
 
-    azure_ad_token_provider: Optional[Reference] = Field(default_factory=get_default_token_provider)
+    azure_ad_token_provider: Optional[Reference[object]] = Field(default_factory=get_default_token_provider)
     token_provider_scopes: List[str] = ["https://cognitiveservices.azure.com/.default"]
     api_version: str = os.environ.get("OPENAI_API_VERSION") or "2024-02-01"
 

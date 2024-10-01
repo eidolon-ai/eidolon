@@ -82,6 +82,7 @@ class EndStreamContextEvent(BaseStreamEvent):
 class ToolCallStartEvent(StartStreamContextEvent):
     event_type: Literal["tool_call_start"] = "tool_call_start"
     tool_call: ToolCall
+    process_id: str
     is_agent_call: bool = False
 
 

@@ -7,12 +7,10 @@ import {HttpException, ProcessStatus} from "@eidolon-ai/client";
 
 const EidolonProcessesContext = createContext<{
   processes: Record<string, ProcessStatus[]>
-  // eslint-disable-next-line no-unused-vars
   updateProcesses: (machineURL: string) => Promise<void>;
   fetchError?: HttpException
 }>({
   processes: {},
-  // eslint-disable-next-line no-unused-vars
   updateProcesses: async (machineURL: string) => {
   },
   fetchError: undefined

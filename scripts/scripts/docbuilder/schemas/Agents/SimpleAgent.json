@@ -211,10 +211,11 @@
       "type": "array"
     },
     "title_generation_mode": {
-      "default": "on_request",
+      "default": "auto",
       "enum": [
         "none",
-        "on_request"
+        "on_request",
+        "auto"
       ],
       "title": "Title Generation Mode",
       "type": "string"

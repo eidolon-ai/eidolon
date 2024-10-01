@@ -101,8 +101,10 @@ class AgentController:
 
     async def add_route(self, app, handler, path, isEndpointAProgram: bool):
         endpoint = self.process_action(handler, isEndpointAProgram)
+        title = handler.extra.get("title", handler.name)
         app.add_api_route(
             path,
+            summary=title,
             endpoint=endpoint,
             methods=["POST"],
             tags=[self.name],
@@ -273,10 +275,8 @@ class AgentController:
 
         def get_start_event():
             extra = {}
-            if "title" in handler.extra:
-                extra["title"] = handler.extra["title"]
-            if "sub_title" in handler.extra:
-                extra["sub_title"] = handler.extra["sub_title"]
+            extra["title"] = process.title if process.title else extra.get("title", "")
+            extra["sub_title"] = extra.get("sub_title", "")
 
             return StartAgentCallEvent(
                 machine=AgentOS.current_machine_url(),

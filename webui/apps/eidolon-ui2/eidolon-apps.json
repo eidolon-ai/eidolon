@@ -1,7 +1,7 @@
 {
   "chatbot": {
-    "name": "Chatbot",
-    "description": "A basic chatbot using GPT-4-latest with conversational memory and no tools.",
+    "name": "Eidolon Chatbot",
+    "description": "A sample chatbot that lets you choose between multiple LLMs, search the web, text to speech, and many more things.",
     "version": "0.1.0",
     "image": "image.webp",
     "location": "http://localhost:8080",
@@ -25,56 +25,11 @@
   },
   "dev-tool": {
     "name": "Eidolon Developer Tool",
-    "description": "The developer tools can be used to test and debug any Eidolon operation.",
+    "description": "The developer tools can be used to test and debug any Eidolon operation. Expand an agent and choose an operation to start.",
     "version": "0.1.0",
     "image": "image.webp",
     "location": "http://localhost:8080",
     "type": "dev",
     "params": {}
-  },
-  "git-search": {
-    "name": "Explore Github docs",
-    "description": "A tool to explore the Github documentation using GPT-4-latest and RAG",
-    "version": "0.1.0",
-    "image": "image.webp",
-    "location": "http://localhost:8080",
-    "type": "copilot",
-    "params": {
-      "custom_page": "git-search",
-      "agent": "repo_expert",
-      "operation": "converse",
-      "inputLabel": "How can I help you?",
-      "titleOperationName": "generate_title",
-      "allowSpeech": true,
-      "speechAgent": "speech_agent",
-      "speechOperation": "speech_to_text"
-    }
-  },
-  "minority-report": {
-    "name": "SF Crime analytics",
-    "description": "Explore crime in San Francisco. Showcases searching a SQL database using natural language.",
-    "version": "0.1.0",
-    "image": "image.webp",
-    "location": "http://localhost:8080"
-  },
-  "venture-agent": {
-    "name": "Venture Agent",
-    "description": "A collection of autonomous agents that research venture backed companies.",
-    "version": "0.1.0",
-    "image": "image.webp",
-    "location": "http://localhost:8080",
-    "type": "copilot",
-    "params": {
-      "addBtnText": "Add Thesis",
-      "newItemText": "New Thesis",
-      "custom_page": "/venture-agent",
-      "agent": "venture_copilot",
-      "operation": "converse",
-      "inputLabel": "How can I help you?",
-      "titleOperationName": "generate_title",
-      "allowSpeech": true,
-      "speechAgent": "speech_agent",
-      "speechOperation": "speech_to_text"
-    }
   }
 }

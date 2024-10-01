@@ -8,6 +8,7 @@ from typing import Literal
 
 import dotenv
 import time
+from dotenv import find_dotenv
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -38,7 +39,7 @@ from eidolon_ai_sdk.system.resources.resources_base import Resource
 from eidolon_ai_sdk.util.posthog import report_server_started, PostHogMiddleware
 from eidolon_ai_sdk.util.replay import ReplayConfig
 
-dotenv.load_dotenv()
+dotenv.load_dotenv(find_dotenv(usecwd=True))
 
 try:
     from opentelemetry.instrumentation.logging import LoggingInstrumentor

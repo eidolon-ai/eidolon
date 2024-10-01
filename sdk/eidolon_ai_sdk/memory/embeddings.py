@@ -86,18 +86,22 @@ class OpenAIEmbedding(Embedding, Specable[OpenAIEmbeddingSpec]):
 
     async def start(self):
         await super().start()
-        conn_handler: OpenAIConnectionHandler = self.spec.connection_handler.instantiate()
-        self.llm = conn_handler.makeClient()
 
     async def stop(self):
         await super().stop()
-        await self.llm.close()
+        if self.llm:
+            await self.llm.close()
         self.llm = None
 
-    async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
+    def get_llm(self):
         if not self.llm:
-            await self.start()
-        response = await self.llm.embeddings.create(
+            conn_handler: OpenAIConnectionHandler = self.spec.connection_handler.instantiate()
+            self.llm = conn_handler.makeClient()
+        return self.llm
+
+    async def embed_text(self, text: str, **kwargs: Any) -> Sequence[float]:
+        llm = self.get_llm()
+        response = await llm.embeddings.create(
             input=text,
             model=self.spec.model,  # Choose the model as per your requirement
         )

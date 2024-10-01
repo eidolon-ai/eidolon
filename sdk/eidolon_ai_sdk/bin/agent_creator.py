@@ -94,7 +94,7 @@ def create_agent():
     agents = [a for a in agent_resources.keys() if a != "Agent"] + ["Custom"]
 
     name = prompt("What is the name of the agent?", default="NewAgent")
-    kind = prompt(f"What type of agent is {name}?", default="GenericAgent", choices=agents)
+    kind = prompt(f"What type of agent is {name}?", default="SimpleAgent", choices=agents)
     args = dict(apiVersion="eidolon/v1")
     args["kind"] = kind if kind != "Custom" else "Agent"
 

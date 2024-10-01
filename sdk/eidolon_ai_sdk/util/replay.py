@@ -43,7 +43,6 @@ def default_serializer(*args, **kwargs):
     to_dump = dict(args=list(args), kwargs=kwargs)
     yaml_string = yaml.dump(to_dump, default_flow_style=False)
 
-    print("****", yaml_string)
     return yaml_string, "yaml"
 
 
