@@ -9,7 +9,6 @@ import yaml
 from fastapi import HTTPException
 from google.generativeai import GenerativeModel
 from google.generativeai.types import GenerateContentResponse
-from google.generativeai.types import Tool
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -31,7 +30,7 @@ from eidolon_ai_sdk.util.replay import replayable
 logger = eidolon_logger.getChild("llm_unit")
 
 
-async def convert_to_llm(message: LLMMessage):
+async def convert_to_gemini(message: LLMMessage):
     if isinstance(message, SystemMessage):
         return {"role": "user", "parts": [message.content]}
     elif isinstance(message, UserMessage):
@@ -42,14 +41,9 @@ async def convert_to_llm(message: LLMMessage):
                 if part.type == "text":
                     if part.text:
                         content.append(part.text)
-                # else:
-                #     # retrieve the image from the file system
-                #     data = await AgentOS.file_memory.read_file(part.image_url)
-                #     # scale the image such that the max size of the shortest size is at most 768px
-                #     data = scale_image(data)
-                #     # base64 encode the data
-                #     base64_image = base64.b64encode(data).decode("utf-8")
-                #     content.append(ImageBlockParam(source=Source(data = base64_image, media_type="image/png", type="base64" ), type="image"))
+                else:
+                    logger.warn(f"Unhandled message content part type: {part.type}")
+
         else:
             content = [content]
 
@@ -57,6 +51,7 @@ async def convert_to_llm(message: LLMMessage):
     elif isinstance(message, AssistantMessage):
         content = [message.content]
         if message.tool_calls and len(message.tool_calls) > 0:
+            logger.debug(f"Gemini instructed tool calls: {message.tool_calls}")
             for tool_call in message.tool_calls:
                 pass
                 # content.append(ToolUseBlockParam(type="tool_use", id=tool_call.tool_call_id, name=tool_call.name, input=tool_call.arguments))
@@ -152,7 +147,7 @@ class GeminiLLMUnit(LLMUnit, Specable[GeminiLLMUnitSpec]):
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
         system_prompt = "\n".join([message.content for message in inMessages if isinstance(message, SystemMessage)])
-        messages = [await convert_to_llm(message) for message in inMessages if not isinstance(message, SystemMessage)]
+        messages = [await convert_to_gemini(message) for message in inMessages if not isinstance(message, SystemMessage)]
         if output_format == "str" or output_format["type"] == "string":
             is_string = True
         else:
@@ -284,7 +279,7 @@ def _llm_request():
     async def fn(client_args: dict = None, **kwargs):
         client = GenerativeModel(**(client_args or {}))
         async for e in await client.generate_content_async(**kwargs, stream=True):
-            print(e)
+            logger.debug(e)
             yield e
 
     return fn
