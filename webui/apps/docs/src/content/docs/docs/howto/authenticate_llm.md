@@ -49,4 +49,4 @@ MISTRAL_API_KEY=yourmistralapikey
 
 Restart Eidolon. Agents can now authenticate with your preferred LLMs.
 
->Note: if the `.env` file does not exist in your application root directory, create it as a plain text file. Always restart after editing the `.env` file.
+>Note: if the `.env` file does not exist in your application root directory, create it as a plain text file.

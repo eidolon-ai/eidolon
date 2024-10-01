@@ -12,7 +12,7 @@ from anthropic import (
     RateLimitError,
     APIStatusError,
     TextEvent,
-    ContentBlockStopEvent,
+    ContentBlockStopEvent, AuthenticationError,
 )
 from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
 from anthropic.types.image_block_param import Source
@@ -206,6 +206,8 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
             raise HTTPException(502, f"Anthropic Error: {e.message}") from e
         except RateLimitError as e:
             raise HTTPException(429, "Anthropic Rate Limit Exceeded") from e
+        except AuthenticationError as e:
+            raise HTTPException(500, "Anthropic Authentication Error") from e
         except APIStatusError as e:
             raise HTTPException(502, f"Anthropic Status Error: {e.message}") from e
 
@@ -284,9 +286,14 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
 def _llm_request():
     async def fn(client_args: dict = None, **kwargs):
         client = AsyncAnthropic(**(client_args or {}))
-        async with client.messages.stream(**kwargs) as stream:
-            async for e in stream:
-                yield e
+        try:
+            async with client.messages.stream(**kwargs) as stream:
+                async for e in stream:
+                    yield e
+        except TypeError as e:
+            if "Could not resolve authentication method." in str(e):
+                raise HTTPException(500, "Authentication Error: set envar `ANTHROPIC_API_KEY`")
+            raise
 
     return fn
 

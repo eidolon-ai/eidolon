@@ -2,11 +2,12 @@ import os
 from typing import Optional, cast, List
 
 from azure.identity import get_bearer_token_provider, EnvironmentCredential
-from openai import AsyncOpenAI, AsyncStream, NotFoundError
+from openai import AsyncOpenAI, AsyncStream, NotFoundError, OpenAIError
 from openai.lib.azure import AsyncAzureOpenAI
 from openai.types import ImagesResponse
 from openai.types.chat import ChatCompletionChunk, ChatCompletion
 from pydantic import BaseModel, Field
+from fastapi import HTTPException
 
 from eidolon_ai_sdk.apu.apu import APUException
 from eidolon_ai_sdk.system.reference_model import Specable, Reference
@@ -34,7 +35,11 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
 
     async def _make_request(self, **kwargs):
         try:
-            return await self.makeClient().chat.completions.create(**kwargs)
+            client = self.makeClient()
+        except OpenAIError as e:
+            raise HTTPException(500, str(e)) from e
+        try:
+            return await client.chat.completions.create(**kwargs)
         except NotFoundError as e:
             # The user likely does not have access to the requested named model or the model name is invalid.
             # A typical response looks like this:
@@ -46,7 +51,7 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
             #   }
             # }
             message = (
-                f"{e.message}\n" 
+                f"{e.message}\n"
                 "OpenAI accounts that do not have sufficient credits may not have access to some models."
             )
             raise APUException(description=message)
