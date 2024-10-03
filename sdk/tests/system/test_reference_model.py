@@ -206,3 +206,16 @@ def test_loosely_validated_type_bounds():
 def test_referencing_base_models_directly():
     with resource(name="BaseSpec", implementation=fqn(BaseSpec), spec=dict(foo="bar")):
         assert AnnotatedReference[BaseSpec]().instantiate().foo == "bar"
+
+
+def test_reference_model_merges_nested_shorthand_impl():
+    with (
+        resource(name="SimpleModel", implementation=fqn(SimpleModel), spec=dict(simple=fqn(OS))),
+        resource(name="derived", implementation="SimpleModel", spec=dict(simple=dict(
+            implementation=fqn(System)
+        ))),
+    ):
+        ref = AnnotatedReference[SimpleModel, "derived"]()
+        assert ref.instantiate().simple.instantiate().spec.foo == "system foo"
+
+

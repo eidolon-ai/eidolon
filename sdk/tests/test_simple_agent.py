@@ -91,13 +91,105 @@ resources = [
 ]
 
 
-def pytest_generate_tests(metafunc):
-    apus = metafunc.cls.apus
-    metafunc.parametrize(["apu"], [[apu] for apu in apus], ids=metafunc.cls.apus, scope="class")
-
-
+os.environ.setdefault("OPENAI_API_KEY", "key_not_needed_with_saved_cassettes")
 os.environ.setdefault("ANTHROPIC_API_KEY", "key_not_needed_with_saved_cassettes")
 os.environ.setdefault("MISTRAL_API_KEY", "key_not_needed_with_saved_cassettes")
+
+
+class TestBadAuthToken:
+    @pytest.fixture(scope="class")
+    def envar_manager(self):
+        old_anthropic = os.environ.get("ANTHROPIC_API_KEY")
+        old_mistral = os.environ.get("MISTRAL_API_KEY")
+        old_openai = os.environ.get("OPENAI_API_KEY")
+        os.environ["ANTHROPIC_API_KEY"] = "bad_key"
+        os.environ["MISTRAL_API_KEY"] = "bad_key"
+        os.environ["OPENAI_API_KEY"] = "bad_key"
+        yield
+        os.environ["ANTHROPIC_API_KEY"] = old_anthropic
+        os.environ["MISTRAL_API_KEY"] = old_mistral
+        os.environ["OPENAI_API_KEY"] = old_openai
+
+    @pytest.fixture(scope="class", autouse=True)
+    async def server(self, run_app, envar_manager):
+        async with run_app(
+            r("openai", apu="GPT4o"),
+            r("anthropic", apu="ClaudeSonnet"),
+            r("minstral", apu="MistralLarge"),
+        ) as ra:
+            yield ra
+
+    async def test_openai_bad_auth(self):
+        process = await Agent.get("openai").create_process()
+        with pytest.raises(AgentError) as err:
+            await process.action("converse", body="What is the capital of France?")
+        assert err.value.status_code == 500
+        assert "AuthenticationError" in err.value.response.json()['data']
+
+    async def test_anthropic_bad_auth(self):
+        process = await Agent.get("anthropic").create_process()
+        with pytest.raises(AgentError) as err:
+            await process.action("converse", body="What is the capital of France?")
+        assert err.value.status_code == 500
+        assert "Anthropic Authentication Error" in err.value.response.json()['data']
+
+    async def test_mistral_bad_auth(self):
+        process = await Agent.get("minstral").create_process()
+        with pytest.raises(AgentError) as err:
+            await process.action("converse", body="What is the capital of France?")
+        assert err.value.status_code == 502
+        assert "Unauthorized" in err.value.response.json()['data']
+
+
+class TestNoAuthToken:
+    @pytest.fixture(scope="class")
+    def envar_manager(self):
+        old_anthropic = os.environ.get("ANTHROPIC_API_KEY")
+        old_mistral = os.environ.get("MISTRAL_API_KEY")
+        old_openai = os.environ.get("OPENAI_API_KEY")
+        del os.environ["ANTHROPIC_API_KEY"]
+        del os.environ["MISTRAL_API_KEY"]
+        del os.environ["OPENAI_API_KEY"]
+        yield
+        os.environ["ANTHROPIC_API_KEY"] = old_anthropic
+        os.environ["MISTRAL_API_KEY"] = old_mistral
+        os.environ["OPENAI_API_KEY"] = old_openai
+
+    @pytest.fixture(scope="class", autouse=True)
+    async def server(self, run_app, envar_manager):
+        async with run_app(
+                r("openai", apu="GPT4o"),
+                r("anthropic", apu="ClaudeSonnet"),
+                r("minstral", apu="MistralLarge"),
+        ) as ra:
+            yield ra
+
+    async def test_openai_bad_auth(self):
+        process = await Agent.get("openai").create_process()
+        with pytest.raises(AgentError) as err:
+            await process.action("converse", body="What is the capital of France?")
+        assert err.value.status_code == 500
+        assert "OPENAI_API_KEY environment variable" in err.value.response.json()['data']
+
+    async def test_anthropic_bad_auth(self):
+        process = await Agent.get("anthropic").create_process()
+        with pytest.raises(AgentError) as err:
+            await process.action("converse", body="What is the capital of France?")
+        assert err.value.status_code == 500
+        assert "Authentication Error" in err.value.response.json()['data']
+
+    async def test_mistral_bad_auth(self):
+        process = await Agent.get("minstral").create_process()
+        with pytest.raises(AgentError) as err:
+            await process.action("converse", body="What is the capital of France?")
+        assert err.value.status_code == 502
+        assert "Unauthorized" in err.value.response.json()['data']
+
+
+def pytest_generate_tests(metafunc):
+    if hasattr(metafunc.cls, "apus"):
+        apus = metafunc.cls.apus
+        metafunc.parametrize(["apu"], [[apu] for apu in apus], ids=metafunc.cls.apus, scope="class")
 
 
 class TestSimpleTests:
