@@ -1,5 +1,8 @@
 import os
 import shutil
+from concurrent.futures.process import ProcessPoolExecutor
+from pathlib import Path
+from typing import Optional, List
 
 from pydantic import BaseModel
 
@@ -9,11 +12,19 @@ from eidolon_ai_sdk.system.reference_model import Specable
 
 
 class CrewSpec(BaseModel):
-    agents: dict
-    tasks: dict
+    agents: List[dict]
+    tasks: List[dict]
+    process: Process = Process.squential
+    max_workers: Optional[int] = None
 
 
 class CrewAgent(Specable[CrewSpec]):
+    pool: ProcessPoolExecutor
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.pool = ProcessPoolExecutor(max_workers=self.spec.max_workers)
+
     async def delete_process(self, process_id):
         crew_identifier = f"crew_file_sync_{process_id}"
         async with sync_temp_loc(crew_identifier) as tempdir:
@@ -22,5 +33,18 @@ class CrewAgent(Specable[CrewSpec]):
     async def task(self, process_id):
         crew_identifier = f"crew_file_sync_{process_id}"
         async with managed_lock(crew_identifier), sync_temp_loc(crew_identifier) as synced_tempdir:
-            # todo, I think there is a environ context manager, regardless we need to test that this does not bleed between simultaneous requests
-            os.environ["CREWAI_STORAGE_DIR"] = synced_tempdir
+            # todo, this needs to be an async pool of some sort
+            result = await self.pool.submit(do_crew_things, self.spec, synced_tempdir)
+        return result
+
+
+def do_crew_things(spec: CrewSpec, loc: Path):
+    os.environ["CREWAI_STORAGE_DIR"] = str(loc)
+    agents = [Agent(**a) for a in spec.agents]
+    tasks = [Task(**t) for t in spec.tasks]
+    crew = Crew(
+        agents=agents,
+        tasks=tasks,
+        process=spec.process
+    )
+    return crew.kickoff
