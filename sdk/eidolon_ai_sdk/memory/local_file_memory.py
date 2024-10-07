@@ -1,4 +1,6 @@
+import fnmatch
 import glob
+import os
 from pathlib import Path
 
 from pydantic import Field, field_validator, BaseModel
@@ -149,9 +151,18 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
         return safe_file_path.exists()
 
     async def glob(self, pattern):
+
+        def _list_files(loc: Path):
+            if os.path.isfile(loc):
+                yield FileMetadata(file_path=str(loc.relative_to(self.root_dir)))
+            else:
+                for record in os.listdir(loc):
+                    yield from _list_files(loc / record)
+
         safe_file_path = self.resolve(pattern)
         for s in glob.glob(str(safe_file_path), root_dir=self.root_dir):
-            yield FileMetadata(file_path=s.removeprefix(str(self.root_dir)).removeprefix("/"))
+            for r in _list_files(Path(s)):
+                yield r
 
     async def start(self):
         """

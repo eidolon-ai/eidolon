@@ -1,5 +1,6 @@
 import os
 import pathlib
+import shutil
 from contextlib import asynccontextmanager
 
 import httpx
@@ -94,14 +95,14 @@ def client_builder(run_app):
 def machine_manager(file_memory, symbolic_memory, similarity_memory):
     @asynccontextmanager
     async def fn():
-        async with symbolic_memory() as sym, similarity_memory() as sim:
+        async with symbolic_memory() as sym, similarity_memory() as sim, file_memory() as fm:
             yield MachineResource(
                 apiVersion="eidolon/v1",
                 metadata=Metadata(name="test_machine"),
                 kind="Machine",
                 spec=dict(
                     symbolic_memory=sym,
-                    file_memory=file_memory,
+                    file_memory=fm,
                     similarity_memory=sim,
                 ),
             )
@@ -177,7 +178,12 @@ def file_memory_loc(tmp_path_factory, module_identifier):
 
 @pytest.fixture(scope="module")
 def file_memory(file_memory_loc):
-    return Reference[LocalFileMemory](root_dir=str(file_memory_loc))
+    @asynccontextmanager
+    async def fm():
+        for record in os.listdir(file_memory_loc):
+            shutil.rmtree(file_memory_loc / record, ignore_errors=True)
+        yield Reference[LocalFileMemory](root_dir=str(file_memory_loc))
+    return fm
 
 
 @pytest.fixture(scope="module")

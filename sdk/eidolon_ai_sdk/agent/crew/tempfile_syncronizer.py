@@ -1,4 +1,5 @@
 import os
+import shutil
 from contextlib import asynccontextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -24,6 +25,7 @@ async def _read(loc, write_loc):
         record = cast(FileMetadata, record)
         relative_path = Path(record.file_path).relative_to(write_loc)
         found = await AgentOS.file_memory.read_file(record.file_path)
+        os.makedirs((loc / relative_path).parent, exist_ok=True)
         with open(loc / relative_path, "wb") as f:
             f.write(found)
         acc.add(relative_path)
@@ -32,7 +34,7 @@ async def _read(loc, write_loc):
 
 async def _write(root, loc, write_loc):
     acc = set()
-    relative_loc = Path(root).relative_to(loc)
+    relative_loc = Path(loc).relative_to(root)
     await AgentOS.file_memory.mkdir(str(Path(write_loc) / relative_loc), exist_ok=True)
     for path in os.listdir(loc):
         item_loc = str(Path(loc) / path)
