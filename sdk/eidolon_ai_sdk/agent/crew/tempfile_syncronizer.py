@@ -1,5 +1,4 @@
 import os
-import shutil
 from contextlib import asynccontextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory

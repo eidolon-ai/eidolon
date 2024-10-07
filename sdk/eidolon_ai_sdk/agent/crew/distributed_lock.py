@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timedelta
 from typing import ClassVar
 
@@ -67,3 +68,22 @@ class DistributedLock(MongoDoc, extra="allow"):
 
     async def release(self):
         await AgentOS.symbolic_memory.delete(self.collection, {"_id": self.record_id, "owner": self.owner})
+
+
+async def _refresh_lock(lock: DistributedLock, duration: int, interval: int):
+    try:
+        while True:
+            await asyncio.sleep(interval / 1000)
+            await lock.renew(duration)
+    except LockException:
+        logger.exception("Error automatically refreshing lock")
+
+
+async def managed_lock(key: str, duration: int = 15000, refresh_interval: int = 5000, timeout: int = -1):
+    lock = await DistributedLock.acquire(key, duration, timeout)
+    refresh_in_background = asyncio.create_task(_refresh_lock(lock, duration, refresh_interval))
+    try:
+        yield lock
+    finally:
+        refresh_in_background.cancel("Completed task, releasing lock")
+        await lock.release()
