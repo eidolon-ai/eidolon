@@ -89,6 +89,7 @@ export default defineConfig({
             {label: 'Github Repo Expert', link: '/docs/recipes/repo-expert'},
             {label: 'S3 RAG', link: '/docs/recipes/s3-rag'},
             {label: 'Web Researcher Chatbot', link: '/docs/recipes/web-researcher'},
+            {label: 'Azure Powered Agent', link: '/docs/recipes/azure-agent'},
             // {label: 'K8 Assistant', link: '/docs/recipes/under-construction'},
             // {label: 'Venture Search', link: '/docs/recipes/under-construction'},
             // {label: 'Github Repo Expert', link: '/docs/recipes/under-construction'},
