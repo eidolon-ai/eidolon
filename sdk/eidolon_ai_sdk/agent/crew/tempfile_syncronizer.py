@@ -8,6 +8,10 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 
 
+# easy perf gains:
+# 1. get checksums of files to see if they need to be updated or not
+# 2. stream read / write since currently it is 2x as slow since it blocks each entirely
+# 3. potentially virtual fs
 @asynccontextmanager
 async def sync_temp_loc(identifier: str):
     with TemporaryDirectory() as tempdir:

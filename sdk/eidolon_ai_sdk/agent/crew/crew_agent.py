@@ -4,6 +4,7 @@ from concurrent.futures.process import ProcessPoolExecutor
 from pathlib import Path
 from typing import Optional, List
 
+from crewai import Agent, Task, Crew, Process
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.crew.distributed_lock import managed_lock
@@ -14,7 +15,7 @@ from eidolon_ai_sdk.system.reference_model import Specable
 class CrewSpec(BaseModel):
     agents: List[dict]
     tasks: List[dict]
-    process: Process = Process.squential
+    process: Process = Process.sequential
     max_workers: Optional[int] = None
 
 
@@ -47,4 +48,4 @@ def do_crew_things(spec: CrewSpec, loc: Path):
         tasks=tasks,
         process=spec.process
     )
-    return crew.kickoff
+    return crew.kickoff()
