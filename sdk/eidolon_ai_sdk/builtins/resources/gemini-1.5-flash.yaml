@@ -1,0 +1,28 @@
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: Gemini-1.5-Flash
+  annotations:
+    - title: "Gemini 1.5 Flash"
+spec:
+  implementation: APU
+  audio_unit: OpenAiSpeech
+  image_unit: OpenAIImageUnit
+  llm_unit:
+    implementation: GeminiLLMUnit
+    model: "gemini-1.5-flash"
+---
+apiVersion: eidolon/v1
+kind: Reference
+metadata:
+  name: gemini-1.5-flash
+spec:
+  implementation: LLMModel
+  human_name: Gemini 1.5 Flash
+  name: "gemini-1.5-flash"
+  input_context_limit: 1048576
+  output_context_limit: 8192
+  supports_tools: True
+  supports_image_input: True
+  supports_audio_input: True

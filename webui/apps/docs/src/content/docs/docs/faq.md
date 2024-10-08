@@ -44,7 +44,7 @@ With clear modular design comes all the benefits of customizing and changing out
 
 This means no vendor lock-in and minimizes the work needed to upgrade portions of an agent. Without this flexibility, developers will not be able to adapt their agents to the rapidly changing AI landscape.
 
-#### 4. Security & Regulatory Complicance
+#### 4. Security & Regulatory Compliance
 Perhaps the most important for the enterprise, support for governance -- security, regulatory compliance -- are factored into overall design. We know implementing security after the fact results in ongoing, inflated costs, in both retro-fitting and starting over. Let's fix that now.
 
 
