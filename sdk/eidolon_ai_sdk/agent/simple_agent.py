@@ -134,7 +134,7 @@ class SimpleAgentSpec(BaseModel):
     actions: List[ActionDefinition] = [ActionDefinition()]
     apu: AnnotatedReference[APU] = None
     apus: List[NamedAPU] = []
-    title_generation_mode: Literal["none", "on_request", "auto"] = "auto"
+    title_generation_mode: Literal["none", "on_request", "auto"] = "none"
 
     @model_validator(mode="before")
     def validate_apu(cls, value):

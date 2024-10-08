@@ -211,7 +211,7 @@
       "type": "array"
     },
     "title_generation_mode": {
-      "default": "auto",
+      "default": "none",
       "enum": [
         "none",
         "on_request",
