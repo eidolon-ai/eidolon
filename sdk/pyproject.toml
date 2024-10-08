@@ -88,12 +88,12 @@ extras = [ "essential",]
 version = "^1.43.0"
 optional = true
 
-[tool.poetry.dependencies.crewai]
-version = "^0.67.1"
-optional = true
+#[tool.poetry.dependencies.crewai]
+#version = "^0.67.1"
+#optional = true
 
 [tool.poetry.extras]
-all = [ "playwright", "crewai" ]
+all = [ "playwright" ]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
@@ -102,9 +102,9 @@ ruff = "^0.1.7"
 pytest-recording = "^0.13.1"
 pytest-asyncio = "^0.23.4"
 pdoc = "^14.4.0"
-vcrpy = "^6.0.1"
 watchfiles = "^0.22.0"
 pytest-mock = "^3.14.0"
+vcrpy = "^6.0.2"
 
 [tool.poetry.group.dev.dependencies.typer]
 extras = [ "all",]
