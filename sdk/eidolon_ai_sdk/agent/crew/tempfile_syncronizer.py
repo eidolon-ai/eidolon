@@ -4,6 +4,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import cast
 
+import aiofiles
+
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 
@@ -29,8 +31,8 @@ async def _read(loc, write_loc):
         relative_path = Path(record.file_path).relative_to(write_loc)
         found = await AgentOS.file_memory.read_file(record.file_path)
         os.makedirs((loc / relative_path).parent, exist_ok=True)
-        with open(loc / relative_path, "wb") as f:
-            f.write(found)
+        async with aiofiles.open(loc / relative_path, "wb") as f:
+            await f.write(found)
         acc.add(relative_path)
     return acc
 
@@ -43,9 +45,10 @@ async def _write(root, loc, write_loc):
         item_loc = str(Path(loc) / path)
         item_relative_loc = str(relative_loc / path)
         if os.path.isfile(item_loc):
-            with open(item_loc, 'rb') as f:
+            async with aiofiles.open(item_loc, 'rb') as f:
                 write_loc = str(Path(write_loc) / item_relative_loc)
-                await AgentOS.file_memory.write_file(write_loc, f.read())
+                content = await f.read()
+                await AgentOS.file_memory.write_file(write_loc, content)
             acc.add(item_relative_loc)
         else:
             acc.union(await _write(root, item_loc, write_loc))

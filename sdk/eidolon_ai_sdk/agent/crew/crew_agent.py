@@ -1,12 +1,15 @@
+import asyncio
 import os
 import shutil
 from concurrent.futures.process import ProcessPoolExecutor
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Annotated
 
 from crewai import Agent, Task, Crew, Process
+from fastapi import Body
 from pydantic import BaseModel
 
+from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.agent.crew.distributed_lock import managed_lock
 from eidolon_ai_sdk.agent.crew.tempfile_syncronizer import sync_temp_loc
 from eidolon_ai_sdk.system.reference_model import Specable
@@ -31,15 +34,21 @@ class CrewAgent(Specable[CrewSpec]):
         async with sync_temp_loc(crew_identifier) as tempdir:
             shutil.rmtree(tempdir)
 
-    async def task(self, process_id):
+    @register_program()
+    async def kickoff(self, process_id, body: Annotated[dict, Body()] = None):
+        body = body or {}
         crew_identifier = f"crew_file_sync_{process_id}"
         async with managed_lock(crew_identifier), sync_temp_loc(crew_identifier) as synced_tempdir:
-            # todo, this needs to be an async pool of some sort
-            result = await self.pool.submit(do_crew_things, self.spec, synced_tempdir)
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(
+                self.pool,
+                do_crew_things,
+                body, self.spec, synced_tempdir
+            )
         return result
 
 
-def do_crew_things(spec: CrewSpec, loc: Path):
+def do_crew_things(body, spec: CrewSpec, loc: Path):
     os.environ["CREWAI_STORAGE_DIR"] = str(loc)
     agents = [Agent(**a) for a in spec.agents]
     tasks = [Task(**t) for t in spec.tasks]
@@ -48,4 +57,4 @@ def do_crew_things(spec: CrewSpec, loc: Path):
         tasks=tasks,
         process=spec.process
     )
-    return crew.kickoff()
+    return crew.kickoff(body)
