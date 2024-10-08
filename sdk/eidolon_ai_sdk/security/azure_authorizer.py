@@ -11,7 +11,7 @@ from eidolon_ai_sdk.system.reference_model import Specable
 
 class AzureJWTProcessorSpec(BaseModel):
     client_id: str = Field(
-        os.environ.get("AZURE_CLIENT_ID") or os.environ.get("AZURE_AD_CLIENT_ID"),
+        os.environ.get("AZURE_CLIENT_IDs") or os.environ.get("AZURE_AD_CLIENT_IDs"),
         description="Your azure client or application ID. Defaults to the environment variable AZURE_CLIENT_ID",
     )
     tenant_id: str = Field(
