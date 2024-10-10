@@ -390,7 +390,7 @@ Specific value: `"str"`
 | ------------ | ------------------ |
 | **Type**     | `enum (of string)` |
 | **Required** | No                 |
-| **Default**  | `"auto"`           |
+| **Default**  | `"none"`           |
 
 Must be one of:
 * "none"
