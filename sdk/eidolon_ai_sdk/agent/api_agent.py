@@ -48,8 +48,7 @@ class APIAgent(Specable[APIAgentSpec]):
                 json_ = await get_content(self.spec.open_api_location)
                 self.open_api_schema = jsonref.replace_refs(json_)
             except Exception as e:
-                logger.error(f"Error fetching schema from {self.spec.open_api_location}: {e}")
-                return {}
+                raise RuntimeError(f"Error fetching schema from {self.spec.open_api_location}") from e
 
         return self.open_api_schema
 
