@@ -1,22 +1,22 @@
 ---
 title: FilesystemLoader
-description: "Description of FilesystemLoader component"
+description: Description of the FilesystemLoader component
 ---
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | FilesystemLoader  |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
 | + [root_dir](#root_dir )             | No      | string | No         | -          | Root Dir          |
 | - [pattern](#pattern )               | No      | string | No         | -          | Pattern           |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** FilesystemLoader
+| **Required** | Yes     |
 
 Specific value: `"FilesystemLoader"`
 

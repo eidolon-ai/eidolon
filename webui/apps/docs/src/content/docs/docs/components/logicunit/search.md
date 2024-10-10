@@ -1,11 +1,11 @@
 ---
 title: Search
-description: "Description of Search component"
+description: Description of the Search component
 ---
 
 | Property                                       | Pattern | Type        | Deprecated | Definition | Title/Description   |
 | ---------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------- |
-| - [implementation](#implementation )           | No      | const       | No         | -          | Search              |
+| + [implementation](#implementation )           | No      | const       | No         | -          | Implementation      |
 | - [cse_id](#cse_id )                           | No      | string      | No         | -          | Cse Id              |
 | - [cse_token](#cse_token )                     | No      | string      | No         | -          | Cse Token           |
 | - [name](#name )                               | No      | string      | No         | -          | Name                |
@@ -15,12 +15,12 @@ description: "Description of Search component"
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** Search
+| **Required** | Yes     |
 
 Specific value: `"Search"`
 

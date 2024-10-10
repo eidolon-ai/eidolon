@@ -1,51 +1,43 @@
 ---
 title: AzureLLMUnit
-description: "Description of AzureLLMUnit component"
+description: Description of the AzureLLMUnit component
 ---
 
-**Description:** Azure LLM Unit. Requires model to be defined. See https://www.eidolonai.com/docs/howto/swap_llm for more details.
-
-Authentication is handled oot with one of two mechanisms:
-* Static token defined with AZURE_OPENAI_API_KEY
-* Token provider defined by AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-
-To use an alternative authentication mechanism, provide a custom token provider.
-
-| Property                                                 | Pattern | Type                | Deprecated | Definition                        | Title/Description               |
-| -------------------------------------------------------- | ------- | ------------------- | ---------- | --------------------------------- | ------------------------------- |
-| - [implementation](#implementation )                     | No      | const               | No         | -                                 | AzureLLMUnit                    |
-| + [model](#model )                                       | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
-| - [temperature](#temperature )                           | No      | number              | No         | -                                 | Temperature                     |
-| - [force_json](#force_json )                             | No      | boolean             | No         | -                                 | Force Json                      |
-| - [max_tokens](#max_tokens )                             | No      | integer             | No         | -                                 | Max Tokens                      |
-| - [supports_system_messages](#supports_system_messages ) | No      | boolean             | No         | -                                 | Supports System Messages        |
-| - [can_stream](#can_stream )                             | No      | boolean             | No         | -                                 | Can Stream                      |
-| + [azure_endpoint](#azure_endpoint )                     | No      | string              | No         | -                                 | Azure Endpoint                  |
-| - [azure_ad_token_provider](#azure_ad_token_provider )   | No      | object              | No         | -                                 | object Reference                |
-| - [token_provider_scopes](#token_provider_scopes )       | No      | array of string     | No         | -                                 | Token Provider Scopes           |
-| - [api_version](#api_version )                           | No      | string              | No         | -                                 | Api Version                     |
-| - [client_args](#client_args )                           | No      | object              | No         | -                                 | Client Args                     |
+| Property                                                 | Pattern | Type                | Deprecated | Definition            | Title/Description                                                                                                                                                                              |
+| -------------------------------------------------------- | ------- | ------------------- | ---------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [implementation](#implementation )                     | No      | const               | No         | -                     | Implementation                                                                                                                                                                                 |
+| + [model](#model )                                       | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -                     | The model to use for the LLM. Since Azure deployments use custom names, no default is provided. See https://www.eidolonai.com/docs/howto/swap_llm for more details. on defining custom models. |
+| - [temperature](#temperature )                           | No      | number              | No         | -                     | Temperature                                                                                                                                                                                    |
+| - [force_json](#force_json )                             | No      | boolean             | No         | -                     | Force Json                                                                                                                                                                                     |
+| - [max_tokens](#max_tokens )                             | No      | integer             | No         | -                     | Max Tokens                                                                                                                                                                                     |
+| - [supports_system_messages](#supports_system_messages ) | No      | boolean             | No         | -                     | Supports System Messages                                                                                                                                                                       |
+| - [can_stream](#can_stream )                             | No      | boolean             | No         | -                     | Can Stream                                                                                                                                                                                     |
+| + [azure_endpoint](#azure_endpoint )                     | No      | string              | No         | -                     | Azure Endpoint                                                                                                                                                                                 |
+| - [azure_ad_token_provider](#azure_ad_token_provider )   | No      | object              | No         | In #/$defs/_Reference | -                                                                                                                                                                                              |
+| - [token_provider_scopes](#token_provider_scopes )       | No      | array of string     | No         | -                     | Token Provider Scopes                                                                                                                                                                          |
+| - [api_version](#api_version )                           | No      | string              | No         | -                     | Api Version                                                                                                                                                                                    |
+| - [client_args](#client_args )                           | No      | object              | No         | -                     | Client Args                                                                                                                                                                                    |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** AzureLLMUnit
+| **Required** | Yes     |
 
 Specific value: `"AzureLLMUnit"`
 
 ## <a name="model"></a>2. Property `model`
 
-|                |                                |
-| -------------- | ------------------------------ |
-| **Type**       | `Reference[LLMModel]`          |
-| **Required**   | Yes                            |
-| **Defined in** | [LLMModel](/docs/components/llmmodel/overview) |
+|              |                                                              |
+| ------------ | ------------------------------------------------------------ |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview)                                        |
+| **Required** | Yes                                                          |
+| **Default**  | `{"implementation": "eidolon_ai_sdk.apu.llm_unit.LLMModel"}` |
 
-**Description:** Overview of LLMModel components
+**Description:** The model to use for the LLM. Since Azure deployments use custom names, no default is provided. See https://www.eidolonai.com/docs/howto/swap_llm for more details. on defining custom models.
 
 ## <a name="temperature"></a>3. Property `temperature`
 
@@ -110,13 +102,12 @@ Specific value: `"AzureLLMUnit"`
 
 ## <a name="azure_ad_token_provider"></a>9. Property `azure_ad_token_provider`
 
-**Title:** object Reference
-
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/$defs/_Reference                                                        |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -127,11 +118,10 @@ Specific value: `"AzureLLMUnit"`
 
 **Title:** Implementation
 
-|              |                     |
-| ------------ | ------------------- |
-| **Type**     | `string`            |
-| **Required** | No                  |
-| **Default**  | `"builtins.object"` |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ## <a name="token_provider_scopes"></a>10. Property `token_provider_scopes`
 
@@ -155,7 +145,7 @@ Specific value: `"AzureLLMUnit"`
 | ----------------------------------------------------------- | ----------- |
 | [token_provider_scopes items](#token_provider_scopes_items) | -           |
 
-### <a name="autogenerated_heading_2"></a>10.1. token_provider_scopes items
+### <a name="autogenerated_heading_1"></a>10.1. token_provider_scopes items
 
 |              |          |
 | ------------ | -------- |

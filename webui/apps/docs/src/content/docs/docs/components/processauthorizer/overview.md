@@ -1,7 +1,7 @@
 ---
 title: ProcessAuthorizer Overview
-description: "Overview of ProcessAuthorizer components"
+description: "None"
 ---
-Overview of ProcessAuthorizer components
+Overview of the ProcessAuthorizer component
 ## Builtins
-* [PrivateAuthorizer](/docs/components/processauthorizer/privateauthorizer/) (default)
+* [PrivateAuthorizer](/docs/components/processauthorizer/privateauthorizer/)

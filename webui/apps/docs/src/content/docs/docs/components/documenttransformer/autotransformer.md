@@ -1,20 +1,21 @@
 ---
 title: AutoTransformer
-description: "Description of AutoTransformer component"
+description: Description of the AutoTransformer component
 ---
 
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | AutoTransformer   |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
+| - [](#additionalProperties )         | No      | object | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** AutoTransformer
+| **Required** | Yes     |
 
 Specific value: `"AutoTransformer"`
 

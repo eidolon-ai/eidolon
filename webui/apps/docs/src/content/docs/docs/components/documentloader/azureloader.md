@@ -1,39 +1,36 @@
 ---
 title: AzureLoader
-description: "Description of AzureLoader component"
+description: Description of the AzureLoader component
 ---
 
-**Description:** Loads documents from an azure storage container.
-
-| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description           |
-| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------- |
-| - [implementation](#implementation )                           | No      | const   | No         | -          | AzureLoader                 |
-| - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | -          | object Reference            |
-| + [account_url](#account_url )                                 | No      | string  | No         | -          | Account Url                 |
-| + [container](#container )                                     | No      | string  | No         | -          | Container                   |
-| - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -          | Create Container On Startup |
-| - [pattern](#pattern )                                         | No      | string  | No         | -          | Pattern                     |
+| Property                                                       | Pattern | Type    | Deprecated | Definition            | Title/Description           |
+| -------------------------------------------------------------- | ------- | ------- | ---------- | --------------------- | --------------------------- |
+| + [implementation](#implementation )                           | No      | const   | No         | -                     | Implementation              |
+| - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | In #/$defs/_Reference | -                           |
+| + [account_url](#account_url )                                 | No      | string  | No         | -                     | Account Url                 |
+| + [container](#container )                                     | No      | string  | No         | -                     | Container                   |
+| - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -                     | Create Container On Startup |
+| - [pattern](#pattern )                                         | No      | string  | No         | -                     | Pattern                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** AzureLoader
+| **Required** | Yes     |
 
 Specific value: `"AzureLoader"`
 
 ## <a name="azure_ad_token_provider"></a>2. Property `azure_ad_token_provider`
-
-**Title:** object Reference
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/$defs/_Reference                                                        |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -44,11 +41,10 @@ Specific value: `"AzureLoader"`
 
 **Title:** Implementation
 
-|              |                     |
-| ------------ | ------------------- |
-| **Type**     | `string`            |
-| **Required** | No                  |
-| **Default**  | `"builtins.object"` |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ## <a name="account_url"></a>3. Property `account_url`
 

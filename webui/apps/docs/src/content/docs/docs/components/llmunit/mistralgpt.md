@@ -1,38 +1,35 @@
 ---
 title: MistralGPT
-description: "Description of MistralGPT component"
+description: Description of the MistralGPT component
 ---
 
-| Property                             | Pattern | Type                | Deprecated | Definition                        | Title/Description               |
-| ------------------------------------ | ------- | ------------------- | ---------- | --------------------------------- | ------------------------------- |
-| - [implementation](#implementation ) | No      | const               | No         | -                                 | MistralGPT                      |
-| - [model](#model )                   | No      | Reference[LLMModel] | No         | In [LLMModel](/docs/components/llmmodel/overview) | Overview of LLMModel components |
-| - [temperature](#temperature )       | No      | number              | No         | -                                 | Temperature                     |
-| - [force_json](#force_json )         | No      | boolean             | No         | -                                 | Force Json                      |
-| - [max_tokens](#max_tokens )         | No      | integer             | No         | -                                 | Max Tokens                      |
-| - [client_args](#client_args )       | No      | object              | No         | -                                 | Client Args                     |
+| Property                             | Pattern | Type                | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------------------- | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation ) | No      | const               | No         | -          | Implementation    |
+| - [model](#model )                   | No      | [Reference[LLMModel]](/docs/components/llmmodel/overview) | No         | -          | -                 |
+| - [temperature](#temperature )       | No      | number              | No         | -          | Temperature       |
+| - [force_json](#force_json )         | No      | boolean             | No         | -          | Force Json        |
+| - [max_tokens](#max_tokens )         | No      | integer             | No         | -          | Max Tokens        |
+| - [client_args](#client_args )       | No      | object              | No         | -          | Client Args       |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** MistralGPT
+| **Required** | Yes     |
 
 Specific value: `"MistralGPT"`
 
 ## <a name="model"></a>2. Property `model`
 
-|                |                                              |
-| -------------- | -------------------------------------------- |
-| **Type**       | `Reference[LLMModel]`                        |
-| **Required**   | No                                           |
-| **Default**    | `{"implementation": "mistral-large-latest"}` |
-| **Defined in** | [LLMModel](/docs/components/llmmodel/overview)               |
-
-**Description:** Overview of LLMModel components
+|              |                                                              |
+| ------------ | ------------------------------------------------------------ |
+| **Type**     | [`Reference[LLMModel]`](/docs/components/llmmodel/overview)                                        |
+| **Required** | No                                                           |
+| **Default**  | `{"implementation": "eidolon_ai_sdk.apu.llm_unit.LLMModel"}` |
 
 ## <a name="temperature"></a>3. Property `temperature`
 

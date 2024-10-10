@@ -3,10 +3,10 @@ import re
 from re import Pattern
 
 import math
-from openai import BaseModel
 from opentelemetry import trace
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
+from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
 from eidolon_ai_client.util.logger import logger

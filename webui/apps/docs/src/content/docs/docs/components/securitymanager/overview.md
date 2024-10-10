@@ -1,7 +1,7 @@
 ---
 title: SecurityManager Overview
-description: "Overview of SecurityManager components"
+description: "None"
 ---
-Overview of SecurityManager components
+Overview of the SecurityManager component
 ## Builtins
-* [SecurityManagerImpl](/docs/components/securitymanager/securitymanagerimpl/) (default)
+* [SecurityManagerImpl](/docs/components/securitymanager/securitymanagerimpl/)

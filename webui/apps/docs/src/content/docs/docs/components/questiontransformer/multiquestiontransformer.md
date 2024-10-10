@@ -1,23 +1,23 @@
 ---
 title: MultiQuestionTransformer
-description: "Description of MultiQuestionTransformer component"
+description: Description of the MultiQuestionTransformer component
 ---
 
-| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description        |
-| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#implementation )         | No      | const   | No         | -          | MultiQuestionTransformer |
-| - [keep_original](#keep_original )           | No      | boolean | No         | -          | Keep Original            |
-| - [number_to_generate](#number_to_generate ) | No      | integer | No         | -          | Number To Generate       |
-| - [prompt](#prompt )                         | No      | string  | No         | -          | Prompt                   |
+| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description  |
+| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------ |
+| + [implementation](#implementation )         | No      | const   | No         | -          | Implementation     |
+| - [keep_original](#keep_original )           | No      | boolean | No         | -          | Keep Original      |
+| - [number_to_generate](#number_to_generate ) | No      | integer | No         | -          | Number To Generate |
+| - [prompt](#prompt )                         | No      | string  | No         | -          | Prompt             |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** MultiQuestionTransformer
+| **Required** | Yes     |
 
 Specific value: `"MultiQuestionTransformer"`
 

@@ -1,7 +1,7 @@
 ---
 title: ResultSummarizer Overview
-description: "Overview of ResultSummarizer components"
+description: "None"
 ---
-Overview of ResultSummarizer components
+Overview of the ResultSummarizer component
 ## Builtins
 * [ResultSummarizer](/docs/components/resultsummarizer/resultsummarizer/) (default)

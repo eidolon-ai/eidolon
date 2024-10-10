@@ -1,25 +1,21 @@
 ---
 title: IOUnit
-description: "Description of IOUnit component"
+description: Description of the IOUnit component
 ---
 
-**Description:** 
-This is the IO unit for the APU. It is responsible for converting the prompts from the User to the LLM
-
-This can be overridden to provide custom IO handling.
-
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | IOUnit            |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
+| - [](#additionalProperties )         | No      | object | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** IOUnit
+| **Required** | Yes     |
 
 Specific value: `"IOUnit"`
 

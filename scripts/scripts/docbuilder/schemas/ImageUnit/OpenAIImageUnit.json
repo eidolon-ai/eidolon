@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "OpenAIImageUnit",
+      "title": "Implementation"
+    },
+    "image_to_text_prompt": {
+      "default": "Use the following prompt to describe the image:",
+      "description": "The prompt to use for the conversion. The text should be very verbose and detailed.",
+      "title": "Image To Text Prompt",
+      "type": "string"
+    },
+    "text_to_image_prompt": {
+      "default": "Use the provided text to create an image:",
+      "description": "The prompt to use for the conversion. The text should be very verbose and detailed.",
+      "title": "Text To Image Prompt",
+      "type": "string"
+    },
+    "connection_handler": {
+      "$ref": "../OpenAIConnectionHandler/overview.json"
+    },
+    "image_to_text_model": {
+      "default": "gpt-4-turbo",
+      "description": "The model to use for the vision LLM.",
+      "title": "Image To Text Model",
+      "type": "string"
+    },
+    "text_to_image_model": {
+      "default": "dall-e-3",
+      "description": "The model to use for the vision LLM.",
+      "title": "Text To Image Model",
+      "type": "string"
+    },
+    "temperature": {
+      "default": 0.3,
+      "title": "Temperature",
+      "type": "number"
+    },
+    "image_to_text_system_prompt": {
+      "default": "You are an expert at answering questions about images. You are presented with an image and a question and must answer the question based on the information in the image.",
+      "description": "The system prompt to use for text to image.",
+      "title": "Image To Text System Prompt",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.llm.open_ai_image_unit.OpenAIImageUnit",
+    "group": "ImageUnit",
+    "name": "OpenAIImageUnit",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "OpenAIImageUnit",
+  "type": "object"
+}

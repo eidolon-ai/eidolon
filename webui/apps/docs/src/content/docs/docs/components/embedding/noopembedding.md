@@ -1,20 +1,20 @@
 ---
 title: NoopEmbedding
-description: "Description of NoopEmbedding component"
+description: Description of the NoopEmbedding component
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | NoopEmbedding     |
+| + [implementation](#implementation ) | No      | const | No         | -          | Implementation    |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** NoopEmbedding
+| **Required** | Yes     |
 
 Specific value: `"NoopEmbedding"`
 

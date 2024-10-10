@@ -1,22 +1,22 @@
 ---
 title: ChromaVectorStore
-description: "Description of ChromaVectorStore component"
+description: Description of the ChromaVectorStore component
 ---
 
 | Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description       |
 | ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------- |
-| - [implementation](#implementation )                   | No      | const  | No         | -          | ChromaVectorStore       |
+| + [implementation](#implementation )                   | No      | const  | No         | -          | Implementation          |
 | - [root_document_directory](#root_document_directory ) | No      | string | No         | -          | Root Document Directory |
 | - [url](#url )                                         | No      | string | No         | -          | Url                     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** ChromaVectorStore
+| **Required** | Yes     |
 
 Specific value: `"ChromaVectorStore"`
 

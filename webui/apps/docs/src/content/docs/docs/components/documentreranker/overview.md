@@ -1,7 +1,7 @@
 ---
 title: DocumentReranker Overview
-description: "Overview of DocumentReranker components"
+description: "None"
 ---
-Overview of DocumentReranker components
+Overview of the DocumentReranker component
 ## Builtins
-* [RAGFusionReranker](/docs/components/documentreranker/ragfusionreranker/) (default)
+* [RAGFusionReranker](/docs/components/documentreranker/ragfusionreranker/)

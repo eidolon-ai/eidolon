@@ -1,21 +1,21 @@
 ---
 title: LocalFileMemory
-description: "Description of LocalFileMemory component"
+description: Description of the LocalFileMemory component
 ---
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | LocalFileMemory   |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
 | - [root_dir](#root_dir )             | No      | string | No         | -          | Root Dir          |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** LocalFileMemory
+| **Required** | Yes     |
 
 Specific value: `"LocalFileMemory"`
 

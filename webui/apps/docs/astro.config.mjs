@@ -98,117 +98,223 @@ export default defineConfig({
         },
         {
           label: 'Builtin Components',
-          items: [
+          items: 
             // ### Start Components ###
-            {
-              label: 'SymbolicMemory', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/symbolicmemory/overview'},
-                {label: 'LocalSymbolicMemory', link: '/docs/components/symbolicmemory/localsymbolicmemory'},
-                {label: 'MongoSymbolicMemory', link: '/docs/components/symbolicmemory/mongosymbolicmemory'},
-              ]
-            },
-            {
-              label: 'SimilarityMemory', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/similaritymemory/overview'},
-                {label: 'SimilarityMemoryImpl', link: '/docs/components/similaritymemory/similaritymemoryimpl'},
-              ]
-            },
-            {
-              label: 'FileMemoryBase', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/filememorybase/overview'},
-                {label: 'AzureFileMemory', link: '/docs/components/filememorybase/azurefilememory'},
-                {label: 'FileMemory', link: '/docs/components/filememorybase/filememory'},
-                {label: 'LocalFileMemory', link: '/docs/components/filememorybase/localfilememory'},
-                {label: 'S3FileMemory', link: '/docs/components/filememorybase/s3filememory'},
-              ]
-            },
-            {
-              label: 'Agents', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/agents/overview'},
-                {label: 'APIAgent', link: '/docs/components/agents/apiagent'},
-                {label: 'RetrieverAgent', link: '/docs/components/agents/retrieveragent'},
-                {label: 'SimpleAgent', link: '/docs/components/agents/simpleagent'},
-                {label: 'SqlAgent', link: '/docs/components/agents/sqlagent'},
-              ]
-            },
-            {
-              label: 'APU', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/apu/overview'},
-                {label: 'ClaudeHaiku', link: '/docs/components/apu/claudehaiku'},
-                {label: 'ClaudeOpus', link: '/docs/components/apu/claudeopus'},
-                {label: 'ClaudeSonnet', link: '/docs/components/apu/claudesonnet'},
-                {label: 'ConversationalAPU', link: '/docs/components/apu/conversationalapu'},
-                {label: 'GPT3.5-turbo', link: '/docs/components/apu/gpt3_5-turbo'},
-                {label: 'GPT4-turbo', link: '/docs/components/apu/gpt4-turbo'},
-                {label: 'GPT4o', link: '/docs/components/apu/gpt4o'},
-                {label: 'GPT4o-mini', link: '/docs/components/apu/gpt4o-mini'},
-                {label: 'GPTo1Preview', link: '/docs/components/apu/gpto1preview'},
-                {label: 'Llamma3-8b', link: '/docs/components/apu/llamma3-8b'},
-                {label: 'MistralLarge', link: '/docs/components/apu/mistrallarge'},
-                {label: 'MistralMedium', link: '/docs/components/apu/mistralmedium'},
-                {label: 'MistralSmall', link: '/docs/components/apu/mistralsmall'},
-              ]
-            },
-            {
-              label: 'LLMUnit', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/llmunit/overview'},
-                {label: 'AnthropicLLMUnit', link: '/docs/components/llmunit/anthropicllmunit'},
-                {label: 'AzureLLMUnit', link: '/docs/components/llmunit/azurellmunit'},
-                {label: 'MistralGPT', link: '/docs/components/llmunit/mistralgpt'},
-                {label: 'OllamaLLMUnit', link: '/docs/components/llmunit/ollamallmunit'},
-                {label: 'OpenAIGPT', link: '/docs/components/llmunit/openaigpt'},
-                {label: 'ToolCallLLMWrapper', link: '/docs/components/llmunit/toolcallllmwrapper'},
-              ]
-            },
-            {
-              label: 'LLMModel', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/llmmodel/overview'},
-                {label: 'LLMModel', link: '/docs/components/llmmodel/llmmodel'},
-                {label: 'claude-3-5-sonnet-20240620', link: '/docs/components/llmmodel/claude-3-5-sonnet-20240620'},
-                {label: 'claude-3-haiku-20240307', link: '/docs/components/llmmodel/claude-3-haiku-20240307'},
-                {label: 'claude-3-opus-20240229', link: '/docs/components/llmmodel/claude-3-opus-20240229'},
-                {label: 'claude-3-sonnet-20240229', link: '/docs/components/llmmodel/claude-3-sonnet-20240229'},
-                {label: 'gpt-3.5-turbo', link: '/docs/components/llmmodel/gpt-3_5-turbo'},
-                {label: 'gpt-4-turbo', link: '/docs/components/llmmodel/gpt-4-turbo'},
-                {label: 'gpt-4o', link: '/docs/components/llmmodel/gpt-4o'},
-                {label: 'gpt-4o-mini', link: '/docs/components/llmmodel/gpt-4o-mini'},
-                {label: 'gpt-o1-preview', link: '/docs/components/llmmodel/gpt-o1-preview'},
-                {label: 'llama3-8b', link: '/docs/components/llmmodel/llama3-8b'},
-                {label: 'mistral-large-latest', link: '/docs/components/llmmodel/mistral-large-latest'},
-                {label: 'mistral-medium-latest', link: '/docs/components/llmmodel/mistral-medium-latest'},
-                {label: 'mistral-small-latest', link: '/docs/components/llmmodel/mistral-small-latest'},
-              ]
-            },
-            {
-              label: 'LogicUnit', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/logicunit/overview'},
-                {label: 'ApiLogicUnit', link: '/docs/components/logicunit/apilogicunit'},
-                {label: 'AudioUnit', link: '/docs/components/logicunit/audiounit'},
-                {label: 'Browser', link: '/docs/components/logicunit/browser'},
-                {label: 'OpenAIImageUnit', link: '/docs/components/logicunit/openaiimageunit'},
-                {label: 'OpenAiSpeech', link: '/docs/components/logicunit/openaispeech'},
-                {label: 'Search', link: '/docs/components/logicunit/search'},
-                {label: 'VectaraSearch', link: '/docs/components/logicunit/vectarasearch'},
-                {label: 'WebSearch', link: '/docs/components/logicunit/websearch'},
-              ]
-            },
-            {
-              label: 'DocumentManager', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/documentmanager/overview'},
-                {label: 'DocumentManager', link: '/docs/components/documentmanager/documentmanager'},
-              ]
-            },
-            {
-              label: 'DocumentLoader', collapsed: true, items: [
-                {label: 'Overview', link: '/docs/components/documentloader/overview'},
-                {label: 'AzureLoader', link: '/docs/components/documentloader/azureloader'},
-                {label: 'FilesystemLoader', link: '/docs/components/documentloader/filesystemloader'},
-                {label: 'GitHubLoader', link: '/docs/components/documentloader/githubloader'},
-                {label: 'S3Loader', link: '/docs/components/documentloader/s3loader'},
-              ]
-            },
+            [
+              {
+                "label": "Machine",
+                "collapsed": true,
+                "items": [
+                  {
+                    "label": "Symbolic Memory",
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "label": "Overview",
+                        "link": "/docs/components/symbolicmemory/overview"
+                      },
+                      {
+                        "label": "LocalSymbolicMemory",
+                        "link": "/docs/components/symbolicmemory/localsymbolicmemory"
+                      },
+                      {
+                        "label": "MongoSymbolicMemory",
+                        "link": "/docs/components/symbolicmemory/mongosymbolicmemory"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Similarity Memory",
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "label": "Overview",
+                        "link": "/docs/components/similaritymemory/overview"
+                      },
+                      {
+                        "label": "SimilarityMemoryImpl",
+                        "link": "/docs/components/similaritymemory/similaritymemoryimpl"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "File Memory",
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "label": "Overview",
+                        "link": "/docs/components/filememory/overview"
+                      },
+                      {
+                        "label": "AzureFileMemory",
+                        "link": "/docs/components/filememory/azurefilememory"
+                      },
+                      {
+                        "label": "LocalFileMemory",
+                        "link": "/docs/components/filememory/localfilememory"
+                      },
+                      {
+                        "label": "S3FileMemory",
+                        "link": "/docs/components/filememory/s3filememory"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "Agents",
+                "collapsed": true,
+                "items": [
+                  {
+                    "label": "Overview",
+                    "link": "/docs/components/agent/overview"
+                  },
+                  {
+                    "label": "APIAgent",
+                    "link": "/docs/components/agent/apiagent"
+                  },
+                  {
+                    "label": "RetrieverAgent",
+                    "link": "/docs/components/agent/retrieveragent"
+                  },
+                  {
+                    "label": "SimpleAgent",
+                    "link": "/docs/components/agent/simpleagent"
+                  },
+                  {
+                    "label": "SqlAgent",
+                    "link": "/docs/components/agent/sqlagent"
+                  }
+                ]
+              },
+              {
+                "label": "APUs",
+                "collapsed": true,
+                "items": [
+                  {
+                    "label": "Overview",
+                    "link": "/docs/components/apu/overview"
+                  },
+                  {
+                    "label": "ClaudeHaiku",
+                    "link": "/docs/components/apu/claudehaiku"
+                  },
+                  {
+                    "label": "ClaudeOpus",
+                    "link": "/docs/components/apu/claudeopus"
+                  },
+                  {
+                    "label": "ClaudeSonnet",
+                    "link": "/docs/components/apu/claudesonnet"
+                  },
+                  {
+                    "label": "ConversationalAPU",
+                    "link": "/docs/components/apu/conversationalapu"
+                  },
+                  {
+                    "label": "GPT3.5-turbo",
+                    "link": "/docs/components/apu/gpt3_5-turbo"
+                  },
+                  {
+                    "label": "GPT4-turbo",
+                    "link": "/docs/components/apu/gpt4-turbo"
+                  },
+                  {
+                    "label": "GPT4o",
+                    "link": "/docs/components/apu/gpt4o"
+                  },
+                  {
+                    "label": "GPT4o-mini",
+                    "link": "/docs/components/apu/gpt4o-mini"
+                  },
+                  {
+                    "label": "GPTo1Preview",
+                    "link": "/docs/components/apu/gpto1preview"
+                  },
+                  {
+                    "label": "Llamma3-8b",
+                    "link": "/docs/components/apu/llamma3-8b"
+                  },
+                  {
+                    "label": "MistralLarge",
+                    "link": "/docs/components/apu/mistrallarge"
+                  },
+                  {
+                    "label": "MistralMedium",
+                    "link": "/docs/components/apu/mistralmedium"
+                  },
+                  {
+                    "label": "MistralSmall",
+                    "link": "/docs/components/apu/mistralsmall"
+                  }
+                ]
+              },
+              {
+                "label": "LLM Providers",
+                "collapsed": true,
+                "items": [
+                  {
+                    "label": "Overview",
+                    "link": "/docs/components/llmunit/overview"
+                  },
+                  {
+                    "label": "AnthropicLLMUnit",
+                    "link": "/docs/components/llmunit/anthropicllmunit"
+                  },
+                  {
+                    "label": "AzureLLMUnit",
+                    "link": "/docs/components/llmunit/azurellmunit"
+                  },
+                  {
+                    "label": "MistralGPT",
+                    "link": "/docs/components/llmunit/mistralgpt"
+                  },
+                  {
+                    "label": "OllamaLLMUnit",
+                    "link": "/docs/components/llmunit/ollamallmunit"
+                  },
+                  {
+                    "label": "OpenAIGPT",
+                    "link": "/docs/components/llmunit/openaigpt"
+                  },
+                  {
+                    "label": "ToolCallLLMWrapper",
+                    "link": "/docs/components/llmunit/toolcallllmwrapper"
+                  }
+                ]
+              },
+              {
+                "label": "Tools",
+                "collapsed": true,
+                "items": [
+                  {
+                    "label": "Overview",
+                    "link": "/docs/components/logicunit/overview"
+                  },
+                  {
+                    "label": "ApiLogicUnit",
+                    "link": "/docs/components/logicunit/apilogicunit"
+                  },
+                  {
+                    "label": "Browser",
+                    "link": "/docs/components/logicunit/browser"
+                  },
+                  {
+                    "label": "Search",
+                    "link": "/docs/components/logicunit/search"
+                  },
+                  {
+                    "label": "VectaraSearch",
+                    "link": "/docs/components/logicunit/vectarasearch"
+                  },
+                  {
+                    "label": "WebSearch",
+                    "link": "/docs/components/logicunit/websearch"
+                  }
+                ]
+              }
+            ]
             // ### End Components ###
-          ]
         },
         {
           label: 'FAQ', link: '/docs/faq'

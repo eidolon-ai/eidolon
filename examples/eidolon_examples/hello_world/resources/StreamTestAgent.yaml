@@ -3,4 +3,5 @@ kind: Agent
 metadata:
   name: StreamingTest
 
-spec: "eidolon_examples.hello_world.StreamingTest.StreamingTest"
+spec:
+  implementation: eidolon_examples.hello_world.StreamingTest.StreamingTest

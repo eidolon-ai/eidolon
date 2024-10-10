@@ -1,0 +1,91 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "RetrieverAgent",
+      "title": "Implementation"
+    },
+    "max_num_results": {
+      "default": 10,
+      "description": "The maximum number of results to consider.",
+      "title": "Max Num Results",
+      "type": "integer"
+    },
+    "question_transformer": {
+      "$ref": "../QuestionTransformer/overview.json"
+    },
+    "document_retriever": {
+      "$ref": "../DocumentRetriever/overview.json"
+    },
+    "document_reranker": {
+      "$ref": "../DocumentReranker/overview.json"
+    },
+    "result_summarizer": {
+      "$ref": "../ResultSummarizer/overview.json"
+    },
+    "name": {
+      "description": "The name of the document store to use.",
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "description": "A detailed description of the the retriever including all necessary information for the calling agent to decide to call this agent, i.e. file type or location or etc...",
+      "title": "Description",
+      "type": "string"
+    },
+    "loader_root_location": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "A URL specifying the root location of the loader.",
+      "title": "Loader Root Location"
+    },
+    "loader_pattern": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "**/*",
+      "description": "The search pattern to use when loading files.",
+      "title": "Loader Pattern"
+    },
+    "document_manager": {
+      "anyOf": [
+        {
+          "$ref": "../DocumentManager/overview.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "apu": {
+      "$ref": "../APU/overview.json",
+      "description": "The APU to use for question transformation."
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.retriever_agent.retriever_agent.RetrieverAgent",
+    "group": "Agent",
+    "name": "RetrieverAgent",
+    "overrides": {}
+  },
+  "required": [
+    "name",
+    "description",
+    "implementation"
+  ],
+  "title": "RetrieverAgent",
+  "type": "object"
+}

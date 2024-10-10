@@ -18,10 +18,11 @@ class Metadata(BaseModel, extra="allow"):
 T = TypeVar("T", bound=BaseModel)
 
 
-class Resource(BaseModel, extra="allow"):
+class Resource(BaseModel):
     apiVersion: str
     kind: str
     metadata: Metadata = Metadata()
+    spec: dict | str = {}
 
     @classmethod
     def kind_literal(cls) -> Optional[str]:

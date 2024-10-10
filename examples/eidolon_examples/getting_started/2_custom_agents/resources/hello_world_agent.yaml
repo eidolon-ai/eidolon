@@ -3,4 +3,5 @@ kind: Agent
 metadata:
   name: hello_world
 
-spec: "eidolon_examples.getting_started.2_custom_agents.hello_world.HelloWorld"
+spec:
+  implementation: "eidolon_examples.getting_started.2_custom_agents.hello_world.HelloWorld"

@@ -1,23 +1,23 @@
 ---
 title: GoogleJWTProcessor
-description: "Description of GoogleJWTProcessor component"
+description: Description of the GoogleJWTProcessor component
 ---
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description  |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------ |
-| - [implementation](#implementation ) | No      | const  | No         | -          | GoogleJWTProcessor |
-| - [jwks_url](#jwks_url )             | No      | string | No         | -          | Jwks Url           |
-| - [audience](#audience )             | No      | string | No         | -          | Audience           |
-| - [issuer](#issuer )                 | No      | string | No         | -          | Issuer             |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
+| - [jwks_url](#jwks_url )             | No      | string | No         | -          | Jwks Url          |
+| - [audience](#audience )             | No      | string | No         | -          | Audience          |
+| - [issuer](#issuer )                 | No      | string | No         | -          | Issuer            |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** GoogleJWTProcessor
+| **Required** | Yes     |
 
 Specific value: `"GoogleJWTProcessor"`
 

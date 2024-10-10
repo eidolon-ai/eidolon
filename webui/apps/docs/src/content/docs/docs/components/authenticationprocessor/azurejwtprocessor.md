@@ -1,23 +1,23 @@
 ---
 title: AzureJWTProcessor
-description: "Description of AzureJWTProcessor component"
+description: Description of the AzureJWTProcessor component
 ---
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const  | No         | -          | AzureJWTProcessor |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
 | - [client_id](#client_id )           | No      | string | No         | -          | Client Id         |
 | - [tenant_id](#tenant_id )           | No      | string | No         | -          | Tenant Id         |
 | - [issuer_prefix](#issuer_prefix )   | No      | string | No         | -          | Issuer Prefix     |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** AzureJWTProcessor
+| **Required** | Yes     |
 
 Specific value: `"AzureJWTProcessor"`
 

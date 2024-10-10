@@ -3,8 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import List
 
-from openai import BaseModel
-from pydantic import PrivateAttr
+from pydantic import PrivateAttr, BaseModel
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
