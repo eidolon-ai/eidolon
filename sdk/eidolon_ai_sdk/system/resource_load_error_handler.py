@@ -15,8 +15,8 @@ def _add_load_error(name: str, error: str):
 
 
 def _add_start_error(name: str, error: str):
-    if name not in load_errors:
-        load_errors[name] = []
+    if name not in start_errors:
+        start_errors[name] = []
     start_errors[name].append(error)
 
 
