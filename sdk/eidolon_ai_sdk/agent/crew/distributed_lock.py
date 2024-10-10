@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from typing import ClassVar
 
@@ -79,6 +80,7 @@ async def _refresh_lock(lock: DistributedLock, duration: int, interval: int):
         logger.exception("Error automatically refreshing lock")
 
 
+@asynccontextmanager
 async def managed_lock(key: str, duration: int = 15000, refresh_interval: int = 5000, timeout: int = -1):
     lock = await DistributedLock.acquire(key, duration, timeout)
     refresh_in_background = asyncio.create_task(_refresh_lock(lock, duration, refresh_interval))
