@@ -54,6 +54,9 @@ def generate_schema():
     accumulated_schema["$defs"].update(machine_schema.pop("$defs", {}))
     fake_agent_schema = AgentBuilder.model_json_schema()
     accumulated_schema["$defs"].update(fake_agent_schema.pop("$defs", {}))
+
+    # only one version of agent machine so no need to require impl
+    accumulated_schema["$defs"]["AgentMachine"]['required'] = [r for r in accumulated_schema["$defs"]["AgentMachine"]['required'] if r != "implementation"]
     return accumulated_schema
 
 

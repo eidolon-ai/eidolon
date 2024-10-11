@@ -5,7 +5,7 @@ description: Description of the AgentMachine component
 
 | Property                                                   | Pattern | Type                         | Deprecated | Definition | Title/Description                                                                 |
 | ---------------------------------------------------------- | ------- | ---------------------------- | ---------- | ---------- | --------------------------------------------------------------------------------- |
-| + [implementation](#implementation )                       | No      | const                        | No         | -          | Implementation                                                                    |
+| - [implementation](#implementation )                       | No      | const                        | No         | -          | Implementation                                                                    |
 | - [symbolic_memory](#symbolic_memory )                     | No      | [Reference[SymbolicMemory]](/docs/components/symbolicmemory/overview)    | No         | -          | The Symbolic Memory implementation.                                               |
 | - [file_memory](#file_memory )                             | No      | [Reference[FileMemory]](/docs/components/filememory/overview)        | No         | -          | The File Memory implementation.                                                   |
 | - [similarity_memory](#similarity_memory )                 | No      | [Reference[SimilarityMemory]](/docs/components/similaritymemory/overview)  | No         | -          | The Vector Memory implementation.                                                 |
@@ -20,7 +20,7 @@ description: Description of the AgentMachine component
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | Yes     |
+| **Required** | No      |
 
 Specific value: `"AgentMachine"`
 
