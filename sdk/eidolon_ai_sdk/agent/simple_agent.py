@@ -6,8 +6,7 @@ from typing import List, Literal, Optional, Union, Dict, Any, AsyncIterable
 
 from fastapi import Body
 from jinja2 import Environment, meta, StrictUndefined
-from openai import BaseModel
-from pydantic import field_validator, model_validator
+from pydantic import field_validator, model_validator, BaseModel
 from pydantic_core import to_jsonable_python
 
 from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent, UserInputEvent, FileHandle

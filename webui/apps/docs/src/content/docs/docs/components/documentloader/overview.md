@@ -1,10 +1,10 @@
 ---
 title: DocumentLoader Overview
-description: "Overview of DocumentLoader components"
+description: "None"
 ---
-Overview of DocumentLoader components
+Overview of the DocumentLoader component
 ## Builtins
 * [AzureLoader](/docs/components/documentloader/azureloader/)
-* [FilesystemLoader](/docs/components/documentloader/filesystemloader/) (default)
+* [FilesystemLoader](/docs/components/documentloader/filesystemloader/)
 * [GitHubLoader](/docs/components/documentloader/githubloader/)
 * [S3Loader](/docs/components/documentloader/s3loader/)

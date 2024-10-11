@@ -1,13 +1,11 @@
 ---
 title: S3Loader
-description: "Description of S3Loader component"
+description: Description of the S3Loader component
 ---
-
-**Description:** Loads documents from an S3 bucket.
 
 | Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
-| - [implementation](#implementation )               | No      | const  | No         | -          | S3Loader              |
+| + [implementation](#implementation )               | No      | const  | No         | -          | Implementation        |
 | + [bucket](#bucket )                               | No      | string | No         | -          | Bucket                |
 | - [region_name](#region_name )                     | No      | string | No         | -          | Region Name           |
 | - [aws_access_key_id](#aws_access_key_id )         | No      | string | No         | -          | Aws Access Key Id     |
@@ -18,12 +16,12 @@ description: "Description of S3Loader component"
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** S3Loader
+| **Required** | Yes     |
 
 Specific value: `"S3Loader"`
 

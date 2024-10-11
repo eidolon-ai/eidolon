@@ -1,28 +1,25 @@
 ---
 title: DocumentManager
-description: "Description of DocumentManager component"
+description: Description of the DocumentManager component
 ---
 
-**Description:** Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (
-provided by loader) into similarity memory where they can be searched.
-
-| Property                                   | Pattern | Type                         | Deprecated | Definition                                 | Title/Description                        |
-| ------------------------------------------ | ------- | ---------------------------- | ---------- | ------------------------------------------ | ---------------------------------------- |
-| - [implementation](#implementation )       | No      | const                        | No         | -                                          | DocumentManager                          |
-| + [name](#name )                           | No      | string                       | No         | -                                          | Name                                     |
-| - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -                                          | Recheck Frequency                        |
-| - [loader](#loader )                       | No      | Reference[DocumentLoader]    | No         | In [DocumentLoader](/docs/components/documentloader/overview)    | Overview of DocumentLoader components    |
-| - [concurrency](#concurrency )             | No      | integer                      | No         | -                                          | Concurrency                              |
-| - [doc_processor](#doc_processor )         | No      | Reference[DocumentProcessor] | No         | In [DocumentProcessor](/docs/components/documentprocessor/overview) | Overview of DocumentProcessor components |
+| Property                                   | Pattern | Type                         | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | ---------------------------- | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation )       | No      | const                        | No         | -          | Implementation    |
+| + [name](#name )                           | No      | string                       | No         | -          | Name              |
+| - [recheck_frequency](#recheck_frequency ) | No      | integer                      | No         | -          | Recheck Frequency |
+| - [loader](#loader )                       | No      | [Reference[DocumentLoader]](/docs/components/documentloader/overview)    | No         | -          | -                 |
+| - [concurrency](#concurrency )             | No      | integer                      | No         | -          | Concurrency       |
+| - [doc_processor](#doc_processor )         | No      | [Reference[DocumentProcessor]](/docs/components/documentprocessor/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** DocumentManager
+| **Required** | Yes     |
 
 Specific value: `"DocumentManager"`
 
@@ -51,14 +48,11 @@ Specific value: `"DocumentManager"`
 
 ## <a name="loader"></a>4. Property `loader`
 
-|                |                                        |
-| -------------- | -------------------------------------- |
-| **Type**       | `Reference[DocumentLoader]`            |
-| **Required**   | No                                     |
-| **Default**    | `{"implementation": "DocumentLoader"}` |
-| **Defined in** | [DocumentLoader](/docs/components/documentloader/overview)   |
-
-**Description:** Overview of DocumentLoader components
+|              |                                        |
+| ------------ | -------------------------------------- |
+| **Type**     | [`Reference[DocumentLoader]`](/docs/components/documentloader/overview)            |
+| **Required** | No                                     |
+| **Default**  | `{"implementation": "DocumentLoader"}` |
 
 ## <a name="concurrency"></a>5. Property `concurrency`
 
@@ -74,13 +68,10 @@ Specific value: `"DocumentManager"`
 
 ## <a name="doc_processor"></a>6. Property `doc_processor`
 
-|                |                                           |
-| -------------- | ----------------------------------------- |
-| **Type**       | `Reference[DocumentProcessor]`            |
-| **Required**   | No                                        |
-| **Default**    | `{"implementation": "DocumentProcessor"}` |
-| **Defined in** | [DocumentProcessor](/docs/components/documentprocessor/overview)   |
-
-**Description:** Overview of DocumentProcessor components
+|              |                                           |
+| ------------ | ----------------------------------------- |
+| **Type**     | [`Reference[DocumentProcessor]`](/docs/components/documentprocessor/overview)            |
+| **Required** | No                                        |
+| **Default**  | `{"implementation": "DocumentProcessor"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------

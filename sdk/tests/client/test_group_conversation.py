@@ -2,7 +2,7 @@ from typing import Annotated
 
 import pytest_asyncio
 from fastapi import Body
-from openai import BaseModel
+from pydantic import BaseModel
 
 from eidolon_ai_client.client import Machine
 from eidolon_ai_client.events import (

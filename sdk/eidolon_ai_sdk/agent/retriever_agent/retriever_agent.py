@@ -66,14 +66,14 @@ class RetrieverAgentSpec(RetrieverSpec):
         return value
 
 
-class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
+class RetrieverAgent(Specable[RetrieverAgentSpec]):
     apu: APU
     document_manager: DocumentManager
+    retriever: Retriever
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
         Specable.__init__(self, **kwargs)
-
+        self.retriever = Retriever(spec=self.spec)
         self.apu = self.spec.apu.instantiate()
 
         if self.spec.document_manager:
@@ -104,5 +104,5 @@ class RetrieverAgent(Retriever, Specable[RetrieverAgentSpec]):
         if hasattr(self, "document_manager") and self.document_manager:
             await self.document_manager.sync_docs()
 
-        results = await super().do_search(f"doc_contents_{self.spec.name}", self.apu, process_id, question)
+        results = await self.retriever.do_search(f"doc_contents_{self.spec.name}", self.apu, process_id, question)
         return [doc async for doc in results]

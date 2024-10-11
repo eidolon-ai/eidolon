@@ -1,22 +1,22 @@
 ---
 title: OpenAIEmbedding
-description: "Description of OpenAIEmbedding component"
+description: Description of the OpenAIEmbedding component
 ---
 
-| Property                                     | Pattern | Type                               | Deprecated | Definition                                       | Title/Description                              |
-| -------------------------------------------- | ------- | ---------------------------------- | ---------- | ------------------------------------------------ | ---------------------------------------------- |
-| - [implementation](#implementation )         | No      | const                              | No         | -                                                | OpenAIEmbedding                                |
-| - [model](#model )                           | No      | string                             | No         | -                                                | Model                                          |
-| - [connection_handler](#connection_handler ) | No      | Reference[OpenAIConnectionHandler] | No         | In [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview) | Overview of OpenAIConnectionHandler components |
+| Property                                     | Pattern | Type                               | Deprecated | Definition | Title/Description |
+| -------------------------------------------- | ------- | ---------------------------------- | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation )         | No      | const                              | No         | -          | Implementation    |
+| - [model](#model )                           | No      | string                             | No         | -          | Model             |
+| - [connection_handler](#connection_handler ) | No      | [Reference[OpenAIConnectionHandler]](/docs/components/openaiconnectionhandler/overview) | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** OpenAIEmbedding
+| **Required** | Yes     |
 
 Specific value: `"OpenAIEmbedding"`
 
@@ -34,13 +34,10 @@ Specific value: `"OpenAIEmbedding"`
 
 ## <a name="connection_handler"></a>3. Property `connection_handler`
 
-|                |                                                 |
-| -------------- | ----------------------------------------------- |
-| **Type**       | `Reference[OpenAIConnectionHandler]`            |
-| **Required**   | No                                              |
-| **Default**    | `{"implementation": "OpenAIConnectionHandler"}` |
-| **Defined in** | [OpenAIConnectionHandler](/docs/components/openaiconnectionhandler/overview)   |
-
-**Description:** Overview of OpenAIConnectionHandler components
+|              |                                                 |
+| ------------ | ----------------------------------------------- |
+| **Type**     | [`Reference[OpenAIConnectionHandler]`](/docs/components/openaiconnectionhandler/overview)            |
+| **Required** | No                                              |
+| **Default**  | `{"implementation": "OpenAIConnectionHandler"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------

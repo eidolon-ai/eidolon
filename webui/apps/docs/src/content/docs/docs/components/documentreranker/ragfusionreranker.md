@@ -1,21 +1,21 @@
 ---
 title: RAGFusionReranker
-description: "Description of RAGFusionReranker component"
+description: Description of the RAGFusionReranker component
 ---
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const   | No         | -          | RAGFusionReranker |
+| + [implementation](#implementation ) | No      | const   | No         | -          | Implementation    |
 | - [k](#k )                           | No      | integer | No         | -          | K                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** RAGFusionReranker
+| **Required** | Yes     |
 
 Specific value: `"RAGFusionReranker"`
 

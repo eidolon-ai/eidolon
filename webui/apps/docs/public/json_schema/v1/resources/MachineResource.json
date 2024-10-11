@@ -1,0 +1,44 @@
+{
+  "$defs": {
+    "Metadata": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+          "name"
+      ],
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "apiVersion": {
+      "title": "ApiVersion",
+      "const": "server.eidolonai.com/v1alpha1"
+    },
+    "kind": {
+      "const": "Machine",
+      "default": "Machine",
+      "title": "Kind"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    },
+    "spec": {
+      "$ref": "../schemas/AgentMachine/overview.json"
+    }
+
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "title": "MachineResource",
+  "type": "object"
+}

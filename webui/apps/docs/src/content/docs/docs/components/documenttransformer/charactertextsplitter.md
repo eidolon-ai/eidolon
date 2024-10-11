@@ -1,26 +1,26 @@
 ---
 title: CharacterTextSplitter
-description: "Description of CharacterTextSplitter component"
+description: Description of the CharacterTextSplitter component
 ---
 
-| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description     |
-| -------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------- |
-| - [implementation](#implementation )         | No      | const   | No         | -          | CharacterTextSplitter |
-| - [chunk_size](#chunk_size )                 | No      | integer | No         | -          | Chunk Size            |
-| - [chunk_overlap](#chunk_overlap )           | No      | integer | No         | -          | Chunk Overlap         |
-| - [keep_separator](#keep_separator )         | No      | boolean | No         | -          | Keep Separator        |
-| - [strip_whitespace](#strip_whitespace )     | No      | boolean | No         | -          | Strip Whitespace      |
-| - [separator](#separator )                   | No      | string  | No         | -          | Separator             |
-| - [is_separator_regex](#is_separator_regex ) | No      | boolean | No         | -          | Is Separator Regex    |
+| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description  |
+| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------ |
+| + [implementation](#implementation )         | No      | const   | No         | -          | Implementation     |
+| - [chunk_size](#chunk_size )                 | No      | integer | No         | -          | Chunk Size         |
+| - [chunk_overlap](#chunk_overlap )           | No      | integer | No         | -          | Chunk Overlap      |
+| - [keep_separator](#keep_separator )         | No      | boolean | No         | -          | Keep Separator     |
+| - [strip_whitespace](#strip_whitespace )     | No      | boolean | No         | -          | Strip Whitespace   |
+| - [separator](#separator )                   | No      | string  | No         | -          | Separator          |
+| - [is_separator_regex](#is_separator_regex ) | No      | boolean | No         | -          | Is Separator Regex |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** CharacterTextSplitter
+| **Required** | Yes     |
 
 Specific value: `"CharacterTextSplitter"`
 
