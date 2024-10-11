@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from eidolon_ai_client.client import Agent
@@ -14,15 +12,15 @@ from eidolon_ai_sdk.util.class_utils import fqn
 def processes_resource():
     spec = APIAgentSpec(
         title="Local Agent",
-        root_call_url="https://openlibrary.org",
-        open_api_location="https://openlibrary.org/static/openapi.json",
+        root_call_url="https://fakerestapi.azurewebsites.net",
+        open_api_location="https://fakerestapi.azurewebsites.net/swagger/v1/swagger.json",
+        max_response_size=75 * 1024,
         operations_to_expose=[
             Operation(
                 **{
-                    "name": "get_books",
-                    "path": "/api/books",
+                    "name": "get_authors",
+                    "path": "/api/v1/Authors",
                     "method": "get",
-                    "extra_query_params": {"format": "{{ENV_FORMAT}}"},
                 }
             )
         ],
@@ -40,8 +38,12 @@ async def agent(processes_resource, run_app) -> Agent:
         yield Agent.get("LocalAgent")
 
 
-async def test_get_processes(agent):
+async def test_get_authors(agent):
     process = await agent.create_process()
-    os.environ["ENV_FORMAT"] = "json"
-    found = await process.action("get_books", {"bibkeys": "OCLC:263296519"})
-    assert found.data.get("OCLC:263296519") is not None
+    found = await process.action("get_authors", dict(body={}))
+    assert found.data[0] == {
+        "id": 1,
+        "idBook": 1,
+        "firstName": "First Name 1",
+        "lastName": "Last Name 1"
+    }
