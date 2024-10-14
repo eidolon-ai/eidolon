@@ -58,7 +58,7 @@ class OllamaLLMUnitSpec(LLMUnitSpec):
     force_json: bool = True
     max_tokens: Optional[int] = None
     host: Optional[str] = Field(description="Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.")
-    options: OllamaOptions = Field(default={}, description="Additional arguments when calling ollama.AsyncClient.chat")
+    client_options: OllamaOptions = Field(default={}, description="Additional arguments when calling ollama.AsyncClient.chat")
 
 
 class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
@@ -126,7 +126,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
             else:
                 messages.insert(0, {"role": "system", "content": force_json_msg})
         logger.debug(messages)
-        options = cast(Options, cast(BaseModel, self.spec.options).model_dump())
+        options = cast(Options, cast(BaseModel, self.spec.client_options).model_dump())
         if self.spec.max_tokens:
             options["num_predict"] = self.spec.max_tokens
         options["temperature"] = self.spec.temperature
