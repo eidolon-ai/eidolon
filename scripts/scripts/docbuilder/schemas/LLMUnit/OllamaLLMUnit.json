@@ -30,8 +30,21 @@
       "default": null,
       "title": "Max Tokens"
     },
+    "ollama_host": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.",
+      "title": "Ollama Host"
+    },
     "client_options": {
       "default": {},
+      "description": "Extra key-value arguments when instantiating ollama.AsyncClient.",
       "title": "Client Options",
       "type": "object"
     }
@@ -43,6 +56,7 @@
     "overrides": {}
   },
   "required": [
+    "ollama_host",
     "implementation"
   ],
   "title": "OllamaLLMUnit",

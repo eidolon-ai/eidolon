@@ -10,6 +10,7 @@ description: Description of the OllamaLLMUnit component
 | - [temperature](#temperature )       | No      | number              | No         | -          | Temperature       |
 | - [force_json](#force_json )         | No      | boolean             | No         | -          | Force Json        |
 | - [max_tokens](#max_tokens )         | No      | integer             | No         | -          | Max Tokens        |
+| + [ollama_host](#ollama_host )       | No      | string              | No         | -          | Ollama Host       |
 | - [client_options](#client_options ) | No      | object              | No         | -          | Client Options    |
 
 ## <a name="implementation"></a>1. Property `implementation`
@@ -61,7 +62,19 @@ Specific value: `"OllamaLLMUnit"`
 | **Required** | No        |
 | **Default**  | `null`    |
 
-## <a name="client_options"></a>6. Property `client_options`
+## <a name="ollama_host"></a>6. Property `ollama_host`
+
+**Title:** Ollama Host
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Running Ollama location.
+Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.
+
+## <a name="client_options"></a>7. Property `client_options`
 
 **Title:** Client Options
 
@@ -71,5 +84,7 @@ Specific value: `"OllamaLLMUnit"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `{}`                                                                      |
+
+**Description:** Extra key-value arguments when instantiating ollama.AsyncClient.
 
 ----------------------------------------------------------------------------------------------------------------------------
