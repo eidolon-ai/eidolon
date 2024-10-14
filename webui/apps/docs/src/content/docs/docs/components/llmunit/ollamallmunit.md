@@ -10,9 +10,8 @@ description: Description of the OllamaLLMUnit component
 | - [temperature](#temperature )       | No      | number              | No         | -                        | Temperature                                               |
 | - [force_json](#force_json )         | No      | boolean             | No         | -                        | Force Json                                                |
 | - [max_tokens](#max_tokens )         | No      | integer             | No         | -                        | Max Tokens                                                |
-| + [ollama_host](#ollama_host )       | No      | string              | No         | -                        | Ollama Host                                               |
-| - [client_options](#client_options ) | No      | object              | No         | -                        | Client Options                                            |
-| - [chat_options](#chat_options )     | No      | object              | No         | In #/$defs/OllamaOptions | Additional arguments when calling ollama.AsyncClient.chat |
+| + [host](#host )                     | No      | string              | No         | -                        | Host                                                      |
+| - [client_options](#client_options ) | No      | object              | No         | In #/$defs/OllamaOptions | Additional arguments when calling ollama.AsyncClient.chat |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -63,9 +62,9 @@ Specific value: `"OllamaLLMUnit"`
 | **Required** | No        |
 | **Default**  | `null`    |
 
-## <a name="ollama_host"></a>6. Property `ollama_host`
+## <a name="host"></a>6. Property `host`
 
-**Title:** Ollama Host
+**Title:** Host
 
 |              |          |
 | ------------ | -------- |
@@ -76,19 +75,6 @@ Specific value: `"OllamaLLMUnit"`
 Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.
 
 ## <a name="client_options"></a>7. Property `client_options`
-
-**Title:** Client Options
-
-|                           |                                                                           |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                  |
-| **Required**              | No                                                                        |
-| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
-| **Default**               | `{}`                                                                      |
-
-**Description:** Extra key-value arguments when instantiating ollama.AsyncClient.
-
-## <a name="chat_options"></a>8. Property `chat_options`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -102,40 +88,40 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 
 **Description:** Additional arguments when calling ollama.AsyncClient.chat
 
-| Property                                                | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| + [numa](#chat_options_numa )                           | No      | boolean         | No         | -          | Numa              |
-| + [num_ctx](#chat_options_num_ctx )                     | No      | integer         | No         | -          | Num Ctx           |
-| + [num_batch](#chat_options_num_batch )                 | No      | integer         | No         | -          | Num Batch         |
-| + [num_gpu](#chat_options_num_gpu )                     | No      | integer         | No         | -          | Num Gpu           |
-| + [main_gpu](#chat_options_main_gpu )                   | No      | integer         | No         | -          | Main Gpu          |
-| + [low_vram](#chat_options_low_vram )                   | No      | boolean         | No         | -          | Low Vram          |
-| + [f16_kv](#chat_options_f16_kv )                       | No      | boolean         | No         | -          | F16 Kv            |
-| + [logits_all](#chat_options_logits_all )               | No      | boolean         | No         | -          | Logits All        |
-| + [vocab_only](#chat_options_vocab_only )               | No      | boolean         | No         | -          | Vocab Only        |
-| + [use_mmap](#chat_options_use_mmap )                   | No      | boolean         | No         | -          | Use Mmap          |
-| + [use_mlock](#chat_options_use_mlock )                 | No      | boolean         | No         | -          | Use Mlock         |
-| + [embedding_only](#chat_options_embedding_only )       | No      | boolean         | No         | -          | Embedding Only    |
-| + [num_thread](#chat_options_num_thread )               | No      | integer         | No         | -          | Num Thread        |
-| + [num_keep](#chat_options_num_keep )                   | No      | integer         | No         | -          | Num Keep          |
-| + [seed](#chat_options_seed )                           | No      | integer         | No         | -          | Seed              |
-| + [num_predict](#chat_options_num_predict )             | No      | integer         | No         | -          | Num Predict       |
-| + [top_k](#chat_options_top_k )                         | No      | integer         | No         | -          | Top K             |
-| + [top_p](#chat_options_top_p )                         | No      | number          | No         | -          | Top P             |
-| + [tfs_z](#chat_options_tfs_z )                         | No      | number          | No         | -          | Tfs Z             |
-| + [typical_p](#chat_options_typical_p )                 | No      | number          | No         | -          | Typical P         |
-| + [repeat_last_n](#chat_options_repeat_last_n )         | No      | integer         | No         | -          | Repeat Last N     |
-| + [temperature](#chat_options_temperature )             | No      | number          | No         | -          | Temperature       |
-| + [repeat_penalty](#chat_options_repeat_penalty )       | No      | number          | No         | -          | Repeat Penalty    |
-| + [presence_penalty](#chat_options_presence_penalty )   | No      | number          | No         | -          | Presence Penalty  |
-| + [frequency_penalty](#chat_options_frequency_penalty ) | No      | number          | No         | -          | Frequency Penalty |
-| + [mirostat](#chat_options_mirostat )                   | No      | integer         | No         | -          | Mirostat          |
-| + [mirostat_tau](#chat_options_mirostat_tau )           | No      | number          | No         | -          | Mirostat Tau      |
-| + [mirostat_eta](#chat_options_mirostat_eta )           | No      | number          | No         | -          | Mirostat Eta      |
-| + [penalize_newline](#chat_options_penalize_newline )   | No      | boolean         | No         | -          | Penalize Newline  |
-| + [stop](#chat_options_stop )                           | No      | array of string | No         | -          | Stop              |
+| Property                                                  | Pattern | Type            | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| + [numa](#client_options_numa )                           | No      | boolean         | No         | -          | Numa              |
+| + [num_ctx](#client_options_num_ctx )                     | No      | integer         | No         | -          | Num Ctx           |
+| + [num_batch](#client_options_num_batch )                 | No      | integer         | No         | -          | Num Batch         |
+| + [num_gpu](#client_options_num_gpu )                     | No      | integer         | No         | -          | Num Gpu           |
+| + [main_gpu](#client_options_main_gpu )                   | No      | integer         | No         | -          | Main Gpu          |
+| + [low_vram](#client_options_low_vram )                   | No      | boolean         | No         | -          | Low Vram          |
+| + [f16_kv](#client_options_f16_kv )                       | No      | boolean         | No         | -          | F16 Kv            |
+| + [logits_all](#client_options_logits_all )               | No      | boolean         | No         | -          | Logits All        |
+| + [vocab_only](#client_options_vocab_only )               | No      | boolean         | No         | -          | Vocab Only        |
+| + [use_mmap](#client_options_use_mmap )                   | No      | boolean         | No         | -          | Use Mmap          |
+| + [use_mlock](#client_options_use_mlock )                 | No      | boolean         | No         | -          | Use Mlock         |
+| + [embedding_only](#client_options_embedding_only )       | No      | boolean         | No         | -          | Embedding Only    |
+| + [num_thread](#client_options_num_thread )               | No      | integer         | No         | -          | Num Thread        |
+| + [num_keep](#client_options_num_keep )                   | No      | integer         | No         | -          | Num Keep          |
+| + [seed](#client_options_seed )                           | No      | integer         | No         | -          | Seed              |
+| + [num_predict](#client_options_num_predict )             | No      | integer         | No         | -          | Num Predict       |
+| + [top_k](#client_options_top_k )                         | No      | integer         | No         | -          | Top K             |
+| + [top_p](#client_options_top_p )                         | No      | number          | No         | -          | Top P             |
+| + [tfs_z](#client_options_tfs_z )                         | No      | number          | No         | -          | Tfs Z             |
+| + [typical_p](#client_options_typical_p )                 | No      | number          | No         | -          | Typical P         |
+| + [repeat_last_n](#client_options_repeat_last_n )         | No      | integer         | No         | -          | Repeat Last N     |
+| + [temperature](#client_options_temperature )             | No      | number          | No         | -          | Temperature       |
+| + [repeat_penalty](#client_options_repeat_penalty )       | No      | number          | No         | -          | Repeat Penalty    |
+| + [presence_penalty](#client_options_presence_penalty )   | No      | number          | No         | -          | Presence Penalty  |
+| + [frequency_penalty](#client_options_frequency_penalty ) | No      | number          | No         | -          | Frequency Penalty |
+| + [mirostat](#client_options_mirostat )                   | No      | integer         | No         | -          | Mirostat          |
+| + [mirostat_tau](#client_options_mirostat_tau )           | No      | number          | No         | -          | Mirostat Tau      |
+| + [mirostat_eta](#client_options_mirostat_eta )           | No      | number          | No         | -          | Mirostat Eta      |
+| + [penalize_newline](#client_options_penalize_newline )   | No      | boolean         | No         | -          | Penalize Newline  |
+| + [stop](#client_options_stop )                           | No      | array of string | No         | -          | Stop              |
 
-### <a name="chat_options_numa"></a>8.1. Property `numa`
+### <a name="client_options_numa"></a>7.1. Property `numa`
 
 **Title:** Numa
 
@@ -144,7 +130,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_num_ctx"></a>8.2. Property `num_ctx`
+### <a name="client_options_num_ctx"></a>7.2. Property `num_ctx`
 
 **Title:** Num Ctx
 
@@ -153,7 +139,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_num_batch"></a>8.3. Property `num_batch`
+### <a name="client_options_num_batch"></a>7.3. Property `num_batch`
 
 **Title:** Num Batch
 
@@ -162,7 +148,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_num_gpu"></a>8.4. Property `num_gpu`
+### <a name="client_options_num_gpu"></a>7.4. Property `num_gpu`
 
 **Title:** Num Gpu
 
@@ -171,7 +157,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_main_gpu"></a>8.5. Property `main_gpu`
+### <a name="client_options_main_gpu"></a>7.5. Property `main_gpu`
 
 **Title:** Main Gpu
 
@@ -180,7 +166,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_low_vram"></a>8.6. Property `low_vram`
+### <a name="client_options_low_vram"></a>7.6. Property `low_vram`
 
 **Title:** Low Vram
 
@@ -189,7 +175,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_f16_kv"></a>8.7. Property `f16_kv`
+### <a name="client_options_f16_kv"></a>7.7. Property `f16_kv`
 
 **Title:** F16 Kv
 
@@ -198,7 +184,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_logits_all"></a>8.8. Property `logits_all`
+### <a name="client_options_logits_all"></a>7.8. Property `logits_all`
 
 **Title:** Logits All
 
@@ -207,7 +193,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_vocab_only"></a>8.9. Property `vocab_only`
+### <a name="client_options_vocab_only"></a>7.9. Property `vocab_only`
 
 **Title:** Vocab Only
 
@@ -216,7 +202,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_use_mmap"></a>8.10. Property `use_mmap`
+### <a name="client_options_use_mmap"></a>7.10. Property `use_mmap`
 
 **Title:** Use Mmap
 
@@ -225,7 +211,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_use_mlock"></a>8.11. Property `use_mlock`
+### <a name="client_options_use_mlock"></a>7.11. Property `use_mlock`
 
 **Title:** Use Mlock
 
@@ -234,7 +220,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_embedding_only"></a>8.12. Property `embedding_only`
+### <a name="client_options_embedding_only"></a>7.12. Property `embedding_only`
 
 **Title:** Embedding Only
 
@@ -243,7 +229,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_num_thread"></a>8.13. Property `num_thread`
+### <a name="client_options_num_thread"></a>7.13. Property `num_thread`
 
 **Title:** Num Thread
 
@@ -252,7 +238,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_num_keep"></a>8.14. Property `num_keep`
+### <a name="client_options_num_keep"></a>7.14. Property `num_keep`
 
 **Title:** Num Keep
 
@@ -261,7 +247,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_seed"></a>8.15. Property `seed`
+### <a name="client_options_seed"></a>7.15. Property `seed`
 
 **Title:** Seed
 
@@ -270,7 +256,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_num_predict"></a>8.16. Property `num_predict`
+### <a name="client_options_num_predict"></a>7.16. Property `num_predict`
 
 **Title:** Num Predict
 
@@ -279,7 +265,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_top_k"></a>8.17. Property `top_k`
+### <a name="client_options_top_k"></a>7.17. Property `top_k`
 
 **Title:** Top K
 
@@ -288,7 +274,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_top_p"></a>8.18. Property `top_p`
+### <a name="client_options_top_p"></a>7.18. Property `top_p`
 
 **Title:** Top P
 
@@ -297,7 +283,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_tfs_z"></a>8.19. Property `tfs_z`
+### <a name="client_options_tfs_z"></a>7.19. Property `tfs_z`
 
 **Title:** Tfs Z
 
@@ -306,7 +292,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_typical_p"></a>8.20. Property `typical_p`
+### <a name="client_options_typical_p"></a>7.20. Property `typical_p`
 
 **Title:** Typical P
 
@@ -315,7 +301,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_repeat_last_n"></a>8.21. Property `repeat_last_n`
+### <a name="client_options_repeat_last_n"></a>7.21. Property `repeat_last_n`
 
 **Title:** Repeat Last N
 
@@ -324,7 +310,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_temperature"></a>8.22. Property `temperature`
+### <a name="client_options_temperature"></a>7.22. Property `temperature`
 
 **Title:** Temperature
 
@@ -333,7 +319,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_repeat_penalty"></a>8.23. Property `repeat_penalty`
+### <a name="client_options_repeat_penalty"></a>7.23. Property `repeat_penalty`
 
 **Title:** Repeat Penalty
 
@@ -342,7 +328,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_presence_penalty"></a>8.24. Property `presence_penalty`
+### <a name="client_options_presence_penalty"></a>7.24. Property `presence_penalty`
 
 **Title:** Presence Penalty
 
@@ -351,7 +337,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_frequency_penalty"></a>8.25. Property `frequency_penalty`
+### <a name="client_options_frequency_penalty"></a>7.25. Property `frequency_penalty`
 
 **Title:** Frequency Penalty
 
@@ -360,7 +346,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_mirostat"></a>8.26. Property `mirostat`
+### <a name="client_options_mirostat"></a>7.26. Property `mirostat`
 
 **Title:** Mirostat
 
@@ -369,7 +355,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `integer` |
 | **Required** | Yes       |
 
-### <a name="chat_options_mirostat_tau"></a>8.27. Property `mirostat_tau`
+### <a name="client_options_mirostat_tau"></a>7.27. Property `mirostat_tau`
 
 **Title:** Mirostat Tau
 
@@ -378,7 +364,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_mirostat_eta"></a>8.28. Property `mirostat_eta`
+### <a name="client_options_mirostat_eta"></a>7.28. Property `mirostat_eta`
 
 **Title:** Mirostat Eta
 
@@ -387,7 +373,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `number` |
 | **Required** | Yes      |
 
-### <a name="chat_options_penalize_newline"></a>8.29. Property `penalize_newline`
+### <a name="client_options_penalize_newline"></a>7.29. Property `penalize_newline`
 
 **Title:** Penalize Newline
 
@@ -396,7 +382,7 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Type**     | `boolean` |
 | **Required** | Yes       |
 
-### <a name="chat_options_stop"></a>8.30. Property `stop`
+### <a name="client_options_stop"></a>7.30. Property `stop`
 
 **Title:** Stop
 
@@ -413,11 +399,11 @@ Defaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not se
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be        | Description |
-| -------------------------------------- | ----------- |
-| [stop items](#chat_options_stop_items) | -           |
+| Each item of this array must be          | Description |
+| ---------------------------------------- | ----------- |
+| [stop items](#client_options_stop_items) | -           |
 
-#### <a name="autogenerated_heading_1"></a>8.30.1. stop items
+#### <a name="autogenerated_heading_1"></a>7.30.1. stop items
 
 |              |          |
 | ------------ | -------- |
