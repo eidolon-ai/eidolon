@@ -47,6 +47,11 @@
       "description": "Extra key-value arguments when instantiating ollama.AsyncClient.",
       "title": "Client Options",
       "type": "object"
+    },
+    "chat_options": {
+      "$ref": "#/$defs/OllamaOptions",
+      "default": {},
+      "description": "Additional arguments when calling ollama.AsyncClient.chat"
     }
   },
   "reference_details": {
@@ -60,5 +65,168 @@
     "implementation"
   ],
   "title": "OllamaLLMUnit",
-  "type": "object"
+  "type": "object",
+  "$defs": {
+    "OllamaOptions": {
+      "properties": {
+        "numa": {
+          "title": "Numa",
+          "type": "boolean"
+        },
+        "num_ctx": {
+          "title": "Num Ctx",
+          "type": "integer"
+        },
+        "num_batch": {
+          "title": "Num Batch",
+          "type": "integer"
+        },
+        "num_gpu": {
+          "title": "Num Gpu",
+          "type": "integer"
+        },
+        "main_gpu": {
+          "title": "Main Gpu",
+          "type": "integer"
+        },
+        "low_vram": {
+          "title": "Low Vram",
+          "type": "boolean"
+        },
+        "f16_kv": {
+          "title": "F16 Kv",
+          "type": "boolean"
+        },
+        "logits_all": {
+          "title": "Logits All",
+          "type": "boolean"
+        },
+        "vocab_only": {
+          "title": "Vocab Only",
+          "type": "boolean"
+        },
+        "use_mmap": {
+          "title": "Use Mmap",
+          "type": "boolean"
+        },
+        "use_mlock": {
+          "title": "Use Mlock",
+          "type": "boolean"
+        },
+        "embedding_only": {
+          "title": "Embedding Only",
+          "type": "boolean"
+        },
+        "num_thread": {
+          "title": "Num Thread",
+          "type": "integer"
+        },
+        "num_keep": {
+          "title": "Num Keep",
+          "type": "integer"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "num_predict": {
+          "title": "Num Predict",
+          "type": "integer"
+        },
+        "top_k": {
+          "title": "Top K",
+          "type": "integer"
+        },
+        "top_p": {
+          "title": "Top P",
+          "type": "number"
+        },
+        "tfs_z": {
+          "title": "Tfs Z",
+          "type": "number"
+        },
+        "typical_p": {
+          "title": "Typical P",
+          "type": "number"
+        },
+        "repeat_last_n": {
+          "title": "Repeat Last N",
+          "type": "integer"
+        },
+        "temperature": {
+          "title": "Temperature",
+          "type": "number"
+        },
+        "repeat_penalty": {
+          "title": "Repeat Penalty",
+          "type": "number"
+        },
+        "presence_penalty": {
+          "title": "Presence Penalty",
+          "type": "number"
+        },
+        "frequency_penalty": {
+          "title": "Frequency Penalty",
+          "type": "number"
+        },
+        "mirostat": {
+          "title": "Mirostat",
+          "type": "integer"
+        },
+        "mirostat_tau": {
+          "title": "Mirostat Tau",
+          "type": "number"
+        },
+        "mirostat_eta": {
+          "title": "Mirostat Eta",
+          "type": "number"
+        },
+        "penalize_newline": {
+          "title": "Penalize Newline",
+          "type": "boolean"
+        },
+        "stop": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Stop",
+          "type": "array"
+        }
+      },
+      "required": [
+        "numa",
+        "num_ctx",
+        "num_batch",
+        "num_gpu",
+        "main_gpu",
+        "low_vram",
+        "f16_kv",
+        "logits_all",
+        "vocab_only",
+        "use_mmap",
+        "use_mlock",
+        "embedding_only",
+        "num_thread",
+        "num_keep",
+        "seed",
+        "num_predict",
+        "top_k",
+        "top_p",
+        "tfs_z",
+        "typical_p",
+        "repeat_last_n",
+        "temperature",
+        "repeat_penalty",
+        "presence_penalty",
+        "frequency_penalty",
+        "mirostat",
+        "mirostat_tau",
+        "mirostat_eta",
+        "penalize_newline",
+        "stop"
+      ],
+      "title": "OllamaOptions",
+      "type": "object"
+    }
+  }
 }
