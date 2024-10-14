@@ -1,10 +1,12 @@
 import json
 import logging
+import os
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 import yaml
 from fastapi import HTTPException
 from ollama import AsyncClient, ResponseError, Options
+from pydantic import Field
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -52,7 +54,8 @@ class OllamaLLMUnitSpec(LLMUnitSpec):
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
-    client_options: dict = {}
+    ollama_host: Optional[str] = Field(description="Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.")
+    client_options: dict = Field(default={}, description="Extra key-value arguments when instantiating ollama.AsyncClient.")
 
 
 class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
@@ -72,7 +75,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
         logger.info("executing ollama llm request")
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(fn=_ollama_client(), name_override="ollama_completion", parser=_raw_parser)
+        llm_request = replayable(fn=_ollama_client(self.spec.ollama_host, self.spec.client_options), name_override="ollama_completion", parser=_raw_parser)
         complete_message = ""
         try:
             async for m_chunk in llm_request(**request):
@@ -129,9 +132,9 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
         return is_string, request
 
 
-def _ollama_client():
+def _ollama_client(host: Optional[str], extra_client_args: dict = None):
     async def fn(**kwargs):
-        client: AsyncClient = AsyncClient()
+        client: AsyncClient = AsyncClient(host=host, **(extra_client_args or {}))
         async for e in await client.chat(**kwargs, stream=True):
             yield e
 
