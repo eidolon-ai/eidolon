@@ -1,12 +1,14 @@
+import copy
 import json
 import logging
 import os
-from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
+from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast, Type
 
 import yaml
 from fastapi import HTTPException
 from ollama import AsyncClient, ResponseError, Options
-from pydantic import Field
+from pydantic import Field, create_model, BaseModel
+from pydantic.v1 import create_model_from_typeddict
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
@@ -48,6 +50,10 @@ async def convert_to_ollama(message: LLMMessage):
 
 llama3 = "llama3"
 
+OllamaOptions: Type[BaseModel] = create_model('OllamaOptions', **{
+    field_name: (field_type, ...) for field_name, field_type in Options.__annotations__.items()
+})
+
 
 class OllamaLLMUnitSpec(LLMUnitSpec):
     model: AnnotatedReference[LLMModel, llama3]
@@ -56,6 +62,7 @@ class OllamaLLMUnitSpec(LLMUnitSpec):
     max_tokens: Optional[int] = None
     ollama_host: Optional[str] = Field(description="Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.")
     client_options: dict = Field(default={}, description="Extra key-value arguments when instantiating ollama.AsyncClient.")
+    chat_options: OllamaOptions = Field(default={}, description="Additional arguments when calling ollama.AsyncClient.chat")
 
 
 class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
@@ -123,10 +130,11 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
             else:
                 messages.insert(0, {"role": "system", "content": force_json_msg})
         logger.debug(messages)
-        options = cast(Options, self.spec.client_options or {})
+        options = cast(Options, cast(BaseModel, self.spec.chat_options).model_dump())
         if self.spec.max_tokens:
             options["num_predict"] = self.spec.max_tokens
         options["temperature"] = self.spec.temperature
+        request[options] = options
         if not is_string:
             request["format"] = "json"
         return is_string, request
