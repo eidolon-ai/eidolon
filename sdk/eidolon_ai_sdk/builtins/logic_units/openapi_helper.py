@@ -151,12 +151,12 @@ def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, 
                 else:
                     logger.error(f"Unsupported parameter location {param['in']}")
         body = kwargs.pop("header__", {})
-        # fields = kwargs.pop("fields__", [])
+        fields = kwargs.pop("fields__", [])
 
         retValue = await call_fn(path_to_call, method, query_params, headers, body)
 
-        # if fields:
-        #     retValue = filter_and_reconstruct_json_from_paths(retValue, fields)
+        if fields:
+            retValue = filter_and_reconstruct_json_from_paths(retValue, fields)
 
         if result_filters:
             retValue = filter_and_reconstruct_json(retValue, result_filters)

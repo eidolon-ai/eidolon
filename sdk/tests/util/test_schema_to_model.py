@@ -136,3 +136,22 @@ class TestSchemaToModel:
         with pytest.raises(ValueError) as exc_info:
             schema_to_model(json_schema, "UnsupportedModel", {})
         assert "Error creating field 'name'" in str(exc_info.value)
+
+    def test_nested_allofs(self):
+        """Test that nested allOf is correctly handled."""
+        json_schema = {
+            "type": "object",
+            "allOf": [
+                {
+                    "properties": {"name": {"type": "string"}},
+                    "required": ["name"],
+                },
+                {
+                    "properties": {"age": {"type": "integer"}},
+                },
+            ],
+        }
+        NestedAllOfModel = schema_to_model(json_schema, "NestedAllOfModel", {})
+        model = NestedAllOfModel(name="John Doe", age=30)
+        assert model.name == "John Doe"
+        assert model.age == 30

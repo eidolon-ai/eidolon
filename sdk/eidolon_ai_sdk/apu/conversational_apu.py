@@ -259,6 +259,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             tool_stream = stream_manager(
                 tool_event_stream,
                 ToolCallStartEvent(
+                    process_id=call_context.process_id,
                     tool_call=tc,
                     context_id=tc.tool_call_id,
                     title=tool_def.eidolon_handler.extra.get("title", tool_def.eidolon_handler.name),
