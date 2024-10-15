@@ -55,7 +55,7 @@ export default defineConfig([{
               "utf8",
             );
 
-            let cssModule: any = {};
+            const cssModule: any = {};
             const result = await postcss([
               postcssModules({
                 generateScopedName: function (name, filename) {

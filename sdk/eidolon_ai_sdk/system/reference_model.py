@@ -45,7 +45,7 @@ D = TypeVar("D")
 
 class Reference(BaseModel):
     """
-    Used to create references to other classes. t is designed to be used with two type variables, `B` and `D` which are
+    Used to create references to other classes. It is designed to be used with two type variables, `B` and `D` which are
     the type bound and default type respectively. Neither are required, and if only one type is provided it is assumed
     to be the bound. Bound is used as the default if no default is provided. default can also be a string which will be
     looked up from the OS ReferenceResources.

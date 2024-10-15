@@ -1,5 +1,4 @@
 import {EidolonProvider, providerMap, signIn} from "../../auth";
-import {Box} from "@mui/material";
 import SigninCard from "./signin_card";
 
 export const revalidate = 0
@@ -33,12 +32,12 @@ export default function SignInPage() {
   }
 
   return (
-    <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#ddd"}}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-200">
       <SigninCard providers={providers} doSignin={
         async (providerId: string, formData: FormData) => {
           "use server"
           await signIn(providerId, formData)
         }}/>
-    </Box>
+    </div>
   )
 }

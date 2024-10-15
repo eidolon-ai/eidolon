@@ -8,8 +8,8 @@ import {setupPolly} from 'setup-polly-jest';
 Polly.register(FetchAdapter);
 Polly.register(FSPersister);
 
-let recordIfMissing = true;
-let mode: PollyConfig['mode'] = 'replay';
+const recordIfMissing = true;
+const mode: PollyConfig['mode'] = 'replay';
 
 /*
 switch (process.env.POLLY_MODE) {

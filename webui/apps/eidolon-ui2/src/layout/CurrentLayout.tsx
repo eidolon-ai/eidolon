@@ -1,5 +1,5 @@
 'use client';
-import React, {FunctionComponent, PropsWithChildren} from 'react';
+import {FunctionComponent, PropsWithChildren} from 'react';
 import PrivateLayout from './PrivateLayout';
 
 /**

@@ -106,23 +106,24 @@ For example, lets look at a simple agent that takes a question and returns a res
 
 ```yaml
 apiVersion: server.eidolonai.com/v1alpha1
-kind: GenericAgent
+kind: SimpleAgent
 
 metadata:
-  name: ExampleGeneric
+  name: ExampleSimple
 
 spec:
-  description: "This is an example of a generic agent which can be used to create a conversational agent."
+  description: "This is an example of a simple agent which can be used to create a conversational agent."
   system_prompt: "You are a machine which follows instructions and returns a summary of your actions."
-  user_prompt: "{{instruction}}"
-  input_schema:
-    instruction:
-      type: string
-  output_schema: 'str'
-  files: 'single'
+  actions:
+    - user_prompt: "{{instruction}}"
+      input_schema:
+        instruction:
+        type: string
+      output_schema: 'str'
+      allow_file_upload: True
 ```
 
-Notice the **kind** is set to **GenericAgent**. This is a special type of agent that is used for single question agents that use an LLM to answer questions. The **spec** field contains the specification for the agent. The specification is a YAML file that defines the configuration parameters for an agent.
+Notice the **kind** is set to **SimpleAgent**. This is a special type of agent that is used for single question agents that use an LLM to answer questions. The **spec** field contains the specification for the agent. The specification is a YAML file that defines the configuration parameters for an agent.
 
 In this example, the specification defines the following parameters:
 - **description**: A description of the agent. This is used to describe the agent to users or other agents that may use this agent.
@@ -132,31 +133,37 @@ In this example, the specification defines the following parameters:
 - **output_schema**: The schema for the output of the agent. This can either be an object or a string. If it is an object, the output is assumed to be a json object. If it is a string, the output is assumed to be a plain string.
 - **files**: The file handling mode for the agent. This can be either 'single', 'single-optional', 'multiple', or 'disable'. This defines how the agent handles files. If it is 'single', the agent will accept a single file as input. If it is 'single-optional', the agent will accept a single file as input, but it is optional. If it is 'multiple', the agent will accept multiple files as input. If it is 'disable', the agent will not accept files as input.
 
-Even though **GenericAgent** is a built-in agent type, there isn't any magic going on here. The **GenericAgent** is just a subclass of `Agent` that defines a few configuration options in its specification.
+Even though **SimpleAgent** is a built-in agent type, there isn't any magic going on here. The **SimpleAgent** is just a subclass of `Agent` that defines a few configuration options in its specification.
 
 ```python
-class GenericAgentSpec(AgentSpec):
-    description: str
-    system_prompt: str
-    user_prompt: str
-    input_schema: Dict[str, Any] = Field({}, description="The json schema for the input model.")
-    output_schema: Union[Literal["str"], Dict[str, Any]] = Field(
-        default="str", description="The json schema for the output model or the literal 'str' for text output."
+class SimpleAgentSpec(AgentSpec):
+    description: Optional[str] = None
+    system_prompt: str = (
+        "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task."
     )
-    files: Literal["disable", "single", "single-optional", "multiple"] = "disable"
+    agent_refs: List[str] = []
+    actions: List[ActionDefinition] = [ActionDefinition()]
+    apu: AnnotatedReference[APU] = None
+    apus: List[NamedAPU] = []
+    title_generation_mode: Literal["none", "on_request"] = "on_request"
 
-class GenericAgent(Agent, Specable[GenericAgentSpec]):
-    @register_program(
-        input_model=make_input_schema,
-        output_model=make_output_schema,
-        description=make_description,
-    )
-    async def question(self, process_id, **kwargs) -> AgentState[Any]:
-        body = kwargs.get("body")
-        body = dict(body) if body else {}
-        files = kwargs.get("file", [])
-        if not isinstance(files, list):
-            files = [files]
+class SimpleAgent(Specable[SimpleAgentSpec]):
+    def __init__(self, spec):
+        super().__init__(spec=spec)
+        if self.spec.apu:
+            self.apu = self.spec.apu.instantiate()
+            self.apu.title = self.apu.__class__.__name__
+            self._register_refs_logic_unit(self.apu, self.spec.agent_refs)
+        else:
+            self.apus = []
+            for apu_spec in self.spec.apus:
+                apu = apu_spec.apu.instantiate()
+                apu.title = apu_spec.title or apu.__class__.__name__
+                if apu_spec.default:
+                    apu.default = True
+                    self.apu = apu
+                self._register_refs_logic_unit(apu, self.spec.agent_refs)
+                self.apus.append(apu)
         ...
 ```
 

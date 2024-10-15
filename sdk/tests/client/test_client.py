@@ -53,6 +53,8 @@ async def test_stream_program(server):
             stream_context=None,
             category=Category.START,
             event_type="agent_call",
+            title='',
+            sub_title='',
             machine=client.current_machine_url(),
             agent_name="HelloWorld",
             call_name="idle",
@@ -79,6 +81,8 @@ async def test_stream_followup(server):
         StartAgentCallEvent(
             stream_context=None,
             category=Category.START,
+            title='',
+            sub_title='',
             event_type="agent_call",
             machine=client.current_machine_url(),
             agent_name="HelloWorld",
@@ -103,6 +107,8 @@ async def test_stream_followup(server):
         StartAgentCallEvent(
             stream_context=None,
             category=Category.START,
+            title='',
+            sub_title='',
             event_type="agent_call",
             machine=client.current_machine_url(),
             agent_name="HelloWorld",

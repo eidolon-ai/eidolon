@@ -1,0 +1,98 @@
+{
+  "description": "Azure LLM Unit. Requires model to be defined. See https://www.eidolonai.com/docs/howto/swap_llm for more details.\n\nAuthentication is handled oot with one of two mechanisms:\n* Static token defined with AZURE_OPENAI_API_KEY\n* Token provider defined by AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID\n\nTo use an alternative authentication mechanism, provide a custom token provider.",
+  "properties": {
+    "implementation": {
+      "const": "AzureLLMUnit",
+      "description": "AzureLLMUnit"
+    },
+    "model": {
+      "$ref": "file:../LLMModel/overview.json"
+    },
+    "temperature": {
+      "default": 0.3,
+      "title": "Temperature",
+      "type": "number"
+    },
+    "force_json": {
+      "default": true,
+      "title": "Force Json",
+      "type": "boolean"
+    },
+    "max_tokens": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Tokens"
+    },
+    "supports_system_messages": {
+      "default": true,
+      "title": "Supports System Messages",
+      "type": "boolean"
+    },
+    "can_stream": {
+      "default": true,
+      "title": "Can Stream",
+      "type": "boolean"
+    },
+    "azure_endpoint": {
+      "description": "The azure_endpoint for the Azure LLM API. ie, \"https://eidolon-azure.openai.azure.com/\"",
+      "title": "Azure Endpoint",
+      "type": "string"
+    },
+    "azure_ad_token_provider": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "properties": {
+            "implementation": {
+              "default": "builtins.object",
+              "title": "Implementation",
+              "type": "string"
+            }
+          },
+          "reference_pointer": {
+            "default_impl": "builtins.object",
+            "type": "object"
+          },
+          "title": "object Reference",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "token_provider_scopes": {
+      "default": [
+        "https://cognitiveservices.azure.com/.default"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Token Provider Scopes",
+      "type": "array"
+    },
+    "api_version": {
+      "default": "2024-02-01",
+      "title": "Api Version",
+      "type": "string"
+    },
+    "client_args": {
+      "default": {},
+      "title": "Client Args",
+      "type": "object"
+    }
+  },
+  "required": [
+    "model",
+    "azure_endpoint"
+  ],
+  "title": "AzureLLMUnit",
+  "type": "object"
+}

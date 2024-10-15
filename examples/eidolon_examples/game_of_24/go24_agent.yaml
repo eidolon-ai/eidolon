@@ -4,7 +4,7 @@ metadata:
   name: GO24
 
 spec:
-  implementation: GenericAgent
+  implementation: SimpleAgent
   description: "A tool for solving the game of 24"
   agent_refs: ['ToT']
   #  can reference named cpus within spec or implement them locally, default used if none is provided. If no default reverts to system default
@@ -19,8 +19,5 @@ spec:
     the tool to guide your thinking.
     
     Think carefully about how you want to solve the problem. Then make a plan to implement the changes.
-  user_prompt: "The 4 numbers are {{request}}"
-  input_schema:
-    request:
-      type: string
-  output_schema: 'str'
+  actions:
+    - user_prompt: "The 4 numbers are {{request}}"

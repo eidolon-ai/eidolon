@@ -7,4 +7,12 @@ module.exports = {
     project: "./tsconfig.lint.json",
     tsconfigRootDir: __dirname,
   },
-};
+  overrides: [
+    {
+      files: ["tailwind.config.js", "jest.config.ts"],
+      parserOptions: {
+        project: null,
+      },
+    },
+  ],
+}

@@ -1,32 +1,41 @@
 'use client'
 
-import {Box, CircularProgress, CircularProgressProps} from "@mui/material";
-import {SxProps} from "@mui/material/styles";
+import React from 'react';
+import { Loader } from 'lucide-react';
 
-export function CircularProgressWithContent(
-  props: CircularProgressProps & { sx?: SxProps, children: JSX.Element }
-) {
-  let sx: object = {position: 'relative', display: 'inline-flex', alignItems: 'center'}
-  if (props.sx) {
-    sx = {...sx, ...props.sx}
-  }
+interface CircularProgressWithContentProps {
+  value?: number;
+  size?: number;
+  color?: string;
+  className?: string;
+  children: React.ReactNode;
+}
+
+export function CircularProgressWithContent({
+  value = 0,
+  size = 40,
+  color = 'blue',
+  className = '',
+  children
+}: CircularProgressWithContentProps) {
+  // Calculate the stroke dash offset based on the value
+  const circumference = 2 * Math.PI * 16; // Lucide's Loader has a default radius of 16
+  const strokeDashoffset = ((100 - value) / 100 * circumference).toFixed(3);
+
   return (
-    <Box sx={sx}>
-      <CircularProgress {...props} />
-      <Box
-        sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+    <div className={`relative inline-flex items-center justify-center ${className}`}>
+      <Loader
+        size={size}
+        className={`text-${color}-600 animate-spin`}
+        strokeWidth={4}
+        style={{
+          strokeDasharray: circumference,
+          strokeDashoffset: strokeDashoffset
         }}
-      >
-        {props.children}
-      </Box>
-    </Box>
+      />
+      <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full">
+        {children}
+      </div>
+    </div>
   );
 }

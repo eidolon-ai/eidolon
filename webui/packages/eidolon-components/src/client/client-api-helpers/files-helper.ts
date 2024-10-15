@@ -1,4 +1,18 @@
 import {FileHandle} from "@eidolon-ai/client";
+import {SelectedFile} from "../file-upload/file-upload.js";
+
+export async function uploadFiles(machineURL: string, process_id: string, files: SelectedFile[]) {
+  const fileHandles: FileHandle[] = [];
+  for (const blob of files) {
+    const fileHandle = await uploadFile(machineURL, process_id, blob.blob);
+    if (fileHandle) {
+      const fh_with_md = await setMetadata(machineURL, process_id, fileHandle.file_id, {...fileHandle.metadata, name: blob.name});
+      fileHandles.push(fh_with_md ? fh_with_md : fileHandle);
+    }
+  }
+
+  return fileHandles;
+}
 
 export async function uploadFile(machineUrl: string, process_id: string, file: Blob) {
   return fetch(`/api/eidolon/process/${process_id}/files?machineURL=${machineUrl}`, {
@@ -13,11 +27,11 @@ export async function uploadFile(machineUrl: string, process_id: string, file: B
       if (resp.status === 404) {
         return null
       }
-      return resp.json().then((json: Record<string, any>) => json as FileHandle)
+      return resp.json().then((json) => json as FileHandle)
     })
 }
 
-export async function setMetadata(machineUrl: string, process_id: string, file_id: string, metadata: Record<string, any>) {
+export async function setMetadata(machineUrl: string, process_id: string, file_id: string, metadata: Record<string, unknown>) {
   return fetch(`/api/eidolon/process/${process_id}/files/${file_id}?machineURL=${machineUrl}`, {
     headers: {
       "Content-Type": "application/json",
@@ -29,7 +43,7 @@ export async function setMetadata(machineUrl: string, process_id: string, file_i
       if (resp.status === 404) {
         return null
       }
-      return resp.json().then((json: Record<string, any>) => json as FileHandle)
+      return resp.json().then((json) => json as FileHandle)
     })
 }
 

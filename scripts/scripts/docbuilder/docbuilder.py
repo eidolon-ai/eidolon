@@ -227,7 +227,7 @@ def generate_json(write_base):
                 spec = Reference.get_spec_type(clz)
                 if spec:
                     for k, v in spec.model_fields.items():
-                        if v.annotation.__name__ == "_Reference" and v.default_factory:
+                        if v.annotation.__name__ == "_Reference":
                             schema_prop = json_schema['properties'][k]
                             if "allOf" in schema_prop:
                                 if len(schema_prop["allOf"]) != 1 or len(schema_prop["allOf"][0]) != 1:
@@ -235,9 +235,11 @@ def generate_json(write_base):
                                 schema_prop.update(schema_prop["allOf"][0])
 
                             def_pointer = schema_prop['$ref'].replace("#/$defs/", "")
-                            default_impl: dict = json_schema['$defs'][def_pointer]['reference_pointer']['default_impl']
-                            if k not in overrides:
-                                overrides[k] = dict(implementation=default_impl)
+
+                            if v.default_factory:
+                                default_impl: dict = json_schema['$defs'][def_pointer]['reference_pointer']['default_impl']
+                                if k not in overrides:
+                                    overrides[k] = dict(implementation=default_impl)
 
                 defs = dict()
                 for k, v in list(json_schema.get("$defs", {}).items()):
