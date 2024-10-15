@@ -48,7 +48,7 @@ async def convert_to_ollama(message: LLMMessage):
 llama3 = "llama3"
 
 OllamaOptions: Type[BaseModel] = create_model('OllamaOptions', **{
-    field_name: (field_type, ...) for field_name, field_type in Options.__annotations__.items()
+    field_name: (field_type, None) for field_name, field_type in Options.__annotations__.items()
 })
 
 
@@ -57,8 +57,8 @@ class OllamaLLMUnitSpec(LLMUnitSpec):
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
-    host: Optional[str] = Field(description="Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.")
-    client_options: OllamaOptions = Field(default={}, description="Additional arguments when calling ollama.AsyncClient.chat")
+    host: Optional[str] = Field(default=None, description="Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.")
+    client_options: OllamaOptions = Field(default=OllamaOptions(), description="Additional arguments when calling ollama.AsyncClient.chat")
 
 
 class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
@@ -78,7 +78,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
         logger.info("executing ollama llm request")
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(fn=_ollama_client(self.spec.ollama_host), name_override="ollama_completion", parser=_raw_parser)
+        llm_request = replayable(fn=_ollama_client(self.spec.host), name_override="ollama_completion", parser=_raw_parser)
         complete_message = ""
         try:
             async for m_chunk in llm_request(**request):
@@ -126,11 +126,12 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
             else:
                 messages.insert(0, {"role": "system", "content": force_json_msg})
         logger.debug(messages)
-        options = cast(Options, cast(BaseModel, self.spec.client_options).model_dump())
+        options = cast(Options, cast(BaseModel, self.spec.client_options).model_dump(exclude_defaults=True))
         if self.spec.max_tokens:
             options["num_predict"] = self.spec.max_tokens
-        options["temperature"] = self.spec.temperature
-        request[options] = options
+        if self.spec.temperature >= 0:
+            options["temperature"] = self.spec.temperature
+        request['options'] = options
         if not is_string:
             request["format"] = "json"
         return is_string, request
