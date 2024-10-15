@@ -1,20 +1,21 @@
 ---
 title: LocalSymbolicMemory
-description: "Description of LocalSymbolicMemory component"
+description: Description of the LocalSymbolicMemory component
 ---
 
-| Property                             | Pattern | Type  | Deprecated | Definition | Title/Description   |
-| ------------------------------------ | ------- | ----- | ---------- | ---------- | ------------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | LocalSymbolicMemory |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |
+| - [](#additionalProperties )         | No      | object | No         | -          | -                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** LocalSymbolicMemory
+| **Required** | Yes     |
 
 Specific value: `"LocalSymbolicMemory"`
 

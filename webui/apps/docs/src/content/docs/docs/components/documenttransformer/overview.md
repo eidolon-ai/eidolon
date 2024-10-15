@@ -1,10 +1,10 @@
 ---
 title: DocumentTransformer Overview
-description: "Overview of DocumentTransformer components"
+description: "None"
 ---
-Overview of DocumentTransformer components
+Overview of the DocumentTransformer component
 ## Builtins
-* [AutoTransformer](/docs/components/documenttransformer/autotransformer/) (default)
+* [AutoTransformer](/docs/components/documenttransformer/autotransformer/)
 * [CharacterTextSplitter](/docs/components/documenttransformer/charactertextsplitter/)
 * [HTMLHeaderTextSplitter](/docs/components/documenttransformer/htmlheadertextsplitter/)
 * [LatexTextSplitter](/docs/components/documenttransformer/latextextsplitter/)

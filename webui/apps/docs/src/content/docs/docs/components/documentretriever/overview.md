@@ -1,7 +1,7 @@
 ---
 title: DocumentRetriever Overview
-description: "Overview of DocumentRetriever components"
+description: "None"
 ---
-Overview of DocumentRetriever components
+Overview of the DocumentRetriever component
 ## Builtins
-* [SimilarityMemoryRetriever](/docs/components/documentretriever/similaritymemoryretriever/) (default)
+* [SimilarityMemoryRetriever](/docs/components/documentretriever/similaritymemoryretriever/)

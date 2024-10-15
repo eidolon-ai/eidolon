@@ -1,26 +1,26 @@
 ---
 title: SentenceTransformersTokenTextSplitter
-description: "Description of SentenceTransformersTokenTextSplitter component"
+description: Description of the SentenceTransformersTokenTextSplitter component
 ---
 
-| Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description                     |
-| ---------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------- |
-| - [implementation](#implementation )     | No      | const   | No         | -          | SentenceTransformersTokenTextSplitter |
-| - [chunk_size](#chunk_size )             | No      | integer | No         | -          | Chunk Size                            |
-| - [chunk_overlap](#chunk_overlap )       | No      | integer | No         | -          | Chunk Overlap                         |
-| - [keep_separator](#keep_separator )     | No      | boolean | No         | -          | Keep Separator                        |
-| - [strip_whitespace](#strip_whitespace ) | No      | boolean | No         | -          | Strip Whitespace                      |
-| - [model](#model )                       | No      | string  | No         | -          | Model                                 |
-| - [tokens_per_chunk](#tokens_per_chunk ) | No      | integer | No         | -          | Tokens Per Chunk                      |
+| Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ---------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| + [implementation](#implementation )     | No      | const   | No         | -          | Implementation    |
+| - [chunk_size](#chunk_size )             | No      | integer | No         | -          | Chunk Size        |
+| - [chunk_overlap](#chunk_overlap )       | No      | integer | No         | -          | Chunk Overlap     |
+| - [keep_separator](#keep_separator )     | No      | boolean | No         | -          | Keep Separator    |
+| - [strip_whitespace](#strip_whitespace ) | No      | boolean | No         | -          | Strip Whitespace  |
+| - [model](#model )                       | No      | string  | No         | -          | Model             |
+| - [tokens_per_chunk](#tokens_per_chunk ) | No      | integer | No         | -          | Tokens Per Chunk  |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** SentenceTransformersTokenTextSplitter
+| **Required** | Yes     |
 
 Specific value: `"SentenceTransformersTokenTextSplitter"`
 

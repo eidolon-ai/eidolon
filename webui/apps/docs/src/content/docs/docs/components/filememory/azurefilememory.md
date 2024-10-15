@@ -1,36 +1,35 @@
 ---
 title: AzureFileMemory
-description: "Description of AzureFileMemory component"
+description: Description of the AzureFileMemory component
 ---
 
-| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description           |
-| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------- |
-| - [implementation](#implementation )                           | No      | const   | No         | -          | AzureFileMemory             |
-| - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | -          | object Reference            |
-| + [account_url](#account_url )                                 | No      | string  | No         | -          | Account Url                 |
-| + [container](#container )                                     | No      | string  | No         | -          | Container                   |
-| - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -          | Create Container On Startup |
+| Property                                                       | Pattern | Type    | Deprecated | Definition            | Title/Description           |
+| -------------------------------------------------------------- | ------- | ------- | ---------- | --------------------- | --------------------------- |
+| + [implementation](#implementation )                           | No      | const   | No         | -                     | Implementation              |
+| - [azure_ad_token_provider](#azure_ad_token_provider )         | No      | object  | No         | In #/$defs/_Reference | -                           |
+| + [account_url](#account_url )                                 | No      | string  | No         | -                     | Account Url                 |
+| + [container](#container )                                     | No      | string  | No         | -                     | Container                   |
+| - [create_container_on_startup](#create_container_on_startup ) | No      | boolean | No         | -                     | Create Container On Startup |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** AzureFileMemory
+| **Required** | Yes     |
 
 Specific value: `"AzureFileMemory"`
 
 ## <a name="azure_ad_token_provider"></a>2. Property `azure_ad_token_provider`
-
-**Title:** object Reference
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                  |
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/$defs/_Reference                                                        |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -41,11 +40,10 @@ Specific value: `"AzureFileMemory"`
 
 **Title:** Implementation
 
-|              |                     |
-| ------------ | ------------------- |
-| **Type**     | `string`            |
-| **Required** | No                  |
-| **Default**  | `"builtins.object"` |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ## <a name="account_url"></a>3. Property `account_url`
 

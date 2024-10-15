@@ -1,7 +1,7 @@
 ---
 title: MemoryUnit Overview
-description: "Overview of MemoryUnit components"
+description: "None"
 ---
-Overview of MemoryUnit components
+Overview of the MemoryUnit component
 ## Builtins
-* [RawMemoryUnit](/docs/components/memoryunit/rawmemoryunit/) (default)
+* [RawMemoryUnit](/docs/components/memoryunit/rawmemoryunit/)

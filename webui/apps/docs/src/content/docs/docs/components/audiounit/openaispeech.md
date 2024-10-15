@@ -1,11 +1,11 @@
 ---
 title: OpenAiSpeech
-description: "Description of OpenAiSpeech component"
+description: Description of the OpenAiSpeech component
 ---
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |
 | ------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | -------------------------- |
-| - [implementation](#implementation )                         | No      | const            | No         | -          | OpenAiSpeech               |
+| + [implementation](#implementation )                         | No      | const            | No         | -          | Implementation             |
 | - [text_to_speech_model](#text_to_speech_model )             | No      | enum (of string) | No         | -          | Text To Speech Model       |
 | - [text_to_speech_voice](#text_to_speech_voice )             | No      | enum (of string) | No         | -          | Text To Speech Voice       |
 | - [speech_to_text_model](#speech_to_text_model )             | No      | const            | No         | -          | Speech To Text Model       |
@@ -13,12 +13,12 @@ description: "Description of OpenAiSpeech component"
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** OpenAiSpeech
+| **Required** | Yes     |
 
 Specific value: `"OpenAiSpeech"`
 

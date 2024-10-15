@@ -1,20 +1,20 @@
 ---
 title: ResultSummarizer
-description: "Description of ResultSummarizer component"
+description: Description of the ResultSummarizer component
 ---
 
 | Property                             | Pattern | Type  | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----- | ---------- | ---------- | ----------------- |
-| - [implementation](#implementation ) | No      | const | No         | -          | ResultSummarizer  |
+| + [implementation](#implementation ) | No      | const | No         | -          | Implementation    |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** ResultSummarizer
+| **Required** | Yes     |
 
 Specific value: `"ResultSummarizer"`
 

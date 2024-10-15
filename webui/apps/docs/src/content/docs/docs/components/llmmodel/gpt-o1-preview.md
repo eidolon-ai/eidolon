@@ -1,27 +1,27 @@
 ---
 title: gpt-o1-preview
-description: "Description of gpt-o1-preview component"
+description: Description of the gpt-o1-preview component
 ---
 
 | Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description    |
 | ------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------- |
-| - [implementation](#implementation )             | No      | const   | No         | -          | gpt-o1-preview       |
-| - [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
-| - [name](#name )                                 | No      | string  | No         | -          | Name                 |
-| - [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
-| - [output_context_limit](#output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
-| - [supports_tools](#supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
-| - [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
-| - [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
+| + [implementation](#implementation )             | No      | const   | No         | -          | Implementation       |
+| + [human_name](#human_name )                     | No      | string  | No         | -          | Human Name           |
+| + [name](#name )                                 | No      | string  | No         | -          | Name                 |
+| + [input_context_limit](#input_context_limit )   | No      | integer | No         | -          | Input Context Limit  |
+| + [output_context_limit](#output_context_limit ) | No      | integer | No         | -          | Output Context Limit |
+| + [supports_tools](#supports_tools )             | No      | boolean | No         | -          | Supports Tools       |
+| + [supports_image_input](#supports_image_input ) | No      | boolean | No         | -          | Supports Image Input |
+| + [supports_audio_input](#supports_audio_input ) | No      | boolean | No         | -          | Supports Audio Input |
 
 ## <a name="implementation"></a>1. Property `implementation`
+
+**Title:** Implementation
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** gpt-o1-preview
+| **Required** | Yes     |
 
 Specific value: `"gpt-o1-preview"`
 
@@ -32,7 +32,7 @@ Specific value: `"gpt-o1-preview"`
 |              |            |
 | ------------ | ---------- |
 | **Type**     | `string`   |
-| **Required** | No         |
+| **Required** | Yes        |
 | **Default**  | `"GPT-o1"` |
 
 ## <a name="name"></a>3. Property `name`
@@ -42,7 +42,7 @@ Specific value: `"gpt-o1-preview"`
 |              |                |
 | ------------ | -------------- |
 | **Type**     | `string`       |
-| **Required** | No             |
+| **Required** | Yes            |
 | **Default**  | `"o1-preview"` |
 
 ## <a name="input_context_limit"></a>4. Property `input_context_limit`
@@ -52,7 +52,7 @@ Specific value: `"gpt-o1-preview"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `128000`  |
 
 ## <a name="output_context_limit"></a>5. Property `output_context_limit`
@@ -62,7 +62,7 @@ Specific value: `"gpt-o1-preview"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `32768`   |
 
 ## <a name="supports_tools"></a>6. Property `supports_tools`
@@ -72,7 +72,7 @@ Specific value: `"gpt-o1-preview"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `false`   |
 
 ## <a name="supports_image_input"></a>7. Property `supports_image_input`
@@ -82,7 +82,7 @@ Specific value: `"gpt-o1-preview"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `false`   |
 
 ## <a name="supports_audio_input"></a>8. Property `supports_audio_input`
@@ -92,7 +92,7 @@ Specific value: `"gpt-o1-preview"`
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
-| **Required** | No        |
+| **Required** | Yes       |
 | **Default**  | `false`   |
 
 ----------------------------------------------------------------------------------------------------------------------------

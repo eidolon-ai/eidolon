@@ -1,11 +1,11 @@
 ---
 title: S3FileMemory
-description: "Description of S3FileMemory component"
+description: Description of the S3FileMemory component
 ---
 
 | Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description        |
 | -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [implementation](#implementation )                     | No      | const   | No         | -          | S3FileMemory             |
+| + [implementation](#implementation )                     | No      | const   | No         | -          | Implementation           |
 | + [bucket](#bucket )                                     | No      | string  | No         | -          | Bucket                   |
 | - [region_name](#region_name )                           | No      | string  | No         | -          | Region Name              |
 | - [aws_access_key_id](#aws_access_key_id )               | No      | string  | No         | -          | Aws Access Key Id        |
@@ -16,12 +16,12 @@ description: "Description of S3FileMemory component"
 
 ## <a name="implementation"></a>1. Property `implementation`
 
+**Title:** Implementation
+
 |              |         |
 | ------------ | ------- |
 | **Type**     | `const` |
-| **Required** | No      |
-
-**Description:** S3FileMemory
+| **Required** | Yes     |
 
 Specific value: `"S3FileMemory"`
 

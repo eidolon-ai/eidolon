@@ -1,7 +1,7 @@
 ---
 title: SqlClient Overview
-description: "Overview of SqlClient components"
+description: "None"
 ---
-Overview of SqlClient components
+Overview of the SqlClient component
 ## Builtins
-* [SqlAlchemy](/docs/components/sqlclient/sqlalchemy/) (default)
+* [SqlAlchemy](/docs/components/sqlclient/sqlalchemy/)

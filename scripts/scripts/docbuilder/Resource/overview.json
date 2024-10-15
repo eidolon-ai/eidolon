@@ -1,0 +1,15 @@
+{
+  "title": "Resource",
+  "description": "Overview of Resource components",
+  "anyOf": [
+    {
+      "$ref": "./AgentResource.json"
+    },
+    {
+      "$ref": "./MachineResource.json"
+    }
+  ],
+  "reference_group": {
+    "type": "Resource"
+  }
+}
