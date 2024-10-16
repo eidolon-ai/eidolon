@@ -274,15 +274,17 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         yield UserInputEvent(input=request_body, files=attached_files)
 
         # generate the tile if it is not generated
+        gen_title_task = None
         process_obj = await ProcessDoc.find_one(query={"_id": process_id})
         if self.spec.title_generation_mode == "auto" and not process_obj.title:
             async def genTitle():
                 title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
-                response = await (await apu.new_thread(process_id)).run_request(prompts=[title_message])
-                await process_obj.update(title=response)
+                new_thread = await apu.new_thread(process_id)
+                title_response = await new_thread.run_request(prompts=[title_message])
+                await process_obj.update(title=title_response)
 
             # noinspection PyAsyncCall
-            asyncio.create_task(genTitle())
+            gen_title_task = asyncio.create_task(genTitle())
 
         thread = await apu.main_thread(process_id)
         response = thread.stream_request(
@@ -292,6 +294,11 @@ class SimpleAgent(Specable[SimpleAgentSpec]):
         async for event in response:
             yield event
         yield AgentStateEvent(state=action.output_state)
+        if gen_title_task:
+            try:
+                await gen_title_task
+            except Exception:
+                logger.exception("Error generating title")
 
     async def _gen_title(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
         last_state = RequestContext.get("__last_state__")
