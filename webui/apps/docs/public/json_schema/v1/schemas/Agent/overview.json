@@ -1,6 +1,9 @@
 {
   "anyOf": [
     {
+      "$ref": "../Agent/AutonomousSpeechAgent.json"
+    },
+    {
       "$ref": "../Agent/RetrieverAgent.json"
     },
     {

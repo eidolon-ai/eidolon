@@ -121,11 +121,11 @@ Specific value: `"GPT4o-mini"`
 
 ### <a name="audio_unit_anyOf_i0"></a>8.1. Property `item 0`
 
-|              |                                                                 |
-| ------------ | --------------------------------------------------------------- |
-| **Type**     | [`Reference[AudioUnit]`](/docs/components/audiounit/overview)                                          |
-| **Required** | No                                                              |
-| **Default**  | `{"implementation": "eidolon_ai_sdk.apu.audio_unit.AudioUnit"}` |
+|              |                                   |
+| ------------ | --------------------------------- |
+| **Type**     | [`Reference[AudioUnit]`](/docs/components/audiounit/overview)            |
+| **Required** | No                                |
+| **Default**  | `{"implementation": "AudioUnit"}` |
 
 ### <a name="audio_unit_anyOf_i1"></a>8.2. Property `item 1`
 
