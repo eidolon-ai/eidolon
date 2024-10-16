@@ -53,6 +53,17 @@ async def patch_content(url: str, headers=None, **kwargs):
         response = await client.patch(**params, json=body)  # Send the body as JSON
         await AgentError.check(response)
         return response.json()
+    
+
+async def delete_content(url: str, headers=None, **kwargs):
+    params = {"url": url}
+    if headers:
+        params["headers"] = headers
+
+    async with AsyncClient(timeout=Timeout(5.0, read=600.0)) as client:
+        response = await client.delete(**params)
+        await AgentError.check(response)
+        return response.json()
 
 
 def _render_template_from_env(template_string):
@@ -80,7 +91,7 @@ def build_call(extra_header_params, extra_query_params, root_call_url):
             path_to_call += "?" + "&".join([f"{quote_plus(k)}={quote_plus(str(v))}" for k, v in query_params if v])
 
         url = urljoin(root_call_url + "/", path_to_call)
-        logger.info(f"Calling API {url}")
+        logger.info(f"Calling API {url} - {method}")
         try:
             if method == "get":
                 return await get_content(url, headers=headers, **body)
@@ -94,9 +105,13 @@ def build_call(extra_header_params, extra_query_params, root_call_url):
                     body = body.dict(exclude_none=True)
                 
                 return await patch_content(url, headers=headers, body=body)
+            elif method == "delete":
+                return await delete_content(url, headers=headers)
             else:
                 logger.error(f"Unsupported method {method}")
-                return {}
+                return {
+                    "error": f"The method {method} is not supported for this API call"
+                }
         except Exception as e:
             logger.error(f"Error calling {url}: {e}, body = {body}")
             raise e
