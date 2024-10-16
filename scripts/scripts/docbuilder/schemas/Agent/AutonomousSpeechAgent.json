@@ -5,17 +5,6 @@
       "const": "AutonomousSpeechAgent",
       "title": "Implementation"
     },
-    "apu": {
-      "$ref": "../APU/overview.json"
-    },
-    "agent_refs": {
-      "default": [],
-      "items": {
-        "type": "string"
-      },
-      "title": "Agent Refs",
-      "type": "array"
-    },
     "speech_llm": {
       "$ref": "../AudioUnit/overview.json"
     }
