@@ -1,0 +1,34 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "AutonomousSpeechAgent",
+      "title": "Implementation"
+    },
+    "apu": {
+      "$ref": "../APU/overview.json"
+    },
+    "agent_refs": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Agent Refs",
+      "type": "array"
+    },
+    "speech_llm": {
+      "$ref": "../AudioUnit/overview.json"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.audio_agent.AutonomousSpeechAgent",
+    "group": "Agent",
+    "name": "AutonomousSpeechAgent",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "AutonomousSpeechAgent",
+  "type": "object"
+}
