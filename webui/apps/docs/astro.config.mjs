@@ -174,6 +174,10 @@ export default defineConfig({
                     "link": "/docs/components/agent/apiagent"
                   },
                   {
+                    "label": "AutonomousSpeechAgent",
+                    "link": "/docs/components/agent/autonomousspeechagent"
+                  },
+                  {
                     "label": "RetrieverAgent",
                     "link": "/docs/components/agent/retrieveragent"
                   },
