@@ -30,10 +30,54 @@
       "default": null,
       "title": "Max Tokens"
     },
+    "host": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.",
+      "title": "Host"
+    },
     "client_options": {
-      "default": {},
-      "title": "Client Options",
-      "type": "object"
+      "$ref": "#/$defs/OllamaOptions",
+      "default": {
+        "numa": null,
+        "num_ctx": null,
+        "num_batch": null,
+        "num_gpu": null,
+        "main_gpu": null,
+        "low_vram": null,
+        "f16_kv": null,
+        "logits_all": null,
+        "vocab_only": null,
+        "use_mmap": null,
+        "use_mlock": null,
+        "embedding_only": null,
+        "num_thread": null,
+        "num_keep": null,
+        "seed": null,
+        "num_predict": null,
+        "top_k": null,
+        "top_p": null,
+        "tfs_z": null,
+        "typical_p": null,
+        "repeat_last_n": null,
+        "temperature": null,
+        "repeat_penalty": null,
+        "presence_penalty": null,
+        "frequency_penalty": null,
+        "mirostat": null,
+        "mirostat_tau": null,
+        "mirostat_eta": null,
+        "penalize_newline": null,
+        "stop": null
+      },
+      "description": "Additional arguments when calling ollama.AsyncClient.chat"
     }
   },
   "reference_details": {
@@ -46,5 +90,166 @@
     "implementation"
   ],
   "title": "OllamaLLMUnit",
-  "type": "object"
+  "type": "object",
+  "$defs": {
+    "OllamaOptions": {
+      "properties": {
+        "numa": {
+          "default": null,
+          "title": "Numa",
+          "type": "boolean"
+        },
+        "num_ctx": {
+          "default": null,
+          "title": "Num Ctx",
+          "type": "integer"
+        },
+        "num_batch": {
+          "default": null,
+          "title": "Num Batch",
+          "type": "integer"
+        },
+        "num_gpu": {
+          "default": null,
+          "title": "Num Gpu",
+          "type": "integer"
+        },
+        "main_gpu": {
+          "default": null,
+          "title": "Main Gpu",
+          "type": "integer"
+        },
+        "low_vram": {
+          "default": null,
+          "title": "Low Vram",
+          "type": "boolean"
+        },
+        "f16_kv": {
+          "default": null,
+          "title": "F16 Kv",
+          "type": "boolean"
+        },
+        "logits_all": {
+          "default": null,
+          "title": "Logits All",
+          "type": "boolean"
+        },
+        "vocab_only": {
+          "default": null,
+          "title": "Vocab Only",
+          "type": "boolean"
+        },
+        "use_mmap": {
+          "default": null,
+          "title": "Use Mmap",
+          "type": "boolean"
+        },
+        "use_mlock": {
+          "default": null,
+          "title": "Use Mlock",
+          "type": "boolean"
+        },
+        "embedding_only": {
+          "default": null,
+          "title": "Embedding Only",
+          "type": "boolean"
+        },
+        "num_thread": {
+          "default": null,
+          "title": "Num Thread",
+          "type": "integer"
+        },
+        "num_keep": {
+          "default": null,
+          "title": "Num Keep",
+          "type": "integer"
+        },
+        "seed": {
+          "default": null,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "num_predict": {
+          "default": null,
+          "title": "Num Predict",
+          "type": "integer"
+        },
+        "top_k": {
+          "default": null,
+          "title": "Top K",
+          "type": "integer"
+        },
+        "top_p": {
+          "default": null,
+          "title": "Top P",
+          "type": "number"
+        },
+        "tfs_z": {
+          "default": null,
+          "title": "Tfs Z",
+          "type": "number"
+        },
+        "typical_p": {
+          "default": null,
+          "title": "Typical P",
+          "type": "number"
+        },
+        "repeat_last_n": {
+          "default": null,
+          "title": "Repeat Last N",
+          "type": "integer"
+        },
+        "temperature": {
+          "default": null,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "repeat_penalty": {
+          "default": null,
+          "title": "Repeat Penalty",
+          "type": "number"
+        },
+        "presence_penalty": {
+          "default": null,
+          "title": "Presence Penalty",
+          "type": "number"
+        },
+        "frequency_penalty": {
+          "default": null,
+          "title": "Frequency Penalty",
+          "type": "number"
+        },
+        "mirostat": {
+          "default": null,
+          "title": "Mirostat",
+          "type": "integer"
+        },
+        "mirostat_tau": {
+          "default": null,
+          "title": "Mirostat Tau",
+          "type": "number"
+        },
+        "mirostat_eta": {
+          "default": null,
+          "title": "Mirostat Eta",
+          "type": "number"
+        },
+        "penalize_newline": {
+          "default": null,
+          "title": "Penalize Newline",
+          "type": "boolean"
+        },
+        "stop": {
+          "default": null,
+          "items": {
+            "type": "string"
+          },
+          "title": "Stop",
+          "type": "array"
+        }
+      },
+      "title": "OllamaOptions",
+      "type": "object"
+    }
+  }
 }
