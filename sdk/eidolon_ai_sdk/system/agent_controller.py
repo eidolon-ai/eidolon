@@ -338,7 +338,9 @@ class AgentController:
             await store_events(self.name, process.record_id, events_to_store)
             # get the latest state and if terminated, delete the process
             latest_record = await self.get_latest_process_event(process.record_id)
-            if latest_record.delete_on_terminate and latest_record.state == "terminated":
+            if not latest_record:
+                logger.warning(f"Process {process.record_id} not found, but permissions indicate it should have existed")
+            elif latest_record.delete_on_terminate and latest_record.state == "terminated":
                 await self._delete_process(process.record_id)
 
     async def stream_agent_iterator(
@@ -517,7 +519,7 @@ class AgentController:
     def get_available_actions(self, state):
         return [action for action, handler in self.actions.items() if state in handler.extra["allowed_states"]]
 
-    async def get_latest_process_event(self, process_id) -> ProcessDoc:
+    async def get_latest_process_event(self, process_id) -> typing.Optional[ProcessDoc]:
         return await ProcessDoc.find_one(query=dict(_id=process_id, agent=self.name), sort=dict(updated=-1))
 
     def create_response_model(self, handler: FnHandler):
