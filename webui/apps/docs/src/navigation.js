@@ -25,6 +25,7 @@ export const headerData = {
       {
         text: 'Videos',
         href: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
+        newTab: true,
       }
     ],
     actions: [
