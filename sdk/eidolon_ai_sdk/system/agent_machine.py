@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from typing import List, Optional, Annotated, Literal, cast
 
 from fastapi import FastAPI, Request, Body, Header
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from starlette.responses import JSONResponse, Response
 
 from eidolon_ai_client.client import ProcessStatus
@@ -26,6 +26,8 @@ from ..security.permissions import PermissionException
 
 
 class MachineSpec(BaseModel):
+    model_config = ConfigDict(extra='allow')
+
     symbolic_memory: AnnotatedReference[SymbolicMemory] = Field(description="The Symbolic Memory implementation.")
     file_memory: AnnotatedReference[FileMemory] = Field(description="The File Memory implementation.")
     similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")
