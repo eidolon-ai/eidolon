@@ -17,6 +17,7 @@ interface Link {
   href?: string;
   ariaLabel?: string;
   icon?: string;
+  newTab?: boolean;
 }
 
 interface ActionLink extends CallToAction {
@@ -93,9 +94,10 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
         class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium"
       >
         {
-          links.map(({text, href, links}) => (
+          links.map(({text, href, links, newTab}) => (
             <li class={links?.length ? "dropdown" : ""}>
               {links?.length ? (
+                <div>luktestislength</div>
                 <>
                   <button class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center">
                     {text}
@@ -103,7 +105,7 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
                   </button>
                   <ul
                     class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
-                    {links.map(({text: text2, href: href2}) => (
+                    {links.map(({text: text2, href: href2, newTab: newTab2}) => (
                       <li>
                         <a
                           class:list={[
@@ -111,6 +113,7 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
                             {"aw-link-active": href2 === currentPath}
                           ]}
                           href={href2}
+                          target={newTab2 ? "_blank" : "_self"}
                         >
                           {text2}
                         </a>
@@ -121,10 +124,11 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
               ) : (
                 <a
                   class:list={[
-                    "hover:text-link dark:hover:text-white px-4 py-3 flex items-centers",
+                    "hover:text-link dark:hover:text-white px-4 py-3 flex items-centers lukefoobar",
                     {"aw-link-active": href === currentPath}
                   ]}
                   href={href}
+                  target={newTab ? "_blank" : "_self"}
                 >
                   {text}
                 </a>
