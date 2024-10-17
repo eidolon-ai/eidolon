@@ -22,24 +22,36 @@ At its core, this feature is schema validation for your Eidolon resources. This 
 
 This enables your IDE to offer code completion and inline documentation, speeding up development and reducing errors.
 
-< image description="Screenshot of schema validation in action, showing an incorrect Eidolon resource with a tooltip explaining the error." />
-
 ## How to enable Eidolon IDE Support
-* **IntelliJ** and **PyCharm** work out of the box with Eidolon schema support.
+In many cases you don't actually need to do anything. Your IDE likely already includes support for Eidolon resources.
 
-* **Visual Studio Code** will require the [YAML plugin](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension.
+Just add the `.eidolon.yaml` or `.eidolon.yml` extension to your Eidolon resources, and your IDE apply the schema for you.
 
-* **Using a different IDE?** Let us know on Discord, and we’ll add the configuration details here!
+* **IntelliJ** and **PyCharm**: Ships out of the box with Eidolon schema support.
 
-The plugins will automatically apply Eidolon’s schema to any file that ends in `.eidolon.yaml` or `.eidolon.yml`.
+* **Visual Studio Code**: Download the [YAML plugin](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension.
 
-> Visual Studio also matches any `.yaml` file in a directory named `eidolon_resources`. __cough__ JetBrains has a bug  __cough__.
+* **Using a different IDE?**: Let us know on [Discord](https://discord.gg/6kVQrHpeqG), and we’ll add the configuration details here!
 
 ## How did we do it?
 I’ll admit, I’m not exactly an IDE plugin expert, so I was a bit nervous about the difficulty. But it turns out, once you have a well-defined JSON schema, the process is surprisingly simple.
 
-We’ve been generating JSON schema for a while now to power our docs. With the schema in hand, all we had to do was make it accessible to the IDE. [SchemaStore](https://www.schemastore.org/) is a project that both JetBrains and VS Code use as a schema library, so we just added our schema there.
+[SchemaStore](https://www.schemastore.org/) is a project that both JetBrains and Visual Studio (and a host of other projects) use as a json schema library to validate yaml files.
 
-They run quick tests, and my pull request was merged in just a few minutes. 10/10 dev experience, and a classic case of open-source projects helping other open-source projects.
+The process of integrating with SchemaStore was straightforward:
 
-< image description="Snippet of JSON schema used for Eidolon, showing a key part of the schema. You could also include a screenshot of the SchemaStore entry." />
+#### 1. Generate the JSON schema for our resources
+We were already generating json schema to power our documentation, so this was almost a noop for us.
+
+Eidolon uses pydantic as a validation library, and they ship with pretty powerful json schema support. We use that to generate json schema for our resources, paired with a Github action that guarantees the schema is up to date.
+#### 2. Serve the schema on a public URL
+The next step was then to serve our json schema on a public URL. Unfortunately we didn't get this for free with our docs, but with a little enhancement to our docs builder script we were able to serve the schema on a public URL. It is worth noting that if your schemas are broken into many files, so this also means updating references between them.
+
+We chose to host our schema ourselves on [eidolonai.com](/json_schema/v1/resources/overview.json), but you can point to the raw file on github, or add it directly to schemastore.
+
+#### 3. Add the schema to [SchemaStore](https://github.com/SchemaStore/schemastore) project
+Sometimes making open source contributions can be much more headache than you would expect, but it is pretty easy with SchemaStore.
+
+SchemaStore maintains a [catalog](https://github.com/SchemaStore/schemastore/blob/master/src/api/json/catalog.json) of json schemas. Adding Eidolon to the list meant adding a new json record pointing to our publicly accessible schema.
+
+My pull request was merged in just a few minutes. 10/10 dev experience and a classic case of open-source projects helping other open-source projects.
