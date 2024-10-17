@@ -75,6 +75,29 @@ jobs:
         with:
           commit_message: "Updating component docs"
 
+  sdk-ruff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install
+        working-directory: sdk
+      - run: poetry run ruff check .
+        working-directory: sdk
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: always()
+        with:
+          commit_message: "ruff"
+
   sdk-test:
     runs-on: ubuntu-latest
     services:
@@ -95,8 +118,6 @@ jobs:
       - run: poetry run playwright install
         working-directory: sdk
       - run: poetry run ruff format .
-        working-directory: sdk
-      - run: poetry run ruff check .
         working-directory: sdk
       - run: poetry run pytest
         env:

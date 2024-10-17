@@ -3,7 +3,6 @@ from typing import List, Any, cast
 import jsonref
 from pydantic import BaseModel, Field
 
-from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.builtins.logic_units.api_helper import build_call, get_content
 from eidolon_ai_sdk.builtins.logic_units.openapi_helper import build_actions, Action, Operation
@@ -48,8 +47,7 @@ class APIAgent(Specable[APIAgentSpec]):
                 json_ = await get_content(self.spec.open_api_location)
                 self.open_api_schema = jsonref.replace_refs(json_)
             except Exception as e:
-                logger.error(f"Error fetching schema from {self.spec.open_api_location}: {e}")
-                return {}
+                raise RuntimeError(f"Error fetching schema from {self.spec.open_api_location}") from e
 
         return self.open_api_schema
 
