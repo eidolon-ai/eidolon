@@ -29,7 +29,7 @@ src="https://www.youtube.com/embed/8GOsbX8Hs50">
 ###### [How to Configure Built-in Components](/docs/howto/configure_builtins)
 
 ## Agents
-### [Conversational Agent](https://github.com/eidolon-ai/eidolon-chatbot/blob/main/resources/conversational_agent.yaml)
+### [Conversational Agent](https://github.com/eidolon-ai/eidolon-chatbot/blob/main/resources/conversational_agent.eidolon.yaml)
 This uses the [SimpleAgent](/docs/components/agents/simpleagent) template, but needs some customization to enable file uploads and support multiple LLMs. 
 
 You will notice that enabled file upload on our AgentProcessingUnit's primary action.
@@ -41,7 +41,7 @@ You will notice that enabled file upload on our AgentProcessingUnit's primary ac
 ```
 
 
-We also have a list of available [APUs](/docs/components/apu/overview) in resources/apus.yaml.
+We also have a list of available [APUs](/docs/components/apu/overview) in resources/apus.eidolon.yaml.
 ```yaml
   apus:
     - apu: MistralSmall
