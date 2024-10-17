@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-ai-sdk"
-version = "0.1.147"
+version = "0.1.148"
 description = "An open source sgent service SDK"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -15,7 +15,7 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "sdk"
-last-update-hash = "41ad86919cdcf4504b5293304b027e5a4f367a7a"
+last-update-hash = "5b7939982fec76410cdf3af9711bc90a9cf1355a"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
