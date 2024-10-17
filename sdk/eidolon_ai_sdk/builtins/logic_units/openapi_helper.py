@@ -53,7 +53,7 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                     params[param["name"]] = schema_
                                     if "type" not in schema_:
                                         schema_["type"] = "string"
-                                    if "required" in param and param["required"]:
+                                    if param.get("required", False):
                                         required.append(param["name"])
                                 elif param["in"] == "path":
                                     params[param["name"]] = schema_
@@ -72,8 +72,8 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                                     items=dict(type="string", description="The path of a response field as it appears in the json schema"), required=False)
 
                         if "requestBody" in method:
-                            params["__body__"] = _body_model(method, name)
-                            required.append("__body__")
+                            params["header__"] = _body_model(method, name)
+                            required.append("header__")
                         description = operation.description or _description(method, name)
                         actions.append(
                             Action(
@@ -150,7 +150,7 @@ def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, 
                     headers[param["name"]] = str(kwargs[param["name"]])
                 else:
                     logger.error(f"Unsupported parameter location {param['in']}")
-        body = kwargs.pop("__body__", {})
+        body = kwargs.pop("header__", {})
         fields = kwargs.pop("fields__", [])
 
         retValue = await call_fn(path_to_call, method, query_params, headers, body)

@@ -1,5 +1,4 @@
 from typing import List, Any
-
 import jsonref
 from pydantic import BaseModel, Field
 
@@ -41,8 +40,8 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
     async def get_schema(self) -> dict:
         if not self.open_api_schema:
             try:
-                json_ = await get_content(self.spec.open_api_location)
-                self.open_api_schema = jsonref.replace_refs(json_)
+                content = await get_content(self.spec.open_api_location)
+                self.open_api_schema = jsonref.replace_refs(content)
             except Exception as e:
                 logger.error(f"Error fetching schema from {self.spec.open_api_location}: {e}")
                 return {}
@@ -69,7 +68,8 @@ class ApiLogicUnit(LogicUnit, Specable[ApiLogicUnitSpec]):
         return tools
 
     def _build_tool_def(self, action: Action):
-        model = schema_to_model(action.action_schema, "InputModel")
+        schemas = self.open_api_schema.get('components', {}).get('schemas', {})
+        model = schema_to_model(action.action_schema, "InputModel", schemas)
         return FnHandler(
             name=action.name,
             description=lambda a, b: action.description,
