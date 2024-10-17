@@ -97,7 +97,6 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
           links.map(({text, href, links, newTab}) => (
             <li class={links?.length ? "dropdown" : ""}>
               {links?.length ? (
-                <div>luktestislength</div>
                 <>
                   <button class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center">
                     {text}
@@ -124,7 +123,7 @@ const githubText = `<div style="height: 24px; width: 24px">${githubIcon}</div>`
               ) : (
                 <a
                   class:list={[
-                    "hover:text-link dark:hover:text-white px-4 py-3 flex items-centers lukefoobar",
+                    "hover:text-link dark:hover:text-white px-4 py-3 flex items-centers",
                     {"aw-link-active": href === currentPath}
                   ]}
                   href={href}
