@@ -1,0 +1,45 @@
+---
+publishDate: 2024-10-17T00:00:00Z
+author: 'Luke Lalor (luke@augustdata.ai)'
+title: 'Eidolon Meets Your IDE: Fast, Validated Development with Schema Support'
+excerpt: "Adding Eidolon IDE support to your project is easy and can save you time and effort."
+image: /images/ide_help.gif
+tags:
+  - LLM App Development
+  - Dev Experience
+metadata:
+  canonical: https://www.eidolonai.com/ide_help/
+---
+
+This article is about a new feature we just added to Eidolon—or more specifically, added to your IDE—so you can build faster using Eidolon.
+
+In this article, we’ll cover what this feature offers, how to enable it, and how to start using it in your project.
+
+As a bonus, we’ll take a dive into how it works under the hood.
+
+## What is Eidolon IDE Support? And what does it give you?
+At its core, this feature is schema validation for your Eidolon resources. This means you get real-time feedback when your Eidolon resources are not correct.
+
+This enables your IDE to offer code completion and inline documentation, speeding up development and reducing errors.
+
+< image description="Screenshot of schema validation in action, showing an incorrect Eidolon resource with a tooltip explaining the error." />
+
+## How to enable Eidolon IDE Support
+* **IntelliJ** and **PyCharm** work out of the box with Eidolon schema support.
+
+* **Visual Studio Code** will require the [YAML plugin](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension.
+
+* **Using a different IDE?** Let us know on Discord, and we’ll add the configuration details here!
+
+The plugins will automatically apply Eidolon’s schema to any file that ends in `.eidolon.yaml` or `.eidolon.yml`.
+
+> Visual Studio also matches any `.yaml` file in a directory named `eidolon_resources`. __cough__ JetBrains has a bug  __cough__.
+
+## How did we do it?
+I’ll admit, I’m not exactly an IDE plugin expert, so I was a bit nervous about the difficulty. But it turns out, once you have a well-defined JSON schema, the process is surprisingly simple.
+
+We’ve been generating JSON schema for a while now to power our docs. With the schema in hand, all we had to do was make it accessible to the IDE. [SchemaStore](https://www.schemastore.org/) is a project that both JetBrains and VS Code use as a schema library, so we just added our schema there.
+
+They run quick tests, and my pull request was merged in just a few minutes. 10/10 dev experience, and a classic case of open-source projects helping other open-source projects.
+
+< image description="Snippet of JSON schema used for Eidolon, showing a key part of the schema. You could also include a screenshot of the SchemaStore entry." />
