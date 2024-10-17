@@ -83,7 +83,7 @@ configurations that can be referenced by multiple components.
 
 Let's create a named resource `frugal_apu` so we can easily point to an older model for some agents.
 
-_frugal_apu.yaml_
+_frugal_apu.eidolon.yaml_
 ```yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference

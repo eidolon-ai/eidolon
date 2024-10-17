@@ -112,7 +112,7 @@ The repository you  cloned:
 - defines an **Agent Machine** 💻 
 - with a single **Agent Program** 🤖 
 - named `hello-world` 👋
-- defined in a YAML file located at `resources/hello_world_agent.yaml`
+- defined in a YAML file located at `resources/hello_world_agent.eidolon.yaml`
 
 The agent's YAML file describes:
 
@@ -120,7 +120,7 @@ The agent's YAML file describes:
 - including the `system_prompt`, which are instructions to the LLM 
 - and any customization you might want, such as [swapping out the LLM](/docs/howto/swap_llm), custom tools, etc.
 
-```yaml title=resources/hello-world.yaml
+```yaml title=resources/hello-world.eidolon.yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
@@ -147,7 +147,7 @@ To see how quickly you can iterate to build powerful agentic applications, make 
 
 Using a text editor, change the system prompt:
 
-```yaml title=resources/hello-world.yaml
+```yaml title=resources/hello-world.eidolon.yaml
   system_prompt: |
     Repeat the user prompt, then translate the user prompt into Spanish.
 ```
