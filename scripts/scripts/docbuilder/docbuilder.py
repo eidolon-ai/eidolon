@@ -17,9 +17,7 @@ from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
 from eidolon_ai_sdk.system.reference_model import Reference
-from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
-from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
@@ -42,15 +40,12 @@ def main():
 
     print("copying schema to site...")
     shutil.rmtree(EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1", ignore_errors=True)
-    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas",
-                    EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'schemas')
-    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "Resource",
-                    EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'resources')
+    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas", EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'schemas')
+    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "Resource", EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'resources')
 
 
 class AgentBuilder(BaseModel):
-    documented_agents: Reference[
-        "Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
+    documented_agents: Reference["Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
 
 
 def generate_schema():
@@ -300,9 +295,11 @@ def clean_ref_groups_for_md(schema, group_defaults, seen=None):
 
     seen.add(id(schema))
     if isinstance(schema, dict):  # inline optional types for easier to read markdown
-        if "anyOf" in schema and len(schema['anyOf']) == 2 and [s for s in schema['anyOf'] if
-                                                                len(s) == 1 and s.get("type") == "null"] and schema.get(
-            'default') is None:
+        if (
+                "anyOf" in schema and len(schema['anyOf']) == 2
+                and [s for s in schema['anyOf'] if len(s) == 1 and s.get("type") == "null"]
+                and schema.get('default') is None
+        ):
             any_of = schema.pop('anyOf')
             object_type = [s for s in any_of if not (len(s) == 1 and s.get("type") == "null")][0]
             schema.update(object_type)
